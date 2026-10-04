@@ -164,3 +164,8 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 @media print { .top-actions { display: none !important; } }
 
 .dates { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-left: auto; }
+
+.finals { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--text-2); margin-top: 6px; }
+.finals:empty { display: none; }
+.finals i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+.finals b { color: var(--text); font-weight: 650; }

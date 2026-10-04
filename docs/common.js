@@ -114,7 +114,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
   series = series.filter(r => r.points.length > 1);
   const W = opts.width || el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
-  const wide = W > 560, m = { l: 46, r: wide ? 78 : 10, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
+  const wide = W > 560, m = { l: 46, r: wide ? 150 : 10, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
   if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   let lo = 0, hi = 0;
@@ -157,7 +157,8 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
     labels.forEach(l => {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
-      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '');
+      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '') + ' ';
+      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); tv.textContent = pct(l.r.points[l.r.points.length - 1][1], 1).replace(' %', opts.unit ? opts.unit.replace(' ', '') : '%');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
