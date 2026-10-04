@@ -145,8 +145,15 @@ function shareUrl() {
   q.set('sw', P.sumWin); q.set('oh', P.ovH); if (P.hmProv) q.set('hm', P.hmProv);
   return location.origin === 'null' ? location.href.split('#')[0] + '#' + q : location.origin + location.pathname + '#' + q;
 }
+/* Datos negalima rinkti vėliau nei naujausi turimi duomenys (fondai skelbia ankstesnės darbo dienos vertę, šiandienos nebūna) */
+const LATEST = Math.max(...DATA.groups.map(g => groupEnd(g).end)), EARLIEST = Math.min(...DATA.groups.flatMap(g => g.funds.map(f => f.d[0])));
+function normalizeDates(changed) {
+  const fix = v => { if (!v) return ''; const d = dayOf(v); return isNaN(d) ? '' : iso(Math.min(Math.max(d, EARLIEST), LATEST)); };
+  P.from = fix(P.from); P.to = fix(P.to);
+  if (P.from && P.to && P.from > P.to) { if (changed === 'to') P.from = P.to; else P.to = P.from; }
+}
 try { applyState(JSON.parse(localStorage.getItem('perfState'))); } catch (e) {}
-loadHash();
+loadHash(); normalizeDates();
 
 /* ---------- laikotarpis ---------- */
 function rangeFor(group) {
@@ -498,8 +505,8 @@ function buildControls() {
     });
     pe.appendChild(b);
   });
-  $('from').addEventListener('change', e => { P.from = e.target.value; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
-  $('to').addEventListener('change', e => { P.to = e.target.value; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
+  $('from').addEventListener('change', e => { P.from = e.target.value; normalizeDates('from'); $('from').value = P.from; $('to').value = P.to; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
+  $('to').addEventListener('change', e => { P.to = e.target.value; normalizeDates('to'); $('from').value = P.from; $('to').value = P.to; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
   $('group').addEventListener('change', e => { P.group = e.target.value; resetZoom(); saveState(); renderFunds(); });
   $('hmProv').addEventListener('change', e => { P.hmProv = e.target.value; saveState(); renderHeatmap(byId(P.group)); });
   $('ovH').addEventListener('change', e => { P.ovH = e.target.value; saveState(); renderOverall(); });
@@ -542,6 +549,7 @@ function labelControls() {
   $('periods').setAttribute('aria-label', T().period);
   $('periods').querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
   $('lblFrom').textContent = T().from; $('lblTo').textContent = T().to;
+  ['from', 'to'].forEach(id => { $(id).min = iso(EARLIEST); $(id).max = iso(LATEST); });
   const sel = $('group'), cur = P.group; sel.innerHTML = DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join(''); sel.value = cur;
   $('foot').textContent = T().foot;
   $('btnShare').textContent = T().share; $('btnXlsx').textContent = T().xlsx; $('btnPrint').textContent = T().print;
