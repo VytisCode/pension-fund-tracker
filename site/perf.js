@@ -20,7 +20,8 @@ addStrings({
   nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
   foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
   share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
-  eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider chip to highlight it.',
+  viewret: 'Return', viewdiff: 'Difference vs group average', mDiff: 'Lines show each fund’s cumulative return minus the group average, in percentage points (0 = group average).',
+  eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
   advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.',
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
@@ -72,7 +73,8 @@ addStrings({
   nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
   foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
   share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
-  eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte.',
+  viewret: 'Grąža', viewdiff: 'Skirtumas nuo grupės vidurkio', mDiff: 'Linijos rodo kiekvieno fondo sukauptą grąžą minus grupės vidurkis, procentiniais punktais (0 = grupės vidurkis).',
+  eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
   advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus',
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
@@ -107,13 +109,13 @@ addStrings({
 
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hl: null, zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: '1m', ovH: 'long' };
+  hl: null, pin: null, view: 'ret', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: '1m', ovH: 'long' };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, hmProv: P.hmProv, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, hmProv: P.hmProv, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -121,6 +123,7 @@ function applyState(s) {
   if (typeof s.from === 'string') P.from = s.from; if (typeof s.to === 'string') P.to = s.to;
   if (byId(s.group)) P.group = s.group;
   if (Array.isArray(s.provs)) { const v = s.provs.filter(id => DATA.providers.some(p => p.id === id)); if (v.length) P.provs = new Set(v); }
+  if (s.view === 'ret' || s.view === 'diff') P.view = s.view;
   if (typeof s.adv === 'boolean') P.adv = s.adv;
   if (typeof s.rf === 'number' && isFinite(s.rf)) P.rf = s.rf;
   if (s.hmProv && DATA.providers.some(p => p.id === s.hmProv)) P.hmProv = s.hmProv;
@@ -132,7 +135,7 @@ function loadHash() {
   const s = {};
   if (q.get('p')) s.period = q.get('p'); if (q.get('f')) s.from = q.get('f'); if (q.get('t')) s.to = q.get('t'); if (q.get('g')) s.group = q.get('g');
   if (q.get('v')) s.provs = q.get('v').split(','); if (q.get('rf')) s.rf = parseFloat(q.get('rf')); if (q.get('adv')) s.adv = q.get('adv') === '1';
-  if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh');
+  if (q.get('vw')) s.view = q.get('vw'); if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh');
   applyState(s);
   if (q.get('l') === 'en' || q.get('l') === 'lt') lang = q.get('l');
   if (q.get('ev') === '1') P.events = true;
@@ -144,6 +147,7 @@ function shareUrl() {
   q.set('g', P.group); q.set('v', [...P.provs].join(',')); q.set('l', lang);
   if (P.events) q.set('ev', '1'); if (P.zoom) q.set('z', iso(P.zoom[0]) + '_' + iso(P.zoom[1]));
   if (P.adv) { q.set('adv', '1'); q.set('rf', P.rf); }
+  if (P.view !== 'ret') q.set('vw', P.view);
   q.set('sw', P.sumWin); q.set('oh', P.ovH); if (P.hmProv) q.set('hm', P.hmProv);
   return location.origin === 'null' ? location.href.split('#')[0] + '#' + q : location.origin + location.pathname + '#' + q;
 }
@@ -380,13 +384,25 @@ function drawChart() {
     series.push({ provider: f.provider, aligned: true, points: s.points.map(([d, r]) => [d, ((1 + L / 100) * (1 + r / 100) - 1) * 100]) });
   });
   const sortedEv = EVENTS.map((e, i) => ({ day: dayOf(e.day), n: i + 1, title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day);
+  if (P.view === 'diff' && series.length > 1) {                  // skirtumas nuo grupės vidurkio, p. p.
+    const days = [...new Set(series.flatMap(r => r.points.map(p => p[0])))].sort((a, b) => a - b), idx = series.map(() => 0), out = series.map(() => []);
+    days.forEach(d => {
+      const v = series.map((r, k) => { while (idx[k] + 1 < r.points.length && r.points[idx[k] + 1][0] <= d) idx[k]++; return r.points[0][0] <= d ? r.points[idx[k]][1] : null; });
+      const ok = v.filter(x => x !== null), avg = ok.reduce((a, b) => a + b, 0) / ok.length;
+      v.forEach((x, k) => { if (x !== null) out[k].push([d, x - avg]); });
+    });
+    series.forEach((r, k) => { r.points = out[k]; });
+  }
   const evs = P.events ? sortedEv.filter(e => e.day >= x0 && e.day <= x1) : [];
-  $('mChart').textContent = P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`);
+  $('mChart').textContent = (P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`)) + (P.view === 'diff' ? ' ' + T().mDiff : '');
   const late = series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
   if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
-  const ctl = drawLineChart($('chart'), series, x0, x1, { events: evs, hl: P.hl, onZoom: (a, b) => { P.zoom = [a, b]; drawChart(); } });
-  chartState = { ctl, series, x0, x1, evs };
+  const diff = P.view === 'diff', unit = diff ? ' p.p.' : ' %', W = $('chart').clientWidth || 600;
+  const opt = { events: evs, hl: P.pin || P.hl, height: Math.max(300, Math.min(520, Math.round(W * 0.42))), unit, axisUnit: diff ? ' pp' : '%',
+    onZoom: (a, b) => { P.zoom = [a, b]; drawChart(); }, onPick: id => { P.pin = P.pin === id ? null : id; drawChart(); } };
+  const ctl = drawLineChart($('chart'), series, x0, x1, opt);
+  chartState = { ctl, series, x0, x1, evs, opt };
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
 }
 function renderCoverage(g) {
@@ -491,7 +507,7 @@ async function exportXlsx() {
 }
 function downloadPng() {
   const g = byId(P.group), tmp = document.createElement('div'), W = 1100, H = 520;
-  const ctl = drawLineChart(tmp, chartState.series, chartState.x0, chartState.x1, { width: W, height: H, events: chartState.evs });
+  const ctl = drawLineChart(tmp, chartState.series, chartState.x0, chartState.x1, { width: W, height: H, events: chartState.evs, unit: chartState.opt.unit, axisUnit: chartState.opt.axisUnit });
   if (!ctl) return;
   const cs = getComputedStyle(document.documentElement), res = s => s.replace(/var\((--[\w-]+)\)/g, (_, k) => cs.getPropertyValue(k).trim() || '#888');
   const ser = new XMLSerializer(), inner = res([...ctl.svg.childNodes].map(n => ser.serializeToString(n)).join(''));
@@ -534,12 +550,14 @@ function buildControls() {
     const c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.dataset.id = p.id;
     c.innerHTML = `<i style="background:${colorOf(p.id)}"></i>${p.label}`;
     c.addEventListener('click', () => { if (P.provs.has(p.id)) { if (P.provs.size > 1) P.provs.delete(p.id); } else P.provs.add(p.id); syncChips(); saveState(); renderFunds(); });
-    const hl = id => { P.hl = id; if (chartState && chartState.ctl) chartState.ctl.highlight(id); };
+    const hl = id => { P.hl = id; if (chartState && chartState.ctl) chartState.ctl.highlight(id || P.pin || null); };
+    c.addEventListener('dblclick', () => { P.pin = P.pin === p.id ? null : p.id; if (!P.provs.has(p.id)) { P.provs.add(p.id); syncChips(); renderFunds(); } else drawChart(); });
     c.addEventListener('mouseenter', () => hl(p.id)); c.addEventListener('mouseleave', () => hl(null));
     c.addEventListener('focus', () => hl(p.id)); c.addEventListener('blur', () => hl(null));
     $('chips').appendChild(c);
   });
   ['1w', '1m'].forEach(w => { const b = document.createElement('button'); b.type = 'button'; b.dataset.w = w; b.addEventListener('click', () => { P.sumWin = w; saveState(); syncSumWin(); renderSummary(); }); $('sumWin').appendChild(b); });
+  ['ret', 'diff'].forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.addEventListener('click', () => { P.view = v; saveState(); syncView(); drawChart(); }); $('viewSeg').appendChild(b); });
   $('resetZoom').addEventListener('click', () => { resetZoom(); drawChart(); });
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
@@ -563,6 +581,7 @@ function buildControls() {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') $('pop').style.display = 'none'; });
 }
 function syncChips() { document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', P.provs.has(c.dataset.id))); }
+function syncView() { $('viewSeg').querySelectorAll('button').forEach(b => { b.textContent = T()['view' + b.dataset.v]; b.setAttribute('aria-pressed', b.dataset.v === P.view); }); }
 function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = T()['win' + b.dataset.w]; b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
 function labelControls() {
   $('periods').setAttribute('aria-label', T().period);
@@ -575,7 +594,7 @@ function labelControls() {
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
   $('sub').textContent = `${T().dataUntil} ${iso(Math.max(...DATA.groups.map(g => groupEnd(g).end)))} · ${T().updated} ${DATA.generated}`;
-  syncSumWin();
+  syncSumWin(); syncView();
 }
 function syncAll() {
   $('periods').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === P.period));

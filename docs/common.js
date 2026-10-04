@@ -129,7 +129,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
 
   niceTicks(lo, hi).forEach(t => {
     add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
-    const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + '%';
+    const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + (opts.axisUnit || '%');
   });
   const years = (x1 - x0) / 365, ticks = [], cur = new Date(x0 * DAY);
   if (years > 5) { for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += years > 6 ? 2 : 1) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }
@@ -156,7 +156,8 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
     for (let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 13);
     labels.forEach(l => {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
-      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: 'cursor:default' }); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '');
+      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
+      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
@@ -176,7 +177,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
     if (!vals.length) return;
     cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
-    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''}</span><span>${pct(o.v)}</span></div>`).join('');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''}</span><span>${pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
     tip.style.display = 'block'; place(ev);
   };
   hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
@@ -208,7 +209,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       Object.keys(els).forEach(k => els[k].forEach(n => {
         const on = !id || k === id;
         n.setAttribute('opacity', on ? 1 : 0.15);
-        if (n.tagName === 'path') n.setAttribute('stroke-width', id && on ? 3 : 2);
+        if (n.tagName === 'path') { n.setAttribute('stroke-width', id && on ? 3 : 2); if (id && on) n.parentNode.insertBefore(n, cross); }
       }));
     },
   };
