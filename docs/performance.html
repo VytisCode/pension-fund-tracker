@@ -163,7 +163,8 @@ const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 
 function renderMarket() {
   $('hMarket').textContent = T().hMarket; $('hRet').textContent = T().hRet; $('hRank').textContent = T().hRank;
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
-  const provs = DATA.providers;
+  const MARKET_ORDER = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // lentelių stulpelių tvarka
+  const provs = MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
   const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
   const rows = DATA.groups.map(g => {
     const rng = rangeFor(g), vals = {};
