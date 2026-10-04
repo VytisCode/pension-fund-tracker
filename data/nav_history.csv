@@ -29453,7 +29453,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 1961-1967,1.2635,9803508,1.2802
 2026-09-29,GOINDEX,Goindex pensija 1961-1967,1.2643,9820495,1.2808
 2026-09-30,GOINDEX,Goindex pensija 1961-1967,1.2663,9829596,1.2816
-2026-10-01,GOINDEX,Goindex pensija 1961-1967,1.2661,9507924,1.2839
+2026-10-01,GOINDEX,Goindex pensija 1961-1967,1.2661,9507924.3378,1.2839
 2022-08-22,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
@@ -30488,7 +30488,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 1968-1974,1.6056,35185414,1.6332
 2026-09-29,GOINDEX,Goindex pensija 1968-1974,1.6067,35209105,1.6327
 2026-09-30,GOINDEX,Goindex pensija 1968-1974,1.6089,35277101,1.6294
-2026-10-01,GOINDEX,Goindex pensija 1968-1974,1.6079,32580337,1.6398
+2026-10-01,GOINDEX,Goindex pensija 1968-1974,1.6079,32580337.2844,1.6398
 2022-08-22,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
@@ -31523,7 +31523,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 1975-1981,1.6299,53163067,1.6569
 2026-09-29,GOINDEX,Goindex pensija 1975-1981,1.6311,53215347,1.6563
 2026-09-30,GOINDEX,Goindex pensija 1975-1981,1.6334,53291504,1.6523
-2026-10-01,GOINDEX,Goindex pensija 1975-1981,1.632,49779347,1.6639
+2026-10-01,GOINDEX,Goindex pensija 1975-1981,1.632,49779346.7673,1.6639
 2022-08-22,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
@@ -32558,7 +32558,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 1982-1988,1.6375,57438318,1.6569
 2026-09-29,GOINDEX,Goindex pensija 1982-1988,1.6388,57495330,1.6563
 2026-09-30,GOINDEX,Goindex pensija 1982-1988,1.6411,57576357,1.6523
-2026-10-01,GOINDEX,Goindex pensija 1982-1988,1.6397,52920674,1.6639
+2026-10-01,GOINDEX,Goindex pensija 1982-1988,1.6397,52920674.3005,1.6639
 2022-08-22,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
@@ -33593,7 +33593,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 1989-1995,1.6282,45606081,1.6569
 2026-09-29,GOINDEX,Goindex pensija 1989-1995,1.6295,45599993,1.6563
 2026-09-30,GOINDEX,Goindex pensija 1989-1995,1.6318,45675263,1.6523
-2026-10-01,GOINDEX,Goindex pensija 1989-1995,1.6304,41166933,1.6639
+2026-10-01,GOINDEX,Goindex pensija 1989-1995,1.6304,41166933.1477,1.6639
 2022-08-22,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
@@ -34628,7 +34628,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 1996-2002,1.632,25345789,1.6569
 2026-09-29,GOINDEX,Goindex pensija 1996-2002,1.6333,25365923,1.6563
 2026-09-30,GOINDEX,Goindex pensija 1996-2002,1.6357,25408825,1.6523
-2026-10-01,GOINDEX,Goindex pensija 1996-2002,1.6341,22929433,1.6639
+2026-10-01,GOINDEX,Goindex pensija 1996-2002,1.6341,22929432.625,1.6639
 2025-01-02,GOINDEX,Goindex pensija 2003-2009,1.0,1093916,1.0
 2025-01-03,GOINDEX,Goindex pensija 2003-2009,1.0,1095326,1.0072
 2025-01-06,GOINDEX,Goindex pensija 2003-2009,1.0022,1097778,1.0032
@@ -35069,7 +35069,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensija 2003-2009,1.2399,4524745,1.2526
 2026-09-29,GOINDEX,Goindex pensija 2003-2009,1.241,4529066,1.2521
 2026-09-30,GOINDEX,Goindex pensija 2003-2009,1.2429,4534983,1.2491
-2026-10-01,GOINDEX,Goindex pensija 2003-2009,1.2416,4258773,1.2579
+2026-10-01,GOINDEX,Goindex pensija 2003-2009,1.2416,4258772.7534,1.2579
 2022-08-22,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
@@ -36104,7 +36104,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-09-28,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0797,1603879,1.0901
 2026-09-29,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0802,1604520,1.0908
 2026-09-30,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0818,1606931,1.0923
-2026-10-01,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0818,1414697,1.0923
+2026-10-01,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0818,1414696.9628,1.0923
 2019-01-02,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
