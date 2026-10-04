@@ -6,6 +6,7 @@ Paleidžiama po kiekvieno duomenų atnaujinimo (žr. .github/workflows/update.ym
 import csv
 import json
 import re
+import hashlib
 import shutil
 from datetime import date, datetime
 from pathlib import Path
@@ -86,8 +87,16 @@ def main() -> None:
     DOCS.mkdir(exist_ok=True)
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data.js").write_text(data_js, encoding="utf-8")
-    for name in ("index.html", "overview.html", "performance.html", "perf.js", "events.js", "style.css", "common.js"):
+    assets = ("perf.js", "events.js", "style.css", "common.js", "data.js")
+    for name in ("index.html", "overview.html", "performance.html") + assets[:-1]:
         shutil.copyfile(SITE / name, DOCS / name)
+    # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
+    ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}
+    for page in ("index.html", "overview.html", "performance.html"):
+        text = (DOCS / page).read_text(encoding="utf-8")
+        for n in assets:
+            text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
+        (DOCS / page).write_text(text, encoding="utf-8")
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
 
 
