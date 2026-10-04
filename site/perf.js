@@ -25,6 +25,7 @@ addStrings({
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
   nAdv: 'Computed for the selected period (best / worst calendar year: whole history, full years only). Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; on periods shorter than a year the annualised figures are unreliable. Months = full calendar months inside the period.',
+  notShown: l => `Not shown – the fund did not exist at the start of this range: ${l}. Choose a shorter period to include it.`,
   covTitle: 'Data coverage', covLater: (p, d) => `${p}: data starts ${d} – later than the other funds in this group (the fund is newer or earlier history is not available), so long periods and “since inception” figures cover a shorter history.`,
   covSeb: 'Earlier history has not been loaded yet (only data from the date above is available).',
   sumNoData: 'Not enough data.', sumLatest: d => `Latest data: <b>${d}</b>.`,
@@ -76,6 +77,7 @@ addStrings({
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
   nAdv: 'Skaičiuojama pasirinktam laikotarpiui (geriausi / blogiausi kalendoriniai metai – visa istorija, tik pilni metai). Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi. Mėnesiai = pilni kalendoriniai mėnesiai laikotarpio viduje.',
+  notShown: l => `Nerodoma – fondo šio intervalo pradžioje dar nebuvo: ${l}. Pasirinkite trumpesnį laikotarpį, kad jis būtų įtrauktas.`,
   covTitle: 'Duomenų aprėptis', covLater: (p, d) => `${p}: duomenys prasideda ${d} – vėliau nei kitų šios grupės fondų (fondas naujesnis arba ankstesnės istorijos nėra), todėl ilgi laikotarpiai ir rodikliai „nuo įsteigimo“ apima trumpesnę istoriją.`,
   covSeb: 'Ankstesnė istorija dar neįkelta (turimi tik duomenys nuo nurodytos dienos).',
   sumNoData: 'Duomenų nepakanka.', sumLatest: d => `Naujausi duomenys: <b>${d}</b>.`,
@@ -156,16 +158,22 @@ try { applyState(JSON.parse(localStorage.getItem('perfState'))); } catch (e) {}
 loadHash(); normalizeDates();
 
 /* ---------- laikotarpis ---------- */
-function rangeFor(group) {
+/* „Visa istorija“ = nuo ankstyviausio fondo pradžios (vėliau pradėję fondai rodomi „–“ / negrafikuojami).
+   sel = true: skaičiuojama tik iš pasirinktų tiekėjų (grafikui ir lentelėms po juo). */
+const maxAnchor = (group, sel) => {            // fondai, pradėję ≤31 d. po ankstyviausio, laikomi pradėjusiais kartu
+  const st = group.funds.filter(f => !sel || P.provs.has(f.provider)).map(f => f.d[0]).sort((x, y) => x - y);
+  return Math.max(...st.filter(d => d - st[0] <= 31));
+};
+function rangeFor(group, sel) {
   const { end: commonEnd, overallLast } = groupEnd(group);
   if (P.period === 'custom') {
-    const anchor = P.from ? dayOf(P.from) : anchorFor('max', commonEnd, group.funds);
+    const anchor = P.from ? dayOf(P.from) : maxAnchor(group, sel);
     const end = P.to ? Math.min(dayOf(P.to), commonEnd) : commonEnd;
     return { anchor, end, overallLast };
   }
-  return { anchor: anchorFor(P.period, commonEnd, group.funds), end: commonEnd, overallLast };
+  return { anchor: P.period === 'max' ? maxAnchor(group, sel) : anchorFor(P.period, commonEnd, group.funds), end: commonEnd, overallLast };
 }
-const rangeAt = (group, per) => { const { end, overallLast } = groupEnd(group); return { anchor: anchorFor(per, end, group.funds), end, overallLast }; };
+const rangeAt = (group, per) => { const { end, overallLast } = groupEnd(group); return { anchor: per === 'max' ? maxAnchor(group, false) : anchorFor(per, end, group.funds), end, overallLast }; };
 const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : T().periods[P.period];
 const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - 5;
 const ik = k => `<button type="button" class="info" data-k="${k}" aria-label="info">i</button>`;
@@ -358,13 +366,15 @@ function renderOverall() {
 /* ---------- 2. fondų palyginimas ---------- */
 let chartState = null;
 function drawChart() {
-  const g = byId(P.group), rng = rangeFor(g);
+  const g = byId(P.group), rng = rangeFor(g, true);
   const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
   const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
   const series = fs.map(f => { const s = seriesOf(f, x0, x1); return s && s.points.length > 1 ? { provider: f.provider, points: s.points } : null; }).filter(Boolean);
   const sortedEv = EVENTS.map((e, i) => ({ day: dayOf(e.day), n: i + 1, title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day);
   const evs = P.events ? sortedEv.filter(e => e.day >= x0 && e.day <= x1) : [];
   $('mChart').textContent = P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`);
+  const late = fs.filter(f => f.d[0] > x0).map(f => `${labelOf(f.provider)} (${iso(f.d[0])})`);
+  if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
   const ctl = drawLineChart($('chart'), series, x0, x1, { events: evs, hl: P.hl, onZoom: (a, b) => { P.zoom = [a, b]; drawChart(); } });
   chartState = { ctl, series, x0, x1, evs };
@@ -383,7 +393,7 @@ function renderCoverage(g) {
   c.innerHTML = lines.length ? `<b>${T().covTitle}</b>${ik('coverage')}` + lines.map(l => `<div>${l}</div>`).join('') : '';
 }
 function renderFunds() {
-  const g = byId(P.group), rng = rangeFor(g);
+  const g = byId(P.group), rng = rangeFor(g, true);
   $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
   $('hMetrics').innerHTML = T().hMetrics + ik('ret'); $('hCal').innerHTML = T().hCal + ik('cal'); $('hRoll').innerHTML = T().hRoll + ik('roll'); $('nFund').textContent = T().nFund;
   $('hQP').innerHTML = T().hQP + ik('quartile'); $('hHm').innerHTML = T().hHm + ik('heat');
@@ -525,7 +535,7 @@ function buildControls() {
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
   $('btnAdv').addEventListener('click', () => { P.adv = !P.adv; saveState(); renderFunds(); });
-  $('rf').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)) { P.rf = v; saveState(); renderAdvanced(byId(P.group), rangeFor(byId(P.group)), byId(P.group).funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rangeFor(byId(P.group)))).filter(Boolean).sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9))); } });
+  $('rf').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)) { P.rf = v; saveState(); renderAdvanced(byId(P.group), rangeFor(byId(P.group), true), byId(P.group).funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rangeFor(byId(P.group), true))).filter(Boolean).sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9))); } });
   $('btnXlsx').addEventListener('click', exportXlsx);
   $('btnPrint').addEventListener('click', () => window.print());
   $('btnShare').addEventListener('click', async () => {
