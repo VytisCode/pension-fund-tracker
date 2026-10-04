@@ -9,7 +9,7 @@ const I18N = {
     navOverview: 'Overview', navPerformance: 'Performance & peers',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', noNew: 'no new data', noData: 'Not enough data for this period.',
-    chartLabel: 'Return over the selected period', born: 'Born', turto: 'Asset preservation funds',
+    chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
     periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
   },
   lt: {
@@ -17,7 +17,7 @@ const I18N = {
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
-    chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo fondai',
+    chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
     periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 m.', '3y': '3 m.', '5y': '5 m.', max: 'Visa istorija', custom: 'Pasirinktas' },
   },
 };
