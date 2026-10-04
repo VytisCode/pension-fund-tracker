@@ -169,3 +169,8 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .finals:empty { display: none; }
 .finals i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
 .finals b { color: var(--text); font-weight: 650; }
+
+/* galutinės reikšmės / legenda grafike – matomos tik užvedus pelę ant grafiko */
+.chart .endlab { opacity: 0; transition: opacity .15s; }
+.chart:hover .endlab { opacity: 1; }
+@media (hover: none) { .chart .endlab { opacity: 1; } }
