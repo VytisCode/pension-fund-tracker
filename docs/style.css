@@ -162,3 +162,5 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .top-tools { flex-wrap: wrap; justify-content: flex-end; }
 #periodbar { flex-wrap: wrap; justify-content: flex-start; }
 @media print { .top-actions { display: none !important; } }
+
+.dates { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-left: auto; }
