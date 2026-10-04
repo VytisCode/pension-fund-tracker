@@ -369,6 +369,14 @@ function renderOverall() {
 
 /* ---------- 2. fondų palyginimas ---------- */
 let chartState = null;
+P.mr = 16;                                               // dešinė paraštė: grafikas „susispaudžia“ užvedus pelę, kad tilptų legenda
+function paintChart() { const cs = chartState; if (cs) cs.ctl = drawLineChart($('chart'), cs.series, cs.x0, cs.x1, Object.assign({}, cs.opt, { mr: P.mr })); }
+let mrAnim = 0;
+function animateMr(target) {
+  cancelAnimationFrame(mrAnim);
+  const step = () => { P.mr += (target - P.mr) * 0.35; if (Math.abs(target - P.mr) < 1) P.mr = target; paintChart(); if (P.mr !== target) mrAnim = requestAnimationFrame(step); };
+  mrAnim = requestAnimationFrame(step);
+}
 function drawChart() {
   const g = byId(P.group), rng = rangeFor(g, true);
   const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
@@ -401,8 +409,8 @@ function drawChart() {
   const diff = P.view === 'diff', unit = diff ? ' p.p.' : ' %', W = $('chart').clientWidth || 600;
   const opt = { events: evs, hl: P.pin || P.hl, height: Math.max(300, Math.min(520, Math.round(W * 0.42))), unit, axisUnit: diff ? ' pp' : '%',
     onZoom: (a, b) => { P.zoom = [a, b]; drawChart(); }, onPick: id => { P.pin = P.pin === id ? null : id; drawChart(); } };
-  const ctl = drawLineChart($('chart'), series, x0, x1, opt);
-  chartState = { ctl, series, x0, x1, evs, opt };
+  chartState = { ctl: null, series, x0, x1, evs, opt };
+  paintChart();
   const fin = $('finals'); const narrow = W <= 560;                    // siaurame ekrane galutinės reikšmės – po grafiku
   fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', diff ? ' p.p.' : '%')}</b></span>`).join('') : '';
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
@@ -509,7 +517,7 @@ async function exportXlsx() {
 }
 function downloadPng() {
   const g = byId(P.group), tmp = document.createElement('div'), W = 1100, H = 520;
-  const ctl = drawLineChart(tmp, chartState.series, chartState.x0, chartState.x1, { width: W, height: H, events: chartState.evs, unit: chartState.opt.unit, axisUnit: chartState.opt.axisUnit });
+  const ctl = drawLineChart(tmp, chartState.series, chartState.x0, chartState.x1, { width: W, height: H, events: chartState.evs, unit: chartState.opt.unit, axisUnit: chartState.opt.axisUnit, mr: 150 });
   if (!ctl) return;
   const cs = getComputedStyle(document.documentElement), res = s => s.replace(/var\((--[\w-]+)\)/g, (_, k) => cs.getPropertyValue(k).trim() || '#888');
   const ser = new XMLSerializer(), inner = res([...ctl.svg.childNodes].map(n => ser.serializeToString(n)).join(''));
@@ -560,6 +568,10 @@ function buildControls() {
   });
   ['1w', '1m'].forEach(w => { const b = document.createElement('button'); b.type = 'button'; b.dataset.w = w; b.addEventListener('click', () => { P.sumWin = w; saveState(); syncSumWin(); renderSummary(); }); $('sumWin').appendChild(b); });
   ['ret', 'diff'].forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.addEventListener('click', () => { P.view = v; saveState(); syncView(); drawChart(); }); $('viewSeg').appendChild(b); });
+  if (!matchMedia('(hover: none)').matches) {
+    $('chart').addEventListener('mouseenter', () => { if (($('chart').clientWidth || 0) > 560) animateMr(150); });
+    $('chart').addEventListener('mouseleave', () => animateMr(16));
+  }
   $('resetZoom').addEventListener('click', () => { resetZoom(); drawChart(); });
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
