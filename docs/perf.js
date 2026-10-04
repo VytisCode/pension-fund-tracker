@@ -20,7 +20,7 @@ addStrings({
   nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
   foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
   share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
-  viewret: 'Return', viewdiff: 'Difference vs group average', mDiff: 'Lines show each fund’s cumulative return minus the group average, in percentage points (0 = group average).',
+  viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in percentage points (0 = ${r || 'group average'}).`,
   eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
   advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.',
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
@@ -81,7 +81,7 @@ addStrings({
   nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
   foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
   share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
-  viewret: 'Grąža', viewdiff: 'Skirtumas nuo grupės vidurkio', mDiff: 'Linijos rodo kiekvieno fondo sukauptą grąžą minus grupės vidurkis, procentiniais punktais (0 = grupės vidurkis).',
+  viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentiniais punktais (0 = ${r || 'grupės vidurkis'}).`,
   eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
   advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus',
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
@@ -138,13 +138,13 @@ function presetRange(per, end, group, sel) {
   return { anchor: anchorFor(per, end, group.funds), end };
 }
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hl: null, pin: null, view: 'ret', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: '1m', ovH: 'long' };
+  hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: '1m', ovH: 'long' };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, hmProv: P.hmProv, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -153,6 +153,7 @@ function applyState(s) {
   if (byId(s.group)) P.group = s.group;
   if (Array.isArray(s.provs)) { const v = s.provs.filter(id => DATA.providers.some(p => p.id === id)); if (v.length) P.provs = new Set(v); }
   if (s.view === 'ret' || s.view === 'diff') P.view = s.view;
+  if (s.diffRef === 'avg' || DATA.providers.some(p => p.id === s.diffRef)) P.diffRef = s.diffRef;
   if (typeof s.adv === 'boolean') P.adv = s.adv;
   if (typeof s.rf === 'number' && isFinite(s.rf)) P.rf = s.rf;
   if (s.hmProv && DATA.providers.some(p => p.id === s.hmProv)) P.hmProv = s.hmProv;
@@ -164,7 +165,7 @@ function loadHash() {
   const s = {};
   if (q.get('p')) s.period = q.get('p'); if (q.get('f')) s.from = q.get('f'); if (q.get('t')) s.to = q.get('t'); if (q.get('g')) s.group = q.get('g');
   if (q.get('v')) s.provs = q.get('v').split(','); if (q.get('rf')) s.rf = parseFloat(q.get('rf')); if (q.get('adv')) s.adv = q.get('adv') === '1';
-  if (q.get('vw')) s.view = q.get('vw'); if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh');
+  if (q.get('vw')) s.view = q.get('vw'); if (q.get('dr')) s.diffRef = q.get('dr'); if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh');
   applyState(s);
   if (q.get('l') === 'en' || q.get('l') === 'lt') lang = q.get('l');
   if (q.get('ev') === '1') P.events = true;
@@ -176,7 +177,7 @@ function shareUrl() {
   q.set('g', P.group); q.set('v', [...P.provs].join(',')); q.set('l', lang);
   if (P.events) q.set('ev', '1'); if (P.zoom) q.set('z', iso(P.zoom[0]) + '_' + iso(P.zoom[1]));
   if (P.adv) { q.set('adv', '1'); q.set('rf', P.rf); }
-  if (P.view !== 'ret') q.set('vw', P.view);
+  if (P.view !== 'ret') { q.set('vw', P.view); q.set('dr', P.diffRef); }
   q.set('sw', P.sumWin); q.set('oh', P.ovH); if (P.hmProv) q.set('hm', P.hmProv);
   return location.origin === 'null' ? location.href.split('#')[0] + '#' + q : location.origin + location.pathname + '#' + q;
 }
@@ -420,32 +421,43 @@ function animateMr(target) {
   const step = () => { P.mr += (target - P.mr) * 0.35; if (Math.abs(target - P.mr) < 1) P.mr = target; paintChart(); if (P.mr !== target) mrAnim = requestAnimationFrame(step); };
   mrAnim = requestAnimationFrame(step);
 }
-function drawChart() {
-  const g = byId(P.group), rng = rangeFor(g, true);
-  const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
-  const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
+/* Eilutės grafikui: kiekvienam fondui nuo x0; vėliau pradėję fondai prasideda pirmą savo dieną ties kitų fondų vidutiniu lygiu (žymima *),
+   kad būtų matomas jų kitimas, o ankstesnių fondų istorija nebūtų trumpinama. */
+function buildSeries(fs, x0, x1) {
   const series = fs.map(f => { const s = seriesOf(f, x0, x1); return s && s.points.length > 1 ? { provider: f.provider, points: s.points } : null; }).filter(Boolean);
-  /* Vėliau pradėję fondai: linija prasideda jų pirmą dieną ties kitų fondų vidutiniu lygiu tą dieną (žymima *),
-     kad būtų matomas vėlesnio fondo kitimas, o ankstesnių fondų istorija nebūtų trumpinama. */
-  const lateF = fs.filter(f => f.d[0] > x0 && f.d[0] < x1);
-  lateF.forEach(f => {
+  fs.filter(f => f.d[0] > x0 && f.d[0] < x1).forEach(f => {
     const d0 = f.d[0], lv = series.filter(r => !r.aligned).map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= d0) { v = r.points[i][1]; break; } return v; }).filter(v => v !== null);
     const s = seriesOf(f, d0, x1); if (!lv.length || !s || s.points.length < 2) return;
     const L = lv.reduce((a, b) => a + b, 0) / lv.length;
     series.push({ provider: f.provider, aligned: true, points: s.points.map(([d, r]) => [d, ((1 + L / 100) * (1 + r / 100) - 1) * 100]) });
   });
+  return series;
+}
+let chartRef = null;
+function drawChart() {
+  const g = byId(P.group), rng = rangeFor(g, true);
+  const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
+  const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
+  const series = buildSeries(fs, x0, x1);
   const sortedEv = EVENTS.map((e, i) => ({ day: dayOf(e.day), n: i + 1, title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day);
-  if (P.view === 'diff' && series.length > 1) {                  // skirtumas nuo grupės vidurkio, p. p.
-    const days = [...new Set(series.flatMap(r => r.points.map(p => p[0])))].sort((a, b) => a - b), idx = series.map(() => 0), out = series.map(() => []);
-    days.forEach(d => {
-      const v = series.map((r, k) => { while (idx[k] + 1 < r.points.length && r.points[idx[k] + 1][0] <= d) idx[k]++; return r.points[0][0] <= d ? r.points[idx[k]][1] : null; });
-      const ok = v.filter(x => x !== null), avg = ok.reduce((a, b) => a + b, 0) / ok.length;
-      v.forEach((x, k) => { if (x !== null) out[k].push([d, x - avg]); });
-    });
-    series.forEach((r, k) => { r.points = out[k]; });
+  if (P.view === 'diff') {                                       // skirtumas nuo grupės vidurkio arba pasirinkto tiekėjo, p. p.
+    const refS = P.diffRef !== 'avg' ? buildSeries(g.funds.filter(f => !isStale(f, rng.overallLast)), x0, x1).find(r => r.provider === P.diffRef) : null;
+    if (refS) {
+      const lvl = d => { let v = null; for (let i = refS.points.length - 1; i >= 0; i--) if (refS.points[i][0] <= d) { v = refS.points[i][1]; break; } return v; };
+      series.forEach(r => { r.points = r.points.map(([d, v]) => { const rv = lvl(d); return rv === null ? null : [d, v - rv]; }).filter(Boolean); });
+    } else if (series.length > 1) {
+      const days = [...new Set(series.flatMap(r => r.points.map(p => p[0])))].sort((a, b) => a - b), idx = series.map(() => 0), out = series.map(() => []);
+      days.forEach(d => {
+        const v = series.map((r, k) => { while (idx[k] + 1 < r.points.length && r.points[idx[k] + 1][0] <= d) idx[k]++; return r.points[0][0] <= d ? r.points[idx[k]][1] : null; });
+        const ok = v.filter(x => x !== null), avg = ok.reduce((a, b) => a + b, 0) / ok.length;
+        v.forEach((x, k) => { if (x !== null) out[k].push([d, x - avg]); });
+      });
+      series.forEach((r, k) => { r.points = out[k]; });
+    }
+    chartRef = refS ? labelOf(P.diffRef) : null;
   }
   const evs = P.events ? sortedEv.filter(e => e.day >= x0 && e.day <= x1) : [];
-  $('mChart').textContent = (P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`)) + (P.view === 'diff' ? ' ' + T().mDiff : '');
+  $('mChart').textContent = (P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`)) + (P.view === 'diff' ? ' ' + T().mDiff(chartRef) : '');
   const late = series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
   if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
@@ -621,6 +633,7 @@ function buildControls() {
     $('chart').addEventListener('mouseenter', () => { if (($('chart').clientWidth || 0) > 560) animateMr(150); });
     $('chart').addEventListener('mouseleave', () => animateMr(16));
   }
+  $('diffRef').addEventListener('change', e => { P.diffRef = e.target.value; saveState(); drawChart(); });
   $('resetZoom').addEventListener('click', () => { resetZoom(); drawChart(); });
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
@@ -644,7 +657,10 @@ function buildControls() {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') $('pop').style.display = 'none'; });
 }
 function syncChips() { document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', P.provs.has(c.dataset.id))); }
-function syncView() { $('viewSeg').querySelectorAll('button').forEach(b => { b.textContent = T()['view' + b.dataset.v]; b.setAttribute('aria-pressed', b.dataset.v === P.view); }); }
+function syncView() {
+  const sel = $('diffRef'), cur = P.diffRef;
+  sel.innerHTML = `<option value="avg">${T().diffAvg}</option>` + marketProvs().map(p => `<option value="${p.id}">${p.label}</option>`).join(''); sel.value = cur; sel.hidden = P.view !== 'diff';
+  $('diffFromLbl').hidden = P.view !== 'diff'; $('diffFromLbl').textContent = T().diffFrom; $('viewSeg').querySelectorAll('button').forEach(b => { b.textContent = T()['view' + b.dataset.v]; b.setAttribute('aria-pressed', b.dataset.v === P.view); }); }
 function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = T()['win' + b.dataset.w]; b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
 function labelControls() {
   $('periods').setAttribute('aria-label', T().period);
