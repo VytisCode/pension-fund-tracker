@@ -19,7 +19,7 @@ addStrings({
   mZoom: (g, a, b) => `${g} · zoomed ${a} → ${b}. Returns rebased to 0 % at the start of the zoomed range.`,
   nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
   foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
-  share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', xlsxDay: 'Daily table (.xlsx)', xlsxDayTip: 'Same layout as the old daily file (fund, date, unit value, net assets): one row per fund for the chosen date; default = latest. If a fund has no value on that day, its last earlier value is used.', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
+  share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', allFunds: 'All funds', allNote: 'The chart is drawn for one age group at a time – pick a group above to see it. The tables below show all funds; ranks and highlighted best values are within each age group.', capMetrics2: '“Since inception” columns: each fund’s first date → end date.', xlsxDay: 'Daily table (.xlsx)', xlsxDayTip: 'Same layout as the old daily file (fund, date, unit value, net assets): one row per fund for the chosen date; default = latest. If a fund has no value on that day, its last earlier value is used.', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
   viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in % (0 = ${r || 'group average'}).`,
   eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
   advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.',
@@ -80,7 +80,7 @@ addStrings({
   mZoom: (g, a, b) => `${g} · priartinta ${a} → ${b}. Grąža perskaičiuota į 0 % priartinto laikotarpio pradžioje.`,
   nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
   foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
-  share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', xlsxDay: 'Dienos lentelė (.xlsx)', xlsxDayTip: 'Toks pat išdėstymas kaip senajame dienos faile (fondas, data, vieneto vertė, grynieji aktyvai): po eilutę kiekvienam fondui pasirinktai dienai; pagal nutylėjimą – naujausia. Jei fondas tą dieną vertės neturi, imama paskutinė ankstesnė.', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
+  share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', allFunds: 'Visi fondai', allNote: 'Grafikas braižomas vienai amžiaus grupei – pasirinkite grupę aukščiau, kad jį pamatytumėte. Lentelėse žemiau rodomi visi fondai; vietos ir paryškintos geriausios reikšmės skaičiuojamos kiekvienoje amžiaus grupėje.', capMetrics2: 'Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → pabaigos data.', xlsxDay: 'Dienos lentelė (.xlsx)', xlsxDayTip: 'Toks pat išdėstymas kaip senajame dienos faile (fondas, data, vieneto vertė, grynieji aktyvai): po eilutę kiekvienam fondui pasirinktai dienai; pagal nutylėjimą – naujausia. Jei fondas tą dieną vertės neturi, imama paskutinė ankstesnė.', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
   viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentais (0 = ${r || 'grupės vidurkis'}).`,
   eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
   advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus',
@@ -126,19 +126,20 @@ addStrings({
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovH: 'long' };
+  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovH: 'long' };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
   if (PRESET_IDS.includes(s.period) || s.period === 'custom' || isCalPeriod(s.period)) P.period = s.period;
   if (typeof s.from === 'string') P.from = s.from; if (typeof s.to === 'string') P.to = s.to;
-  if (byId(s.group)) P.group = s.group;
+  if (s.group === 'all' || byId(s.group)) P.group = s.group;
+  if (byId(s.hmGroup)) P.hmGroup = s.hmGroup;
   if (Array.isArray(s.provs)) { const v = s.provs.filter(id => DATA.providers.some(p => p.id === id)); if (v.length) P.provs = new Set(v); }
   if (s.view === 'ret' || s.view === 'diff') P.view = s.view;
   if (s.diffRef === 'avg' || DATA.providers.some(p => p.id === s.diffRef)) P.diffRef = s.diffRef;
@@ -407,6 +408,7 @@ function animateMr(target) {
 }
 let chartRef = null;
 function drawChart() {
+  if (P.group === 'all') return;
   const g = byId(P.group), rng = rangeFor(g, true);
   const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
   const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
@@ -442,62 +444,86 @@ function drawChart() {
   fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
 }
-function renderCoverage(g) {
-  const firsts = g.funds.map(f => ({ f, d: f.d[0] })), earliest = Math.min(...firsts.map(x => x.d)), lines = [];
-  firsts.forEach(({ f, d }) => {
-    if (d - earliest > 31 || (f.provider === 'SEB' && g.id === '1989-1995' && d >= dayOf('2023-10-01'))) {
-      let t = T().covLater(labelOf(f.provider), iso(d));
-      if (f.provider === 'SEB' && g.id === '1989-1995' && d >= dayOf('2023-10-01')) t += ' ' + T().covSeb;
-      lines.push(t);
-    }
+function renderCoverage(gs, ALL) {
+  const lines = [];
+  gs.forEach(g => {
+    const firsts = g.funds.map(f => ({ f, d: f.d[0] })), earliest = Math.min(...firsts.map(x => x.d));
+    firsts.forEach(({ f, d }) => {
+      const sebGap = f.provider === 'SEB' && g.id === '1989-1995' && d >= dayOf('2023-10-01');
+      if (d - earliest > 31 || sebGap) {
+        let t = T().covLater(labelOf(f.provider), iso(d));
+        if (ALL) t = `${groupLabel(g)}: ${t}`;
+        if (sebGap) t += ' ' + T().covSeb;
+        lines.push(t);
+      }
+    });
   });
   const c = $('cov'); c.hidden = !lines.length;
   c.innerHTML = lines.length ? `<b>${T().covTitle}</b>${ik('coverage')}` + lines.map(l => `<div>${l}</div>`).join('') : '';
 }
+let lastParts = [];
+const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
-  const g = byId(P.group), rng = rangeFor(g, true);
+  const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
   $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
   $('hMetrics').innerHTML = T().hMetrics + ik('ret'); $('hCal').innerHTML = T().hCal + ik('cal'); $('hRoll').innerHTML = T().hRoll + ik('roll'); $('nFund').textContent = T().nFund;
   $('hQP').innerHTML = T().hQP + ik('quartile'); $('hHm').innerHTML = T().hHm + ik('heat');
-  const all = g.funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(Boolean);
-  all.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
-  drawChart(); renderCoverage(g);
+  const parts = gs.map(g => {
+    const rng = rangeFor(g, true);
+    const all = g.funds.filter(f => P.provs.has(f.provider)).map(f => { const s = fundStats(f, rng); if (s) s.g = g; return s; }).filter(Boolean);
+    all.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
+    return { g, rng, all };
+  });
+  lastParts = parts;
+  const rngs = parts.map(x => x.rng);
+  $('chartCard').hidden = ALL; $('allNote').hidden = !ALL; $('allNote').textContent = T().allNote;
+  if (ALL) { $('cov').hidden = false; renderCoverage(gs, true); } else { drawChart(); renderCoverage(gs, false); }
 
-  setCap('tMetrics', T().capMetrics(`${iso(rng.anchor)}`, iso(rng.end)));
-  const rk = rankOf(all.map(s => ({ key: s.f.provider, v: s.ret })));
-  const bestOf = (key, dir) => { const vs = all.map(s => s[key]).filter(v => v !== null); return vs.length ? (dir > 0 ? Math.max(...vs) : Math.min(...vs)) : null; };
+  setCap('tMetrics', ALL ? spanText(periodText(), rngs) + '. ' + T().capMetrics2 : T().capMetrics(`${iso(rngs[0].anchor)}`, iso(rngs[0].end)));
   const cell = (v, fmt, best) => v === null ? '<td class="na">–</td>' : `<td class="${v === best ? 'best' : ''}">${fmt(v)}</td>`;
-  const nm = s => `<td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}</td>`;
+  const nm = s => `<td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}${ALL ? ` <span class="na">${groupLabel(s.g)}</span>` : ''}</td>`;
+  const tr = (first, inner) => `<tr${ALL && first ? ' class="gstart"' : ''}>${inner}</tr>`;
+  const body = fn => parts.map(pt => pt.all.map((s, i) => tr(i === 0, fn(s, pt, i))).join('')).join('');
   $('tMetrics').innerHTML = `<thead><tr><th>${T().thRank}</th><th style="text-align:left">${T().thFund}</th><th>${T().thPeriodRet}</th>${th(T().thVol, 'vol')}${th(T().thMdd, 'mdd')}<th>${T().thInception}</th>${th(T().thCagr, 'cagr')}<th>${T().thVolAll}</th><th>${T().thMddAll}</th></tr></thead><tbody>`
-    + all.map(s => `<tr><td class="n">${rk.map.get(s.f.provider) || ''}</td>${nm(s)}${cell(s.ret, v => pct(v), bestOf('ret', 1))}${cell(s.vol, v => num(v, 1) + ' %', bestOf('vol', -1))}${cell(s.mdd, v => num(v, 1) + ' %', bestOf('mdd', 1))}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), bestOf('cagr', 1))}${cell(s.volAll, v => num(v, 1) + ' %', bestOf('volAll', -1))}${cell(s.mddAll, v => num(v, 1) + ' %', bestOf('mddAll', 1))}</tr>`).join('') + '</tbody>';
+    + parts.map(pt => {
+      const rk = rankOf(pt.all.map(s => ({ key: s.f.provider, v: s.ret })));
+      const bestOf = (key, dir) => { const vs = pt.all.map(s => s[key]).filter(v => v !== null); return vs.length ? (dir > 0 ? Math.max(...vs) : Math.min(...vs)) : null; };
+      return pt.all.map((s, i) => tr(i === 0, `<td class="n">${rk.map.get(s.f.provider) || ''}</td>${nm(s)}${cell(s.ret, v => pct(v), bestOf('ret', 1))}${cell(s.vol, v => num(v, 1) + ' %', bestOf('vol', -1))}${cell(s.mdd, v => num(v, 1) + ' %', bestOf('mdd', 1))}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), bestOf('cagr', 1))}${cell(s.volAll, v => num(v, 1) + ' %', bestOf('volAll', -1))}${cell(s.mddAll, v => num(v, 1) + ' %', bestOf('mddAll', 1))}`)).join('');
+    }).join('') + '</tbody>';
 
-  const cal = all.map(s => ({ s, c: calendarReturns(s.f, rng.end) }));
-  const years = [...new Set(cal.flatMap(x => Object.keys(x.c)))].map(Number).sort((a, b) => a - b);
-  const lastYear = new Date(rng.end * DAY).getUTCFullYear();
-  setCap('tCal', T().capCal(years[0], lastYear, iso(rng.end)));
+  const endAll = Math.max(...rngs.map(r => r.end));
+  const calP = parts.map(pt => ({ pt, cal: pt.all.map(s => ({ s, c: calendarReturns(s.f, pt.rng.end) })) }));
+  const years = [...new Set(calP.flatMap(x => x.cal.flatMap(y => Object.keys(y.c))))].map(Number).sort((a, b) => a - b);
+  const lastYear = new Date(endAll * DAY).getUTCFullYear();
+  setCap('tCal', T().capCal(years[0], lastYear, ALL ? [...new Set(rngs.map(r => iso(r.end)))].join(' / ') : iso(rngs[0].end)));
   $('tCal').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${years.map(y => `<th>${y === lastYear ? T().ytd : y}</th>`).join('')}</tr></thead><tbody>`
-    + cal.map(x => `<tr>${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1).replace(' %', '%')}${c.partial ? '*' : ''}</td>`; }).join('')}</tr>`).join('') + '</tbody>';
+    + calP.map(({ cal }) => cal.map((x, i) => tr(i === 0, `${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1).replace(' %', '%')}${c.partial ? '*' : ''}</td>`; }).join('')}`)).join('')).join('') + '</tbody>';
 
-  setCap('tRoll', T().capRoll(iso(groupEnd(g).end)));
-  const rol = all.map(s => ({ s, r: rolling(s.f, groupEnd(g).end) }));
+  setCap('tRoll', T().capRoll(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end)));
   const keys = [[1, 'thRet1m'], [3, 'thRet3m'], [6, 'thRet6m'], [12, 'thRet1y'], [36, 'thRet3y'], [60, 'thRet5y']];
-  const rb = k => { const vs = rol.map(x => x.r[k]).filter(v => v !== null && v !== undefined); return vs.length ? Math.max(...vs) : null; };
   $('tRoll').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${keys.map(k => `<th>${T()[k[1]]}</th>`).join('')}<th>${T().thR1avg}</th><th>${T().thR1min}</th><th>${T().thR1max}</th><th>${T().thR1pos}</th></tr></thead><tbody>`
-    + rol.map(x => `<tr>${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}</tr>`).join('') + '</tbody>';
+    + parts.map(pt => {
+      const rol = pt.all.map(s => ({ s, r: rolling(s.f, groupEnd(pt.g).end) }));
+      const rb = k => { const vs = rol.map(x => x.r[k]).filter(v => v !== null && v !== undefined); return vs.length ? Math.max(...vs) : null; };
+      return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
+    }).join('') + '</tbody>';
 
-  renderQuartilesByPeriod(g); renderHeatmap(g); renderAdvanced(g, rng, all);
+  renderQuartilesByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
 }
-function renderQuartilesByPeriod(g) {
-  setCap('tQP', T().capQP(iso(groupEnd(g).end), iso(rangeAt(g, 'max').anchor)));
-  const ranks = {}; PERIOD_IDS.forEach(per => { const rng = rangeAt(g, per); ranks[per] = rankOf(g.funds.map(f => ({ key: f.provider, v: retOf(g, f.provider, rng) }))); });
+function renderQuartilesByPeriod(gs, ALL) {
+  setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
   $('tQP').innerHTML = `<thead><tr><th></th>${PERIOD_IDS.map(per => `<th>${T().periods[per]}</th>`).join('')}</tr></thead><tbody>`
-    + marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).map(p => `<tr><td class="name"><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}</td>${PERIOD_IDS.map(per => { const r = ranks[per], q = quartileOf(r.map.get(p.id), r.n); return q ? `<td class="q${q}" title="${r.map.get(p.id)}/${r.n}">Q${q}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('') + '</tbody>';
+    + gs.map(g => {
+      const ranks = {}; PERIOD_IDS.forEach(per => { const rng = rangeAt(g, per); ranks[per] = rankOf(g.funds.map(f => ({ key: f.provider, v: retOf(g, f.provider, rng) }))); });
+      return marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).map((p, i) => `<tr${ALL && i === 0 ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}${ALL ? ` <span class="na">${groupLabel(g)}</span>` : ''}</td>${PERIOD_IDS.map(per => { const r = ranks[per], q = quartileOf(r.map.get(p.id), r.n); return q ? `<td class="q${q}" title="${r.map.get(p.id)}/${r.n}">Q${q}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('');
+    }).join('') + '</tbody>';
 }
 function heatColor(v) {
   const t = Math.min(1, Math.abs(v) / 6);
   return v >= 0 ? `hsl(135,45%,${92 - 37 * t}%)` : `hsl(5,75%,${92 - 27 * t}%)`;
 }
-function renderHeatmap(g) {
+function renderHeatmap(g, ALL) {
+  const hg = $('hmGroup'); hg.hidden = !ALL; if (ALL) { hg.innerHTML = DATA.groups.map(x => `<option value="${x.id}">${groupLabel(x)}</option>`).join(''); hg.value = g.id; }
   const sel = $('hmProv'), provs = marketProvs().filter(p => g.funds.some(f => f.provider === p.id));
   if (!provs.some(p => p.id === P.hmProv)) P.hmProv = (provs.find(p => P.provs.has(p.id)) || provs[0]).id;
   sel.innerHTML = provs.map(p => `<option value="${p.id}">${p.label}</option>`).join(''); sel.value = P.hmProv;
@@ -509,16 +535,17 @@ function renderHeatmap(g) {
   $('tHm').innerHTML = `<thead><tr><th>${T().thYear}</th>${mn.map(m => `<th>${m}</th>`).join('')}<th>${T().thYear}</th></tr></thead><tbody>`
     + years.map(y => `<tr><td>${y === lastY ? T().ytd : y}</td>${mn.map((_, m) => { const v = mr[y][m]; return v === undefined ? '<td class="na"></td>' : `<td style="background:${heatColor(v)}">${num(v, 1)}</td>`; }).join('')}${cal[y] ? `<td class="yr" style="background:${heatColor(cal[y].ret / 3)}">${num(cal[y].ret, 1)}${cal[y].partial ? '*' : ''}</td>` : '<td class="na"></td>'}</tr>`).join('') + '</tbody>';
 }
-function renderAdvanced(g, rng, all) {
+function renderAdvanced(parts, ALL) {
   $('btnAdv').setAttribute('aria-pressed', P.adv); $('adv').hidden = !P.adv; $('rf').value = P.rf;
   if (!P.adv) return;
-  setCap('tAdv', T().capAdv(iso(rng.anchor), iso(rng.end)));
+  const rngs = parts.map(x => x.rng), a0 = Math.min(...rngs.map(r => r.anchor)), a1 = Math.max(...rngs.map(r => r.anchor));
+  setCap('tAdv', T().capAdv(a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)}`, iso(Math.max(...rngs.map(r => r.end)))));
   $('lblRf').textContent = T().rf; $('nAdv').textContent = T().nAdv;
-  const rows = all.map(s => ({ s, a: advStats(s.f, rng, P.rf) })).filter(x => x.a);
+  const rows = parts.flatMap(pt => pt.all.map((s, i) => ({ s, first: i === 0, a: advStats(s.f, pt.rng, P.rf) }))).filter(x => x.a);
   const d = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d)}</span>` : '–', y = x => x ? `${fmtP(x.v, 1)} <span class="na">${x.y}</span>` : '–';
   const m = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d).slice(0, 7)}</span>` : '–';
   $('tAdv').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().thAnn}</th>${th(T().thVol, 'vol')}${th(T().thSharpe, 'sharpe')}${th(T().thBestD, 'bestworst')}<th>${T().thWorstD}</th><th>${T().thBestM}</th><th>${T().thWorstM}</th><th>${T().thBestY}</th><th>${T().thWorstY}</th>${th(T().thPosM, 'posm')}</tr></thead><tbody>`
-    + rows.map(({ s, a }) => `<tr><td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}</td><td>${a.ann === null ? '–' : fmtP(a.ann, 1)}</td><td>${a.vol === null ? '–' : num(a.vol, 1) + ' %'}</td><td>${a.sharpe === null ? '–' : num(a.sharpe, 2)}</td><td>${d(a.bestD)}</td><td>${d(a.worstD)}</td><td>${m(a.bestM)}</td><td>${m(a.worstM)}</td><td>${y(a.bestY)}</td><td>${y(a.worstY)}</td><td>${a.posM === null ? '–' : num(a.posM, 0) + '%'}</td></tr>`).join('') + '</tbody>';
+    + rows.map(({ s, a, first }) => `<tr${ALL && first ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}${ALL ? ` <span class="na">${groupLabel(s.g)}</span>` : ''}</td><td>${a.ann === null ? '–' : fmtP(a.ann, 1)}</td><td>${a.vol === null ? '–' : num(a.vol, 1) + ' %'}</td><td>${a.sharpe === null ? '–' : num(a.sharpe, 2)}</td><td>${d(a.bestD)}</td><td>${d(a.worstD)}</td><td>${m(a.bestM)}</td><td>${m(a.worstM)}</td><td>${y(a.bestY)}</td><td>${y(a.worstY)}</td><td>${a.posM === null ? '–' : num(a.posM, 0) + '%'}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ---------- eksportas ---------- */
@@ -564,8 +591,8 @@ async function exportXlsx() {
   const btn = $('btnXlsx'); btn.textContent = T().xlsxBusy; btn.disabled = true;
   try {
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
-    const wb = XLSX.utils.book_new(), g = byId(P.group);
-    const info = [[T().siteTitle], [T().updated, DATA.generated], [T().dataUntil, iso(Math.max(...DATA.groups.map(x => groupEnd(x).end)))], [T().period, periodText()], [T().group, groupLabel(g)], [], [T().foot]];
+    const wb = XLSX.utils.book_new();
+    const info = [[T().siteTitle], [T().updated, DATA.generated], [T().dataUntil, iso(Math.max(...DATA.groups.map(x => groupEnd(x).end)))], [T().period, periodText()], [T().group, groupName(P.group)], [], [T().foot]];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(info), 'Info');
     const sheets = [['Summary', 'tSum'], ['Return', 'tRet'], ['Rank', 'tRank'], ['Quartile', 'tQ'], ['Overall ranking', 'tOv'], ['Metrics', 'tMetrics'], ['Calendar years', 'tCal'], ['Rolling', 'tRoll'], ['Quartile by period', 'tQP'], ['Monthly heat map', 'tHm']];
     if (P.adv) sheets.push(['Advanced', 'tAdv']);
@@ -617,7 +644,8 @@ function buildControls() {
   $('from').addEventListener('change', e => { P.from = e.target.value; normalizeDates('from'); $('from').value = P.from; $('to').value = P.to; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
   $('to').addEventListener('change', e => { P.to = e.target.value; normalizeDates('to'); $('from').value = P.from; $('to').value = P.to; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
   $('group').addEventListener('change', e => { P.group = e.target.value; resetZoom(); saveState(); renderFunds(); });
-  $('hmProv').addEventListener('change', e => { P.hmProv = e.target.value; saveState(); renderHeatmap(byId(P.group)); });
+  $('hmProv').addEventListener('change', e => { P.hmProv = e.target.value; saveState(); renderHeatmap(byId(P.group === 'all' ? P.hmGroup : P.group), P.group === 'all'); });
+  $('hmGroup').addEventListener('change', e => { P.hmGroup = e.target.value; saveState(); renderHeatmap(byId(P.hmGroup), true); });
   $('ovH').addEventListener('change', e => { P.ovH = e.target.value; saveState(); renderOverall(); });
   $('chips').innerHTML = '';
   DATA.providers.forEach(p => {
@@ -641,7 +669,7 @@ function buildControls() {
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
   $('btnAdv').addEventListener('click', () => { P.adv = !P.adv; saveState(); renderFunds(); });
-  $('rf').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)) { P.rf = v; saveState(); renderAdvanced(byId(P.group), rangeFor(byId(P.group), true), byId(P.group).funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rangeFor(byId(P.group), true))).filter(Boolean).sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9))); } });
+  $('rf').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)) { P.rf = v; saveState(); renderAdvanced(lastParts, P.group === 'all'); } });
   $('btnXlsx').addEventListener('click', exportXlsx);
   $('btnXlsxDay').addEventListener('click', exportDay);
   $('btnPrint').addEventListener('click', () => window.print());
@@ -681,7 +709,7 @@ function labelControls() {
   syncCalSelects();
   $('lblFrom').textContent = T().from; $('lblTo').textContent = T().to;
   ['from', 'to'].forEach(id => { $(id).min = iso(EARLIEST); $(id).max = iso(LATEST); });
-  const sel = $('group'), cur = P.group; sel.innerHTML = DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join(''); sel.value = cur;
+  const sel = $('group'), cur = P.group; sel.innerHTML = `<option value="all">${T().allFunds}</option>` + DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join(''); sel.value = cur;
   $('foot').textContent = T().foot;
   $('btnShare').textContent = T().share; $('btnXlsx').textContent = T().xlsx; $('btnXlsxDay').textContent = T().xlsxDay; $('btnXlsxDay').title = T().xlsxDayTip; $('xlDate').title = T().xlsxDayTip; $('xlDate').min = iso(EARLIEST); $('xlDate').max = iso(LATEST); if (!$('xlDate').value) $('xlDate').value = iso(LATEST); $('btnPrint').textContent = T().print;
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
@@ -693,7 +721,7 @@ function syncAll() {
   $('periods').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === P.period));
   syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);
-  $('printMeta').textContent = `${T().siteTitle} · ${groupLabel(byId(P.group))} · ${periodText()} · ${T().updated} ${DATA.generated}`;
+  $('printMeta').textContent = `${T().siteTitle} · ${groupName(P.group)} · ${periodText()} · ${T().updated} ${DATA.generated}`;
   renderSummary(); renderMarket(); renderFunds();
 }
 buildControls(); syncChips();

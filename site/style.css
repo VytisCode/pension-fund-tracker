@@ -186,3 +186,7 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .seg select.segsel option { background: var(--card); color: var(--text); }
 .xlday { display: inline-flex; gap: 6px; align-items: center; }
 @media print { .xlday { display: none !important; } }
+tr.gstart td { border-top: 2px solid var(--axis); }
+tr.gstart:first-child td { border-top: 0; }
+.top-actions { flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 640px) { .top-tools { width: 100%; justify-content: flex-start; } .top-actions { justify-content: flex-start; } }

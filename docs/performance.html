@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Performance & peers</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=a95c08c7">
+<link rel="stylesheet" href="style.css?v=587a689a">
 </head>
 <body>
 <div class="wrap">
@@ -55,7 +55,8 @@
       <label class="field"><span id="lblGroup"></span><select id="group"></select></label>
       <div class="chips" id="chips"></div>
     </div>
-    <div class="card">
+    <p class="note" id="allNote" hidden></p>
+    <div class="card" id="chartCard">
       <div class="meta" id="mChart"></div>
       <div class="chart" id="chart"></div>
       <div class="finals" id="finals"></div>
@@ -79,7 +80,7 @@
     <div class="cap" id="c_tRoll"></div><div class="card scroll"><table class="metrics" id="tRoll"></table></div>
     <div class="group-h" id="hQP"></div>
     <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
-    <div class="group-h"><span id="hHm"></span> <select id="hmProv"></select></div>
+    <div class="group-h"><span id="hHm"></span> <select id="hmGroup" hidden></select> <select id="hmProv"></select></div>
     <div class="cap" id="c_tHm"></div><div class="card scroll"><table class="hm" id="tHm"></table></div>
 
     <div class="tools" id="optional-toggle"><button class="btn" type="button" id="btnAdv" aria-pressed="false"></button></div>
@@ -95,9 +96,9 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data.js?v=96e73ad3"></script>
+<script src="data.js?v=5f504b05"></script>
 <script src="events.js?v=5b59ef9e"></script>
 <script src="common.js?v=1a3acaf1"></script>
-<script src="perf.js?v=d0828039"></script>
+<script src="perf.js?v=a099a794"></script>
 </body>
 </html>
