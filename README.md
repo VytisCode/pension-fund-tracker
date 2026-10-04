@@ -38,7 +38,7 @@ Privatus pensijų fondų (II pakopa) sekimo projektas: kasdien surenka Lietuvos 
 
 ## Kasdienis atnaujinimas
 
-`update.py` + `.github/workflows/update.yml` („Update fund data"). Veikia kas valandą darbo dienomis nuo ~12:15–13:15 iki ~22:15–23:15 Vilniaus laiku (fondai dažniausiai atnaujina iki 18 val., bet kai kurie vėliau).
+`update.py` + `.github/workflows/update.yml` („Update fund data"). Veikia darbo dienomis kas valandą nuo ~14:15 iki ~18:15 Vilniaus laiku (fondai dažniausiai atnaujina iki 18 val.) ir papildomai ryte ~07:30 (antradienį–šeštadienį) – ryto paleidimas užpildo vakarykštes spragas (`CATCHUP=true`). Naršyklės tiekėjai rodo tik naujausią dieną, todėl ryto paleidimas svarbus: jį praleidus, vėlai paskelbta diena prarandama.
 
 - Laukiama diena = paskutinė darbo diena prieš šiandieną (įskaitant Lietuvos šventes). Tiekėjas tikrinamas **tik jei** saugykloje dar nėra jos duomenų – kitu atveju paleidimas baigiasi per sekundes.
 - Lengvi tiekėjai (be naršyklės): Artea (API), Allianz (POST), Goindex (API, reikia `GOINDEX_API_SECRET_KEY`).

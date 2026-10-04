@@ -1,12 +1,14 @@
 name: Update fund data
 
-# Kas valandą darbo dienomis, nuo ~12:15–13:15 iki ~22:15–23:15 Vilniaus laiku (UTC+2/+3).
+# Darbo dienomis kas valandą nuo ~14:15 iki ~18:15 Vilniaus laiku (UTC+3 vasarą; žiemą viena valanda anksčiau),
+# be to ryte (~07:30, antradienį–šeštadienį) papildomas paleidimas praėjusios dienos spragoms užpildyti.
 # Kiekvienas tiekėjas tikrinamas tik jei saugykloje dar nėra laukiamos dienos duomenų,
 # todėl kai viskas jau atnaujinta, paleidimas baigiasi per kelias sekundes.
 # Ranka: Actions → "Update fund data" → Run workflow.
 on:
   schedule:
-    - cron: "15 10-20 * * 1-5"
+    - cron: "15 11-15 * * 1-5"
+    - cron: "30 4 * * 2-6"
   workflow_dispatch:
 
 permissions:
@@ -26,6 +28,7 @@ jobs:
       LUMINOR_PROXY_USERNAME: ${{ secrets.LUMINOR_PROXY_USERNAME }}
       LUMINOR_PROXY_PASSWORD: ${{ secrets.LUMINOR_PROXY_PASSWORD }}
       LUMINOR_BROWSER_RETRIES: "6"
+      CATCHUP: ${{ github.event.schedule == '30 4 * * 2-6' && 'true' || 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

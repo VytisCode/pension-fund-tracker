@@ -14,6 +14,7 @@ Komandos:
 
 Papildomi nustatymai (aplinkos kintamieji):
     GOINDEX_API_SECRET_KEY   Goindex API raktas (GitHub secret)
+    CATCHUP=true             ryto papildomas paleidimas (laukiama diena skaičiuojama nuo vakar)
     MAX_BROWSER_ATTEMPTS     bandymų per dieną vienam naršyklės tiekėjui (numatyta 5)
 """
 import json
@@ -97,6 +98,8 @@ def expected_date(today: date = None) -> date:
     dienomis nieko neskelbia). Todėl: randame paskutinę darbo dieną iki šiandien (imtinai),
     o laukiama diena – dar viena darbo diena atgal."""
     day = today or today_vilnius()
+    if today is None and os.getenv("CATCHUP", "").lower() == "true":
+        day -= timedelta(days=1)  # ryto „papildomas" paleidimas: tikriname vakarykštės dienos laukiamą vertę
     while not is_business_day(day):
         day -= timedelta(days=1)
     day -= timedelta(days=1)
