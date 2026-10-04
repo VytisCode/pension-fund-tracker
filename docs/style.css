@@ -174,3 +174,6 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .chart .endlab { opacity: 0; transition: opacity .15s; }
 .chart:hover .endlab { opacity: 1; }
 @media (hover: none) { .chart .endlab { opacity: 1; } }
+
+.cap { color: var(--text-3); font-size: 11.5px; margin: 0 0 4px; }
+.card .cap { margin-bottom: 6px; }

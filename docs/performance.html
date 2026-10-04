@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Performance & peers</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=99dcd1fe">
+<link rel="stylesheet" href="style.css?v=e1a31a5f">
 </head>
 <body>
 <div class="wrap">
@@ -27,7 +27,7 @@
     <h2 id="hSum"></h2>
     <div class="tools" style="margin:0 0 10px"><div class="seg" id="sumWin" role="group"></div></div>
     <div id="sumText"></div>
-    <div class="card scroll"><table class="metrics" id="tSum"></table></div>
+    <div class="cap" id="c_tSum"></div><div class="card scroll"><table class="metrics" id="tSum"></table></div>
     <p class="note" id="nSum"></p>
   </section>
 
@@ -35,14 +35,14 @@
     <h2 id="hMarket"></h2>
     <div class="meta" id="mMarket"></div>
     <div class="two">
-      <div><div class="group-h" id="hRet"></div><div class="scroll"><table class="mx" id="tRet"></table></div></div>
-      <div><div class="group-h" id="hRank"></div><div class="scroll"><table class="mx" id="tRank"></table></div></div>
+      <div><div class="group-h" id="hRet"></div><div class="cap" id="c_tRet"></div><div class="scroll"><table class="mx" id="tRet"></table></div></div>
+      <div><div class="group-h" id="hRank"></div><div class="cap" id="c_tRank"></div><div class="scroll"><table class="mx" id="tRank"></table></div></div>
     </div>
     <div class="two">
-      <div><div class="group-h" id="hQ"></div><div class="scroll"><table class="mx" id="tQ"></table></div></div>
+      <div><div class="group-h" id="hQ"></div><div class="cap" id="c_tQ"></div><div class="scroll"><table class="mx" id="tQ"></table></div></div>
       <div>
         <div class="group-h"><span id="hOv"></span> <select id="ovH"></select></div>
-        <div class="scroll"><table class="metrics" id="tOv"></table></div>
+        <div class="cap" id="c_tOv"></div><div class="scroll"><table class="metrics" id="tOv"></table></div>
       </div>
     </div>
     <p class="note" id="nMarket"></p>
@@ -70,21 +70,21 @@
     <div class="cov" id="cov" hidden></div>
 
     <div class="group-h" id="hMetrics"></div>
-    <div class="card scroll"><table class="metrics" id="tMetrics"></table></div>
+    <div class="cap" id="c_tMetrics"></div><div class="card scroll"><table class="metrics" id="tMetrics"></table></div>
     <div class="group-h" id="hCal"></div>
-    <div class="card scroll"><table class="metrics" id="tCal"></table></div>
+    <div class="cap" id="c_tCal"></div><div class="card scroll"><table class="metrics" id="tCal"></table></div>
     <div class="group-h" id="hRoll"></div>
-    <div class="card scroll"><table class="metrics" id="tRoll"></table></div>
+    <div class="cap" id="c_tRoll"></div><div class="card scroll"><table class="metrics" id="tRoll"></table></div>
     <div class="group-h" id="hQP"></div>
-    <div class="card scroll"><table class="mx" id="tQP"></table></div>
+    <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
     <div class="group-h"><span id="hHm"></span> <select id="hmProv"></select></div>
-    <div class="card scroll"><table class="hm" id="tHm"></table></div>
+    <div class="cap" id="c_tHm"></div><div class="card scroll"><table class="hm" id="tHm"></table></div>
 
     <div class="tools" id="optional-toggle"><button class="btn" type="button" id="btnAdv" aria-pressed="false"></button></div>
     <div class="adv" id="adv">
       <div class="card scroll">
         <div class="tools" style="margin:0 0 10px"><label class="field"><span id="lblRf"></span><input class="small-in" type="number" id="rf" step="0.25" min="0" max="20"> %</label></div>
-        <table class="metrics" id="tAdv"></table>
+        <div class="cap" id="c_tAdv"></div><table class="metrics" id="tAdv"></table>
       </div>
       <p class="note" id="nAdv"></p>
     </div>
@@ -93,9 +93,9 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data.js?v=06ca9239"></script>
+<script src="data.js?v=5dac8c7f"></script>
 <script src="events.js?v=5b59ef9e"></script>
 <script src="common.js?v=50f5e533"></script>
-<script src="perf.js?v=bf471bb3"></script>
+<script src="perf.js?v=beddbe90"></script>
 </body>
 </html>

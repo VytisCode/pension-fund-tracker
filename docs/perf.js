@@ -27,6 +27,14 @@ addStrings({
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
   nAdv: 'Computed for the selected period (best / worst calendar year: whole history, full years only). Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; on periods shorter than a year the annualised figures are unreliable. Months = full calendar months inside the period.',
   notShown: l => `* Started later: ${l} – the line begins at the average level of the other funds on its first day, so only its subsequent movement is comparable; its own return over the full range is not shown.`,
+  capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'start differs by group', endByGroup: 'end differs by group',
+  capOv: (h, d) => `${h}; every period ends on its group’s latest date (up to ${d})`,
+  capMetrics: (a, e) => `Period columns: ${a} → ${e}. “Since inception” columns: each fund’s first date → ${e}.`,
+  capCal: (y0, y1, e) => `Calendar years ${y0}–${y1}; the last column is year to date (to ${e}).`,
+  capRoll: e => `Rolling windows ending ${e}; “Rolling 1-yr” statistics use every 12-month window in the fund’s history.`,
+  capQP: (e, a) => `Periods ending ${e}; “All history” starts ${a}.`,
+  capHm: (p, a, e) => `${p}: monthly returns ${a} → ${e}; the first and last months may be partial.`,
+  capAdv: (a, e) => `Period ${a} → ${e}; best / worst calendar year: whole history.`,
   covTitle: 'Data coverage', covLater: (p, d) => `${p}: data starts ${d} – later than the other funds in this group (the fund is newer or earlier history is not available), so long periods and “since inception” figures cover a shorter history.`,
   covSeb: 'Earlier history has not been loaded yet (only data from the date above is available).',
   sumNoData: 'Not enough data.', sumLatest: d => `Latest data: <b>${d}</b>.`,
@@ -80,6 +88,14 @@ addStrings({
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
   nAdv: 'Skaičiuojama pasirinktam laikotarpiui (geriausi / blogiausi kalendoriniai metai – visa istorija, tik pilni metai). Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi. Mėnesiai = pilni kalendoriniai mėnesiai laikotarpio viduje.',
   notShown: l => `* Pradėjo vėliau: ${l} – linija prasideda ties kitų fondų vidutiniu lygiu pirmą jo dieną, todėl palyginamas tik tolesnis kitimas; savo grąža per visą intervalą nerodoma.`,
+  capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'pradžia skiriasi pagal grupę', endByGroup: 'pabaiga skiriasi pagal grupę',
+  capOv: (h, d) => `${h}; kiekvienas laikotarpis baigiasi savo grupės paskutine diena (iki ${d})`,
+  capMetrics: (a, e) => `Laikotarpio stulpeliai: ${a} → ${e}. Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → ${e}.`,
+  capCal: (y0, y1, e) => `Kalendoriniai metai ${y0}–${y1}; paskutinis stulpelis – šie metai iki šiol (iki ${e}).`,
+  capRoll: e => `Slenkantys langai, baigiantys ${e}; „Slenkanti 1 m.“ rodikliai naudoja visus 12 mėn. langus fondo istorijoje.`,
+  capQP: (e, a) => `Laikotarpiai baigiasi ${e}; „Visa istorija“ prasideda ${a}.`,
+  capHm: (p, a, e) => `${p}: mėnesių grąža ${a} → ${e}; pirmas ir paskutinis mėnuo gali būti nepilni.`,
+  capAdv: (a, e) => `Laikotarpis ${a} → ${e}; geriausi / blogiausi kalendoriniai metai – visa istorija.`,
   covTitle: 'Duomenų aprėptis', covLater: (p, d) => `${p}: duomenys prasideda ${d} – vėliau nei kitų šios grupės fondų (fondas naujesnis arba ankstesnės istorijos nėra), todėl ilgi laikotarpiai ir rodikliai „nuo įsteigimo“ apima trumpesnę istoriją.`,
   covSeb: 'Ankstesnė istorija dar neįkelta (turimi tik duomenys nuo nurodytos dienos).',
   sumNoData: 'Duomenų nepakanka.', sumLatest: d => `Naujausi duomenys: <b>${d}</b>.`,
@@ -178,6 +194,12 @@ function rangeFor(group, sel) {
   return { anchor: P.period === 'max' ? maxAnchor(group, sel) : anchorFor(P.period, commonEnd, group.funds), end: commonEnd, overallLast };
 }
 const rangeAt = (group, per) => { const { end, overallLast } = groupEnd(group); return { anchor: per === 'max' ? maxAnchor(group, false) : anchorFor(per, end, group.funds), end, overallLast }; };
+const setCap = (id, t) => { const e = $('c_' + id); if (e) e.textContent = t; };
+function spanText(label, rngs) {                         // laikotarpio datos per visas grupes
+  const A = rngs.map(r => r.anchor), E = rngs.map(r => r.end), a0 = Math.min(...A), a1 = Math.max(...A), e0 = Math.min(...E), e1 = Math.max(...E);
+  const a = a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)} (${T().byGroup})`, e = e0 === e1 ? iso(e0) : `${iso(e0)}…${iso(e1)}`;
+  return T().capSpan(label, a, e);
+}
 const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : T().periods[P.period];
 const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - 5;
 const ik = k => `<button type="button" class="info" data-k="${k}" aria-label="info">i</button>`;
@@ -312,6 +334,7 @@ function renderSummary() {
     return best ? `${labelOf(best.p)} ${fmtP(best.v, 2)} <span class="na">${iso(best.d)}</span>` : '–';
   };
   const sw = p => `<span class="sw" style="background:${colorOf(p)}"></span>`;
+  if (rows.length) setCap('tSum', spanText(T()['win' + P.sumWin], rows));
   $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thMove}</th></tr></thead><tbody>`
     + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end)}</td></tr>`).join('') + '</tbody>';
 }
@@ -342,6 +365,8 @@ function renderMarket() {
   const qCell = (rank, n) => { const q = quartileOf(rank, n); return q ? `<td class="q${q}">Q${q}</td>` : '<td class="na">–</td>'; };
   const qBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => qCell(r.ranks.get(p.id), r.n)).join('')}</tr>`).join('')
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => qCell(akRank.map.get(p.id), akRank.n)).join('')}</tr>`;
+  const spanAll = spanText(periodText(), rows.map(r => rangeFor(r.g, false)));
+  ['tRet', 'tRank', 'tQ'].forEach(id => setCap(id, spanAll));
   $('tRet').innerHTML = head + `<tbody>${retBody}</tbody>`;
   $('tRank').innerHTML = head + `<tbody>${rankBody}</tbody>`;
   $('tQ').innerHTML = head + `<tbody>${qBody}</tbody>`;
@@ -353,6 +378,7 @@ function renderOverall() {
   $('hOv').innerHTML = T().hOv;
   const sel = $('ovH'); sel.innerHTML = `<option value="all">${T().ovAll}</option><option value="long">${T().ovLong}</option>`; sel.value = P.ovH;
   const pers = P.ovH === 'all' ? PERIOD_IDS : ['1y', '3y', '5y', 'max'], st = {};
+  setCap('tOv', T().capOv(pers.map(p => T().periods[p]).join(', '), iso(LATEST)));
   DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, q1: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
@@ -436,6 +462,7 @@ function renderFunds() {
   all.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
   drawChart(); renderCoverage(g);
 
+  setCap('tMetrics', T().capMetrics(`${iso(rng.anchor)}`, iso(rng.end)));
   const rk = rankOf(all.map(s => ({ key: s.f.provider, v: s.ret })));
   const bestOf = (key, dir) => { const vs = all.map(s => s[key]).filter(v => v !== null); return vs.length ? (dir > 0 ? Math.max(...vs) : Math.min(...vs)) : null; };
   const cell = (v, fmt, best) => v === null ? '<td class="na">–</td>' : `<td class="${v === best ? 'best' : ''}">${fmt(v)}</td>`;
@@ -446,9 +473,11 @@ function renderFunds() {
   const cal = all.map(s => ({ s, c: calendarReturns(s.f, rng.end) }));
   const years = [...new Set(cal.flatMap(x => Object.keys(x.c)))].map(Number).sort((a, b) => a - b);
   const lastYear = new Date(rng.end * DAY).getUTCFullYear();
+  setCap('tCal', T().capCal(years[0], lastYear, iso(rng.end)));
   $('tCal').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${years.map(y => `<th>${y === lastYear ? T().ytd : y}</th>`).join('')}</tr></thead><tbody>`
     + cal.map(x => `<tr>${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1).replace(' %', '%')}${c.partial ? '*' : ''}</td>`; }).join('')}</tr>`).join('') + '</tbody>';
 
+  setCap('tRoll', T().capRoll(iso(groupEnd(g).end)));
   const rol = all.map(s => ({ s, r: rolling(s.f, groupEnd(g).end) }));
   const keys = [[1, 'thRet1m'], [3, 'thRet3m'], [6, 'thRet6m'], [12, 'thRet1y'], [36, 'thRet3y'], [60, 'thRet5y']];
   const rb = k => { const vs = rol.map(x => x.r[k]).filter(v => v !== null && v !== undefined); return vs.length ? Math.max(...vs) : null; };
@@ -458,6 +487,7 @@ function renderFunds() {
   renderQuartilesByPeriod(g); renderHeatmap(g); renderAdvanced(g, rng, all);
 }
 function renderQuartilesByPeriod(g) {
+  setCap('tQP', T().capQP(iso(groupEnd(g).end), iso(rangeAt(g, 'max').anchor)));
   const ranks = {}; PERIOD_IDS.forEach(per => { const rng = rangeAt(g, per); ranks[per] = rankOf(g.funds.map(f => ({ key: f.provider, v: retOf(g, f.provider, rng) }))); });
   $('tQP').innerHTML = `<thead><tr><th></th>${PERIOD_IDS.map(per => `<th>${T().periods[per]}</th>`).join('')}</tr></thead><tbody>`
     + marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).map(p => `<tr><td class="name"><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}</td>${PERIOD_IDS.map(per => { const r = ranks[per], q = quartileOf(r.map.get(p.id), r.n); return q ? `<td class="q${q}" title="${r.map.get(p.id)}/${r.n}">Q${q}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('') + '</tbody>';
@@ -471,6 +501,7 @@ function renderHeatmap(g) {
   if (!provs.some(p => p.id === P.hmProv)) P.hmProv = (provs.find(p => P.provs.has(p.id)) || provs[0]).id;
   sel.innerHTML = provs.map(p => `<option value="${p.id}">${p.label}</option>`).join(''); sel.value = P.hmProv;
   const f = g.funds.find(x => x.provider === P.hmProv), end = groupEnd(g).end;
+  setCap('tHm', T().capHm(labelOf(P.hmProv), iso(f.d[0]), iso(Math.min(end, f.d[f.d.length - 1]))));
   const mr = monthlyReturns(f, Math.min(end, f.d[f.d.length - 1])), cal = calendarReturns(f, Math.min(end, f.d[f.d.length - 1]));
   const years = Object.keys(mr).map(Number).sort((a, b) => b - a), lastY = new Date(end * DAY).getUTCFullYear();
   const mn = Array.from({ length: 12 }, (_, m) => new Date(Date.UTC(2000, m, 1)).toLocaleDateString(T().locale, { month: 'short', timeZone: 'UTC' }));
@@ -480,6 +511,7 @@ function renderHeatmap(g) {
 function renderAdvanced(g, rng, all) {
   $('btnAdv').setAttribute('aria-pressed', P.adv); $('adv').hidden = !P.adv; $('rf').value = P.rf;
   if (!P.adv) return;
+  setCap('tAdv', T().capAdv(iso(rng.anchor), iso(rng.end)));
   $('lblRf').textContent = T().rf; $('nAdv').textContent = T().nAdv;
   const rows = all.map(s => ({ s, a: advStats(s.f, rng, P.rf) })).filter(x => x.a);
   const d = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d)}</span>` : '–', y = x => x ? `${fmtP(x.v, 1)} <span class="na">${x.y}</span>` : '–';
