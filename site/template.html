@@ -11,7 +11,7 @@
   --surface: #fcfcfb; --card: #ffffff; --line: #e6e5e1;
   --text: #0b0b0b; --text-2: #52514e; --text-3: #7b7a75;
   --grid: #ebeae6; --axis: #b9b8b2; --accent: #256abf; --hover: #f3f2ef;
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300;
+  --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
@@ -19,7 +19,7 @@
     --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
     --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
     --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422;
-    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300;
+    --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
   }
 }
 :root[data-theme="dark"] {
@@ -27,7 +27,7 @@
   --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
   --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
   --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300;
+  --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--surface); color: var(--text);
@@ -42,7 +42,8 @@ h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
 .seg button:hover:not([aria-pressed="true"]) { background: var(--hover); }
-.theme { margin-left: auto; border: 1px solid var(--line); background: var(--card); color: var(--text-2);
+.lang { margin-left: auto; }
+.theme { border: 1px solid var(--line); background: var(--card); color: var(--text-2);
   border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--text-2); }
 .legend i, td .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
@@ -79,36 +80,53 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 <div class="wrap">
   <header>
     <div>
-      <h1>Pensijų fondų sekimas</h1>
+      <h1 id="title"></h1>
       <div class="sub" id="sub"></div>
     </div>
   </header>
   <div class="controls">
     <div class="seg" id="periods" role="group" aria-label="Laikotarpis"></div>
     <div class="legend" id="legend"></div>
-    <button class="theme" id="theme" type="button">Tema</button>
+    <div class="seg lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
+    <button class="theme" id="theme" type="button"></button>
   </div>
   <div class="grid" id="groups"></div>
-  <footer>
-    Grąža = vieneto vertės pokytis laikotarpyje (nuo ankstesnės dienos vertės iki bendros paskutinės dienos grupėje); nėra metinė.
-    Skirtingų tiekėjų fondų vieneto vertės skiriasi, todėl lyginama procentine grąža. Grynieji aktyvai – naujausia žinoma reikšmė.
-    Duomenys renkami automatiškai iš tiekėjų puslapių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.
-  </footer>
+  <footer id="foot"></footer>
 </div>
 <script>
 const DATA = /*DATA*/null;
+const I18N = {
+  en: {
+    title: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
+    thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
+    dataUntil: 'Data until', updated: 'updated', noNew: 'no new data', noData: 'Not enough data for this period.',
+    chartLabel: 'Return over the selected period',
+    group: { turto: 'Asset preservation funds' }, born: 'Born',
+    periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history' },
+    foot: 'Return = change in unit value over the period (from the value on the starting date to the latest common date within each group); it is not annualised. Different providers\' unit values differ, so funds are compared by percentage return. Net assets show the latest known value. Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
+  },
+  lt: {
+    title: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
+    thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
+    dataUntil: 'Duomenys iki', updated: 'atnaujinta', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
+    chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu',
+    group: { turto: 'Turto išsaugojimo fondai' }, born: 'Gimę',
+    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 m.', '3y': '3 m.', '5y': '5 m.', max: 'Visa istorija' },
+    foot: 'Grąža = vieneto vertės pokytis laikotarpyje (nuo pradžios dienos vertės iki bendros paskutinės dienos kiekvienoje grupėje); nėra metinė. Skirtingų tiekėjų vieneto vertės skiriasi, todėl fondai lyginami procentine grąža. Grynieji aktyvai – naujausia žinoma reikšmė. Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
+  },
+};
+let lang = 'en';                       // numatytoji kalba – anglų
+try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
+const T = () => I18N[lang];
+const groupLabel = g => g.id === 'turto' ? T().group.turto : `${T().born} ${g.id.replace('-', '–')}`;
 const DAY = 86400000;
 const iso = d => new Date(d * DAY).toISOString().slice(0, 10);
-const num = (x, p = 2) => x.toLocaleString('lt-LT', { minimumFractionDigits: p, maximumFractionDigits: p });
+const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
 const pct = x => (x >= 0 ? '+' : '−') + num(Math.abs(x)) + ' %';
 const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
 const labelOf = id => DATA.providers.find(p => p.id === id).label;
 
-const PERIODS = [
-  { id: '1m', label: '1 mėn.' }, { id: '3m', label: '3 mėn.' }, { id: '6m', label: '6 mėn.' },
-  { id: 'ytd', label: 'Šie metai' }, { id: '1y', label: '1 m.' }, { id: '3y', label: '3 m.' },
-  { id: '5y', label: '5 m.' }, { id: 'max', label: 'Visa istorija' },
-];
+const PERIODS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'].map(id => ({ id }));
 let period = 'ytd';
 try { const s = localStorage.getItem('period'); if (PERIODS.some(p => p.id === s)) period = s; } catch (e) {}
 
@@ -170,7 +188,7 @@ function drawChart(el, data) {
   const W = el.clientWidth || 600, H = Math.max(240, Math.min(340, W * 0.5));
   const wide = W > 560, m = { l: 46, r: wide ? 78 : 10, t: 10, b: 26 };
   const x0 = data.anchor, x1 = data.end;
-  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', '<p class="na">Šiam laikotarpiui duomenų nepakanka.</p>'); return; }
+  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return; }
   let lo = 0, hi = 0;
   series.forEach(s => s.series.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
   const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
@@ -179,7 +197,7 @@ function drawChart(el, data) {
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', 'Fondų grąžos kitimas laikotarpyje');
+  svg.setAttribute('aria-label', T().chartLabel);
   const add = (tag, attrs, parent = svg) => { const n = document.createElementNS(ns, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
 
   niceTicks(lo, hi).forEach(t => {
@@ -245,13 +263,13 @@ function render() {
   DATA.groups.forEach(g => {
     const data = compute(g); latest = Math.max(latest, data.end);
     const card = document.createElement('section'); card.className = 'card';
-    const per = PERIODS.find(p => p.id === period).label;
-    card.innerHTML = `<h2>${g.label}</h2><div class="meta">${per}: ${iso(data.anchor)} → ${iso(data.end)}</div>
-      <div class="body"><table><thead><tr><th>Tiekėjas</th><th>Grąža</th><th class="hide-s">Vieneto vertė</th><th>Aktyvai, mln. €</th></tr></thead><tbody></tbody></table><div class="chart"></div></div>`;
+    const per = T().periods[period];
+    card.innerHTML = `<h2>${groupLabel(g)}</h2><div class="meta">${per}: ${iso(data.anchor)} → ${iso(data.end)}</div>
+      <div class="body"><table><thead><tr><th>${T().thProvider}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div class="chart"></div></div>`;
     const tb = card.querySelector('tbody');
     data.rows.forEach((r, i) => {
       const tr = document.createElement('tr');
-      const ret = r.ret === null ? `<span class="na">${r.stale ? 'nėra naujų duomenų' : '–'}</span>` : `<span class="${r.ret >= 0 ? 'pos' : 'neg'}">${pct(r.ret)}</span>`;
+      const ret = r.ret === null ? `<span class="na">${r.stale ? T().noNew : '–'}</span>` : `<span class="${r.ret >= 0 ? 'pos' : 'neg'}">${pct(r.ret)}</span>`;
       tr.innerHTML = `<td class="name"><span class="rank">${r.ret === null ? '' : i + 1}</span><span class="sw" style="background:${colorOf(r.f.provider)}"></span>${labelOf(r.f.provider)}</td>
         <td>${ret}</td><td class="hide-s">${r.unit === null ? '–' : num(r.unit, 4)}</td><td>${r.f.assets ? num(r.f.assets / 1e6, 1) : '<span class="na">–</span>'}</td>`;
       tb.appendChild(tr);
@@ -259,18 +277,30 @@ function render() {
     root.appendChild(card);
     cards.push({ el: card.querySelector('.chart'), data });
   });
-  document.getElementById('sub').textContent = `Duomenys iki ${iso(latest)} · atnaujinta ${DATA.generated}`;
+  document.getElementById('sub').textContent = `${T().dataUntil} ${iso(latest)} · ${T().updated} ${DATA.generated}`;
   cards.forEach(c => drawChart(c.el, c.data));
 }
 
 const pe = document.getElementById('periods');
 PERIODS.forEach(p => {
-  const b = document.createElement('button'); b.type = 'button'; b.textContent = p.label; b.dataset.id = p.id;
+  const b = document.createElement('button'); b.type = 'button'; b.dataset.id = p.id;
   b.addEventListener('click', () => { period = p.id; try { localStorage.setItem('period', p.id); } catch (e) {} sync(); render(); });
   pe.appendChild(b);
 });
+function applyStatic() {
+  document.documentElement.lang = lang; document.title = T().title;
+  document.getElementById('title').textContent = T().title;
+  document.getElementById('theme').textContent = T().theme;
+  document.getElementById('foot').textContent = T().foot;
+  pe.setAttribute('aria-label', T().period);
+  pe.querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
+  document.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+}
+document.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {} applyStatic(); render();
+}));
 function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === period)); }
-sync();
+sync(); applyStatic();
 document.getElementById('legend').innerHTML = DATA.providers.map(p => `<span><i style="background:${colorOf(p.id)}"></i>${p.label}</span>`).join('');
 document.getElementById('theme').addEventListener('click', () => {
   const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
