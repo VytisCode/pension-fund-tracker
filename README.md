@@ -7,6 +7,8 @@ Privatus pensijų fondų (II pakopa) sekimo projektas: kasdien surenka Lietuvos 
 - `base_scraper.py` ir `sources/` – skaitytuvai, perimti iš esamo veikiančio sprendimo (SEB, Swedbank, Artea, Luminor, Goindex, Allianz).
 - Goindex API raktas **neįrašytas kode**. Skaitytuvas jį ima iš aplinkos kintamojo `GOINDEX_API_SECRET_KEY` (Github: Settings → Secrets and variables → Actions).
 - Luminor, jei reikės, naudoja tarpinį serverį (proxy) per `LUMINOR_PROXY_*` kintamuosius.
+- `store.py` – istorijos saugykla `data/nav_history.csv` (stulpeliai: `date, provider, fund, unit_value, net_assets`), kuri nesidubliuoja paleidus pakartotinai.
+- `backfill_artea.py` – parsisiunčia visą Artea istoriją nuo 2019 m. į saugyklą. Paleidžiama Github: **Actions → Backfill Artea history → Run workflow**.
 
 ## Šaltinių patikros rezultatai (2026-10-04)
 

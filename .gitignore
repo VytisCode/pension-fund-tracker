@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*_data_*.xlsx
+pension_data_combined_*.xlsx
