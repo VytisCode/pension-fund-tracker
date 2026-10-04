@@ -31,7 +31,7 @@ const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), p) + ' %';
 const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), p) + '%';
 const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
 const labelOf = id => DATA.providers.find(p => p.id === id).label;
-const groupLabel = g => g.id === 'turto' ? T().turto : `${T().born} ${g.id.replace('-', '–')}`;
+const groupLabel = g => g.id === 'turto' ? T().turto : g.id.replace('-', '–');
 
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 
@@ -158,7 +158,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
       if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '') + ' ';
-      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); tv.textContent = pct(l.r.points[l.r.points.length - 1][1], 1).replace(' %', opts.unit === ' p.p.' ? ' p.p.' : '%');
+      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); tv.textContent = pct(l.r.points[l.r.points.length - 1][1], 1).replace(' %', '%');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });

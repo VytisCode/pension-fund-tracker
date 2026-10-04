@@ -20,7 +20,7 @@ addStrings({
   nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
   foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
   share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
-  viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in percentage points (0 = ${r || 'group average'}).`,
+  viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in % (0 = ${r || 'group average'}).`,
   eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
   advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.',
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
@@ -40,7 +40,7 @@ addStrings({
   sumNoData: 'Not enough data.', sumLatest: d => `Latest data: <b>${d}</b>.`,
   sumLead: (p, k, n) => `<b>${p}</b> led in ${k} of ${n} age groups.`, sumLag: (p, k, n) => `<b>${p}</b> lagged in ${k} of ${n} age groups.`,
   sumMove: (p, g, v, d) => `Largest one-day move: <b>${p}</b> (${g}) <b>${v}</b> on ${d}.`,
-  thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, p.p.', thMove: 'Largest 1-day move',
+  thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
     ret: 'Change in unit value between the start and end of the period. Unit values are already net of fees and taxes, so no further deduction is needed.',
@@ -81,7 +81,7 @@ addStrings({
   nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
   foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
   share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
-  viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentiniais punktais (0 = ${r || 'grupės vidurkis'}).`,
+  viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentais (0 = ${r || 'grupės vidurkis'}).`,
   eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
   advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus',
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
@@ -101,7 +101,7 @@ addStrings({
   sumNoData: 'Duomenų nepakanka.', sumLatest: d => `Naujausi duomenys: <b>${d}</b>.`,
   sumLead: (p, k, n) => `<b>${p}</b> pirmavo ${k} iš ${n} amžiaus grupių.`, sumLag: (p, k, n) => `<b>${p}</b> atsiliko ${k} iš ${n} amžiaus grupių.`,
   sumMove: (p, g, v, d) => `Didžiausias vienos dienos pokytis: <b>${p}</b> (${g}) <b>${v}</b>, ${d}.`,
-  thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, p. p.', thMove: 'Didžiausias 1 d. pokytis',
+  thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
     ret: 'Vieneto vertės pokytis tarp laikotarpio pradžios ir pabaigos. Vieneto vertė jau yra po mokesčių ir sąnaudų, todėl papildomai nieko atimti nereikia.',
@@ -436,7 +436,7 @@ function drawChart() {
   const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
   const series = buildSeries(fs, x0, x1);
   const sortedEv = EVENTS.map((e, i) => ({ day: dayOf(e.day), n: i + 1, title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day);
-  if (P.view === 'diff') {                                       // skirtumas nuo grupės vidurkio arba pasirinkto tiekėjo, p. p.
+  if (P.view === 'diff') {                                       // skirtumas nuo grupės vidurkio arba pasirinkto tiekėjo,
     const refS = P.diffRef !== 'avg' ? buildSeries(g.funds.filter(f => !isStale(f, rng.overallLast)), x0, x1).find(r => r.provider === P.diffRef) : null;
     if (refS) {
       const lvl = d => { let v = null; for (let i = refS.points.length - 1; i >= 0; i--) if (refS.points[i][0] <= d) { v = refS.points[i][1]; break; } return v; };
@@ -457,13 +457,13 @@ function drawChart() {
   const late = series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
   if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
-  const diff = P.view === 'diff', unit = diff ? ' p.p.' : ' %', W = $('chart').clientWidth || 600;
-  const opt = { events: evs, hl: P.pin || P.hl, height: Math.max(300, Math.min(520, Math.round(W * 0.42))), unit, axisUnit: diff ? ' pp' : '%',
+  const diff = P.view === 'diff', unit = ' %', W = $('chart').clientWidth || 600;
+  const opt = { events: evs, hl: P.pin || P.hl, height: Math.max(300, Math.min(520, Math.round(W * 0.42))), unit, axisUnit: '%',
     onZoom: (a, b) => { P.zoom = [a, b]; drawChart(); }, onPick: id => { P.pin = P.pin === id ? null : id; drawChart(); } };
   chartState = { ctl: null, series, x0, x1, evs, opt };
   paintChart();
   const fin = $('finals'); const narrow = W <= 560;                    // siaurame ekrane galutinės reikšmės – po grafiku
-  fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', diff ? ' p.p.' : '%')}</b></span>`).join('') : '';
+  fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
 }
 function renderCoverage(g) {
