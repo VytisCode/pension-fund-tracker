@@ -11,7 +11,7 @@ import csv
 from pathlib import Path
 
 DATA_FILE = Path(__file__).parent / "data" / "nav_history.csv"
-COLUMNS = ["date", "provider", "fund", "unit_value", "net_assets"]
+COLUMNS = ["date", "provider", "fund", "unit_value", "net_assets", "benchmark_index"]
 
 
 def load(path: Path = DATA_FILE) -> dict:
