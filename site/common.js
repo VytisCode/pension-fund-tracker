@@ -156,7 +156,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
     for (let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 13);
     labels.forEach(l => {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
-      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: 'cursor:default' }); t.textContent = labelOf(l.r.provider);
+      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: 'cursor:default' }); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
@@ -176,7 +176,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
     if (!vals.length) return;
     cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
-    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${pct(o.v)}</span></div>`).join('');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''}</span><span>${pct(o.v)}</span></div>`).join('');
     tip.style.display = 'block'; place(ev);
   };
   hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });

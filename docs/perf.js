@@ -25,7 +25,7 @@ addStrings({
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
   nAdv: 'Computed for the selected period (best / worst calendar year: whole history, full years only). Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; on periods shorter than a year the annualised figures are unreliable. Months = full calendar months inside the period.',
-  notShown: l => `Not shown – the fund did not exist at the start of this range: ${l}. Choose a shorter period to include it.`,
+  notShown: l => `* Started later: ${l} – the line begins at the average level of the other funds on its first day, so only its subsequent movement is comparable; its own return over the full range is not shown.`,
   covTitle: 'Data coverage', covLater: (p, d) => `${p}: data starts ${d} – later than the other funds in this group (the fund is newer or earlier history is not available), so long periods and “since inception” figures cover a shorter history.`,
   covSeb: 'Earlier history has not been loaded yet (only data from the date above is available).',
   sumNoData: 'Not enough data.', sumLatest: d => `Latest data: <b>${d}</b>.`,
@@ -77,7 +77,7 @@ addStrings({
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
   nAdv: 'Skaičiuojama pasirinktam laikotarpiui (geriausi / blogiausi kalendoriniai metai – visa istorija, tik pilni metai). Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi. Mėnesiai = pilni kalendoriniai mėnesiai laikotarpio viduje.',
-  notShown: l => `Nerodoma – fondo šio intervalo pradžioje dar nebuvo: ${l}. Pasirinkite trumpesnį laikotarpį, kad jis būtų įtrauktas.`,
+  notShown: l => `* Pradėjo vėliau: ${l} – linija prasideda ties kitų fondų vidutiniu lygiu pirmą jo dieną, todėl palyginamas tik tolesnis kitimas; savo grąža per visą intervalą nerodoma.`,
   covTitle: 'Duomenų aprėptis', covLater: (p, d) => `${p}: duomenys prasideda ${d} – vėliau nei kitų šios grupės fondų (fondas naujesnis arba ankstesnės istorijos nėra), todėl ilgi laikotarpiai ir rodikliai „nuo įsteigimo“ apima trumpesnę istoriją.`,
   covSeb: 'Ankstesnė istorija dar neįkelta (turimi tik duomenys nuo nurodytos dienos).',
   sumNoData: 'Duomenų nepakanka.', sumLatest: d => `Naujausi duomenys: <b>${d}</b>.`,
@@ -370,10 +370,19 @@ function drawChart() {
   const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
   const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
   const series = fs.map(f => { const s = seriesOf(f, x0, x1); return s && s.points.length > 1 ? { provider: f.provider, points: s.points } : null; }).filter(Boolean);
+  /* Vėliau pradėję fondai: linija prasideda jų pirmą dieną ties kitų fondų vidutiniu lygiu tą dieną (žymima *),
+     kad būtų matomas vėlesnio fondo kitimas, o ankstesnių fondų istorija nebūtų trumpinama. */
+  const lateF = fs.filter(f => f.d[0] > x0 && f.d[0] < x1);
+  lateF.forEach(f => {
+    const d0 = f.d[0], lv = series.filter(r => !r.aligned).map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= d0) { v = r.points[i][1]; break; } return v; }).filter(v => v !== null);
+    const s = seriesOf(f, d0, x1); if (!lv.length || !s || s.points.length < 2) return;
+    const L = lv.reduce((a, b) => a + b, 0) / lv.length;
+    series.push({ provider: f.provider, aligned: true, points: s.points.map(([d, r]) => [d, ((1 + L / 100) * (1 + r / 100) - 1) * 100]) });
+  });
   const sortedEv = EVENTS.map((e, i) => ({ day: dayOf(e.day), n: i + 1, title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day);
   const evs = P.events ? sortedEv.filter(e => e.day >= x0 && e.day <= x1) : [];
   $('mChart').textContent = P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`);
-  const late = fs.filter(f => f.d[0] > x0).map(f => `${labelOf(f.provider)} (${iso(f.d[0])})`);
+  const late = series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
   if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
   const ctl = drawLineChart($('chart'), series, x0, x1, { events: evs, hl: P.hl, onZoom: (a, b) => { P.zoom = [a, b]; drawChart(); } });
