@@ -123,7 +123,20 @@ addStrings({
   },
 });
 
-const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];
+const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
+const PRESET_IDS = ['1m', '3m', '6m', 'ytd', 'lq', '1y', 'ly', '3y', '5y', 'max'];   // greitieji mygtukai (lq = paskutinis pilnas ketvirtis, ly = praėję kalendoriniai metai)
+/* Kalendoriniai laikotarpiai: pilnas paskutinis ketvirtis ir praėję kalendoriniai metai (iki paskutinės bendros dienos) */
+function lastQuarterEnd(end) {
+  const y = new Date(end * DAY).getUTCFullYear();
+  return [[y, 11], [y, 8], [y, 5], [y, 2], [y - 1, 11], [y - 1, 8]].map(([yy, mm]) => Math.round(Date.UTC(yy, mm + 1, 0) / DAY)).find(d => d <= end);
+}
+function lastYearEnd(end) { const y = new Date(end * DAY).getUTCFullYear(); const d = Math.round(Date.UTC(y, 11, 31) / DAY); return d <= end ? d : Math.round(Date.UTC(y - 1, 11, 31) / DAY); }
+function presetRange(per, end, group, sel) {
+  if (per === 'max') return { anchor: maxAnchor(group, sel), end };
+  if (per === 'lq') { const qe = lastQuarterEnd(end), d = new Date(qe * DAY); return { anchor: Math.round(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 2, 0) / DAY), end: qe }; }
+  if (per === 'ly') { const ye = lastYearEnd(end), y = new Date(ye * DAY).getUTCFullYear(); return { anchor: Math.round(Date.UTC(y - 1, 11, 31) / DAY), end: ye }; }
+  return { anchor: anchorFor(per, end, group.funds), end };
+}
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
   hl: null, pin: null, view: 'ret', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: '1m', ovH: 'long' };
 const $ = id => document.getElementById(id);
@@ -135,7 +148,7 @@ function saveState() {
 }
 function applyState(s) {
   if (!s) return;
-  if (PERIOD_IDS.includes(s.period) || s.period === 'custom') P.period = s.period;
+  if (PRESET_IDS.includes(s.period) || s.period === 'custom') P.period = s.period;
   if (typeof s.from === 'string') P.from = s.from; if (typeof s.to === 'string') P.to = s.to;
   if (byId(s.group)) P.group = s.group;
   if (Array.isArray(s.provs)) { const v = s.provs.filter(id => DATA.providers.some(p => p.id === id)); if (v.length) P.provs = new Set(v); }
@@ -169,6 +182,10 @@ function shareUrl() {
 }
 /* Datos negalima rinkti vėliau nei naujausi turimi duomenys (fondai skelbia ankstesnės darbo dienos vertę, šiandienos nebūna) */
 const LATEST = Math.max(...DATA.groups.map(g => groupEnd(g).end)), EARLIEST = Math.min(...DATA.groups.flatMap(g => g.funds.map(f => f.d[0])));
+{ // dinaminės mygtukų antraštės: „Q3 2026“ ir „2025“
+  const qe = new Date(lastQuarterEnd(LATEST) * DAY), q = `Q${Math.floor(qe.getUTCMonth() / 3) + 1} ${qe.getUTCFullYear()}`, y = String(new Date(lastYearEnd(LATEST) * DAY).getUTCFullYear());
+  [I18N.en.periods, I18N.lt.periods].forEach(p => { p.lq = q; p.ly = y; });
+}
 function normalizeDates(changed) {
   const fix = v => { if (!v) return ''; const d = dayOf(v); return isNaN(d) ? '' : iso(Math.min(Math.max(d, EARLIEST), LATEST)); };
   P.from = fix(P.from); P.to = fix(P.to);
@@ -191,9 +208,9 @@ function rangeFor(group, sel) {
     const end = P.to ? Math.min(dayOf(P.to), commonEnd) : commonEnd;
     return { anchor, end, overallLast };
   }
-  return { anchor: P.period === 'max' ? maxAnchor(group, sel) : anchorFor(P.period, commonEnd, group.funds), end: commonEnd, overallLast };
+  return { ...presetRange(P.period, commonEnd, group, sel), overallLast };
 }
-const rangeAt = (group, per) => { const { end, overallLast } = groupEnd(group); return { anchor: per === 'max' ? maxAnchor(group, false) : anchorFor(per, end, group.funds), end, overallLast }; };
+const rangeAt = (group, per) => { const { end, overallLast } = groupEnd(group); return { ...presetRange(per, end, group, false), overallLast }; };
 const setCap = (id, t) => { const e = $('c_' + id); if (e) e.textContent = t; };
 function spanText(label, rngs) {                         // laikotarpio datos per visas grupes
   const A = rngs.map(r => r.anchor), E = rngs.map(r => r.end), a0 = Math.min(...A), a1 = Math.max(...A), e0 = Math.min(...E), e1 = Math.max(...E);
@@ -573,7 +590,7 @@ function downloadPng() {
 function resetZoom() { P.zoom = null; }
 function buildControls() {
   const pe = $('periods');
-  [...PERIOD_IDS, 'custom'].forEach(id => {
+  [...PRESET_IDS, 'custom'].forEach(id => {
     const b = document.createElement('button'); b.type = 'button'; b.dataset.id = id;
     b.addEventListener('click', () => {
       P.period = id;
