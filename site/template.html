@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pensijų fondų sekimas</title>
+<meta name="description" content="Lietuvos II pakopos pensijų fondų rezultatai pagal gimimo metų grupes">
+<style>
+:root {
+  color-scheme: light;
+  --surface: #fcfcfb; --card: #ffffff; --line: #e6e5e1;
+  --text: #0b0b0b; --text-2: #52514e; --text-3: #7b7a75;
+  --grid: #ebeae6; --axis: #b9b8b2; --accent: #256abf; --hover: #f3f2ef;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
+    --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
+    --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
+  --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
+  --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface); color: var(--text);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 56px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
+.sub { color: var(--text-2); font-size: 13px; margin-top: 4px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 22px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; background: var(--card); overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--text-2); padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.seg button:hover:not([aria-pressed="true"]) { background: var(--hover); }
+.theme { margin-left: auto; border: 1px solid var(--line); background: var(--card); color: var(--text-2);
+  border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--text-2); }
+.legend i, td .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.card h2 { font-size: 17px; margin: 0 0 2px; }
+.card .meta { color: var(--text-3); font-size: 12px; margin-bottom: 12px; }
+.body > * { min-width: 0; }
+.card { min-width: 0; }
+@media (max-width: 600px) { .hide-s { display: none; } .card { padding: 12px; } th, td { padding-left: 4px; padding-right: 4px; } }
+.body { display: grid; grid-template-columns: minmax(300px, 400px) 1fr; gap: 18px; align-items: start; }
+@media (max-width: 860px) { .body { grid-template-columns: 1fr; } }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: right; font-weight: 500; color: var(--text-3); font-size: 12px; padding: 0 6px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+td { padding: 7px 6px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.name { text-align: left; color: var(--text); }
+td .rank { display: inline-block; width: 18px; color: var(--text-3); font-size: 12px; }
+tr:last-child td { border-bottom: 0; }
+.pos { color: var(--text); font-weight: 600; } .neg { color: var(--text-2); font-weight: 600; }
+.na { color: var(--text-3); }
+.chart { position: relative; width: 100%; min-height: 260px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tip { position: absolute; pointer-events: none; background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 10px; font-size: 12.5px; box-shadow: 0 4px 16px rgba(0,0,0,.18); display: none; z-index: 2; min-width: 150px; }
+.tip b { display: block; margin-bottom: 4px; font-weight: 600; }
+.tip div { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; }
+.tip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height: 1.6; }
+.warn { color: var(--text-2); font-size: 13px; margin: 0 0 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Pensijų fondų sekimas</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+  </header>
+  <div class="controls">
+    <div class="seg" id="periods" role="group" aria-label="Laikotarpis"></div>
+    <div class="legend" id="legend"></div>
+    <button class="theme" id="theme" type="button">Tema</button>
+  </div>
+  <div class="grid" id="groups"></div>
+  <footer>
+    Grąža = vieneto vertės pokytis laikotarpyje (nuo ankstesnės dienos vertės iki bendros paskutinės dienos grupėje); nėra metinė.
+    Skirtingų tiekėjų fondų vieneto vertės skiriasi, todėl lyginama procentine grąža. Grynieji aktyvai – naujausia žinoma reikšmė.
+    Duomenys renkami automatiškai iš tiekėjų puslapių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.
+  </footer>
+</div>
+<script>
+const DATA = /*DATA*/null;
+const DAY = 86400000;
+const iso = d => new Date(d * DAY).toISOString().slice(0, 10);
+const num = (x, p = 2) => x.toLocaleString('lt-LT', { minimumFractionDigits: p, maximumFractionDigits: p });
+const pct = x => (x >= 0 ? '+' : '−') + num(Math.abs(x)) + ' %';
+const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
+const labelOf = id => DATA.providers.find(p => p.id === id).label;
+
+const PERIODS = [
+  { id: '1m', label: '1 mėn.' }, { id: '3m', label: '3 mėn.' }, { id: '6m', label: '6 mėn.' },
+  { id: 'ytd', label: 'Šie metai' }, { id: '1y', label: '1 m.' }, { id: '3y', label: '3 m.' },
+  { id: '5y', label: '5 m.' }, { id: 'max', label: 'Visa istorija' },
+];
+let period = 'ytd';
+try { const s = localStorage.getItem('period'); if (PERIODS.some(p => p.id === s)) period = s; } catch (e) {}
+
+function lastOnOrBefore(f, day) {            // paskutinė reikšmė iki dienos (imtinai) arba null
+  let lo = 0, hi = f.d.length - 1, ans = -1;
+  while (lo <= hi) { const mid = (lo + hi) >> 1; if (f.d[mid] <= day) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
+  return ans;
+}
+function shiftMonths(day, months) {
+  const dt = new Date(day * DAY); dt.setUTCMonth(dt.getUTCMonth() - months);
+  return Math.round(dt.getTime() / DAY);
+}
+function anchorFor(per, end, funds) {
+  const e = new Date(end * DAY);
+  switch (per) {
+    case '1m': return shiftMonths(end, 1);
+    case '3m': return shiftMonths(end, 3);
+    case '6m': return shiftMonths(end, 6);
+    case '1y': return shiftMonths(end, 12);
+    case '3y': return shiftMonths(end, 36);
+    case '5y': return shiftMonths(end, 60);
+    case 'ytd': return Math.round(Date.UTC(e.getUTCFullYear() - 1, 11, 31) / DAY);
+    default: return Math.max(...funds.map(f => f.d[0]));       // bendra pradžia
+  }
+}
+function compute(group) {
+  const funds = group.funds;
+  const overallLast = Math.max(...funds.map(f => f.d[f.d.length - 1]));
+  const live = funds.filter(f => f.d[f.d.length - 1] >= overallLast - 5);
+  const end = Math.min(...live.map(f => f.d[f.d.length - 1]));          // bendra paskutinė diena
+  const anchor = anchorFor(period, end, funds);
+  const rows = funds.map(f => {
+    const ie = lastOnOrBefore(f, end), ia = lastOnOrBefore(f, anchor);
+    const stale = f.d[f.d.length - 1] < overallLast - 5;
+    let ret = null;
+    if (!stale && ie >= 0 && ia >= 0 && !(period !== 'max' && f.d[0] > anchor)) ret = (f.v[ie] / f.v[ia] - 1) * 100;
+    const series = [];
+    if (ret !== null) {
+      const base = f.v[ia];
+      series.push([anchor, 0]);
+      for (let i = 0; i < f.d.length; i++) if (f.d[i] > anchor && f.d[i] <= end) series.push([f.d[i], (f.v[i] / base - 1) * 100]);
+    }
+    return { f, ret, series, unit: ie >= 0 ? f.v[ie] : null, stale };
+  });
+  rows.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
+  return { rows, end, anchor };
+}
+
+function niceTicks(min, max, n = 5) {
+  const span = max - min || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+  const out = []; for (let t = Math.ceil(min / step) * step; t <= max + 1e-9; t += step) out.push(+t.toFixed(10));
+  return out;
+}
+
+function drawChart(el, data) {
+  el.querySelectorAll('svg').forEach(s => s.remove());
+  const series = data.rows.filter(r => r.series.length > 1);
+  const W = el.clientWidth || 600, H = Math.max(240, Math.min(340, W * 0.5));
+  const wide = W > 560, m = { l: 46, r: wide ? 78 : 10, t: 10, b: 26 };
+  const x0 = data.anchor, x1 = data.end;
+  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', '<p class="na">Šiam laikotarpiui duomenų nepakanka.</p>'); return; }
+  let lo = 0, hi = 0;
+  series.forEach(s => s.series.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
+  const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
+  const X = d => m.l + (d - x0) / (x1 - x0) * (W - m.l - m.r);
+  const Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Fondų grąžos kitimas laikotarpyje');
+  const add = (tag, attrs, parent = svg) => { const n = document.createElementNS(ns, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
+
+  niceTicks(lo, hi).forEach(t => {
+    add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
+    const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + '%';
+  });
+  const years = (x1 - x0) / 365, ticks = [];
+  const cur = new Date(x0 * DAY);
+  if (years > 5) { for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += years > 6 ? 2 : 1) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }
+  else if (years > 1.2) {
+    const stepM = years > 3 ? 6 : 3;
+    for (let t = Date.UTC(cur.getUTCFullYear(), 0, 1); t / DAY < x1; ) {
+      const dt = new Date(t); if (t / DAY > x0) ticks.push([Math.round(t / DAY), iso(Math.round(t / DAY)).slice(0, 7)]);
+      t = Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth() + stepM, 1);
+    }
+  }
+  else { for (let k = 0; k < 6; k++) { const d = Math.round(x0 + (x1 - x0) * k / 5); ticks.push([d, iso(d).slice(years > 0.4 ? 0 : 5)]); } }
+  ticks.forEach(([d, label]) => {
+    if (d <= x0 || d > x1) return;
+    const tx = add('text', { x: X(d), y: H - 6, 'text-anchor': 'middle', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = label;
+  });
+
+  const step = Math.max(1, Math.floor((x1 - x0) / (W * 1.2)));
+  series.slice().reverse().forEach(r => {
+    let path = '', last = -1e9;
+    r.series.forEach((p, i) => { if (i === 0 || i === r.series.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
+    add('path', { d: path, fill: 'none', stroke: colorOf(r.f.provider), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+  });
+  if (wide) {                                    // tiesioginės žymos dešinėje, be persidengimo
+    const labels = series.map(r => ({ r, y: Y(r.series[r.series.length - 1][1]) })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 13);
+    labels.forEach(l => {
+      add('circle', { cx: X(x1), cy: Y(l.r.series[l.r.series.length - 1][1]), r: 3.5, fill: colorOf(l.r.f.provider), stroke: 'var(--card)', 'stroke-width': 2 });
+      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12 }); t.textContent = labelOf(l.r.f.provider);
+    });
+  }
+  const cross = add('line', { y1: m.t, y2: H - m.b, stroke: 'var(--axis)', 'stroke-width': 1, visibility: 'hidden' });
+  const hit = add('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' });
+  el.appendChild(svg);
+  let tip = el.querySelector('.tip'); if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; el.appendChild(tip); }
+  const move = ev => {
+    const rect = svg.getBoundingClientRect(), scale = W / rect.width;
+    const px = (ev.clientX - rect.left) * scale;
+    const day = Math.round(x0 + (px - m.l) / (W - m.l - m.r) * (x1 - x0));
+    const vals = series.map(r => { let v = null; for (let i = r.series.length - 1; i >= 0; i--) if (r.series[i][0] <= day) { v = r.series[i][1]; break; } return { r, v }; })
+      .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
+    if (!vals.length) return;
+    cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.f.provider)}"></span>${labelOf(o.r.f.provider)}</span><span>${pct(o.v)}</span></div>`).join('');
+    tip.style.display = 'block';
+    const left = (ev.clientX - el.getBoundingClientRect().left) + 14;
+    tip.style.left = Math.min(left, el.clientWidth - tip.offsetWidth - 4) + 'px';
+    tip.style.top = Math.max(0, (ev.clientY - el.getBoundingClientRect().top) - tip.offsetHeight - 10) + 'px';
+  };
+  hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
+  hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); });
+}
+
+const cards = [];
+function render() {
+  const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
+  let latest = 0;
+  DATA.groups.forEach(g => {
+    const data = compute(g); latest = Math.max(latest, data.end);
+    const card = document.createElement('section'); card.className = 'card';
+    const per = PERIODS.find(p => p.id === period).label;
+    card.innerHTML = `<h2>${g.label}</h2><div class="meta">${per}: ${iso(data.anchor)} → ${iso(data.end)}</div>
+      <div class="body"><table><thead><tr><th>Tiekėjas</th><th>Grąža</th><th class="hide-s">Vieneto vertė</th><th>Aktyvai, mln. €</th></tr></thead><tbody></tbody></table><div class="chart"></div></div>`;
+    const tb = card.querySelector('tbody');
+    data.rows.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      const ret = r.ret === null ? `<span class="na">${r.stale ? 'nėra naujų duomenų' : '–'}</span>` : `<span class="${r.ret >= 0 ? 'pos' : 'neg'}">${pct(r.ret)}</span>`;
+      tr.innerHTML = `<td class="name"><span class="rank">${r.ret === null ? '' : i + 1}</span><span class="sw" style="background:${colorOf(r.f.provider)}"></span>${labelOf(r.f.provider)}</td>
+        <td>${ret}</td><td class="hide-s">${r.unit === null ? '–' : num(r.unit, 4)}</td><td>${r.f.assets ? num(r.f.assets / 1e6, 1) : '<span class="na">–</span>'}</td>`;
+      tb.appendChild(tr);
+    });
+    root.appendChild(card);
+    cards.push({ el: card.querySelector('.chart'), data });
+  });
+  document.getElementById('sub').textContent = `Duomenys iki ${iso(latest)} · atnaujinta ${DATA.generated}`;
+  cards.forEach(c => drawChart(c.el, c.data));
+}
+
+const pe = document.getElementById('periods');
+PERIODS.forEach(p => {
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = p.label; b.dataset.id = p.id;
+  b.addEventListener('click', () => { period = p.id; try { localStorage.setItem('period', p.id); } catch (e) {} sync(); render(); });
+  pe.appendChild(b);
+});
+function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === period)); }
+sync();
+document.getElementById('legend').innerHTML = DATA.providers.map(p => `<span><i style="background:${colorOf(p.id)}"></i>${p.label}</span>`).join('');
+document.getElementById('theme').addEventListener('click', () => {
+  const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', document.documentElement.dataset.theme); } catch (e) {}
+});
+try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => cards.forEach(c => drawChart(c.el, c.data)), 120); });
+render();
+</script>
+</body>
+</html>

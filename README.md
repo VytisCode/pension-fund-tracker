@@ -48,3 +48,7 @@ Privatus pensijų fondų (II pakopa) sekimo projektas: kasdien surenka Lietuvos 
 - `python update.py status` – parodo, ko dar trūksta.
 
 GitHub secrets (Settings → Secrets and variables → Actions): `GOINDEX_API_SECRET_KEY` (būtinas Goindex API keliui), neprivalomi `LUMINOR_PROXY_SERVER`, `LUMINOR_PROXY_USERNAME`, `LUMINOR_PROXY_PASSWORD`.
+
+## Svetainė
+
+`build_site.py` iš `data/nav_history.csv` ir `site/template.html` sugeneruoja `docs/index.html` (viena failo svetainė su grafikais; atnaujinimo workflow ją perstato tik tada, kai pasikeičia duomenys). Svetainė talpinama per GitHub Pages: Settings → Pages → Build and deployment → Source: „Deploy from a branch" → Branch: `main`, aplankas `/docs`.
