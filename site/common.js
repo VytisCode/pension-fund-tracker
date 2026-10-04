@@ -226,3 +226,62 @@ function seriesOf(f, anchor, end) {
   for (let i = ia + 1; i <= ie; i++) if (f.d[i] > anchor) points.push([f.d[i], (f.v[i] / base - 1) * 100]);
   return { ret: (f.v[ie] / base - 1) * 100, points, ia, ie };
 }
+
+
+/* ---------- bendra laikotarpių logika (rezultatų ir apžvalgos puslapiai) ---------- */
+const PRESET_IDS = ['1m', '3m', '6m', 'ytd', 'Q', '1y', 'Y', '3y', '5y', 'max'];   // Q ir Y – išskleidžiami sąrašai (ketvirtis „q:2026-3“, metai „y:2025“)
+const isCalPeriod = id => /^q:\d{4}-[1-4]$/.test(id) || /^y:\d{4}$/.test(id);
+const periodLabel = id => { let m; if ((m = /^q:(\d{4})-([1-4])$/.exec(id))) return `Q${m[2]} ${m[1]}`; if ((m = /^y:(\d{4})$/.exec(id))) return m[1]; return T().periods[id]; };
+const maxAnchorOf = funds => {                  // „Visa istorija“: nuo ankstyviausio fondo; pradėję ≤31 d. vėliau laikomi pradėjusiais kartu
+  const st = funds.map(f => f.d[0]).sort((x, y) => x - y);
+  return Math.max(...st.filter(d => d - st[0] <= 31));
+};
+function presetRangeF(per, end, funds, maxA) {
+  if (per === 'max') return { anchor: maxA, end };
+  let m;
+  if ((m = /^q:(\d{4})-([1-4])$/.exec(per))) { const y = +m[1], q = +m[2]; return { anchor: Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY), end: Math.min(end, Math.round(Date.UTC(y, q * 3, 0) / DAY)) }; }
+  if ((m = /^y:(\d{4})$/.exec(per))) { const y = +m[1]; return { anchor: Math.round(Date.UTC(y - 1, 11, 31) / DAY), end: Math.min(end, Math.round(Date.UTC(y, 11, 31) / DAY)) }; }
+  return { anchor: anchorFor(per, end, funds), end };
+}
+function calOptions(latest, earliest) {          // tik pilni ketvirčiai / metai, kurių pabaiga yra duomenų ribose
+  const y1 = new Date(latest * DAY).getUTCFullYear(), y0 = new Date(earliest * DAY).getUTCFullYear(), qs = [], ys = [];
+  for (let y = y1; y >= y0; y--) {
+    for (let q = 4; q >= 1; q--) { const e = Math.round(Date.UTC(y, q * 3, 0) / DAY), st = Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY); if (e <= latest && st >= earliest) qs.push(`q:${y}-${q}`); }
+    const e = Math.round(Date.UTC(y, 11, 31) / DAY), st = Math.round(Date.UTC(y - 1, 11, 31) / DAY); if (e <= latest && st >= earliest) ys.push(`y:${y}`);
+  }
+  return { q: qs, y: ys };
+}
+/* Eilutės grafikui: kiekvienam fondui nuo x0; vėliau pradėję fondai prasideda pirmą savo dieną ties kitų fondų vidutiniu lygiu (žymima *),
+   kad būtų matomas jų kitimas, o ankstesnių fondų istorija nebūtų trumpinama. */
+function buildSeries(fs, x0, x1) {
+  const series = fs.map(f => { const s = seriesOf(f, x0, x1); return s && s.points.length > 1 ? { provider: f.provider, points: s.points } : null; }).filter(Boolean);
+  fs.filter(f => f.d[0] > x0 && f.d[0] < x1).forEach(f => {
+    const d0 = f.d[0], lv = series.filter(r => !r.aligned).map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= d0) { v = r.points[i][1]; break; } return v; }).filter(v => v !== null);
+    const s = seriesOf(f, d0, x1); if (!lv.length || !s || s.points.length < 2) return;
+    const L = lv.reduce((a, b) => a + b, 0) / lv.length;
+    series.push({ provider: f.provider, aligned: true, points: s.points.map(([d, r]) => [d, ((1 + L / 100) * (1 + r / 100) - 1) * 100]) });
+  });
+  return series;
+}
+/* Grafikas „susispaudžia“ užvedus pelę, kad dešinėje tilptų fondų pavadinimai su galutinėmis reikšmėmis.
+   paint(mr) – perpiešia grafiką su nurodyta dešine paraštė. */
+function hoverCompress(el, paint) {
+  const st = { mr: 16, anim: 0 };
+  const go = target => {
+    cancelAnimationFrame(st.anim);
+    const step = () => { st.mr += (target - st.mr) * 0.35; if (Math.abs(target - st.mr) < 1) st.mr = target; paint(st.mr); if (st.mr !== target) st.anim = requestAnimationFrame(step); };
+    st.anim = requestAnimationFrame(step);
+  };
+  if (!matchMedia('(hover: none)').matches) {
+    el.addEventListener('mouseenter', () => { if ((el.clientWidth || 0) > 560) go(150); });
+    el.addEventListener('mouseleave', () => go(16));
+  }
+  return st;
+}
+addStrings({
+  qPlace: 'Quarter', yPlace: 'Year',
+  notShown: l => `* Started later: ${l} – the line begins at the average level of the other funds on its first day, so only its subsequent movement is comparable; its own return over the full range is not shown.`,
+}, {
+  qPlace: 'Ketvirtis', yPlace: 'Metai',
+  notShown: l => `* Pradėjo vėliau: ${l} – linija prasideda ties kitų fondų vidutiniu lygiu pirmą jo dieną, todėl palyginamas tik tolesnis kitimas; savo grąža per visą intervalą nerodoma.`,
+});

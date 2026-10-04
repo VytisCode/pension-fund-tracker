@@ -124,15 +124,7 @@ addStrings({
 });
 
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
-const PRESET_IDS = ['1m', '3m', '6m', 'ytd', 'Q', '1y', 'Y', '3y', '5y', 'max'];   // greitieji mygtukai; Q ir Y – išskleidžiami sąrašai (ketvirtis „q:2026-3“, kalendoriniai metai „y:2025“)
-const isCalPeriod = id => /^q:\d{4}-[1-4]$/.test(id) || /^y:\d{4}$/.test(id);
-function presetRange(per, end, group, sel) {
-  if (per === 'max') return { anchor: maxAnchor(group, sel), end };
-  let m;
-  if ((m = /^q:(\d{4})-([1-4])$/.exec(per))) { const y = +m[1], q = +m[2]; return { anchor: Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY), end: Math.min(end, Math.round(Date.UTC(y, q * 3, 0) / DAY)) }; }
-  if ((m = /^y:(\d{4})$/.exec(per))) { const y = +m[1]; return { anchor: Math.round(Date.UTC(y - 1, 11, 31) / DAY), end: Math.min(end, Math.round(Date.UTC(y, 11, 31) / DAY)) }; }
-  return { anchor: anchorFor(per, end, group.funds), end };
-}
+const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
   hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovH: 'long' };
 const $ = id => document.getElementById(id);
@@ -190,10 +182,7 @@ loadHash(); normalizeDates();
 /* ---------- laikotarpis ---------- */
 /* „Visa istorija“ = nuo ankstyviausio fondo pradžios (vėliau pradėję fondai rodomi „–“ / negrafikuojami).
    sel = true: skaičiuojama tik iš pasirinktų tiekėjų (grafikui ir lentelėms po juo). */
-const maxAnchor = (group, sel) => {            // fondai, pradėję ≤31 d. po ankstyviausio, laikomi pradėjusiais kartu
-  const st = group.funds.filter(f => !sel || P.provs.has(f.provider)).map(f => f.d[0]).sort((x, y) => x - y);
-  return Math.max(...st.filter(d => d - st[0] <= 31));
-};
+const maxAnchor = (group, sel) => maxAnchorOf(group.funds.filter(f => !sel || P.provs.has(f.provider)));
 function rangeFor(group, sel) {
   const { end: commonEnd, overallLast } = groupEnd(group);
   if (P.period === 'custom') {
@@ -210,7 +199,6 @@ function spanText(label, rngs) {                         // laikotarpio datos pe
   const a = a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)} (${T().byGroup})`, e = e0 === e1 ? iso(e0) : `${iso(e0)}…${iso(e1)}`;
   return T().capSpan(label, a, e);
 }
-const periodLabel = id => { let m; if ((m = /^q:(\d{4})-([1-4])$/.exec(id))) return `Q${m[2]} ${m[1]}`; if ((m = /^y:(\d{4})$/.exec(id))) return m[1]; return T().periods[id]; };
 const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : periodLabel(P.period);
 const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - 5;
 const ik = k => `<button type="button" class="info" data-k="${k}" aria-label="info">i</button>`;
@@ -416,18 +404,6 @@ function animateMr(target) {
   cancelAnimationFrame(mrAnim);
   const step = () => { P.mr += (target - P.mr) * 0.35; if (Math.abs(target - P.mr) < 1) P.mr = target; paintChart(); if (P.mr !== target) mrAnim = requestAnimationFrame(step); };
   mrAnim = requestAnimationFrame(step);
-}
-/* Eilutės grafikui: kiekvienam fondui nuo x0; vėliau pradėję fondai prasideda pirmą savo dieną ties kitų fondų vidutiniu lygiu (žymima *),
-   kad būtų matomas jų kitimas, o ankstesnių fondų istorija nebūtų trumpinama. */
-function buildSeries(fs, x0, x1) {
-  const series = fs.map(f => { const s = seriesOf(f, x0, x1); return s && s.points.length > 1 ? { provider: f.provider, points: s.points } : null; }).filter(Boolean);
-  fs.filter(f => f.d[0] > x0 && f.d[0] < x1).forEach(f => {
-    const d0 = f.d[0], lv = series.filter(r => !r.aligned).map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= d0) { v = r.points[i][1]; break; } return v; }).filter(v => v !== null);
-    const s = seriesOf(f, d0, x1); if (!lv.length || !s || s.points.length < 2) return;
-    const L = lv.reduce((a, b) => a + b, 0) / lv.length;
-    series.push({ provider: f.provider, aligned: true, points: s.points.map(([d, r]) => [d, ((1 + L / 100) * (1 + r / 100) - 1) * 100]) });
-  });
-  return series;
 }
 let chartRef = null;
 function drawChart() {
@@ -657,15 +633,7 @@ function buildControls() {
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') $('pop').style.display = 'none'; });
 }
-function buildCalOptions() {                          // tik pilni ketvirčiai / metai, kurių pabaiga yra duomenų ribose
-  const y1 = new Date(LATEST * DAY).getUTCFullYear(), y0 = new Date(EARLIEST * DAY).getUTCFullYear(), qs = [], ys = [];
-  for (let y = y1; y >= y0; y--) {
-    for (let q = 4; q >= 1; q--) { const e = Math.round(Date.UTC(y, q * 3, 0) / DAY), st = Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY); if (e <= LATEST && st >= EARLIEST) qs.push(`q:${y}-${q}`); }
-    const e = Math.round(Date.UTC(y, 11, 31) / DAY), st = Math.round(Date.UTC(y - 1, 11, 31) / DAY); if (e <= LATEST && st >= EARLIEST) ys.push(`y:${y}`);
-  }
-  return { q: qs, y: ys };
-}
-const CAL_OPTS = buildCalOptions();
+const CAL_OPTS = calOptions(LATEST, EARLIEST);
 function syncCalSelects() {
   $('periods').querySelectorAll('select.segsel').forEach(sel => {
     const k = sel.dataset.kind, active = P.period.startsWith(k + ':');

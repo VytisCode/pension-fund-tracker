@@ -25,32 +25,40 @@ addStrings({
 }, {
   foot: 'Grąža = vieneto vertės pokytis laikotarpyje (nuo pradžios dienos vertės iki bendros paskutinės dienos kiekvienoje grupėje); nėra metinė. Skirtingų tiekėjų vieneto vertės skiriasi, todėl fondai lyginami procentine grąža. Grynieji aktyvai – naujausia žinoma reikšmė. Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
 });
-const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];
+const LATEST = Math.max(...DATA.groups.map(g => groupEnd(g).end)), EARLIEST = Math.min(...DATA.groups.flatMap(g => g.funds.map(f => f.d[0])));
+const CAL_OPTS = calOptions(LATEST, EARLIEST);
 let period = 'ytd';
-try { const s = localStorage.getItem('period'); if (PERIOD_IDS.includes(s)) period = s; } catch (e) {}
+try { const s = localStorage.getItem('period'); if (PRESET_IDS.includes(s) || isCalPeriod(s)) period = s; } catch (e) {}
 
 function compute(group) {
   const { end, overallLast } = groupEnd(group);
-  const anchor = anchorFor(period, end, group.funds);
+  const { anchor, end: e2 } = presetRangeF(period, end, group.funds, maxAnchorOf(group.funds));
+  const live = group.funds.filter(f => f.d[f.d.length - 1] >= overallLast - 5);
   const rows = group.funds.map(f => {
     const stale = f.d[f.d.length - 1] < overallLast - 5;
-    const s = stale ? null : seriesOf(f, anchor, end);
-    const ie = lastOnOrBefore(f, end);
-    return { f, ret: s ? s.ret : null, points: s ? s.points : [], unit: ie >= 0 ? f.v[ie] : null, stale };
+    const s = stale ? null : seriesOf(f, anchor, e2);
+    const ie = lastOnOrBefore(f, e2);
+    return { f, ret: s ? s.ret : null, unit: ie >= 0 ? f.v[ie] : null, stale };
   });
   rows.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
-  return { rows, end, anchor };
+  return { rows, end: e2, anchor, series: buildSeries(live, anchor, e2) };
 }
 
 const cards = [];
+function paintCard(c, mr) {
+  c.ctl = drawLineChart(c.chart, c.data.series, c.data.anchor, c.data.end, { mr, height: Math.max(260, Math.min(420, Math.round((c.chart.clientWidth || 600) * 0.42))), unit: ' %', axisUnit: '%' });
+  const narrow = (c.chart.clientWidth || 0) <= 560;
+  c.fin.innerHTML = narrow ? c.data.series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
+}
 function render() {
   const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
   let latest = 0;
   DATA.groups.forEach(g => {
     const data = compute(g); latest = Math.max(latest, data.end);
     const card = document.createElement('section'); card.className = 'card';
-    card.innerHTML = `<h2>${groupLabel(g)}</h2><div class="meta">${T().periods[period]}: ${iso(data.anchor)} → ${iso(data.end)}</div>
-      <div class="body"><table><thead><tr><th>${T().thProvider}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div class="chart"></div></div>`;
+    const late = data.series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
+    card.innerHTML = `<h2>${groupLabel(g)}</h2><div class="meta">${periodLabel(period)}: ${iso(data.anchor)} → ${iso(data.end)}${late.length ? ' ' + T().notShown(late.join(', ')) : ''}</div>
+      <div class="body"><table><thead><tr><th>${T().thProvider}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div><div class="chart"></div><div class="finals"></div></div></div>`;
     const tb = card.querySelector('tbody');
     data.rows.forEach((r, i) => {
       const tr = document.createElement('tr');
@@ -60,25 +68,40 @@ function render() {
       tb.appendChild(tr);
     });
     root.appendChild(card);
-    cards.push({ el: card.querySelector('.chart'), data });
+    const c = { chart: card.querySelector('.chart'), fin: card.querySelector('.finals'), data, ctl: null };
+    c.hc = hoverCompress(c.chart, mr => paintCard(c, mr));
+    cards.push(c);
   });
   document.getElementById('sub').textContent = `${T().dataUntil} ${iso(latest)} · ${T().updated} ${DATA.generated}`;
   document.getElementById('foot').textContent = T().foot;
-  cards.forEach(c => drawLineChart(c.el, c.data.rows.filter(r => r.points.length > 1).map(r => ({ provider: r.f.provider, points: r.points })), c.data.anchor, c.data.end));
+  cards.forEach(c => paintCard(c, 16));
 }
 
 const pe = document.getElementById('periods');
-function labelPeriods() { pe.setAttribute('aria-label', T().period); pe.querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]); }
-PERIOD_IDS.forEach(id => {
+function labelPeriods() {
+  pe.setAttribute('aria-label', T().period);
+  pe.querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
+  pe.querySelectorAll('select.segsel').forEach(sel => {
+    const k = sel.dataset.kind, active = period.startsWith(k + ':');
+    sel.innerHTML = `<option value="">${k === 'q' ? T().qPlace : T().yPlace}</option>` + CAL_OPTS[k].map(id => `<option value="${id}">${periodLabel(id)}</option>`).join('');
+    sel.value = active ? period : ''; sel.classList.toggle('active', active);
+  });
+}
+PRESET_IDS.forEach(id => {
+  if (id === 'Q' || id === 'Y') {
+    const sel = document.createElement('select'); sel.className = 'segsel'; sel.dataset.kind = id.toLowerCase();
+    sel.addEventListener('change', () => { if (!sel.value) return; period = sel.value; try { localStorage.setItem('period', period); } catch (e) {} sync(); render(); });
+    pe.appendChild(sel); return;
+  }
   const b = document.createElement('button'); b.type = 'button'; b.dataset.id = id;
   b.addEventListener('click', () => { period = id; try { localStorage.setItem('period', id); } catch (e) {} sync(); render(); });
   pe.appendChild(b);
 });
-function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === period)); }
+function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === period)); labelPeriods(); }
 document.getElementById('legend').innerHTML = DATA.providers.map(p => `<span><i style="background:${colorOf(p.id)}"></i>${p.label}</span>`).join('');
-renderHeader('overview', () => { labelPeriods(); render(); });
-labelPeriods(); sync(); render();
-let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => cards.forEach(c => drawLineChart(c.el, c.data.rows.filter(r => r.points.length > 1).map(r => ({ provider: r.f.provider, points: r.points })), c.data.anchor, c.data.end)), 120); });
+renderHeader('overview', () => { sync(); render(); });
+sync(); render();
+let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => cards.forEach(c => paintCard(c, c.hc.mr)), 120); });
 </script>
 </body>
 </html>
