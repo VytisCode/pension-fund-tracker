@@ -35,3 +35,16 @@ Privatus pensijų fondų (II pakopa) sekimo projektas: kasdien surenka Lietuvos 
 3. Kasdienis automatinis atnaujinimas per Github Actions.
 4. Svetainė: einamųjų metų rezultatų reitingas pagal grupes, linijinės diagramos.
 5. Vėliau: valdymo mokesčiai, interaktyvios lentelės, Lietuvos banko ketvirtiniai portfelių failai.
+
+## Kasdienis atnaujinimas
+
+`update.py` + `.github/workflows/update.yml` („Update fund data"). Veikia kas valandą (~07:15–00:15 Vilniaus laiku, pirmadienį–šeštadienį), nes fondai skelbia vertes skirtingu metu.
+
+- Laukiama diena = paskutinė darbo diena prieš šiandieną (įskaitant Lietuvos šventes). Tiekėjas tikrinamas **tik jei** saugykloje dar nėra jos duomenų – kitu atveju paleidimas baigiasi per sekundes.
+- Lengvi tiekėjai (be naršyklės): Artea (API), Allianz (POST), Goindex (API, reikia `GOINDEX_API_SECRET_KEY`).
+- Naršyklės tiekėjai (merginos skaitytuvai iš `sources/`): SEB, Swedbank, Luminor, Goindex (jei nėra rakto). Playwright diegiamas tik jei kam nors tikrai reikia; vienam tiekėjui – ne daugiau kaip 5 bandymai per dieną (`data/update_state.json`).
+- Apsaugos: nežinomi fondai (pvz. III pakopos) praleidžiami; vienos dienos vertės pokytis >12 % laikomas klaida ir neįrašomas; esami grynieji aktyvai neperrašomi tuščiais.
+- Rezultatai matomi Actions paleidimo „Summary" skiltyje.
+- `python update.py status` – parodo, ko dar trūksta.
+
+GitHub secrets (Settings → Secrets and variables → Actions): `GOINDEX_API_SECRET_KEY` (būtinas Goindex API keliui), neprivalomi `LUMINOR_PROXY_SERVER`, `LUMINOR_PROXY_USERNAME`, `LUMINOR_PROXY_PASSWORD`.
