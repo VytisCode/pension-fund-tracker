@@ -93,8 +93,13 @@ def today_vilnius() -> date:
 
 
 def expected_date(today: date = None) -> date:
-    """Paskutinė darbo diena, ankstesnė už šiandieną (jos vertę fondai jau turėtų būti paskelbę)."""
-    day = (today or today_vilnius()) - timedelta(days=1)
+    """Fondai darbo dieną paskelbia ANKSTESNĖS darbo dienos vertę (savaitgaliais ir šventinėmis
+    dienomis nieko neskelbia). Todėl: randame paskutinę darbo dieną iki šiandien (imtinai),
+    o laukiama diena – dar viena darbo diena atgal."""
+    day = today or today_vilnius()
+    while not is_business_day(day):
+        day -= timedelta(days=1)
+    day -= timedelta(days=1)
     while not is_business_day(day):
         day -= timedelta(days=1)
     return day
@@ -122,6 +127,14 @@ def number(value):
         return float(text)
     except ValueError:
         return None
+
+
+def clean_assets(value):
+    """Grynieji aktyvai: sveikas skaičius be „.0“, kitu atveju 2 ženklai po kablelio."""
+    if value is None:
+        return None
+    value = round(float(value), 2)
+    return int(value) if value == int(value) else value
 
 
 def iso_date(value):
@@ -222,7 +235,7 @@ def commit_rows(provider: str, new_rows: list, existing: dict, expected: date, l
         old = existing.get((day, fund))
         merged = {
             "date": day, "provider": provider, "fund": fund, "unit_value": unit,
-            "net_assets": row.get("net_assets") or (old or {}).get("net_assets") or None,
+            "net_assets": clean_assets(row.get("net_assets")) or (old or {}).get("net_assets") or None,
             "benchmark_index": row.get("benchmark_index") or (old or {}).get("benchmark_index") or None,
         }
         accepted.append(merged)
@@ -324,9 +337,24 @@ def run_browser_script(provider: str, log: list) -> list:
 
 
 # --------------------------------------------------------------------------- valdymas
-def summary(lines: list) -> None:
+LOG_FILE = ROOT / "data" / "last_update_log.txt"
+
+
+def write_log(lines: list) -> None:
+    """Palieka paskutinių bandymų žurnalą saugykloje (kad rezultatą matytų ir Claude)."""
+    try:
+        old = LOG_FILE.read_text(encoding="utf-8")[-15000:]
+    except OSError:
+        old = ""
+    LOG_FILE.parent.mkdir(exist_ok=True)
+    LOG_FILE.write_text(old + "\n".join(lines) + "\n\n", encoding="utf-8")
+
+
+def summary(lines: list, attempted: bool = False) -> None:
     text = "\n".join(lines)
     print(text)
+    if attempted:
+        write_log(lines)
     target = os.getenv("GITHUB_STEP_SUMMARY")
     if target:
         with open(target, "a", encoding="utf-8") as f:
@@ -339,6 +367,7 @@ def run_group(providers: list, fetchers: dict) -> int:
     state = load_state()
     log = [f"Vilnius: {datetime.now(TZ):%Y-%m-%d %H:%M}, laukiama diena: {expected}"]
     problems = 0
+    attempted = False
     for provider in providers:
         missing = missing_funds(existing, provider, expected)
         if not missing:
@@ -348,6 +377,7 @@ def run_group(providers: list, fetchers: dict) -> int:
         if is_browser and attempts_today(state, provider) >= MAX_BROWSER_ATTEMPTS:
             log.append(f"{provider}: pasiektas dienos bandymų limitas ({MAX_BROWSER_ATTEMPTS})")
             continue
+        attempted = True
         try:
             if is_browser:
                 add_attempt(state, provider)
@@ -363,7 +393,7 @@ def run_group(providers: list, fetchers: dict) -> int:
         log.append(f"{provider}: gauta {len(rows)} eil., nauja/pakeista {changed}; "
                    f"{'viskas iki ' + str(expected) if not still else 'dar trūksta: ' + str(len(still)) + ' fondų'}")
     save_state(state)
-    summary(log)
+    summary(log, attempted)
     return 0 if problems == 0 else 0  # klaidos nenumuša workflow; matomos suvestinėje
 
 
