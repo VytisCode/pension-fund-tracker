@@ -190,3 +190,8 @@ tr.gstart td { border-top: 2px solid var(--axis); }
 tr.gstart:first-child td { border-top: 0; }
 .top-actions { flex-wrap: wrap; justify-content: flex-end; }
 @media (max-width: 640px) { .top-tools { width: 100%; justify-content: flex-start; } .top-actions { justify-content: flex-start; } }
+/* lentelių antraštės lieka matomos slenkant (kai lentelė telpa ekrane) */
+.scroll.stick { overflow: visible; }
+.stick table thead th { position: sticky; top: var(--stick, 0px); z-index: 4; background: var(--card); box-shadow: inset 0 -1px 0 var(--line); border-bottom: 0; padding-top: 6px; }
+.two .stick table thead th, .sec > .stick table thead th { background: var(--surface); }
+@media print { .stick table thead th { position: static; } }

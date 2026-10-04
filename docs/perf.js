@@ -461,6 +461,11 @@ function renderCoverage(gs, ALL) {
   const c = $('cov'); c.hidden = !lines.length;
   c.innerHTML = lines.length ? `<b>${T().covTitle}</b>${ik('coverage')}` + lines.map(l => `<div>${l}</div>`).join('') : '';
 }
+function fitSticky() {          // lentelių antraštės lieka matomos slenkant; jei lentelė platesnė už ekraną (telefone) – įprastas slinkimas į šonus
+  const bar = $('periodbar');
+  document.documentElement.style.setProperty('--stick', (getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight : 0) + 'px');
+  document.querySelectorAll('.scroll').forEach(sc => { sc.classList.remove('stick'); if (sc.scrollWidth <= sc.clientWidth + 1) sc.classList.add('stick'); });
+}
 let lastParts = [];
 const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
@@ -493,7 +498,8 @@ function renderFunds() {
 
   const endAll = Math.max(...rngs.map(r => r.end));
   const calP = parts.map(pt => ({ pt, cal: pt.all.map(s => ({ s, c: calendarReturns(s.f, pt.rng.end) })) }));
-  const years = [...new Set(calP.flatMap(x => x.cal.flatMap(y => Object.keys(y.c))))].map(Number).sort((a, b) => a - b);
+  const calRows = calP.flatMap(x => x.cal), needN = Math.min(calRows.length, Math.max(2, Math.ceil(calRows.length * 0.25)));   // metų, kuriuose beveik nėra duomenų (pvz., 2018 – kelios dienos), stulpelio nerodome
+  const years = [...new Set(calRows.flatMap(y => Object.keys(y.c)))].map(Number).filter(y => calRows.filter(r => r.c[y]).length >= needN).sort((a, b) => a - b);
   const lastYear = new Date(endAll * DAY).getUTCFullYear();
   setCap('tCal', T().capCal(years[0], lastYear, ALL ? [...new Set(rngs.map(r => iso(r.end)))].join(' / ') : iso(rngs[0].end)));
   $('tCal').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${years.map(y => `<th>${y === lastYear ? T().ytd : y}</th>`).join('')}</tr></thead><tbody>`
@@ -509,6 +515,7 @@ function renderFunds() {
     }).join('') + '</tbody>';
 
   renderQuartilesByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
+  fitSticky();
 }
 function renderQuartilesByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
@@ -722,7 +729,7 @@ function syncAll() {
   syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);
   $('printMeta').textContent = `${T().siteTitle} · ${groupName(P.group)} · ${periodText()} · ${T().updated} ${DATA.generated}`;
-  renderSummary(); renderMarket(); renderFunds();
+  renderSummary(); renderMarket(); renderFunds(); fitSticky();
 }
 buildControls(); syncChips();
 renderHeader('performance', () => { labelControls(); syncAll(); });
@@ -730,4 +737,4 @@ document.querySelector('#top .top-tools').prepend($('actions'));   // veiksmų m
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => chartState && drawChart(), 120); });
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); fitSticky(); }, 120); });
