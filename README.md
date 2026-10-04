@@ -51,4 +51,8 @@ GitHub secrets (Settings → Secrets and variables → Actions): `GOINDEX_API_SE
 
 ## Svetainė
 
-`build_site.py` iš `data/nav_history.csv` ir `site/template.html` sugeneruoja `docs/index.html` (viena failo svetainė su grafikais; atnaujinimo workflow ją perstato tik tada, kai pasikeičia duomenys). Svetainė talpinama per GitHub Pages: Settings → Pages → Build and deployment → Source: „Deploy from a branch" → Branch: `main`, aplankas `/docs`.
+Šaltinis – `site/` (puslapiai `index.html`, `performance.html`, bendras `common.js`, `style.css`). `build_site.py` iš `data/nav_history.csv` sugeneruoja `docs/` (įskaitant `docs/data.js` su visais duomenimis); atnaujinimo workflow ją perstato tik tada, kai pasikeičia duomenys. Svetainė talpinama per GitHub Pages: Settings → Pages → Deploy from a branch → `main`, aplankas `/docs`. **Docs aplanko failų ranka netaisyti – juos perrašo `build_site.py`.**
+
+- **Overview / Apžvalga** – kiekvienos amžiaus grupės lentelė ir linijų grafikas.
+- **Performance & peers / Rezultatai ir palyginimas** – visos rinkos grąžos ir vietų matricos, vienas grafikas su grupės ir tiekėjų pasirinkimu, rodikliai (metinė grąža nuo įsteigimo, kalendorinė, slenkanti, svyravimas, didžiausias kritimas).
+- Kalbos: EN (numatyta) ir LT.

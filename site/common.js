@@ -1,0 +1,186 @@
+/* Bendras kodas visiems puslapiams: kalba, tema, antraštė, pagalbinės funkcijos, linijinė diagrama. */
+const DAY = 86400000;
+const iso = d => new Date(d * DAY).toISOString().slice(0, 10);
+const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
+
+const I18N = {
+  en: {
+    siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
+    navOverview: 'Overview', navPerformance: 'Performance & peers',
+    thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
+    dataUntil: 'Data until', updated: 'updated', noNew: 'no new data', noData: 'Not enough data for this period.',
+    chartLabel: 'Return over the selected period', born: 'Born', turto: 'Asset preservation funds',
+    periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
+  },
+  lt: {
+    siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
+    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas',
+    thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
+    dataUntil: 'Duomenys iki', updated: 'atnaujinta', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
+    chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo fondai',
+    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 m.', '3y': '3 m.', '5y': '5 m.', max: 'Visa istorija', custom: 'Pasirinktas' },
+  },
+};
+function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt, lt); }
+
+let lang = 'en';                        // numatytoji kalba – anglų
+try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
+const T = () => I18N[lang];
+const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
+const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), p) + ' %';
+const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), p) + '%';
+const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
+const labelOf = id => DATA.providers.find(p => p.id === id).label;
+const groupLabel = g => g.id === 'turto' ? T().turto : `${T().born} ${g.id.replace('-', '–')}`;
+
+try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+
+/* Antraštė su navigacija, kalbos ir temos jungikliais. onLang – iš naujo nupiešia puslapį. */
+function renderHeader(active, onLang) {
+  const h = document.getElementById('top');
+  h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div>
+    <nav class="nav"><a href="index.html" data-p="index"></a><a href="performance.html" data-p="performance"></a></nav></div>
+    <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
+      <button class="theme" id="theme" type="button"></button></div>`;
+  const apply = () => {
+    document.documentElement.lang = lang;
+    document.title = T().siteTitle;
+    document.getElementById('title').textContent = T().siteTitle;
+    document.getElementById('theme').textContent = T().theme;
+    h.querySelector('[data-p="index"]').textContent = T().navOverview;
+    h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
+    h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
+    h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
+    h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  };
+  h.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
+    lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {}
+    apply(); onLang();
+  }));
+  h.querySelector('#theme').addEventListener('click', () => {
+    const el = document.documentElement;
+    const dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+    el.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('theme', el.dataset.theme); } catch (e) {}
+  });
+  apply();
+  return apply;
+}
+
+/* ---------- laiko eilučių pagalbinės ---------- */
+function lastOnOrBefore(f, day) {          // paskutinės reikšmės indeksas iki dienos (imtinai) arba -1
+  let lo = 0, hi = f.d.length - 1, ans = -1;
+  while (lo <= hi) { const mid = (lo + hi) >> 1; if (f.d[mid] <= day) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
+  return ans;
+}
+function shiftMonths(day, months) {
+  const dt = new Date(day * DAY); dt.setUTCMonth(dt.getUTCMonth() - months);
+  return Math.round(dt.getTime() / DAY);
+}
+function groupEnd(group) {                  // bendra paskutinė diena grupėje (jau atnaujinusių tiekėjų)
+  const funds = group.funds;
+  const overallLast = Math.max(...funds.map(f => f.d[f.d.length - 1]));
+  const live = funds.filter(f => f.d[f.d.length - 1] >= overallLast - 5);
+  return { end: Math.min(...live.map(f => f.d[f.d.length - 1])), overallLast };
+}
+function anchorFor(per, end, funds) {
+  const e = new Date(end * DAY);
+  switch (per) {
+    case '1m': return shiftMonths(end, 1);
+    case '3m': return shiftMonths(end, 3);
+    case '6m': return shiftMonths(end, 6);
+    case '1y': return shiftMonths(end, 12);
+    case '3y': return shiftMonths(end, 36);
+    case '5y': return shiftMonths(end, 60);
+    case 'ytd': return Math.round(Date.UTC(e.getUTCFullYear() - 1, 11, 31) / DAY);
+    default: return Math.max(...funds.map(f => f.d[0]));       // bendra pradžia
+  }
+}
+
+/* ---------- linijinė diagrama ----------
+   series: [{ provider, points: [[diena, grąža %], ...] }] */
+function niceTicks(min, max, n = 5) {
+  const span = max - min || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+  const out = []; for (let t = Math.ceil(min / step) * step; t <= max + 1e-9; t += step) out.push(+t.toFixed(10));
+  return out;
+}
+function drawLineChart(el, series, x0, x1, opts = {}) {
+  el.querySelectorAll('svg, p.na').forEach(s => s.remove());
+  series = series.filter(r => r.points.length > 1);
+  const W = el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
+  const wide = W > 560, m = { l: 46, r: wide ? 78 : 10, t: 10, b: 26 };
+  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return; }
+  let lo = 0, hi = 0;
+  series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
+  const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
+  const X = d => m.l + (d - x0) / (x1 - x0) * (W - m.l - m.r);
+  const Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', T().chartLabel);
+  const add = (tag, attrs, parent = svg) => { const n = document.createElementNS(ns, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
+
+  niceTicks(lo, hi).forEach(t => {
+    add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
+    const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + '%';
+  });
+  const years = (x1 - x0) / 365, ticks = [], cur = new Date(x0 * DAY);
+  if (years > 5) { for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += years > 6 ? 2 : 1) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }
+  else if (years > 1.2) {
+    const stepM = years > 3 ? 6 : 3;
+    for (let t = Date.UTC(cur.getUTCFullYear(), 0, 1); t / DAY < x1; ) {
+      const dt = new Date(t); if (t / DAY > x0) ticks.push([Math.round(t / DAY), iso(Math.round(t / DAY)).slice(0, 7)]);
+      t = Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth() + stepM, 1);
+    }
+  } else { for (let k = 0; k < 6; k++) { const d = Math.round(x0 + (x1 - x0) * k / 5); ticks.push([d, iso(d).slice(years > 0.4 ? 0 : 5)]); } }
+  ticks.forEach(([d, label]) => {
+    if (d <= x0 || d > x1) return;
+    const tx = add('text', { x: X(d), y: H - 6, 'text-anchor': 'middle', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = label;
+  });
+
+  const step = Math.max(1, Math.floor((x1 - x0) / (W * 1.2)));
+  series.slice().reverse().forEach(r => {
+    let path = '', last = -1e9;
+    r.points.forEach((p, i) => { if (i === 0 || i === r.points.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
+    add('path', { d: path, fill: 'none', stroke: colorOf(r.provider), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+  });
+  if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
+    const labels = series.map(r => ({ r, y: Y(r.points[r.points.length - 1][1]) })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 13);
+    labels.forEach(l => {
+      add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
+      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12 }); t.textContent = labelOf(l.r.provider);
+    });
+  }
+  const cross = add('line', { y1: m.t, y2: H - m.b, stroke: 'var(--axis)', 'stroke-width': 1, visibility: 'hidden' });
+  const hit = add('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' });
+  el.appendChild(svg);
+  let tip = el.querySelector('.tip'); if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; el.appendChild(tip); }
+  const move = ev => {
+    const rect = svg.getBoundingClientRect(), scale = W / rect.width;
+    const px = (ev.clientX - rect.left) * scale;
+    const day = Math.round(x0 + (px - m.l) / (W - m.l - m.r) * (x1 - x0));
+    const vals = series.map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= day) { v = r.points[i][1]; break; } return { r, v }; })
+      .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
+    if (!vals.length) return;
+    cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${pct(o.v)}</span></div>`).join('');
+    tip.style.display = 'block';
+    const box = el.getBoundingClientRect();
+    tip.style.left = Math.min((ev.clientX - box.left) + 14, el.clientWidth - tip.offsetWidth - 4) + 'px';
+    tip.style.top = Math.max(0, (ev.clientY - box.top) - tip.offsetHeight - 10) + 'px';
+  };
+  hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
+  hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); });
+}
+
+/* Grupės kortelės: grąža ir linijos laikotarpyje (naudoja ir apžvalga, ir rezultatų puslapis) */
+function seriesOf(f, anchor, end) {
+  const ie = lastOnOrBefore(f, end), ia = lastOnOrBefore(f, anchor);
+  if (ie < 0 || ia < 0 || f.d[0] > anchor) return null;
+  const base = f.v[ia], points = [[anchor, 0]];
+  for (let i = ia + 1; i <= ie; i++) if (f.d[i] > anchor) points.push([f.d[i], (f.v[i] / base - 1) * 100]);
+  return { ret: (f.v[ie] / base - 1) * 100, points, ia, ie };
+}

@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 """
-Sugeneruoja statinę svetainę docs/index.html iš data/nav_history.csv ir site/template.html.
+Sugeneruoja statinę svetainę (docs/) iš data/nav_history.csv ir site/ failų (puslapiai + bendras kodas); duomenys – docs/data.js.
 Paleidžiama po kiekvieno duomenų atnaujinimo (žr. .github/workflows/update.yml).
 """
 import csv
 import json
 import re
+import shutil
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data" / "nav_history.csv"
-TEMPLATE = ROOT / "site" / "template.html"
-OUTPUT = ROOT / "docs" / "index.html"
+SITE = ROOT / "site"
+DOCS = ROOT / "docs"
 
 PROVIDERS = [  # fiksuota tvarka = fiksuota spalva (CSS --series-N)
     ("ALLIANZ", "Allianz"),
@@ -82,12 +83,12 @@ def main() -> None:
         "providers": [{"id": pid, "label": label} for pid, label in PROVIDERS],
         "groups": groups,
     }
-    html = TEMPLATE.read_text(encoding="utf-8").replace(
-        "/*DATA*/null", json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-    )
-    OUTPUT.parent.mkdir(exist_ok=True)
-    OUTPUT.write_text(html, encoding="utf-8")
-    print(f"docs/index.html: {len(html) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
+    DOCS.mkdir(exist_ok=True)
+    data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data.js").write_text(data_js, encoding="utf-8")
+    for name in ("index.html", "performance.html", "style.css", "common.js"):
+        shutil.copyfile(SITE / name, DOCS / name)
+    print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
 
 
 if __name__ == "__main__":
