@@ -1,2 +1,28 @@
 # pension-fund-tracker
-Pensijų fondų sekimas
+
+Privatus pensijų fondų (II pakopa) sekimo projektas: kasdien surenka Lietuvos fondų vieneto vertes, kaupia istoriją ir rodo rezultatus.
+
+## Kur esame
+
+- `base_scraper.py` ir `sources/` – skaitytuvai, perimti iš esamo veikiančio sprendimo (SEB, Swedbank, Artea, Luminor, Goindex, Allianz).
+- Goindex API raktas **neįrašytas kode**. Skaitytuvas jį ima iš aplinkos kintamojo `GOINDEX_API_SECRET_KEY` (Github: Settings → Secrets and variables → Actions).
+- Luminor, jei reikės, naudoja tarpinį serverį (proxy) per `LUMINOR_PROXY_*` kintamuosius.
+
+## Šaltinių patikros rezultatai (2026-10-04)
+
+| Fondas | Būsena |
+|---|---|
+| Artea | API `api.sb.lt/funds-api/Prices/History?fundCode=...` duoda istoriją nuo 2019-01-02, be rakto |
+| Swedbank | vertės matomos puslapio HTML |
+| Luminor | puslapis atsidarė be blokavimo; Github serveriuose dar netikrinta |
+| Allianz | duomenys įkeliami JavaScript, reikia naršyklės arba duomenų adreso |
+| Goindex | API su slaptu raktu; paprastas puslapio atsisiuntimas grąžina 403 |
+| SEB | `robots.txt` draudžia robotams; sprendimas dar priimamas |
+
+## Planas
+
+1. Duomenų saugykla: vienas failas su visa istorija (data, fondas, vieneto vertė, grynieji aktyvai).
+2. Istorijos užpildymas nuo 2019 m. (pirma Artea, kitiems – iš savo failų).
+3. Kasdienis automatinis atnaujinimas per Github Actions.
+4. Svetainė: einamųjų metų rezultatų reitingas pagal grupes, linijinės diagramos.
+5. Vėliau: valdymo mokesčiai, interaktyvios lentelės, Lietuvos banko ketvirtiniai portfelių failai.
