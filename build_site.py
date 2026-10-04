@@ -61,6 +61,7 @@ def main() -> None:
             assets = float(row["net_assets"]) if row["net_assets"] else None
             entry["rows"].append((row["date"], float(row["unit_value"]), assets))
 
+    assets_js = {name: {"d": [day_number(d) for d, _, a in sorted(e["rows"]) if a], "a": [a for d, _, a in sorted(e["rows"]) if a]} for name, e in funds.items()}
     groups = []
     for gid, label in GROUPS:
         items = []
@@ -87,6 +88,8 @@ def main() -> None:
     DOCS.mkdir(exist_ok=True)
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data.js").write_text(data_js, encoding="utf-8")
+    # Grynieji aktyvai pagal dienas – kraunami tik spaudžiant „dienos lentelės“ Excel mygtuką
+    (DOCS / "assets.js").write_text("const ASSETS=" + json.dumps(assets_js, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     assets = ("perf.js", "events.js", "style.css", "common.js", "data.js")
     for name in ("index.html", "overview.html", "performance.html") + assets[:-1]:
         shutil.copyfile(SITE / name, DOCS / name)

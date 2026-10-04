@@ -184,3 +184,5 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .seg select.segsel:hover:not(.active) { background: var(--hover); }
 .seg select.segsel.active { background: var(--accent); color: #fff; }
 .seg select.segsel option { background: var(--card); color: var(--text); }
+.xlday { display: inline-flex; gap: 6px; align-items: center; }
+@media print { .xlday { display: none !important; } }

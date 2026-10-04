@@ -19,7 +19,7 @@ addStrings({
   mZoom: (g, a, b) => `${g} · zoomed ${a} → ${b}. Returns rebased to 0 % at the start of the zoomed range.`,
   nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
   foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
-  share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
+  share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', xlsxDay: 'Daily table (.xlsx)', xlsxDayTip: 'Same layout as the old daily file (fund, date, unit value, net assets): one row per fund for the chosen date; default = latest. If a fund has no value on that day, its last earlier value is used.', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
   viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in % (0 = ${r || 'group average'}).`,
   eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
   advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.',
@@ -80,7 +80,7 @@ addStrings({
   mZoom: (g, a, b) => `${g} · priartinta ${a} → ${b}. Grąža perskaičiuota į 0 % priartinto laikotarpio pradžioje.`,
   nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
   foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
-  share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
+  share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', xlsxDay: 'Dienos lentelė (.xlsx)', xlsxDayTip: 'Toks pat išdėstymas kaip senajame dienos faile (fondas, data, vieneto vertė, grynieji aktyvai): po eilutę kiekvienam fondui pasirinktai dienai; pagal nutylėjimą – naujausia. Jei fondas tą dieną vertės neturi, imama paskutinė ankstesnė.', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
   viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentais (0 = ${r || 'grupės vidurkis'}).`,
   eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
   advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus',
@@ -534,6 +534,32 @@ function tableToAoa(id) {
   return [...c.rows].map(r => [...r.cells].map(x => parseCell(x.textContent)));
 }
 function loadScript(src) { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+/* „Dienos lentelė“: tas pats stulpelių ir fondų pavadinimų išdėstymas kaip senajame faile (pension_data_combined_YYYY-MM-DD.xlsx) */
+const EXPORT_NAMES = {"ALLIANZ":[["2003-2009","Allianz D1 gimusiems 2003-2009 m."],["turto","Allianz S turto išsaugojimo"],["1961-1967","Allianz X1 gimusiems 1961–1967 m."],["1968-1974","Allianz X2 gimusiems 1968–1974 m."],["1975-1981","Allianz X3 gimusiems 1975–1981 m."],["1982-1988","Allianz Y1 gimusiems 1982–1988 m."],["1989-1995","Allianz Y2 gimusiems 1989–1995 m."],["1996-2002","Allianz Y3 gimusiems 1996–2002 m."]],"ARTEA":[["2003-2009","Artea pensija 2003-2009"],["1996-2002","Artea pensija 1996-2002"],["1989-1995","Artea pensija 1989-1995"],["1982-1988","Artea pensija 1982-1988"],["1975-1981","Artea pensija 1975-1981"],["1968-1974","Artea pensija 1968-1974"],["1961-1967","Artea pensija 1961-1967"],["turto","Artea pensijų turto išsaugojimo fondas"]],"GOINDEX":[["2003-2009","Goindex pensija 2003-2009"],["1996-2002","Goindex pensija 1996-2002"],["1989-1995","Goindex pensija 1989-1995"],["1982-1988","Goindex pensija 1982-1988"],["1975-1981","Goindex pensija 1975-1981"],["1968-1974","Goindex pensija 1968-1974"],["1961-1967","Goindex pensija 1961-1967"],["turto","Goindex pensijų turto išsaugojimo fondas"]],"LUMINOR":[["2003-2009","Luminor 2003-2009 tikslinės grupės pensijų fondas"],["1996-2002","Luminor 1996-2002 tikslinės grupės pensijų fondas"],["1989-1995","Luminor 1989-1995 tikslinės grupės pensijų fondas"],["1982-1988","Luminor 1982-1988 tikslinės grupės pensijų fondas"],["1975-1981","Luminor 1975-1981 tikslinės grupės pensijų fondas"],["1968-1974","Luminor 1968-1974 tikslinės grupės pensijų fondas"],["1961-1967","Luminor 1961-1967 tikslinės grupės pensijų fondas"],["turto","Luminor pensijų turto išsaugojimo fondas"]],"SEB":[["2003-2009","SEB pensija 2003-2009"],["1996-2002","SEB pensija 1996-2002"],["1989-1995","SEB pensija 1989-1995"],["1982-1988","SEB pensija 1982-1988"],["1975-1981","SEB pensija 1975-1981"],["1968-1974","SEB pensija 1968-1974"],["1961-1967","SEB pensija 1961-1967"],["turto","SEB turto išsaugojimo fondas"]],"SWEDBANK":[["2003-2009","Pensija 2003-2009"],["1996-2002","Pensija 1996-2002"],["1989-1995","Pensija 1989-1995"],["1982-1988","Pensija 1982-1988"],["1975-1981","Pensija 1975-1981"],["1968-1974","Pensija 1968-1974"],["1961-1967","Pensija 1961-1967"],["turto","Turto išsaugojimo pensijų fondas"]]};
+function loadAssets() { return new Promise((ok, no) => { if (typeof ASSETS !== 'undefined') return ok(); const s = document.createElement('script'); s.src = 'assets.js?v=' + encodeURIComponent(DATA.generated); s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+async function exportDay() {
+  const btn = $('btnXlsxDay'); btn.textContent = T().xlsxBusy; btn.disabled = true;
+  try {
+    await Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'), loadAssets()]);
+    const D = Math.min(Math.max(dayOf($('xlDate').value || iso(LATEST)), EARLIEST), LATEST);
+    const rows = [['Fondo pavadinimas', 'Data', 'Vieneto vertė', 'Grynieji aktyvai']]; let eff = 0;
+    DATA.providers.forEach(p => {
+      rows.push([p.id]);
+      (EXPORT_NAMES[p.id] || []).forEach(([gid, name]) => {
+        const g = byId(gid), f = g && g.funds.find(x => x.provider === p.id), i = f ? lastOnOrBefore(f, D) : -1;
+        if (i < 0) { rows.push([name, '', '', '']); return; }
+        const a = ASSETS[f.name]; let j = a ? a.d.length - 1 : -1; while (j >= 0 && a.d[j] > f.d[i]) j--;
+        eff = Math.max(eff, f.d[i]);
+        rows.push([name, iso(f.d[i]), f.v[i], j >= 0 ? a.a[j] : '']);
+      });
+    });
+    const wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{ wch: 40 }, { wch: 21.5 }, { wch: 21.5 }, { wch: 21.5 }];
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, `pension_data_combined_${iso(eff)}.xlsx`);
+  } catch (e) { alert(T().xlsxFail); }
+  btn.disabled = false; btn.textContent = T().xlsxDay;
+}
 async function exportXlsx() {
   const btn = $('btnXlsx'); btn.textContent = T().xlsxBusy; btn.disabled = true;
   try {
@@ -617,6 +643,7 @@ function buildControls() {
   $('btnAdv').addEventListener('click', () => { P.adv = !P.adv; saveState(); renderFunds(); });
   $('rf').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)) { P.rf = v; saveState(); renderAdvanced(byId(P.group), rangeFor(byId(P.group), true), byId(P.group).funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rangeFor(byId(P.group), true))).filter(Boolean).sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9))); } });
   $('btnXlsx').addEventListener('click', exportXlsx);
+  $('btnXlsxDay').addEventListener('click', exportDay);
   $('btnPrint').addEventListener('click', () => window.print());
   $('btnShare').addEventListener('click', async () => {
     const url = shareUrl(); history.replaceState(null, '', url.slice(url.indexOf('#')));
@@ -656,7 +683,7 @@ function labelControls() {
   ['from', 'to'].forEach(id => { $(id).min = iso(EARLIEST); $(id).max = iso(LATEST); });
   const sel = $('group'), cur = P.group; sel.innerHTML = DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join(''); sel.value = cur;
   $('foot').textContent = T().foot;
-  $('btnShare').textContent = T().share; $('btnXlsx').textContent = T().xlsx; $('btnPrint').textContent = T().print;
+  $('btnShare').textContent = T().share; $('btnXlsx').textContent = T().xlsx; $('btnXlsxDay').textContent = T().xlsxDay; $('btnXlsxDay').title = T().xlsxDayTip; $('xlDate').title = T().xlsxDayTip; $('xlDate').min = iso(EARLIEST); $('xlDate').max = iso(LATEST); if (!$('xlDate').value) $('xlDate').value = iso(LATEST); $('btnPrint').textContent = T().print;
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
   $('sub').textContent = `${T().dataUntil} ${iso(Math.max(...DATA.groups.map(g => groupEnd(g).end)))} · ${T().updated} ${DATA.generated}`;
