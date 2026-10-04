@@ -39,7 +39,7 @@ try { const t = localStorage.getItem('theme'); if (t) document.documentElement.d
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div>
-    <nav class="nav"><a href="index.html" data-p="index"></a><a href="performance.html" data-p="performance"></a></nav></div>
+    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a></nav></div>
     <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
       <button class="theme" id="theme" type="button"></button></div>`;
@@ -48,7 +48,7 @@ function renderHeader(active, onLang) {
     document.title = T().siteTitle;
     document.getElementById('title').textContent = T().siteTitle;
     document.getElementById('theme').textContent = T().theme;
-    h.querySelector('[data-p="index"]').textContent = T().navOverview;
+    h.querySelector('[data-p="overview"]').textContent = T().navOverview;
     h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');

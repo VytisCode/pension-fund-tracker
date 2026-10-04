@@ -86,7 +86,7 @@ def main() -> None:
     DOCS.mkdir(exist_ok=True)
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data.js").write_text(data_js, encoding="utf-8")
-    for name in ("index.html", "performance.html", "style.css", "common.js"):
+    for name in ("index.html", "overview.html", "performance.html", "style.css", "common.js"):
         shutil.copyfile(SITE / name, DOCS / name)
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
 

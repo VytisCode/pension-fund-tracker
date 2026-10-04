@@ -4,81 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pension fund tracker</title>
-<meta name="description" content="Lithuanian second-pillar pension funds by birth-year group">
-<link rel="stylesheet" href="style.css">
+<meta http-equiv="refresh" content="0; url=performance.html">
+<link rel="canonical" href="performance.html">
 </head>
-<body>
-<div class="wrap">
-  <header id="top"></header>
-  <div class="controls">
-    <div class="seg" id="periods" role="group"></div>
-    <div class="legend" id="legend"></div>
-  </div>
-  <div class="grid" id="groups"></div>
-  <footer id="foot"></footer>
-</div>
-<script src="data.js"></script>
-<script src="common.js"></script>
-<script>
-addStrings({
-  foot: 'Return = change in unit value over the period (from the value on the starting date to the latest common date within each group); it is not annualised. Different providers\' unit values differ, so funds are compared by percentage return. Net assets show the latest known value. Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
-}, {
-  foot: 'Grąža = vieneto vertės pokytis laikotarpyje (nuo pradžios dienos vertės iki bendros paskutinės dienos kiekvienoje grupėje); nėra metinė. Skirtingų tiekėjų vieneto vertės skiriasi, todėl fondai lyginami procentine grąža. Grynieji aktyvai – naujausia žinoma reikšmė. Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
-});
-const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];
-let period = 'ytd';
-try { const s = localStorage.getItem('period'); if (PERIOD_IDS.includes(s)) period = s; } catch (e) {}
-
-function compute(group) {
-  const { end, overallLast } = groupEnd(group);
-  const anchor = anchorFor(period, end, group.funds);
-  const rows = group.funds.map(f => {
-    const stale = f.d[f.d.length - 1] < overallLast - 5;
-    const s = stale ? null : seriesOf(f, anchor, end);
-    const ie = lastOnOrBefore(f, end);
-    return { f, ret: s ? s.ret : null, points: s ? s.points : [], unit: ie >= 0 ? f.v[ie] : null, stale };
-  });
-  rows.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
-  return { rows, end, anchor };
-}
-
-const cards = [];
-function render() {
-  const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
-  let latest = 0;
-  DATA.groups.forEach(g => {
-    const data = compute(g); latest = Math.max(latest, data.end);
-    const card = document.createElement('section'); card.className = 'card';
-    card.innerHTML = `<h2>${groupLabel(g)}</h2><div class="meta">${T().periods[period]}: ${iso(data.anchor)} → ${iso(data.end)}</div>
-      <div class="body"><table><thead><tr><th>${T().thProvider}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div class="chart"></div></div>`;
-    const tb = card.querySelector('tbody');
-    data.rows.forEach((r, i) => {
-      const tr = document.createElement('tr');
-      const ret = r.ret === null ? `<span class="na">${r.stale ? T().noNew : '–'}</span>` : `<span class="${r.ret >= 0 ? 'pos' : 'neg'}">${pct(r.ret)}</span>`;
-      tr.innerHTML = `<td class="name"><span class="rank">${r.ret === null ? '' : i + 1}</span><span class="sw" style="background:${colorOf(r.f.provider)}"></span>${labelOf(r.f.provider)}</td>
-        <td>${ret}</td><td class="hide-s">${r.unit === null ? '–' : num(r.unit, 4)}</td><td>${r.f.assets ? num(r.f.assets / 1e6, 1) : '<span class="na">–</span>'}</td>`;
-      tb.appendChild(tr);
-    });
-    root.appendChild(card);
-    cards.push({ el: card.querySelector('.chart'), data });
-  });
-  document.getElementById('sub').textContent = `${T().dataUntil} ${iso(latest)} · ${T().updated} ${DATA.generated}`;
-  document.getElementById('foot').textContent = T().foot;
-  cards.forEach(c => drawLineChart(c.el, c.data.rows.filter(r => r.points.length > 1).map(r => ({ provider: r.f.provider, points: r.points })), c.data.anchor, c.data.end));
-}
-
-const pe = document.getElementById('periods');
-function labelPeriods() { pe.setAttribute('aria-label', T().period); pe.querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]); }
-PERIOD_IDS.forEach(id => {
-  const b = document.createElement('button'); b.type = 'button'; b.dataset.id = id;
-  b.addEventListener('click', () => { period = id; try { localStorage.setItem('period', id); } catch (e) {} sync(); render(); });
-  pe.appendChild(b);
-});
-function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === period)); }
-document.getElementById('legend').innerHTML = DATA.providers.map(p => `<span><i style="background:${colorOf(p.id)}"></i>${p.label}</span>`).join('');
-renderHeader('index', () => { labelPeriods(); render(); });
-labelPeriods(); sync(); render();
-let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => cards.forEach(c => drawLineChart(c.el, c.data.rows.filter(r => r.points.length > 1).map(r => ({ provider: r.f.provider, points: r.points })), c.data.anchor, c.data.end)), 120); });
-</script>
+<body><p><a href="performance.html">Performance &amp; peers</a></p>
+<script>location.replace('performance.html' + location.hash);</script>
 </body>
 </html>
