@@ -10,6 +10,8 @@ Privatus pensijų fondų (II pakopa) sekimo projektas: kasdien surenka Lietuvos 
 - `store.py` – istorijos saugykla `data/nav_history.csv` (stulpeliai: `date, provider, fund, unit_value, net_assets`), kuri nesidubliuoja paleidus pakartotinai.
 - `backfill_artea.py` – parsisiunčia visą Artea istoriją nuo 2019 m. į saugyklą. Paleidžiama Github: **Actions → Backfill Artea history → Run workflow**.
 - `import_seb_csv.py` – importuoja SEB istorinius CSV failus iš `imports/seb/` (atsisiųsti iš SEB interneto banko). Saugykloje papildomas stulpelis `benchmark_index` (SEB „Lyginamasis indeksas"). Grynųjų aktyvų reikšmė 0 laikoma trūkstamais duomenimis.
+- `import_luminor_csv.py` – importuoja Luminor istorines vertes iš `imports/luminor/` (originalūs `.xls` failai paversti į CSV; eksporte tik data ir vieneto vertė, grynųjų aktyvų nėra). Luminor šventinių dienų eilučių nepateikia.
+- `backfill_allianz.py` – Allianz istorija nuo 2019 m. per `POST /snippets/pensiju-fondai` (laukai `_token`, `direction`, `pdate`). Paleidžiama Github: **Actions → Backfill Allianz history → Run workflow** (~15–40 min).
 - Žinoma spraga: `SEB_pensija_1989-1995.csv` apima tik nuo 2023-10-02, reikia atsisiųsti visą laikotarpį ir paleisti importą iš naujo.
 
 ## Šaltinių patikros rezultatai (2026-10-04)
