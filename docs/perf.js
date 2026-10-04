@@ -1,7 +1,7 @@
 /* Rezultatų ir palyginimo puslapis. Priklauso nuo: data.js (DATA), events.js (EVENTS), common.js. */
 addStrings({
   from: 'From', to: 'To', group: 'Group', ret: 'Return', rank: 'Rank (1 = best)', avg: 'Average',
-  hSum: 'Automatic summary', win1w: 'Last 7 days', win1m: 'Last month',
+  hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
   hQ: 'Quartile within the age group (Q1 = top 25 %)',
@@ -62,7 +62,7 @@ addStrings({
   },
 }, {
   from: 'Nuo', to: 'Iki', group: 'Grupė', ret: 'Grąža', rank: 'Vieta (1 = geriausia)', avg: 'Vidurkis',
-  hSum: 'Automatinė santrauka', win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo',
+  hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
   hQ: 'Kvartilis amžiaus grupėje (Q1 = geriausi 25 %)',
@@ -124,21 +124,17 @@ addStrings({
 });
 
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
-const PRESET_IDS = ['1m', '3m', '6m', 'ytd', 'lq', '1y', 'ly', '3y', '5y', 'max'];   // greitieji mygtukai (lq = paskutinis pilnas ketvirtis, ly = praėję kalendoriniai metai)
-/* Kalendoriniai laikotarpiai: pilnas paskutinis ketvirtis ir praėję kalendoriniai metai (iki paskutinės bendros dienos) */
-function lastQuarterEnd(end) {
-  const y = new Date(end * DAY).getUTCFullYear();
-  return [[y, 11], [y, 8], [y, 5], [y, 2], [y - 1, 11], [y - 1, 8]].map(([yy, mm]) => Math.round(Date.UTC(yy, mm + 1, 0) / DAY)).find(d => d <= end);
-}
-function lastYearEnd(end) { const y = new Date(end * DAY).getUTCFullYear(); const d = Math.round(Date.UTC(y, 11, 31) / DAY); return d <= end ? d : Math.round(Date.UTC(y - 1, 11, 31) / DAY); }
+const PRESET_IDS = ['1m', '3m', '6m', 'ytd', 'Q', '1y', 'Y', '3y', '5y', 'max'];   // greitieji mygtukai; Q ir Y – išskleidžiami sąrašai (ketvirtis „q:2026-3“, kalendoriniai metai „y:2025“)
+const isCalPeriod = id => /^q:\d{4}-[1-4]$/.test(id) || /^y:\d{4}$/.test(id);
 function presetRange(per, end, group, sel) {
   if (per === 'max') return { anchor: maxAnchor(group, sel), end };
-  if (per === 'lq') { const qe = lastQuarterEnd(end), d = new Date(qe * DAY); return { anchor: Math.round(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 2, 0) / DAY), end: qe }; }
-  if (per === 'ly') { const ye = lastYearEnd(end), y = new Date(ye * DAY).getUTCFullYear(); return { anchor: Math.round(Date.UTC(y - 1, 11, 31) / DAY), end: ye }; }
+  let m;
+  if ((m = /^q:(\d{4})-([1-4])$/.exec(per))) { const y = +m[1], q = +m[2]; return { anchor: Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY), end: Math.min(end, Math.round(Date.UTC(y, q * 3, 0) / DAY)) }; }
+  if ((m = /^y:(\d{4})$/.exec(per))) { const y = +m[1]; return { anchor: Math.round(Date.UTC(y - 1, 11, 31) / DAY), end: Math.min(end, Math.round(Date.UTC(y, 11, 31) / DAY)) }; }
   return { anchor: anchorFor(per, end, group.funds), end };
 }
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: '1m', ovH: 'long' };
+  hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovH: 'long' };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
@@ -148,7 +144,7 @@ function saveState() {
 }
 function applyState(s) {
   if (!s) return;
-  if (PRESET_IDS.includes(s.period) || s.period === 'custom') P.period = s.period;
+  if (PRESET_IDS.includes(s.period) || s.period === 'custom' || isCalPeriod(s.period)) P.period = s.period;
   if (typeof s.from === 'string') P.from = s.from; if (typeof s.to === 'string') P.to = s.to;
   if (byId(s.group)) P.group = s.group;
   if (Array.isArray(s.provs)) { const v = s.provs.filter(id => DATA.providers.some(p => p.id === id)); if (v.length) P.provs = new Set(v); }
@@ -157,7 +153,7 @@ function applyState(s) {
   if (typeof s.adv === 'boolean') P.adv = s.adv;
   if (typeof s.rf === 'number' && isFinite(s.rf)) P.rf = s.rf;
   if (s.hmProv && DATA.providers.some(p => p.id === s.hmProv)) P.hmProv = s.hmProv;
-  if (s.sumWin === '1w' || s.sumWin === '1m') P.sumWin = s.sumWin;
+  if (s.sumWin === 'sel' || s.sumWin === '1w' || s.sumWin === '1m') P.sumWin = s.sumWin;
   if (s.ovH === 'all' || s.ovH === 'long') P.ovH = s.ovH;
 }
 function loadHash() {
@@ -183,10 +179,6 @@ function shareUrl() {
 }
 /* Datos negalima rinkti vėliau nei naujausi turimi duomenys (fondai skelbia ankstesnės darbo dienos vertę, šiandienos nebūna) */
 const LATEST = Math.max(...DATA.groups.map(g => groupEnd(g).end)), EARLIEST = Math.min(...DATA.groups.flatMap(g => g.funds.map(f => f.d[0])));
-{ // dinaminės mygtukų antraštės: „Q3 2026“ ir „2025“
-  const qe = new Date(lastQuarterEnd(LATEST) * DAY), q = `Q${Math.floor(qe.getUTCMonth() / 3) + 1} ${qe.getUTCFullYear()}`, y = String(new Date(lastYearEnd(LATEST) * DAY).getUTCFullYear());
-  [I18N.en.periods, I18N.lt.periods].forEach(p => { p.lq = q; p.ly = y; });
-}
 function normalizeDates(changed) {
   const fix = v => { if (!v) return ''; const d = dayOf(v); return isNaN(d) ? '' : iso(Math.min(Math.max(d, EARLIEST), LATEST)); };
   P.from = fix(P.from); P.to = fix(P.to);
@@ -218,7 +210,8 @@ function spanText(label, rngs) {                         // laikotarpio datos pe
   const a = a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)} (${T().byGroup})`, e = e0 === e1 ? iso(e0) : `${iso(e0)}…${iso(e1)}`;
   return T().capSpan(label, a, e);
 }
-const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : T().periods[P.period];
+const periodLabel = id => { let m; if ((m = /^q:(\d{4})-([1-4])$/.exec(id))) return `Q${m[2]} ${m[1]}`; if ((m = /^y:(\d{4})$/.exec(id))) return m[1]; return T().periods[id]; };
+const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : periodLabel(P.period);
 const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - 5;
 const ik = k => `<button type="button" class="info" data-k="${k}" aria-label="info">i</button>`;
 const th = (label, k, style = '') => `<th${style ? ` style="${style}"` : ''}>${label}${k ? ik(k) : ''}</th>`;
@@ -323,11 +316,14 @@ const fmtP = (v, p = 1) => pct(v, p).replace(' %', '%');
 
 /* ---------- 0. automatinė santrauka ---------- */
 function renderSummary() {
+  syncSumWin();
   $('hSum').innerHTML = T().hSum + ik('summary'); $('nSum').textContent = T().nSum;
   const rows = []; const lead = {}, lag = {}; let move = null, latest = 0, ng = 0;
   DATA.groups.forEach(g => {
-    const { end, overallLast } = groupEnd(g); latest = Math.max(latest, end);
-    const anchor = P.sumWin === '1w' ? end - 7 : shiftMonths(end, 1);
+    const { end: gEnd, overallLast } = groupEnd(g); latest = Math.max(latest, gEnd);
+    let anchor, end = gEnd;
+    if (P.sumWin === 'sel') { const r = rangeFor(g, false); anchor = r.anchor; end = r.end; }
+    else anchor = P.sumWin === '1w' ? gEnd - 7 : shiftMonths(gEnd, 1);
     const items = [];
     g.funds.forEach(f => {
       if (isStale(f, overallLast)) return;
@@ -352,7 +348,7 @@ function renderSummary() {
     return best ? `${labelOf(best.p)} ${fmtP(best.v, 2)} <span class="na">${iso(best.d)}</span>` : '–';
   };
   const sw = p => `<span class="sw" style="background:${colorOf(p)}"></span>`;
-  if (rows.length) setCap('tSum', spanText(T()['win' + P.sumWin], rows));
+  if (rows.length) setCap('tSum', spanText(winLabel(P.sumWin), rows));
   $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thMove}</th></tr></thead><tbody>`
     + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end)}</td></tr>`).join('') + '</tbody>';
 }
@@ -603,6 +599,11 @@ function resetZoom() { P.zoom = null; }
 function buildControls() {
   const pe = $('periods');
   [...PRESET_IDS, 'custom'].forEach(id => {
+    if (id === 'Q' || id === 'Y') {                    // išskleidžiami sąrašai: ketvirčiai ir kalendoriniai metai
+      const sel = document.createElement('select'); sel.className = 'segsel'; sel.dataset.kind = id.toLowerCase();
+      sel.addEventListener('change', () => { if (!sel.value) return; P.period = sel.value; resetZoom(); saveState(); syncAll(); });
+      pe.appendChild(sel); return;
+    }
     const b = document.createElement('button'); b.type = 'button'; b.dataset.id = id;
     b.addEventListener('click', () => {
       P.period = id;
@@ -627,7 +628,7 @@ function buildControls() {
     c.addEventListener('focus', () => hl(p.id)); c.addEventListener('blur', () => hl(null));
     $('chips').appendChild(c);
   });
-  ['1w', '1m'].forEach(w => { const b = document.createElement('button'); b.type = 'button'; b.dataset.w = w; b.addEventListener('click', () => { P.sumWin = w; saveState(); syncSumWin(); renderSummary(); }); $('sumWin').appendChild(b); });
+  ['sel', '1w', '1m'].forEach(w => { const b = document.createElement('button'); b.type = 'button'; b.dataset.w = w; b.addEventListener('click', () => { P.sumWin = w; saveState(); syncSumWin(); renderSummary(); }); $('sumWin').appendChild(b); });
   ['ret', 'diff'].forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.addEventListener('click', () => { P.view = v; saveState(); syncView(); drawChart(); }); $('viewSeg').appendChild(b); });
   if (!matchMedia('(hover: none)').matches) {
     $('chart').addEventListener('mouseenter', () => { if (($('chart').clientWidth || 0) > 560) animateMr(150); });
@@ -656,15 +657,33 @@ function buildControls() {
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') $('pop').style.display = 'none'; });
 }
+function buildCalOptions() {                          // tik pilni ketvirčiai / metai, kurių pabaiga yra duomenų ribose
+  const y1 = new Date(LATEST * DAY).getUTCFullYear(), y0 = new Date(EARLIEST * DAY).getUTCFullYear(), qs = [], ys = [];
+  for (let y = y1; y >= y0; y--) {
+    for (let q = 4; q >= 1; q--) { const e = Math.round(Date.UTC(y, q * 3, 0) / DAY), st = Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY); if (e <= LATEST && st >= EARLIEST) qs.push(`q:${y}-${q}`); }
+    const e = Math.round(Date.UTC(y, 11, 31) / DAY), st = Math.round(Date.UTC(y - 1, 11, 31) / DAY); if (e <= LATEST && st >= EARLIEST) ys.push(`y:${y}`);
+  }
+  return { q: qs, y: ys };
+}
+const CAL_OPTS = buildCalOptions();
+function syncCalSelects() {
+  $('periods').querySelectorAll('select.segsel').forEach(sel => {
+    const k = sel.dataset.kind, active = P.period.startsWith(k + ':');
+    sel.innerHTML = `<option value="">${k === 'q' ? T().qPlace : T().yPlace}</option>` + CAL_OPTS[k].map(id => `<option value="${id}">${periodLabel(id)}</option>`).join('');
+    sel.value = active ? P.period : ''; sel.classList.toggle('active', active);
+  });
+}
 function syncChips() { document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', P.provs.has(c.dataset.id))); }
 function syncView() {
   const sel = $('diffRef'), cur = P.diffRef;
   sel.innerHTML = `<option value="avg">${T().diffAvg}</option>` + marketProvs().map(p => `<option value="${p.id}">${p.label}</option>`).join(''); sel.value = cur; sel.hidden = P.view !== 'diff';
   $('diffFromLbl').hidden = P.view !== 'diff'; $('diffFromLbl').textContent = T().diffFrom; $('viewSeg').querySelectorAll('button').forEach(b => { b.textContent = T()['view' + b.dataset.v]; b.setAttribute('aria-pressed', b.dataset.v === P.view); }); }
-function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = T()['win' + b.dataset.w]; b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
+function winLabel(w) { const v = T()['win' + w]; return typeof v === 'function' ? v(periodText()) : v; }
+function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = winLabel(b.dataset.w); b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
 function labelControls() {
   $('periods').setAttribute('aria-label', T().period);
   $('periods').querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
+  syncCalSelects();
   $('lblFrom').textContent = T().from; $('lblTo').textContent = T().to;
   ['from', 'to'].forEach(id => { $(id).min = iso(EARLIEST); $(id).max = iso(LATEST); });
   const sel = $('group'), cur = P.group; sel.innerHTML = DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join(''); sel.value = cur;
@@ -677,6 +696,7 @@ function labelControls() {
 }
 function syncAll() {
   $('periods').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === P.period));
+  syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);
   $('printMeta').textContent = `${T().siteTitle} · ${groupLabel(byId(P.group))} · ${periodText()} · ${T().updated} ${DATA.generated}`;
   renderSummary(); renderMarket(); renderFunds();
