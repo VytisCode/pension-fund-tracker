@@ -56,3 +56,6 @@ GitHub secrets (Settings → Secrets and variables → Actions): `GOINDEX_API_SE
 - **Overview / Apžvalga** – kiekvienos amžiaus grupės lentelė ir linijų grafikas.
 - **Performance & peers / Rezultatai ir palyginimas** – visos rinkos grąžos ir vietų matricos, vienas grafikas su grupės ir tiekėjų pasirinkimu, rodikliai (metinė grąža nuo įsteigimo, kalendorinė, slenkanti, svyravimas, didžiausias kritimas).
 - Kalbos: EN (numatyta) ir LT.
+
+## Rezultatų puslapio funkcijos
+`site/performance.html` + `site/perf.js` (+ `site/events.js` – rinkų įvykiai su šaltiniais, rodomi tik įjungus). Yra: automatinė santrauka, rinkos lentelės (grąža, vieta, kvartilis, bendras reitingas), grafikas su priartinimu / paryškinimu / PNG, kalendorinė ir slenkanti grąža, mėnesių šilumos žemėlapis, papildomi rodikliai (Sharpe ir kt.), „i“ paaiškinimai, Excel eksportas (SheetJS iš cdnjs), spausdinimas / PDF, išsaugoma būsena ir dalijimosi nuoroda (URL #). Faktai apie įvykius – `site/events.js`.

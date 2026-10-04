@@ -105,3 +105,55 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .two > div { min-width: 0; }
 .bar { min-width: 0; }
 @media (max-width: 700px) { .sticky { position: static; } }
+
+/* ---- rezultatų puslapio papildymai ---- */
+.btn { border: 1px solid var(--line); background: var(--card); color: var(--text-2); border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.btn:hover { background: var(--hover); }
+.btn[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn[hidden] { display: none; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 0; }
+.tools .grow { flex: 1; }
+.info { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 4px; border-radius: 50%; border: 1px solid var(--text-3);
+  background: transparent; color: var(--text-3); font: italic 600 10px/1 Georgia, serif; cursor: pointer; padding: 0; vertical-align: 1px; }
+.info:hover, .info:focus-visible { color: var(--accent); border-color: var(--accent); }
+#pop { position: absolute; z-index: 20; max-width: 300px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px; font-size: 12.5px; line-height: 1.5; font-weight: 400; box-shadow: 0 6px 20px rgba(0,0,0,.22); display: none; white-space: normal; text-align: left; }
+.evlist { margin: 10px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--text-2); }
+.evlist li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+.evlist .n { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; border: 1.2px solid var(--text-2); align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text); }
+.evlist b { color: var(--text); } .evlist a { color: var(--accent); }
+.hm th, .hm td { text-align: center; padding: 5px 3px; font-size: 12px; }
+.hm td { color: #1a1a19; border-right: 1px solid var(--card); border-bottom: 1px solid var(--card); }
+.hm td:first-child, .hm th:first-child { text-align: left; background: transparent; color: var(--text); padding-left: 6px; }
+.hm td.yr { font-weight: 700; }
+.hm td.na { background: transparent; }
+.cov { margin: 10px 0 0; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--s6); border-radius: 8px; font-size: 12.5px; color: var(--text-2); background: var(--card); }
+.cov[hidden] { display: none; }
+.cov div + div { margin-top: 4px; }
+.q1 { background: #63be7b; } .q2 { background: #c5de80; } .q3 { background: #fcc27c; } .q4 { background: #f8696b; }
+.mx td[class^="q"] { color: #1a1a19; }
+.sumline { margin: 0 0 10px; font-size: 14px; line-height: 1.55; }
+.sumline b { font-weight: 650; }
+.adv { margin-top: 14px; }
+.adv[hidden] { display: none; }
+.small-in { width: 70px; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; font-size: 13px; }
+.printonly { display: none; }
+@media print {
+  :root, :root[data-theme="dark"], :root:where(:not([data-theme="light"])) {
+    color-scheme: light;
+    --surface: #fff; --card: #fff; --line: #d8d7d2; --text: #000; --text-2: #3a3935; --text-3: #5d5c57;
+    --grid: #e6e5e1; --axis: #9d9c96; --accent: #256abf; --hover: #f3f2ef;
+    --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
+  }
+  body { font-size: 11px; }
+  .wrap { max-width: none; padding: 0; }
+  .nav, .top-tools, .bar, .tools, .chips, #resetZoom, .info, #optional-toggle, .noprint { display: none !important; }
+  .printonly { display: block; margin: 0 0 8px; font-size: 11px; color: var(--text-2); }
+  .card, .scroll, .two > div { break-inside: avoid; }
+  .scroll { overflow: visible; }
+  table { font-size: 10.5px; }
+  .sec { margin-top: 14px; }
+  .two { grid-template-columns: 1fr 1fr; gap: 10px; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h2 { break-after: avoid; }
+}

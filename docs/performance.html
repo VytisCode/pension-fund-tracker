@@ -10,12 +10,25 @@
 <body>
 <div class="wrap">
   <header id="top"></header>
+  <div class="printonly" id="printMeta"></div>
 
   <div class="bar sticky" id="periodbar">
     <div class="seg" id="periods" role="group"></div>
     <label class="field"><span id="lblFrom"></span><input type="date" id="from"></label>
     <label class="field"><span id="lblTo"></span><input type="date" id="to"></label>
+    <span class="grow" style="flex:1"></span>
+    <button class="btn" type="button" id="btnShare"></button>
+    <button class="btn" type="button" id="btnXlsx"></button>
+    <button class="btn" type="button" id="btnPrint"></button>
   </div>
+
+  <section class="sec">
+    <h2 id="hSum"></h2>
+    <div class="tools" style="margin:0 0 10px"><div class="seg" id="sumWin" role="group"></div></div>
+    <div id="sumText"></div>
+    <div class="card scroll"><table class="metrics" id="tSum"></table></div>
+    <p class="note" id="nSum"></p>
+  </section>
 
   <section class="sec">
     <h2 id="hMarket"></h2>
@@ -23,6 +36,13 @@
     <div class="two">
       <div><div class="group-h" id="hRet"></div><div class="scroll"><table class="mx" id="tRet"></table></div></div>
       <div><div class="group-h" id="hRank"></div><div class="scroll"><table class="mx" id="tRank"></table></div></div>
+    </div>
+    <div class="two">
+      <div><div class="group-h" id="hQ"></div><div class="scroll"><table class="mx" id="tQ"></table></div></div>
+      <div>
+        <div class="group-h"><span id="hOv"></span> <select id="ovH"></select></div>
+        <div class="scroll"><table class="metrics" id="tOv"></table></div>
+      </div>
     </div>
     <p class="note" id="nMarket"></p>
   </section>
@@ -36,7 +56,15 @@
     <div class="card">
       <div class="meta" id="mChart"></div>
       <div class="chart" id="chart"></div>
+      <div class="tools">
+        <button class="btn" type="button" id="resetZoom" hidden></button>
+        <button class="btn" type="button" id="btnEvents" aria-pressed="false"></button><span id="evInfo" style="margin-left:-4px"></span>
+        <button class="btn" type="button" id="btnPng"></button>
+        <span class="note" id="zoomHint" style="margin:0"></span>
+      </div>
+      <ul class="evlist" id="evList"></ul>
     </div>
+    <div class="cov" id="cov" hidden></div>
 
     <div class="group-h" id="hMetrics"></div>
     <div class="card scroll"><table class="metrics" id="tMetrics"></table></div>
@@ -44,224 +72,27 @@
     <div class="card scroll"><table class="metrics" id="tCal"></table></div>
     <div class="group-h" id="hRoll"></div>
     <div class="card scroll"><table class="metrics" id="tRoll"></table></div>
+    <div class="group-h" id="hQP"></div>
+    <div class="card scroll"><table class="mx" id="tQP"></table></div>
+    <div class="group-h"><span id="hHm"></span> <select id="hmProv"></select></div>
+    <div class="card scroll"><table class="hm" id="tHm"></table></div>
+
+    <div class="tools" id="optional-toggle"><button class="btn" type="button" id="btnAdv" aria-pressed="false"></button></div>
+    <div class="adv" id="adv">
+      <div class="card scroll">
+        <div class="tools" style="margin:0 0 10px"><label class="field"><span id="lblRf"></span><input class="small-in" type="number" id="rf" step="0.25" min="0" max="20"> %</label></div>
+        <table class="metrics" id="tAdv"></table>
+      </div>
+      <p class="note" id="nAdv"></p>
+    </div>
     <p class="note" id="nFund"></p>
   </section>
   <footer id="foot"></footer>
 </div>
+<div id="pop" role="tooltip"></div>
 <script src="data.js"></script>
+<script src="events.js"></script>
 <script src="common.js"></script>
-<script>
-addStrings({
-  from: 'From', to: 'To', group: 'Group', ret: 'Return', rank: 'Rank (1 = best)', avg: 'Average',
-  hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
-  hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
-  mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
-  nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
-  hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
-  thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
-  thInception: 'Inception', thCagr: 'Return p.a. since inception', thVolAll: 'Volatility p.a. since inception', thMddAll: 'Max drawdown since inception',
-  thRet1m: '1 mo', thRet3m: '3 mo', thRet6m: '6 mo', thRet1y: '1 yr', thRet3y: '3 yr p.a.', thRet5y: '5 yr p.a.',
-  thR1avg: 'Rolling 1-yr: average', thR1min: 'min', thR1max: 'max', thR1pos: '% positive',
-  ytd: 'YTD', mChart: (g, p) => `${g} · ${p}. Returns rebased to 0 % at the start of the period.`,
-  nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Past performance is not a guide to future returns.',
-  foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
-}, {
-  from: 'Nuo', to: 'Iki', group: 'Grupė', ret: 'Grąža', rank: 'Vieta (1 = geriausia)', avg: 'Vidurkis',
-  hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
-  hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
-  mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
-  nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
-  hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
-  thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
-  thInception: 'Pradžia', thCagr: 'Metinė grąža nuo įsteigimo', thVolAll: 'Svyravimas per metus nuo įsteigimo', thMddAll: 'Didžiausias kritimas nuo įsteigimo',
-  thRet1m: '1 mėn.', thRet3m: '3 mėn.', thRet6m: '6 mėn.', thRet1y: '1 m.', thRet3y: '3 m., metinė', thRet5y: '5 m., metinė',
-  thR1avg: 'Slenkanti 1 m.: vidurkis', thR1min: 'min.', thR1max: 'maks.', thR1pos: '% teigiamų',
-  ytd: 'Šie metai', mChart: (g, p) => `${g} · ${p}. Grąža perskaičiuota į 0 % laikotarpio pradžioje.`,
-  nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Praeities rezultatai negarantuoja ateities grąžos.',
-  foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
-});
-
-const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];
-const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)) };
-try { const s = localStorage.getItem('perfPeriod'); if (PERIOD_IDS.includes(s)) P.period = s; const g = localStorage.getItem('perfGroup'); if (DATA.groups.some(x => x.id === g)) P.group = g; } catch (e) {}
-const $ = id => document.getElementById(id);
-const byId = id => DATA.groups.find(g => g.id === id);
-
-/* ---------- laikotarpis ---------- */
-function rangeFor(group) {
-  const { end: commonEnd, overallLast } = groupEnd(group);
-  if (P.period === 'custom') {
-    const anchor = P.from ? dayOf(P.from) : anchorFor('max', commonEnd, group.funds);
-    const end = P.to ? Math.min(dayOf(P.to), commonEnd) : commonEnd;
-    return { anchor, end, overallLast };
-  }
-  return { anchor: anchorFor(P.period, commonEnd, group.funds), end: commonEnd, overallLast };
-}
-const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : T().periods[P.period];
-const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - 5;
-
-/* ---------- skaičiavimai ---------- */
-function stdev(a) { const n = a.length; if (n < 2) return null; const m = a.reduce((s, x) => s + x, 0) / n; return Math.sqrt(a.reduce((s, x) => s + (x - m) * (x - m), 0) / (n - 1)); }
-function riskStats(f, ia, ie) {            // svyravimas ir didžiausias kritimas tarp indeksų
-  const r = []; let peak = f.v[ia], mdd = 0;
-  for (let i = ia + 1; i <= ie; i++) {
-    const x = f.v[i] / f.v[i - 1] - 1; if (x !== 0) r.push(x);
-    if (f.v[i] > peak) peak = f.v[i];
-    mdd = Math.min(mdd, f.v[i] / peak - 1);
-  }
-  const sd = r.length >= 20 ? stdev(r) : null;
-  return { vol: sd === null ? null : sd * Math.sqrt(252) * 100, mdd: mdd * 100 };
-}
-function fundStats(f, rng) {
-  if (isStale(f, rng.overallLast)) return null;
-  const s = seriesOf(f, rng.anchor, rng.end);
-  const ie = lastOnOrBefore(f, rng.end);
-  const out = { f, ret: null, points: [], vol: null, mdd: null, cagr: null, volAll: null, mddAll: null, inception: f.d[0] };
-  if (s) { out.ret = s.ret; out.points = s.points; const rs = riskStats(f, s.ia, s.ie); out.vol = rs.vol; out.mdd = rs.mdd; }
-  if (ie > 0) {
-    const days = f.d[ie] - f.d[0];
-    if (days >= 365) out.cagr = (Math.pow(f.v[ie] / f.v[0], 365.25 / days) - 1) * 100;
-    const ra = riskStats(f, 0, ie); out.volAll = ra.vol; out.mddAll = ra.mdd;
-  }
-  return out;
-}
-function calendarReturns(f, endDay) {
-  const last = new Date(endDay * DAY).getUTCFullYear(), first = new Date(f.d[0] * DAY).getUTCFullYear(), out = {};
-  for (let y = first; y <= last; y++) {
-    const yEnd = y === last ? endDay : Math.round(Date.UTC(y, 11, 31) / DAY);
-    const ie = lastOnOrBefore(f, yEnd);
-    let ia = lastOnOrBefore(f, Math.round(Date.UTC(y - 1, 11, 31) / DAY)), partial = false;
-    if (ia < 0) { ia = 0; partial = f.d[0] > Math.round(Date.UTC(y, 0, 7) / DAY); }
-    if (ie > ia) out[y] = { ret: (f.v[ie] / f.v[ia] - 1) * 100, partial };
-  }
-  return out;
-}
-function rolling(f, endDay) {
-  const ie = lastOnOrBefore(f, endDay), out = {};
-  [1, 3, 6, 12, 36, 60].forEach(h => {
-    const ia = lastOnOrBefore(f, shiftMonths(endDay, h));
-    if (ia < 0 || f.d[0] > shiftMonths(endDay, h) || ie <= ia) { out[h] = null; return; }
-    const r = f.v[ie] / f.v[ia] - 1;
-    out[h] = (h > 12 ? Math.pow(1 + r, 12 / h) - 1 : r) * 100;
-  });
-  const wins = [];
-  for (let i = 0; i <= ie; i++) {
-    if (f.d[i] - 365 < f.d[0]) continue;
-    const ja = lastOnOrBefore(f, f.d[i] - 365); if (ja < 0) continue;
-    wins.push((f.v[i] / f.v[ja] - 1) * 100);
-  }
-  if (wins.length > 20) out.r1 = { avg: wins.reduce((s, x) => s + x, 0) / wins.length, min: Math.min(...wins), max: Math.max(...wins), pos: wins.filter(x => x > 0).length / wins.length * 100 };
-  return out;
-}
-function rankOf(values) {                   // values: [{key, v}] -> Map key -> vieta (didesnė reikšmė = geresnė)
-  const ok = values.filter(o => o.v !== null && o.v !== undefined).sort((a, b) => b.v - a.v), map = new Map();
-  ok.forEach((o, i) => map.set(o.key, i + 1)); return { map, n: ok.length };
-}
-const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1);
-
-/* ---------- 1. visos rinkos lentelės ---------- */
-function renderMarket() {
-  $('hMarket').textContent = T().hMarket; $('hRet').textContent = T().hRet; $('hRank').textContent = T().hRank;
-  $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
-  const MARKET_ORDER = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // lentelių stulpelių tvarka
-  const provs = MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
-  const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
-  const rows = DATA.groups.map(g => {
-    const rng = rangeFor(g), vals = {};
-    provs.forEach(p => { const f = g.funds.find(x => x.provider === p.id); const st = f && !isStale(f, rng.overallLast) ? seriesOf(f, rng.anchor, rng.end) : null; vals[p.id] = st ? st.ret : null; });
-    const { map, n } = rankOf(provs.map(p => ({ key: p.id, v: vals[p.id] })));
-    return { g, vals, ranks: map, n };
-  });
-  const avgRet = {}, avgRank = {};
-  provs.forEach(p => {
-    const r = rows.map(x => x.vals[p.id]).filter(v => v !== null), k = rows.map(x => x.ranks.get(p.id)).filter(v => v);
-    avgRet[p.id] = r.length ? r.reduce((s, x) => s + x, 0) / r.length : null;
-    avgRank[p.id] = k.length ? k.reduce((s, x) => s + x, 0) / k.length : null;
-  });
-  const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] })));
-  const retBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => { const v = r.vals[p.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(p.id), r.n)}">${pct(v, 1)}</td>`; }).join('')}</tr>`).join('')
-    + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRet[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(arRank.map.get(p.id), arRank.n)}">${pct(avgRet[p.id], 1)}</td>`).join('')}</tr>`;
-  const rankBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('')
-    + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRank[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(akRank.map.get(p.id), akRank.n)}">${num(avgRank[p.id], 1)}</td>`).join('')}</tr>`;
-  $('tRet').innerHTML = head + `<tbody>${retBody}</tbody>`;
-  $('tRank').innerHTML = head + `<tbody>${rankBody}</tbody>`;
-}
-
-/* ---------- 2. fondų palyginimas ---------- */
-let chartState = null;
-function renderFunds() {
-  const g = byId(P.group), rng = rangeFor(g);
-  $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
-  $('hMetrics').textContent = T().hMetrics; $('hCal').textContent = T().hCal; $('hRoll').textContent = T().hRoll; $('nFund').textContent = T().nFund;
-  const all = g.funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(Boolean);
-  all.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
-  $('mChart').textContent = T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`);
-  chartState = { series: all.filter(s => s.points.length > 1).map(s => ({ provider: s.f.provider, points: s.points })), anchor: rng.anchor, end: rng.end };
-  drawLineChart($('chart'), chartState.series, chartState.anchor, chartState.end);
-
-  const rk = rankOf(all.map(s => ({ key: s.f.provider, v: s.ret })));
-  const bestOf = (key, dir) => { const vs = all.map(s => s[key]).filter(v => v !== null); return vs.length ? (dir > 0 ? Math.max(...vs) : Math.min(...vs)) : null; };
-  const cell = (v, fmt, best) => v === null ? '<td class="na">–</td>' : `<td class="${v === best ? 'best' : ''}">${fmt(v)}</td>`;
-  const nm = s => `<td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}</td>`;
-  $('tMetrics').innerHTML = `<thead><tr><th>${T().thRank}</th><th style="text-align:left">${T().thFund}</th><th>${T().thPeriodRet}</th><th>${T().thVol}</th><th>${T().thMdd}</th><th>${T().thInception}</th><th>${T().thCagr}</th><th>${T().thVolAll}</th><th>${T().thMddAll}</th></tr></thead><tbody>`
-    + all.map(s => `<tr><td class="n">${rk.map.get(s.f.provider) || ''}</td>${nm(s)}${cell(s.ret, v => pct(v), bestOf('ret', 1))}${cell(s.vol, v => num(v, 1) + ' %', bestOf('vol', -1))}${cell(s.mdd, v => num(v, 1) + ' %', bestOf('mdd', 1))}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), bestOf('cagr', 1))}${cell(s.volAll, v => num(v, 1) + ' %', bestOf('volAll', -1))}${cell(s.mddAll, v => num(v, 1) + ' %', bestOf('mddAll', 1))}</tr>`).join('') + '</tbody>';
-
-  const cal = all.map(s => ({ s, c: calendarReturns(s.f, rng.end) }));
-  const years = [...new Set(cal.flatMap(x => Object.keys(x.c)))].map(Number).sort((a, b) => a - b);
-  const lastYear = new Date(rng.end * DAY).getUTCFullYear();
-  $('tCal').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${years.map(y => `<th>${y === lastYear ? T().ytd : y}</th>`).join('')}</tr></thead><tbody>`
-    + cal.map(x => `<tr>${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1).replace(' %', '%')}${c.partial ? '*' : ''}</td>`; }).join('')}</tr>`).join('') + '</tbody>';
-
-  const rol = all.map(s => ({ s, r: rolling(s.f, groupEnd(g).end) }));
-  const keys = [[1, 'thRet1m'], [3, 'thRet3m'], [6, 'thRet6m'], [12, 'thRet1y'], [36, 'thRet3y'], [60, 'thRet5y']];
-  const rb = k => { const vs = rol.map(x => x.r[k]).filter(v => v !== null && v !== undefined); return vs.length ? Math.max(...vs) : null; };
-  $('tRoll').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${keys.map(k => `<th>${T()[k[1]]}</th>`).join('')}<th>${T().thR1avg}</th><th>${T().thR1min}</th><th>${T().thR1max}</th><th>${T().thR1pos}</th></tr></thead><tbody>`
-    + rol.map(x => `<tr>${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}</tr>`).join('') + '</tbody>';
-}
-
-/* ---------- valdikliai ---------- */
-function buildControls() {
-  const pe = $('periods');
-  [...PERIOD_IDS, 'custom'].forEach(id => {
-    const b = document.createElement('button'); b.type = 'button'; b.dataset.id = id;
-    b.addEventListener('click', () => {
-      P.period = id;
-      if (id !== 'custom') { try { localStorage.setItem('perfPeriod', id); } catch (e) {} }
-      else { if (!P.from) { const e = groupEnd(DATA.groups[0]).end; P.from = iso(shiftMonths(e, 12)); P.to = iso(e); $('from').value = P.from; $('to').value = P.to; } }
-      syncAll();
-    });
-    pe.appendChild(b);
-  });
-  $('from').addEventListener('change', e => { P.from = e.target.value; P.period = 'custom'; syncAll(); });
-  $('to').addEventListener('change', e => { P.to = e.target.value; P.period = 'custom'; syncAll(); });
-  $('group').addEventListener('change', e => { P.group = e.target.value; try { localStorage.setItem('perfGroup', P.group); } catch (e2) {} renderFunds(); });
-  $('chips').innerHTML = '';
-  DATA.providers.forEach(p => {
-    const c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.dataset.id = p.id;
-    c.innerHTML = `<i style="background:${colorOf(p.id)}"></i>${p.label}`;
-    c.addEventListener('click', () => { if (P.provs.has(p.id)) { if (P.provs.size > 1) P.provs.delete(p.id); } else P.provs.add(p.id); syncChips(); renderFunds(); });
-    $('chips').appendChild(c);
-  });
-}
-function syncChips() { document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', P.provs.has(c.dataset.id))); }
-function labelControls() {
-  $('periods').setAttribute('aria-label', T().period);
-  $('periods').querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
-  $('lblFrom').textContent = T().from; $('lblTo').textContent = T().to;
-  const sel = $('group'), cur = P.group; sel.innerHTML = DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join(''); sel.value = cur;
-  $('foot').textContent = T().foot;
-  $('sub').textContent = `${T().dataUntil} ${iso(Math.max(...DATA.groups.map(g => groupEnd(g).end)))} · ${T().updated} ${DATA.generated}`;
-}
-function syncAll() {
-  $('periods').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === P.period));
-  renderMarket(); renderFunds();
-}
-buildControls(); syncChips();
-renderHeader('performance', () => { labelControls(); syncAll(); });
-labelControls();
-$('from').value = P.from; $('to').value = P.to;
-syncAll();
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => chartState && drawLineChart($('chart'), chartState.series, chartState.anchor, chartState.end), 120); });
-</script>
+<script src="perf.js"></script>
 </body>
 </html>

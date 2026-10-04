@@ -109,9 +109,10 @@ function niceTicks(min, max, n = 5) {
 function drawLineChart(el, series, x0, x1, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
   series = series.filter(r => r.points.length > 1);
-  const W = el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
-  const wide = W > 560, m = { l: 46, r: wide ? 78 : 10, t: 10, b: 26 };
-  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return; }
+  const W = opts.width || el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
+  const wide = W > 560, m = { l: 46, r: wide ? 78 : 10, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
+  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
+  const els = {};                               // provider -> [elementai] paryškinimui
   let lo = 0, hi = 0;
   series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
   const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
@@ -144,36 +145,71 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   series.slice().reverse().forEach(r => {
     let path = '', last = -1e9;
     r.points.forEach((p, i) => { if (i === 0 || i === r.points.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
-    add('path', { d: path, fill: 'none', stroke: colorOf(r.provider), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+    (els[r.provider] = els[r.provider] || []).push(add('path', { d: path, fill: 'none', stroke: colorOf(r.provider), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
   });
   if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
     const labels = series.map(r => ({ r, y: Y(r.points[r.points.length - 1][1]) })).sort((a, b) => a.y - b.y);
     for (let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 13);
     labels.forEach(l => {
-      add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
-      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12 }); t.textContent = labelOf(l.r.provider);
+      const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
+      const t = add('text', { x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: 'cursor:default' }); t.textContent = labelOf(l.r.provider);
+      els[l.r.provider].push(c, t);
+      t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
   }
   const cross = add('line', { y1: m.t, y2: H - m.b, stroke: 'var(--axis)', 'stroke-width': 1, visibility: 'hidden' });
-  const hit = add('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' });
+  const hit = add('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent', style: opts.onZoom ? 'cursor:crosshair' : '' });
+  const sel = add('rect', { y: m.t, height: H - m.t - m.b, fill: 'var(--accent)', 'fill-opacity': 0.15, stroke: 'var(--accent)', 'stroke-width': 1, visibility: 'hidden', 'pointer-events': 'none' });
   el.appendChild(svg);
   let tip = el.querySelector('.tip'); if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; el.appendChild(tip); }
+  const place = ev => { const box = el.getBoundingClientRect(); tip.style.left = Math.max(0, Math.min((ev.clientX - box.left) + 14, el.clientWidth - tip.offsetWidth - 4)) + 'px'; tip.style.top = Math.max(0, (ev.clientY - box.top) - tip.offsetHeight - 10) + 'px'; };
+  const dayAt = ev => { const rect = svg.getBoundingClientRect(), px = (ev.clientX - rect.left) * (W / rect.width); return Math.max(x0, Math.min(x1, Math.round(x0 + (px - m.l) / (W - m.l - m.r) * (x1 - x0)))); };
+  let dragging = null;
   const move = ev => {
-    const rect = svg.getBoundingClientRect(), scale = W / rect.width;
-    const px = (ev.clientX - rect.left) * scale;
-    const day = Math.round(x0 + (px - m.l) / (W - m.l - m.r) * (x1 - x0));
+    if (dragging) return;
+    const day = dayAt(ev);
     const vals = series.map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= day) { v = r.points[i][1]; break; } return { r, v }; })
       .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
     if (!vals.length) return;
     cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
     tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${pct(o.v)}</span></div>`).join('');
-    tip.style.display = 'block';
-    const box = el.getBoundingClientRect();
-    tip.style.left = Math.min((ev.clientX - box.left) + 14, el.clientWidth - tip.offsetWidth - 4) + 'px';
-    tip.style.top = Math.max(0, (ev.clientY - box.top) - tip.offsetHeight - 10) + 'px';
+    tip.style.display = 'block'; place(ev);
   };
   hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
-  hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); });
+  hit.addEventListener('mouseleave', () => { if (!dragging) { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); } });
+  if (opts.onZoom) {                              // pelės tempimas = priartinimas
+    hit.addEventListener('pointerdown', ev => {
+      if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
+      dragging = { a: dayAt(ev) }; tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden');
+      const upd = e2 => { const b = dayAt(e2); sel.setAttribute('x', X(Math.min(dragging.a, b))); sel.setAttribute('width', Math.abs(X(b) - X(dragging.a))); sel.setAttribute('visibility', 'visible'); dragging.b = b; };
+      const up = () => { removeEventListener('pointermove', upd); removeEventListener('pointerup', up); sel.setAttribute('visibility', 'hidden'); const d = dragging; dragging = null; if (d && d.b !== undefined && Math.abs(X(d.b) - X(d.a)) > 8) opts.onZoom(Math.min(d.a, d.b), Math.max(d.a, d.b)); };
+      addEventListener('pointermove', upd); addEventListener('pointerup', up); ev.preventDefault();
+    });
+  }
+  if (opts.events && opts.events.length) {         // įvykių žymos viršuje (numeruotos), tekstas – po grafiku
+    opts.events.forEach(e => {
+      if (e.day < x0 || e.day > x1) return;
+      const x = X(e.day);
+      add('line', { x1: x, x2: x, y1: 20, y2: H - m.b, stroke: 'var(--text-3)', 'stroke-width': 1, 'stroke-dasharray': '3 3', 'pointer-events': 'none' });
+      const g = add('g', { style: 'cursor:default' });
+      add('circle', { cx: x, cy: 11, r: 9, fill: 'var(--card)', stroke: 'var(--text-2)', 'stroke-width': 1.2 }, g);
+      const t = add('text', { x, y: 15, 'text-anchor': 'middle', fill: 'var(--text)', 'font-size': 11, 'font-weight': 600 }, g); t.textContent = e.n;
+      g.addEventListener('mouseenter', ev => { tip.innerHTML = `<b>${iso(e.day)} · ${e.title}</b><div style="display:block;max-width:260px;white-space:normal">${e.text}</div>`; tip.style.display = 'block'; place(ev); });
+      g.addEventListener('mousemove', place); g.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+    });
+  }
+  const ctl = {
+    svg,
+    highlight(id) {
+      Object.keys(els).forEach(k => els[k].forEach(n => {
+        const on = !id || k === id;
+        n.setAttribute('opacity', on ? 1 : 0.15);
+        if (n.tagName === 'path') n.setAttribute('stroke-width', id && on ? 3 : 2);
+      }));
+    },
+  };
+  ctl.highlight(opts.hl || null);
+  return ctl;
 }
 
 /* Grupės kortelės: grąža ir linijos laikotarpyje (naudoja ir apžvalga, ir rezultatų puslapis) */
