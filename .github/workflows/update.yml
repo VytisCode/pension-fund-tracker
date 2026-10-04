@@ -1,12 +1,12 @@
 name: Update fund data
 
-# Kas valandą (~07:15–00:15 Vilniaus laiku), pirmadienį–šeštadienį.
+# Kas valandą darbo dienomis, nuo ~12:15–13:15 iki ~22:15–23:15 Vilniaus laiku (UTC+2/+3).
 # Kiekvienas tiekėjas tikrinamas tik jei saugykloje dar nėra laukiamos dienos duomenų,
 # todėl kai viskas jau atnaujinta, paleidimas baigiasi per kelias sekundes.
 # Ranka: Actions → "Update fund data" → Run workflow.
 on:
   schedule:
-    - cron: "15 4-21 * * 1-6"
+    - cron: "15 10-20 * * 1-5"
   workflow_dispatch:
 
 permissions:
