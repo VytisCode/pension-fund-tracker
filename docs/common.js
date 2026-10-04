@@ -42,12 +42,16 @@ function renderHeader(active, onLang) {
     <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a></nav></div>
     <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
-      <button class="theme" id="theme" type="button"></button></div>`;
+      <div class="seg" id="theme" role="group">
+        <button type="button" data-theme="light"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+        <button type="button" data-theme="dark"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></div>`;
   const apply = () => {
     document.documentElement.lang = lang;
     document.title = T().siteTitle;
     document.getElementById('title').textContent = T().siteTitle;
-    document.getElementById('theme').textContent = T().theme;
+    const el = document.documentElement, dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+    const tb = document.getElementById('theme'); tb.setAttribute('aria-label', T().theme);
+    tb.querySelectorAll('button').forEach(b => { b.setAttribute('aria-pressed', (b.dataset.theme === 'dark') === dark); b.title = b.dataset.theme === 'dark' ? (lang === 'lt' ? 'Tamsi tema' : 'Dark theme') : (lang === 'lt' ? 'Šviesi tema' : 'Light theme'); b.setAttribute('aria-label', b.title); });
     h.querySelector('[data-p="overview"]').textContent = T().navOverview;
     h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
@@ -58,12 +62,12 @@ function renderHeader(active, onLang) {
     lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {}
     apply(); onLang();
   }));
-  h.querySelector('#theme').addEventListener('click', () => {
-    const el = document.documentElement;
-    const dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
-    el.dataset.theme = dark ? 'light' : 'dark';
-    try { localStorage.setItem('theme', el.dataset.theme); } catch (e) {}
-  });
+  h.querySelectorAll('#theme button').forEach(b => b.addEventListener('click', () => {
+    document.documentElement.dataset.theme = b.dataset.theme;
+    try { localStorage.setItem('theme', b.dataset.theme); } catch (e) {}
+    apply();
+  }));
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
   apply();
   return apply;
 }
