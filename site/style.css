@@ -157,3 +157,8 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   h2 { break-after: avoid; }
 }
+
+.top-actions { display: flex; gap: 8px; }
+.top-tools { flex-wrap: wrap; justify-content: flex-end; }
+#periodbar { flex-wrap: wrap; justify-content: flex-start; }
+@media print { .top-actions { display: none !important; } }
