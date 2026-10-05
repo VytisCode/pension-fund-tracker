@@ -44,12 +44,18 @@ jobs:
       - name: Light providers (Artea, Allianz, Goindex API)
         run: python -u update.py light
 
+      - name: III pillar light providers (Artea API, Goindex API)
+        if: always()
+        run: python -u pillar3.py light
+
       - name: Does anything need a browser?
         id: need
-        run: python update.py needs-browser
+        run: |
+          python update.py needs-browser
+          python pillar3.py needs-browser
 
       - name: Install browser
-        if: steps.need.outputs.needs_browser == 'true'
+        if: steps.need.outputs.needs_browser == 'true' || steps.need.outputs.needs_browser_p3 == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
@@ -59,10 +65,14 @@ jobs:
         if: steps.need.outputs.needs_browser == 'true'
         run: python -u update.py browser
 
+      - name: III pillar browser providers (SEB, Swedbank, Luminor)
+        if: always() && steps.need.outputs.needs_browser_p3 == 'true'
+        run: python -u pillar3.py browser
+
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv; then
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
             python build_site.py
@@ -83,7 +93,7 @@ jobs:
           fi
           # Kad nesusikauptų dešimtys vienodų pranešimų, kai tiekėjas (pvz., Luminor) ilgai neatsako:
           # ataskaita siunčiama, kai gauta naujų duomenų, paleidus ranka, ryto paleidime arba paskutiniame dienos paleidime.
-          if git diff --quiet -- data/nav_history.csv \
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv \
              && [ "${{ github.event_name }}" = "schedule" ] \
              && [ "${{ github.event.schedule }}" != "37 4 * * 2-6" ] \
              && [ "$(date -u +%-H)" -lt 16 ]; then
@@ -116,7 +126,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/nav_history.csv data/update_state.json data/last_update_log.txt docs
+          git add data/nav_history.csv data/pillar3_history.csv data/update_state.json data/last_update_log.txt docs
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

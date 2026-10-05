@@ -101,6 +101,53 @@ def main() -> None:
             text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
         (DOCS / page).write_text(text, encoding="utf-8")
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
+    build_pillar3(ver)
+
+
+def build_pillar3(ver: dict) -> None:
+    """III pakopos polapis: docs/data3.js iš data/pillar3_history.csv + site/pillar3.html, site/p3.js."""
+    import pillar3
+
+    path = ROOT / "data" / "pillar3_history.csv"
+    if not path.exists():
+        return
+    series = {}
+    with path.open(encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            if row["unit_value"]:
+                series.setdefault(row["fund"], []).append(
+                    (row["date"], float(row["unit_value"]), float(row["net_assets"]) if row["net_assets"] else None))
+    providers, groups = [], {"bond": [], "mixed": [], "equity": []}
+    for i, (prov, name, cat, code, risky) in enumerate(pillar3.FUNDS):
+        fid = f"f{i}"
+        providers.append({"id": fid, "label": name, "brand": prov})
+        rows = sorted(series.get(name, []))
+        if not rows:
+            continue
+        last_assets = next(((d, a) for d, _, a in reversed(rows) if a), (None, None))
+        d0 = day_number(rows[0][0])
+        days = [day_number(d) for d, _, _ in rows]
+        groups[cat].append({
+            "provider": fid, "brand": prov, "name": name, "code": code, "risky": risky,
+            "d0": d0, "dd": [b - a for a, b in zip([d0] + days[:-1], days)][1:],  # dienų skirtumai (mažesnis failas)
+            "v": [round(v, 5) for _, v, _ in rows],
+            "assets": last_assets[1], "assetsDate": day_number(last_assets[0]) if last_assets[0] else None,
+        })
+    payload = {
+        "generated": datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M"),
+        "providers": providers,
+        "groups": [{"id": gid, "funds": funds} for gid, funds in groups.items()],
+    }
+    data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data3.js").write_text(data_js, encoding="utf-8")
+    shutil.copyfile(SITE / "pillar3.html", DOCS / "pillar3.html")
+    shutil.copyfile(SITE / "p3.js", DOCS / "p3.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data3.js", "p3.js")}}
+    text = (DOCS / "pillar3.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "data3.js", "p3.js"):
+        text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
+    (DOCS / "pillar3.html").write_text(text, encoding="utf-8")
+    print(f"docs/data3.js: {len(data_js) / 1024:.0f} KB, III pakopos fondų: {sum(len(g) for g in groups.values())}")
 
 
 if __name__ == "__main__":

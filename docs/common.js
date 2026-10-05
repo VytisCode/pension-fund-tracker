@@ -6,7 +6,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 const I18N = {
   en: {
     siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
-    navOverview: 'Overview', navPerformance: 'Performance & peers',
+    navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', noNew: 'no new data', noData: 'Not enough data for this period.',
     chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
@@ -14,7 +14,7 @@ const I18N = {
   },
   lt: {
     siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
-    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas',
+    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
@@ -39,7 +39,7 @@ try { const t = localStorage.getItem('theme'); if (t) document.documentElement.d
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div>
-    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a></nav></div>
+    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a></nav></div>
     <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
       <div class="seg" id="theme" role="group">
@@ -54,6 +54,7 @@ function renderHeader(active, onLang) {
     tb.querySelectorAll('button').forEach(b => { b.setAttribute('aria-pressed', (b.dataset.theme === 'dark') === dark); b.title = b.dataset.theme === 'dark' ? (lang === 'lt' ? 'Tamsi tema' : 'Dark theme') : (lang === 'lt' ? 'Šviesi tema' : 'Light theme'); b.setAttribute('aria-label', b.title); });
     h.querySelector('[data-p="overview"]').textContent = T().navOverview;
     h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
+    h.querySelector('[data-p="pillar3"]').textContent = T().navPillar3;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
