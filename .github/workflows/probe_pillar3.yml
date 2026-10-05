@@ -8,6 +8,10 @@ on:
         description: "Tiekėjai (tarpais), tuščia = visi: seb swedbank artea goindex luminor"
         required: false
         default: ""
+      script:
+        description: "Skriptas tools/ aplanke"
+        required: false
+        default: "probe_pillar3.py"
 
 permissions:
   contents: write
@@ -33,7 +37,9 @@ jobs:
       - name: Probe
         env:
           PROVIDERS: ${{ inputs.providers }}
-        run: python -u tools/probe_pillar3.py $PROVIDERS
+          SCRIPT: ${{ inputs.script }}
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: xvfb-run -a python -u "tools/$(basename "$SCRIPT")" $PROVIDERS
       # Rezultatai įrašomi į atskirą šaką „probe-results“ (ne main), kad juos būtų galima perskaityti.
       - name: Save results to probe-results branch
         if: always()
