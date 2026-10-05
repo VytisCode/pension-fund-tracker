@@ -1,0 +1,44 @@
+Vilnius: 2026-10-05 16:40, laukiama diena: 2026-10-02
+  ! Artea pensija 2003-2009: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-09-21 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-21 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-21 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-21 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-21 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-21 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-17 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-18 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-21 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-17 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-18 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-21 – praleista
+ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-10-02
+ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-10-02
+GOINDEX: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-02
+
+Vilnius: 2026-10-05 16:41, laukiama diena: 2026-10-02
+SEB: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-02
+SWEDBANK: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-02
+  ! LUMINOR: skaitytuvas nesukūrė failo (kodas 1). Pabaiga:
+Failed fund 20: Cloudflare challenge page returned by curl (direct)
+Proxy payload attempt failed fund 23: Cloudflare challenge page returned by curl (direct)
+Failed fund 23: Cloudflare challenge page returned by curl (direct)
+Proxy payload attempt failed fund 21: Cloudflare challenge page returned by curl (direct)
+Failed fund 21: Cloudflare challenge page returned by curl (direct)
+Parsed 0 funds from server payload
+Cloudflare challenge detected on IDs: 15, 16, 17, 18, 19, 20, 21, 23
+No data parsed.
+LUMINOR: gauta 0 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+GOINDEX: jau atnaujinta iki 2026-10-02
+
