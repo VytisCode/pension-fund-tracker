@@ -1,14 +1,16 @@
 name: Update fund data
 
-# Darbo dienomis kas valandą nuo ~14:15 iki ~18:15 Vilniaus laiku (UTC+3 vasarą; žiemą viena valanda anksčiau),
-# be to ryte (~07:30, antradienį–šeštadienį) papildomas paleidimas praėjusios dienos spragoms užpildyti.
+# Darbo dienomis du kartus per valandą (:07 ir :37) nuo ~14:07 iki ~19:37 Vilniaus laiku vasarą
+# (žiemą, UTC+2, viena valanda anksčiau: ~13:07–18:37). Minutės ne apvalios, nes GitHub
+# per pilnas valandas dažniausiai vėlina arba praleidžia suplanuotus paleidimus.
+# Be to ryte (~07:37 vasarą, antradienį–šeštadienį) papildomas paleidimas praėjusios dienos spragoms užpildyti.
 # Kiekvienas tiekėjas tikrinamas tik jei saugykloje dar nėra laukiamos dienos duomenų,
 # todėl kai viskas jau atnaujinta, paleidimas baigiasi per kelias sekundes.
 # Ranka: Actions → "Update fund data" → Run workflow.
 on:
   schedule:
-    - cron: "15 11-15 * * 1-5"
-    - cron: "30 4 * * 2-6"
+    - cron: "7,37 11-16 * * 1-5"
+    - cron: "37 4 * * 2-6"
   workflow_dispatch:
 
 permissions:
@@ -29,7 +31,7 @@ jobs:
       LUMINOR_PROXY_USERNAME: ${{ secrets.LUMINOR_PROXY_USERNAME }}
       LUMINOR_PROXY_PASSWORD: ${{ secrets.LUMINOR_PROXY_PASSWORD }}
       LUMINOR_BROWSER_RETRIES: "6"
-      CATCHUP: ${{ github.event.schedule == '30 4 * * 2-6' && 'true' || 'false' }}
+      CATCHUP: ${{ github.event.schedule == '37 4 * * 2-6' && 'true' || 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,6 +79,15 @@ jobs:
         run: |
           if [ -z "$(git status --porcelain -- data/last_update_log.txt)" ]; then
             echo "Šį kartą duomenų nebandyta rinkti – ataskaitos nereikia."
+            exit 0
+          fi
+          # Kad nesusikauptų dešimtys vienodų pranešimų, kai tiekėjas (pvz., Luminor) ilgai neatsako:
+          # ataskaita siunčiama, kai gauta naujų duomenų, paleidus ranka, ryto paleidime arba paskutiniame dienos paleidime.
+          if git diff --quiet -- data/nav_history.csv \
+             && [ "${{ github.event_name }}" = "schedule" ] \
+             && [ "${{ github.event.schedule }}" != "37 4 * * 2-6" ] \
+             && [ "$(date -u +%-H)" -lt 16 ]; then
+            echo "Naujų duomenų nėra, o tai ne paskutinis dienos paleidimas – ataskaitos nesiunčiame."
             exit 0
           fi
           {
