@@ -10,7 +10,7 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   probe:
@@ -34,8 +34,17 @@ jobs:
         env:
           PROVIDERS: ${{ inputs.providers }}
         run: python -u tools/probe_pillar3.py $PROVIDERS
-      - uses: actions/upload-artifact@v4
+      # Rezultatai įrašomi į atskirą šaką „probe-results“ (ne main), kad juos būtų galima perskaityti.
+      - name: Save results to probe-results branch
         if: always()
-        with:
-          name: probe_out
-          path: probe_out/
+        run: |
+          mkdir -p /tmp/out && cp -r probe_out/. /tmp/out/ || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan probe-results
+          git rm -rfq . >/dev/null
+          rm -rf probe_out
+          cp -r /tmp/out/. .
+          git add -A
+          git commit -qm "probe results $(date -u +%FT%TZ)"
+          git push -f origin probe-results
