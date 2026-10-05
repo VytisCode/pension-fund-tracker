@@ -287,7 +287,7 @@ def fetch_luminor_index_history() -> list:
     rows = []
     for day, val in hist.items():
         if isinstance(val, dict):
-            val = val.get("unit_price_eur") or val.get("unit_price") or val.get("value") or val.get("price")
+            val = val.get("value_eur") or val.get("unit_price_eur") or val.get("unit_price") or val.get("value")
         if re.match(r"\d{4}-\d{2}-\d{2}$", str(day)) and u.number(val):
             rows.append(row(day, "Luminor ateitis akcijų index", u.number(val)))
     return rows
