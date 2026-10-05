@@ -57,3 +57,9 @@ No data parsed.
 LUMINOR: gauta 0 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 GOINDEX: jau atnaujinta iki 2026-10-02
 
+Vilnius: 2026-10-05 18:15, laukiama diena: 2026-10-02
+SEB: jau atnaujinta iki 2026-10-02
+SWEDBANK: jau atnaujinta iki 2026-10-02
+LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-02
+GOINDEX: jau atnaujinta iki 2026-10-02
+
