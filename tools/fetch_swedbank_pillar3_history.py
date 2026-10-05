@@ -49,10 +49,30 @@ def fetch_one(page, fund):
             break
     if link is None:
         raise RuntimeError("fund link not found")
-    with page.expect_response(lambda r: "price-provider/pub/json" in r.url, timeout=60000) as info:
-        link.click()
-    data = json.loads(info.value.text())
-    page.wait_for_timeout(1500)
+    bodies = []
+
+    def on_resp(resp):
+        if "price-provider/pub/json" in resp.url:
+            try:
+                bodies.append(resp.text())
+            except Exception:
+                pass
+
+    page.on("response", on_resp)
+    link.click()
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(5000)
+    page.remove_listener("response", on_resp)
+    data = []
+    for body in bodies:
+        try:
+            parsed = json.loads(body)
+        except Exception:
+            continue
+        if isinstance(parsed, list) and len(parsed) > len(data):
+            data = parsed
+    if not data:
+        raise RuntimeError(f"no chart data ({len(bodies)} price-provider responses)")
     rows = []
     for ts, value in data:
         day = datetime.fromtimestamp(ts / 1000, tz=VILNIUS).date().isoformat()
@@ -63,8 +83,9 @@ def fetch_one(page, fund):
 def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False, args=["--no-sandbox"])
-        page = browser.new_context(user_agent=UA, locale="lt-LT").new_page()
         for fund in FUNDS:
+            ctx = browser.new_context(user_agent=UA, locale="lt-LT")
+            page = ctx.new_page()
             try:
                 rows = fetch_one(page, fund)
                 dates = [r[0] for r in rows]
@@ -76,6 +97,7 @@ def main():
                 log(f"{fund}: {len(rows)} rows {rows[0]} .. {rows[-1]} duplicates={len(dates) - len(set(dates))}")
             except Exception as exc:
                 log(f"{fund}: ERROR {exc}")
+            ctx.close()
         browser.close()
 
 
