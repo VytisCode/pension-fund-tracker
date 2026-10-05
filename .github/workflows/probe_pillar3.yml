@@ -1,0 +1,41 @@
+name: Probe III pillar sources
+
+# Vienkartinė III pakopos fondų šaltinių patikra. Nieko neįrašo į data/ ir nekeičia svetainės.
+on:
+  workflow_dispatch:
+    inputs:
+      providers:
+        description: "Tiekėjai (tarpais), tuščia = visi: seb swedbank artea goindex luminor"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GOINDEX_API_SECRET_KEY: ${{ secrets.GOINDEX_API_SECRET_KEY }}
+      LUMINOR_PROXY_SERVER: ${{ secrets.LUMINOR_PROXY_SERVER }}
+      LUMINOR_PROXY_USERNAME: ${{ secrets.LUMINOR_PROXY_USERNAME }}
+      LUMINOR_PROXY_PASSWORD: ${{ secrets.LUMINOR_PROXY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Probe
+        env:
+          PROVIDERS: ${{ inputs.providers }}
+        run: python -u tools/probe_pillar3.py $PROVIDERS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe_out
+          path: probe_out/
