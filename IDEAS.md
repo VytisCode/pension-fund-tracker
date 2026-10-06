@@ -21,7 +21,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 
 ## Klausimas savininkui
 
-Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po mokesčių** (t. y. ką realiai gauna taupytojas), ar užtenka grąžos pagal vieneto vertę, kaip dabar? Nuo to priklauso, kaip rodysime valdymo mokesčius: atskiru stulpeliu ar jau įskaičiuotus į grąžą.
+„Ataskaitų“ puslapiui (Meet 13, 15, 17) reikės kiekvieno fondo **lyginamojo indekso (benchmark)** reikšmių. Fondai jų kasdien viešai neskelbia. Ar turite šiuos duomenis savo failuose (pvz., iš darbo), ar ieškoti fondų mėnesinėse ataskaitose ir Lietuvos banko duomenyse?
 
 ---
 
@@ -34,10 +34,38 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 
 ---
 
+## „Meet“ užduotys (2026-10-06, Issue #10)
+
+Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos eilės tvarka, didelės skaidomos į kelis PR. Kur trūksta duomenų (pvz., akcijų dalies), Claude klausia savininko.
+
+**A. „Performance & peers“ puslapis**
+1. **Heatmap lentelių eilutės pagal riziką:** viršuje turto išsaugojimo (payout), toliau 1961, 1968 … , jauniausi (2003) apačioje. – *atlikta (PR #11, 2026-10-06)*
+2. **Vienodo pločio, sulygiuoti heatmap langeliai**, elegantiškesnės lentelės. – *atlikta (PR #11, 2026-10-06)*
+3. **Pašalinti lentelę „Quartile within age group“.** – *patvirtinta*
+4. **Kvartilius visur pakeisti konkrečia vieta** (1–6) rizikos grupėje; kvartilių neliks niekur. – *patvirtinta*
+5. **Grąžos ir rizikos žemėlapis:** taškinė diagrama (horizontaliai svyravimai, vertikaliai grąža, spalva pagal gimimo grupę). – *patvirtinta*
+6. **Santykinė grąža prieš grupės vidurkį:** juostinė diagrama, nulis = grupės vidurkis. – *patvirtinta*
+7. **Reitingo kaita laike:** fondo vieta kas mėnesį ar ketvirtį. – *patvirtinta*
+8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *patvirtinta*
+9. **Mokesčių poveikis laike:** kiek valdymo mokesčiai sukaupia per 5–10 m., palyginti tarp fondų. – *patvirtinta* (dėl 5–9: įtraukti visas, nereikalingas išmesti vėliau)
+10. **Valdomo turto (AUM) kaita** kiekvienam II pakopos fondui kas ketvirtį: grafikas ir lentelė (pensijų reformos kontekstas). Pradėti nuo turimų duomenų. – *patvirtinta*
+11. **Lankstus laikotarpis linijiniuose grafikuose:** „Visa istorija“ lieka; papildomai „nuo [fondo] pradžios“ ir mygtukas „nuo jauniausio fondo pradžios“. – *patvirtinta*
+
+**B. Naujas puslapis „Ataskaitos“ (Reports)**
+12. **Puslapis su valdymo bendrovės pasirinkimu** viršuje; visos lentelės rodo tik jos duomenis. – *patvirtinta*
+13. **Lentelė nr. 1 – rodikliai per laikotarpius** kiekvienam bendrovės fondui: vid. vieneto vertės pokytis, vid. lyginamojo indekso pokytis, abiejų standartiniai nuokrypiai, fondo ir indekso metinė grąža; laikotarpiai 6 mėn., 1, 3, 5 m., nuo pradžios. – *patvirtinta*
+14. **Eksportas į Excel ir PDF.** – *patvirtinta*
+15. **Lentelė nr. 2 – fondas prieš indeksą:** fondo grąža, indekso grąža, skirtumas, bruto grąža (be valdymo mokesčio). – *patvirtinta*
+16. **Valdymo mokesčiai** kiekvienam fondui; mokestis skaičiuojamas proporcingai laikotarpiui. – *patvirtinta*
+17. **Lentelė nr. 3 – „Performance KPI“:** fondas, grąža, peer median (be tos bendrovės), gross return, SAA (indekso grąža), Active / Local Active / Local Passive Manager (pasirenkami), rank in risk class, risk class (akcijų dalis %), fondų skaičius klasėje, AUM, dalis bendrovės turte; apačioje AUM pasverta grąža ir bendras AUM. – *patvirtinta*
+18. **Atskiros „Performance KPI“ lentelės** II ir III pakopai. – *patvirtinta*
+
+---
+
 ## Pirmi 3 darbai (1 etapo užbaigimui)
 
 ### 1. Kad duomenys tikrai būtų renkami automatiškai kasdien
-- **Būsena:** daroma (2026-10-06 savininkas per GitHub svetainę paredagavo `update.yml`; laukiama pirmo automatinio paleidimo)
+- **Būsena:** daroma (tvarkaraštis veikia: pirmas automatinis paleidimas 2026-10-06 14:29 Vilniaus laiku; liko apsauga – pranešti ataskaitoje, jei per dieną nebuvo paleidimų)
 - **Autorius:** Claude
 - **Kodėl:** darbo eiga „Update fund data“ veikia, kai paleidžiama ranka, bet pagal tvarkaraštį GitHub jos dar nė karto nepaleido (2026-10-06 rytą: 0 suplanuotų paleidimų). Kol taip yra, 1 etapo 2 punktas (kasdienis automatinis rinkimas) neįvykdytas.
 - **Ką daryti:** išsiaiškinti, kodėl GitHub nevykdo tvarkaraščio, ir jį „perkrauti“. Pridėti apsaugą: jei per dieną nebuvo nė vieno paleidimo, apie tai pranešti kasdienėje ataskaitoje. Jei GitHub tvarkaraštis ir toliau neveiks, pasiūlyti nemokamą atsarginį paleidiklį.
@@ -62,7 +90,7 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 ## Kitos idėjos (vėlesniam laikui)
 
 ### Valdymo mokesčių rinkimas
-- **Būsena:** patvirtinta
+- **Būsena:** patvirtinta (sujungta su „Meet“ 16)
 - **Autorius:** Claude
 - **Kodėl:** CLAUDE.md numato rinkti ir valdymo mokesčius, bet kol kas renkamos tik vieneto vertės ir turto dydis.
 - **Nauda:** galima palyginti, kiek fondai kainuoja, ir grąžą vertinti atsižvelgiant į mokesčius.
@@ -85,7 +113,7 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 - **Kodėl:** fondų portfelių sudėties ir jos pokyčių kas ketvirtį analizė.
 
 ### Fondo vietos (rank) kitimas laike
-- **Būsena:** patvirtinta (2026-10-06)
+- **Būsena:** patvirtinta (2026-10-06; sujungta su „Meet“ 7)
 - **Autorius:** Claude (pagal savininko atsakymą)
 - **Kodėl:** jūs dažniausiai stebite fondo vietą konkurencijos lentelėje. Dabar matoma tik dabartinė vieta.
 - **Nauda:** grafikas, kaip kiekvieno fondo vieta savo grupėje (pvz., pagal 1 m. grąžą) keitėsi kas mėnesį. Taip matyti, ar fondas pastoviai geras, ar tik neseniai pakilo.
@@ -103,7 +131,7 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 - **Nauda:** punktyrinė linija ten, kur trūksta duomenų, kad lankytojas neapsigautų.
 
 ### Grąžos ir rizikos taškinė diagrama peer grupėje
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (sujungta su „Meet“ 5)
 - **Autorius:** Claude
 - **Kodėl:** lentelėse jau yra grąža, svyravimai ir Sharpe rodiklis, bet juos sunku aprėpti vienu žvilgsniu.
 - **Nauda:** vienas grafikas: horizontaliai rizika (svyravimai), vertikaliai grąža, kiekvienas taškas yra grupės fondas. Iškart matyti, kuris fondas uždirba daugiau už tą pačią riziką.
@@ -119,3 +147,15 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 - **Autorius:** Claude
 - **Kodėl:** jaunesnių gimimo grupių fondai daugiausia investuoja į pasaulio akcijas. Lyginant tik tarpusavyje, nematyti, ar visi kartu neatsilieka nuo rinkos.
 - **Nauda:** grafike papildoma pilka linija, pvz. nemokamai skelbiamas pasaulio akcijų indekso ETF eurais. Matyti, kiek valdytojų rezultatas skiriasi nuo pigaus indekso.
+
+### Užfiksuotas pirmas stulpelis plačiose lentelėse telefone
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** telefone plačios lentelės slenkamos į šoną, ir kairysis stulpelis (gimimo grupė ar fondas) dingsta iš akių.
+- **Nauda:** slenkant lentelę, grupės pavadinimas lieka matomas, todėl skaičių nebereikia „gaudyti“.
+
+### Heatmap langelio paaiškinimas užvedus pelę
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** langelyje matyti tik grąža, bet ne datos ir vieneto vertės, iš kurių ji paskaičiuota.
+- **Nauda:** užvedus pelę ar paspaudus telefone matyti fondo pavadinimas, pradžios ir pabaigos datos bei vieneto vertės. Lengviau patikrinti skaičių ir paaiškinti draugams.

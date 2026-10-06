@@ -84,6 +84,10 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
 .scroll { overflow-x: auto; }
+.mx { table-layout: fixed; min-width: 520px; }                  /* vienodo pločio langeliai */
+.mx th:first-child, .mx td:first-child { width: 92px; }
+.mx th { overflow: hidden; text-overflow: ellipsis; }
+.mx .sw-top { display: block; width: 18px; height: 4px; border-radius: 2px; margin: 0 auto 4px; }
 .mx th, .mx td { text-align: center; }
 .mx th:first-child, .mx td:first-child { text-align: left; }
 .mx td { padding: 6px 4px; border-bottom: 1px solid var(--card); border-right: 1px solid var(--card); font-weight: 500; }

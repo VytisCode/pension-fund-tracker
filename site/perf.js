@@ -347,8 +347,9 @@ function renderMarket() {
   $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank'); $('hQ').innerHTML = T().hQ + ik('quartile');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
   const provs = marketProvs();
-  const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
-  const rows = DATA.groups.map(g => {
+  const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
+  // eilutės pagal riziką: viršuje turto išsaugojimo, toliau vyresni, jauniausi (2003–2009) apačioje
+  const rows = DATA.groups.slice().reverse().map(g => {
     const rng = rangeFor(g), vals = {};
     provs.forEach(p => { vals[p.id] = retOf(g, p.id, rng); });
     const { map, n } = rankOf(provs.map(p => ({ key: p.id, v: vals[p.id] })));
