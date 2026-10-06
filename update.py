@@ -46,7 +46,7 @@ BROWSER_SCRIPTS = {
     "GOINDEX": "goindex_pensions.py",  # pats pirma bando API, jei neina – naršyklė
 }
 LIGHT_PROVIDERS = ["ARTEA", "ALLIANZ", "GOINDEX"]
-GOINDEX_API = "https://dapi.goindex.lt/v1/funds/summary/tab"
+from fund_links import GOINDEX_API  # noqa: E402
 GOINDEX_CODES = {
     "GOX-03/09": "Goindex pensija 2003-2009",
     "GOX-61/67": "Goindex pensija 1961-1967",

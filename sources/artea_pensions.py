@@ -18,12 +18,13 @@ from playwright.sync_api import sync_playwright
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from base_scraper import BaseScraper
+import fund_links
 
 
 class ArteaPensionsScraper(BaseScraper):
     """Scrapes Artea II pillar pension funds from the expandable selector."""
 
-    URL = "https://www.artea.lt/lt/privatiems/pensija/ii-pakopos-pensija/artea-pensija-1996-2002-index-plus"
+    URL = fund_links.ARTEA_PAGE
     USER_AGENT = (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -35,7 +36,7 @@ class ArteaPensionsScraper(BaseScraper):
         ".custom-select-opener",
         "[role='combobox']",
     ]
-    API_HISTORY_URL = "https://api.sb.lt/funds-api/Prices/History"
+    API_HISTORY_URL = fund_links.ARTEA_HISTORY_API
     FUND_CODE_MAP = {
         "INV-03/09": "Artea pensija 2003-2009",
         "INV-61/67": "Artea pensija 1961-1967",

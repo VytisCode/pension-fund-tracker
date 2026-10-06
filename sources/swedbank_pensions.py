@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from base_scraper import BaseScraper
+import fund_links
 import pandas as pd
 
 
@@ -20,7 +21,7 @@ class SwedBankPerformanceScraper(BaseScraper):
         super().__init__("swedbank_pensions")
     
     def get_url(self) -> str:
-        return "https://www.swedbank.lt/private/pensions/pillar2/allFunds?language=LIT"
+        return fund_links.SWEDBANK_II
 
     def normalize_date_text(self, value: str) -> str:
         raw = " ".join(str(value).split())

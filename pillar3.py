@@ -22,6 +22,7 @@ import urllib.request
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+import fund_links
 import store
 import update as u
 
@@ -142,7 +143,7 @@ def fetch_artea() -> list:
     """Visa istorija iš api.sb.lt (nuo fondo įsteigimo) – pirmas paleidimas užpildo viską."""
     rows = []
     for _, fund, _, code, _ in [f for f in FUNDS if f[0] == "ARTEA"]:
-        for rec in http_json("https://api.sb.lt/funds-api/Prices/History?" + urllib.parse.urlencode({"fundCode": code})):
+        for rec in http_json(fund_links.ARTEA_HISTORY_API + "?" + urllib.parse.urlencode({"fundCode": code})):
             if rec.get("d") and rec.get("p"):
                 assets = u.number(rec.get("n"))
                 rows.append(row(u.iso_date(rec["d"]), fund, u.number(rec["p"]), assets if assets and assets > 1000 else None))
@@ -181,7 +182,7 @@ def table_rows(page) -> list:
 def fetch_seb() -> list:
     pw, browser, page = browser_page()
     try:
-        page.goto("https://e.seb.lt/web/ipank.p?sesskey=&act=VPFOND&filterCode=P&lang=lit&frnam=X&unetmenuhigh=",
+        page.goto(fund_links.SEB_II,
                   wait_until="domcontentloaded", timeout=90000)
         page.wait_for_timeout(3000)
         years = re.findall(r"(\d{4})-\d{2}-\d{2}", page.inner_text("body"))
@@ -208,7 +209,7 @@ def fetch_seb() -> list:
 def fetch_swedbank() -> list:
     pw, browser, page = browser_page()
     try:
-        page.goto("https://www.swedbank.lt/private/pensions/pillar3/allFunds?language=LIT",
+        page.goto(fund_links.SWEDBANK_III,
                   wait_until="networkidle", timeout=90000)
         page.wait_for_timeout(2000)
         rows = []

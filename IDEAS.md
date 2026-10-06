@@ -68,7 +68,7 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 - **Nauda:** galima palyginti, kiek fondai kainuoja, ir grąžą vertinti atsižvelgiant į mokesčius.
 
 ### Visos fondų nuorodos viename konfigūracijos faile
-- **Būsena:** patvirtinta
+- **Būsena:** atlikta (2026-10-06, failas `fund_links.py`)
 - **Autorius:** Claude
 - **Kodėl:** fondų puslapių nuorodos dabar išbarstytos po kelis failus (`sources/*.py`, `update.py`, `pillar3.py`). CLAUDE.md prašo jas laikyti vienoje vietoje.
 - **Nauda:** pasikeitus fondo svetainei, nuorodą reikės pataisyti tik vienoje vietoje.
@@ -89,6 +89,18 @@ Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po moke
 - **Autorius:** Claude (pagal savininko atsakymą)
 - **Kodėl:** jūs dažniausiai stebite fondo vietą konkurencijos lentelėje. Dabar matoma tik dabartinė vieta.
 - **Nauda:** grafikas, kaip kiekvieno fondo vieta savo grupėje (pvz., pagal 1 m. grąžą) keitėsi kas mėnesį. Taip matyti, ar fondas pastoviai geras, ar tik neseniai pakilo.
+
+### Šviežumo ženklas ir el. laiške
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** svetainėje jau matyti, kurie valdytojai atsilieka, bet vakarinis laiškas to nemini taip aiškiai.
+- **Nauda:** laiške viena eilutė „atsilieka: Luminor (2 d. d.)“ – nereikia atidaryti svetainės.
+
+### Duomenų spragų ženklas grafike
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** savininkas rankiniu būdu pildys istorines spragas; kol jų nėra, grafikas tyliai jungia taškus tiesia linija.
+- **Nauda:** punktyrinė linija ten, kur trūksta duomenų, kad lankytojas neapsigautų.
 
 ### Grąžos ir rizikos taškinė diagrama peer grupėje
 - **Būsena:** nauja

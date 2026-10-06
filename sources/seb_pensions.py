@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from base_scraper import BaseScraper
+import fund_links
 
 # Only II pillar funds; skip III pillar
 EXCLUDED_PREFIXES = ("SEB index.", "SEB pensija 18+", "SEB pensija 50+", "SEB pensija 58+")
@@ -24,7 +25,7 @@ II_PILLAR_FUNDS = {
 class SEBPensionsScraper(BaseScraper):
     """Scrapes SEB II pillar pension fund table."""
 
-    URL = "https://e.seb.lt/web/ipank.p?sesskey=&act=VPFOND&filterCode=P&lang=lit&frnam=X&unetmenuhigh="
+    URL = fund_links.SEB_II
 
     def __init__(self):
         super().__init__("seb_pensions")
@@ -120,7 +121,7 @@ class SEBPensionsScraper(BaseScraper):
             })
 
         # Pass 2: visit each detail page to get net assets
-        base_url = "https://e.seb.lt/web/ipank.p"
+        base_url = fund_links.SEB_BASE
         for idx, fund in enumerate(fund_data, start=1):
             print(f"  [{idx}/{len(fund_data)}] Getting net assets for {fund['Fund name']}...")
             net_assets = None
