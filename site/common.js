@@ -8,7 +8,9 @@ const I18N = {
     siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
-    dataUntil: 'Data until', updated: 'updated', noNew: 'no new data', noData: 'Not enough data for this period.',
+    dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
+    freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
+    freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
     chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
     periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
   },
@@ -16,7 +18,9 @@ const I18N = {
     siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
-    dataUntil: 'Duomenys iki', updated: 'atnaujinta', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
+    dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
+    freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
+    freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
     periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 m.', '3y': '3 m.', '5y': '5 m.', max: 'Visa istorija', custom: 'Pasirinktas' },
   },
@@ -38,7 +42,7 @@ try { const t = localStorage.getItem('theme'); if (t) document.documentElement.d
 /* Antraštė su navigacija, kalbos ir temos jungikliais. onLang – iš naujo nupiešia puslapį. */
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
-  h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div>
+  h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div><div class="fresh" id="fresh"></div>
     <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a></nav></div>
     <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
@@ -58,6 +62,7 @@ function renderHeader(active, onLang) {
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+    if (active !== 'pillar3') document.getElementById('fresh').innerHTML = freshnessHTML();
   };
   h.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
     lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {}
@@ -71,6 +76,24 @@ function renderHeader(active, onLang) {
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
   apply();
   return apply;
+}
+
+/* Duomenų šviežumas: kiekvieno tiekėjo seniausia iš paskutinių fondų verčių dienų (uždaryti fondai,
+   neatnaujinti > 30 d., neskaičiuojami). Atsiliekantys nuo naujausios dienos paryškinami. */
+function businessDaysBetween(a, b) {      // darbo dienos intervale (a, b]
+  let n = 0; for (let d = a + 1; d <= b; d++) { const w = new Date(d * DAY).getUTCDay(); if (w !== 0 && w !== 6) n++; }
+  return n;
+}
+function freshnessHTML() {
+  const lasts = DATA.groups.flatMap(g => g.funds.map(f => ({ p: f.provider, d: f.d[f.d.length - 1] })));
+  const top = Math.max(...lasts.map(x => x.d));
+  return `<span class="fr-l">${T().freshLbl}</span>` + DATA.providers.map(p => {
+    const ds = lasts.filter(x => x.p === p.id && x.d >= top - 30).map(x => x.d);
+    if (!ds.length) return '';
+    const d = Math.min(...ds), lag = businessDaysBetween(d, top);
+    const tip = lag ? T().freshLate(lag) : T().freshOk;
+    return `<span class="fr${lag ? ' late' : ''}" title="${tip}"><i style="background:${colorOf(p.id)}"></i>${p.label} ${iso(d).slice(5)}${lag ? ' ⚠' : ''}</span>`;
+  }).join('');
 }
 
 /* ---------- laiko eilučių pagalbinės ---------- */
