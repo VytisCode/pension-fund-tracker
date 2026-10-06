@@ -13,6 +13,8 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-06.** Klaidina, kai vėliau atsiradęs fondas linijiniame grafike rodomas nuo dirbtinio pradžios taško (kitų fondų vidurkio). Geriau ilgame laikotarpyje tokio fondo visai nerodyti.
 - **2026-10-06.** Visi Claude pasiūlymai (žemiau) patvirtinti.
 - **2026-10-06.** Projektas tik prasideda – dirbti intensyviau: du vystymo ciklai kiekvieną darbo dieną.
+- **2026-10-06.** Claude gali **pats sujungti (merge)** PR, kurie įgyvendina patvirtintas idėjas ar smulkius patobulinimus, jei patikra praėjo. Savininkas apie juos sužino iš vakarinio laiško. Išimtys (sujungia savininkas): PR, keičiantys `.github/workflows/update.yml`, naujos didelės funkcijos ir viskas, kas nepatvirtinta.
+- **2026-10-06.** Savininkas planuoja balso pokalbius („meet“) apie dashboard. Jų išvados įrašomos į GitHub „Issue“ pavadinimu „Meet: <data>“; Claude ciklas jas perkelia į šį sąrašą kaip patvirtintas idėjas.
 
 ---
 
@@ -81,7 +83,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **Kodėl:** fondų portfelių sudėties ir jos pokyčių kas ketvirtį analizė.
 
 ### Fondo vietos (rank) kitimas laike
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06)
 - **Autorius:** Claude (pagal savininko atsakymą)
 - **Kodėl:** jūs dažniausiai stebite fondo vietą konkurencijos lentelėje. Dabar matoma tik dabartinė vieta.
 - **Nauda:** grafikas, kaip kiekvieno fondo vieta savo grupėje (pvz., pagal 1 m. grąžą) keitėsi kas mėnesį. Taip matyti, ar fondas pastoviai geras, ar tik neseniai pakilo.
