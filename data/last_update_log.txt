@@ -47,9 +47,9 @@ SEB: jau atnaujinta iki 2026-10-02
 SWEDBANK: jau atnaujinta iki 2026-10-02
   ! LUMINOR: skaitytuvas nesukūrė failo (kodas 1). Pabaiga:
 Failed fund 20: Cloudflare challenge page returned by curl (direct)
-Proxy payload attempt failed fund 23: curl: (7) Failed to connect to 46.203.240.155 port 1080 after 160 ms: Couldn't connect to server
+Proxy payload attempt failed fund 23: curl: (7) Failed to connect to *** port 1080 after 160 ms: Couldn't connect to server
 Failed fund 23: Cloudflare challenge page returned by curl (direct)
-Proxy payload attempt failed fund 21: curl: (7) Failed to connect to 46.203.240.155 port 1080 after 159 ms: Couldn't connect to server
+Proxy payload attempt failed fund 21: curl: (7) Failed to connect to *** port 1080 after 159 ms: Couldn't connect to server
 Failed fund 21: Cloudflare challenge page returned by curl (direct)
 Parsed 0 funds from server payload
 Cloudflare challenge detected on IDs: 15, 16, 17, 18, 19, 20, 21, 23

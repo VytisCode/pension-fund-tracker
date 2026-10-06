@@ -343,6 +343,19 @@ def run_browser_script(provider: str, log: list) -> list:
 LOG_FILE = ROOT / "data" / "last_update_log.txt"
 
 
+IP_ADDRESS = re.compile(r"\b\d{1,3}(?:\.\d{1,3}){3}(?::\d+)?\b")
+
+
+def mask_private(text: str) -> str:
+    """Žurnalas ir suvestinė vieši, todėl paslepiame proxy adresą ir prisijungimo duomenis."""
+    for name in ("LUMINOR_PROXY_SERVER", "LUMINOR_PROXY_USERNAME", "LUMINOR_PROXY_PASSWORD"):
+        value = os.getenv(name, "").strip().strip("'\"")
+        for part in {value, *value.split(":")} if value else ():
+            if len(part) >= 4:
+                text = text.replace(part, "***")
+    return IP_ADDRESS.sub("***", text)
+
+
 def write_log(lines: list) -> None:
     """Palieka paskutinių bandymų žurnalą saugykloje (kad rezultatą matytų ir Claude)."""
     try:
@@ -350,11 +363,11 @@ def write_log(lines: list) -> None:
     except OSError:
         old = ""
     LOG_FILE.parent.mkdir(exist_ok=True)
-    LOG_FILE.write_text(old + "\n".join(lines) + "\n\n", encoding="utf-8")
+    LOG_FILE.write_text(mask_private(old + "\n".join(lines) + "\n\n"), encoding="utf-8")
 
 
 def summary(lines: list, attempted: bool = False) -> None:
-    text = "\n".join(lines)
+    text = mask_private("\n".join(lines))
     print(text)
     if attempted:
         write_log(lines)
