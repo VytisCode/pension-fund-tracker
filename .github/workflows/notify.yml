@@ -1,0 +1,40 @@
+name: Cycle report
+
+# Laiškas savininkui po kiekvieno Claude vystymo ciklo (ką padarė ir kas toliau).
+# Paleidžia Claude ciklo pabaigoje; galima paleisti ir ranka: Actions → "Cycle report" → Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: "Laiško tema"
+        required: true
+        type: string
+      body:
+        description: "Laiško tekstas"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Send e-mail
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          SUBJECT: ${{ inputs.subject }}
+          BODY: ${{ inputs.body }}
+        run: python notify.py
