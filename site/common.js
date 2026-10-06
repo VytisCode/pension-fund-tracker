@@ -158,7 +158,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
     labels.forEach(l => {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
-      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + (l.r.aligned ? '*' : '') + ' ';
+      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + ' ';
       const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); tv.textContent = pct(l.r.points[l.r.points.length - 1][1], 1).replace(' %', '%');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
@@ -179,7 +179,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
     if (!vals.length) return;
     cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
-    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''}</span><span>${pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
     tip.style.display = 'block'; place(ev);
   };
   hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
@@ -252,16 +252,11 @@ function calOptions(latest, earliest) {          // tik pilni ketvirčiai / meta
   }
   return { q: qs, y: ys };
 }
-/* Eilutės grafikui: kiekvienam fondui nuo x0; vėliau pradėję fondai prasideda pirmą savo dieną ties kitų fondų vidutiniu lygiu (žymima *),
-   kad būtų matomas jų kitimas, o ankstesnių fondų istorija nebūtų trumpinama. */
+/* Eilutės grafikui: kiekvienam fondui nuo x0. Fondai, kurie pradėjo vėliau nei x0, grafike nerodomi
+   (netikros pradžios vertės nekuriame) – jų sąrašas grąžinamas series.hidden, kad būtų galima paminėti po grafiku. */
 function buildSeries(fs, x0, x1) {
   const series = fs.map(f => { const s = seriesOf(f, x0, x1); return s && s.points.length > 1 ? { provider: f.provider, points: s.points } : null; }).filter(Boolean);
-  fs.filter(f => f.d[0] > x0 && f.d[0] < x1).forEach(f => {
-    const d0 = f.d[0], lv = series.filter(r => !r.aligned).map(r => { let v = null; for (let i = r.points.length - 1; i >= 0; i--) if (r.points[i][0] <= d0) { v = r.points[i][1]; break; } return v; }).filter(v => v !== null);
-    const s = seriesOf(f, d0, x1); if (!lv.length || !s || s.points.length < 2) return;
-    const L = lv.reduce((a, b) => a + b, 0) / lv.length;
-    series.push({ provider: f.provider, aligned: true, points: s.points.map(([d, r]) => [d, ((1 + L / 100) * (1 + r / 100) - 1) * 100]) });
-  });
+  series.hidden = fs.filter(f => f.d[0] > x0 && f.d[0] < x1).map(f => ({ provider: f.provider, start: f.d[0] }));
   return series;
 }
 /* Grafikas „susispaudžia“ užvedus pelę, kad dešinėje tilptų fondų pavadinimai su galutinėmis reikšmėmis.
@@ -281,8 +276,8 @@ function hoverCompress(el, paint) {
 }
 addStrings({
   qPlace: 'Quarter', yPlace: 'Year',
-  notShown: l => `* Started later: ${l} – the line begins at the average level of the other funds on its first day, so only its subsequent movement is comparable; its own return over the full range is not shown.`,
+  notShown: l => `Not shown on the chart (started later than the period start): ${l}. Pick a shorter period to see them.`,
 }, {
   qPlace: 'Ketvirtis', yPlace: 'Metai',
-  notShown: l => `* Pradėjo vėliau: ${l} – linija prasideda ties kitų fondų vidutiniu lygiu pirmą jo dieną, todėl palyginamas tik tolesnis kitimas; savo grąža per visą intervalą nerodoma.`,
+  notShown: l => `Grafike nerodoma (pradėjo vėliau nei laikotarpio pradžia): ${l}. Pasirinkite trumpesnį laikotarpį, kad juos matytumėte.`,
 });

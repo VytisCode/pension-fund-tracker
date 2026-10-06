@@ -48,7 +48,7 @@ const cards = [];
 function paintCard(c, mr) {
   c.ctl = drawLineChart(c.chart, c.data.series, c.data.anchor, c.data.end, { mr, height: Math.max(260, Math.min(420, Math.round((c.chart.clientWidth || 600) * 0.42))), unit: ' %', axisUnit: '%' });
   const narrow = (c.chart.clientWidth || 0) <= 560;
-  c.fin.innerHTML = narrow ? c.data.series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
+  c.fin.innerHTML = narrow ? c.data.series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
 }
 function render() {
   const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
@@ -56,7 +56,7 @@ function render() {
   DATA.groups.forEach(g => {
     const data = compute(g); latest = Math.max(latest, data.end);
     const card = document.createElement('section'); card.className = 'card';
-    const late = data.series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
+    const late = data.series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
     card.innerHTML = `<h2>${groupLabel(g)}</h2><div class="meta">${periodLabel(period)}: ${iso(data.anchor)} → ${iso(data.end)}${late.length ? ' ' + T().notShown(late.join(', ')) : ''}</div>
       <div class="body"><table><thead><tr><th>${T().thProvider}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div><div class="chart"></div><div class="finals"></div></div></div>`;
     const tb = card.querySelector('tbody');
