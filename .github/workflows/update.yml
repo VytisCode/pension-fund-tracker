@@ -21,6 +21,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: write
 
 concurrency:
   group: update-fund-data
@@ -29,7 +30,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       GOINDEX_API_SECRET_KEY: ${{ secrets.GOINDEX_API_SECRET_KEY }}
       LUMINOR_PROXY_SERVER: ${{ secrets.LUMINOR_PROXY_SERVER }}
@@ -131,3 +132,23 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+
+      # GitHub tvarkaraštis dažnai praleidžia paleidimus, todėl kiekvienas paleidimas, jei dar trūksta
+      # duomenų ir dar ne vėlu (13:00–19:30 Vilniaus laiku), po 30 min. pats paleidžia kitą bandymą.
+      # Taip pakanka, kad per dieną suveiktų bent vienas paleidimas (tvarkaraščio, ranka ar Claude ciklo).
+      - name: Schedule next attempt (if data still missing)
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOW=$(TZ=Europe/Vilnius date +%H%M)
+          if [ "$NOW" -lt 1300 ] || [ "$NOW" -ge 1930 ]; then
+            echo "Ne rinkimo laikas ($NOW) – kito bandymo neplanuojame."; exit 0
+          fi
+          if ! python update.py status 2>/dev/null | grep -q "trūksta"; then
+            echo "Visi II pakopos duomenys surinkti – kito bandymo nereikia."; exit 0
+          fi
+          echo "Dar trūksta duomenų – kitas bandymas po 30 min."
+          sleep 1800
+          gh workflow run update.yml --ref main
