@@ -6,7 +6,7 @@ name: Update fund data
 # Be to ryte (~07:37 vasarą, antradienį–šeštadienį) papildomas paleidimas praėjusios dienos spragoms užpildyti.
 # Kiekvienas tiekėjas tikrinamas tik jei saugykloje dar nėra laukiamos dienos duomenų,
 # todėl kai viskas jau atnaujinta, paleidimas baigiasi per kelias sekundes.
-# Ranka: Actions → "Update fund data" → Run workflow ok.
+# Ranka: Actions → "Update fund data" → Run workflow ok2
 on:
   schedule:
     - cron: "7,37 11-16 * * 1-5"
