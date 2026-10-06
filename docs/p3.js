@@ -96,7 +96,7 @@ function renderCards() {
     if (!g.funds.length) return;
     const data = compute(g);
     const card = document.createElement('section'); card.className = 'card';
-    const late = data.series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
+    const late = data.series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
     card.innerHTML = `<h2>${T().cat[g.id]}</h2><div class="meta">${periodLabel(period)}: ${iso(data.anchor)} → ${iso(data.end)}${late.length ? ' ' + T().notShown(late.join(', ')) : ''}</div>
       <div class="body"><table><thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div><div class="chart"></div></div></div>`;
     const tb = card.querySelector('tbody');

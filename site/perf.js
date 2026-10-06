@@ -26,7 +26,7 @@ addStrings({
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
   nAdv: 'Computed for the selected period (best / worst calendar year: whole history, full years only). Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; on periods shorter than a year the annualised figures are unreliable. Months = full calendar months inside the period.',
-  notShown: l => `* Started later: ${l} – the line begins at the average level of the other funds on its first day, so only its subsequent movement is comparable; its own return over the full range is not shown.`,
+  notShown: l => `Not shown on the chart (started later than the period start): ${l}. Pick a shorter period to see them.`,
   capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'start differs by group', endByGroup: 'end differs by group',
   capOv: (h, d) => `${h}; every period ends on its group’s latest date (up to ${d})`,
   capMetrics: (a, e) => `Period columns: ${a} → ${e}. “Since inception” columns: each fund’s first date → ${e}.`,
@@ -87,7 +87,7 @@ addStrings({
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
   nAdv: 'Skaičiuojama pasirinktam laikotarpiui (geriausi / blogiausi kalendoriniai metai – visa istorija, tik pilni metai). Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi. Mėnesiai = pilni kalendoriniai mėnesiai laikotarpio viduje.',
-  notShown: l => `* Pradėjo vėliau: ${l} – linija prasideda ties kitų fondų vidutiniu lygiu pirmą jo dieną, todėl palyginamas tik tolesnis kitimas; savo grąža per visą intervalą nerodoma.`,
+  notShown: l => `Grafike nerodoma (pradėjo vėliau nei laikotarpio pradžia): ${l}. Pasirinkite trumpesnį laikotarpį, kad juos matytumėte.`,
   capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'pradžia skiriasi pagal grupę', endByGroup: 'pabaiga skiriasi pagal grupę',
   capOv: (h, d) => `${h}; kiekvienas laikotarpis baigiasi savo grupės paskutine diena (iki ${d})`,
   capMetrics: (a, e) => `Laikotarpio stulpeliai: ${a} → ${e}. Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → ${e}.`,
@@ -432,7 +432,7 @@ function drawChart() {
   }
   const evs = P.events ? sortedEv.filter(e => e.day >= x0 && e.day <= x1) : [];
   $('mChart').textContent = (P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`)) + (P.view === 'diff' ? ' ' + T().mDiff(chartRef) : '');
-  const late = series.filter(r => r.aligned).map(r => `${labelOf(r.provider)} (${iso(r.points[0][0])})`);
+  const late = series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
   if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
   const diff = P.view === 'diff', unit = ' %', W = $('chart').clientWidth || 600;
@@ -441,7 +441,7 @@ function drawChart() {
   chartState = { ctl: null, series, x0, x1, evs, opt };
   paintChart();
   const fin = $('finals'); const narrow = W <= 560;                    // siaurame ekrane galutinės reikšmės – po grafiku
-  fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)}${o.r.aligned ? '*' : ''} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
+  fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
 }
 function renderCoverage(gs, ALL) {
