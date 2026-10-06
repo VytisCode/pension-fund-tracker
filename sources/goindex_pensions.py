@@ -18,6 +18,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from base_scraper import BaseScraper
+import fund_links
 def send_notification_email(subject, body):
     """E-mail alerts are not used in this project; print instead."""
     print(f"[ALERT] {subject}\n{body}")
@@ -26,8 +27,8 @@ def send_notification_email(subject, body):
 class GoindexPensionsScraper(BaseScraper):
     """Scrapes Goindex II pillar pension fund table."""
 
-    URL = "https://www.goindex.lt/2-pakopa/fondu-rezultatai-ir-dokumentai/"
-    API_SUMMARY_URL = "https://dapi.goindex.lt/v1/funds/summary/tab"
+    URL = fund_links.GOINDEX_PAGE
+    API_SUMMARY_URL = fund_links.GOINDEX_API
     DEFAULT_SECRET_KEY = ""  # set GOINDEX_API_SECRET_KEY as an environment variable / GitHub secret
     FUND_CODE_MAP = {
         "GOX-03/09": "Goindex pensija 2003-2009",

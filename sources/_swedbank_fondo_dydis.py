@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from base_scraper import BaseScraper
+import fund_links
 
 
 class SwedBankFundSizesScraper(BaseScraper):
@@ -18,7 +19,7 @@ class SwedBankFundSizesScraper(BaseScraper):
         super().__init__("swedbank_fondo_dydis")
     
     def get_url(self) -> str:
-        return "https://www.swedbank.lt/private/pensions/pillar2/allFunds?language=LIT"
+        return fund_links.SWEDBANK_II
     
     def dismiss_cookie_modal(self, page):
         """Aggressively dismiss all cookie modal buttons."""

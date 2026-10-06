@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from base_scraper import BaseScraper
+import fund_links
 
 # Exclude the liquidated Allianz B fund (zero assets)
 EXCLUDED_FUNDS = {
@@ -20,7 +21,7 @@ EXCLUDED_FUNDS = {
 class AllianzPensionsScraper(BaseScraper):
     """Scrapes Allianz gyvenimo ciklo pension fund table."""
 
-    URL = "https://investavimorezultatai.allianz.lt/?tipas=gyvenimo-ciklo-pensiju-fondai"
+    URL = fund_links.ALLIANZ_PAGE
 
     def __init__(self):
         super().__init__("allianz_pensions")

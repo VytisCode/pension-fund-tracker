@@ -33,14 +33,7 @@ EXCLUDED_FUNDS = {
 }
 
 LUMINOR_II_FUND_IDS = ["15", "16", "17", "18", "19", "20", "23", "21"]
-LUMINOR_BASE_URLS = [
-    "https://luminor.lt/lt/rinkis-fonda",
-    "https://www.luminor.lt/lt/rinkis-fonda",
-]
-LUMINOR_TABLE_URLS = [
-    "https://luminor.lt/lt/pensiju-fondai",
-    "https://www.luminor.lt/lt/pensiju-fondai",
-]
+from fund_links import LUMINOR_BASE_URLS, LUMINOR_TABLE_URLS  # noqa: E402
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
 DEFAULT_CLOUDFLARE_WAIT_MS = 45000
