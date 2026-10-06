@@ -14,12 +14,14 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-06.** Visi Claude pasiūlymai (žemiau) patvirtinti.
 - **2026-10-06.** Projektas tik prasideda – dirbti intensyviau: du vystymo ciklai kiekvieną darbo dieną.
 - **2026-10-06.** Claude gali **pats sujungti (merge)** PR, kurie įgyvendina patvirtintas idėjas ar smulkius patobulinimus, jei patikra praėjo. Savininkas apie juos sužino iš vakarinio laiško. Išimtys (sujungia savininkas): PR, keičiantys `.github/workflows/update.yml`, naujos didelės funkcijos ir viskas, kas nepatvirtinta.
+- **2026-10-06.** Po kiekvieno Claude vystymo ciklo – trumpas laiškas savininkui (darbo eiga `notify.yml`): ką padaryta ir kokia kita užduotis.
 - **2026-10-06.** Savininkas planuoja balso pokalbius („meet“) apie dashboard. Jų išvados įrašomos į GitHub „Issue“ pavadinimu „Meet: <data>“; Claude ciklas jas perkelia į šį sąrašą kaip patvirtintas idėjas.
 
 ---
 
 ## Klausimas savininkui
 
+Kai lyginate fondus darbe ar rodote draugams, ar jums svarbiau **grąža po mokesčių** (t. y. ką realiai gauna taupytojas), ar užtenka grąžos pagal vieneto vertę, kaip dabar? Nuo to priklauso, kaip rodysime valdymo mokesčius: atskiru stulpeliu ar jau įskaičiuotus į grąžą.
 
 ---
 
@@ -72,7 +74,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **Nauda:** pasikeitus fondo svetainei, nuorodą reikės pataisyti tik vienoje vietoje.
 
 ### Duomenų šviežumo ženklas svetainėje
-- **Būsena:** patvirtinta
+- **Būsena:** atlikta (PR #8, 2026-10-06)
 - **Autorius:** Claude
 - **Kodėl:** fondai vertes skelbia skirtingu laiku, o kartais rinkimas nepavyksta (pvz., Luminor).
 - **Nauda:** prie kiekvieno valdytojo matytųsi paskutinė vertės data. Jei duomenys pasenę, ji būtų paryškinta, kad lankytojas nesuklystų lygindamas.
@@ -87,3 +89,21 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **Autorius:** Claude (pagal savininko atsakymą)
 - **Kodėl:** jūs dažniausiai stebite fondo vietą konkurencijos lentelėje. Dabar matoma tik dabartinė vieta.
 - **Nauda:** grafikas, kaip kiekvieno fondo vieta savo grupėje (pvz., pagal 1 m. grąžą) keitėsi kas mėnesį. Taip matyti, ar fondas pastoviai geras, ar tik neseniai pakilo.
+
+### Grąžos ir rizikos taškinė diagrama peer grupėje
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** lentelėse jau yra grąža, svyravimai ir Sharpe rodiklis, bet juos sunku aprėpti vienu žvilgsniu.
+- **Nauda:** vienas grafikas: horizontaliai rizika (svyravimai), vertikaliai grąža, kiekvienas taškas yra grupės fondas. Iškart matyti, kuris fondas uždirba daugiau už tą pačią riziką.
+
+### „Mano fondas“: savo fondo paryškinimas visur
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** dažniausiai žmogus seka vieną savo fondą ir jo vietą tarp kitų.
+- **Nauda:** pasirinkus savo fondą, jis paryškinamas visose lentelėse ir grafikuose, o pasirinkimas įsimenamas naršyklėje. Patogu ir draugams: kiekvienas mato savo fondą.
+
+### Palyginimas su pasaulio akcijų indeksu
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** jaunesnių gimimo grupių fondai daugiausia investuoja į pasaulio akcijas. Lyginant tik tarpusavyje, nematyti, ar visi kartu neatsilieka nuo rinkos.
+- **Nauda:** grafike papildoma pilka linija, pvz. nemokamai skelbiamas pasaulio akcijų indekso ETF eurais. Matyti, kiek valdytojų rezultatas skiriasi nuo pigaus indekso.
