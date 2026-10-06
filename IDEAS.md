@@ -12,13 +12,19 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-06.** Dažniausiai lyginami skirtingų laikotarpių grąžos ir stebima fondo vieta (rank) konkurencijos lentelėje.
 - **2026-10-06.** Klaidina, kai vėliau atsiradęs fondas linijiniame grafike rodomas nuo dirbtinio pradžios taško (kitų fondų vidurkio). Geriau ilgame laikotarpyje tokio fondo visai nerodyti.
 - **2026-10-06.** Visi Claude pasiūlymai (žemiau) patvirtinti.
+- **2026-10-06.** Projektas tik prasideda – dirbti intensyviau: du vystymo ciklai kiekvieną darbo dieną.
+
+---
+
+## Klausimas savininkui
+
 
 ---
 
 ## Savininko idėjos
 
 ### Nerodyti vėliau atsiradusių fondų nuo dirbtinės pradžios
-- **Būsena:** daroma (Pull Request paruoštas)
+- **Būsena:** atlikta (PR #2, 2026-10-06)
 - **Autorius:** savininkas
 - **Kas:** jei fondas pradėjo veikti vėliau nei pasirinkto laikotarpio pradžia, jo linija grafike nebepiešiama. Po grafiku parašoma, kurie fondai nerodomi ir nuo kada jų duomenys prasideda. Pasirinkus trumpesnį laikotarpį, jie vėl matomi. Tas pats galioja ir „Apžvalgos“ bei III pakopos puslapiams.
 
@@ -27,21 +33,21 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 ## Pirmi 3 darbai (1 etapo užbaigimui)
 
 ### 1. Kad duomenys tikrai būtų renkami automatiškai kasdien
-- **Būsena:** patvirtinta
+- **Būsena:** daroma (2026-10-06 savininkas per GitHub svetainę paredagavo `update.yml`; laukiama pirmo automatinio paleidimo)
 - **Autorius:** Claude
 - **Kodėl:** darbo eiga „Update fund data“ veikia, kai paleidžiama ranka, bet pagal tvarkaraštį GitHub jos dar nė karto nepaleido (2026-10-06 rytą: 0 suplanuotų paleidimų). Kol taip yra, 1 etapo 2 punktas (kasdienis automatinis rinkimas) neįvykdytas.
 - **Ką daryti:** išsiaiškinti, kodėl GitHub nevykdo tvarkaraščio, ir jį „perkrauti“. Pridėti apsaugą: jei per dieną nebuvo nė vieno paleidimo, apie tai pranešti kasdienėje ataskaitoje. Jei GitHub tvarkaraštis ir toliau neveiks, pasiūlyti nemokamą atsarginį paleidiklį.
 - **Nauda:** svetainė atsinaujins be jūsų įsikišimo.
 
 ### 2. Svetainės ir repozitorijos privatumas: `noindex` ir proxy adreso slėpimas
-- **Būsena:** patvirtinta
+- **Būsena:** atlikta (PR #3, 2026-10-06)
 - **Autorius:** Claude
 - **Kodėl:** CLAUDE.md reikalauja, kad svetainėje būtų `noindex`, bet nė viename puslapyje jo dar nėra. Be to, viešame žurnale `data/last_update_log.txt` matyti Luminor proxy IP adresas ir prievadas. Slaptažodis ten nerodomas.
 - **Ką daryti:** visiems puslapiams pridėti `<meta name="robots" content="noindex">` ir `robots.txt`. Žurnale proxy adresą pakeisti į „***“.
 - **Nauda:** svetainės nerodys „Google“ ir kitos paieškos sistemos, o proxy adresas nebebus skelbiamas viešai.
 
 ### 3. Kasdienė ataskaita el. paštu vietoj „Issue“ komentarų
-- **Būsena:** patvirtinta
+- **Būsena:** atlikta (PR #4, 2026-10-06; Gmail nustatymai įrašyti, bandomasis laiškas gautas)
 - **Autorius:** Claude
 - **Kodėl:** dabar po kiekvieno paleidimo ataskaita rašoma kaip GitHub „Issue“ komentaras (testavimo fazė). CLAUDE.md numato **vieną** trumpą ataskaitą per dieną į jūsų asmeninį paštą iš `fundsautomationbot@gmail.com`.
 - **Ką daryti:** vakare (po paskutinio paleidimo) siųsti vieną laišką. Laiške nurodyti, kurie fondai atnaujinti, kurie ne, ar buvo klaidų, kiek liko Luminor bandymų, ir įtraukti dienos idėjas bei klausimą. Prisijungimo duomenis laikyti tik GitHub Secrets. Pradėjus siųsti laiškus, „Issue“ komentarų žingsnį pašalinti.

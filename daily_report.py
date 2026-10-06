@@ -118,8 +118,9 @@ def ideas_section() -> list:
     if ideas:
         out += ["", "Idėjos, laukiančios jūsų sprendimo (IDEAS.md):"] + [f"  • {i}" for i in ideas]
     q = re.search(r"^## Klausimas savininkui\s*\n(.+?)(?=^## |\Z)", text, re.M | re.S)
-    if q and q.group(1).strip():
-        out += ["", "Klausimas jums:", "  " + q.group(1).strip()]
+    question = q.group(1).replace("---", "").strip() if q else ""
+    if question:
+        out += ["", "Klausimas jums:", "  " + question]
     return out
 
 
@@ -157,6 +158,14 @@ def mark_sent(today: str) -> None:
     REPORT_STATE.write_text(json.dumps({"last_sent": today}, indent=1) + "\n", encoding="utf-8")
 
 
+def finish(today: str, forced: bool, keep: str) -> None:
+    """Bandomasis (ranka paprašytas) laiškas nepažymi dienos kaip atliktos – vakarinė ataskaita vis tiek bus išsiųsta."""
+    if forced and keep:
+        REPORT_STATE.write_text(keep, encoding="utf-8")
+    elif not forced:
+        mark_sent(today)
+
+
 def output(name: str, value: str) -> None:
     target = os.getenv("GITHUB_OUTPUT")
     if target:
@@ -164,9 +173,20 @@ def output(name: str, value: str) -> None:
             f.write(f"{name}={value}\n")
 
 
+def previous_state() -> str:
+    """Būsena prieš paleidimą (darbo eiga bandomajam laiškui failą ištrina)."""
+    try:
+        return subprocess.run(["git", "show", "HEAD:data/report_state.json"], capture_output=True,
+                              text=True, cwd=ROOT, check=True).stdout
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def send() -> int:
     today = f"{datetime.now(u.TZ):%Y-%m-%d}"
-    if already_sent(today):
+    forced = os.getenv("FORCE_REPORT") == "true"
+    keep = previous_state() if forced else ""
+    if not forced and already_sent(today):
         print("Šiandienos ataskaita jau išsiųsta.")
         return 0
     subject, body = build()
@@ -176,7 +196,7 @@ def send() -> int:
         print("Gmail nustatymų nėra – ataskaita bus paskelbta kaip GitHub Issue komentaras.")
         (ROOT / "report.md").write_text(f"**{subject}**\n\n```\n{body}\n```\n", encoding="utf-8")
         output("fallback", "true")
-        mark_sent(today)
+        finish(today, forced, keep)
         return 0
     msg = MIMEText(body, "plain", "utf-8")
     msg["Subject"], msg["From"], msg["To"], msg["Date"] = subject, user, ", ".join(to), formatdate(localtime=True)
@@ -184,7 +204,7 @@ def send() -> int:
         smtp.login(user, password)
         smtp.sendmail(user, to, msg.as_string())
     print(f"Išsiųsta: {subject}")
-    mark_sent(today)
+    finish(today, forced, keep)
     return 0
 
 
