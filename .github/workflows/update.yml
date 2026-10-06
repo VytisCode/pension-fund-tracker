@@ -12,6 +12,11 @@ on:
     - cron: "7,37 11-16 * * 1-5"
     - cron: "37 4 * * 2-6"
   workflow_dispatch:
+    inputs:
+      send_report:
+        description: "Išsiųsti dienos ataskaitą el. paštu dabar"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -78,41 +83,33 @@ jobs:
             python build_site.py
           fi
 
-      # TESTAVIMO FAZĖ: kai paleidimas realiai bandė rinkti duomenis, į vieną „Issue“ įrašomas komentaras su ataskaita
-      # (GitHub apie jį praneša el. paštu ir telefono programėlėje). Kai testavimas baigsis – ištrinkite šį žingsnį.
-      - name: Test report (GitHub issue comment)
-        if: always()
+      # Viena kasdienė ataskaita el. paštu: pirmame paleidime po 16:00 UTC (~19:00 Vilniaus laiku vasarą)
+      # arba paleidus ranka su „send_report“. Jei Gmail nustatymų (Secrets) dar nėra – ataskaita
+      # vieną kartą per dieną paskelbiama kaip „Issue“ komentaras.
+      - name: Daily report (e-mail)
+        id: report
+        if: always() && ((github.event_name == 'schedule' && github.event.schedule != '37 4 * * 2-6') || inputs.send_report)
+        continue-on-error: true
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          GITHUB_TOKEN: ${{ github.token }}
+          FORCE_REPORT: ${{ inputs.send_report && 'true' || 'false' }}
+        run: |
+          if [ "$FORCE_REPORT" != "true" ] && [ "$(date -u +%-H)" -lt 16 ]; then
+            echo "Dar ne vakaras – ataskaitą siųsime vėlesniame paleidime."
+            exit 0
+          fi
+          [ "$FORCE_REPORT" = "true" ] && rm -f data/report_state.json
+          python daily_report.py send
+
+      - name: Daily report fallback (GitHub issue comment)
+        if: always() && steps.report.outputs.fallback == 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if [ -z "$(git status --porcelain -- data/last_update_log.txt)" ]; then
-            echo "Šį kartą duomenų nebandyta rinkti – ataskaitos nereikia."
-            exit 0
-          fi
-          # Kad nesusikauptų dešimtys vienodų pranešimų, kai tiekėjas (pvz., Luminor) ilgai neatsako:
-          # ataskaita siunčiama, kai gauta naujų duomenų, paleidus ranka, ryto paleidime arba paskutiniame dienos paleidime.
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv \
-             && [ "${{ github.event_name }}" = "schedule" ] \
-             && [ "${{ github.event.schedule }}" != "37 4 * * 2-6" ] \
-             && [ "$(date -u +%-H)" -lt 16 ]; then
-            echo "Naujų duomenų nėra, o tai ne paskutinis dienos paleidimas – ataskaitos nesiunčiame."
-            exit 0
-          fi
-          {
-            echo "@${{ github.repository_owner }} Duomenų surinkimo ataskaita ($(TZ=Europe/Vilnius date '+%Y-%m-%d %H:%M'))"
-            echo
-            echo "**Ką rado / ko nerado (šio paleidimo žurnalas):**"
-            echo '```'
-            awk 'BEGIN{RS="";ORS="\n\n"}{a[NR]=$0}END{for(i=(NR>1?NR-1:1);i<=NR;i++)print a[i]}' data/last_update_log.txt
-            echo '```'
-            echo "**Dabartinė būsena:**"
-            echo '```'
-            python update.py status
-            echo '```'
-            echo "Pilnas paleidimas: $RUN_URL"
-          } > report.md
           NUM=$(gh issue list --state open --search "Duomenų surinkimo ataskaitos in:title" --json number --jq '.[0].number')
           if [ -z "$NUM" ]; then
             gh issue create --title "Duomenų surinkimo ataskaitos (testavimas)" --body-file report.md
@@ -126,7 +123,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/nav_history.csv data/pillar3_history.csv data/update_state.json data/last_update_log.txt docs
+          git add data/nav_history.csv data/pillar3_history.csv data/update_state.json data/report_state.json data/last_update_log.txt docs
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else
