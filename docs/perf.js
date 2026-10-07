@@ -4,9 +4,11 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
-  hOv: 'Overall ranking across all groups and periods –', ovAll: 'all periods', ovLong: '1 yr and longer',
+  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', ovLong: '1 yr and longer', ovPick: 'Periods included:',
+  gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
+  nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
-  nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value. Overall ranking: every age group × every period is one comparison; providers are ordered by average rank.',
+  nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
   thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
@@ -63,9 +65,11 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
-  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai) –', ovAll: 'visi laikotarpiai', ovLong: '1 m. ir ilgesni',
+  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', ovLong: '1 m. ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
+  gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
+  nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
-  nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę. Bendras reitingas: kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas; tiekėjai rikiuojami pagal vidutinę vietą.',
+  nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
   thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
@@ -120,15 +124,16 @@ addStrings({
 });
 
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
+const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovH: 'long' };
+  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovH: P.ovH })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -143,14 +148,16 @@ function applyState(s) {
   if (typeof s.rf === 'number' && isFinite(s.rf)) P.rf = s.rf;
   if (s.hmProv && DATA.providers.some(p => p.id === s.hmProv)) P.hmProv = s.hmProv;
   if (s.sumWin === 'sel' || s.sumWin === '1w' || s.sumWin === '1m') P.sumWin = s.sumWin;
-  if (s.ovH === 'all' || s.ovH === 'long') P.ovH = s.ovH;
+  if (s.ovH === 'all') P.ovP = new Set(PERIOD_IDS);                                   // senos nuorodos / išsaugota būsena
+  if (Array.isArray(s.ovP)) { const v = s.ovP.filter(x => PERIOD_IDS.includes(x)); if (v.length) P.ovP = new Set(v); }
+  if (typeof s.gx === 'boolean') P.gx = s.gx;
 }
 function loadHash() {
   const q = new URLSearchParams(location.hash.slice(1)); if (![...q.keys()].length) return;
   const s = {};
   if (q.get('p')) s.period = q.get('p'); if (q.get('f')) s.from = q.get('f'); if (q.get('t')) s.to = q.get('t'); if (q.get('g')) s.group = q.get('g');
   if (q.get('v')) s.provs = q.get('v').split(','); if (q.get('rf')) s.rf = parseFloat(q.get('rf')); if (q.get('adv')) s.adv = q.get('adv') === '1';
-  if (q.get('vw')) s.view = q.get('vw'); if (q.get('dr')) s.diffRef = q.get('dr'); if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh');
+  if (q.get('vw')) s.view = q.get('vw'); if (q.get('dr')) s.diffRef = q.get('dr'); if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh'); if (q.get('op')) s.ovP = q.get('op').split(','); if (q.get('gx')) s.gx = q.get('gx') === '1';
   applyState(s);
   if (q.get('l') === 'en' || q.get('l') === 'lt') lang = q.get('l');
   if (q.get('ev') === '1') P.events = true;
@@ -163,7 +170,7 @@ function shareUrl() {
   if (P.events) q.set('ev', '1'); if (P.zoom) q.set('z', iso(P.zoom[0]) + '_' + iso(P.zoom[1]));
   if (P.adv) { q.set('adv', '1'); q.set('rf', P.rf); }
   if (P.view !== 'ret') { q.set('vw', P.view); q.set('dr', P.diffRef); }
-  q.set('sw', P.sumWin); q.set('oh', P.ovH); if (P.hmProv) q.set('hm', P.hmProv);
+  q.set('sw', P.sumWin); q.set('op', [...P.ovP].join(',')); if (P.gx) q.set('gx', '1'); if (P.hmProv) q.set('hm', P.hmProv);
   return location.origin === 'null' ? location.href.split('#')[0] + '#' + q : location.origin + location.pathname + '#' + q;
 }
 /* Datos negalima rinkti vėliau nei naujausi turimi duomenys (fondai skelbia ankstesnės darbo dienos vertę, šiandienos nebūna) */
@@ -344,8 +351,14 @@ function renderMarket() {
   const provs = marketProvs();
   const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
   // eilutės pagal riziką: viršuje turto išsaugojimo, toliau vyresni, jauniausi (2003–2009) apačioje
+  const gxStarts = [];
   const rows = DATA.groups.slice().reverse().map(g => {
     const rng = rangeFor(g), vals = {};
+    if (P.gx) {                                   // visi nuo Goindex fondo pradžios (arba nuo vėlesnės laikotarpio pradžios)
+      const gf = g.funds.find(f => f.provider === 'GOINDEX');
+      if (gf) { rng.anchor = Math.max(rng.anchor, gf.d[0]); gxStarts.push(gf.d[0]); }
+    }
+    g.rngM = rng;
     provs.forEach(p => { vals[p.id] = retOf(g, p.id, rng); });
     const { map, n } = rankOf(provs.map(p => ({ key: p.id, v: vals[p.id] })));
     return { g, vals, ranks: map, n };
@@ -361,7 +374,10 @@ function renderMarket() {
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRet[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(arRank.map.get(p.id), arRank.n)}">${pct(avgRet[p.id], 1)}</td>`).join('')}</tr>`;
   const rankBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('')
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRank[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(akRank.map.get(p.id), akRank.n)}">${num(avgRank[p.id], 1)}</td>`).join('')}</tr>`;
-  const spanAll = spanText(periodText(), rows.map(r => rangeFor(r.g, false)));
+  const spanAll = spanText(periodText() + (P.gx ? ' · ' + T().gxBtn : ''), rows.map(r => r.g.rngM));
+  $('btnGx').textContent = T().gxBtn; $('btnGx').setAttribute('aria-pressed', P.gx);
+  const gxa = Math.min(...gxStarts), gxb = Math.max(...gxStarts);
+  $('nGx').hidden = !P.gx; $('nGx').textContent = P.gx && gxStarts.length ? T().gxNote(gxa === gxb ? iso(gxa) : `${iso(gxa)}…${iso(gxb)}`) : '';
   ['tRet', 'tRank'].forEach(id => setCap(id, spanAll));
   $('tRet').innerHTML = head + `<tbody>${retBody}</tbody>`;
   $('tRank').innerHTML = head + `<tbody>${rankBody}</tbody>`;
@@ -370,10 +386,13 @@ function renderMarket() {
 
 /* bendras reitingas: visos grupės × laikotarpiai */
 function renderOverall() {
-  $('hOv').innerHTML = T().hOv;
-  const sel = $('ovH'); sel.innerHTML = `<option value="all">${T().ovAll}</option><option value="long">${T().ovLong}</option>`; sel.value = P.ovH;
-  const pers = P.ovH === 'all' ? PERIOD_IDS : ['1y', '3y', '5y', 'max'], st = {};
-  setCap('tOv', T().capOv(pers.map(p => T().periods[p]).join(', '), iso(LATEST)));
+  $('hOv').innerHTML = T().hOv; $('lblOvP').textContent = T().ovPick;
+  $('ovPers').querySelectorAll('button').forEach(b => { b.textContent = T().periods[b.dataset.p]; b.setAttribute('aria-pressed', P.ovP.has(b.dataset.p)); });
+  const isSet = ids => ids.length === P.ovP.size && ids.every(x => P.ovP.has(x));
+  $('ovPreset').querySelectorAll('button').forEach(b => { b.textContent = T()[b.dataset.k]; b.setAttribute('aria-pressed', isSet(OV_PRESETS[b.dataset.k])); });
+  const pers = PERIOD_IDS.filter(p => P.ovP.has(p)), st = {}, perTxt = pers.map(p => T().periods[p]).join(', ');
+  setCap('tOv', T().capOv(perTxt, iso(LATEST)));
+  $('nOv').textContent = T().nOv(perTxt, DATA.groups.length);
   DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, top2: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
@@ -645,7 +664,13 @@ function buildControls() {
   $('group').addEventListener('change', e => { P.group = e.target.value; resetZoom(); saveState(); renderFunds(); });
   $('hmProv').addEventListener('change', e => { P.hmProv = e.target.value; saveState(); renderHeatmap(byId(P.group === 'all' ? P.hmGroup : P.group), P.group === 'all'); });
   $('hmGroup').addEventListener('change', e => { P.hmGroup = e.target.value; saveState(); renderHeatmap(byId(P.hmGroup), true); });
-  $('ovH').addEventListener('change', e => { P.ovH = e.target.value; saveState(); renderOverall(); });
+  PERIOD_IDS.forEach(per => { const b = document.createElement('button'); b.type = 'button'; b.dataset.p = per;
+    b.addEventListener('click', () => { if (P.ovP.has(per)) { if (P.ovP.size > 1) P.ovP.delete(per); } else P.ovP.add(per); saveState(); renderOverall(); });
+    $('ovPers').appendChild(b); });
+  Object.keys(OV_PRESETS).forEach(k => { const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k;
+    b.addEventListener('click', () => { P.ovP = new Set(OV_PRESETS[k]); saveState(); renderOverall(); });
+    $('ovPreset').appendChild(b); });
+  $('btnGx').addEventListener('click', () => { P.gx = !P.gx; saveState(); renderMarket(); });
   $('chips').innerHTML = '';
   DATA.providers.forEach(p => {
     const c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.dataset.id = p.id;
