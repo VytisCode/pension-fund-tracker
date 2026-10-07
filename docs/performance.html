@@ -36,13 +36,17 @@
   <section class="sec">
     <h2 id="hMarket"></h2>
     <div class="meta" id="mMarket"></div>
+    <div class="tools" style="margin:6px 0 4px"><button class="btn" type="button" id="btnGx" aria-pressed="false"></button></div>
+    <p class="note" id="nGx" hidden style="margin:4px 0 8px"></p>
     <div class="two">
       <div><div class="group-h" id="hRet"></div><div class="cap" id="c_tRet"></div><div class="scroll"><table class="mx" id="tRet"></table></div></div>
       <div><div class="group-h" id="hRank"></div><div class="cap" id="c_tRank"></div><div class="scroll"><table class="mx" id="tRank"></table></div></div>
     </div>
     <div class="ovwrap">
-      <div class="group-h"><span id="hOv"></span> <select id="ovH"></select></div>
+      <div class="group-h"><span id="hOv"></span></div>
+      <div class="tools" style="margin:0 0 8px"><span class="field" id="lblOvP"></span><div class="seg" id="ovPers" role="group"></div><div class="seg" id="ovPreset" role="group"></div></div>
       <div class="cap" id="c_tOv"></div><div class="scroll"><table class="metrics" id="tOv"></table></div>
+      <p class="note" id="nOv"></p>
     </div>
     <p class="note" id="nMarket"></p>
   </section>
@@ -97,6 +101,6 @@
 <script src="data.js?v=a2f6e739"></script>
 <script src="events.js?v=5b59ef9e"></script>
 <script src="common.js?v=1cc11d33"></script>
-<script src="perf.js?v=dcb8e3e1"></script>
+<script src="perf.js?v=27b034d1"></script>
 </body>
 </html>
