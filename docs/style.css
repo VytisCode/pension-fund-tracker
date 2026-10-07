@@ -84,8 +84,8 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
 .scroll { overflow-x: auto; }
-.mx { table-layout: fixed; min-width: 520px; }                  /* vienodo pločio langeliai */
-.mx th:first-child, .mx td:first-child { width: 92px; }
+#tRet, #tRank { table-layout: fixed; min-width: 520px; }        /* vienodo pločio langeliai rinkos lentelėse */
+#tRet th:first-child, #tRet td:first-child, #tRank th:first-child, #tRank td:first-child { width: 92px; }
 .mx th { overflow: hidden; text-overflow: ellipsis; }
 .mx .sw-top { display: block; width: 18px; height: 4px; border-radius: 2px; margin: 0 auto 4px; }
 .mx th, .mx td { text-align: center; }
@@ -139,8 +139,6 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .cov { margin: 10px 0 0; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--s6); border-radius: 8px; font-size: 12.5px; color: var(--text-2); background: var(--card); }
 .cov[hidden] { display: none; }
 .cov div + div { margin-top: 4px; }
-.q1 { background: #63be7b; } .q2 { background: #c5de80; } .q3 { background: #fcc27c; } .q4 { background: #f8696b; }
-.mx td[class^="q"] { color: #1a1a19; }
 .sumline { margin: 0 0 10px; font-size: 14px; line-height: 1.55; }
 .sumline b { font-weight: 650; }
 .adv { margin-top: 14px; }
@@ -204,3 +202,4 @@ tr.gstart:first-child td { border-top: 0; }
 .stick table thead th { position: sticky; top: var(--stick, 0px); z-index: 4; background: var(--card); box-shadow: inset 0 -1px 0 var(--line); border-bottom: 0; padding-top: 6px; }
 .two .stick table thead th, .sec > .stick table thead th { background: var(--surface); }
 @media print { .stick table thead th { position: static; } }
+.ovwrap { max-width: 760px; margin-top: 8px; }

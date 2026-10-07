@@ -4,13 +4,12 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
-  hQ: 'Quartile within the age group (Q1 = top 25 %)',
   hOv: 'Overall ranking across all groups and periods –', ovAll: 'all periods', ovLong: '1 yr and longer',
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
-  nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value. Quartile: rank 1–2 of 6 ≈ Q1–Q2 etc. (rank × 4 / number of funds, rounded up). Overall ranking: every age group × every period is one comparison; providers are ordered by average rank.',
-  thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thQ1: '% top quartile', thAvgRank: 'Avg. rank',
+  nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value. Overall ranking: every age group × every period is one comparison; providers are ordered by average rank.',
+  thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
-  hQP: 'Quartile by period (this group)', hHm: 'Monthly returns heat map –',
+  hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
   thInception: 'Inception', thCagr: 'Return p.a. since inception', thVolAll: 'Volatility p.a. since inception', thMddAll: 'Max drawdown since inception',
   thRet1m: '1 mo', thRet3m: '3 mo', thRet6m: '6 mo', thRet1y: '1 yr', thRet3y: '3 yr p.a.', thRet5y: '5 yr p.a.',
@@ -45,8 +44,7 @@ addStrings({
   info: {
     ret: 'Change in unit value between the start and end of the period. Unit values are already net of fees and taxes, so no further deduction is needed.',
     rank: 'Position of each provider within its age group by return over the selected period; 1 = best.',
-    quartile: 'Funds in an age group are split into four equal-sized bands by return: Q1 = top 25 %, Q4 = bottom 25 %. With six funds, ranks 1–2 ≈ Q1–Q2 etc.',
-    overall: 'Every age group × every period is one comparison. Counts how often a provider is first, in the top quartile, and its average rank. Short periods are noisy, so the “1 yr and longer” view is usually fairer.',
+    overall: 'Every age group × every period is one comparison. Counts how often a provider is first, in the top two, and its average rank. Short periods are noisy, so the “1 yr and longer” view is usually fairer.',
     vol: 'Volatility = standard deviation of daily returns × √252 – how much the unit value fluctuates; higher = more risk. Days with no price change are excluded.',
     mdd: 'Maximum drawdown = the largest fall from a peak to a later trough. Shows the worst loss an investor could have suffered.',
     cagr: 'Compound annual growth rate between the first and last available unit value (shown only when the history is at least one year).',
@@ -65,13 +63,12 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
-  hQ: 'Kvartilis amžiaus grupėje (Q1 = geriausi 25 %)',
   hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai) –', ovAll: 'visi laikotarpiai', ovLong: '1 m. ir ilgesni',
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
-  nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę. Kvartilis: vieta × 4 / fondų skaičius, apvalinama aukštyn (iš 6 fondų 1–2 vieta ≈ Q1–Q2 ir t. t.). Bendras reitingas: kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas; tiekėjai rikiuojami pagal vidutinę vietą.',
-  thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thQ1: '% viršutiniame kvartilyje', thAvgRank: 'Vid. vieta',
+  nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę. Bendras reitingas: kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas; tiekėjai rikiuojami pagal vidutinę vietą.',
+  thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
-  hQP: 'Kvartilis pagal laikotarpį (ši grupė)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
+  hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
   thInception: 'Pradžia', thCagr: 'Metinė grąža nuo įsteigimo', thVolAll: 'Svyravimas per metus nuo įsteigimo', thMddAll: 'Didžiausias kritimas nuo įsteigimo',
   thRet1m: '1 mėn.', thRet3m: '3 mėn.', thRet6m: '6 mėn.', thRet1y: '1 m.', thRet3y: '3 m., metinė', thRet5y: '5 m., metinė',
@@ -106,8 +103,7 @@ addStrings({
   info: {
     ret: 'Vieneto vertės pokytis tarp laikotarpio pradžios ir pabaigos. Vieneto vertė jau yra po mokesčių ir sąnaudų, todėl papildomai nieko atimti nereikia.',
     rank: 'Kiekvieno tiekėjo vieta savo amžiaus grupėje pagal grąžą pasirinktu laikotarpiu; 1 = geriausia.',
-    quartile: 'Amžiaus grupės fondai pagal grąžą padalijami į keturias vienodo dydžio dalis: Q1 = geriausi 25 %, Q4 = prasčiausi 25 %. Esant šešiems fondams, 1–2 vieta ≈ Q1–Q2 ir t. t.',
-    overall: 'Kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas. Skaičiuojama, kaip dažnai tiekėjas yra pirmas, viršutiniame kvartilyje ir jo vidutinė vieta. Trumpi laikotarpiai triukšmingi, todėl „1 m. ir ilgesni“ dažniausiai teisingesnis.',
+    overall: 'Kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas. Skaičiuojama, kaip dažnai tiekėjas yra pirmas, 1–2 vietoje ir jo vidutinė vieta. Trumpi laikotarpiai triukšmingi, todėl „1 m. ir ilgesni“ dažniausiai teisingesnis.',
     vol: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 – kiek svyruoja vieneto vertė; didesnis = didesnė rizika. Dienos be kainos pokyčio neįtraukiamos.',
     mdd: 'Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki vėlesnio dugno. Rodo blogiausią galimą investuotojo nuostolį.',
     cagr: 'Sudėtinis metinis augimas tarp pirmos ir paskutinės turimos vieneto vertės (rodoma tik bent vienerių metų istorijai).',
@@ -297,7 +293,6 @@ function rankOf(values) {                   // values: [{key, v}] -> Map key -> 
   ok.forEach((o, i) => map.set(o.key, i + 1)); return { map, n: ok.length };
 }
 const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1);
-const quartileOf = (rank, n) => (!rank || n < 3) ? null : Math.min(4, Math.ceil(rank * 4 / n));
 const MARKET_ORDER = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // lentelių stulpelių tvarka
 const marketProvs = () => MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
 const retOf = (g, pid, rng) => { const f = g.funds.find(x => x.provider === pid); if (!f || isStale(f, rng.overallLast)) return null; const s = seriesOf(f, rng.anchor, rng.end); return s ? s.ret : null; };
@@ -344,7 +339,7 @@ function renderSummary() {
 
 /* ---------- 1. visos rinkos lentelės ---------- */
 function renderMarket() {
-  $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank'); $('hQ').innerHTML = T().hQ + ik('quartile');
+  $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
   const provs = marketProvs();
   const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
@@ -366,14 +361,10 @@ function renderMarket() {
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRet[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(arRank.map.get(p.id), arRank.n)}">${pct(avgRet[p.id], 1)}</td>`).join('')}</tr>`;
   const rankBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('')
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRank[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(akRank.map.get(p.id), akRank.n)}">${num(avgRank[p.id], 1)}</td>`).join('')}</tr>`;
-  const qCell = (rank, n) => { const q = quartileOf(rank, n); return q ? `<td class="q${q}">Q${q}</td>` : '<td class="na">–</td>'; };
-  const qBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => qCell(r.ranks.get(p.id), r.n)).join('')}</tr>`).join('')
-    + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => qCell(akRank.map.get(p.id), akRank.n)).join('')}</tr>`;
   const spanAll = spanText(periodText(), rows.map(r => rangeFor(r.g, false)));
-  ['tRet', 'tRank', 'tQ'].forEach(id => setCap(id, spanAll));
+  ['tRet', 'tRank'].forEach(id => setCap(id, spanAll));
   $('tRet').innerHTML = head + `<tbody>${retBody}</tbody>`;
   $('tRank').innerHTML = head + `<tbody>${rankBody}</tbody>`;
-  $('tQ').innerHTML = head + `<tbody>${qBody}</tbody>`;
   renderOverall();
 }
 
@@ -383,18 +374,18 @@ function renderOverall() {
   const sel = $('ovH'); sel.innerHTML = `<option value="all">${T().ovAll}</option><option value="long">${T().ovLong}</option>`; sel.value = P.ovH;
   const pers = P.ovH === 'all' ? PERIOD_IDS : ['1y', '3y', '5y', 'max'], st = {};
   setCap('tOv', T().capOv(pers.map(p => T().periods[p]).join(', '), iso(LATEST)));
-  DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, q1: 0, rs: 0 }; });
+  DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, top2: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
     if (n < 3) return;
-    map.forEach((rank, id) => { const s = st[id]; s.cmp++; s.rs += rank; if (rank === 1) s.first++; if (quartileOf(rank, n) === 1) s.q1++; });
+    map.forEach((rank, id) => { const s = st[id]; s.cmp++; s.rs += rank; if (rank === 1) s.first++; if (rank <= 2) s.top2++; });
   }));
   const list = DATA.providers.filter(p => st[p.id].cmp).map(p => ({ id: p.id, ...st[p.id], avg: st[p.id].rs / st[p.id].cmp })).sort((a, b) => a.avg - b.avg);
   const bst = (k, dir) => Math.max(...list.map(x => dir * x[k]));
   const mark = (v, k, dir, txt) => `<td class="${dir * v === bst(k, dir) ? 'best' : ''}">${txt}</td>`;
-  const bFirst = Math.max(...list.map(x => x.first / x.cmp)), bQ = Math.max(...list.map(x => x.q1 / x.cmp)), bAvg = Math.min(...list.map(x => x.avg));
-  $('tOv').innerHTML = `<thead><tr>${th(T().thRank, 'overall')}<th style="text-align:left">${T().thFund}</th><th>${T().thCmp}</th><th>${T().thFirst}</th><th>${T().thFirstPct}</th><th>${T().thQ1}</th><th>${T().thAvgRank}</th></tr></thead><tbody>`
-    + list.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="name"><span class="sw" style="background:${colorOf(x.id)}"></span>${labelOf(x.id)}</td><td>${x.cmp}</td><td>${x.first}</td><td class="${x.first / x.cmp === bFirst ? 'best' : ''}">${num(x.first / x.cmp * 100, 0)}%</td><td class="${x.q1 / x.cmp === bQ ? 'best' : ''}">${num(x.q1 / x.cmp * 100, 0)}%</td><td class="${x.avg === bAvg ? 'best' : ''}">${num(x.avg, 2)}</td></tr>`).join('') + '</tbody>';
+  const bFirst = Math.max(...list.map(x => x.first / x.cmp)), bTop2 = Math.max(...list.map(x => x.top2 / x.cmp)), bAvg = Math.min(...list.map(x => x.avg));
+  $('tOv').innerHTML = `<thead><tr>${th(T().thRank, 'overall')}<th style="text-align:left">${T().thFund}</th><th>${T().thCmp}</th><th>${T().thFirst}</th><th>${T().thFirstPct}</th><th>${T().thTop2}</th><th>${T().thAvgRank}</th></tr></thead><tbody>`
+    + list.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="name"><span class="sw" style="background:${colorOf(x.id)}"></span>${labelOf(x.id)}</td><td>${x.cmp}</td><td>${x.first}</td><td class="${x.first / x.cmp === bFirst ? 'best' : ''}">${num(x.first / x.cmp * 100, 0)}%</td><td class="${x.top2 / x.cmp === bTop2 ? 'best' : ''}">${num(x.top2 / x.cmp * 100, 0)}%</td><td class="${x.avg === bAvg ? 'best' : ''}">${num(x.avg, 2)}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ---------- 2. fondų palyginimas ---------- */
@@ -473,7 +464,7 @@ function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
   $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
   $('hMetrics').innerHTML = T().hMetrics + ik('ret'); $('hCal').innerHTML = T().hCal + ik('cal'); $('hRoll').innerHTML = T().hRoll + ik('roll'); $('nFund').textContent = T().nFund;
-  $('hQP').innerHTML = T().hQP + ik('quartile'); $('hHm').innerHTML = T().hHm + ik('heat');
+  $('hQP').innerHTML = T().hQP + ik('rank'); $('hHm').innerHTML = T().hHm + ik('heat');
   const parts = gs.map(g => {
     const rng = rangeFor(g, true);
     const all = g.funds.filter(f => P.provs.has(f.provider)).map(f => { const s = fundStats(f, rng); if (s) s.g = g; return s; }).filter(Boolean);
@@ -515,15 +506,15 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
-  renderQuartilesByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
+  renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
-function renderQuartilesByPeriod(gs, ALL) {
+function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
   $('tQP').innerHTML = `<thead><tr><th></th>${PERIOD_IDS.map(per => `<th>${T().periods[per]}</th>`).join('')}</tr></thead><tbody>`
     + gs.map(g => {
       const ranks = {}; PERIOD_IDS.forEach(per => { const rng = rangeAt(g, per); ranks[per] = rankOf(g.funds.map(f => ({ key: f.provider, v: retOf(g, f.provider, rng) }))); });
-      return marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).map((p, i) => `<tr${ALL && i === 0 ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}${ALL ? ` <span class="na">${groupLabel(g)}</span>` : ''}</td>${PERIOD_IDS.map(per => { const r = ranks[per], q = quartileOf(r.map.get(p.id), r.n); return q ? `<td class="q${q}" title="${r.map.get(p.id)}/${r.n}">Q${q}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('');
+      return marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).map((p, i) => `<tr${ALL && i === 0 ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}${ALL ? ` <span class="na">${groupLabel(g)}</span>` : ''}</td>${PERIOD_IDS.map(per => { const r = ranks[per], k = r.map.get(p.id); return k && r.n >= 2 ? `<td class="${rkClass(k, r.n)}" title="${k}/${r.n}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('');
     }).join('') + '</tbody>';
 }
 function heatColor(v) {
@@ -602,7 +593,7 @@ async function exportXlsx() {
     const wb = XLSX.utils.book_new();
     const info = [[T().siteTitle], [T().updated, DATA.generated], [T().dataUntil, iso(Math.max(...DATA.groups.map(x => groupEnd(x).end)))], [T().period, periodText()], [T().group, groupName(P.group)], [], [T().foot]];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(info), 'Info');
-    const sheets = [['Summary', 'tSum'], ['Return', 'tRet'], ['Rank', 'tRank'], ['Quartile', 'tQ'], ['Overall ranking', 'tOv'], ['Metrics', 'tMetrics'], ['Calendar years', 'tCal'], ['Rolling', 'tRoll'], ['Quartile by period', 'tQP'], ['Monthly heat map', 'tHm']];
+    const sheets = [['Summary', 'tSum'], ['Return', 'tRet'], ['Rank', 'tRank'], ['Overall ranking', 'tOv'], ['Metrics', 'tMetrics'], ['Calendar years', 'tCal'], ['Rolling', 'tRoll'], ['Rank by period', 'tQP'], ['Monthly heat map', 'tHm']];
     if (P.adv) sheets.push(['Advanced', 'tAdv']);
     sheets.forEach(([name, id]) => XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(tableToAoa(id)), name));
     XLSX.writeFile(wb, `pension-funds-${iso(Math.max(...DATA.groups.map(x => groupEnd(x).end)))}.xlsx`);
