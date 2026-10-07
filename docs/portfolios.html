@@ -33,11 +33,17 @@
   .comp span { display: block; height: 100%; }
   .complg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--text-2); }
   .complg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 0 0 12px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 12px; }
   .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
-  .kpi b { display: block; font-size: 18px; margin-top: 2px; }
+  .kpi b { display: block; font-size: 17px; margin-top: 2px; white-space: nowrap; }
   .kpi span { font-size: 12px; color: var(--text-2); }
   .more { margin-top: 10px; }
+  table.altt td { text-align: center; }
+  table.altt th { text-align: center; }
+  table.altt td.l, table.altt th.l { text-align: left; }
+  table.altt td:first-child { min-width: 190px; white-space: normal; }
+  table.altt td.pfsub { white-space: normal; min-width: 180px; font-size: 11.5px; }
+  table.altt tr.sep td { background: var(--surface); font-weight: 600; text-align: left; cursor: default; }
   .hist td { font-size: 12.5px; }
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 900px; }
@@ -53,6 +59,12 @@
   <section class="card"><div class="scroll"><table class="pft" id="tcTable"></table></div>
     <button type="button" class="btn more" id="tcMore"></button>
     <p class="note" id="tcNote"></p></section>
+
+  <h2 class="sec" id="altTitle"></h2>
+  <p class="lead" id="altLead"></p>
+  <div class="bar pfbar" id="altBar"></div>
+  <section class="card"><div class="meta" id="altChartMeta"></div><div class="chart" id="altChart"></div><div class="legend" id="altLegend" style="margin-top:6px"></div></section>
+  <section class="card" style="margin-top:12px"><div class="scroll"><table class="pft altt" id="altTable"></table></div><p class="note" id="altNote"></p></section>
 
   <h2 class="sec" id="fcTitle"></h2>
   <p class="lead" id="fcLead"></p>
@@ -76,7 +88,7 @@
   <footer id="foot"></footer>
 </div>
 <script src="common.js?v=2663b773"></script>
-<script src="data_pf.js?v=2b62859e"></script>
-<script src="pf.js?v=842a3a82"></script>
+<script src="data_pf.js?v=f035bf91"></script>
+<script src="pf.js?v=11747a16"></script>
 </body>
 </html>
