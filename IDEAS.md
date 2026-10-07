@@ -20,9 +20,12 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-06 (laiškas, 15:59).** Lyginamieji indeksai (benchmark): daugiau informacijos savininkas gauti negali. Kur duomenų nėra, langeliai lieka tušti. **Šio klausimo daugiau neklausti.**
 - **2026-10-07.** Dashboard pirmiausia kuriamas **kompiuterio** ekranui (telefonas antroje vietoje).
 - **2026-10-07.** Rizikingos (akcijų) dalies % visiems fondams savininkas pateiks Excel failais. Kai jų prireiks, paprašyti laišku.
-- **2026-10-07.** Kiekvieno ciklo laiškas siunčiamas kaip atsakymas į **tą pačią laiškų giją**, kad visas ataskaitas būtų galima slinkti viename laiške. – *atlikta (PR #17, 2026-10-07; laukia sujungimo)*
+- **2026-10-07.** Kiekvieno ciklo laiškas siunčiamas kaip atsakymas į **tą pačią laiškų giją**, kad visas ataskaitas būtų galima slinkti viename laiške. – *atlikta (PR #17, 2026-10-07)*
 - **2026-10-07.** Savininko atsakymai laiškais ateina į fundsautomationbot@gmail.com kaip atsakymai į ciklo laiškus. Ciklas juos privalo perskaityti ir įrašyti čia (10-06 popietės atsakymas buvo praleistas).
 - **2026-10-07.** Netrukus savininkas pateiks: SEB 1989 fondo duomenis, visų fondų rizikingos dalies % (Excel) ir visas LB portfelių ataskaitas. Iš LB ataskaitų bus atskiras analizės polapis; kai jos ateis, Claude pasiūlo, kokia analizė naudingiausia.
+- **2026-10-07 (vakaras).** Vystymo ciklai – **6 kartus per dieną, kasdien** (~08:50, 10:50, 12:50, 14:50, 16:50, 18:50 Vilniaus laiku), kol savininkas pasakys kitaip. Kad ciklai būtų nedideli ir neužpildytų pašto: naujas idėjas rašyti ne dažniau kaip 2 kartus per dieną (rytą ir popiet), klausimą savininkui – kartą per dieną (pirmame dienos cikle). Jei baigiasi Pro limitas – ciklą praleisti ir paminėti kitame laiške.
+- **2026-10-07 (vakaras).** Duomenų atnaujinimas vis dar „stringa“: GitHub tvarkaraštis paleidžia tik apie 2 iš 12 suplanuotų paleidimų per dieną. Todėl kiekvienas ciklas tikrina `python update.py status` ir `python pillar3.py status`: jei darbo dieną po 13:00 Vilniaus laiku dar trūksta laukiamos dienos duomenų, o „Update fund data“ per paskutinę valandą nebuvo paleistas ir dabar nevyksta, ciklas jį paleidžia pats (`actions_run_trigger`, `update.yml`, `main`) ir parašo apie tai laiške.
+- **2026-10-07 (vakaras).** Savininkas turi kasdienius AUM (grynųjų aktyvų) duomenis nuo ~2026-03-23 kitame kompiuteryje ir pabandys juos atsiųsti (svarbiausia Swedbank ir Luminor II pakopa 03-23–06-01, Swedbank III pakopa). Kai atsiųs – importuoti į istoriją ir patikslinti puslapio „Turtas (AUM)“ balandžio išmokėjimus.
 
 ---
 
