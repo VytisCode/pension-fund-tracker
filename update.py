@@ -98,8 +98,10 @@ def expected_date(today: date = None) -> date:
     dienomis nieko neskelbia). Todėl: randame paskutinę darbo dieną iki šiandien (imtinai),
     o laukiama diena – dar viena darbo diena atgal."""
     day = today or today_vilnius()
-    if today is None and os.getenv("CATCHUP", "").lower() == "true":
-        day -= timedelta(days=1)  # ryto „papildomas" paleidimas: tikriname vakarykštės dienos laukiamą vertę
+    # Ryto „papildomas" paleidimas tikrina vakarykštės dienos laukiamą vertę. GitHub kartais jį
+    # pavėlina keliomis valandomis (2026-10-07 – iki 14:19), todėl po pietų jis elgiasi kaip įprastas.
+    if today is None and os.getenv("CATCHUP", "").lower() == "true" and datetime.now(TZ).hour < 12:
+        day -= timedelta(days=1)
     while not is_business_day(day):
         day -= timedelta(days=1)
     day -= timedelta(days=1)
