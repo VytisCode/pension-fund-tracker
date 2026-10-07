@@ -6,7 +6,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 const I18N = {
   en: {
     siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
-    navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III',
+    navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
@@ -16,7 +16,7 @@ const I18N = {
   },
   lt: {
     siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
-    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa',
+    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
@@ -43,7 +43,7 @@ try { const t = localStorage.getItem('theme'); if (t) document.documentElement.d
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div><div class="fresh" id="fresh"></div>
-    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a></nav></div>
+    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a><a href="portfolios.html" data-p="portfolios"></a></nav></div>
     <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
       <div class="seg" id="theme" role="group">
@@ -59,10 +59,11 @@ function renderHeader(active, onLang) {
     h.querySelector('[data-p="overview"]').textContent = T().navOverview;
     h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
     h.querySelector('[data-p="pillar3"]').textContent = T().navPillar3;
+    h.querySelector('[data-p="portfolios"]').textContent = T().navPortfolios;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
-    if (active !== 'pillar3') document.getElementById('fresh').innerHTML = freshnessHTML();
+    if (active !== 'pillar3' && active !== 'portfolios') document.getElementById('fresh').innerHTML = freshnessHTML();
   };
   h.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
     lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {}
@@ -182,7 +183,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
       if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + ' ';
-      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); tv.textContent = pct(l.r.points[l.r.points.length - 1][1], 1).replace(' %', '%');
+      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1).replace(' %', '%');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
@@ -202,7 +203,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
     if (!vals.length) return;
     cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
-    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${opts.fmt ? opts.fmt(o.v) : pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
     tip.style.display = 'block'; place(ev);
   };
   hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
