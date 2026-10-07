@@ -20,7 +20,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-06 (laiškas, 15:59).** Lyginamieji indeksai (benchmark): daugiau informacijos savininkas gauti negali. Kur duomenų nėra, langeliai lieka tušti. **Šio klausimo daugiau neklausti.**
 - **2026-10-07.** Dashboard pirmiausia kuriamas **kompiuterio** ekranui (telefonas antroje vietoje).
 - **2026-10-07.** Rizikingos (akcijų) dalies % visiems fondams savininkas pateiks Excel failais. Kai jų prireiks, paprašyti laišku.
-- **2026-10-07.** Kiekvieno ciklo laiškas siunčiamas kaip atsakymas į **tą pačią laiškų giją**, kad visas ataskaitas būtų galima slinkti viename laiške.
+- **2026-10-07.** Kiekvieno ciklo laiškas siunčiamas kaip atsakymas į **tą pačią laiškų giją**, kad visas ataskaitas būtų galima slinkti viename laiške. – *atlikta (PR #17, 2026-10-07; laukia sujungimo)*
 - **2026-10-07.** Savininko atsakymai laiškais ateina į fundsautomationbot@gmail.com kaip atsakymai į ciklo laiškus. Ciklas juos privalo perskaityti ir įrašyti čia (10-06 popietės atsakymas buvo praleistas).
 - **2026-10-07.** Netrukus savininkas pateiks: SEB 1989 fondo duomenis, visų fondų rizikingos dalies % (Excel) ir visas LB portfelių ataskaitas. Iš LB ataskaitų bus atskiras analizės polapis; kai jos ateis, Claude pasiūlo, kokia analizė naudingiausia.
 
@@ -37,14 +37,14 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 Visos patvirtintos savininko. Pirmenybė prieš kitas idėjas.
 
 **III pakopos polapis**
-1. **Po kiekvienu linijiniu grafiku – dvi heatmap lentelės** (grąža per laikotarpį ir vieta grupėje), tokios pačios kaip „Rezultatai ir palyginimas“ puslapyje. – *daroma (Claude, projekto gija)*
-2. **Fondų įjungimas / išjungimas linijiniuose grafikuose** ir jų palyginimas, kaip „Rezultatai ir palyginimas“ → „Fondų palyginimas“. – *daroma (Claude, projekto gija)*
-3. **Laikotarpio pasirinkimas prie kiekvienos diagramos:** „Nuo bendros pradžios“ (since common inception), „Nuo SEB pradžios“, „Nuo Goindex pradžios“ ir t. t. – *daroma (Claude, projekto gija)*
-4. **Mygtukai istoriniams rinkų įvykiams** (kaip II pakopos puslapyje, bet daugiau įvykių). – *daroma (Claude, projekto gija)*
+1. **Po kiekvienu linijiniu grafiku – dvi heatmap lentelės** (grąža per laikotarpį ir vieta grupėje), tokios pačios kaip „Rezultatai ir palyginimas“ puslapyje. – *atlikta (PR #19, 2026-10-07; laukia sujungimo)*
+2. **Fondų įjungimas / išjungimas linijiniuose grafikuose** ir jų palyginimas, kaip „Rezultatai ir palyginimas“ → „Fondų palyginimas“. – *atlikta (PR #19, 2026-10-07; laukia sujungimo)*
+3. **Laikotarpio pasirinkimas prie kiekvienos diagramos:** „Nuo bendros pradžios“ (since common inception), „Nuo SEB pradžios“, „Nuo Goindex pradžios“ ir t. t. – *atlikta (PR #19, 2026-10-07; laukia sujungimo)*
+4. **Mygtukai istoriniams rinkų įvykiams** (kaip II pakopos puslapyje, bet daugiau įvykių). – *atlikta (PR #19, 2026-10-07; laukia sujungimo)*
 
 **„Pension fund tracker“ (rezultatų) puslapis**
-5. **Heatmap lentelėse „Return over the period“ ir „Rank within the age group“ – jungiklis „Nuo Goindex pradžios“**, kad „All history“ režime būtų galima objektyviai palyginti ir su Goindex. – *daroma (Claude, projekto gija)*
-6. **Lentelė „Overall ranking across all groups and periods“:** periodų pasirinkimo mygtukai ir aiškus paaiškinimas, kas yra „Comparisons“. – *daroma (Claude, projekto gija)*
+5. **Heatmap lentelėse „Return over the period“ ir „Rank within the age group“ – jungiklis „Nuo Goindex pradžios“**, kad „All history“ režime būtų galima objektyviai palyginti ir su Goindex. – *atlikta (PR #18, 2026-10-07; laukia sujungimo)*
+6. **Lentelė „Overall ranking across all groups and periods“:** periodų pasirinkimo mygtukai ir aiškus paaiškinimas, kas yra „Comparisons“. – *atlikta (PR #18, 2026-10-07; laukia sujungimo)*
 
 ---
 
