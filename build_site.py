@@ -102,6 +102,7 @@ def main() -> None:
         (DOCS / page).write_text(text, encoding="utf-8")
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
     build_pillar3(ver)
+    build_portfolios(ver)
 
 
 def build_pillar3(ver: dict) -> None:
@@ -148,6 +149,85 @@ def build_pillar3(ver: dict) -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "pillar3.html").write_text(text, encoding="utf-8")
     print(f"docs/data3.js: {len(data_js) / 1024:.0f} KB, III pakopos fondų: {sum(len(g) for g in groups.values())}")
+
+
+PF_TYPES = {"equity": "e", "bond": "b", "fund": "f", "cash": "c", "derivative": "d"}
+# Pavadinimai, kurie iš tikrųjų yra valdymo bendrovės, o ne vertybinio popieriaus pavadinimas (pvz. Allianz ataskaitose)
+COMPANY_NAME = re.compile(r"\b(S\.?A\.?|GmbH|Limited|Ltd|Management|Asset Management|Investors|S\.à r\.l\.|AG|plc|Inc)\b\.?\s*$", re.I)
+
+
+def best_name(names, kind):
+    """Iš kelių to paties ISIN pavadinimų (skirtingi valdytojai rašo skirtingai) parenkamas aiškiausias."""
+    def score(item):
+        n, cnt = item
+        s = cnt
+        if kind == "fund":
+            s += 10000 * bool(re.search(r"ETF|UCITS|Fund|Index|fond|Trust|SICAV|Portfolio", n, re.I))
+            s -= 20000 * bool(COMPANY_NAME.search(n))
+        if kind == "bond":
+            s += 10000 * bool(re.search(r"\d", n))       # su kuponu ir terminu
+        s += 5000 * (n != n.upper())                      # ne vien didžiosios raidės
+        return s
+    return max(names.items(), key=score)[0]
+
+
+def pf_fund_label(code, provider, pillar, name):
+    m = re.match(r"[A-Z]{3}-(\d\d)/(\d\d)$", code)
+    if m:
+        a, b = int(m.group(1)), int(m.group(2))
+        a += 2000 if a < 30 else 1900
+        b += 2000 if b < 30 else 1900
+        return f"{provider} {a}–{b}", f"{a}-{b}"
+    if code.endswith("-TIPF"):
+        return f"{provider} turto išsaugojimo", "turto"
+    short = re.sub(r"\s*\(.*?\)", "", name).strip(" „“\"")
+    return short, "III"
+
+
+def build_portfolios(ver: dict) -> None:
+    """Portfelių polapis: docs/data_pf.js iš data/portfolios.csv (žr. portfolios.py) + site/portfolios.html, site/pf.js."""
+    path = ROOT / "data" / "portfolios.csv"
+    if not path.exists():
+        return
+    rows = list(csv.DictReader(path.open(encoding="utf-8", newline="")))
+    quarters = sorted({r["date"] for r in rows})
+    qi = {d: i for i, d in enumerate(quarters)}
+    names, meta = {}, {}
+    for r in rows:
+        names.setdefault(r["pos_id"], {}).setdefault(r["name"], 0)
+        names[r["pos_id"]][r["name"]] += 1
+        meta[r["pos_id"]] = (r["type"], r["country"], r["currency"], r["kis_type"])  # naujausi duomenys
+    sec_ids = sorted(names)
+    si = {p: i for i, p in enumerate(sec_ids)}
+    secs = []
+    for p in sec_ids:
+        kind, country, cur, kis = meta[p]
+        name = best_name(names[p], kind)
+        secs.append([name, PF_TYPES[kind], country, cur, kis,
+                     p if re.match(r"^[A-Z]{2}[A-Z0-9]{9}\d$", p) else "",
+                     int(kind == "fund" and bool(COMPANY_NAME.search(name)))])  # 1 = žinoma tik valdymo bendrovė
+    funds = {}
+    for r in rows:
+        f = funds.setdefault(r["fund_code"], {"c": r["fund_code"], "p": r["provider"], "pl": r["pillar"], "r": []})
+        f["name"] = r["fund_name"]  # naujausias pavadinimas (eilutės surikiuotos pagal datą)
+        qty = float(r["qty"]) if r["qty"] else None
+        qty = None if qty is None else (round(qty) if abs(qty) >= 100 else round(qty, 3))
+        f["r"].extend([qi[r["date"]], si[r["pos_id"]], qty, round(float(r["value"]))])
+    out = []
+    for f in sorted(funds.values(), key=lambda f: (f["pl"], f["p"], f["c"])):
+        label, group = pf_fund_label(f["c"], f["p"], f["pl"], f["name"])
+        out.append({"c": f["c"], "n": label, "full": f["name"], "p": f["p"], "pl": f["pl"], "g": group, "r": f["r"]})
+    payload = {"quarters": quarters, "secs": secs, "funds": out}
+    data_js = "const PF=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data_pf.js").write_text(data_js, encoding="utf-8")
+    shutil.copyfile(SITE / "portfolios.html", DOCS / "portfolios.html")
+    shutil.copyfile(SITE / "pf.js", DOCS / "pf.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_pf.js", "pf.js")}}
+    text = (DOCS / "portfolios.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "data_pf.js", "pf.js"):
+        text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
+    (DOCS / "portfolios.html").write_text(text, encoding="utf-8")
+    print(f"docs/data_pf.js: {len(data_js) / 1024:.0f} KB, ketvirčių: {len(quarters)}, fondų: {len(out)}, pozicijų: {len(secs)}")
 
 
 if __name__ == "__main__":

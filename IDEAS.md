@@ -131,9 +131,28 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** prie kiekvieno valdytojo matytųsi paskutinė vertės data. Jei duomenys pasenę, ji būtų paryškinta, kad lankytojas nesuklystų lygindamas.
 
 ### Lietuvos banko ketvirtiniai portfelių duomenys
-- **Būsena:** patvirtinta (2 etapas, CLAUDE.md skyrius „Vėliau“)
+- **Būsena:** daroma (2026-10-07 savininkas davė visus 28 ketvirčius ir leido kurti; pirmoji dalis – polapis „Portfeliai“: ketvirčio didžiausi pokyčiai ir fondo portfelis su pozicijų istorija)
 - **Autorius:** savininkas (CLAUDE.md)
 - **Kodėl:** fondų portfelių sudėties ir jos pokyčių kas ketvirtį analizė.
+- **Duomenys:** `imports/lb_portfolios/` (LB xlsx failai) → `python3 portfolios.py` → `data/portfolios.csv`. Atsiradus naujam ketvirčiui – įdėti failą ir paleisti iš naujo.
+
+### Portfeliai: tikri fondų pavadinimai pagal ISIN
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** Allianz ir kai kurios SEB ataskaitos vietoj fondo pavadinimo rašo tik valdymo bendrovę (pvz. „Schroder Investment Management“), todėl apie 90 iš ~490 fondų / ETF rodomi tik su ISIN kodu.
+- **Nauda:** nemokamas OpenFIGI katalogas pagal ISIN grąžina tikrą pavadinimą; vieną kartą paleidus per GitHub Actions, pavadinimai būtų išsaugoti faile ir visur matytųsi aiškiai.
+
+### Portfeliai: sudėties kitimas laike
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** fondo kortelėje dabar matyti tik vieno ketvirčio sudėtis (akcijos, fondai, obligacijos, pinigai).
+- **Nauda:** grafikas, kaip nuo 2019 m. keitėsi akcijų, obligacijų, Lietuvos investicijų ir valiutų dalys; galima palyginti visų valdytojų tos pačios grupės fondus vienoje vietoje.
+
+### Portfeliai: kas turi šią poziciją
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** įdomu matyti, kurie fondai turi, pvz., Nvidia ar Ignitis obligacijas ir kiek.
+- **Nauda:** paieška pagal pavadinimą ar ISIN – lentelė su visais fondais, kuriuose ta pozicija yra, jos svoriu ir pokyčiu.
 
 ### Fondo vietos (rank) kitimas laike
 - **Būsena:** patvirtinta (2026-10-06; sujungta su „Meet“ 7)
