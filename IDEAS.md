@@ -21,7 +21,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 
 ## Klausimas savininkui
 
-„Performance KPI“ lentelei (Meet 17) reikės kiekvieno fondo **rizikos klasės – numatytos akcijų dalies %**. Ar turite šiuos skaičius (pvz., iš darbo ar fondų taisyklių)? Jei ne, ar tinka imti iš fondų investavimo strategijų ir Lietuvos banko duomenų, o jūs patikrintumėte?
+Kai rodote dashboard draugams ar kolegoms, ar dažniau naudojatės **telefonu** ar **kompiuteriu**? Nuo to priklauso, ar naujas diagramas (pvz., grąžos ir rizikos žemėlapį) pirmiausia pritaikyti mažam ekranui.
 
 ---
 
@@ -65,7 +65,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 ## Pirmi 3 darbai (1 etapo užbaigimui)
 
 ### 1. Kad duomenys tikrai būtų renkami automatiškai kasdien
-- **Būsena:** daroma (tvarkaraštis veikia: pirmas automatinis paleidimas 2026-10-06 14:29 Vilniaus laiku; liko apsauga – pranešti ataskaitoje, jei per dieną nebuvo paleidimų)
+- **Būsena:** daroma (tvarkaraštis veikia, bet GitHub paleidimus vėlina ar praleidžia; PR #12 – pakartotiniai bandymai kas 30 min., PR #14 – pavėlavęs rytinis paleidimas po pietų veikia kaip įprastas; liko apsauga – pranešti ataskaitoje, jei per dieną nebuvo paleidimų)
 - **Autorius:** Claude
 - **Kodėl:** darbo eiga „Update fund data“ veikia, kai paleidžiama ranka, bet pagal tvarkaraštį GitHub jos dar nė karto nepaleido (2026-10-06 rytą: 0 suplanuotų paleidimų). Kol taip yra, 1 etapo 2 punktas (kasdienis automatinis rinkimas) neįvykdytas.
 - **Ką daryti:** išsiaiškinti, kodėl GitHub nevykdo tvarkaraščio, ir jį „perkrauti“. Pridėti apsaugą: jei per dieną nebuvo nė vieno paleidimo, apie tai pranešti kasdienėje ataskaitoje. Jei GitHub tvarkaraštis ir toliau neveiks, pasiūlyti nemokamą atsarginį paleidiklį.
@@ -171,3 +171,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** dabar trumpiausias laikotarpis yra 1 mėn., todėl nematyti, kaip fondai pajudėjo vakar, pvz., po didesnio rinkos kritimo.
 - **Nauda:** „Apžvalgos“ puslapyje stulpelis „1 d.“ su paskutinės dienos vieneto vertės pokyčiu. Iškart matyti, kurie fondai labiausiai reagavo į rinką.
+
+### Rinkimo laikų žurnalas ataskaitoje
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** GitHub tvarkaraštis paleidimus vėlina valandomis (2026-10-07 rytinis paleidimas įvyko tik 14:19), o dabar tai matyti tik GitHub svetainėje.
+- **Nauda:** vakariniame laiške viena eilutė: kada vyko paleidimai ir kada kiekvienas valdytojas paskelbė vertę. Per kelias savaites paaiškės, kada geriausia rinkti duomenis, ir bus galima sumažinti nereikalingų paleidimų.
