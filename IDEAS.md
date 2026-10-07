@@ -16,12 +16,35 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-06.** Claude gali **pats sujungti (merge)** PR, kurie įgyvendina patvirtintas idėjas ar smulkius patobulinimus, jei patikra praėjo. Savininkas apie juos sužino iš vakarinio laiško. Išimtys (sujungia savininkas): PR, keičiantys `.github/workflows/update.yml`, naujos didelės funkcijos ir viskas, kas nepatvirtinta.
 - **2026-10-06.** Po kiekvieno Claude vystymo ciklo – trumpas laiškas savininkui (darbo eiga `notify.yml`): ką padaryta ir kokia kita užduotis.
 - **2026-10-06.** Savininkas planuoja balso pokalbius („meet“) apie dashboard. Jų išvados įrašomos į GitHub „Issue“ pavadinimu „Meet: <data>“; Claude ciklas jas perkelia į šį sąrašą kaip patvirtintas idėjas.
+- **2026-10-06 (laiškas, 12:36).** Valdymo mokesčiai nuskaičiuojami kasdien, todėl paskelbtos vieneto vertės jau yra po mokesčių. Papildomai mokesčių iš grąžos atimti nereikia. Visos kitos tos dienos idėjos patvirtintos.
+- **2026-10-06 (laiškas, 15:59).** Lyginamieji indeksai (benchmark): daugiau informacijos savininkas gauti negali. Kur duomenų nėra, langeliai lieka tušti. **Šio klausimo daugiau neklausti.**
+- **2026-10-07.** Dashboard pirmiausia kuriamas **kompiuterio** ekranui (telefonas antroje vietoje).
+- **2026-10-07.** Rizikingos (akcijų) dalies % visiems fondams savininkas pateiks Excel failais. Kai jų prireiks, paprašyti laišku.
+- **2026-10-07.** Kiekvieno ciklo laiškas siunčiamas kaip atsakymas į **tą pačią laiškų giją**, kad visas ataskaitas būtų galima slinkti viename laiške.
+- **2026-10-07.** Savininko atsakymai laiškais ateina į fundsautomationbot@gmail.com kaip atsakymai į ciklo laiškus. Ciklas juos privalo perskaityti ir įrašyti čia (10-06 popietės atsakymas buvo praleistas).
+- **2026-10-07.** Netrukus savininkas pateiks: SEB 1989 fondo duomenis, visų fondų rizikingos dalies % (Excel) ir visas LB portfelių ataskaitas. Iš LB ataskaitų bus atskiras analizės polapis; kai jos ateis, Claude pasiūlo, kokia analizė naudingiausia.
 
 ---
 
 ## Klausimas savininkui
 
-Kai rodote dashboard draugams ar kolegoms, ar dažniau naudojatės **telefonu** ar **kompiuteriu**? Nuo to priklauso, ar naujas diagramas (pvz., grąžos ir rizikos žemėlapį) pirmiausia pritaikyti mažam ekranui.
+*(Atsakyta 2026-10-07: pirmenybė kompiuterio vaizdui. Kitas ciklas įrašo naują klausimą; ne apie lyginamuosius indeksus.)*
+
+---
+
+## Savininko užduotys (2026-10-07)
+
+Visos patvirtintos savininko. Pirmenybė prieš kitas idėjas.
+
+**III pakopos polapis**
+1. **Po kiekvienu linijiniu grafiku – dvi heatmap lentelės** (grąža per laikotarpį ir vieta grupėje), tokios pačios kaip „Rezultatai ir palyginimas“ puslapyje. – *daroma (Claude, projekto gija)*
+2. **Fondų įjungimas / išjungimas linijiniuose grafikuose** ir jų palyginimas, kaip „Rezultatai ir palyginimas“ → „Fondų palyginimas“. – *daroma (Claude, projekto gija)*
+3. **Laikotarpio pasirinkimas prie kiekvienos diagramos:** „Nuo bendros pradžios“ (since common inception), „Nuo SEB pradžios“, „Nuo Goindex pradžios“ ir t. t. – *daroma (Claude, projekto gija)*
+4. **Mygtukai istoriniams rinkų įvykiams** (kaip II pakopos puslapyje, bet daugiau įvykių). – *daroma (Claude, projekto gija)*
+
+**„Pension fund tracker“ (rezultatų) puslapis**
+5. **Heatmap lentelėse „Return over the period“ ir „Rank within the age group“ – jungiklis „Nuo Goindex pradžios“**, kad „All history“ režime būtų galima objektyviai palyginti ir su Goindex. – *daroma (Claude, projekto gija)*
+6. **Lentelė „Overall ranking across all groups and periods“:** periodų pasirinkimo mygtukai ir aiškus paaiškinimas, kas yra „Comparisons“. – *daroma (Claude, projekto gija)*
 
 ---
 
@@ -119,13 +142,13 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** grafikas, kaip kiekvieno fondo vieta savo grupėje (pvz., pagal 1 m. grąžą) keitėsi kas mėnesį. Taip matyti, ar fondas pastoviai geras, ar tik neseniai pakilo.
 
 ### Šviežumo ženklas ir el. laiške
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** svetainėje jau matyti, kurie valdytojai atsilieka, bet vakarinis laiškas to nemini taip aiškiai.
 - **Nauda:** laiške viena eilutė „atsilieka: Luminor (2 d. d.)“ – nereikia atidaryti svetainės.
 
 ### Duomenų spragų ženklas grafike
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** savininkas rankiniu būdu pildys istorines spragas; kol jų nėra, grafikas tyliai jungia taškus tiesia linija.
 - **Nauda:** punktyrinė linija ten, kur trūksta duomenų, kad lankytojas neapsigautų.
@@ -137,43 +160,43 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** vienas grafikas: horizontaliai rizika (svyravimai), vertikaliai grąža, kiekvienas taškas yra grupės fondas. Iškart matyti, kuris fondas uždirba daugiau už tą pačią riziką.
 
 ### „Mano fondas“: savo fondo paryškinimas visur
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** dažniausiai žmogus seka vieną savo fondą ir jo vietą tarp kitų.
 - **Nauda:** pasirinkus savo fondą, jis paryškinamas visose lentelėse ir grafikuose, o pasirinkimas įsimenamas naršyklėje. Patogu ir draugams: kiekvienas mato savo fondą.
 
 ### Palyginimas su pasaulio akcijų indeksu
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** jaunesnių gimimo grupių fondai daugiausia investuoja į pasaulio akcijas. Lyginant tik tarpusavyje, nematyti, ar visi kartu neatsilieka nuo rinkos.
 - **Nauda:** grafike papildoma pilka linija, pvz. nemokamai skelbiamas pasaulio akcijų indekso ETF eurais. Matyti, kiek valdytojų rezultatas skiriasi nuo pigaus indekso.
 
 ### Užfiksuotas pirmas stulpelis plačiose lentelėse telefone
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** telefone plačios lentelės slenkamos į šoną, ir kairysis stulpelis (gimimo grupė ar fondas) dingsta iš akių.
 - **Nauda:** slenkant lentelę, grupės pavadinimas lieka matomas, todėl skaičių nebereikia „gaudyti“.
 
 ### Heatmap langelio paaiškinimas užvedus pelę
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** langelyje matyti tik grąža, bet ne datos ir vieneto vertės, iš kurių ji paskaičiuota.
 - **Nauda:** užvedus pelę ar paspaudus telefone matyti fondo pavadinimas, pradžios ir pabaigos datos bei vieneto vertės. Lengviau patikrinti skaičių ir paaiškinti draugams.
 
 ### Valdytojo kortelė paspaudus jo pavadinimą
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** rinkos lentelėse matyti visų valdytojų skaičiai, bet norint pažiūrėti vieną valdytoją reikia ieškoti po kelias lenteles.
 - **Nauda:** paspaudus, pvz., „Swedbank“, atsidaro trumpa suvestinė: visi jo fondai, grąžos ir vietos per laikotarpius vienoje vietoje. Patogu ruošiantis pokalbiui apie konkretų valdytoją.
 
 ### Paskutinės dienos pokytis
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** dabar trumpiausias laikotarpis yra 1 mėn., todėl nematyti, kaip fondai pajudėjo vakar, pvz., po didesnio rinkos kritimo.
 - **Nauda:** „Apžvalgos“ puslapyje stulpelis „1 d.“ su paskutinės dienos vieneto vertės pokyčiu. Iškart matyti, kurie fondai labiausiai reagavo į rinką.
 
 ### Rinkimo laikų žurnalas ataskaitoje
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (2026-10-06/07)
 - **Autorius:** Claude
 - **Kodėl:** GitHub tvarkaraštis paleidimus vėlina valandomis (2026-10-07 rytinis paleidimas įvyko tik 14:19), o dabar tai matyti tik GitHub svetainėje.
 - **Nauda:** vakariniame laiške viena eilutė: kada vyko paleidimai ir kada kiekvienas valdytojas paskelbė vertę. Per kelias savaites paaiškės, kada geriausia rinkti duomenis, ir bus galima sumažinti nereikalingų paleidimų.
