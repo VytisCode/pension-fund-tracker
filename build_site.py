@@ -171,6 +171,26 @@ def best_name(names, kind):
     return max(names.items(), key=score)[0]
 
 
+# Alternatyvūs (nelikvidūs) fondai: LB KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti – privatus kapitalas,
+# infrastruktūra, privati skola ir pan.), išskyrus biržoje prekiaujamus ETF / UCITS (pvz. NT indeksų ETF).
+ALT_LIQUID = re.compile(r"ETF|UCITS|EPRA|NAREIT|FTSE|iShares|Xtrackers|Amundi|BNP P|Carmignac|Vontobel|SEB Asset Management SA", re.I)
+ALT_KINDS = [  # (požymis, raktažodžiai pavadinime) – pirmas atitikęs laimi
+    ("debt", r"debt|mezzanine|lending|credit|loan|skol|17Capital|BPM|CVI"),
+    ("infra", r"infra|energ|renewabl|clean|solar|wind|green|Ignitis"),
+    ("forest", r"forest|land|miš|SG Capital"),
+    ("re", r"real estate|property|kinnisvara|EfTEN|Prosperus|LORDS|Capitalica|Horizon|residential|EIKA|PREF|NT fond"),
+]
+
+
+def alt_kind(kind, kis, name):
+    if kind != "fund" or kis not in ("5", "6", "7") or ALT_LIQUID.search(name):
+        return ""
+    for tag, rx in ALT_KINDS:
+        if re.search(rx, name, re.I):
+            return tag
+    return "re" if kis == "5" else "hedge" if kis == "6" else "pe"
+
+
 def pf_fund_label(code, provider, pillar, name):
     m = re.match(r"[A-Z]{3}-(\d\d)/(\d\d)$", code)
     if m:
@@ -205,7 +225,8 @@ def build_portfolios(ver: dict) -> None:
         name = best_name(names[p], kind)
         secs.append([name, PF_TYPES[kind], country, cur, kis,
                      p if re.match(r"^[A-Z]{2}[A-Z0-9]{9}\d$", p) else "",
-                     int(kind == "fund" and bool(COMPANY_NAME.search(name)))])  # 1 = žinoma tik valdymo bendrovė
+                     int(kind == "fund" and bool(COMPANY_NAME.search(name))),  # 1 = žinoma tik valdymo bendrovė
+                     alt_kind(kind, kis, " ".join(names[p]))])
     funds = {}
     for r in rows:
         f = funds.setdefault(r["fund_code"], {"c": r["fund_code"], "p": r["provider"], "pl": r["pillar"], "r": []})

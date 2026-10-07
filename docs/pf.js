@@ -17,6 +17,13 @@ addStrings({
   thQ: 'Quarter', thUnits: 'Units', nFunds: n => `${n} fund${n === 1 ? '' : 's'}`,
   more: n => `Show ${n} more`, noRows: 'No changes match the filters.',
   tcNote: q => `Weight = share of the manager’s (or fund’s) portfolio in the selected pillar. “New” = not held at the end of the previous quarter, “Sold out” = no longer held. Cash, deposits and derivatives have no units, so they are not listed here – see the fund portfolio below. Data: Bank of Lithuania, quarterly pension fund portfolio reports (${q}).`,
+  altTitle: 'Alternative investments',
+  altLead: 'Share of illiquid alternative funds – private equity and venture capital, infrastructure and energy, real estate, private debt, forests – in each portfolio. They cannot be sold quickly, so when participants leave a fund (for example after the 2026 pension reform) and liquid securities are sold, the share of alternatives grows by itself.',
+  alts: { pe: 'Private equity & venture', infra: 'Infrastructure & energy', re: 'Real estate', debt: 'Private debt', forest: 'Forest & land', hedge: 'Hedge funds' },
+  altNone: m => `No alternative funds at all: ${m}.`, altShort: 'alternatives', altAll: 'Alternative funds', kAlt: 'Alternatives',
+  altChart: 'Share of alternatives in the manager’s portfolios (all funds of the pillar together), %',
+  thAltV: 'Alternatives, value', thAltMix: 'Of which', thChgAlt: 'Alternatives value', thChgTot: 'Whole portfolio', thChg: (a, b) => `Change ${a} → ${b}`,
+  altNote: 'Alternative = Bank of Lithuania fund types 5 (real estate), 6 (hedge) and 7 (other: private equity, venture, infrastructure, private debt), excluding exchange-traded ETF/UCITS funds. The split by kind is based on the fund name. If alternatives’ value barely changes while the whole portfolio shrinks, the higher share comes from selling liquid assets. Click a fund to open its portfolio.',
   fund: 'Fund', kTotal: 'Portfolio value', kPos: 'Positions', kTop10: 'Top 10 positions', kNew: 'New / sold out',
   showExits: 'Sold-out positions are listed at the bottom.',
   fcNote: 'Weight = position value ÷ sum of all positions (≈ net assets). Change in units shows buying or selling; a change in weight can also come from price moves. Fund names in the reports are sometimes given only as the management company – then the ISIN code identifies the fund.',
@@ -40,6 +47,13 @@ addStrings({
   thQ: 'Ketvirtis', thUnits: 'Vienetai', nFunds: n => `${n} fond${n === 1 ? 'as' : n < 10 ? 'ai' : 'ų'}`,
   more: n => `Rodyti dar ${n}`, noRows: 'Pagal pasirinktus filtrus pokyčių nėra.',
   tcNote: q => `Svoris = dalis valdytojo (ar fondo) portfelio pasirinktoje pakopoje. „Nauja“ = ankstesnio ketvirčio pabaigoje nebuvo, „Pardavė visą“ = nebeliko. Pinigai, indėliai ir išvestinės priemonės neturi vienetų, todėl čia nerodomi – žr. fondo portfelį žemiau. Duomenys: Lietuvos bankas, ketvirtinės pensijų fondų portfelių ataskaitos (${q}).`,
+  altTitle: 'Alternatyvios investicijos',
+  altLead: 'Nelikvidžių alternatyvių fondų – privataus ir rizikos kapitalo, infrastruktūros ir energetikos, nekilnojamo turto, privačios skolos, miškų – dalis kiekviename portfelyje. Jų greitai parduoti negalima, todėl kai dalyviai palieka fondą (pvz. po 2026 m. pensijų reformos) ir parduodami likvidūs vertybiniai popieriai, alternatyvų dalis išauga savaime.',
+  alts: { pe: 'Privatus ir rizikos kapitalas', infra: 'Infrastruktūra ir energetika', re: 'Nekilnojamas turtas', debt: 'Privati skola', forest: 'Miškai ir žemė', hedge: 'Rizikos draudimo fondai' },
+  altNone: m => `Alternatyvių fondų neturi: ${m}.`, altShort: 'alternatyvios', altAll: 'Alternatyvūs fondai', kAlt: 'Alternatyvios',
+  altChart: 'Alternatyvų dalis valdytojo portfeliuose (visi pakopos fondai kartu), %',
+  thAltV: 'Alternatyvų vertė', thAltMix: 'Iš jų', thChgAlt: 'Alternatyvų vertė', thChgTot: 'Visas portfelis', thChg: (a, b) => `Pokytis ${a} → ${b}`,
+  altNote: 'Alternatyvios = Lietuvos banko KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti: privatus ir rizikos kapitalas, infrastruktūra, privati skola), išskyrus biržoje prekiaujamus ETF / UCITS fondus. Skirstymas pagal rūšį – pagal fondo pavadinimą. Jei alternatyvų vertė beveik nesikeičia, o visas portfelis mažėja, didesnė dalis atsiranda dėl likvidaus turto pardavimo. Paspaudus fondą atidaromas jo portfelis.',
   fund: 'Fondas', kTotal: 'Portfelio vertė', kPos: 'Pozicijų', kTop10: '10 didžiausių pozicijų', kNew: 'Naujos / parduotos',
   showExits: 'Visiškai parduotos pozicijos – lentelės apačioje.',
   fcNote: 'Svoris = pozicijos vertė ÷ visų pozicijų suma (≈ grynieji aktyvai). Vienetų pokytis rodo pirkimą ar pardavimą; svoris gali keistis ir dėl kainų. Ataskaitose fondų pavadinimai kartais nurodomi tik kaip valdymo bendrovė – tada fondą atpažinti padeda ISIN kodas.',
@@ -54,7 +68,7 @@ const MGRS = ['Allianz', 'Artea', 'Goindex', 'Luminor', 'SEB', 'Swedbank'];     
 var DATA = { providers: MGRS.map(m => ({ id: m, label: m })) };                // drawLineChart spalvoms ir pavadinimams
 const Q = PF.quarters, NQ = Q.length, QDAY = Q.map(dayOf);
 const qLabel = i => { const [y, m] = Q[i].split('-'); return lang === 'lt' ? `${y} m. ${['I', 'II', 'III', 'IV'][m / 3 - 1]} ketv.` : `Q${m / 3} ${y}`; };
-const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6] }));
+const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '' }));
 const FUNDS = PF.funds.map(f => {
   const q = Array.from({ length: NQ }, () => null);        // q[ketvirtis] = Map(pozicija -> {u, v}) arba null (fondo nebuvo)
   for (let i = 0; i < f.r.length; i += 4) {
@@ -67,7 +81,7 @@ const FUNDS = PF.funds.map(f => {
 });
 const fundBy = Object.fromEntries(FUNDS.map(f => [f.c, f]));
 const posLabel = s => s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
-const typeLabel = s => { const l = s.t === 'f' && s.kis ? (T().kis[s.kis] || T().types.f) : T().types[s.t]; return l[0].toUpperCase() + l.slice(1); };
+const typeLabel = s => { const l = s.alt ? T().alts[s.alt] : s.t === 'f' && s.kis ? (T().kis[s.kis] || T().types.f) : T().types[s.t]; return l[0].toUpperCase() + l.slice(1); };
 const fundName = f => f.g === 'turto' ? f.n.replace('turto išsaugojimo', lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : f.n;
 const sw = m => `<span class="sw" style="background:${colorOf(m)}"></span>`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -175,7 +189,7 @@ function renderTopChanges() {
 }
 
 /* ---------- 2. fondo portfelis ---------- */
-const TYPE_COL = { e: 'var(--s1)', f3: 'var(--s4)', f: 'var(--s3)', b: 'var(--s2)', c: 'var(--s5)', d: 'var(--s6)' };
+const TYPE_COL = { e: 'var(--s1)', f3: 'var(--s4)', f: 'var(--s3)', alt: '#c9a227', b: 'var(--s2)', c: 'var(--s5)', d: 'var(--s6)' };
 function fundSelect() {
   const opt = f => `<option value="${f.c}"${f.c === ST.fund ? ' selected' : ''}>${esc(fundName(f))}${f.last < NQ - 1 ? ` (${T().closed})` : ''}</option>`;
   return `<select id="fcFund">` + ['II', 'III'].map(pl => MGRS.map(m => {
@@ -203,7 +217,7 @@ function renderFund() {
   const first = f.q.findIndex(Boolean);
   const bar = document.getElementById('fcBar');
   bar.innerHTML = field(T().fund, fundSelect()) + field(T().quarter, quarterSelect('fcQ', ST.fq, first).replace(/<option value="(\d+)"/g, (s, i) => f.q[+i] ? s : s + ' disabled'))
-    + field(T().assetType, `<select id="fcType">${['all', 'e', 'b', 'f', 'c', 'd'].map(t => `<option value="${t}"${t === ST.ft ? ' selected' : ''}>${t === 'all' ? T().all : T().types[t]}</option>`).join('')}</select>`);
+    + field(T().assetType, `<select id="fcType">${['all', 'e', 'b', 'f', 'alt', 'c', 'd'].map(t => `<option value="${t}"${t === ST.ft ? ' selected' : ''}>${t === 'all' ? T().all : t === 'alt' ? T().altAll : T().types[t]}</option>`).join('')}</select>`);
   bar.querySelector('#fcFund').addEventListener('change', e => { ST.fund = e.target.value; ST.fq = fundBy[ST.fund].q[ST.fq] ? ST.fq : fundBy[ST.fund].last; ST.pos = null; fcLimit = 40; save(); renderFund(); });
   bar.querySelector('#fcQ').addEventListener('change', e => { ST.fq = +e.target.value; fcLimit = 40; save(); renderFund(); });
   bar.querySelector('#fcType').addEventListener('change', e => { ST.ft = e.target.value; fcLimit = 40; save(); renderFund(); });
@@ -213,16 +227,17 @@ function renderFund() {
   const nNew = rows.filter(r => r.act === 'new').length;
   document.getElementById('fcKpis').innerHTML = [
     [T().kTotal, eur(tot)], [T().kPos, rows.length], [T().kTop10, wFmt(byW.slice(0, 10).reduce((a, r) => a + r.w, 0), 1)],
+    [T().kAlt, (() => { const a = altShare(f, ST.fq), a0 = ST.fq > first ? altShare(f, ST.fq - 1) : null; return wFmt(a, 1) + (a0 == null ? '' : ` <small class="${a > a0 ? 'up' : a < a0 ? 'down' : ''}" style="font-size:12px;white-space:nowrap">${pp(a - a0)} p. p.</small>`); })()],
     [T().kNew, ST.fq > first ? `${nNew} / ${exits.length}` : '–'],
   ].map(([l, v]) => `<div class="kpi"><span>${l}</span><b>${v}</b></div>`).join('');
   // sudėtis pagal turto tipą (akcijų fondai atskirai nuo kitų fondų)
-  const comp = {}; rows.forEach(r => { const k = r.s.t === 'f' && r.s.kis === '3' ? 'f3' : r.s.t; comp[k] = (comp[k] || 0) + r.w; });
-  const compLbl = k => k === 'f3' ? T().kis[3] : k === 'f' ? (lang === 'lt' ? 'kiti fondai' : 'other funds') : T().types[k];
-  const keys = ['e', 'f3', 'f', 'b', 'c', 'd'].filter(k => comp[k]);
+  const comp = {}; rows.forEach(r => { const k = r.s.alt ? 'alt' : r.s.t === 'f' && r.s.kis === '3' ? 'f3' : r.s.t; comp[k] = (comp[k] || 0) + r.w; });
+  const compLbl = k => k === 'alt' ? T().altAll : k === 'f3' ? T().kis[3] : k === 'f' ? (lang === 'lt' ? 'kiti fondai' : 'other funds') : T().types[k];
+  const keys = ['e', 'f3', 'f', 'alt', 'b', 'c', 'd'].filter(k => comp[k]);
   document.getElementById('fcComp').innerHTML = `<div class="comp">${keys.filter(k => comp[k] > 0).map(k => `<span style="width:${comp[k]}%;background:${TYPE_COL[k]}" title="${compLbl(k)} ${wFmt(comp[k], 1)}"></span>`).join('')}</div>
     <div class="complg">${keys.map(k => `<span><i style="background:${TYPE_COL[k]}"></i>${compLbl(k)} <b>${wFmt(comp[k], 1)}</b></span>`).join('')}</div>`;
 
-  const all = byW.concat(exits.sort((a, b) => a.dw - b.dw)).filter(r => ST.ft === 'all' || r.s.t === ST.ft);
+  const all = byW.concat(exits.sort((a, b) => a.dw - b.dw)).filter(r => ST.ft === 'all' || (ST.ft === 'alt' ? !!r.s.alt : r.s.t === ST.ft));
   const selAt = all.findIndex(r => r.si === ST.pos);
   if (selAt >= fcLimit) fcLimit = selAt + 1;                 // pasirinkta pozicija visada matoma
   const list = all.slice(0, fcLimit);
@@ -273,11 +288,67 @@ function renderPosition() {
   document.getElementById('phTable').innerHTML = `<thead><tr><th>${T().thQ}</th><th>${T().thUnits}</th><th>${T().thValue}</th><th>${T().thW}</th></tr></thead><tbody>${hist.join('')}</tbody>`;
 }
 
+/* ---------- 3. alternatyvios investicijos ---------- */
+function altValue(f, qi) { let a = 0; if (f.q[qi]) f.q[qi].forEach((x, si) => { if (S[si].alt) a += x.v; }); return a; }
+const altShare = (f, qi) => f.q[qi] && f.tot[qi] ? altValue(f, qi) / f.tot[qi] * 100 : 0;
+function altMix(f, qi) { const m = {}; if (f.q[qi]) f.q[qi].forEach((x, si) => { const k = S[si].alt; if (k) m[k] = (m[k] || 0) + x.v; }); return m; }
+function renderAlt() {
+  const pl = ST.apl || 'II', bar = document.getElementById('altBar');
+  bar.innerHTML = field(T().pillar, seg('apl', [['II', 'II'], ['III', 'III']], pl))
+    + field(T().quarter, quarterSelect('altQ0', ST.aq0 ?? NQ - 3, 0)) + `<span class="pfsub">→ ${qLabel(NQ - 1)}</span>`;
+  wireSegs(bar, { apl: v => { ST.apl = v; save(); renderAlt(); } });
+  const q1 = NQ - 1, q0 = Math.min(ST.aq0 ?? NQ - 3, q1 - 1);
+  bar.querySelector('#altQ0').addEventListener('change', e => { ST.aq0 = +e.target.value; save(); renderAlt(); });
+  // grafikas: valdytojų bendra alternatyvų dalis kiekvieno ketvirčio pabaigoje
+  const series = MGRS.map(m => {
+    const fs = FUNDS.filter(f => f.pl === pl && f.p === m), pts = [];
+    for (let i = 0; i < NQ; i++) { const t = fs.reduce((a, f) => a + f.tot[i], 0); if (t) pts.push([QDAY[i], fs.reduce((a, f) => a + altValue(f, i), 0) / t * 100]); }
+    return { provider: m, points: pts };
+  }).filter(r => r.points.some(p => p[1] > 0));
+  DATA.providers.forEach(p => { p.label = p.id; });
+  const el = document.getElementById('altChart');
+  const paint = mr => drawLineChart(el, series, QDAY[0], QDAY[q1], { fmt: v => num(v, 1) + '%', mr });
+  const hc = renderAlt.hc || (renderAlt.hc = hoverCompress(el, mr => renderAlt.paint(mr)));
+  renderAlt.paint = paint; paint(hc.mr);
+  document.getElementById('altChartMeta').textContent = T().altChart;
+  document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${num(r.points[r.points.length - 1][1], 1)}%</b></span>`).join('');
+  // lentelė: kiekvienas fondas – dalis per paskutinius ketvirčius ir pokytis nuo pasirinkto ketvirčio
+  const cols = []; for (let i = Math.max(0, q1 - 7); i <= q1; i++) cols.push(i);
+  if (!cols.includes(q0)) cols.unshift(q0);
+  const live = FUNDS.filter(f => f.pl === pl && f.last === q1);
+  const funds = live.filter(f => cols.concat([q0]).some(i => altShare(f, i) > 0));
+  const none = [...new Set(live.filter(f => !funds.includes(f)).map(f => f.p))];
+  const order = g => g === 'turto' ? '0' : g;
+  funds.sort((a, b) => order(b.g).localeCompare(order(a.g)) || a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
+  const maxA = Math.max(1, ...funds.flatMap(f => cols.map(i => altShare(f, i))));
+  const cell = v => `<td style="background:color-mix(in srgb, #c9a227 ${Math.round(v / maxA * 85)}%, transparent)">${v ? num(v, 1) : '–'}</td>`;
+  const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 0)}%</td>` : '<td>–</td>';
+  let lastG = null;
+  const tb = document.getElementById('altTable');
+  tb.innerHTML = `<thead><tr><th class="l">${T().thFund}</th>${cols.map(i => `<th>${qLabel(i)}</th>`).join('')}<th>${T().thDw}</th>
+    <th>${T().thAltV}</th><th class="l">${T().thAltMix}</th><th>${T().thChgAlt}</th><th>${T().thChgTot}</th></tr>
+    <tr><th></th>${cols.map(() => '<th></th>').join('')}<th></th><th></th><th></th><th colspan="2" style="text-align:center">${T().thChg(qLabel(q0), qLabel(q1))}</th></tr></thead><tbody>`
+    + funds.map(f => {
+      const sep = pl === 'II' && f.g !== lastG ? `<tr class="sep"><td colspan="${cols.length + 6}">${f.g === 'turto' ? T().turto : T().born + ' ' + f.g.replace('-', '–')}</td></tr>` : '';
+      lastG = f.g;
+      const a1 = altShare(f, q1), a0 = altShare(f, q0), mix = altMix(f, q1), mt = Object.values(mix).reduce((x, y) => x + y, 0);
+      return sep + `<tr data-c="${f.c}"><td class="l">${sw(f.p)}${esc(fundName(f))}</td>${cols.map(i => cell(altShare(f, i))).join('')}
+        <td class="${a1 > a0 ? 'up' : a1 < a0 ? 'down' : ''}">${f.q[q0] ? pp(a1 - a0) : '–'}</td><td>${mt ? eur(mt) : '–'}</td>
+        <td class="l pfsub">${Object.entries(mix).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${T().alts[k]} ${num(v / mt * 100, 0)}%`).join(' · ')}</td>
+        ${chg(altValue(f, q0), altValue(f, q1))}${chg(f.tot[q0], f.tot[q1])}</tr>`;
+    }).join('') + '</tbody>';
+  tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
+    ST.fund = tr.dataset.c; ST.fq = q1; ST.ft = 'alt'; ST.pos = null; fcLimit = 40; save(); renderFund();
+    document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
+  }));
+  document.getElementById('altNote').textContent = (none.length ? T().altNone(none.join(', ')) + ' ' : '') + T().altNote;
+}
+
 function renderAll() {
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
-  ['tcTitle', 'tcLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderTopChanges(); renderFund();
+  ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
+  renderTopChanges(); renderAlt(); renderFund();
 }
 renderHeader('portfolios', renderAll);
 renderAll();
-let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => renderPosition.paint && renderPosition.paint(), 120); });
+let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { renderPosition.paint && renderPosition.paint(); renderAlt.paint && renderAlt.paint(renderAlt.hc.mr); }, 120); });

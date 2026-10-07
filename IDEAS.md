@@ -136,6 +136,12 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Kodėl:** fondų portfelių sudėties ir jos pokyčių kas ketvirtį analizė.
 - **Duomenys:** `imports/lb_portfolios/` (LB xlsx failai) → `python3 portfolios.py` → `data/portfolios.csv`. Atsiradus naujam ketvirčiui – įdėti failą ir paleisti iš naujo.
 
+### Portfeliai: alternatyvių investicijų dalis
+- **Būsena:** daroma (savininko prašymas 2026-10-07)
+- **Autorius:** savininkas
+- **Kodėl:** alternatyvūs fondai (privatus kapitalas, infrastruktūra, NT, privati skola) nelikvidūs; po reformos parduodant likvidų turtą jų dalis portfeliuose didėja.
+- **Kas daroma:** puslapyje „Portfeliai“ skyrius su alternatyvų dalimi pagal valdytoją (grafikas) ir pagal fondą (lentelė per 8 ketvirčius, rūšys, alternatyvų ir viso portfelio vertės pokytis); fondo kortelėje – rodiklis ir filtras „Alternatyvūs fondai“.
+
 ### Portfeliai: tikri fondų pavadinimai pagal ISIN
 - **Būsena:** nauja
 - **Autorius:** Claude
