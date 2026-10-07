@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pension fund tracker</title>
+<meta name="description" content="Lithuanian pension funds: net assets over time and reform payouts">
+<link rel="stylesheet" href="style.css">
+<style>
+  h2.sec { margin: 26px 0 4px; font-size: 19px; }
+  p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 920px; }
+  .pfbar { margin: 4px 0 12px; }
+  table.at { font-size: 13px; }
+  table.at th { white-space: normal; vertical-align: bottom; }
+  table.at th.grp { text-align: center; border-bottom: 1px solid var(--line); }
+  table.at td.l, table.at th.l { text-align: left; }
+  table.at tr.tot td { border-top: 2px solid var(--line); font-weight: 700; }
+  table.at tr.sep td { background: var(--surface); font-weight: 600; text-align: left; }
+  table.at td.bl, table.at th.bl { border-left: 1px solid var(--line); }
+  .up { color: var(--s5); font-weight: 600; } .down { color: #d0453f; font-weight: 600; }
+  .est { color: var(--text-3); }
+  .pfsub { color: var(--text-3); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+
+  <h2 class="sec" id="chTitle"></h2>
+  <p class="lead" id="chLead"></p>
+  <div class="bar pfbar" id="chBar"></div>
+  <section class="card"><div class="meta" id="chMeta"></div><div class="chart" id="chart"></div><div class="legend" id="chLegend" style="margin-top:6px"></div><p class="note" id="chNote"></p></section>
+
+  <h2 class="sec" id="gtTitle"></h2>
+  <section class="card"><div class="scroll"><table class="at" id="gtTable"></table></div><p class="note" id="gtNote"></p></section>
+
+  <h2 class="sec" id="poTitle"></h2>
+  <p class="lead" id="poLead"></p>
+  <div class="bar pfbar" id="poBar"></div>
+  <section class="card"><div class="scroll"><table class="at" id="poTable"></table></div><p class="note" id="poNote"></p></section>
+
+  <footer id="foot"></footer>
+</div>
+<script src="common.js"></script>
+<script src="data_aum.js"></script>
+<script src="aum.js"></script>
+</body>
+</html>

@@ -103,6 +103,7 @@ def main() -> None:
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
     build_pillar3(ver)
     build_portfolios(ver)
+    build_aum(ver)
 
 
 def build_pillar3(ver: dict) -> None:
@@ -249,6 +250,24 @@ def build_portfolios(ver: dict) -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "portfolios.html").write_text(text, encoding="utf-8")
     print(f"docs/data_pf.js: {len(data_js) / 1024:.0f} KB, ketvirčių: {len(quarters)}, fondų: {len(out)}, pozicijų: {len(secs)}")
+
+
+def build_aum(ver: dict) -> None:
+    """Turto (AUM) polapis: docs/data_aum.js (žr. aum.py) + site/aum.html, site/aum.js."""
+    import aum
+
+    payload = aum.build()
+    payload["generated"] = datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
+    data_js = "const AUM=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data_aum.js").write_text(data_js, encoding="utf-8")
+    shutil.copyfile(SITE / "aum.html", DOCS / "aum.html")
+    shutil.copyfile(SITE / "aum.js", DOCS / "aum.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_aum.js", "aum.js")}}
+    text = (DOCS / "aum.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "data_aum.js", "aum.js"):
+        text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
+    (DOCS / "aum.html").write_text(text, encoding="utf-8")
+    print(f"docs/data_aum.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}, išmokėjimų: {len(payload['payouts'])}")
 
 
 if __name__ == "__main__":
