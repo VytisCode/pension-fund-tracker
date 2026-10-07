@@ -6,7 +6,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 const I18N = {
   en: {
     siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
-    navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios',
+    navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
@@ -16,7 +16,7 @@ const I18N = {
   },
   lt: {
     siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
-    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai',
+    navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
@@ -43,7 +43,7 @@ try { const t = localStorage.getItem('theme'); if (t) document.documentElement.d
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div><div class="fresh" id="fresh"></div>
-    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a><a href="portfolios.html" data-p="portfolios"></a></nav></div>
+    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a><a href="aum.html" data-p="aum"></a><a href="portfolios.html" data-p="portfolios"></a></nav></div>
     <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
       <div class="seg" id="theme" role="group">
@@ -60,10 +60,11 @@ function renderHeader(active, onLang) {
     h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
     h.querySelector('[data-p="pillar3"]').textContent = T().navPillar3;
     h.querySelector('[data-p="portfolios"]').textContent = T().navPortfolios;
+    h.querySelector('[data-p="aum"]').textContent = T().navAum;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
-    if (active !== 'pillar3' && active !== 'portfolios') document.getElementById('fresh').innerHTML = freshnessHTML();
+    if (active === 'performance' || active === 'overview') document.getElementById('fresh').innerHTML = freshnessHTML();
   };
   h.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
     lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {}
@@ -154,7 +155,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
 
   niceTicks(lo, hi).forEach(t => {
     add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
-    const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + (opts.axisUnit || '%');
+    const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + (opts.axisUnit ?? '%');
   });
   const years = (x1 - x0) / 365, ticks = [], cur = new Date(x0 * DAY);
   if (years > 5) { for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += years > 6 ? 2 : 1) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }

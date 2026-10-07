@@ -142,6 +142,13 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Kodėl:** alternatyvūs fondai (privatus kapitalas, infrastruktūra, NT, privati skola) nelikvidūs; po reformos parduodant likvidų turtą jų dalis portfeliuose didėja.
 - **Kas daroma:** puslapyje „Portfeliai“ skyrius su alternatyvų dalimi pagal valdytoją (grafikas) ir pagal fondą (lentelė per 8 ketvirčius, rūšys, alternatyvų ir viso portfelio vertės pokytis); fondo kortelėje – rodiklis ir filtras „Alternatyvūs fondai“.
 
+### Turtas (AUM) ir reformos išmokėjimai
+- **Būsena:** daroma (savininko prašymas 2026-10-07)
+- **Autorius:** savininkas
+- **Kodėl:** po reformos kiekvieno ketvirčio pradžioje išmokamas pasitraukusių dalyvių turtas; svarbu matyti, kada ir kiek kiekvienas valdytojas išmokėjo, ir kaip auga III pakopos turtas.
+- **Kas daroma:** puslapis „Turtas (AUM)“: grafikas (II / III pakopa, valdytojai arba grupė, laikotarpiai, mln. € arba %), turto pokyčio lentelė ir išmokėjimų lentelė pagal valdytoją ar fondą (`aum.py` aptinka išmokėjimų dienas).
+- **Trūksta:** Swedbank III pakopos kasdienių grynųjų aktyvų (dabar tik LB ketvirčio sumos).
+
 ### Portfeliai: tikri fondų pavadinimai pagal ISIN
 - **Būsena:** nauja
 - **Autorius:** Claude
