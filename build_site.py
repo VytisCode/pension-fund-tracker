@@ -144,7 +144,7 @@ def build_pillar3(ver: dict) -> None:
     shutil.copyfile(SITE / "p3.js", DOCS / "p3.js")
     ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data3.js", "p3.js")}}
     text = (DOCS / "pillar3.html").read_text(encoding="utf-8")
-    for n in ("style.css", "common.js", "data3.js", "p3.js"):
+    for n in ("style.css", "common.js", "events.js", "data3.js", "p3.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "pillar3.html").write_text(text, encoding="utf-8")
     print(f"docs/data3.js: {len(data_js) / 1024:.0f} KB, III pakopos fondų: {sum(len(g) for g in groups.values())}")
