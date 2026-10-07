@@ -21,7 +21,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 
 ## Klausimas savininkui
 
-„Ataskaitų“ puslapiui (Meet 13, 15, 17) reikės kiekvieno fondo **lyginamojo indekso (benchmark)** reikšmių. Fondai jų kasdien viešai neskelbia. Ar turite šiuos duomenis savo failuose (pvz., iš darbo), ar ieškoti fondų mėnesinėse ataskaitose ir Lietuvos banko duomenyse?
+„Performance KPI“ lentelei (Meet 17) reikės kiekvieno fondo **rizikos klasės – numatytos akcijų dalies %**. Ar turite šiuos skaičius (pvz., iš darbo ar fondų taisyklių)? Jei ne, ar tinka imti iš fondų investavimo strategijų ir Lietuvos banko duomenų, o jūs patikrintumėte?
 
 ---
 
@@ -41,8 +41,8 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 **A. „Performance & peers“ puslapis**
 1. **Heatmap lentelių eilutės pagal riziką:** viršuje turto išsaugojimo (payout), toliau 1961, 1968 … , jauniausi (2003) apačioje. – *atlikta (PR #11, 2026-10-06)*
 2. **Vienodo pločio, sulygiuoti heatmap langeliai**, elegantiškesnės lentelės. – *atlikta (PR #11, 2026-10-06)*
-3. **Pašalinti lentelę „Quartile within age group“.** – *patvirtinta*
-4. **Kvartilius visur pakeisti konkrečia vieta** (1–6) rizikos grupėje; kvartilių neliks niekur. – *patvirtinta*
+3. **Pašalinti lentelę „Quartile within age group“.** – *atlikta (PR #13, 2026-10-07)*
+4. **Kvartilius visur pakeisti konkrečia vieta** (1–6) rizikos grupėje; kvartilių neliks niekur. – *atlikta (PR #13, 2026-10-07)*
 5. **Grąžos ir rizikos žemėlapis:** taškinė diagrama (horizontaliai svyravimai, vertikaliai grąža, spalva pagal gimimo grupę). – *patvirtinta*
 6. **Santykinė grąža prieš grupės vidurkį:** juostinė diagrama, nulis = grupės vidurkis. – *patvirtinta*
 7. **Reitingo kaita laike:** fondo vieta kas mėnesį ar ketvirtį. – *patvirtinta*
@@ -159,3 +159,15 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** langelyje matyti tik grąža, bet ne datos ir vieneto vertės, iš kurių ji paskaičiuota.
 - **Nauda:** užvedus pelę ar paspaudus telefone matyti fondo pavadinimas, pradžios ir pabaigos datos bei vieneto vertės. Lengviau patikrinti skaičių ir paaiškinti draugams.
+
+### Valdytojo kortelė paspaudus jo pavadinimą
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** rinkos lentelėse matyti visų valdytojų skaičiai, bet norint pažiūrėti vieną valdytoją reikia ieškoti po kelias lenteles.
+- **Nauda:** paspaudus, pvz., „Swedbank“, atsidaro trumpa suvestinė: visi jo fondai, grąžos ir vietos per laikotarpius vienoje vietoje. Patogu ruošiantis pokalbiui apie konkretų valdytoją.
+
+### Paskutinės dienos pokytis
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** dabar trumpiausias laikotarpis yra 1 mėn., todėl nematyti, kaip fondai pajudėjo vakar, pvz., po didesnio rinkos kritimo.
+- **Nauda:** „Apžvalgos“ puslapyje stulpelis „1 d.“ su paskutinės dienos vieneto vertės pokyčiu. Iškart matyti, kurie fondai labiausiai reagavo į rinką.
