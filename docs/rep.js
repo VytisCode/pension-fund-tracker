@@ -34,7 +34,7 @@ addStrings({
   info: {
     cal: 'Data: each fund’s unit value at the end of every month = the last unit value published on or before the month’s last day (not older than 10 days).\n\nTotal = latest unit value ÷ unit value on 2018-12-31 − 1. A fund that started later is counted from its first month-end (marked *).\nAverage annual = (1 + total)^(1 ÷ years) − 1, years = days ÷ 365.25.\nCalendar year = unit value on 31 Dec ÷ unit value on 31 Dec of the year before − 1; the current year runs to the latest unit value.\nPlace = order by total among this manager’s funds of the same pillar.\n\nExcel: the “Calculations” sheet lists for every cell the start and end date, both unit values and the formula; the “Table” cells point to it.',
     mon: 'Month = month-end unit value ÷ previous month-end unit value − 1; the current month runs to the latest unit value.\nYear to date = latest unit value ÷ unit value on 31 Dec of last year − 1.\nMonth-end unit value = the last unit value published on or before the month’s last day.\n\nExcel: every cell with its dates, unit values and formula.',
-    kpi: 'As of: a quarter end (default: the latest one), the latest month-end, or the latest day each fund has.\nStart: YTD = 31 Dec of the previous year; 1Y / 3Y / 5Y = the month-end 12 / 36 / 60 months before.\n\nNet return = unit value at the end ÷ unit value at the start − 1 (unit values are already after fees).\nAnnualized = (end ÷ start)^(1 ÷ years) − 1, years = 3 or 5 (months ÷ 12; with “latest day”: days ÷ 365.25).\nPeer median = median of the other managers’ funds in the same group (II pillar: birth-year group; III pillar: fund type).\nGross = net + fees added back: for each calendar year in the period, fee rate × days of the period in that year ÷ days in that year. Rates: II pillar until 2025 = each fund’s 2025 BAR (Bank of Lithuania results report); from 2026 = the fee published by the Bank of Lithuania (the base rate; the lower rate for large managers is not used: it applied only briefly); III pillar = the published asset management fee for the whole period. Annualized gross = (1 + net + fees)^(1 ÷ years) − 1.\nSAA = the same calculation on the fund’s benchmark index (published daily only by SEB and Goindex).\nRanking = 1 + number of funds in the group with a higher net return; number of funds = funds in the group with data for the whole period.\nRisk class = equity share in the fund strategy (Bank of Lithuania). AUM = net assets on the as-of date (with “latest day”: the latest known); share = fund AUM ÷ the manager’s pillar AUM. Total = AUM-weighted net return.\n\nExcel: every fund of every group with dates, unit values, years, the fee formula and the result; median, ranking and total are Excel formulas.',
+    kpi: 'As of: a quarter end (default: the latest one), the latest month-end, or the latest day each fund has.\nStart: YTD = 31 Dec of the previous year; 1Y / 3Y / 5Y = the month-end 12 / 36 / 60 months before.\n\nNet return = unit value at the end ÷ unit value at the start − 1 (unit values are already after fees).\nAnnualized = (end ÷ start)^(1 ÷ years) − 1, years = 3 or 5 (months ÷ 12; with “latest day”: days ÷ 365.25).\nPeer median = median of the other managers’ funds in the same group (II pillar: birth-year group; III pillar: fund type).\nGross = net + fees added back: for each calendar year in the period, fee rate × days of the period in that year ÷ days in that year. Rates: II pillar until 2025 = each fund’s 2025 BAR (Bank of Lithuania results report); from 2026 = the fee published by the Bank of Lithuania (the base rate; the lower rate for large managers is not used: it applied only briefly); III pillar = the published asset management fee for the whole period. Annualized gross = (1 + net + fees)^(1 ÷ years) − 1.\nSAA = the same calculation on the fund’s benchmark index (published daily only by SEB and Goindex).\nRanking = 1 + number of funds in the group with a higher net return; number of funds = funds in the group with data for the whole period.\nRisk class = equity share in the fund strategy (Bank of Lithuania). AUM = net assets on the as-of date (with “latest day”: the latest known); share = fund AUM ÷ the manager’s pillar AUM. Total = AUM-weighted net return.\nA fund that started up to 10 days after the start date (e.g. most 2003-2009 funds on 2025-01-02) is counted from its first unit value, so it is included in the median and ranking.\n\nExcel: every fund of every group with dates, unit values, years, the fee formula and the result; median, ranking and total are Excel formulas.',
     lb: 'As of the chosen quarter end (or the latest month-end).\n\nAverage change: 6 months and 1 year = cumulative (end ÷ start − 1); 3 years, 5 years and since start = average a year, (end ÷ start)^(1 ÷ years) − 1, years = months ÷ 12. Start = the month-end 6 / 12 / 36 / 60 months before; since start = 2018-12-31 (or the fund’s first unit value if it started later).\n\nStandard deviation: daily unit values (and benchmark); days when neither the unit value nor the benchmark changed are left out; daily change = value ÷ previous kept value − 1; sample standard deviation of the changes in the period × √252 (a year). For 6 months × √126 (half a year, not annualized). This reproduces the Bank of Lithuania figures.\n\nAnnual return = unit value on 31 Dec ÷ 31 Dec of the year before − 1; the as-of year runs to the as-of date. Since start = cumulative from the start.\n\nExcel: the “Daily” sheet has the kept daily values with change formulas; standard deviations are STDEV(range) × SQRT(252) on it.',
   },
   foot: 'Sources: providers’ unit values and net assets (collected automatically), Bank of Lithuania results reports and fee files. For information only, not investment advice.',
@@ -72,7 +72,7 @@ addStrings({
   info: {
     cal: 'Duomenys: kiekvieno fondo vieneto vertė mėnesio pabaigoje = paskutinė paskelbta vertė iki mėnesio paskutinės dienos imtinai (ne senesnė nei 10 d.).\n\nBendra = paskutinė vieneto vertė ÷ vertė 2018-12-31 − 1. Vėliau pradėjęs fondas skaičiuojamas nuo pirmos mėnesio pabaigos (pažymėta *).\nVidutinė metinė = (1 + bendra)^(1 ÷ metai) − 1, metai = dienos ÷ 365,25.\nKalendoriniai metai = gruodžio 31 d. vertė ÷ ankstesnių metų gruodžio 31 d. vertė − 1; šie metai – iki paskutinės vertės.\nVieta = eilė pagal bendrą grąžą tarp šio valdytojo tos pačios pakopos fondų.\n\nExcel: lape „Skaičiavimai“ kiekvienam langeliui – pradžios ir pabaigos data, abi vieneto vertės ir formulė; lapo „Lentelė“ langeliai į jį rodo.',
     mon: 'Mėnuo = mėnesio pabaigos vieneto vertė ÷ ankstesnio mėnesio pabaigos vertė − 1; einamasis mėnuo – iki paskutinės vertės.\nNuo metų pradžios = paskutinė vertė ÷ praėjusių metų gruodžio 31 d. vertė − 1.\nMėnesio pabaigos vertė = paskutinė paskelbta vertė iki mėnesio paskutinės dienos imtinai.\n\nExcel: kiekvienas langelis su datomis, vieneto vertėmis ir formule.',
-    kpi: 'Data: ketvirčio pabaiga (numatyta – paskutinė), paskutinė mėnesio pabaiga arba kiekvieno fondo paskutinė diena.\nPradžia: YTD = praėjusių metų gruodžio 31 d.; 1 / 3 / 5 m. = mėnesio pabaiga prieš 12 / 36 / 60 mėn.\n\nGrynoji grąža = vieneto vertė pabaigoje ÷ vieneto vertė pradžioje − 1 (vieneto vertės jau po mokesčių).\nMetinė = (pabaiga ÷ pradžia)^(1 ÷ metai) − 1, metai = 3 arba 5 (mėnesiai ÷ 12; su „paskutinė diena“ – dienos ÷ 365,25).\nPeer median = kitų valdytojų tos pačios grupės fondų grąžos mediana (II pakopa – gimimo metų grupė, III pakopa – fondo tipas).\nBruto = grynoji + atgal pridėti mokesčiai: kiekvieniems kalendoriniams metams laikotarpyje – mokesčio tarifas × laikotarpio dienos tais metais ÷ dienos tais metais. Tarifai: II pakopa iki 2025 m. – kiekvieno fondo 2025 m. BAR (Lietuvos banko rezultatų ataskaita); nuo 2026 m. – Lietuvos banko skelbiamas mokestis (bazinis tarifas; mažesnis tarifas didelėms bendrovėms netaikomas, nes galiojo labai trumpai); III pakopa – skelbiamas valdymo mokestis nuo turto visam laikotarpiui. Metinė bruto = (1 + grynoji + mokesčiai)^(1 ÷ metai) − 1.\nSAA = tas pats skaičiavimas su fondo lyginamuoju indeksu (kasdien jį skelbia tik SEB ir Goindex).\nVieta = 1 + grupės fondų su didesne grynąja grąža skaičius; fondų skaičius = grupės fondai, turintys duomenis visam laikotarpiui.\nRizikos klasė = akcijų dalis fondo strategijoje (Lietuvos bankas). AUM = grynieji aktyvai pasirinktą datą (su „paskutinė diena“ – paskutiniai žinomi); dalis = fondo AUM ÷ valdytojo pakopos AUM. Iš viso = AUM pasverta grynoji grąža.\n\nExcel: visi kiekvienos grupės fondai su datomis, vieneto vertėmis, metais, mokesčio formule ir rezultatu; mediana, vieta ir „Iš viso“ – Excel formulės.',
+    kpi: 'Data: ketvirčio pabaiga (numatyta – paskutinė), paskutinė mėnesio pabaiga arba kiekvieno fondo paskutinė diena.\nPradžia: YTD = praėjusių metų gruodžio 31 d.; 1 / 3 / 5 m. = mėnesio pabaiga prieš 12 / 36 / 60 mėn.\n\nGrynoji grąža = vieneto vertė pabaigoje ÷ vieneto vertė pradžioje − 1 (vieneto vertės jau po mokesčių).\nMetinė = (pabaiga ÷ pradžia)^(1 ÷ metai) − 1, metai = 3 arba 5 (mėnesiai ÷ 12; su „paskutinė diena“ – dienos ÷ 365,25).\nPeer median = kitų valdytojų tos pačios grupės fondų grąžos mediana (II pakopa – gimimo metų grupė, III pakopa – fondo tipas).\nBruto = grynoji + atgal pridėti mokesčiai: kiekvieniems kalendoriniams metams laikotarpyje – mokesčio tarifas × laikotarpio dienos tais metais ÷ dienos tais metais. Tarifai: II pakopa iki 2025 m. – kiekvieno fondo 2025 m. BAR (Lietuvos banko rezultatų ataskaita); nuo 2026 m. – Lietuvos banko skelbiamas mokestis (bazinis tarifas; mažesnis tarifas didelėms bendrovėms netaikomas, nes galiojo labai trumpai); III pakopa – skelbiamas valdymo mokestis nuo turto visam laikotarpiui. Metinė bruto = (1 + grynoji + mokesčiai)^(1 ÷ metai) − 1.\nSAA = tas pats skaičiavimas su fondo lyginamuoju indeksu (kasdien jį skelbia tik SEB ir Goindex).\nVieta = 1 + grupės fondų su didesne grynąja grąža skaičius; fondų skaičius = grupės fondai, turintys duomenis visam laikotarpiui.\nRizikos klasė = akcijų dalis fondo strategijoje (Lietuvos bankas). AUM = grynieji aktyvai pasirinktą datą (su „paskutinė diena“ – paskutiniai žinomi); dalis = fondo AUM ÷ valdytojo pakopos AUM. Iš viso = AUM pasverta grynoji grąža.\nFondas, pradėjęs veikti ne vėliau kaip 10 d. po pradžios datos (pvz. dauguma 2003-2009 fondų 2025-01-02), skaičiuojamas nuo pirmosios vieneto vertės, todėl įtraukiamas į medianą ir vietą.\n\nExcel: visi kiekvienos grupės fondai su datomis, vieneto vertėmis, metais, mokesčio formule ir rezultatu; mediana, vieta ir „Iš viso“ – Excel formulės.',
     lb: 'Pasirinktos ketvirčio pabaigos (arba paskutinės mėnesio pabaigos) duomenimis.\n\nVidutinis pokytis: 6 mėn. ir 1 m. – sukauptas (pabaiga ÷ pradžia − 1); 3 m., 5 m. ir nuo veiklos pradžios – vidutinis per metus, (pabaiga ÷ pradžia)^(1 ÷ metai) − 1, metai = mėnesiai ÷ 12. Pradžia = mėnesio pabaiga prieš 6 / 12 / 36 / 60 mėn.; nuo veiklos pradžios = 2018-12-31 (arba pirmoji fondo vieneto vertė, jei fondas pradėjo vėliau).\n\nStandartinis nuokrypis: kasdienės vieneto vertės (ir indeksas); dienos, kai nepasikeitė nei vieneto vertė, nei indeksas, praleidžiamos; dienos pokytis = vertė ÷ ankstesnė likusi vertė − 1; laikotarpio pokyčių imties standartinis nuokrypis × √252 (metinis). 6 mėn. – × √126 (pusmečio, ne metinis). Taip gaunami Lietuvos banko skaičiai.\n\nMetų grąža = gruodžio 31 d. vertė ÷ ankstesnių metų gruodžio 31 d. vertė − 1; pasirinktos datos metai – iki tos datos. Nuo veiklos pradžios = sukaupta nuo pradžios.\n\nExcel: lape „Dienos“ – likusios kasdienės vertės su pokyčių formulėmis; standartiniai nuokrypiai = STDEV(intervalas) × SQRT(252) šiame lape.',
   },
   foot: 'Šaltiniai: bendrovių skelbiamos vieneto vertės ir grynieji aktyvai (renkami automatiškai), Lietuvos banko rezultatų ataskaitos ir mokesčių failai. Informacinė medžiaga, ne investavimo rekomendacija.',
@@ -109,8 +109,11 @@ function pt(f, i, bm) {
   if (i === 'L') return bm ? (f.blv != null ? [f.bld, f.blv] : null) : [f.ld, f.lv];
   if (i === 'S') return bm ? null : f.s0;
   const v = bm ? f.bm && f.bm[i] : f.m[i];
-  return v != null ? [M[i], v] : null;
+  if (v != null) return [M[i], v];
+  // fondas pradėjo veikti per START_GAP d. po mėnesio pabaigos (pvz. 2025-01-02) – pradžia = pirmoji vertė
+  return !bm && f.s0 && f.s0[0] > M[i] && f.s0[0] - M[i] <= START_GAP ? f.s0 : null;
 }
+const START_GAP = 10;
 function firstIdx(f, from) { for (let i = from; i < NM; i++) if (f.m[i] != null) return i; return null; }
 function feeParts(f, d0, d1) {              // [[tarifas %, dienos, metų dienos]] – atskaitymai proporcingai dienoms
   if (f.pl === 'III' ? f.fee == null : f.bar == null && f.fee == null) return null;
@@ -173,7 +176,9 @@ XB.prototype.std = function (f, label, bm, t0, t1, scale) {
   const col = bm ? D.kb : D.kv;
   let a = D.kd.findIndex(d => d > t0), b = -1;
   for (let k = D.kd.length - 1; k >= 0; k--) if (D.kd[k] <= t1) { b = k; break; }
-  if (a < 1 || b - a < 1 || D.kd[0] > t0) return { n: null, v: null };
+  if (D.kd[0] > t0 + START_GAP) return { n: null, v: null };
+  a = Math.max(a, 1);
+  if (b - a < 1) return { n: null, v: null };
   const r = [];
   for (let k = a; k <= b; k++) if (col[k] != null && col[k - 1] != null) r.push(col[k] / col[k - 1] - 1);
   if (r.length < 2) return { n: null, v: null };
@@ -226,12 +231,12 @@ function renderCal() {
     const fs = fundsOf(pl, ST.m);
     if (!fs.length) continue;
     const rows = fs.map(f => {
-      const s = f.m[i0] != null ? i0 : firstIdx(f, i0);
+      const s = pt(f, i0) ? i0 : firstIdx(f, i0);
       const tot = s != null ? xb.rec(f, T().thTot, s, 'L') : { v: null };
       const avg = s != null && (f.ld - M[s]) / 365.25 >= 1 ? xb.rec(f, T().thAvg, s, 'L', { ann: true }) : { v: null };
       const ys = years.map(y => {
         const a = mIdx(y - 1, 11), b = y === lastY ? 'L' : mIdx(y, 11), fa = firstIdx(f, a);
-        const aa = f.m[a] != null ? a : (fa != null && yearOf(M[fa]) === y ? fa : null);
+        const aa = pt(f, a) ? a : (fa != null && yearOf(M[fa]) === y ? fa : null);
         return aa == null ? { v: null } : Object.assign(xb.rec(f, String(y), aa, b), { part: aa !== a });
       });
       return { f, tot, avg, part: s !== i0, ys };
@@ -351,24 +356,24 @@ function renderLb() {
   head('lbTitle', T().lbTitle, 'lb');
 
   const xb = new XB(), bi = asofIdx(ST.las), hasB = !!f.bm;
-  const s = f.m[0] != null ? 0 : 'S', sDay = s === 0 ? M[0] : f.s0[0];      // veiklos pradžia: 2018-12-31 arba pirmoji vertė
+  const s0i = M.indexOf(f.s0[0]), s = f.m[0] != null ? 0 : s0i >= 0 && f.m[s0i] != null ? s0i : 'S', sDay = s === 'S' ? f.s0[0] : M[s];      // veiklos pradžia: 2018-12-31 arba pirmoji vertė
   const wins = [[6, false], [12, false], [36, true], [60, true], [null, true]];   // [mėnesiai, metinė]
   const rowRet = bm => wins.map(([n, ann], j) => {
     const a = n == null ? s : bi - n;
-    if (n != null && (a < 0 || M[a] < sDay)) return { v: null };
-    const months = n ?? bi;
-    return xb.rec(f, `${bm ? T().lbAvgB : T().lbAvg} · ${T().lbCols[j]}`, a, bi, { bm, ann, years: ann && (n != null || s === 0) ? months / 12 : null, months });
+    if (n != null && (a < 0 || M[a] < sDay - START_GAP)) return { v: null };
+    const months = n ?? (s === 'S' ? null : bi - s);
+    return xb.rec(f, `${bm ? T().lbAvgB : T().lbAvg} · ${T().lbCols[j]}`, a, bi, { bm, ann, years: ann && (n != null || s !== 'S') ? months / 12 : null, months });
   });
   const rowStd = bm => wins.map(([n], j) => {
     const t0 = n == null ? sDay : (bi - n >= 0 ? M[bi - n] : null);
-    if (t0 == null || t0 < sDay) return { v: null };
+    if (t0 == null || t0 < sDay - START_GAP) return { v: null };
     return xb.std(f, `${bm ? T().lbStdB : T().lbStd} · ${T().lbCols[j]}`, bm, t0, M[bi], n === 6 ? 126 : 252);
   });
   const r1 = rowRet(false), r2 = hasB ? rowRet(true) : null, r3 = rowStd(false), r4 = hasB ? rowStd(true) : null;
   const y1 = yearOf(M[bi]), years = []; for (let y = y1; y >= Math.max(2019, yearOf(sDay + 1)); y--) years.push(y);
   const yr = bm => years.map(y => {
     const a = mIdx(y - 1, 11), b = y === y1 ? bi : mIdx(y, 11);
-    const aa = M[a] >= sDay ? a : s === 'S' && yearOf(sDay) === y ? s : null;
+    const aa = M[a] >= sDay - START_GAP ? a : s === 'S' && yearOf(sDay) === y ? s : null;
     return aa == null ? { v: null } : Object.assign(xb.rec(f, `${bm ? T().lbIdx : T().lbFund} · ${T().lbYear(y)}`, aa, b, { bm }), { part: aa === 'S' });
   }).concat([xb.rec(f, `${bm ? T().lbIdx : T().lbFund} · ${T().sinceStart}`, s, bi, { bm })]);
   const a1 = yr(false), a2 = hasB ? yr(true) : null;
