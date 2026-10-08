@@ -78,6 +78,7 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 .nav a:hover { background: var(--hover); }
 .nav a[aria-current="page"] { color: var(--text); border-color: var(--line); background: var(--card); font-weight: 600; }
 .top-tools { display: flex; gap: 8px; align-items: center; }
+#refresh { text-decoration: none; padding: 5px 10px; }
 .sec { margin-top: 26px; }
 .sec h2 { font-size: 18px; margin: 0 0 4px; }
 .sec .meta { color: var(--text-3); font-size: 12.5px; margin-bottom: 12px; }
