@@ -56,6 +56,7 @@
   .pgsig li { margin: 2px 0; }
   table.pgt td:first-child { min-width: 130px; }
   table.pgt tbody tr { cursor: pointer; }
+  .lkreg span { cursor: pointer; border-radius: 6px; padding: 1px 4px; } .lkreg span:hover, .lkreg span.on { background: var(--hover); outline: 1px solid var(--line); }
   .pfbar .field { max-width: 100%; } .pfbar select { max-width: 100%; }
   @media (max-width: 700px) { .kpis, .lkk { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
@@ -82,7 +83,7 @@
   <h2 class="sec" id="pgTitle"></h2>
   <p class="lead" id="pgLead"></p>
   <div class="bar pfbar" id="pgBar"></div>
-  <section class="card"><div class="pgsig" id="pgSignals"></div><div class="scroll"><table class="pft altt pgt" id="pgTable"></table></div><p class="note" id="pgNote"></p></section>
+  <section class="card"><div class="scroll"><table class="pft altt pgt" id="pgTable"></table></div><p class="note" id="pgNote"></p></section>
 
   <h2 class="sec" id="fcTitle"></h2>
   <p class="lead" id="fcLead"></p>

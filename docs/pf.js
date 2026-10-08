@@ -22,13 +22,13 @@ addStrings({
   alts: { pe: 'Private equity & venture', infra: 'Infrastructure & energy', re: 'Real estate', debt: 'Private debt', forest: 'Forest & land', hedge: 'Hedge funds' },
   altNone: m => `No alternative funds at all: ${m}.`, altShort: 'alternatives', altAll: 'Alternative funds', kAlt: 'Alternatives',
   altChart: 'Share of alternatives in the manager’s portfolios (all funds of the pillar together), %',
-  thAltV: 'Alternatives, value', thAltMix: 'Of which', thChgAlt: 'Alternatives value', thChgTot: 'Whole portfolio', thChg: (a, b) => `Change ${a} → ${b}`,
-  altNote: 'Alternative = Bank of Lithuania fund types 5 (real estate), 6 (hedge) and 7 (other: private equity, venture, infrastructure, private debt), excluding exchange-traded ETF/UCITS funds. The split by kind is based on the fund name. If alternatives’ value barely changes while the whole portfolio shrinks, the higher share comes from selling liquid assets. Click a fund to open its portfolio.',
+  thAltV: 'Alternatives, value', thAltMix: 'Of which', thChgAlt: 'Alternatives value', thChgTot: 'Whole fund (net assets)', thChg: (a, b) => `Change ${a} → ${b}`,
+  altNote: 'Alternative = Bank of Lithuania fund types 5 (real estate), 6 (hedge) and 7 (other: private equity, venture, infrastructure, private debt), excluding exchange-traded ETF/UCITS funds. The split by kind is based on the fund name. The last two columns compare the value of alternatives and the value of the whole fund (sum of all positions ≈ net assets) between the two chosen quarters; for example, a fund that paid out to participants leaving after the reform shrank from 59.6 m € to 37.1 m € (−38 %). If alternatives’ value barely changes while the whole fund shrinks, the higher share comes from selling liquid assets. Click a fund to open its portfolio.',
   fund: 'Fund', kTotal: 'Portfolio value', kPos: 'Positions', kTop10: 'Top 10 positions', kNew: 'New / sold out',
   showExits: 'Sold-out positions are listed at the bottom.',
   fcNote: 'Weight = position value ÷ sum of all positions (≈ net assets). Change in units shows buying or selling; a change in weight can also come from price moves. Funds are shown with their full official name from the fund’s page, KID or justETF (otherwise from the OpenFIGI catalogue by ISIN); if the report gives only the management company, it is shown below the name.',
   phPick: 'Click a position in the table', phMeta: 'Weight in the portfolio at each quarter end, %',
-  phPeers: 'Other lines: the same position in the other managers’ funds of the same age group (0 % = not held).',
+  phPeers: 'Columns: this fund. Dots: the same position in the other managers’ funds of the same age group (0 % = not held).',
   pIIa: 'II pillar', pIIIa: 'III pillar', closed: 'closed',
   foot: 'Source: Bank of Lithuania, quarterly reports on pension fund investment portfolios (from Q3 2019). Positions are matched by ISIN code across quarters. For information only, not investment advice.',
 }, {
@@ -52,13 +52,13 @@ addStrings({
   alts: { pe: 'Privatus ir rizikos kapitalas', infra: 'Infrastruktūra ir energetika', re: 'Nekilnojamas turtas', debt: 'Privati skola', forest: 'Miškai ir žemė', hedge: 'Rizikos draudimo fondai' },
   altNone: m => `Alternatyvių fondų neturi: ${m}.`, altShort: 'alternatyvios', altAll: 'Alternatyvūs fondai', kAlt: 'Alternatyvios',
   altChart: 'Alternatyvų dalis valdytojo portfeliuose (visi pakopos fondai kartu), %',
-  thAltV: 'Alternatyvų vertė', thAltMix: 'Iš jų', thChgAlt: 'Alternatyvų vertė', thChgTot: 'Visas portfelis', thChg: (a, b) => `Pokytis ${a} → ${b}`,
-  altNote: 'Alternatyvios = Lietuvos banko KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti: privatus ir rizikos kapitalas, infrastruktūra, privati skola), išskyrus biržoje prekiaujamus ETF / UCITS fondus. Skirstymas pagal rūšį – pagal fondo pavadinimą. Jei alternatyvų vertė beveik nesikeičia, o visas portfelis mažėja, didesnė dalis atsiranda dėl likvidaus turto pardavimo. Paspaudus fondą atidaromas jo portfelis.',
+  thAltV: 'Alternatyvų vertė', thAltMix: 'Iš jų', thChgAlt: 'Alternatyvų vertė', thChgTot: 'Viso fondo turtas', thChg: (a, b) => `Pokytis ${a} → ${b}`,
+  altNote: 'Alternatyvios = Lietuvos banko KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti: privatus ir rizikos kapitalas, infrastruktūra, privati skola), išskyrus biržoje prekiaujamus ETF / UCITS fondus. Skirstymas pagal rūšį – pagal fondo pavadinimą. Paskutiniai du stulpeliai lygina alternatyvų vertę ir viso fondo turtą (visų pozicijų suma ≈ grynieji aktyvai) tarp dviejų pasirinktų ketvirčių; pvz. fondas, išmokėjęs pinigus po reformos pasitraukusiems dalyviams, sumažėjo nuo 59,6 iki 37,1 mln. € (−38 %). Jei alternatyvų vertė beveik nesikeičia, o viso fondo turtas mažėja, didesnė dalis atsiranda dėl likvidaus turto pardavimo. Paspaudus fondą atidaromas jo portfelis.',
   fund: 'Fondas', kTotal: 'Portfelio vertė', kPos: 'Pozicijų', kTop10: '10 didžiausių pozicijų', kNew: 'Naujos / parduotos',
   showExits: 'Visiškai parduotos pozicijos – lentelės apačioje.',
   fcNote: 'Svoris = pozicijos vertė ÷ visų pozicijų suma (≈ grynieji aktyvai). Vienetų pokytis rodo pirkimą ar pardavimą; svoris gali keistis ir dėl kainų. Fondai rodomi pilnu oficialiu pavadinimu iš fondo puslapio, KID dokumento ar justETF (kitaip – iš OpenFIGI katalogo pagal ISIN); jei ataskaitoje nurodyta tik valdymo bendrovė, ji rodoma po pavadinimu.',
   phPick: 'Paspauskite poziciją lentelėje', phMeta: 'Svoris portfelyje kiekvieno ketvirčio pabaigoje, %',
-  phPeers: 'Kitos linijos: ta pati pozicija kitų valdytojų tos pačios amžiaus grupės fonduose (0 % = neturėjo).',
+  phPeers: 'Stulpeliai – šis fondas. Taškai – ta pati pozicija kitų valdytojų tos pačios amžiaus grupės fonduose (0 % = neturėjo).',
   pIIa: 'II pakopa', pIIIa: 'III pakopa', closed: 'uždarytas',
   foot: 'Šaltinis: Lietuvos bankas, ketvirtinės pensijų fondų investicijų portfelių ataskaitos (nuo 2019 m. III ketv.). Pozicijos ketvirčiuose susiejamos pagal ISIN kodą. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
@@ -108,12 +108,12 @@ const MIN_CHANGE = 0.005;                                   // < 0,5 % vienetų 
 /* ---------- fondų ir ETF požymiai (data/fund_attributes.csv) ---------- */
 addStrings({
   ap: { index: 'Index', active: 'Active' },
-  reg: { glob: 'Global (incl. EM)', gdm: 'Global developed', na: 'North America', eu: 'Europe', baltic: 'Baltics', jp: 'Japan', ap: 'Asia-Pacific developed', em: 'Emerging markets', oth: 'Other', unk: 'Not described' },
-  emL: { no: 'no EM', yes: 'incl. EM', only: 'EM only' }, hedged: 'currency hedged', gold: 'Gold', source: 'source',
+  reg: { glob: 'Global incl. EM (e.g. MSCI ACWI)', gdm: 'Global developed only (e.g. MSCI World)', na: 'North America', eu: 'Europe', baltic: 'Baltics', jp: 'Japan', ap: 'Asia-Pacific developed', em: 'Emerging markets', oth: 'Other', unk: 'Not described' },
+  emL: { no: 'no EM', yes: 'incl. EM', only: 'EM only' }, region: 'Region', regPick: 'Click to show only this region’s positions in the table', hedged: 'currency hedged', gold: 'Gold', source: 'source',
   lkTitle: 'What the portfolio covers', lkIdx: 'Index funds', lkTer: 'Funds’ fee (TER)', lkEm: 'Emerging markets', lkGold: 'Gold',
   lkSfdr: 'SFDR art. 8/9', lkCov: 'Funds described', lkEq: e => `Equities (${e} of the portfolio) by region, % of the portfolio`,
   lkTerSub: c => `weighted, known for ${c} of funds`, lkEmSub: w => `+ ${w} in global funds that hold some EM`, lkIdxSub: a => `active funds ${a}`,
-  lkNote: 'Look-through by fund description: a fund’s whole value is assigned to its region (for example, an MSCI World fund counts as “Global developed”, an MSCI ACWI fund as “Global (incl. EM)”), directly held shares by the issuer’s country. TER = ongoing charges of the funds in the portfolio, weighted by their value; the pension fund’s own management fee comes on top. SFDR = EU sustainability disclosure article (8 = promotes ESG characteristics, 9 = sustainable investment objective); not every fund page states it. Fund descriptions were collected from fund pages, KIDs and justETF (October 2026); new funds appearing in later reports will be added.',
+  lkNote: 'Look-through by fund description: a fund’s whole value is assigned to its region (for example, an MSCI World fund counts as “Global developed only”, an MSCI ACWI fund as “Global incl. EM”), directly held shares by the issuer’s country. TER = ongoing charges of the funds in the portfolio, weighted by their value; the pension fund’s own management fee comes on top. SFDR = EU sustainability disclosure article (8 = promotes ESG characteristics, 9 = sustainable investment objective); not every fund page states it. Fund descriptions were collected from fund pages, KIDs and justETF (October 2026); new funds appearing in later reports will be added.',
   pgTitle: 'Peer comparison: what drives the differences',
   pgLead: 'Funds of the same age group at different managers side by side: how much equity and alternatives they hold, how much is in index funds, what the underlying funds cost, whether they hold emerging markets or gold and where the equities are. These differences explain much of why the same age group earns different returns.',
   group: 'Group', pgSig: 'Signals', thEq: 'Equities', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash & money market',
@@ -121,7 +121,7 @@ addStrings({
   sigNoEm: f => `No emerging markets at all: ${f}.`, sigMost: (what, f, v) => `Most ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `least: ${f} (${v}).`,
   sigTer: (a, av, b, bv) => `Cheapest underlying funds: ${a} (${av}); most expensive: ${b} (${bv}).`, sigGold: f => `Holds gold: ${f}.`, sigNoGold: 'Nobody in the group holds gold.',
   wEq: 'equities', wAlt: 'alternatives', wIdx: 'in index funds', wEm: 'emerging markets', wNa: 'North American equities', wBaltic: 'Baltic equities',
-  pgNote: 'All columns are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. EM = funds investing only in emerging markets + directly held EM shares; “global funds incl. EM” = whole value of global funds that hold some EM (typically ~10 % of such a fund). Colour intensity = relative to the highest value in the column. Bonds’ YTM and duration: directly held bonds only (see the note under the fund portfolio). Click a fund to open its portfolio below.',
+  pgNote: 'All columns are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. Equities by region: each equity fund counted fully in its region – “Global incl. EM” = world funds that also hold emerging markets (e.g. MSCI ACWI, EM ~10 % inside), “Global developed only” = world funds without EM (e.g. MSCI World), “Emerging markets” = funds investing only in EM + directly held EM shares. Colour intensity = relative to the highest value in the column. Bonds’ YTM and duration: directly held bonds only (see the note under the fund portfolio). Click a fund to open its portfolio below.',
   pgIII: 'III pillar (all funds)',
   ytm: 'YTM', dur: 'duration', cpn: 'coupon', frn: 'floating rate', matL: 'maturity',
   lkBond: b => `Directly held bonds (${b} of the portfolio)`, lkYtm: 'Yield to maturity (YTM)', lkDur: 'Modified duration', lkYrs: 'Average maturity', yrs: 'yrs',
@@ -132,12 +132,12 @@ addStrings({
   bondNote: 'YTM and modified duration of directly held bonds at the quarter end, weighted by value. Terms (coupon, maturity) come from the EU register ESMA FIRDS; the price is value ÷ nominal from the Bank of Lithuania report (including accrued interest). Annual coupons are assumed (semi-annual for USD), yield to final maturity (not to call). Floating-rate bonds count with duration ≈ 0 and are left out of YTM. Bond funds are not included.',
 }, {
   ap: { index: 'Indeksinis', active: 'Aktyvus' },
-  reg: { glob: 'Pasaulis (su EM)', gdm: 'Išsivysčiusios rinkos (pasaulis)', na: 'Šiaurės Amerika', eu: 'Europa', baltic: 'Baltijos šalys', jp: 'Japonija', ap: 'Azija ir Ramusis vand. (išsivyst.)', em: 'Besivystančios rinkos', oth: 'Kita', unk: 'Neaprašyta' },
-  emL: { no: 'be EM', yes: 'su EM', only: 'tik EM' }, hedged: 'valiuta apdrausta', gold: 'Auksas', source: 'šaltinis',
+  reg: { glob: 'Pasaulis su EM (pvz. MSCI ACWI)', gdm: 'Pasaulis be EM (pvz. MSCI World)', na: 'Šiaurės Amerika', eu: 'Europa', baltic: 'Baltijos šalys', jp: 'Japonija', ap: 'Azija ir Ramusis vand. (išsivyst.)', em: 'Besivystančios rinkos', oth: 'Kita', unk: 'Neaprašyta' },
+  emL: { no: 'be EM', yes: 'su EM', only: 'tik EM' }, region: 'Regionas', regPick: 'Paspauskite – lentelėje liks tik šio regiono pozicijos', hedged: 'valiuta apdrausta', gold: 'Auksas', source: 'šaltinis',
   lkTitle: 'Ką dengia portfelis', lkIdx: 'Indeksiniai fondai', lkTer: 'Fondų mokestis (TER)', lkEm: 'Besivystančios rinkos', lkGold: 'Auksas',
   lkSfdr: 'SFDR 8 / 9 str.', lkCov: 'Aprašyta fondų', lkEq: e => `Akcijos (${e} portfelio) pagal regioną, % portfelio`,
   lkTerSub: c => `svertinis, žinomas ${c} fondų`, lkEmSub: w => `+ ${w} pasaulio fonduose, turinčiuose EM dalį`, lkIdxSub: a => `aktyvūs fondai ${a}`,
-  lkNote: 'Skirstoma pagal fondo aprašą: visa fondo vertė priskiriama jo regionui (pvz. MSCI World fondas – „Išsivysčiusios rinkos (pasaulis)“, MSCI ACWI – „Pasaulis (su EM)“), tiesiogiai turimos akcijos – pagal emitento šalį. TER = portfelyje esančių fondų einamieji mokesčiai, svertiniai pagal jų vertę; pensijų fondo valdymo mokestis – papildomai. SFDR = ES tvarumo atskleidimo straipsnis (8 – skatina ESG savybes, 9 – tvaraus investavimo tikslas); ne visi fondų puslapiai jį nurodo. Fondų aprašai surinkti iš fondų puslapių, KID dokumentų ir justETF (2026 m. spalis); vėlesnėse ataskaitose atsiradę nauji fondai bus papildyti.',
+  lkNote: 'Skirstoma pagal fondo aprašą: visa fondo vertė priskiriama jo regionui (pvz. MSCI World fondas – „Pasaulis be EM“, MSCI ACWI – „Pasaulis su EM“), tiesiogiai turimos akcijos – pagal emitento šalį. TER = portfelyje esančių fondų einamieji mokesčiai, svertiniai pagal jų vertę; pensijų fondo valdymo mokestis – papildomai. SFDR = ES tvarumo atskleidimo straipsnis (8 – skatina ESG savybes, 9 – tvaraus investavimo tikslas); ne visi fondų puslapiai jį nurodo. Fondų aprašai surinkti iš fondų puslapių, KID dokumentų ir justETF (2026 m. spalis); vėlesnėse ataskaitose atsiradę nauji fondai bus papildyti.',
   pgTitle: 'Palyginimas grupėje: kas lemia skirtumus',
   pgLead: 'Tos pačios amžiaus grupės skirtingų valdytojų fondai greta: kiek turi akcijų ir alternatyvų, kiek investuota per indeksinius fondus, kiek kainuoja jų fondai, ar turi besivystančių rinkų ir aukso, kur yra akcijos. Šie skirtumai daug paaiškina, kodėl tos pačios grupės fondų grąža skiriasi.',
   group: 'Grupė', pgSig: 'Signalai', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvios', thCash: 'Pinigai ir pinigų rinka',
@@ -145,7 +145,7 @@ addStrings({
   sigNoEm: f => `Besivystančių rinkų visai neturi: ${f}.`, sigMost: (what, f, v) => `Daugiausia ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `mažiausiai: ${f} (${v}).`,
   sigTer: (a, av, b, bv) => `Pigiausi fondai portfelyje: ${a} (${av}); brangiausi: ${b} (${bv}).`, sigGold: f => `Turi aukso: ${f}.`, sigNoGold: 'Aukso grupėje neturi niekas.',
   wEq: 'akcijų', wAlt: 'alternatyvų', wIdx: 'indeksinių fondų', wEm: 'besivystančių rinkų', wNa: 'Šiaurės Amerikos akcijų', wBaltic: 'Baltijos akcijų',
-  pgNote: 'Visi stulpeliai – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. EM = fondai, investuojantys tik į besivystančias rinkas, + tiesiogiai turimos jų akcijos; „pasaulio fondai su EM“ = visa vertė pasaulio fondų, turinčių EM dalį (tokiame fonde jos paprastai ~10 %). Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Obligacijų YTM ir trukmė – tik tiesiogiai turimų obligacijų (žr. paaiškinimą po fondo portfeliu). Paspaudus fondą atidaromas jo portfelis žemiau.',
+  pgNote: 'Visi stulpeliai – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. Akcijos pagal regioną: kiekvienas akcijų fondas visa verte priskiriamas savo regionui – „Pasaulis su EM“ = pasaulio fondai, kuriuose yra ir besivystančių rinkų (pvz. MSCI ACWI, EM viduje ~10 %), „Pasaulis be EM“ = pasaulio fondai be EM (pvz. MSCI World), „Besivystančios rinkos“ = fondai, investuojantys tik į EM, + tiesiogiai turimos EM akcijos. Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Obligacijų YTM ir trukmė – tik tiesiogiai turimų obligacijų (žr. paaiškinimą po fondo portfeliu). Paspaudus fondą atidaromas jo portfelis žemiau.',
   pgIII: 'III pakopa (visi fondai)',
   ytm: 'YTM', dur: 'trukmė', cpn: 'kuponas', frn: 'kintamos palūkanos', matL: 'išpirkimas',
   lkBond: b => `Tiesiogiai turimos obligacijos (${b} portfelio)`, lkYtm: 'Pajamingumas iki išpirkimo (YTM)', lkDur: 'Modifikuota trukmė', lkYrs: 'Vidutinis likęs terminas', yrs: 'm.',
@@ -175,7 +175,7 @@ function bucket(s) {
   const ac = s.a ? s.a.ac : { 1: 'bond', 3: 'equity', 4: 'money_market', 5: 'real_estate', 7: 'private_equity' }[s.kis] || '';
   return ac === 'equity' ? 'eq' : ac === 'bond' ? 'bd' : ac === 'money_market' ? 'cash' : ['private_equity', 'real_estate', 'other'].includes(ac) ? 'alt' : 'oth';
 }
-const regionOf = s => s.t === 'e' ? ctyRegion(s.cty) : s.a ? REG[s.a.reg] || 'oth' : 'unk';
+const regionOf = s => s.t === 'e' || s.t === 'b' ? ctyRegion(s.cty) : s.t !== 'f' ? null : s.a ? REG[s.a.reg] || 'oth' : 'unk';
 /* Fondo portfelio požymių suvestinė: visi rodikliai – % portfelio */
 function lookThrough(f, qi) {
   const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0, bw: 0, bdW: 0, mdS: 0, yrsS: 0, yW: 0, yS: 0, frn: 0 };
@@ -241,6 +241,54 @@ function wireSegs(root, handlers) {
 }
 const field = (label, html) => `<label class="field">${label} ${html}</label>`;
 const quarterSelect = (id, cur, from = 0) => `<select id="${id}">` + Q.map((_, i) => i).filter(i => i >= from).reverse().map(i => `<option value="${i}"${i === cur ? ' selected' : ''}>${qLabel(i)}</option>`).join('') + '</select>';
+
+/* ---------- stulpelinė diagrama (ketvirčiai) ---------- */
+// cats: ketvirčių indeksai; bars: [{ id, label, vals }] – stulpeliai grupėje; dots: [{ id, label, vals }] – taškai virš grupės
+const qShort = i => { const [y, m] = Q[i].split('-'); return lang === 'lt' ? `${y.slice(2)} ${['I', 'II', 'III', 'IV'][m / 3 - 1]}` : `Q${m / 3} ’${y.slice(2)}`; };
+function drawColumns(el, cats, bars, dots, opts = {}) {
+  el.querySelectorAll('svg, p.na').forEach(s => s.remove());
+  if (!cats.length) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return; }
+  const W = el.clientWidth || 600, H = opts.height || 280, m = { l: 44, r: 8, t: 12, b: 28 };
+  const fmt = opts.fmt || (v => num(v, 1) + '%');
+  let hi = 0; bars.concat(dots).forEach(s => s.vals.forEach(v => { if (v != null) hi = Math.max(hi, v); }));
+  const ticks = niceTicks(0, hi * 1.05 || 1); hi = Math.max(hi * 1.05, ticks[ticks.length - 1]) || 1;
+  const n = cats.length, nb = Math.max(1, bars.length), gw = (W - m.l - m.r) / n, inner = gw * (nb > 1 ? 0.84 : 0.62);
+  const bw = Math.min(56, Math.max(1.5, inner / nb - (nb > 1 ? 2 : 0)));
+  const gx = i => m.l + i * gw, Y = v => m.t + (hi - v) / hi * (H - m.t - m.b), base = Y(0);
+  const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', opts.label || '');
+  const add = (tag, attrs, parent = svg) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  ticks.forEach(t => {
+    add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
+    add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }).textContent = num(t, t % 1 ? 1 : 0) + '%';
+  });
+  const every = Math.ceil(46 / gw);
+  const hov = add('rect', { y: m.t, height: H - m.t - m.b, width: gw, fill: 'var(--hover)', visibility: 'hidden' });
+  cats.forEach((qi, i) => {
+    if ((n - 1 - i) % every === 0) add('text', { x: gx(i) + gw / 2, y: H - 8, 'text-anchor': 'middle', fill: 'var(--text-3)', 'font-size': 11 }).textContent = qShort(qi);
+    bars.forEach((b, k) => {
+      const v = b.vals[i]; if (!v) return;
+      const x = gx(i) + (gw - nb * (bw + (nb > 1 ? 2 : 0))) / 2 + k * (bw + (nb > 1 ? 2 : 0)) + (nb > 1 ? 1 : 0), y = Y(v), h = base - y, r = Math.min(4, bw / 2, h);
+      add('path', { d: `M${x} ${base}V${y + r}Q${x} ${y} ${x + r} ${y}H${x + bw - r}Q${x + bw} ${y} ${x + bw} ${y + r}V${base}Z`, fill: colorOf(b.id) });
+    });
+    dots.forEach(d => { const v = d.vals[i]; if (v == null) return; add('circle', { cx: gx(i) + gw / 2, cy: Y(v), r: 4.5, fill: colorOf(d.id), stroke: 'var(--card)', 'stroke-width': 2 }); });
+  });
+  el.appendChild(svg);
+  let tip = el.querySelector('.tip'); if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; el.appendChild(tip); }
+  const hit = add('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' });
+  const move = ev => {
+    const rect = svg.getBoundingClientRect(), px = (ev.clientX - rect.left) * (W / rect.width), i = Math.max(0, Math.min(n - 1, Math.floor((px - m.l) / gw)));
+    hov.setAttribute('x', gx(i)); hov.setAttribute('visibility', 'visible');
+    const rows = bars.concat(dots).map(s => ({ s, v: s.vals[i] })).filter(o => o.v != null).sort((a, b) => b.v - a.v);
+    tip.innerHTML = `<b>${qLabel(cats[i])}</b>` + rows.map(o => `<div><span><span class="sw" style="background:${colorOf(o.s.id)}"></span>${esc(o.s.label)}</span><span>${fmt(o.v)}</span></div>`).join('');
+    tip.style.display = 'block';
+    const box = el.getBoundingClientRect();
+    tip.style.left = Math.max(0, Math.min(ev.clientX - box.left + 14, el.clientWidth - tip.offsetWidth - 4)) + 'px';
+    tip.style.top = Math.max(0, ev.clientY - box.top - tip.offsetHeight - 10) + 'px';
+  };
+  hit.addEventListener('mousemove', move); hit.addEventListener('touchstart', e => move(e.touches[0]), { passive: true });
+  hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; hov.setAttribute('visibility', 'hidden'); });
+}
 
 /* ---------- 1. ketvirčio pokyčiai ---------- */
 let tcLimit = 30, fcLimit = 40;
@@ -344,10 +392,13 @@ function renderFund() {
   const first = f.q.findIndex(Boolean);
   const bar = document.getElementById('fcBar');
   bar.innerHTML = field(T().fund, fundSelect()) + field(T().quarter, quarterSelect('fcQ', ST.fq, first).replace(/<option value="(\d+)"/g, (s, i) => f.q[+i] ? s : s + ' disabled'))
-    + field(T().assetType, `<select id="fcType">${['all', 'e', 'b', 'f', 'alt', 'c', 'd'].map(t => `<option value="${t}"${t === ST.ft ? ' selected' : ''}>${t === 'all' ? T().all : t === 'alt' ? T().altAll : T().types[t]}</option>`).join('')}</select>`);
+    + field(T().assetType, `<select id="fcType">${['all', 'e', 'b', 'f', 'alt', 'c', 'd'].map(t => `<option value="${t}"${t === ST.ft ? ' selected' : ''}>${t === 'all' ? T().all : t === 'alt' ? T().altAll : T().types[t]}</option>`).join('')}</select>`)
+    + field(T().region, `<select id="fcReg"><option value="all">${T().all}</option>${REG_KEYS.filter(k => [...(f.q[ST.fq] || new Map()).keys()].some(si => regionOf(S[si]) === k)).map(k => `<option value="${k}"${k === ST.fr ? ' selected' : ''}>${T().reg[k]}</option>`).join('')}</select>`);
   bar.querySelector('#fcFund').addEventListener('change', e => { ST.fund = e.target.value; ST.fq = fundBy[ST.fund].q[ST.fq] ? ST.fq : fundBy[ST.fund].last; ST.pos = null; fcLimit = 40; save(); renderFund(); });
   bar.querySelector('#fcQ').addEventListener('change', e => { ST.fq = +e.target.value; fcLimit = 40; save(); renderFund(); });
   bar.querySelector('#fcType').addEventListener('change', e => { ST.ft = e.target.value; fcLimit = 40; save(); renderFund(); });
+  bar.querySelector('#fcReg').addEventListener('change', e => { ST.fr = e.target.value; fcLimit = 40; save(); renderFund(); });
+  if (ST.fr && ST.fr !== 'all' && !bar.querySelector(`#fcReg option[value="${ST.fr}"]`)) ST.fr = 'all';
 
   const { rows, exits } = fundRows(f, ST.fq);
   const tot = f.tot[ST.fq], byW = rows.slice().sort((a, b) => b.w - a.w);
@@ -365,7 +416,7 @@ function renderFund() {
     <div class="complg">${keys.map(k => `<span><i style="background:${TYPE_COL[k]}"></i>${compLbl(k)} <b>${wFmt(comp[k], 1)}</b></span>`).join('')}</div>`;
   renderLook(f, ST.fq);
 
-  const all = byW.concat(exits.sort((a, b) => a.dw - b.dw)).filter(r => ST.ft === 'all' || (ST.ft === 'alt' ? !!r.s.alt : r.s.t === ST.ft));
+  const all = byW.concat(exits.sort((a, b) => a.dw - b.dw)).filter(r => ST.ft === 'all' || (ST.ft === 'alt' ? !!r.s.alt : r.s.t === ST.ft)).filter(r => !ST.fr || ST.fr === 'all' || regionOf(r.s) === ST.fr);
   const selAt = all.findIndex(r => r.si === ST.pos);
   if (selAt >= fcLimit) fcLimit = selAt + 1;                 // pasirinkta pozicija visada matoma
   const list = all.slice(0, fcLimit);
@@ -401,12 +452,13 @@ function renderLook(f, qi) {
     + k(T().lkGold, wFmt(L.gold, 1)) + k(T().lkSfdr, wFmt(L.sfdr, 1))
     + k(T().lkCov, share(L.desc, L.fw)) + '</div>'
     + (eq ? `<div class="meta">${T().lkEq(wFmt(eq, 1))}</div><div class="comp">${regs.map(r => `<span style="width:${L.reg[r] / eq * 100}%;background:${REG_COL[r]}" title="${T().reg[r]} ${wFmt(L.reg[r], 1)}"></span>`).join('')}</div>
-      <div class="complg">${regs.map(r => `<span><i style="background:${REG_COL[r]}"></i>${T().reg[r]} <b>${wFmt(L.reg[r], 1)}</b></span>`).join('')}</div>` : '')
+      <div class="complg lkreg">${regs.map(r => `<span data-r="${r}" title="${T().regPick}"${ST.fr === r ? ' class="on"' : ''}><i style="background:${REG_COL[r]}"></i>${T().reg[r]} <b>${wFmt(L.reg[r], 1)}</b></span>`).join('')}</div>` : '')
     + (L.bw > 0.5 ? `<div class="meta" style="margin-top:12px">${T().lkBond(wFmt(L.bw, 1))}</div><div class="kpis lkk">`
       + k(T().lkYtm, L.ytm == null ? '–' : num(L.ytm, 2) + '%', T().lkBondCov(share(L.bdW, L.bw)))
       + k(T().lkDur, L.md == null ? '–' : num(L.md, 1), L.frn > 0.05 ? T().lkFrn(share(L.frn, L.bw)) : '')
       + k(T().lkYrs, L.yrs == null ? '–' : `${num(L.yrs, 1)} ${T().yrs}`) + '</div>' : '')
     + `<p class="note">${T().lkNote}${L.bw > 0.5 ? ' ' + T().bondNote : ''}</p>`;
+  el.querySelectorAll('.lkreg [data-r]').forEach(x => x.addEventListener('click', () => { ST.fr = ST.fr === x.dataset.r ? 'all' : x.dataset.r; fcLimit = 40; save(); renderFund(); }));
 }
 /* Pozicijos istorija: svoris kiekvieno ketvirčio pabaigoje šiame fonde ir kitų valdytojų tos pačios grupės fonduose */
 function weightSeries(f, si) {
@@ -427,8 +479,12 @@ function renderPosition() {
   DATA.providers.find(p => p.id === f.p).label = fundName(f);
   peers.forEach(g => { DATA.providers.find(p => p.id === g.p).label = fundName(g); });
   const series = [{ provider: f.p, points: weightSeries(f, ST.pos) }].concat(peers.map(g => ({ provider: g.p, points: weightSeries(g, ST.pos) })));
-  const x0 = Math.min(...series.map(r => r.points[0][0])), x1 = QDAY[NQ - 1];
-  const paint = () => { posCtl = drawLineChart(el, series, x0, x1, { height: 260, fmt: v => num(v, 2) + '%', mr: 16 }); };
+  // ketvirčiai nuo pirmo, kai poziciją turėjo kuris nors iš rodomų fondų
+  const held = [f].concat(peers), q0 = Math.min(...held.map(g => g.q.findIndex(m => m && m.has(ST.pos))).filter(i => i >= 0));
+  const cats = []; for (let i = q0; i <= f.last; i++) cats.push(i);
+  const wAt = (g, i) => g.q[i] ? (g.q[i].get(ST.pos)?.v || 0) / g.tot[i] * 100 : null;
+  const paint = () => drawColumns(el, cats, [{ id: f.p, label: fundName(f), vals: cats.map(i => wAt(f, i)) }],
+    peers.map(g => ({ id: g.p, label: fundName(g), vals: cats.map(i => wAt(g, i)) })), { height: 260, fmt: v => num(v, 2) + '%' });
   paint(); renderPosition.paint = paint;
   document.getElementById('phNote').innerHTML = peers.length ? `<span class="legend">${series.map(r => `<span${r.provider === f.p ? ' style="font-weight:700;color:var(--text)"' : ''}><i style="background:${colorOf(r.provider)}"></i>${esc(labelOf(r.provider))}</span>`).join('')}</span>${T().phPeers}` : '';
   // ketvirčių lentelė (naujausi viršuje): vienetai, vertė, svoris
@@ -456,9 +512,11 @@ function renderAlt() {
   }).filter(r => r.points.some(p => p[1] > 0));
   DATA.providers.forEach(p => { p.label = p.id; });
   const el = document.getElementById('altChart');
-  const paint = mr => drawLineChart(el, series, QDAY[0], QDAY[q1], { fmt: v => num(v, 1) + '%', mr });
-  const hc = renderAlt.hc || (renderAlt.hc = hoverCompress(el, mr => renderAlt.paint(mr)));
-  renderAlt.paint = paint; paint(hc.mr);
+  // stulpeliai: tie patys ketvirčiai kaip lentelėje (paskutiniai 8 ir pasirinktas pradžios ketvirtis)
+  const cq = []; for (let i = Math.min(q0, Math.max(0, q1 - 7)); i <= q1; i++) cq.push(i);
+  const at = (r, i) => { const p = r.points.find(x => x[0] === QDAY[i]); return p ? p[1] : null; };
+  const paint = () => drawColumns(el, cq, series.map(r => ({ id: r.provider, label: r.provider, vals: cq.map(i => at(r, i)) })), [], { height: 300 });
+  renderAlt.paint = paint; paint();
   document.getElementById('altChartMeta').textContent = T().altChart;
   document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${num(r.points[r.points.length - 1][1], 1)}%</b></span>`).join('');
   // lentelė: kiekvienas fondas – dalis per paskutinius ketvirčius ir pokytis nuo pasirinkto ketvirčio
@@ -471,7 +529,7 @@ function renderAlt() {
   funds.sort((a, b) => order(b.g).localeCompare(order(a.g)) || a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
   const maxA = Math.max(1, ...funds.flatMap(f => cols.map(i => altShare(f, i))));
   const cell = v => `<td style="background:color-mix(in srgb, #c9a227 ${Math.round(v / maxA * 85)}%, transparent)">${v ? num(v, 1) : '–'}</td>`;
-  const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 0)}%</td>` : '<td>–</td>';
+  const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 0)}%<br><small class="pfsub" style="font-weight:400">${eur(a)} →<br>${eur(b)}</small></td>` : '<td>–</td>';
   let lastG = null;
   const tb = document.getElementById('altTable');
   tb.innerHTML = `<thead><tr><th class="l">${T().thFund}</th>${cols.map(i => `<th>${qLabel(i)}</th>`).join('')}<th>${T().thDw}</th>
@@ -494,7 +552,7 @@ function renderAlt() {
 }
 
 /* ---------- 4. palyginimas grupėje ---------- */
-const PG_COLS = [['eq', 'thEq'], ['bd', 'thBd'], ['alt', 'thAlt'], ['cash', 'thCash'], ['idx', 'thIdx'], ['ter', 'thTer'], ['em', 'thEm'], ['emW', 'thEmW'], ['gold', 'thGold'], ['sfdr', 'thSfdr'], ['ytm', 'thYtm'], ['md', 'thDur']];
+const PG_COLS = [['eq', 'thEq'], ['bd', 'thBd'], ['alt', 'thAlt'], ['cash', 'thCash'], ['idx', 'thIdx'], ['ter', 'thTer'], ['gold', 'thGold'], ['sfdr', 'thSfdr'], ['ytm', 'thYtm'], ['md', 'thDur']];
 const PG_REG = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'unk'];
 function peerRow(f, qi) {
   const L = lookThrough(f, qi);
@@ -533,33 +591,6 @@ function renderPeers() {
     ST.fund = tr.dataset.c; ST.fq = qi; ST.ft = 'all'; ST.pos = null; fcLimit = 40; save(); renderFund();
     document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
   }));
-  // signalai
-  const sig = [], list = a => a.map(nm).join(', ');
-  const ext = (k, what, p = 1) => {
-    const xs = rows.filter(r => r[k] != null); if (xs.length < 2) return;
-    const hi = xs.reduce((a, b) => b[k] > a[k] ? b : a), lo = xs.reduce((a, b) => b[k] < a[k] ? b : a);
-    if (hi[k] - lo[k] < 0.5) return;
-    const zero = xs.filter(r => r[k] < 0.05), loTxt = zero.length ? T().sigLeast(what, list(zero), '0%') : T().sigLeast(what, nm(lo), wFmt(lo[k], p));
-    sig.push(`${T().sigMost(what, nm(hi), wFmt(hi[k], p))}; ${loTxt}`);
-  };
-  if (rows.length > 1) {
-    ext('eq', T().wEq); ext('alt', T().wAlt); ext('idx', T().wIdx);
-    const noEm = rows.filter(r => r.em < 0.05 && r.emW < 0.05 && r.emUnk < 1 && r.eq > 1);
-    if (noEm.length) sig.push(T().sigNoEm(list(noEm)));
-    ext('em', T().wEm);
-    const ters = rows.filter(r => r.ter != null);
-    if (ters.length > 1) { const lo = ters.reduce((a, b) => b.ter < a.ter ? b : a), hi = ters.reduce((a, b) => b.ter > a.ter ? b : a);
-      sig.push(T().sigTer(nm(lo), num(lo.ter, 2) + '%', nm(hi), num(hi.ter, 2) + '%')); }
-    const gold = rows.filter(r => r.gold > 0.05);
-    sig.push(gold.length ? T().sigGold(gold.map(r => `${nm(r)} ${wFmt(r.gold, 1)}`).join(', ')) : T().sigNoGold);
-    [['ytm', 'sigYtm', v => num(v, 2) + '%'], ['md', 'sigDur', v => num(v, 1)]].forEach(([k, key, fm]) => {
-      const xs = rows.filter(r => r[k] != null); if (xs.length < 2) return;
-      const hi = xs.reduce((a, b) => b[k] > a[k] ? b : a), lo = xs.reduce((a, b) => b[k] < a[k] ? b : a);
-      sig.push(T()[key](nm(hi), fm(hi[k]), nm(lo), fm(lo[k])));
-    });
-    ext('r_na', T().wNa); if (rows.some(r => r.r_baltic > 0.5)) ext('r_baltic', T().wBaltic);
-  }
-  document.getElementById('pgSignals').innerHTML = sig.length ? `<b>${T().pgSig}</b><ul>${sig.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
   document.getElementById('pgNote').textContent = T().pgNote;
 }
 
@@ -570,4 +601,4 @@ function renderAll() {
 }
 renderHeader('portfolios', renderAll);
 renderAll();
-let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { renderPosition.paint && renderPosition.paint(); renderAlt.paint && renderAlt.paint(renderAlt.hc.mr); }, 120); });
+let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { renderPosition.paint && renderPosition.paint(); renderAlt.paint && renderAlt.paint(); }, 120); });
