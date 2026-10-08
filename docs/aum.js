@@ -10,6 +10,7 @@ addStrings({
   poLead: 'Since 2026 participants who chose to leave the II pillar are paid out at the start of each quarter (by the 15th). A payout shows up as a sudden fall in net assets that the unit value does not explain. The table shows when each manager paid out and how much the funds lost.',
   pillar: 'Pillar', view: 'Show', vMgr: 'Managers (all funds)', vGrp: 'Group', show: 'Values', sEur: '€ m', sPct: 'Change, %',
   cpf: 'Capital preservation funds', cats: { bond: 'Bond funds', mixed: 'Mixed funds', equity: 'Equity funds' }, allGroups: 'All funds',
+  lgTip: 'Click to hide or show this line; double-click to show only it', lgAll: 'Show all',
   chMeta: u => u === 'pct' ? 'Change in net assets since the start of the period, %' : 'Net assets, € m',
   chNote: q => q ? `Quarter-end values from the Bank of Lithuania (no daily data yet): ${q}.` : '',
   thMgr: 'Manager', thFund: 'Fund', thAum: 'Net assets, € m', thDate: 'Date', thPaid: 'Paid out, € m', thShare: 'Of assets', thWhen: 'Date',
@@ -29,6 +30,7 @@ addStrings({
   poLead: 'Nuo 2026 m. iš II pakopos pasitraukti nusprendusiems dalyviams lėšos išmokamos kiekvieno ketvirčio pradžioje (iki 15 d.). Išmokėjimas matyti kaip staigus turto sumažėjimas, kurio nepaaiškina vieneto vertės pokytis. Lentelėje – kada kiekvienas valdytojas išmokėjo ir kiek fondai neteko turto.',
   pillar: 'Pakopa', view: 'Rodyti', vMgr: 'Valdytojus (visi fondai)', vGrp: 'Grupę', show: 'Reikšmės', sEur: 'mln. €', sPct: 'Pokytis, %',
   cpf: 'Turto išsaugojimo fondai', cats: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fondai', equity: 'Akcijų fondai' }, allGroups: 'Visi fondai',
+  lgTip: 'Paspausk, kad paslėptum ar parodytum šią liniją; paspausk dukart, kad liktų tik ji', lgAll: 'Rodyti visas',
   chMeta: u => u === 'pct' ? 'Turto pokytis nuo laikotarpio pradžios, %' : 'Grynieji aktyvai, mln. €',
   chNote: q => q ? `Ketvirčio pabaigos sumos iš Lietuvos banko (kasdienių duomenų dar nėra): ${q}.` : '',
   thMgr: 'Valdytojas', thFund: 'Fondas', thAum: 'Turtas, mln. €', thDate: 'Data', thPaid: 'Išmokėta, mln. €', thShare: 'Turto dalis', thWhen: 'Data',
@@ -53,7 +55,7 @@ const cls = v => v > 0 ? 'up' : v < 0 ? 'down' : '';
 const grpLabel = (pl, g) => pl === 'III' ? T().cats[g] : g === 'turto' ? T().cpf : `${T().born} ${g.replace('-', '–')}`;
 
 const PO_MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // tvarka kaip savininko lentelėse
-const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct' },
+const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', off: [] },
   (() => { try { return JSON.parse(localStorage.getItem('aumstate')) || {}; } catch (e) { return {}; } })());
 const save = () => { try { localStorage.setItem('aumstate', JSON.stringify(ST)); } catch (e) {} };
 
@@ -112,13 +114,35 @@ function renderChart() {
     if (ST.unit === 'pct' && r.s.d[0] > x0) return null;     // pradėjo vėliau – procentinis pokytis neteisingas
     return { provider: r.m, points: pts };
   }).filter(Boolean);
+  if (!Array.isArray(ST.off)) ST.off = [];
+  const shown = series.filter(r => !ST.off.includes(r.provider));
   const fmt = ST.unit === 'pct' ? v => pct(v, 2).replace(' %', '%') : v => mEur(v) + (lang === 'lt' ? ' mln. €' : ' m €');
   const el = document.getElementById('chart');
-  const paint = mr => drawLineChart(el, series, x0, end, { fmt, axisUnit: ST.unit === 'pct' ? '%' : '', mr });
+  const paint = mr => drawLineChart(el, shown.length ? shown : series, x0, end, { fmt, axisUnit: ST.unit === 'pct' ? '%' : '', mr });
   hc = hc || hoverCompress(el, mr => renderChart.paint(mr));
   renderChart.paint = paint; paint(hc.mr);
   document.getElementById('chMeta').textContent = T().chMeta(ST.unit);
-  document.getElementById('chLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${MLABEL[r.provider]} <b>${fmt(r.points[r.points.length - 1][1])}</b></span>`).join('');
+  // legenda = mygtukai: paspaudus linija paslepiama / parodoma, dukart paspaudus – rodoma tik ji
+  const lg = document.getElementById('chLegend');
+  lg.innerHTML = series.map(r => `<button type="button" class="chip" data-m="${r.provider}" aria-pressed="${!ST.off.includes(r.provider)}" title="${T().lgTip}"><i style="background:${colorOf(r.provider)}"></i>${MLABEL[r.provider]} <b>${fmt(r.points[r.points.length - 1][1])}</b></button>`).join('')
+    + (ST.off.length ? `<button type="button" class="chip" data-m="*">${T().lgAll}</button>` : '');
+  let clickT = null;
+  lg.onclick = e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    const m = b.dataset.m;
+    clearTimeout(clickT);
+    clickT = setTimeout(() => {
+      if (m === '*') ST.off = [];
+      else if (ST.off.includes(m)) ST.off = ST.off.filter(x => x !== m);
+      else if (series.filter(r => !ST.off.includes(r.provider)).length > 1) ST.off = [...ST.off, m];
+      save(); renderChart();
+    }, 220);
+  };
+  lg.ondblclick = e => {
+    const b = e.target.closest('.chip'); if (!b || b.dataset.m === '*') return;
+    clearTimeout(clickT);
+    ST.off = MGRS.filter(x => x !== b.dataset.m); save(); renderChart();
+  };
   const qOnly = [...new Set(fundsOf(ST.pl, ST.g).filter(f => f.q > 0 && f.d[f.q - 1] >= x0).map(f => `${MLABEL[f.p]} ${lang === 'lt' ? 'iki' : 'until'} ${iso(f.d[f.q - 1])}`))];
   document.getElementById('chNote').textContent = T().chNote(qOnly.join(', '));
 }
