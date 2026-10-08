@@ -154,6 +154,7 @@ def build():
                 "fee": (lambda x: (x[1] if prov in large else x[0]) if x else None)(fees.get((pillar, prov, g if pillar == "II" else name))),
                 "aum": round(aum[1]) if aum[1] else None, "aumd": day_number(aum[0]) if aum[0] else None,
                 "s0": [day_number(rows[0][0]), rows[0][1]],
+                "am": [round(v) if v else None for v in at_month_ends(rows, ends, 2)],
             })
             days = [day_number(r[0]) for r in rows]
             daily.append([days[0], [b - a for a, b in zip(days, days[1:])], [r[1] for r in rows],
