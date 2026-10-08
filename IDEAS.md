@@ -164,7 +164,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Būsena:** daroma (savininkas patvirtino visus 3 etapus 2026-10-08)
 - **Autorius:** savininkas
 - **Kodėl:** suprasti, kodėl tos pačios amžiaus grupės fondai pas skirtingus valdytojus uždirba skirtingai: kas neturi EM, kas tik išsivysčiusios rinkos, kas laiko auksą, kieno ETF brangiausi, kiek indeksinių fondų, SFDR 8/9.
-- **Kas daroma:** 1 etapas – fondų ir ETF požymiai `data/fund_attributes.csv` (turto klasė, regionas, EM, indeksinis/aktyvus, SFDR, TER, valiutos apsauga, šaltinis), fondo kortelėje „Ką dengia portfelis“, naujas skyrius „Palyginimas grupėje“ su signalais. 2 etapas – obligacijų YTM ir trukmė (ESMA FIRDS + LB kaina). 3 etapas – tiesioginių akcijų sektoriai.
+- **Kas daroma:** 1 etapas – fondų ir ETF požymiai `data/fund_attributes.csv` (turto klasė, regionas, EM, indeksinis/aktyvus, SFDR, TER, valiutos apsauga, šaltinis), fondo kortelėje „Ką dengia portfelis“, naujas skyrius „Palyginimas grupėje“ su signalais. 2 etapas – obligacijų YTM ir trukmė (ESMA FIRDS + LB kaina, `bonds.py`, `data/security_terms.csv`). 3 etapas – tiesioginių akcijų sektoriai.
 - **Priežiūra:** kas ketvirtį, atėjus naujai LB ataskaitai, aprašyti naujai atsiradusius fondus (keletas eilučių `data/fund_attributes.csv`).
 
 ### Portfeliai: sudėties kitimas laike

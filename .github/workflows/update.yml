@@ -82,6 +82,13 @@ jobs:
         continue-on-error: true
         run: python -u tools/fetch_isin_names.py
 
+      # Obligacijų sąlygos (kuponas, išpirkimo data) ir pilni pavadinimai iš ES registro ESMA FIRDS (nemokamai):
+      # klausiama tik apie naujus ISIN, iš jų svetainė skaičiuoja obligacijų YTM ir trukmę.
+      - name: Bond terms by ISIN (only new ones)
+        if: always()
+        continue-on-error: true
+        run: python -u tools/fetch_security_terms.py
+
       - name: Build website (only if data changed)
         if: always()
         run: |
@@ -135,6 +142,7 @@ jobs:
           # paskutinė gauta €STR norma: jei kitą kartą ECB nepasieks, svetainė naudos ją, o ne 2 %
           if [ -f data/risk_free.json ]; then git add data/risk_free.json; fi
           if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
+          if [ -f data/security_terms.csv ]; then git add data/security_terms.csv; fi
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

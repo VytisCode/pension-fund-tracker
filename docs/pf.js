@@ -68,8 +68,13 @@ const MGRS = ['Allianz', 'Artea', 'Goindex', 'Luminor', 'SEB', 'Swedbank'];     
 var DATA = { providers: MGRS.map(m => ({ id: m, label: m })) };                // drawLineChart spalvoms ir pavadinimams
 const Q = PF.quarters, NQ = Q.length, QDAY = Q.map(dayOf);
 const qLabel = i => { const [y, m] = Q[i].split('-'); return lang === 'lt' ? `${y} m. ${['I', 'II', 'III', 'IV'][m / 3 - 1]} ketv.` : `Q${m / 3} ${y}`; };
-const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '', fn: s[8] || '',
-  a: s[9] ? { ac: s[9][0], reg: s[9][1], em: s[9][2], ap: s[9][3], sfdr: s[9][4], ter: s[9][5], hdg: s[9][6], th: s[9][7], src: s[9][8] } : null }));
+const S = PF.secs.map((s, i) => ({ si: i, name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '', fn: s[8] || '',
+  a: s[9] ? { ac: s[9][0], reg: s[9][1], em: s[9][2], ap: s[9][3], sfdr: s[9][4], ter: s[9][5], hdg: s[9][6], th: s[9][7], src: s[9][8] } : null,
+  bt: s[10] ? { mat: s[10][0], cpn: s[10][1], frn: s[10][2] } : null }));
+// obligacijų YTM ir trukmė: BM[pozicija].get(ketvirtis) = { y: YTM %, md: modifikuota trukmė, yrs: metai iki išpirkimo }
+const BM = {};
+Object.entries(PF.bm || {}).forEach(([si, a]) => { const m = BM[si] = new Map(); for (let i = 0; i < a.length; i += 4) m.set(a[i], { y: a[i + 1], md: a[i + 2], yrs: a[i + 3] }); });
+const bondAt = (si, qi) => BM[si] && BM[si].get(qi);
 const FUNDS = PF.funds.map(f => {
   const q = Array.from({ length: NQ }, () => null);        // q[ketvirtis] = Map(pozicija -> {u, v}) arba null (fondo nebuvo)
   for (let i = 0; i < f.r.length; i += 4) {
@@ -116,8 +121,15 @@ addStrings({
   sigNoEm: f => `No emerging markets at all: ${f}.`, sigMost: (what, f, v) => `Most ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `least: ${f} (${v}).`,
   sigTer: (a, av, b, bv) => `Cheapest underlying funds: ${a} (${av}); most expensive: ${b} (${bv}).`, sigGold: f => `Holds gold: ${f}.`, sigNoGold: 'Nobody in the group holds gold.',
   wEq: 'equities', wAlt: 'alternatives', wIdx: 'in index funds', wEm: 'emerging markets', wNa: 'North American equities', wBaltic: 'Baltic equities',
-  pgNote: 'All columns are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. EM = funds investing only in emerging markets + directly held EM shares; “global funds incl. EM” = whole value of global funds that hold some EM (typically ~10 % of such a fund). Colour intensity = relative to the highest value in the column. Click a fund to open its portfolio below.',
+  pgNote: 'All columns are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. EM = funds investing only in emerging markets + directly held EM shares; “global funds incl. EM” = whole value of global funds that hold some EM (typically ~10 % of such a fund). Colour intensity = relative to the highest value in the column. Bonds’ YTM and duration: directly held bonds only (see the note under the fund portfolio). Click a fund to open its portfolio below.',
   pgIII: 'III pillar (all funds)',
+  ytm: 'YTM', dur: 'duration', cpn: 'coupon', frn: 'floating rate', matL: 'maturity',
+  lkBond: b => `Directly held bonds (${b} of the portfolio)`, lkYtm: 'Yield to maturity (YTM)', lkDur: 'Modified duration', lkYrs: 'Average maturity', yrs: 'yrs',
+  lkBondCov: c => `calculated for ${c} of bonds`, lkFrn: f => `floating rate ${f}`,
+  thYtm: 'Bonds’ YTM', thDur: 'Bonds’ duration',
+  sigYtm: (a, av, b, bv) => `Highest yield on directly held bonds: ${a} (${av}); lowest: ${b} (${bv}).`,
+  sigDur: (a, av, b, bv) => `Longest bond duration (most sensitive to interest rates): ${a} (${av}); shortest: ${b} (${bv}).`,
+  bondNote: 'YTM and modified duration of directly held bonds at the quarter end, weighted by value. Terms (coupon, maturity) come from the EU register ESMA FIRDS; the price is value ÷ nominal from the Bank of Lithuania report (including accrued interest). Annual coupons are assumed (semi-annual for USD), yield to final maturity (not to call). Floating-rate bonds count with duration ≈ 0 and are left out of YTM. Bond funds are not included.',
 }, {
   ap: { index: 'Indeksinis', active: 'Aktyvus' },
   reg: { glob: 'Pasaulis (su EM)', gdm: 'Išsivysčiusios rinkos (pasaulis)', na: 'Šiaurės Amerika', eu: 'Europa', baltic: 'Baltijos šalys', jp: 'Japonija', ap: 'Azija ir Ramusis vand. (išsivyst.)', em: 'Besivystančios rinkos', oth: 'Kita', unk: 'Neaprašyta' },
@@ -133,8 +145,15 @@ addStrings({
   sigNoEm: f => `Besivystančių rinkų visai neturi: ${f}.`, sigMost: (what, f, v) => `Daugiausia ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `mažiausiai: ${f} (${v}).`,
   sigTer: (a, av, b, bv) => `Pigiausi fondai portfelyje: ${a} (${av}); brangiausi: ${b} (${bv}).`, sigGold: f => `Turi aukso: ${f}.`, sigNoGold: 'Aukso grupėje neturi niekas.',
   wEq: 'akcijų', wAlt: 'alternatyvų', wIdx: 'indeksinių fondų', wEm: 'besivystančių rinkų', wNa: 'Šiaurės Amerikos akcijų', wBaltic: 'Baltijos akcijų',
-  pgNote: 'Visi stulpeliai – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. EM = fondai, investuojantys tik į besivystančias rinkas, + tiesiogiai turimos jų akcijos; „pasaulio fondai su EM“ = visa vertė pasaulio fondų, turinčių EM dalį (tokiame fonde jos paprastai ~10 %). Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Paspaudus fondą atidaromas jo portfelis žemiau.',
+  pgNote: 'Visi stulpeliai – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. EM = fondai, investuojantys tik į besivystančias rinkas, + tiesiogiai turimos jų akcijos; „pasaulio fondai su EM“ = visa vertė pasaulio fondų, turinčių EM dalį (tokiame fonde jos paprastai ~10 %). Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Obligacijų YTM ir trukmė – tik tiesiogiai turimų obligacijų (žr. paaiškinimą po fondo portfeliu). Paspaudus fondą atidaromas jo portfelis žemiau.',
   pgIII: 'III pakopa (visi fondai)',
+  ytm: 'YTM', dur: 'trukmė', cpn: 'kuponas', frn: 'kintamos palūkanos', matL: 'išpirkimas',
+  lkBond: b => `Tiesiogiai turimos obligacijos (${b} portfelio)`, lkYtm: 'Pajamingumas iki išpirkimo (YTM)', lkDur: 'Modifikuota trukmė', lkYrs: 'Vidutinis likęs terminas', yrs: 'm.',
+  lkBondCov: c => `apskaičiuota ${c} obligacijų`, lkFrn: f => `kintamos palūkanos ${f}`,
+  thYtm: 'Obligacijų YTM', thDur: 'Obligacijų trukmė',
+  sigYtm: (a, av, b, bv) => `Didžiausias tiesioginių obligacijų pajamingumas: ${a} (${av}); mažiausias: ${b} (${bv}).`,
+  sigDur: (a, av, b, bv) => `Ilgiausia obligacijų trukmė (jautriausios palūkanų pokyčiams): ${a} (${av}); trumpiausia: ${b} (${bv}).`,
+  bondNote: 'Tiesiogiai turimų obligacijų YTM ir modifikuota trukmė ketvirčio pabaigoje, svertiniai pagal vertę. Sąlygos (kuponas, išpirkimo data) – iš ES registro ESMA FIRDS, kaina = vertė ÷ nominalas iš Lietuvos banko ataskaitos (su sukauptomis palūkanomis). Laikoma, kad kuponas mokamas kartą per metus (USD – du kartus), pajamingumas – iki galutinio išpirkimo (ne iki pirmalaikio). Kintamų palūkanų obligacijos įskaičiuojamos su trukme ≈ 0 ir neįskaičiuojamos į YTM. Obligacijų fondai neįtraukti.',
 });
 const REG = { global: 'glob', global_dm: 'gdm', us: 'na', north_america: 'na', europe: 'eu', eurozone: 'eu', japan: 'jp', asia_pacific_dm: 'ap', em: 'em', em_ex_china: 'em', other: 'oth' };
 const REG_KEYS = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'oth', 'unk'];
@@ -159,12 +178,16 @@ function bucket(s) {
 const regionOf = s => s.t === 'e' ? ctyRegion(s.cty) : s.a ? REG[s.a.reg] || 'oth' : 'unk';
 /* Fondo portfelio požymių suvestinė: visi rodikliai – % portfelio */
 function lookThrough(f, qi) {
-  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0 };
+  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0, bw: 0, bdW: 0, mdS: 0, yrsS: 0, yW: 0, yS: 0, frn: 0 };
   if (!m || !t) return L;
   m.forEach((x, si) => {
     const s = S[si], w = x.v / t * 100, b = bucket(s);
     L.b[b] = (L.b[b] || 0) + w;
     if (b === 'eq') { const r = regionOf(s); L.reg[r] = (L.reg[r] || 0) + w; if (r === 'em') L.em += w; }
+    if (s.t === 'b') {
+      L.bw += w; const m = bondAt(si, qi);
+      if (m) { L.bdW += w; L.mdS += w * m.md; L.yrsS += w * m.yrs; if (m.y != null) { L.yW += w; L.yS += w * m.y; } else L.frn += w; }
+    }
     if (s.t !== 'f') return;
     L.fw += w;
     if (b === 'eq' && !(s.a && s.a.em)) L.emUnk += w;          // nežinoma, ar akcijų fondas turi EM
@@ -178,9 +201,17 @@ function lookThrough(f, qi) {
     if (s.a.sfdr === '8' || s.a.sfdr === '9') L.sfdr += w;
   });
   L.ter = L.terW ? L.terS / L.terW : null;
+  L.ytm = L.yW ? L.yS / L.yW : null; L.md = L.bdW ? L.mdS / L.bdW : null; L.yrs = L.bdW ? L.yrsS / L.bdW : null;
   return L;
 }
-function attrChips(s) {
+function attrChips(s, qi) {
+  if (s.t === 'b') {
+    const m = s.bt ? bondAt(s.si, qi) : null, c = [];
+    if (m && m.y != null) c.push(`${T().ytm} ${num(m.y, 2)}%`);
+    if (m) c.push(`${T().dur} ${num(m.md, 1)}`);
+    if (s.bt) { if (s.bt.frn) c.push(T().frn); else if (s.bt.cpn != null) c.push(`${T().cpn} ${num(s.bt.cpn, 2)}%`); c.push(`${T().matL} ${s.bt.mat}`); }
+    return c.length ? `<span class="tags">${c.map(x => `<span>${esc(x)}</span>`).join('')}</span>` : '';
+  }
   if (!s.a) return '';
   const a = s.a, c = [];
   if (a.ap) c.push(T().ap[a.ap]);
@@ -265,7 +296,7 @@ function renderTopChanges() {
     <th>${T().thTrade}</th><th>${T().thValue}</th><th>${T().thW0}</th><th>${T().thW1}</th><th>${T().thDw}</th></tr></thead><tbody>`
     + (shown.length ? shown.map((r, i) => `<tr data-i="${i}"><td class="l">${sw(r.U.mgr)}${r.U.mgr}</td>
       <td class="l">${byFund ? esc(fundName(r.U.fund)) : `<span class="pfsub">${T().nFunds(r.P.funds.size)}</span>`}</td>
-      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s)}</td>
+      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s, ST.q)}</td>
       <td class="l">${badge(r.act)}</td>
       <td class="${r.trade > 0 ? 'up' : 'down'}">${r.trade > 0 ? '+' : ''}${eur(r.trade)}</td>
       <td>${r.P.v[1] ? eur(r.P.v[1]) : '–'}</td><td>${wFmt(r.w0)}</td><td>${wFmt(r.w1)}</td>
@@ -342,7 +373,7 @@ function renderFund() {
   tb.innerHTML = `<thead><tr><th class="l">#</th><th class="l">${T().thPos}</th>
     <th>${T().thValue}</th><th>${T().thW}</th><th>${T().thDw}</th><th>${T().thDq}</th><th class="l">${T().thAct}</th></tr></thead><tbody>`
     + list.map((r, i) => `<tr data-si="${r.si}" class="${r.exit ? 'exit' : ''}${r.si === ST.pos ? ' sel' : ''}"><td class="l pfsub">${r.exit ? '' : i + 1}</td>
-      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s)}</td>
+      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s, r.exit ? ST.fq - 1 : ST.fq)}</td>
       <td>${r.exit ? '–' : eur(r.v)}</td><td>${wFmt(r.w)}</td>
       <td class="${r.dw > 0 ? 'up' : r.dw < 0 ? 'down' : ''}">${r.dw == null ? '–' : pp(r.dw)}</td>
       <td class="${r.dq > 0 ? 'up' : r.dq < 0 ? 'down' : ''}">${r.dq == null || r.act === '' ? '–' : (r.dq > 0 ? '+' : '−') + num(Math.abs(r.dq), 0) + '%'}</td>
@@ -371,7 +402,11 @@ function renderLook(f, qi) {
     + k(T().lkCov, share(L.desc, L.fw)) + '</div>'
     + (eq ? `<div class="meta">${T().lkEq(wFmt(eq, 1))}</div><div class="comp">${regs.map(r => `<span style="width:${L.reg[r] / eq * 100}%;background:${REG_COL[r]}" title="${T().reg[r]} ${wFmt(L.reg[r], 1)}"></span>`).join('')}</div>
       <div class="complg">${regs.map(r => `<span><i style="background:${REG_COL[r]}"></i>${T().reg[r]} <b>${wFmt(L.reg[r], 1)}</b></span>`).join('')}</div>` : '')
-    + `<p class="note">${T().lkNote}</p>`;
+    + (L.bw > 0.5 ? `<div class="meta" style="margin-top:12px">${T().lkBond(wFmt(L.bw, 1))}</div><div class="kpis lkk">`
+      + k(T().lkYtm, L.ytm == null ? '–' : num(L.ytm, 2) + '%', T().lkBondCov(share(L.bdW, L.bw)))
+      + k(T().lkDur, L.md == null ? '–' : num(L.md, 1), L.frn > 0.05 ? T().lkFrn(share(L.frn, L.bw)) : '')
+      + k(T().lkYrs, L.yrs == null ? '–' : `${num(L.yrs, 1)} ${T().yrs}`) + '</div>' : '')
+    + `<p class="note">${T().lkNote}${L.bw > 0.5 ? ' ' + T().bondNote : ''}</p>`;
 }
 /* Pozicijos istorija: svoris kiekvieno ketvirčio pabaigoje šiame fonde ir kitų valdytojų tos pačios grupės fonduose */
 function weightSeries(f, si) {
@@ -385,7 +420,7 @@ function renderPosition() {
   const s = ST.pos == null ? null : S[ST.pos];
   document.getElementById('phTitle').textContent = s ? posLabel(s) : T().phPick;
   document.getElementById('phMeta').innerHTML = s ? esc(`${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin ? ' · ' + s.isin : ''}`)
-    + (s.a && s.a.src ? ` · <a href="${esc(s.a.src)}" target="_blank" rel="noopener">${T().source}</a>` : '') + attrChips(s) + `<br>${T().phMeta}` : '';
+    + (s.a && s.a.src ? ` · <a href="${esc(s.a.src)}" target="_blank" rel="noopener">${T().source}</a>` : '') + attrChips(s, ST.fq) + `<br>${T().phMeta}` : '';
   if (!s) { el.innerHTML = ''; document.getElementById('phTable').innerHTML = ''; document.getElementById('phNote').textContent = ''; return; }
   const peers = f.pl === 'II' ? FUNDS.filter(g => g.pl === 'II' && g.g === f.g && g.p !== f.p && g.q.some(m => m && m.has(ST.pos))) : [];
   DATA.providers.forEach(p => { p.label = p.id; });
@@ -459,11 +494,11 @@ function renderAlt() {
 }
 
 /* ---------- 4. palyginimas grupėje ---------- */
-const PG_COLS = [['eq', 'thEq'], ['bd', 'thBd'], ['alt', 'thAlt'], ['cash', 'thCash'], ['idx', 'thIdx'], ['ter', 'thTer'], ['em', 'thEm'], ['emW', 'thEmW'], ['gold', 'thGold'], ['sfdr', 'thSfdr']];
+const PG_COLS = [['eq', 'thEq'], ['bd', 'thBd'], ['alt', 'thAlt'], ['cash', 'thCash'], ['idx', 'thIdx'], ['ter', 'thTer'], ['em', 'thEm'], ['emW', 'thEmW'], ['gold', 'thGold'], ['sfdr', 'thSfdr'], ['ytm', 'thYtm'], ['md', 'thDur']];
 const PG_REG = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'unk'];
 function peerRow(f, qi) {
   const L = lookThrough(f, qi);
-  const r = { f, emUnk: L.emUnk, eq: L.b.eq || 0, bd: L.b.bd || 0, alt: L.b.alt || 0, cash: L.b.cash || 0, idx: L.idx, ter: L.ter, em: L.em, emW: L.emW, gold: L.gold, sfdr: L.sfdr };
+  const r = { f, emUnk: L.emUnk, eq: L.b.eq || 0, bd: L.b.bd || 0, alt: L.b.alt || 0, cash: L.b.cash || 0, idx: L.idx, ter: L.ter, em: L.em, emW: L.emW, gold: L.gold, sfdr: L.sfdr, ytm: L.bw > 0.5 ? L.ytm : null, md: L.bw > 0.5 ? L.md : null };
   PG_REG.forEach(k => { r['r_' + k] = L.reg[k] || 0; });
   return r;
 }
@@ -485,9 +520,9 @@ function renderPeers() {
   const cols = PG_COLS.concat(PG_REG.filter(k => rows.some(r => r['r_' + k] > 0.05)).map(k => ['r_' + k, null, k]));
   const maxOf = k => Math.max(...rows.map(r => r[k] || 0));
   const mx = Object.fromEntries(cols.map(([k]) => [k, maxOf(k)]));
-  const colr = k => k === 'ter' ? 'var(--s6)' : k === 'gold' ? '#c9a227' : k === 'em' || k === 'r_em' ? '#d0453f' : k.startsWith('r_') ? REG_COL[k.slice(2)] : 'var(--s1)';
+  const colr = k => k === 'ytm' || k === 'md' ? 'var(--s2)' : k === 'ter' ? 'var(--s6)' : k === 'gold' ? '#c9a227' : k === 'em' || k === 'r_em' ? '#d0453f' : k.startsWith('r_') ? REG_COL[k.slice(2)] : 'var(--s1)';
   const cell = (r, k) => { const v = r[k]; if (v == null || (!v && k !== 'ter')) return '<td>–</td>';
-    return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' ? num(v, 2) + '%' : num(v, 1)}</td>`; };
+    return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' || k === 'ytm' ? num(v, 2) + '%' : num(v, 1)}</td>`; };
   const nm = r => `${r.f.p}${ST.pg === 'III' ? ' ' + fundName(r.f).replace(r.f.p, '').trim() : ''}`;
   const tb = document.getElementById('pgTable');
   const nReg = cols.length - PG_COLS.length;
@@ -517,6 +552,11 @@ function renderPeers() {
       sig.push(T().sigTer(nm(lo), num(lo.ter, 2) + '%', nm(hi), num(hi.ter, 2) + '%')); }
     const gold = rows.filter(r => r.gold > 0.05);
     sig.push(gold.length ? T().sigGold(gold.map(r => `${nm(r)} ${wFmt(r.gold, 1)}`).join(', ')) : T().sigNoGold);
+    [['ytm', 'sigYtm', v => num(v, 2) + '%'], ['md', 'sigDur', v => num(v, 1)]].forEach(([k, key, fm]) => {
+      const xs = rows.filter(r => r[k] != null); if (xs.length < 2) return;
+      const hi = xs.reduce((a, b) => b[k] > a[k] ? b : a), lo = xs.reduce((a, b) => b[k] < a[k] ? b : a);
+      sig.push(T()[key](nm(hi), fm(hi[k]), nm(lo), fm(lo[k])));
+    });
     ext('r_na', T().wNa); if (rows.some(r => r.r_baltic > 0.5)) ext('r_baltic', T().wBaltic);
   }
   document.getElementById('pgSignals').innerHTML = sig.length ? `<b>${T().pgSig}</b><ul>${sig.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
