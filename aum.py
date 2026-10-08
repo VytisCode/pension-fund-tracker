@@ -128,7 +128,8 @@ def payouts(daily2, lb_tot, code_of):
             y, m, dd = map(int, d1.split("-"))
             if m not in PAYOUT_MONTHS or dd > PAYOUT_LAST_DAY or (date.fromisoformat(d1) - date.fromisoformat(d0)).days > 7:
                 continue
-            flows[(prov, f"{y}-{(m - 1) // 3 + 1}")][d1][fund] = (a1 - a0 * u1 / u0, a0)
+            # bazė = vakarykštis turtas šios dienos kainomis (be rinkos poveikio), t. y. turtas prieš pat išmokėjimą
+            flows[(prov, f"{y}-{(m - 1) // 3 + 1}")][d1][fund] = (a1 - a0 * u1 / u0, a0 * u1 / u0, [d0, u0, a0, d1, u1, a1])
     out = []
     covered = set()
     for (prov, q), by_day in sorted(flows.items()):
@@ -143,16 +144,19 @@ def payouts(daily2, lb_tot, code_of):
         if not pay_days:
             continue
         per_fund = defaultdict(lambda: [0.0, None])
+        rows_of = defaultdict(list)          # kasdieniai duomenys Excel patikrai
         for d in pay_days:
-            for fund, (fl, a0) in by_day[d].items():
+            for fund, (fl, b, raw) in by_day[d].items():
                 per_fund[fund][0] += fl
+                rows_of[fund].append(raw)
                 if per_fund[fund][1] is None:
-                    per_fund[fund][1] = a0
+                    per_fund[fund][1] = b
         flow = sum(v[0] for v in per_fund.values())
         base = sum(v[1] for v in per_fund.values())
         covered.add((prov, q))
-        out.append({"q": q, "p": prov, "dates": pay_days, "flow": round(flow / 1e6, 2), "base": round(base / 1e6, 2), "est": 0,
-                    "funds": {f: [round(v[0] / 1e6, 3), round(v[1] / 1e6, 3)] for f, v in sorted(per_fund.items())}})
+        out.append({"q": q, "p": prov, "dates": pay_days, "flow": round(flow / 1e6, 3), "base": round(base / 1e6, 3), "est": 0,
+                    "funds": {f: [round(v[0] / 1e6, 3), round(v[1] / 1e6, 3)] for f, v in sorted(per_fund.items())},
+                    "rows": dict(sorted(rows_of.items()))})
     # Ketvirčiai be kasdienių turto duomenų: įvertis iš LB ketvirčio pabaigos sumų (data nežinoma)
     quarters = sorted({d for t in lb_tot.values() for d in t})
     for prov in PROVIDERS:
@@ -163,7 +167,7 @@ def payouts(daily2, lb_tot, code_of):
             qid = f"{y}-{(m - 1) // 3 + 1}"
             if (prov, qid) in covered:
                 continue
-            per_fund, base = {}, 0.0
+            per_fund, rows_of = {}, {}
             for (p, fund), rows in daily2.items():
                 code = code_of.get((p, fund))
                 if p != prov or not code or q0 not in lb_tot[code] or q1 not in lb_tot[code]:
@@ -175,14 +179,15 @@ def payouts(daily2, lb_tot, code_of):
                 # todėl kur yra kasdieniai grynieji aktyvai, naudojami jie
                 a0 = next((a for d, _, a in rows if d == q0 and a), lb_tot[code][q0])
                 a1 = next((a for d, _, a in rows if d == q1 and a), lb_tot[code][q1])
-                per_fund[fund] = [round((a1 - a0 * u1 / u0) / 1e6, 3), round(a0 / 1e6, 3)]
+                per_fund[fund] = [round((a1 - a0 * u1 / u0) / 1e6, 3), round(a0 * u1 / u0 / 1e6, 3)]
+                rows_of[fund] = [[q0, u0, a0, q1, u1, a1]]
             if not per_fund:
                 continue
             flow = sum(v[0] for v in per_fund.values())
             base = sum(v[1] for v in per_fund.values())
             if base and flow / base < -0.05:   # tik ryškūs (reformos) išmokėjimai
                 out.append({"q": qid, "p": prov, "dates": [], "flow": round(flow, 2), "base": round(base, 2), "est": 1,
-                            "funds": dict(sorted(per_fund.items()))})
+                            "funds": dict(sorted(per_fund.items())), "rows": dict(sorted(rows_of.items()))})
     out.sort(key=lambda e: (e["q"], e["p"]))
     return out
 
