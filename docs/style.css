@@ -3,6 +3,7 @@
   --surface: #fcfcfb; --card: #ffffff; --line: #e6e5e1;
   --text: #0b0b0b; --text-2: #52514e; --text-3: #7b7a75;
   --grid: #ebeae6; --axis: #b9b8b2; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400;
+  --g0: #5094e2; --g1: #3a87df; --g2: #2479db; --g3: #206dc5; --g4: #1d61af; --g5: #19559a; --g6: #15467f; --g7: #103865;
   --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
 }
 @media (prefers-color-scheme: dark) {
@@ -11,6 +12,7 @@
     --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
     --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
     --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a;
+    --g0: #1f68bd; --g1: #2377d7; --g2: #3a87df; --g3: #5497e3; --g4: #6ea7e7; --g5: #84b4eb; --g6: #9ac2ef; --g7: #b0cff2;
     --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
   }
 }
@@ -19,6 +21,7 @@
   --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
   --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
   --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a;
+    --g0: #1f68bd; --g1: #2377d7; --g2: #3a87df; --g3: #5497e3; --g4: #6ea7e7; --g5: #84b4eb; --g6: #9ac2ef; --g7: #b0cff2;
   --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
 }
 * { box-sizing: border-box; }
@@ -150,6 +153,7 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
     color-scheme: light;
     --surface: #fff; --card: #fff; --line: #d8d7d2; --text: #000; --text-2: #3a3935; --text-3: #5d5c57;
     --grid: #e6e5e1; --axis: #9d9c96; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400;
+    --g0: #5094e2; --g1: #3a87df; --g2: #2479db; --g3: #206dc5; --g4: #1d61af; --g5: #19559a; --g6: #15467f; --g7: #103865;
     --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
   }
   body { font-size: 11px; }
@@ -203,3 +207,11 @@ tr.gstart:first-child td { border-top: 0; }
 .two .stick table thead th, .sec > .stick table thead th { background: var(--surface); }
 @media print { .stick table thead th { position: static; } }
 .ovwrap { max-width: 760px; margin-top: 8px; }
+/* grąžos ir rizikos žemėlapis */
+.riskmap { position: relative; width: 100%; height: 360px; }
+.riskmap svg { display: block; overflow: visible; }
+.riskmap .pt { stroke: var(--card); stroke-width: 2; }
+.riskmap .pt.dim { opacity: .35; }
+.riskmap .lbl { font-size: 11px; fill: var(--text-2); }
+.riskleg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text-2); margin-top: 8px; }
+.riskleg i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }

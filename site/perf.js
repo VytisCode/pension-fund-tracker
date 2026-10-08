@@ -10,6 +10,8 @@ addStrings({
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
   nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
   thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
+  hRisk: 'Return vs. risk – all age groups', axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
+  capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = age group, from payout (light) to the youngest group (dark). The selected group is highlighted.`,
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
@@ -44,6 +46,7 @@ addStrings({
   thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
+    riskmap: 'Horizontally: volatility (annualised standard deviation of daily returns over the selected period). Vertically: return over the same period. Up and to the left is better: more return for less risk. Only funds with fresh data and at least 20 days of returns are shown.',
     ret: 'Change in unit value between the start and end of the period. Unit values are already net of fees and taxes, so no further deduction is needed.',
     rank: 'Position of each provider within its age group by return over the selected period; 1 = best.',
     overall: 'Every age group × every period is one comparison. Counts how often a provider is first, in the top two, and its average rank. Short periods are noisy, so the “1 yr and longer” view is usually fairer.',
@@ -71,6 +74,8 @@ addStrings({
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
   nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
   thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
+  hRisk: 'Grąža ir rizika – visos amžiaus grupės', axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
+  capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – amžiaus grupė: nuo turto išsaugojimo (šviesiausia) iki jauniausių (tamsiausia). Pasirinkta grupė paryškinta.`,
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
@@ -105,6 +110,7 @@ addStrings({
   thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
+    riskmap: 'Horizontaliai – svyravimas (dienos grąžų standartinis nuokrypis, perskaičiuotas metams) pasirinktu laikotarpiu. Vertikaliai – grąža per tą patį laikotarpį. Aukščiau ir kairiau – geriau: daugiau grąžos už mažesnę riziką. Rodomi tik fondai su šviežiais duomenimis ir bent 20 dienų grąžų.',
     ret: 'Vieneto vertės pokytis tarp laikotarpio pradžios ir pabaigos. Vieneto vertė jau yra po mokesčių ir sąnaudų, todėl papildomai nieko atimti nereikia.',
     rank: 'Kiekvieno tiekėjo vieta savo amžiaus grupėje pagal grąžą pasirinktu laikotarpiu; 1 = geriausia.',
     overall: 'Kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas. Skaičiuojama, kaip dažnai tiekėjas yra pirmas, 1–2 vietoje ir jo vidutinė vieta. Trumpi laikotarpiai triukšmingi, todėl „1 m. ir ilgesni“ dažniausiai teisingesnis.',
@@ -525,8 +531,58 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
+  renderRiskMap();
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
+}
+/* grąžos ir rizikos žemėlapis: visi fondai, spalva pagal amžiaus grupę (šviesiausia – mažiausia rizika) */
+function renderRiskMap() {
+  $('hRisk').innerHTML = T().hRisk + ik('riskmap');
+  const el = $('riskMap'), sel = P.group === 'all' ? null : P.group, nG = DATA.groups.length;
+  const riskIdx = g => nG - 1 - DATA.groups.indexOf(g);          // DATA.groups: 2003…1961, turto
+  const pts = DATA.groups.flatMap(g => { const rng = rangeFor(g, true); return g.funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
+  setCap('riskMap', T().capRisk(periodText(), pts.length));
+  $('riskLeg').innerHTML = DATA.groups.slice().reverse().map(g => `<span><i style="background:var(--g${riskIdx(g)})"></i>${groupLabel(g)}</span>`).join('');
+  el.innerHTML = '';
+  if (!pts.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
+  const W = el.clientWidth, H = el.clientHeight, m = { l: 48, r: 14, t: 10, b: 38 };
+  const xs = niceTicks(0, Math.max(...pts.map(p => p.x)) * 1.05), y0 = Math.min(0, ...pts.map(p => p.y)), y1 = Math.max(0, ...pts.map(p => p.y));
+  const ys = niceTicks(y0 - (y1 - y0) * 0.04, y1 + (y1 - y0) * 0.06);
+  const extend = (t, top) => { const st = t[1] - t[0]; while (t[t.length - 1] < top) t.push(+(t[t.length - 1] + st).toFixed(10)); };   // ašis baigiasi žyma už didžiausio taško
+  extend(xs, Math.max(...pts.map(p => p.x)) * 1.03); extend(ys, y1);
+  const xMax = xs[xs.length - 1], yMin = Math.min(ys[0], y0), yMax = ys[ys.length - 1];
+  const X = v => m.l + v / xMax * (W - m.l - m.r), Y = v => m.t + (yMax - v) / (yMax - yMin || 1) * (H - m.t - m.b);
+  const labelsFor = list => {                                      // pavadinimai šalia paryškintų taškų; persidengiantys perstumiami žemyn
+    const placed = [];
+    return list.slice().sort((a, b) => Y(a.y) - Y(b.y)).map(p => {
+      const right = X(p.x) > W - m.r - 70, x = X(p.x) + (right ? -9 : 9), x0 = right ? x - 66 : x;
+      let y = Y(p.y) + 4;
+      while (placed.some(q => Math.abs(q.y - y) < 12 && Math.abs(q.x0 - x0) < 66)) y += 12;
+      placed.push({ y, x0 });
+      return `<text class="lbl" x="${x}" y="${y}"${right ? ' text-anchor="end"' : ''}>${labelOf(p.f.provider)}</text>`;
+    }).join('');
+  };
+  const order = pts.slice().sort((a, b) => (a.g.id === sel) - (b.g.id === sel));   // paryškinti taškai – viršuje
+  el.innerHTML = `<svg width="${W}" height="${H}" role="img" aria-label="${T().hRisk}">`
+    + ys.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(v, 0)}</text>`).join('')
+    + xs.map(v => `<text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle" font-size="11" fill="var(--text-3)">${num(v, 0)}</text>`).join('')
+    + `<text x="${(m.l + W - m.r) / 2}" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--text-2)">${T().axVol}</text>`
+    + `<text transform="translate(12 ${(m.t + H - m.b) / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--text-2)">${T().axRet}</text>`
+    + order.map(p => `<circle class="pt${sel && p.g.id !== sel ? ' dim' : ''}" cx="${X(p.x)}" cy="${Y(p.y)}" r="5.5" fill="var(--g${riskIdx(p.g)})"><title>${labelOf(p.f.provider)} ${groupLabel(p.g)}: ${pct(p.y, 1)}, ${num(p.x, 1)} %</title></circle>`).join('')
+    + labelsFor(sel ? pts.filter(p => p.g.id === sel) : [])
+    + '</svg>';
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);
+  el.onmousemove = e => {
+    const r = el.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+    let best = null, bd = 196;                                       // 14 px spindulys
+    pts.forEach(p => { const d = (X(p.x) - mx) ** 2 + (Y(p.y) - my) ** 2; if (d < bd) { bd = d; best = p; } });
+    if (!best) { tip.style.display = 'none'; return; }
+    tip.innerHTML = `<b><span class="sw" style="background:${colorOf(best.f.provider)}"></span>${labelOf(best.f.provider)} · ${groupLabel(best.g)}</b><div><span>${T().thPeriodRet}</span><span>${pct(best.y, 2)}</span></div><div><span>${T().thVol}</span><span>${num(best.x, 1)} %</span></div>`;
+    tip.style.display = 'block';
+    const w = tip.offsetWidth, tx = X(best.x) + 12;
+    tip.style.left = (tx + w > W ? X(best.x) - w - 12 : tx) + 'px'; tip.style.top = Math.max(0, Y(best.y) - tip.offsetHeight / 2) + 'px';
+  };
+  el.onmouseleave = () => { tip.style.display = 'none'; };
 }
 function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
@@ -754,4 +810,4 @@ document.querySelector('#top .top-tools').prepend($('actions'));   // veiksmų m
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); fitSticky(); }, 120); });
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); renderRiskMap(); fitSticky(); }, 120); });

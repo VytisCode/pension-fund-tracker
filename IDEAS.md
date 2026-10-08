@@ -31,7 +31,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 
 ## Klausimas savininkui
 
-*(Atsakyta 2026-10-07: pirmenybė kompiuterio vaizdui. Kitas ciklas įrašo naują klausimą; ne apie lyginamuosius indeksus.)*
+Kokį laikotarpį dažniausiai žiūrite, kai lyginate fondus: šiuos metus (YTD), 1 m., 3 m. ar visą istoriją? Jį padaryčiau numatytuoju, kad atidarius svetainę iškart matytumėte tai, ko reikia.
 
 ---
 
@@ -69,7 +69,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 2. **Vienodo pločio, sulygiuoti heatmap langeliai**, elegantiškesnės lentelės. – *atlikta (PR #11, 2026-10-06)*
 3. **Pašalinti lentelę „Quartile within age group“.** – *atlikta (PR #13, 2026-10-07)*
 4. **Kvartilius visur pakeisti konkrečia vieta** (1–6) rizikos grupėje; kvartilių neliks niekur. – *atlikta (PR #13, 2026-10-07)*
-5. **Grąžos ir rizikos žemėlapis:** taškinė diagrama (horizontaliai svyravimai, vertikaliai grąža, spalva pagal gimimo grupę). – *patvirtinta*
+5. **Grąžos ir rizikos žemėlapis:** taškinė diagrama (horizontaliai svyravimai, vertikaliai grąža, spalva pagal gimimo grupę). – *atlikta (PR #25, 2026-10-08)*
 6. **Santykinė grąža prieš grupės vidurkį:** juostinė diagrama, nulis = grupės vidurkis. – *patvirtinta*
 7. **Reitingo kaita laike:** fondo vieta kas mėnesį ar ketvirtį. – *patvirtinta*
 8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *patvirtinta*
@@ -189,7 +189,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** punktyrinė linija ten, kur trūksta duomenų, kad lankytojas neapsigautų.
 
 ### Grąžos ir rizikos taškinė diagrama peer grupėje
-- **Būsena:** patvirtinta (sujungta su „Meet“ 5)
+- **Būsena:** atlikta (PR #25, 2026-10-08; „Meet“ 5)
 - **Autorius:** Claude
 - **Kodėl:** lentelėse jau yra grąža, svyravimai ir Sharpe rodiklis, bet juos sunku aprėpti vienu žvilgsniu.
 - **Nauda:** vienas grafikas: horizontaliai rizika (svyravimai), vertikaliai grąža, kiekvienas taškas yra grupės fondas. Iškart matyti, kuris fondas uždirba daugiau už tą pačią riziką.
@@ -235,3 +235,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** GitHub tvarkaraštis paleidimus vėlina valandomis (2026-10-07 rytinis paleidimas įvyko tik 14:19), o dabar tai matyti tik GitHub svetainėje.
 - **Nauda:** vakariniame laiške viena eilutė: kada vyko paleidimai ir kada kiekvienas valdytojas paskelbė vertę. Per kelias savaites paaiškės, kada geriausia rinkti duomenis, ir bus galima sumažinti nereikalingų paleidimų.
+
+### Grupių vidurkiai grąžos ir rizikos žemėlapyje
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** žemėlapyje matyti visi 48 fondai, bet sunku pasakyti, ar konkretus fondas savo grupėje uždirba daugiau už tą pačią riziką.
+- **Nauda:** kiekvienos amžiaus grupės vidurkis žemėlapyje rodomas kaip didesnis žiedas. Iškart matyti, kurie fondai yra aukščiau už savo grupės vidurkį (geriau), o kurie žemiau.
