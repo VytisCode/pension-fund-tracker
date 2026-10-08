@@ -112,7 +112,7 @@ function renderChart() {
     if (ST.unit === 'pct' && r.s.d[0] > x0) return null;     // pradėjo vėliau – procentinis pokytis neteisingas
     return { provider: r.m, points: pts };
   }).filter(Boolean);
-  const fmt = ST.unit === 'pct' ? v => pct(v, 1).replace(' %', '%') : v => mEur(v) + (lang === 'lt' ? ' mln. €' : ' m €');
+  const fmt = ST.unit === 'pct' ? v => pct(v, 2).replace(' %', '%') : v => mEur(v) + (lang === 'lt' ? ' mln. €' : ' m €');
   const el = document.getElementById('chart');
   const paint = mr => drawLineChart(el, series, x0, end, { fmt, axisUnit: ST.unit === 'pct' ? '%' : '', mr });
   hc = hc || hoverCompress(el, mr => renderChart.paint(mr));
@@ -139,7 +139,7 @@ function renderGrowth() {
   const line = (label, c, isTot) => `<tr class="${isTot ? 'tot' : ''}"><td class="l">${label}</td><td>${mEur(c.v)}</td><td class="pfsub">${c.end == null ? '' : iso(c.end)}</td>` + pers.map(p => {
     const b = c.base[p], v = c.v;
     if (b == null) return '<td class="bl">–</td><td>–</td>';
-    return `<td class="bl ${cls(v - b)}">${signed(v - b, mEur)}</td><td class="${cls(v - b)}">${signed((v / b - 1) * 100, x => num(x, 1))}%</td>`;
+    return `<td class="bl ${cls(v - b)}">${signed(v - b, mEur)}</td><td class="${cls(v - b)}">${signed((v / b - 1) * 100, x => num(x, 2))}%</td>`;
   }).join('') + '</tr>';
   document.getElementById('gtTitle').textContent = `${T().gtTitle} · ${ST.pl === 'II' ? 'II' : 'III'} ${lang === 'lt' ? 'pakopa' : 'pillar'}${ST.g === 'all' ? '' : ' · ' + grpLabel(ST.pl, ST.g)}`;
   document.getElementById('gtTable').innerHTML = `<thead><tr><th class="l" rowspan="2">${T().thMgr}</th><th rowspan="2">${T().thAum}</th><th rowspan="2">${T().thDate}</th>${pers.map(p => `<th class="grp bl" colspan="2">${T().per[p]}</th>`).join('')}</tr>
@@ -186,11 +186,11 @@ function renderPayouts() {
   const qs = [...new Set(AUM.payouts.map(e => e.q))].sort();
   const ev = (m, q) => AUM.payouts.find(e => e.p === m && e.q === q);
   const dates = e => e.est ? `<span class="est">${T().est}</span>` : e.dates.map(d => d.slice(5).replace('-', '.')).join(', ');
-  const cells = (e, flow, base) => e && base ? `<td class="bl pfsub">${dates(e)}</td><td class="down">${signed(flow, mEur)}</td><td class="down">${signed(flow / base * 100, x => num(x, 1))}%</td>` : '<td class="bl">–</td><td>–</td><td>–</td>';
+  const cells = (e, flow, base) => e && base ? `<td class="bl pfsub">${dates(e)}</td><td class="down">${signed(flow, mEur)}</td><td class="down">${signed(flow / base * 100, x => num(x, 2))}%</td>` : '<td class="bl">–</td><td>–</td><td>–</td>';
   let body = '';
   if (ST.po === 'mgr') {
     body = PO_MGRS.map(m => `<tr><td class="l">${sw(m)}${MLABEL[m]}</td>${qs.map(q => { const e = ev(m, q); return cells(e, e && e.flow, e && e.base); }).join('')}</tr>`).join('')
-      + `<tr class="tot"><td class="l">${T().total}</td>${qs.map(q => { const es = AUM.payouts.filter(e => e.q === q), f = es.reduce((a, e) => a + e.flow, 0), b = es.reduce((a, e) => a + e.base, 0); return `<td class="bl"></td><td class="down">${signed(f, mEur)}</td><td class="down">${signed(f / b * 100, x => num(x, 1))}%</td>`; }).join('')}</tr>`;
+      + `<tr class="tot"><td class="l">${T().total}</td>${qs.map(q => { const es = AUM.payouts.filter(e => e.q === q), f = es.reduce((a, e) => a + e.flow, 0), b = es.reduce((a, e) => a + e.base, 0); return `<td class="bl"></td><td class="down">${signed(f, mEur)}</td><td class="down">${signed(f / b * 100, x => num(x, 2))}%</td>`; }).join('')}</tr>`;
   } else {
     GROUPS2.forEach(g => {
       body += `<tr class="sep"><td colspan="${1 + qs.length * 3}">${grpLabel('II', g)}</td></tr>`;

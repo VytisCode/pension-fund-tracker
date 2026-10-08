@@ -276,13 +276,15 @@ def build_reports(ver: dict) -> None:
     import reports
 
     payload = reports.build()
+    daily = payload.pop("_daily")
+    (DOCS / "rep_daily.js").write_text("var REPD=" + json.dumps(daily, separators=(",", ":")) + ";\n", encoding="utf-8")
     payload["generated"] = datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
     data_js = "const REP=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_rep.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "reports.html", DOCS / "reports.html")
     shutil.copyfile(SITE / "rep.js", DOCS / "rep.js")
-    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js")}}
-    text = (DOCS / "reports.html").read_text(encoding="utf-8")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js", "rep_daily.js")}}
+    text = (DOCS / "reports.html").read_text(encoding="utf-8").replace("rep_daily.js", f"rep_daily.js?v={ver['rep_daily.js']}")
     for n in ("style.css", "common.js", "data_rep.js", "rep.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "reports.html").write_text(text, encoding="utf-8")
