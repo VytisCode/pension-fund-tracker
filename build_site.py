@@ -225,16 +225,25 @@ def build_portfolios(ver: dict) -> None:
     # tikri pavadinimai pagal ISIN (tools/fetch_isin_names.py, OpenFIGI) – kai ataskaitoje nurodyta tik valdymo bendrovė
     figi_path = ROOT / "data" / "isin_names.csv"
     figi = {r["isin"]: r["name"] for r in csv.DictReader(figi_path.open(encoding="utf-8", newline=""))} if figi_path.exists() else {}
+    # fondų ir ETF aprašai (data/fund_attributes.csv, surinkta iš fondų puslapių ir justETF): pilnas pavadinimas ir požymiai
+    attr_path = ROOT / "data" / "fund_attributes.csv"
+    attrs = {r["isin"]: r for r in csv.DictReader(attr_path.open(encoding="utf-8", newline=""))} if attr_path.exists() else {}
     sec_ids = sorted(names)
     si = {p: i for i, p in enumerate(sec_ids)}
     secs = []
     for p in sec_ids:
         kind, country, cur, kis = meta[p]
         name = best_name(names[p], kind)
+        co = kind == "fund" and bool(COMPANY_NAME.search(name))           # ataskaitoje nurodyta tik valdymo bendrovė
+        a = attrs.get(p) if kind == "fund" else None
+        full = (a or {}).get("name") or (figi.get(p, "") if co else "")   # pilnas oficialus pavadinimas
+        ter = (a or {}).get("ter_pct", "")
         secs.append([name, PF_TYPES[kind], country, cur, kis,
                      p if re.match(r"^[A-Z]{2}[A-Z0-9]{9}\d$", p) else "",
-                     int(kind == "fund" and bool(COMPANY_NAME.search(name))),  # 1 = žinoma tik valdymo bendrovė
-                     alt_kind(kind, kis, " ".join(names[p])), figi.get(p, "")])
+                     int(co), alt_kind(kind, kis, " ".join(names[p])), full,
+                     # [turto klasė, regionas, EM, indeksinis/aktyvus, SFDR, TER %, valiuta apdrausta, tema, šaltinis]
+                     [a["asset_class"], a["region"], a["em"], a["approach"], a["sfdr"], float(ter) if ter else None,
+                      a["currency_hedged"], a["theme"], a["source_url"]] if a else 0])
     funds = {}
     for r in rows:
         f = funds.setdefault(r["fund_code"], {"c": r["fund_code"], "p": r["provider"], "pl": r["pillar"], "r": []})

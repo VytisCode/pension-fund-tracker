@@ -45,6 +45,19 @@
   table.altt td.pfsub { white-space: normal; min-width: 180px; font-size: 11.5px; }
   table.altt tr.sep td { background: var(--surface); font-weight: 600; text-align: left; cursor: default; }
   .hist td { font-size: 12.5px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 3px 4px; margin-top: 3px; }
+  .tags span { font-size: 10.5px; line-height: 1.5; padding: 0 6px; border-radius: 999px; background: var(--grid); color: var(--text-2); white-space: nowrap; }
+  #phMeta .tags { margin: 4px 0 2px; }
+  h3.lk { font-size: 14px; margin: 16px 0 6px; }
+  .lkk { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .kpi small { display: block; font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .pgsig { font-size: 13px; margin: 0 0 10px; }
+  .pgsig ul { margin: 4px 0 0; padding-left: 18px; }
+  .pgsig li { margin: 2px 0; }
+  table.pgt td:first-child { min-width: 130px; }
+  table.pgt tbody tr { cursor: pointer; }
+  .pfbar .field { max-width: 100%; } .pfbar select { max-width: 100%; }
+  @media (max-width: 700px) { .kpis, .lkk { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 900px; }
 </style>
@@ -66,6 +79,11 @@
   <section class="card"><div class="meta" id="altChartMeta"></div><div class="chart" id="altChart"></div><div class="legend" id="altLegend" style="margin-top:6px"></div></section>
   <section class="card" style="margin-top:12px"><div class="scroll"><table class="pft altt" id="altTable"></table></div><p class="note" id="altNote"></p></section>
 
+  <h2 class="sec" id="pgTitle"></h2>
+  <p class="lead" id="pgLead"></p>
+  <div class="bar pfbar" id="pgBar"></div>
+  <section class="card"><div class="pgsig" id="pgSignals"></div><div class="scroll"><table class="pft altt pgt" id="pgTable"></table></div><p class="note" id="pgNote"></p></section>
+
   <h2 class="sec" id="fcTitle"></h2>
   <p class="lead" id="fcLead"></p>
   <div class="bar pfbar" id="fcBar"></div>
@@ -73,6 +91,7 @@
     <section class="card">
       <div class="kpis" id="fcKpis"></div>
       <div id="fcComp"></div>
+      <div id="fcLook"></div>
       <div class="scroll" style="margin-top:12px"><table class="pft" id="fcTable"></table></div>
       <button type="button" class="btn more" id="fcMore"></button>
       <p class="note" id="fcNote"></p>
@@ -88,7 +107,7 @@
   <footer id="foot"></footer>
 </div>
 <script src="common.js?v=b7313d6a"></script>
-<script src="data_pf.js?v=ff7aa613"></script>
-<script src="pf.js?v=e91b169f"></script>
+<script src="data_pf.js?v=101100d5"></script>
+<script src="pf.js?v=55866e50"></script>
 </body>
 </html>
