@@ -224,3 +224,6 @@ tr.gstart:first-child td { border-top: 0; }
 .reltrack i.up { background: var(--dpos); border-radius: 0 4px 4px 0; }
 .reltrack i.dn { background: var(--dneg); border-radius: 4px 0 0 4px; }
 .relval { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); white-space: nowrap; }
+/* vietos kaita laike */
+.rotchart { position: relative; width: 100%; height: 300px; }
+.rotchart svg { display: block; overflow: visible; }
