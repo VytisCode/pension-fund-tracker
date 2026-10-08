@@ -71,7 +71,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 3. **Pašalinti lentelę „Quartile within age group“.** – *atlikta (PR #13, 2026-10-07)*
 4. **Kvartilius visur pakeisti konkrečia vieta** (1–6) rizikos grupėje; kvartilių neliks niekur. – *atlikta (PR #13, 2026-10-07)*
 5. **Grąžos ir rizikos žemėlapis:** taškinė diagrama (horizontaliai svyravimai, vertikaliai grąža, spalva pagal gimimo grupę). – *atlikta (PR #25, 2026-10-08)*
-6. **Santykinė grąža prieš grupės vidurkį:** juostinė diagrama, nulis = grupės vidurkis. – *patvirtinta*
+6. **Santykinė grąža prieš grupės vidurkį:** juostinė diagrama, nulis = grupės vidurkis. – *atlikta (PR #41, 2026-10-08)*
 7. **Reitingo kaita laike:** fondo vieta kas mėnesį ar ketvirtį. – *patvirtinta*
 8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *patvirtinta*
 9. **Mokesčių poveikis laike:** kiek valdymo mokesčiai sukaupia per 5–10 m., palyginti tarp fondų. – *patvirtinta* (dėl 5–9: įtraukti visas, nereikalingas išmesti vėliau)
@@ -248,3 +248,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** savininkas
 - **Kodėl:** ataskaitos ruošiamos kas ketvirtį (Q3 YTD, Q4 YTD), o skaičiai tikrinami savarankiškai.
 - **Nauda:** Performance KPI – pasirenkama ketvirčio pabaiga ir vaizdai YTD / 3 m. sukaupta / 3 m. metinė (taip pat 1 m. ir 5 m.); nauja Lietuvos banko formos fondo lentelė (vidutinis pokytis, standartinis nuokrypis, metų grąža); prie kiekvienos lentelės ⓘ su metodika ir Excel failas su naudotais duomenimis ir formulėmis. AUM puslapyje procentai su 2 skaičiais po kablelio.
+
+### Santykinės grąžos kaita laike
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** naujoji „grąža palyginti su grupės vidurkiu“ diagrama rodo tik vieną laikotarpį, todėl nematyti, ar fondas lenkia konkurentus nuolat, ar tik pastaruoju metu.
+- **Nauda:** linijinis grafikas, kur nulis yra grupės vidurkis, o kiekvieno valdytojo linija rodo sukauptą skirtumą nuo jo per laiką. Iškart matyti, kada fondas pradėjo atsilikti ar lenkti kitus.

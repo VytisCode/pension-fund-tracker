@@ -2,7 +2,7 @@
   color-scheme: light;
   --surface: #fcfcfb; --card: #ffffff; --line: #e6e5e1;
   --text: #0b0b0b; --text-2: #52514e; --text-3: #7b7a75;
-  --grid: #ebeae6; --axis: #b9b8b2; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400;
+  --grid: #ebeae6; --axis: #b9b8b2; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400; --dpos: #256abf; --dneg: #c4560c;
   --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
 }
 @media (prefers-color-scheme: dark) {
@@ -10,7 +10,7 @@
     color-scheme: dark;
     --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
     --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
-    --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a;
+    --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a; --dpos: #6da7ec; --dneg: #f0904a;
     --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
   }
 }
@@ -18,7 +18,7 @@
   color-scheme: dark;
   --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
   --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
-  --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a;
+  --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a; --dpos: #6da7ec; --dneg: #f0904a;
   --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
 }
 * { box-sizing: border-box; }
@@ -149,7 +149,7 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
   :root, :root[data-theme="dark"], :root:where(:not([data-theme="light"])) {
     color-scheme: light;
     --surface: #fff; --card: #fff; --line: #d8d7d2; --text: #000; --text-2: #3a3935; --text-3: #5d5c57;
-    --grid: #e6e5e1; --axis: #9d9c96; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400;
+    --grid: #e6e5e1; --axis: #9d9c96; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400; --dpos: #256abf; --dneg: #c4560c;
     --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
   }
   body { font-size: 11px; }
@@ -211,3 +211,16 @@ tr.gstart:first-child td { border-top: 0; }
 .rmtools { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
 .rmtools .chips { align-items: center; }
 .rmlbl { font-size: 12px; color: var(--text-3); margin-right: 2px; }
+/* santykinė grąža prieš grupės vidurkį */
+.relgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
+.relgrid.one { grid-template-columns: minmax(0, 680px); }
+.relh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 13px; }
+.relrow { display: grid; grid-template-columns: 96px 1fr 62px; align-items: center; gap: 8px; font-size: 13px; padding: 3px 0; }
+.relname { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.relname .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+.reltrack { position: relative; height: 14px; }
+.reltrack::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1px solid var(--axis); }
+.reltrack i { position: absolute; top: 2px; height: 10px; }
+.reltrack i.up { background: var(--dpos); border-radius: 0 4px 4px 0; }
+.reltrack i.dn { background: var(--dneg); border-radius: 4px 0 0 4px; }
+.relval { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); white-space: nowrap; }
