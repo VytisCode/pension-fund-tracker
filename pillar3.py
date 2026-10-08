@@ -83,15 +83,15 @@ def save(rows: list) -> int:
     return store.upsert(rows, DATA_FILE)
 
 
-def row(day, fund, unit, assets=None):
+def row(day, fund, unit, assets=None, benchmark=None):
     return {"date": day, "provider": PROVIDER_OF[fund], "fund": fund, "unit_value": unit,
-            "net_assets": u.clean_assets(assets) if assets else None}
+            "net_assets": u.clean_assets(assets) if assets else None, "benchmark_index": benchmark or None}
 
 
 # --------------------------------------------------------------------------- importas iš failų
 def read_import_files() -> list:
     rows = []
-    # SEB: Data;Vieneto vertė;Grynųjų aktyvų vertė;...  (0 aktyvai = nėra)
+    # SEB: Data;Vieneto vertė;Grynųjų aktyvų vertė;Lyginamasis indeksas  (0 aktyvai = nėra)
     seb_names = {"SEB_pensija_18+": "SEB pensija 18+", "SEB_pensija_50+": "SEB pensija 50+",
                  "SEB_pensija_58+": "SEB pensija 58+", "SEB_index_Klimato_ateitis": "SEB index. Klimato ateitis"}
     for path in sorted((IMPORTS / "seb").glob("*.csv")):
@@ -100,7 +100,8 @@ def read_import_files() -> list:
             for rec in csv.reader(f, delimiter=";"):
                 if rec and re.match(r"\d{4}-\d{2}-\d{2}", rec[0]):
                     assets = u.number(rec[2]) if len(rec) > 2 else None
-                    rows.append(row(rec[0], fund, u.number(rec[1]), assets if assets and assets > 1000 else None))
+                    bm = u.number(rec[3]) if len(rec) > 3 and rec[3].strip() else None
+                    rows.append(row(rec[0], fund, u.number(rec[1]), assets if assets and assets > 1000 else None, bm))
     # Swedbank: date;unit_value (iš grafiko duomenų)
     for path in sorted((IMPORTS / "swedbank").glob("*.csv")):
         raw = path.stem.replace("Swedbank_", "").replace("_apriboto_nutraukimo", " (apriboto nutraukimo)").replace("_", " ")
@@ -125,7 +126,8 @@ def read_import_files() -> list:
             for rec in csv.reader(f):
                 if rec and re.match(r"\d{4}-\d{2}-\d{2}", rec[0]):
                     assets = u.number(rec[3]) if len(rec) > 3 else None
-                    rows.append(row(rec[0], fund, u.number(rec[1]), assets if assets and assets > 1000 else None))
+                    bm = u.number(rec[2]) if len(rec) > 2 and rec[2].strip() else None
+                    rows.append(row(rec[0], fund, u.number(rec[1]), assets if assets and assets > 1000 else None, bm))
     bad = [r for r in rows if r["fund"] is None or not r["unit_value"]]
     if bad:
         raise SystemExit(f"Neatpažintos eilutės: {bad[:3]}")
@@ -323,8 +325,9 @@ def accept(provider: str, rows: list, existing: dict, log: list, full_history: b
                     log.append(f"  ! {r['fund']} {r['date']}: pokytis per didelis ({last} → {r['unit_value']}) – praleista")
                     continue
         old = existing.get((r["date"], r["fund"]))
-        if old and old.get("net_assets") and not r.get("net_assets"):
-            r = {**r, "net_assets": old["net_assets"]}
+        for col in ("net_assets", "benchmark_index"):      # kasdienis rinkimas jų neturi – paliekame turimas reikšmes
+            if old and old.get(col) and not r.get(col):
+                r = {**r, col: old[col]}
         out.append(r)
     return out
 
