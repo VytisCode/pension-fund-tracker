@@ -12,6 +12,8 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import riskfree
+
 ROOT = Path(__file__).parent
 DATA = ROOT / "data" / "nav_history.csv"
 SITE = ROOT / "site"
@@ -84,6 +86,7 @@ def main() -> None:
         "generated": datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M"),
         "providers": [{"id": pid, "label": label} for pid, label in PROVIDERS],
         "groups": groups,
+        "rf": riskfree.current(),   # €STR Sharpe koeficientui (None, jei ECB nepasiekiamas ir nėra išsaugotos reikšmės)
     }
     DOCS.mkdir(exist_ok=True)
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"

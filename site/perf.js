@@ -25,7 +25,7 @@ addStrings({
   share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', allFunds: 'All funds', allNote: 'The chart is drawn for one age group at a time – pick a group above to see it. The tables below show all funds; ranks and highlighted best values are within each age group.', capMetrics2: '“Since inception” columns: each fund’s first date → end date.', xlsxDay: 'Daily table (.xlsx)', xlsxDayTip: 'Same layout as the old daily file (fund, date, unit value, net assets): one row per fund for the chosen date; default = latest. If a fund has no value on that day, its last earlier value is used.', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
   viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in % (0 = ${r || 'group average'}).`,
   eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
-  advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.',
+  advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.', rfAutoBtn: 'Use €STR',
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
   nAdv: 'Computed for the selected period (best / worst calendar year: whole history, full years only). Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; on periods shorter than a year the annualised figures are unreliable. Months = full calendar months inside the period.',
@@ -46,6 +46,7 @@ addStrings({
   thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
+    rf: () => DATA.rf ? `Default: €STR (euro short-term rate) published daily by the European Central Bank – ${num(DATA.rf.value, 2)} % p.a. on ${DATA.rf.date}. It is the standard risk-free rate for euro investors (all Lithuanian pension fund members invest in EUR) and is updated automatically with the site data. Source: ${DATA.rf.source}. You can type your own value; “Use €STR” returns to the automatic one.` : 'The automatic €STR rate (European Central Bank) is not available yet, so 2 % p.a. is used. You can type your own value.',
     riskmap: 'Horizontally: volatility (annualised standard deviation of daily returns over the selected period). Vertically: return over the same period. Up and to the left is better: more return for less risk. Only funds with fresh data and at least 20 days of returns are shown.',
     ret: 'Change in unit value between the start and end of the period. Unit values are already net of fees and taxes, so no further deduction is needed.',
     rank: 'Position of each provider within its age group by return over the selected period; 1 = best.',
@@ -89,7 +90,7 @@ addStrings({
   share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', allFunds: 'Visi fondai', allNote: 'Grafikas braižomas vienai amžiaus grupei – pasirinkite grupę aukščiau, kad jį pamatytumėte. Lentelėse žemiau rodomi visi fondai; vietos ir paryškintos geriausios reikšmės skaičiuojamos kiekvienoje amžiaus grupėje.', capMetrics2: 'Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → pabaigos data.', xlsxDay: 'Dienos lentelė (.xlsx)', xlsxDayTip: 'Toks pat išdėstymas kaip senajame dienos faile (fondas, data, vieneto vertė, grynieji aktyvai): po eilutę kiekvienam fondui pasirinktai dienai; pagal nutylėjimą – naujausia. Jei fondas tą dieną vertės neturi, imama paskutinė ankstesnė.', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
   viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentais (0 = ${r || 'grupės vidurkis'}).`,
   eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
-  advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus',
+  advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus', rfAutoBtn: 'Grąžinti €STR',
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
   nAdv: 'Skaičiuojama pasirinktam laikotarpiui (geriausi / blogiausi kalendoriniai metai – visa istorija, tik pilni metai). Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi. Mėnesiai = pilni kalendoriniai mėnesiai laikotarpio viduje.',
@@ -110,6 +111,7 @@ addStrings({
   thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
+    rf: () => DATA.rf ? `Numatyta: €STR (euro trumpalaikių palūkanų norma), kurią kasdien skelbia Europos centrinis bankas – ${num(DATA.rf.value, 2)} % per metus (${DATA.rf.date}). Tai standartinė nerizikinga norma EUR investuotojams (visi Lietuvos pensijų fondų dalyviai investuoja eurais); ji atnaujinama automatiškai kartu su svetainės duomenimis. Šaltinis: ${DATA.rf.source}. Galite įrašyti savo skaičių; „Grąžinti €STR“ grąžina automatinę reikšmę.` : 'Automatinė €STR norma (Europos centrinis bankas) dar negauta, todėl naudojama 2 % per metus. Galite įrašyti savo skaičių.',
     riskmap: 'Horizontaliai – svyravimas (dienos grąžų standartinis nuokrypis, perskaičiuotas metams) pasirinktu laikotarpiu. Vertikaliai – grąža per tą patį laikotarpį. Aukščiau ir kairiau – geriau: daugiau grąžos už mažesnę riziką. Rodomi tik fondai su šviežiais duomenimis ir bent 20 dienų grąžų.',
     ret: 'Vieneto vertės pokytis tarp laikotarpio pradžios ir pabaigos. Vieneto vertė jau yra po mokesčių ir sąnaudų, todėl papildomai nieko atimti nereikia.',
     rank: 'Kiekvieno tiekėjo vieta savo amžiaus grupėje pagal grąžą pasirinktu laikotarpiu; 1 = geriausia.',
@@ -133,13 +135,13 @@ const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];          
 const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: 2, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false };
+  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rf: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -151,7 +153,8 @@ function applyState(s) {
   if (s.view === 'ret' || s.view === 'diff') P.view = s.view;
   if (s.diffRef === 'avg' || DATA.providers.some(p => p.id === s.diffRef)) P.diffRef = s.diffRef;
   if (typeof s.adv === 'boolean') P.adv = s.adv;
-  if (typeof s.rf === 'number' && isFinite(s.rf)) P.rf = s.rf;
+  if (typeof s.rfUser === 'number' && isFinite(s.rfUser)) P.rf = s.rfUser;   // tik paties įrašyta norma; kitaip – €STR
+  if (typeof s.rf === 'number' && isFinite(s.rf) && s.fromUrl) P.rf = s.rf;
   if (s.hmProv && DATA.providers.some(p => p.id === s.hmProv)) P.hmProv = s.hmProv;
   if (s.sumWin === 'sel' || s.sumWin === '1w' || s.sumWin === '1m') P.sumWin = s.sumWin;
   if (s.ovH === 'all') P.ovP = new Set(PERIOD_IDS);                                   // senos nuorodos / išsaugota būsena
@@ -162,7 +165,7 @@ function loadHash() {
   const q = new URLSearchParams(location.hash.slice(1)); if (![...q.keys()].length) return;
   const s = {};
   if (q.get('p')) s.period = q.get('p'); if (q.get('f')) s.from = q.get('f'); if (q.get('t')) s.to = q.get('t'); if (q.get('g')) s.group = q.get('g');
-  if (q.get('v')) s.provs = q.get('v').split(','); if (q.get('rf')) s.rf = parseFloat(q.get('rf')); if (q.get('adv')) s.adv = q.get('adv') === '1';
+  if (q.get('v')) s.provs = q.get('v').split(','); if (q.get('rf')) { s.rf = parseFloat(q.get('rf')); s.fromUrl = true; } if (q.get('adv')) s.adv = q.get('adv') === '1';
   if (q.get('vw')) s.view = q.get('vw'); if (q.get('dr')) s.diffRef = q.get('dr'); if (q.get('hm')) s.hmProv = q.get('hm'); if (q.get('sw')) s.sumWin = q.get('sw'); if (q.get('oh')) s.ovH = q.get('oh'); if (q.get('op')) s.ovP = q.get('op').split(','); if (q.get('gx')) s.gx = q.get('gx') === '1';
   applyState(s);
   if (q.get('l') === 'en' || q.get('l') === 'lt') lang = q.get('l');
@@ -174,7 +177,7 @@ function shareUrl() {
   q.set('p', P.period); if (P.period === 'custom') { q.set('f', P.from); q.set('t', P.to); }
   q.set('g', P.group); q.set('v', [...P.provs].join(',')); q.set('l', lang);
   if (P.events) q.set('ev', '1'); if (P.zoom) q.set('z', iso(P.zoom[0]) + '_' + iso(P.zoom[1]));
-  if (P.adv) { q.set('adv', '1'); q.set('rf', P.rf); }
+  if (P.adv) { q.set('adv', '1'); if (P.rf !== null) q.set('rf', P.rf); }
   if (P.view !== 'ret') { q.set('vw', P.view); q.set('dr', P.diffRef); }
   q.set('sw', P.sumWin); q.set('op', [...P.ovP].join(',')); if (P.gx) q.set('gx', '1'); if (P.hmProv) q.set('hm', P.hmProv);
   return location.origin === 'null' ? location.href.split('#')[0] + '#' + q : location.origin + location.pathname + '#' + q;
@@ -625,13 +628,17 @@ function renderHeatmap(g, ALL) {
   $('tHm').innerHTML = `<thead><tr><th>${T().thYear}</th>${mn.map(m => `<th>${m}</th>`).join('')}<th>${T().thYear}</th></tr></thead><tbody>`
     + years.map(y => `<tr><td>${y === lastY ? T().ytd : y}</td>${mn.map((_, m) => { const v = mr[y][m]; return v === undefined ? '<td class="na"></td>' : `<td style="background:${heatColor(v)}">${num(v, 1)}</td>`; }).join('')}${cal[y] ? `<td class="yr" style="background:${heatColor(cal[y].ret / 3)}">${num(cal[y].ret, 1)}${cal[y].partial ? '*' : ''}</td>` : '<td class="na"></td>'}</tr>`).join('') + '</tbody>';
 }
+const rfAuto = () => DATA.rf ? DATA.rf.value : 2;                // €STR iš ECB; jei jo nėra – 2 %
+const rfNow = () => P.rf ?? rfAuto();
 function renderAdvanced(parts, ALL) {
-  $('btnAdv').setAttribute('aria-pressed', P.adv); $('adv').hidden = !P.adv; $('rf').value = P.rf;
+  $('btnAdv').setAttribute('aria-pressed', P.adv); $('adv').hidden = !P.adv;
+  if (document.activeElement !== $('rf')) $('rf').value = rfNow();
+  $('rfAuto').hidden = P.rf === null; $('rfAuto').textContent = T().rfAutoBtn; $('rfInfo').innerHTML = ik('rf');
   if (!P.adv) return;
   const rngs = parts.map(x => x.rng), a0 = Math.min(...rngs.map(r => r.anchor)), a1 = Math.max(...rngs.map(r => r.anchor));
   setCap('tAdv', T().capAdv(a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)}`, iso(Math.max(...rngs.map(r => r.end)))));
   $('lblRf').textContent = T().rf; $('nAdv').textContent = T().nAdv;
-  const rows = parts.flatMap(pt => pt.all.map((s, i) => ({ s, first: i === 0, a: advStats(s.f, pt.rng, P.rf) }))).filter(x => x.a);
+  const rows = parts.flatMap(pt => pt.all.map((s, i) => ({ s, first: i === 0, a: advStats(s.f, pt.rng, rfNow()) }))).filter(x => x.a);
   const d = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d)}</span>` : '–', y = x => x ? `${fmtP(x.v, 1)} <span class="na">${x.y}</span>` : '–';
   const m = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d).slice(0, 7)}</span>` : '–';
   $('tAdv').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().thAnn}</th>${th(T().thVol, 'vol')}${th(T().thSharpe, 'sharpe')}${th(T().thBestD, 'bestworst')}<th>${T().thWorstD}</th><th>${T().thBestM}</th><th>${T().thWorstM}</th><th>${T().thBestY}</th><th>${T().thWorstY}</th>${th(T().thPosM, 'posm')}</tr></thead><tbody>`
@@ -766,6 +773,7 @@ function buildControls() {
   $('btnPng').addEventListener('click', downloadPng);
   $('btnAdv').addEventListener('click', () => { P.adv = !P.adv; saveState(); renderFunds(); });
   $('rf').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)) { P.rf = v; saveState(); renderAdvanced(lastParts, P.group === 'all'); } });
+  $('rfAuto').addEventListener('click', () => { P.rf = null; saveState(); renderAdvanced(lastParts, P.group === 'all'); });
   $('btnXlsx').addEventListener('click', exportXlsx);
   $('btnXlsxDay').addEventListener('click', exportDay);
   $('btnPrint').addEventListener('click', () => window.print());
@@ -778,7 +786,7 @@ function buildControls() {
     const pop = $('pop'), b = e.target.closest('.info');
     if (!b) { pop.style.display = 'none'; return; }
     e.stopPropagation(); if (pop.dataset.k === b.dataset.k && pop.style.display === 'block' && pop._b === b) { pop.style.display = 'none'; return; }
-    pop.textContent = T().info[b.dataset.k]; pop.dataset.k = b.dataset.k; pop._b = b; pop.style.display = 'block';
+    const iv = T().info[b.dataset.k]; pop.textContent = typeof iv === 'function' ? iv() : iv; pop.dataset.k = b.dataset.k; pop._b = b; pop.style.display = 'block';
     const r = b.getBoundingClientRect(), w = pop.offsetWidth;
     pop.style.left = Math.max(8, Math.min(r.left + scrollX - 8, scrollX + document.documentElement.clientWidth - w - 8)) + 'px'; pop.style.top = (r.bottom + scrollY + 6) + 'px';
   });
