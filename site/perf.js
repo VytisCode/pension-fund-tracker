@@ -10,6 +10,8 @@ addStrings({
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
   nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
   thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
+  rmBest: 'Best ratio', rmAvgRank: 'Average place', rmTip: (r, v, k, n) => `Return ${r}, volatility ${v} % · place ${k} of ${n}`,
+  nRmT: rf => `Return-to-risk ratio (Sharpe) = (annualised return − risk-free rate ${rf} %) ÷ annualised volatility, for the period, age groups and providers chosen above. Higher = more return per unit of risk. Colour = place within the age group (green = best); funds are compared only with the same age group. “Average place” = the provider’s average place across the chosen groups. On periods shorter than a year the annualised figures are less reliable.`,
   hRisk: 'Return vs. risk', axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
   capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = provider. Choose the period, age groups and providers above the chart.`, rmGroups: 'Age groups:', rmProvs: 'Providers:', rmAll: 'All',
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
@@ -75,6 +77,8 @@ addStrings({
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
   nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
   thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
+  rmBest: 'Geriausias santykis', rmAvgRank: 'Vidutinė vieta', rmTip: (r, v, k, n) => `Grąža ${r}, svyravimas ${v} % · vieta ${k} iš ${n}`,
+  nRmT: rf => `Grąžos ir rizikos santykis (Sharpe) = (metinė grąža − be rizikos palūkanų norma ${rf} %) ÷ metinis svyravimas, pagal virš grafiko pasirinktą laikotarpį, amžiaus grupes ir tiekėjus. Didesnis = daugiau grąžos vienam rizikos vienetui. Spalva – vieta amžiaus grupėje (žalia = geriausia); fondai lyginami tik su tos pačios grupės fondais. „Vidutinė vieta“ – tiekėjo vidutinė vieta pasirinktose grupėse. Trumpesniais nei metų laikotarpiais metiniai skaičiai mažiau patikimi.`,
   hRisk: 'Grąža ir rizika', axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
   capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – tiekėjas. Laikotarpį, amžiaus grupes ir tiekėjus pasirinkite virš grafiko.`, rmGroups: 'Amžiaus grupės:', rmProvs: 'Tiekėjai:', rmAll: 'Visos',
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
@@ -562,6 +566,7 @@ function renderRiskMap() {
   const el = $('riskMap'), oneGroup = RM.groups.size === 1;
   const pts = DATA.groups.filter(g => RM.groups.has(g.id)).flatMap(g => { const rng = rangeAt(g, RM.per); return g.funds.filter(f => RM.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
   setCap('riskMap', T().capRisk(T().periods[RM.per], pts.length));
+  renderRiskTable(pts);
   el.innerHTML = '';
   if (!pts.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
   const W = el.clientWidth, H = el.clientHeight, m = { l: 48, r: 14, t: 10, b: 38 };
@@ -602,6 +607,33 @@ function renderRiskMap() {
     tip.style.left = (tx + w > W ? X(best.x) - w - 12 : tx) + 'px'; tip.style.top = Math.max(0, Y(best.y) - tip.offsetHeight / 2) + 'px';
   };
   el.onmouseleave = () => { tip.style.display = 'none'; };
+}
+/* grąžos ir rizikos santykis (Sharpe) po žemėlapiu: eilutės – amžiaus grupės, stulpeliai – tiekėjai; spalva – vieta grupėje */
+function renderRiskTable(pts) {
+  const tb = $('rmTable'), rf = rfNow();
+  const groups = DATA.groups.filter(g => RM.groups.has(g.id) && pts.some(p => p.g === g));
+  const provs = marketProvs().filter(p => RM.provs.has(p.id) && pts.some(x => x.f.provider === p.id));
+  $('rmNote').textContent = T().nRmT(num(rf, 2));
+  if (!groups.length) { tb.innerHTML = ''; return; }
+  const sharpe = p => {
+    const s = seriesOf(p.f, rangeAt(p.g, RM.per).anchor, rangeAt(p.g, RM.per).end); if (!s || !p.x) return null;
+    const days = p.f.d[s.ie] - p.f.d[s.ia]; if (days < 30) return null;
+    return ((Math.pow(1 + p.y / 100, 365.25 / days) - 1) * 100 - rf) / p.x;
+  };
+  const rows = groups.map(g => {
+    const vals = {}, info = {};
+    provs.forEach(pr => { const p = pts.find(x => x.g === g && x.f.provider === pr.id); vals[pr.id] = p ? sharpe(p) : null; info[pr.id] = p; });
+    const { map, n } = rankOf(provs.map(pr => ({ key: pr.id, v: vals[pr.id] })));
+    return { g, vals, info, ranks: map, n };
+  });
+  const avgRank = {};
+  provs.forEach(pr => { const k = rows.map(r => r.ranks.get(pr.id)).filter(Boolean); avgRank[pr.id] = k.length ? k.reduce((a, b) => a + b, 0) / k.length : null; });
+  const ak = rankOf(provs.map(pr => ({ key: pr.id, v: avgRank[pr.id] === null ? null : -avgRank[pr.id] })));
+  const best = rows.map(r => { const id = [...r.ranks].find(([, k]) => k === 1); return id ? id[0] : null; });
+  tb.innerHTML = `<thead><tr><th style="text-align:left">${T().group}</th>${provs.map(pr => `<th><span class="sw" style="background:${colorOf(pr.id)}"></span>${pr.label}</th>`).join('')}<th style="text-align:left">${T().rmBest}</th></tr></thead><tbody>`
+    + rows.map((r, i) => `<tr><td>${groupLabel(r.g)}</td>${provs.map(pr => { const v = r.vals[pr.id], p = r.info[pr.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(pr.id), r.n)}" title="${T().rmTip(fmtP(p.y, 2), num(p.x, 1), r.ranks.get(pr.id), r.n)}">${num(v, 2)}</td>`; }).join('')}<td style="text-align:left">${best[i] ? labelOf(best[i]) : '–'}</td></tr>`).join('')
+    + (rows.length > 1 ? `<tr class="avg"><td>${T().rmAvgRank}</td>${provs.map(pr => avgRank[pr.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(ak.map.get(pr.id), ak.n)}">${num(avgRank[pr.id], 1)}</td>`).join('')}<td style="text-align:left">${(() => { const id = [...ak.map].find(([, k]) => k === 1); return id ? labelOf(id[0]) : '–'; })()}</td></tr>` : '')
+    + '</tbody>';
 }
 function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
