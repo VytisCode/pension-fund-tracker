@@ -18,7 +18,12 @@ addStrings({
   byMgr: 'By manager', byFund: 'By fund', bySum: 'Summary', est: '≈ quarter', pu: 'Values', puPct: 'Share of assets', puEur: '€ m',
   thQ: 'Quarter', cum: 'Total so far', rankTip: 'Place among managers this quarter (1 = lost the smallest share of assets)',
   sumNote: 'Quarter = the quarter in which participants applied; the money is paid out at the start of the next quarter. The reform runs until the end of 2027, so there will be 8 payout quarters in total. Colour: green = the smallest share of assets lost, red = the largest (one scale for all cells); the small number = place among managers that quarter.',
-  poNote: 'Payout = sum of daily outflows (change in net assets beyond the unit value change) on days in the first 20 days of the quarter when a manager lost more than 1 % of its assets. Share = payout ÷ net assets just before the payout. “≈ quarter”: no daily data for that quarter yet, so the figure is estimated from Bank of Lithuania quarter-end reports (it also includes the quarter’s regular contributions and returns are removed using unit values).',
+  poNote: 'Payout = sum of daily outflows (change in net assets beyond the unit value change) on days in the first 20 days of the quarter when a manager lost more than 1 % of its assets. Share = payout ÷ net assets just before the payout, valued at the payout day’s unit value (so the market move of that day is removed from both the payout and the base). “≈ quarter”: no daily data for that quarter yet, so the figure is estimated from Bank of Lithuania quarter-end reports (it also includes the quarter’s regular contributions and returns are removed using unit values).',
+  xls: 'Excel', xlsTip: 'Download the payouts as Excel: tables by manager and by fund, every daily input value and the formulas used',
+  xSheets: ['By manager', 'By fund', 'Calculations'],
+  xCalcH: ['Quarter (applications)', 'Manager', 'Fund', 'First payout day (1 = yes)', 'Previous date', 'Unit value', 'Net assets, €', 'Payout date', 'Unit value', 'Net assets, €', 'Base: previous assets at today’s unit value, € = G×I/F', 'Flow, € = J−K', 'Flow share = L/K', 'Estimate'],
+  xTabH: ['Paid out, €', 'Base, €', 'Share'], xGroup: 'Group',
+  xNote: 'Flow = net assets − previous net assets × (unit value ÷ previous unit value): the part of the change in net assets not explained by the unit value (the market). Paid out = sum of flows on payout days; base = net assets just before the payout at the payout day’s unit value (first payout day); share = paid out ÷ base. “≈”: estimate from Bank of Lithuania quarter-end data.',
   quarter: q => appQ(q),
   foot: 'Sources: providers’ daily net asset values (collected automatically), Bank of Lithuania quarterly portfolio reports. For information only, not investment advice.',
 }, {
@@ -37,7 +42,12 @@ addStrings({
   byMgr: 'Pagal valdytoją', byFund: 'Pagal fondą', bySum: 'Suvestinė', est: '≈ ketv.', pu: 'Reikšmės', puPct: 'Turto dalis', puEur: 'mln. €',
   thQ: 'Ketvirtis', cum: 'Iš viso iki šiol', rankTip: 'Vieta tarp valdytojų tą ketvirtį (1 = neteko mažiausios turto dalies)',
   sumNote: 'Ketvirtis = ketvirtis, kurį dalyviai pateikė prašymus; lėšos išmokamos kito ketvirčio pradžioje. Reforma tęsis iki 2027 m. pabaigos, todėl iš viso bus 8 išmokėjimų ketvirčiai. Spalva: žalia = neteko mažiausios turto dalies, raudona = didžiausios (viena skalė visiems langeliams); mažas skaičius = vieta tarp valdytojų tą ketvirtį.',
-  poNote: 'Išmokėjimas = dienos srautų suma (turto pokytis, kurio nepaaiškina vieneto vertė) tomis pirmųjų 20 ketvirčio dienų dienomis, kai valdytojas neteko daugiau nei 1 % turto. Dalis = išmokėta suma ÷ turtas prieš pat išmokėjimą. „≈ ketv.“: to ketvirčio kasdienių duomenų dar nėra, todėl suma įvertinta iš Lietuvos banko ketvirčio pabaigos ataskaitų (į ją įeina ir ketvirčio įprastos įmokos; grąža atimta pagal vieneto vertę).',
+  poNote: 'Išmokėjimas = dienos srautų suma (turto pokytis, kurio nepaaiškina vieneto vertė) tomis pirmųjų 20 ketvirčio dienų dienomis, kai valdytojas neteko daugiau nei 1 % turto. Dalis = išmokėta suma ÷ turtas prieš pat išmokėjimą, perskaičiuotas išmokėjimo dienos vieneto verte (taip tos dienos rinkos pokytis atimamas ir iš sumos, ir iš bazės). „≈ ketv.“: to ketvirčio kasdienių duomenų dar nėra, todėl suma įvertinta iš Lietuvos banko ketvirčio pabaigos ataskaitų (į ją įeina ir ketvirčio įprastos įmokos; grąža atimta pagal vieneto vertę).',
+  xls: 'Excel', xlsTip: 'Atsisiųsti išmokėjimus Excel faile: lentelės pagal valdytoją ir fondą, visi kasdieniai duomenys ir formulės',
+  xSheets: ['Pagal valdytoją', 'Pagal fondą', 'Skaičiavimai'],
+  xCalcH: ['Ketvirtis (prašymai)', 'Valdytojas', 'Fondas', 'Pirma išmokėjimo diena (1 = taip)', 'Ankstesnė data', 'Vieneto vertė', 'Grynieji aktyvai, €', 'Išmokėjimo data', 'Vieneto vertė', 'Grynieji aktyvai, €', 'Bazė: ankstesnis turtas šios dienos vieneto verte, € = G×I/F', 'Srautas, € = J−K', 'Srauto dalis = L/K', 'Įvertis'],
+  xTabH: ['Išmokėta, €', 'Bazė, €', 'Dalis'], xGroup: 'Grupė',
+  xNote: 'Srautas = grynieji aktyvai − ankstesni grynieji aktyvai × (vieneto vertė ÷ ankstesnė vieneto vertė): turto pokyčio dalis, kurios nepaaiškina vieneto vertės (rinkos) pokytis. Išmokėta = srautų suma išmokėjimo dienomis; bazė = turtas prieš pat išmokėjimą, perskaičiuotas išmokėjimo dienos vieneto verte (pirmą išmokėjimo dieną); dalis = išmokėta ÷ bazė. „≈“: įvertis iš Lietuvos banko ketvirčio pabaigos duomenų.',
   quarter: q => appQ(q),
   foot: 'Šaltiniai: bendrovių skelbiami kasdieniai grynieji aktyvai (renkami automatiškai), Lietuvos banko ketvirtinės portfelių ataskaitos. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
@@ -180,8 +190,10 @@ function renderPaySummary() {
 function renderPayouts() {
   const bar = document.getElementById('poBar');
   bar.innerHTML = seg('po', [['sum', T().bySum], ['mgr', T().byMgr], ['fund', T().byFund]], ST.po)
-    + (ST.po === 'sum' ? field(T().pu, seg('pu', [['pct', T().puPct], ['eur', T().puEur]], ST.pu)) : '');
+    + (ST.po === 'sum' ? field(T().pu, seg('pu', [['pct', T().puPct], ['eur', T().puEur]], ST.pu)) : '')
+    + `<button type="button" class="btn xls" id="poXls" title="${T().xlsTip}">⤓ ${T().xls}</button>`;
   wire(bar, { po: v => { ST.po = v; save(); renderPayouts(); }, pu: v => { ST.pu = v; save(); renderPayouts(); } });
+  bar.querySelector('#poXls').addEventListener('click', () => payXls().catch(err => alert('Excel: ' + err)));
   if (ST.po === 'sum') return renderPaySummary();
   const qs = [...new Set(AUM.payouts.map(e => e.q))].sort();
   const ev = (m, q) => AUM.payouts.find(e => e.p === m && e.q === q);
@@ -205,6 +217,60 @@ function renderPayouts() {
     <tr>${qs.map(() => `<th class="bl">${T().thWhen}</th><th>${T().thPaid}</th><th>${T().thShare}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
   document.getElementById('poNote').textContent = T().sumNote.split('. ')[0] + '. ' + T().poNote;
 }
+
+/* ---------- išmokėjimų Excel: langeliai – formulės, kad būtų galima patikrinti ---------- */
+function loadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+const xDate = d => ({ t: 'n', v: Date.parse(d + 'T00:00:00Z') / 864e5 + 25569, z: 'yyyy-mm-dd' });
+function payBook() {
+  const S = T(), [shM, shF, shC] = S.xSheets, C = `'${shC}'`, EUR = '#,##0', P = '0.00%';
+  const evs = AUM.payouts.slice().sort((a, b) => a.q < b.q ? -1 : a.q > b.q ? 1 : PO_MGRS.indexOf(a.p) - PO_MGRS.indexOf(b.p));
+  const calc = [S.xCalcH];
+  evs.forEach(e => Object.entries(e.rows || {}).forEach(([fund, rows]) => rows.forEach(([d0, u0, a0, d1, u1, a1], k) => {
+    const n = calc.length + 1, base = a0 * u1 / u0, fl = a1 - base;
+    calc.push([appQ(e.q), MLABEL[e.p], fund, k ? 0 : 1, xDate(d0), u0, { t: 'n', v: a0, z: EUR }, xDate(d1), u1, { t: 'n', v: a1, z: EUR },
+      { t: 'n', v: base, f: `G${n}*I${n}/F${n}`, z: EUR }, { t: 'n', v: fl, f: `J${n}-K${n}`, z: EUR }, { t: 'n', v: fl / base, f: `L${n}/K${n}`, z: P }, e.est ? '≈' : null]);
+  })));
+  const N = calc.length, rng = c => `${C}!$${c}$2:$${c}$${N}`;
+  calc.push([], [S.xNote]);
+  const qs = [...new Set(evs.map(e => e.q))];
+  const head = first => [[...first, ...qs.flatMap(q => [appQ(q), null, null])], [...first.map(() => null), ...qs.flatMap(() => S.xTabH)]];
+  // vienas ketvirčio blokas: išmokėta, bazė, dalis (formulės SUMIFS iš „Skaičiavimai“)
+  const block = (q, crit, paid, base, r) => {
+    const cond = `${rng('A')},"${appQ(q)}"${crit}`;
+    const L = c => XLSX.utils.encode_col(c);
+    return [{ t: 'n', v: -paid, f: `-SUMIFS(${rng('L')},${cond})`, z: EUR }, { t: 'n', v: base, f: `SUMIFS(${rng('K')},${cond},${rng('D')},1)`, z: EUR },
+      base ? { t: 'n', v: -paid / base, f: `${L(r.c)}${r.n}/${L(r.c + 1)}${r.n}`, z: P } : null];
+  };
+  const sumOf = (es, pick) => es.reduce((a, e) => { const v = pick(e); return v ? [a[0] + v[0], a[1] + v[1]] : a; }, [0, 0]);
+  const mgrRows = head([S.thMgr]);
+  [...PO_MGRS, null].forEach(m => {
+    const n = mgrRows.length + 1, row = [m ? MLABEL[m] : S.total];
+    qs.forEach(q => {
+      const es = evs.filter(e => e.q === q && (!m || e.p === m));
+      const [fl, b] = sumOf(es, e => [e.rows ? Object.values(e.rows).flat().reduce((a, r) => a + r[5] - r[2] * r[4] / r[1], 0) : 0, Object.values(e.rows || {}).reduce((a, r) => a + r[0][2] * r[0][4] / r[0][1], 0)]);
+      row.push(...(es.length ? block(q, m ? `,${rng('B')},"${MLABEL[m]}"` : '', fl, b, { c: row.length, n }) : [null, null, null]));
+    });
+    mgrRows.push(row);
+  });
+  const fundRows = head([S.xGroup, S.thMgr, S.thFund]);
+  GROUPS2.forEach(g => PO_MGRS.forEach(m => {
+    const names = [...new Set(evs.filter(e => e.p === m).flatMap(e => Object.keys(e.rows || {})))].filter(nm => fundsOf('II', g, m).some(f => f.n === nm));
+    names.forEach(nm => {
+      const n = fundRows.length + 1, row = [grpLabel('II', g), MLABEL[m], nm];
+      qs.forEach(q => {
+        const e = evs.find(x => x.q === q && x.p === m), r = e && e.rows && e.rows[nm];
+        row.push(...(r ? block(q, `,${rng('C')},"${nm.replace(/"/g, '""')}"`, r.reduce((a, x) => a + x[5] - x[2] * x[4] / x[1], 0), r[0][2] * r[0][4] / r[0][1], { c: row.length, n }) : [null, null, null]));
+      });
+      fundRows.push(row);
+    });
+  }));
+  const wb = XLSX.utils.book_new(), add = (rows, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
+  add(mgrRows, shM, [{ wch: 14 }, ...Array(qs.length * 3).fill({ wch: 15 })]);
+  add(fundRows, shF, [{ wch: 26 }, { wch: 11 }, { wch: 36 }, ...Array(qs.length * 3).fill({ wch: 15 })]);
+  add(calc, shC, [{ wch: 11 }, { wch: 10 }, { wch: 36 }, { wch: 10 }, { wch: 11 }, { wch: 10 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 15 }, { wch: 17 }, { wch: 15 }, { wch: 10 }, { wch: 7 }]);
+  return wb;
+}
+async function payXls() { await loadXlsx(); XLSX.writeFile(payBook(), `${lang === 'lt' ? 'Ismokejimai' : 'Payouts'}_${String(AUM.generated).slice(0, 10)}.xlsx`); }
 
 function renderAllParts() {
   document.getElementById('sub').textContent = `${T().navAum} · ${T().updated} ${AUM.generated}`;
