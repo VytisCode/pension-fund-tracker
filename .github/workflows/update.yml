@@ -75,6 +75,13 @@ jobs:
         if: always() && steps.need.outputs.needs_browser_p3 == 'true'
         run: python -u pillar3.py browser
 
+      # Vertybinių popierių pavadinimai pagal ISIN (OpenFIGI, nemokamai): klausiama tik apie naujus ISIN
+      # iš data/portfolios.csv, todėl dažniausiai trunka kelias sekundes.
+      - name: Security names by ISIN (only new ones)
+        if: always()
+        continue-on-error: true
+        run: python -u tools/fetch_isin_names.py
+
       - name: Build website (only if data changed)
         if: always()
         run: |
@@ -127,6 +134,7 @@ jobs:
           git add data/nav_history.csv data/pillar3_history.csv data/update_state.json data/report_state.json data/last_update_log.txt docs
           # paskutinė gauta €STR norma: jei kitą kartą ECB nepasieks, svetainė naudos ją, o ne 2 %
           if [ -f data/risk_free.json ]; then git add data/risk_free.json; fi
+          if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

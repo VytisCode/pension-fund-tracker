@@ -26,7 +26,7 @@ addStrings({
   altNote: 'Alternative = Bank of Lithuania fund types 5 (real estate), 6 (hedge) and 7 (other: private equity, venture, infrastructure, private debt), excluding exchange-traded ETF/UCITS funds. The split by kind is based on the fund name. If alternatives’ value barely changes while the whole portfolio shrinks, the higher share comes from selling liquid assets. Click a fund to open its portfolio.',
   fund: 'Fund', kTotal: 'Portfolio value', kPos: 'Positions', kTop10: 'Top 10 positions', kNew: 'New / sold out',
   showExits: 'Sold-out positions are listed at the bottom.',
-  fcNote: 'Weight = position value ÷ sum of all positions (≈ net assets). Change in units shows buying or selling; a change in weight can also come from price moves. Fund names in the reports are sometimes given only as the management company – then the ISIN code identifies the fund.',
+  fcNote: 'Weight = position value ÷ sum of all positions (≈ net assets). Change in units shows buying or selling; a change in weight can also come from price moves. Fund names in the reports are sometimes given only as the management company – then the name is looked up by ISIN code in the OpenFIGI catalogue and the company is shown below it.',
   phPick: 'Click a position in the table', phMeta: 'Weight in the portfolio at each quarter end, %',
   phPeers: 'Other lines: the same position in the other managers’ funds of the same age group (0 % = not held).',
   pIIa: 'II pillar', pIIIa: 'III pillar', closed: 'closed',
@@ -56,7 +56,7 @@ addStrings({
   altNote: 'Alternatyvios = Lietuvos banko KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti: privatus ir rizikos kapitalas, infrastruktūra, privati skola), išskyrus biržoje prekiaujamus ETF / UCITS fondus. Skirstymas pagal rūšį – pagal fondo pavadinimą. Jei alternatyvų vertė beveik nesikeičia, o visas portfelis mažėja, didesnė dalis atsiranda dėl likvidaus turto pardavimo. Paspaudus fondą atidaromas jo portfelis.',
   fund: 'Fondas', kTotal: 'Portfelio vertė', kPos: 'Pozicijų', kTop10: '10 didžiausių pozicijų', kNew: 'Naujos / parduotos',
   showExits: 'Visiškai parduotos pozicijos – lentelės apačioje.',
-  fcNote: 'Svoris = pozicijos vertė ÷ visų pozicijų suma (≈ grynieji aktyvai). Vienetų pokytis rodo pirkimą ar pardavimą; svoris gali keistis ir dėl kainų. Ataskaitose fondų pavadinimai kartais nurodomi tik kaip valdymo bendrovė – tada fondą atpažinti padeda ISIN kodas.',
+  fcNote: 'Svoris = pozicijos vertė ÷ visų pozicijų suma (≈ grynieji aktyvai). Vienetų pokytis rodo pirkimą ar pardavimą; svoris gali keistis ir dėl kainų. Ataskaitose fondų pavadinimai kartais nurodomi tik kaip valdymo bendrovė – tada pavadinimas surandamas pagal ISIN kodą OpenFIGI kataloge, o bendrovė rodoma po juo.',
   phPick: 'Paspauskite poziciją lentelėje', phMeta: 'Svoris portfelyje kiekvieno ketvirčio pabaigoje, %',
   phPeers: 'Kitos linijos: ta pati pozicija kitų valdytojų tos pačios amžiaus grupės fonduose (0 % = neturėjo).',
   pIIa: 'II pakopa', pIIIa: 'III pakopa', closed: 'uždarytas',
@@ -68,7 +68,7 @@ const MGRS = ['Allianz', 'Artea', 'Goindex', 'Luminor', 'SEB', 'Swedbank'];     
 var DATA = { providers: MGRS.map(m => ({ id: m, label: m })) };                // drawLineChart spalvoms ir pavadinimams
 const Q = PF.quarters, NQ = Q.length, QDAY = Q.map(dayOf);
 const qLabel = i => { const [y, m] = Q[i].split('-'); return lang === 'lt' ? `${y} m. ${['I', 'II', 'III', 'IV'][m / 3 - 1]} ketv.` : `Q${m / 3} ${y}`; };
-const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '' }));
+const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '', fn: s[8] || '' }));
 const FUNDS = PF.funds.map(f => {
   const q = Array.from({ length: NQ }, () => null);        // q[ketvirtis] = Map(pozicija -> {u, v}) arba null (fondo nebuvo)
   for (let i = 0; i < f.r.length; i += 4) {
@@ -80,7 +80,9 @@ const FUNDS = PF.funds.map(f => {
   return { ...f, q, tot, last };
 });
 const fundBy = Object.fromEntries(FUNDS.map(f => [f.c, f]));
-const posLabel = s => s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
+// kai ataskaitoje nurodyta tik valdymo bendrovė, rodomas tikras pavadinimas pagal ISIN (OpenFIGI), o bendrovė – antroje eilutėje
+const posLabel = s => s.co && s.fn ? s.fn : s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
+const posSub = s => `${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin && (!s.co || s.fn) ? ' · ' + s.isin : ''}`;
 const typeLabel = s => { const l = s.alt ? T().alts[s.alt] : s.t === 'f' && s.kis ? (T().kis[s.kis] || T().types.f) : T().types[s.t]; return l[0].toUpperCase() + l.slice(1); };
 const fundName = f => f.g === 'turto' ? f.n.replace('turto išsaugojimo', lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : f.n;
 const sw = m => `<span class="sw" style="background:${colorOf(m)}"></span>`;
@@ -169,7 +171,7 @@ function renderTopChanges() {
     <th>${T().thTrade}</th><th>${T().thValue}</th><th>${T().thW0}</th><th>${T().thW1}</th><th>${T().thDw}</th></tr></thead><tbody>`
     + (shown.length ? shown.map((r, i) => `<tr data-i="${i}"><td class="l">${sw(r.U.mgr)}${r.U.mgr}</td>
       <td class="l">${byFund ? esc(fundName(r.U.fund)) : `<span class="pfsub">${T().nFunds(r.P.funds.size)}</span>`}</td>
-      <td class="nm">${esc(posLabel(r.s))}<br><small>${typeLabel(r.s)} · ${r.s.cty || '–'}${r.s.isin && !r.s.co ? ' · ' + r.s.isin : ''}</small></td>
+      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small></td>
       <td class="l">${badge(r.act)}</td>
       <td class="${r.trade > 0 ? 'up' : 'down'}">${r.trade > 0 ? '+' : ''}${eur(r.trade)}</td>
       <td>${r.P.v[1] ? eur(r.P.v[1]) : '–'}</td><td>${wFmt(r.w0)}</td><td>${wFmt(r.w1)}</td>
@@ -245,7 +247,7 @@ function renderFund() {
   tb.innerHTML = `<thead><tr><th class="l">#</th><th class="l">${T().thPos}</th>
     <th>${T().thValue}</th><th>${T().thW}</th><th>${T().thDw}</th><th>${T().thDq}</th><th class="l">${T().thAct}</th></tr></thead><tbody>`
     + list.map((r, i) => `<tr data-si="${r.si}" class="${r.exit ? 'exit' : ''}${r.si === ST.pos ? ' sel' : ''}"><td class="l pfsub">${r.exit ? '' : i + 1}</td>
-      <td class="nm">${esc(posLabel(r.s))}<br><small>${typeLabel(r.s)} · ${r.s.cty || '–'}${r.s.isin && !r.s.co ? ' · ' + r.s.isin : ''}</small></td>
+      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small></td>
       <td>${r.exit ? '–' : eur(r.v)}</td><td>${wFmt(r.w)}</td>
       <td class="${r.dw > 0 ? 'up' : r.dw < 0 ? 'down' : ''}">${r.dw == null ? '–' : pp(r.dw)}</td>
       <td class="${r.dq > 0 ? 'up' : r.dq < 0 ? 'down' : ''}">${r.dq == null || r.act === '' ? '–' : (r.dq > 0 ? '+' : '−') + num(Math.abs(r.dq), 0) + '%'}</td>
@@ -271,7 +273,7 @@ function renderPosition() {
   const f = fundBy[ST.fund], el = document.getElementById('phChart');
   const s = ST.pos == null ? null : S[ST.pos];
   document.getElementById('phTitle').textContent = s ? posLabel(s) : T().phPick;
-  document.getElementById('phMeta').textContent = s ? `${typeLabel(s)} · ${s.cty || '–'}${s.isin ? ' · ' + s.isin : ''} — ${T().phMeta}` : '';
+  document.getElementById('phMeta').textContent = s ? `${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin ? ' · ' + s.isin : ''} — ${T().phMeta}` : '';
   if (!s) { el.innerHTML = ''; document.getElementById('phTable').innerHTML = ''; document.getElementById('phNote').textContent = ''; return; }
   const peers = f.pl === 'II' ? FUNDS.filter(g => g.pl === 'II' && g.g === f.g && g.p !== f.p && g.q.some(m => m && m.has(ST.pos))) : [];
   DATA.providers.forEach(p => { p.label = p.id; });

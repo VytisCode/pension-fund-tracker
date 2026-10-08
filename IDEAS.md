@@ -154,7 +154,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Trūksta:** Swedbank III pakopos kasdienių grynųjų aktyvų (dabar tik LB ketvirčio sumos).
 
 ### Portfeliai: tikri fondų pavadinimai pagal ISIN
-- **Būsena:** nauja
+- **Būsena:** daroma (savininko prioritetas 2026-10-08)
 - **Autorius:** Claude
 - **Kodėl:** Allianz ir kai kurios SEB ataskaitos vietoj fondo pavadinimo rašo tik valdymo bendrovę (pvz. „Schroder Investment Management“), todėl apie 90 iš ~490 fondų / ETF rodomi tik su ISIN kodu.
 - **Nauda:** nemokamas OpenFIGI katalogas pagal ISIN grąžina tikrą pavadinimą; vieną kartą paleidus per GitHub Actions, pavadinimai būtų išsaugoti faile ir visur matytųsi aiškiai.
