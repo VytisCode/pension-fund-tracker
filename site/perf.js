@@ -10,8 +10,8 @@ addStrings({
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
   nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
   thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
-  hRisk: 'Return vs. risk – all age groups', axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
-  capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = age group, from payout (light) to the youngest group (dark). The selected group is highlighted.`,
+  hRisk: 'Return vs. risk', axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
+  capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = provider. Choose the period, age groups and providers above the chart.`, rmGroups: 'Age groups:', rmProvs: 'Providers:', rmAll: 'All',
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
@@ -74,8 +74,8 @@ addStrings({
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
   nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
   thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
-  hRisk: 'Grąža ir rizika – visos amžiaus grupės', axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
-  capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – amžiaus grupė: nuo turto išsaugojimo (šviesiausia) iki jauniausių (tamsiausia). Pasirinkta grupė paryškinta.`,
+  hRisk: 'Grąža ir rizika', axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
+  capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – tiekėjas. Laikotarpį, amžiaus grupes ir tiekėjus pasirinkite virš grafiko.`, rmGroups: 'Amžiaus grupės:', rmProvs: 'Tiekėjai:', rmAll: 'Visos',
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
@@ -535,14 +535,30 @@ function renderFunds() {
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
-/* grąžos ir rizikos žemėlapis: visi fondai, spalva pagal amžiaus grupę (šviesiausia – mažiausia rizika) */
+/* grąžos ir rizikos žemėlapis: savi laikotarpio, amžiaus grupių ir tiekėjų pasirinkimai; spalva – tiekėjas */
+const RM = { per: null, groups: null, provs: null };
 function renderRiskMap() {
   $('hRisk').innerHTML = T().hRisk + ik('riskmap');
-  const el = $('riskMap'), sel = P.group === 'all' ? null : P.group, nG = DATA.groups.length;
-  const riskIdx = g => nG - 1 - DATA.groups.indexOf(g);          // DATA.groups: 2003…1961, turto
-  const pts = DATA.groups.flatMap(g => { const rng = rangeFor(g, true); return g.funds.filter(f => P.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
-  setCap('riskMap', T().capRisk(periodText(), pts.length));
-  $('riskLeg').innerHTML = DATA.groups.slice().reverse().map(g => `<span><i style="background:var(--g${riskIdx(g)})"></i>${groupLabel(g)}</span>`).join('');
+  if (!RM.per) { RM.per = PERIOD_IDS.includes(P.period) ? P.period : 'ytd'; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id)); }
+  const tools = $('rmTools'), groupsByRisk = DATA.groups.slice().reverse();      // turto, 1961 … 2003
+  const chip = (id, on, label, color) => `<button type="button" class="chip" data-id="${id}" aria-pressed="${on}">${color ? `<i style="background:${color}"></i>` : ''}${label}</button>`;
+  tools.innerHTML = `<div class="seg" data-k="per" role="group" aria-label="${T().period}">${PERIOD_IDS.map(id => `<button type="button" data-id="${id}" aria-pressed="${id === RM.per}">${T().periods[id]}</button>`).join('')}</div>`
+    + `<div class="chips" data-k="groups"><span class="rmlbl">${T().rmGroups}</span>${chip('all', RM.groups.size === DATA.groups.length, T().rmAll)}${groupsByRisk.map(g => chip(g.id, RM.groups.has(g.id), groupLabel(g))).join('')}</div>`
+    + `<div class="chips" data-k="provs"><span class="rmlbl">${T().rmProvs}</span>${marketProvs().map(p => chip(p.id, RM.provs.has(p.id), p.label, colorOf(p.id))).join('')}</div>`;
+  tools.onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = b.parentElement.dataset.k, id = b.dataset.id;
+    if (k === 'per') RM.per = id;
+    else if (k === 'groups') {
+      if (id === 'all') RM.groups = new Set(DATA.groups.map(g => g.id));
+      else if (RM.groups.size === DATA.groups.length) RM.groups = new Set([id]);   // iš „visų“ – pirmas paspaudimas palieka vieną grupę
+      else if (RM.groups.has(id)) { if (RM.groups.size > 1) RM.groups.delete(id); } else RM.groups.add(id);
+    } else if (k === 'provs') { if (RM.provs.has(id)) { if (RM.provs.size > 1) RM.provs.delete(id); } else RM.provs.add(id); }
+    renderRiskMap();
+  };
+  const el = $('riskMap'), oneGroup = RM.groups.size === 1;
+  const pts = DATA.groups.filter(g => RM.groups.has(g.id)).flatMap(g => { const rng = rangeAt(g, RM.per); return g.funds.filter(f => RM.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
+  setCap('riskMap', T().capRisk(T().periods[RM.per], pts.length));
   el.innerHTML = '';
   if (!pts.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
   const W = el.clientWidth, H = el.clientHeight, m = { l: 48, r: 14, t: 10, b: 38 };
@@ -552,24 +568,24 @@ function renderRiskMap() {
   extend(xs, Math.max(...pts.map(p => p.x)) * 1.03); extend(ys, y1);
   const xMax = xs[xs.length - 1], yMin = Math.min(ys[0], y0), yMax = ys[ys.length - 1];
   const X = v => m.l + v / xMax * (W - m.l - m.r), Y = v => m.t + (yMax - v) / (yMax - yMin || 1) * (H - m.t - m.b);
-  const labelsFor = list => {                                      // pavadinimai šalia paryškintų taškų; persidengiantys perstumiami žemyn
+  const dec = t => (t[1] - t[0]) % 1 ? 1 : 0;                         // žingsnis 2,5 → viena dešimtainė
+  const labelsFor = list => {                                      // pavadinimai šalia taškų; persidengiantys perstumiami žemyn
     const placed = [];
     return list.slice().sort((a, b) => Y(a.y) - Y(b.y)).map(p => {
       const right = X(p.x) > W - m.r - 70, x = X(p.x) + (right ? -9 : 9), x0 = right ? x - 66 : x;
       let y = Y(p.y) + 4;
       while (placed.some(q => Math.abs(q.y - y) < 12 && Math.abs(q.x0 - x0) < 66)) y += 12;
       placed.push({ y, x0 });
-      return `<text class="lbl" x="${x}" y="${y}"${right ? ' text-anchor="end"' : ''}>${labelOf(p.f.provider)}</text>`;
+      return `<text class="lbl" x="${x}" y="${y}"${right ? ' text-anchor="end"' : ''}>${oneGroup ? labelOf(p.f.provider) : groupLabel(p.g)}</text>`;
     }).join('');
   };
-  const order = pts.slice().sort((a, b) => (a.g.id === sel) - (b.g.id === sel));   // paryškinti taškai – viršuje
   el.innerHTML = `<svg width="${W}" height="${H}" role="img" aria-label="${T().hRisk}">`
-    + ys.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(v, 0)}</text>`).join('')
-    + xs.map(v => `<text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle" font-size="11" fill="var(--text-3)">${num(v, 0)}</text>`).join('')
+    + ys.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(v, dec(ys))}</text>`).join('')
+    + xs.map(v => `<text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle" font-size="11" fill="var(--text-3)">${num(v, dec(xs))}</text>`).join('')
     + `<text x="${(m.l + W - m.r) / 2}" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--text-2)">${T().axVol}</text>`
     + `<text transform="translate(12 ${(m.t + H - m.b) / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--text-2)">${T().axRet}</text>`
-    + order.map(p => `<circle class="pt${sel && p.g.id !== sel ? ' dim' : ''}" cx="${X(p.x)}" cy="${Y(p.y)}" r="5.5" fill="var(--g${riskIdx(p.g)})"><title>${labelOf(p.f.provider)} ${groupLabel(p.g)}: ${pct(p.y, 1)}, ${num(p.x, 1)} %</title></circle>`).join('')
-    + labelsFor(sel ? pts.filter(p => p.g.id === sel) : [])
+    + pts.map(p => `<circle class="pt" cx="${X(p.x)}" cy="${Y(p.y)}" r="6" fill="${colorOf(p.f.provider)}"><title>${labelOf(p.f.provider)} ${groupLabel(p.g)}: ${pct(p.y, 1)}, ${num(p.x, 1)} %</title></circle>`).join('')
+    + (oneGroup || RM.provs.size === 1 ? labelsFor(pts) : '')
     + '</svg>';
   const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);
   el.onmousemove = e => {
