@@ -26,7 +26,7 @@ addStrings({
   altNote: 'Alternative = Bank of Lithuania fund types 5 (real estate), 6 (hedge) and 7 (other: private equity, venture, infrastructure, private debt), excluding exchange-traded ETF/UCITS funds. The split by kind is based on the fund name. If alternatives’ value barely changes while the whole portfolio shrinks, the higher share comes from selling liquid assets. Click a fund to open its portfolio.',
   fund: 'Fund', kTotal: 'Portfolio value', kPos: 'Positions', kTop10: 'Top 10 positions', kNew: 'New / sold out',
   showExits: 'Sold-out positions are listed at the bottom.',
-  fcNote: 'Weight = position value ÷ sum of all positions (≈ net assets). Change in units shows buying or selling; a change in weight can also come from price moves. Fund names in the reports are sometimes given only as the management company – then the name is looked up by ISIN code in the OpenFIGI catalogue and the company is shown below it.',
+  fcNote: 'Weight = position value ÷ sum of all positions (≈ net assets). Change in units shows buying or selling; a change in weight can also come from price moves. Funds are shown with their full official name from the fund’s page, KID or justETF (otherwise from the OpenFIGI catalogue by ISIN); if the report gives only the management company, it is shown below the name.',
   phPick: 'Click a position in the table', phMeta: 'Weight in the portfolio at each quarter end, %',
   phPeers: 'Other lines: the same position in the other managers’ funds of the same age group (0 % = not held).',
   pIIa: 'II pillar', pIIIa: 'III pillar', closed: 'closed',
@@ -56,7 +56,7 @@ addStrings({
   altNote: 'Alternatyvios = Lietuvos banko KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti: privatus ir rizikos kapitalas, infrastruktūra, privati skola), išskyrus biržoje prekiaujamus ETF / UCITS fondus. Skirstymas pagal rūšį – pagal fondo pavadinimą. Jei alternatyvų vertė beveik nesikeičia, o visas portfelis mažėja, didesnė dalis atsiranda dėl likvidaus turto pardavimo. Paspaudus fondą atidaromas jo portfelis.',
   fund: 'Fondas', kTotal: 'Portfelio vertė', kPos: 'Pozicijų', kTop10: '10 didžiausių pozicijų', kNew: 'Naujos / parduotos',
   showExits: 'Visiškai parduotos pozicijos – lentelės apačioje.',
-  fcNote: 'Svoris = pozicijos vertė ÷ visų pozicijų suma (≈ grynieji aktyvai). Vienetų pokytis rodo pirkimą ar pardavimą; svoris gali keistis ir dėl kainų. Ataskaitose fondų pavadinimai kartais nurodomi tik kaip valdymo bendrovė – tada pavadinimas surandamas pagal ISIN kodą OpenFIGI kataloge, o bendrovė rodoma po juo.',
+  fcNote: 'Svoris = pozicijos vertė ÷ visų pozicijų suma (≈ grynieji aktyvai). Vienetų pokytis rodo pirkimą ar pardavimą; svoris gali keistis ir dėl kainų. Fondai rodomi pilnu oficialiu pavadinimu iš fondo puslapio, KID dokumento ar justETF (kitaip – iš OpenFIGI katalogo pagal ISIN); jei ataskaitoje nurodyta tik valdymo bendrovė, ji rodoma po pavadinimu.',
   phPick: 'Paspauskite poziciją lentelėje', phMeta: 'Svoris portfelyje kiekvieno ketvirčio pabaigoje, %',
   phPeers: 'Kitos linijos: ta pati pozicija kitų valdytojų tos pačios amžiaus grupės fonduose (0 % = neturėjo).',
   pIIa: 'II pakopa', pIIIa: 'III pakopa', closed: 'uždarytas',
@@ -68,7 +68,8 @@ const MGRS = ['Allianz', 'Artea', 'Goindex', 'Luminor', 'SEB', 'Swedbank'];     
 var DATA = { providers: MGRS.map(m => ({ id: m, label: m })) };                // drawLineChart spalvoms ir pavadinimams
 const Q = PF.quarters, NQ = Q.length, QDAY = Q.map(dayOf);
 const qLabel = i => { const [y, m] = Q[i].split('-'); return lang === 'lt' ? `${y} m. ${['I', 'II', 'III', 'IV'][m / 3 - 1]} ketv.` : `Q${m / 3} ${y}`; };
-const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '', fn: s[8] || '' }));
+const S = PF.secs.map(s => ({ name: s[0], t: s[1], cty: s[2], cur: s[3], kis: s[4], isin: s[5], co: s[6], alt: s[7] || '', fn: s[8] || '',
+  a: s[9] ? { ac: s[9][0], reg: s[9][1], em: s[9][2], ap: s[9][3], sfdr: s[9][4], ter: s[9][5], hdg: s[9][6], th: s[9][7], src: s[9][8] } : null }));
 const FUNDS = PF.funds.map(f => {
   const q = Array.from({ length: NQ }, () => null);        // q[ketvirtis] = Map(pozicija -> {u, v}) arba null (fondo nebuvo)
   for (let i = 0; i < f.r.length; i += 4) {
@@ -80,8 +81,8 @@ const FUNDS = PF.funds.map(f => {
   return { ...f, q, tot, last };
 });
 const fundBy = Object.fromEntries(FUNDS.map(f => [f.c, f]));
-// kai ataskaitoje nurodyta tik valdymo bendrovė, rodomas tikras pavadinimas pagal ISIN (OpenFIGI), o bendrovė – antroje eilutėje
-const posLabel = s => s.co && s.fn ? s.fn : s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
+// fondams rodomas pilnas oficialus pavadinimas (data/fund_attributes.csv, kitaip OpenFIGI); jei ataskaitoje nurodyta tik bendrovė – ji antroje eilutėje
+const posLabel = s => s.fn ? s.fn : s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
 const posSub = s => `${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin && (!s.co || s.fn) ? ' · ' + s.isin : ''}`;
 const typeLabel = s => { const l = s.alt ? T().alts[s.alt] : s.t === 'f' && s.kis ? (T().kis[s.kis] || T().types.f) : T().types[s.t]; return l[0].toUpperCase() + l.slice(1); };
 const fundName = f => f.g === 'turto' ? f.n.replace('turto išsaugojimo', lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : f.n;
@@ -98,6 +99,99 @@ const wFmt = (w, p = 2) => w ? num(w, p) + '%' : '–';
 const pp = d => (d >= 0.005 ? '+' : d <= -0.005 ? '−' : '') + num(Math.abs(d), 2);
 const badge = a => `<span class="badge b-${a}">${T().acts[a]}</span>`;
 const MIN_CHANGE = 0.005;                                   // < 0,5 % vienetų pokytis laikomas nepasikeitusiu (apvalinimai)
+
+/* ---------- fondų ir ETF požymiai (data/fund_attributes.csv) ---------- */
+addStrings({
+  ap: { index: 'Index', active: 'Active' },
+  reg: { glob: 'Global (incl. EM)', gdm: 'Global developed', na: 'North America', eu: 'Europe', baltic: 'Baltics', jp: 'Japan', ap: 'Asia-Pacific developed', em: 'Emerging markets', oth: 'Other', unk: 'Not described' },
+  emL: { no: 'no EM', yes: 'incl. EM', only: 'EM only' }, hedged: 'currency hedged', gold: 'Gold', source: 'source',
+  lkTitle: 'What the portfolio covers', lkIdx: 'Index funds', lkTer: 'Funds’ fee (TER)', lkEm: 'Emerging markets', lkGold: 'Gold',
+  lkSfdr: 'SFDR art. 8/9', lkCov: 'Funds described', lkEq: e => `Equities (${e} of the portfolio) by region, % of the portfolio`,
+  lkTerSub: c => `weighted, known for ${c} of funds`, lkEmSub: w => `+ ${w} in global funds that hold some EM`, lkIdxSub: a => `active funds ${a}`,
+  lkNote: 'Look-through by fund description: a fund’s whole value is assigned to its region (for example, an MSCI World fund counts as “Global developed”, an MSCI ACWI fund as “Global (incl. EM)”), directly held shares by the issuer’s country. TER = ongoing charges of the funds in the portfolio, weighted by their value; the pension fund’s own management fee comes on top. SFDR = EU sustainability disclosure article (8 = promotes ESG characteristics, 9 = sustainable investment objective); not every fund page states it. Fund descriptions were collected from fund pages, KIDs and justETF (October 2026); new funds appearing in later reports will be added.',
+  pgTitle: 'Peer comparison: what drives the differences',
+  pgLead: 'Funds of the same age group at different managers side by side: how much equity and alternatives they hold, how much is in index funds, what the underlying funds cost, whether they hold emerging markets or gold and where the equities are. These differences explain much of why the same age group earns different returns.',
+  group: 'Group', pgSig: 'Signals', thEq: 'Equities', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash & money market',
+  thIdx: 'Index funds', thTer: 'Funds’ TER', thEm: 'EM', thEmW: 'Global funds incl. EM', thGold: 'Gold', thSfdr: 'SFDR 8/9', thReg: 'Equities by region, % of the portfolio',
+  sigNoEm: f => `No emerging markets at all: ${f}.`, sigMost: (what, f, v) => `Most ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `least: ${f} (${v}).`,
+  sigTer: (a, av, b, bv) => `Cheapest underlying funds: ${a} (${av}); most expensive: ${b} (${bv}).`, sigGold: f => `Holds gold: ${f}.`, sigNoGold: 'Nobody in the group holds gold.',
+  wEq: 'equities', wAlt: 'alternatives', wIdx: 'in index funds', wEm: 'emerging markets', wNa: 'North American equities', wBaltic: 'Baltic equities',
+  pgNote: 'All columns are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. EM = funds investing only in emerging markets + directly held EM shares; “global funds incl. EM” = whole value of global funds that hold some EM (typically ~10 % of such a fund). Colour intensity = relative to the highest value in the column. Click a fund to open its portfolio below.',
+  pgIII: 'III pillar (all funds)',
+}, {
+  ap: { index: 'Indeksinis', active: 'Aktyvus' },
+  reg: { glob: 'Pasaulis (su EM)', gdm: 'Išsivysčiusios rinkos (pasaulis)', na: 'Šiaurės Amerika', eu: 'Europa', baltic: 'Baltijos šalys', jp: 'Japonija', ap: 'Azija ir Ramusis vand. (išsivyst.)', em: 'Besivystančios rinkos', oth: 'Kita', unk: 'Neaprašyta' },
+  emL: { no: 'be EM', yes: 'su EM', only: 'tik EM' }, hedged: 'valiuta apdrausta', gold: 'Auksas', source: 'šaltinis',
+  lkTitle: 'Ką dengia portfelis', lkIdx: 'Indeksiniai fondai', lkTer: 'Fondų mokestis (TER)', lkEm: 'Besivystančios rinkos', lkGold: 'Auksas',
+  lkSfdr: 'SFDR 8 / 9 str.', lkCov: 'Aprašyta fondų', lkEq: e => `Akcijos (${e} portfelio) pagal regioną, % portfelio`,
+  lkTerSub: c => `svertinis, žinomas ${c} fondų`, lkEmSub: w => `+ ${w} pasaulio fonduose, turinčiuose EM dalį`, lkIdxSub: a => `aktyvūs fondai ${a}`,
+  lkNote: 'Skirstoma pagal fondo aprašą: visa fondo vertė priskiriama jo regionui (pvz. MSCI World fondas – „Išsivysčiusios rinkos (pasaulis)“, MSCI ACWI – „Pasaulis (su EM)“), tiesiogiai turimos akcijos – pagal emitento šalį. TER = portfelyje esančių fondų einamieji mokesčiai, svertiniai pagal jų vertę; pensijų fondo valdymo mokestis – papildomai. SFDR = ES tvarumo atskleidimo straipsnis (8 – skatina ESG savybes, 9 – tvaraus investavimo tikslas); ne visi fondų puslapiai jį nurodo. Fondų aprašai surinkti iš fondų puslapių, KID dokumentų ir justETF (2026 m. spalis); vėlesnėse ataskaitose atsiradę nauji fondai bus papildyti.',
+  pgTitle: 'Palyginimas grupėje: kas lemia skirtumus',
+  pgLead: 'Tos pačios amžiaus grupės skirtingų valdytojų fondai greta: kiek turi akcijų ir alternatyvų, kiek investuota per indeksinius fondus, kiek kainuoja jų fondai, ar turi besivystančių rinkų ir aukso, kur yra akcijos. Šie skirtumai daug paaiškina, kodėl tos pačios grupės fondų grąža skiriasi.',
+  group: 'Grupė', pgSig: 'Signalai', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvios', thCash: 'Pinigai ir pinigų rinka',
+  thIdx: 'Indeksiniai fondai', thTer: 'Fondų TER', thEm: 'EM', thEmW: 'Pasaulio fondai su EM', thGold: 'Auksas', thSfdr: 'SFDR 8/9', thReg: 'Akcijos pagal regioną, % portfelio',
+  sigNoEm: f => `Besivystančių rinkų visai neturi: ${f}.`, sigMost: (what, f, v) => `Daugiausia ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `mažiausiai: ${f} (${v}).`,
+  sigTer: (a, av, b, bv) => `Pigiausi fondai portfelyje: ${a} (${av}); brangiausi: ${b} (${bv}).`, sigGold: f => `Turi aukso: ${f}.`, sigNoGold: 'Aukso grupėje neturi niekas.',
+  wEq: 'akcijų', wAlt: 'alternatyvų', wIdx: 'indeksinių fondų', wEm: 'besivystančių rinkų', wNa: 'Šiaurės Amerikos akcijų', wBaltic: 'Baltijos akcijų',
+  pgNote: 'Visi stulpeliai – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. EM = fondai, investuojantys tik į besivystančias rinkas, + tiesiogiai turimos jų akcijos; „pasaulio fondai su EM“ = visa vertė pasaulio fondų, turinčių EM dalį (tokiame fonde jos paprastai ~10 %). Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Paspaudus fondą atidaromas jo portfelis žemiau.',
+  pgIII: 'III pakopa (visi fondai)',
+});
+const REG = { global: 'glob', global_dm: 'gdm', us: 'na', north_america: 'na', europe: 'eu', eurozone: 'eu', japan: 'jp', asia_pacific_dm: 'ap', em: 'em', em_ex_china: 'em', other: 'oth' };
+const REG_KEYS = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'oth', 'unk'];
+const REG_COL = { na: 'var(--s1)', eu: 'var(--s2)', baltic: 'var(--s5)', gdm: 'var(--s3)', glob: 'var(--s4)', jp: 'var(--s6)', ap: '#8e7cc3', em: '#d0453f', oth: 'var(--axis)', unk: 'var(--grid)' };
+const CTY_EU = new Set('AT BE BG CH CY CZ DE DK ES FI FR GB GR HR HU IE IS IT LI LU MT NL NO PL PT RO SE SI SK JE GG IM FO'.split(' '));
+const CTY_EM = new Set('CN TW IN KR BR MX ZA SA AE QA KW TH MY ID PH CL CO PE TR EG'.split(' '));
+function ctyRegion(c) {
+  if (['US', 'CA', 'BM', 'PA', 'KY', 'PR', 'BS'].includes(c)) return 'na';
+  if (['LT', 'LV', 'EE'].includes(c)) return 'baltic';
+  if (c === 'JP') return 'jp';
+  if (['AU', 'NZ', 'HK', 'SG'].includes(c)) return 'ap';
+  if (CTY_EM.has(c)) return 'em';
+  return CTY_EU.has(c) ? 'eu' : 'oth';
+}
+// turto grupė: eq akcijos, bd obligacijos, alt alternatyvios, cash pinigai ir pinigų rinka, der išvestinės, oth kita
+function bucket(s) {
+  if (s.t !== 'f') return { e: 'eq', b: 'bd', c: 'cash', d: 'der' }[s.t];
+  if (s.alt) return 'alt';
+  const ac = s.a ? s.a.ac : { 1: 'bond', 3: 'equity', 4: 'money_market', 5: 'real_estate', 7: 'private_equity' }[s.kis] || '';
+  return ac === 'equity' ? 'eq' : ac === 'bond' ? 'bd' : ac === 'money_market' ? 'cash' : ['private_equity', 'real_estate', 'other'].includes(ac) ? 'alt' : 'oth';
+}
+const regionOf = s => s.t === 'e' ? ctyRegion(s.cty) : s.a ? REG[s.a.reg] || 'oth' : 'unk';
+/* Fondo portfelio požymių suvestinė: visi rodikliai – % portfelio */
+function lookThrough(f, qi) {
+  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0 };
+  if (!m || !t) return L;
+  m.forEach((x, si) => {
+    const s = S[si], w = x.v / t * 100, b = bucket(s);
+    L.b[b] = (L.b[b] || 0) + w;
+    if (b === 'eq') { const r = regionOf(s); L.reg[r] = (L.reg[r] || 0) + w; if (r === 'em') L.em += w; }
+    if (s.t !== 'f') return;
+    L.fw += w;
+    if (b === 'eq' && !(s.a && s.a.em)) L.emUnk += w;          // nežinoma, ar akcijų fondas turi EM
+    if (!s.a) return;
+    L.desc += w;
+    if (s.a.ap === 'index') L.idx += w; else if (s.a.ap === 'active') L.act += w;
+    if (s.a.ter != null) { L.terW += w; L.terS += w * s.a.ter; }
+    if (s.a.em === 'only' && b !== 'eq') L.em += w;            // akcijų EM fondai jau įskaityti per regioną
+    if (s.a.em === 'yes') L.emW += w;
+    if (s.a.th === 'gold') L.gold += w;
+    if (s.a.sfdr === '8' || s.a.sfdr === '9') L.sfdr += w;
+  });
+  L.ter = L.terW ? L.terS / L.terW : null;
+  return L;
+}
+function attrChips(s) {
+  if (!s.a) return '';
+  const a = s.a, c = [];
+  if (a.ap) c.push(T().ap[a.ap]);
+  if (a.reg) c.push(T().reg[REG[a.reg] || 'oth']);
+  if (a.em && s.a.ac !== 'private_equity' && s.a.ac !== 'real_estate') c.push(T().emL[a.em]);
+  if (a.th === 'gold') c.push(T().gold);
+  if (a.sfdr) c.push('SFDR ' + a.sfdr);
+  if (a.ter != null) c.push('TER ' + num(a.ter, 2) + '%');
+  if (a.hdg === 'yes') c.push(T().hedged);
+  return `<span class="tags">${c.map(x => `<span>${esc(x)}</span>`).join('')}</span>`;
+}
 
 /* Būsena (išsaugoma naršyklėje) */
 const ST = Object.assign({ q: NQ - 1, pl: 'II', mgr: 'all', lv: 'mgr', type: 'all', act: 'all', sort: 'eur', fund: 'SWD-89/95', fq: NQ - 1, ft: 'all', pos: null, fsort: 'w' },
@@ -171,7 +265,7 @@ function renderTopChanges() {
     <th>${T().thTrade}</th><th>${T().thValue}</th><th>${T().thW0}</th><th>${T().thW1}</th><th>${T().thDw}</th></tr></thead><tbody>`
     + (shown.length ? shown.map((r, i) => `<tr data-i="${i}"><td class="l">${sw(r.U.mgr)}${r.U.mgr}</td>
       <td class="l">${byFund ? esc(fundName(r.U.fund)) : `<span class="pfsub">${T().nFunds(r.P.funds.size)}</span>`}</td>
-      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small></td>
+      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s)}</td>
       <td class="l">${badge(r.act)}</td>
       <td class="${r.trade > 0 ? 'up' : 'down'}">${r.trade > 0 ? '+' : ''}${eur(r.trade)}</td>
       <td>${r.P.v[1] ? eur(r.P.v[1]) : '–'}</td><td>${wFmt(r.w0)}</td><td>${wFmt(r.w1)}</td>
@@ -238,6 +332,7 @@ function renderFund() {
   const keys = ['e', 'f3', 'f', 'alt', 'b', 'c', 'd'].filter(k => comp[k]);
   document.getElementById('fcComp').innerHTML = `<div class="comp">${keys.filter(k => comp[k] > 0).map(k => `<span style="width:${comp[k]}%;background:${TYPE_COL[k]}" title="${compLbl(k)} ${wFmt(comp[k], 1)}"></span>`).join('')}</div>
     <div class="complg">${keys.map(k => `<span><i style="background:${TYPE_COL[k]}"></i>${compLbl(k)} <b>${wFmt(comp[k], 1)}</b></span>`).join('')}</div>`;
+  renderLook(f, ST.fq);
 
   const all = byW.concat(exits.sort((a, b) => a.dw - b.dw)).filter(r => ST.ft === 'all' || (ST.ft === 'alt' ? !!r.s.alt : r.s.t === ST.ft));
   const selAt = all.findIndex(r => r.si === ST.pos);
@@ -247,7 +342,7 @@ function renderFund() {
   tb.innerHTML = `<thead><tr><th class="l">#</th><th class="l">${T().thPos}</th>
     <th>${T().thValue}</th><th>${T().thW}</th><th>${T().thDw}</th><th>${T().thDq}</th><th class="l">${T().thAct}</th></tr></thead><tbody>`
     + list.map((r, i) => `<tr data-si="${r.si}" class="${r.exit ? 'exit' : ''}${r.si === ST.pos ? ' sel' : ''}"><td class="l pfsub">${r.exit ? '' : i + 1}</td>
-      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small></td>
+      <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s)}</td>
       <td>${r.exit ? '–' : eur(r.v)}</td><td>${wFmt(r.w)}</td>
       <td class="${r.dw > 0 ? 'up' : r.dw < 0 ? 'down' : ''}">${r.dw == null ? '–' : pp(r.dw)}</td>
       <td class="${r.dq > 0 ? 'up' : r.dq < 0 ? 'down' : ''}">${r.dq == null || r.act === '' ? '–' : (r.dq > 0 ? '+' : '−') + num(Math.abs(r.dq), 0) + '%'}</td>
@@ -262,6 +357,22 @@ function renderFund() {
   tb.querySelectorAll('tbody tr').forEach(tr => tr.classList.toggle('sel', +tr.dataset.si === ST.pos));
   renderPosition();
 }
+function renderLook(f, qi) {
+  const L = lookThrough(f, qi), el = document.getElementById('fcLook');
+  if (!L.fw && !L.b.eq) { el.innerHTML = ''; return; }
+  const share = (a, b) => b ? wFmt(a / b * 100, 0) : '–';
+  const k = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  const eq = L.b.eq || 0, regs = REG_KEYS.filter(r => L.reg[r] > 0.05);
+  el.innerHTML = `<h3 class="lk">${T().lkTitle}</h3><div class="kpis lkk">`
+    + k(T().lkIdx, wFmt(L.idx, 1), T().lkIdxSub(wFmt(L.act, 1)))
+    + k(T().lkTer, L.ter == null ? '–' : num(L.ter, 2) + '%', L.ter == null ? '' : T().lkTerSub(share(L.terW, L.fw)))
+    + k(T().lkEm, wFmt(L.em, 1), L.emW ? T().lkEmSub(wFmt(L.emW, 1)) : '')
+    + k(T().lkGold, wFmt(L.gold, 1)) + k(T().lkSfdr, wFmt(L.sfdr, 1))
+    + k(T().lkCov, share(L.desc, L.fw)) + '</div>'
+    + (eq ? `<div class="meta">${T().lkEq(wFmt(eq, 1))}</div><div class="comp">${regs.map(r => `<span style="width:${L.reg[r] / eq * 100}%;background:${REG_COL[r]}" title="${T().reg[r]} ${wFmt(L.reg[r], 1)}"></span>`).join('')}</div>
+      <div class="complg">${regs.map(r => `<span><i style="background:${REG_COL[r]}"></i>${T().reg[r]} <b>${wFmt(L.reg[r], 1)}</b></span>`).join('')}</div>` : '')
+    + `<p class="note">${T().lkNote}</p>`;
+}
 /* Pozicijos istorija: svoris kiekvieno ketvirčio pabaigoje šiame fonde ir kitų valdytojų tos pačios grupės fonduose */
 function weightSeries(f, si) {
   const pts = [], first = f.q.findIndex(Boolean);
@@ -273,7 +384,8 @@ function renderPosition() {
   const f = fundBy[ST.fund], el = document.getElementById('phChart');
   const s = ST.pos == null ? null : S[ST.pos];
   document.getElementById('phTitle').textContent = s ? posLabel(s) : T().phPick;
-  document.getElementById('phMeta').textContent = s ? `${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin ? ' · ' + s.isin : ''} — ${T().phMeta}` : '';
+  document.getElementById('phMeta').innerHTML = s ? esc(`${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin ? ' · ' + s.isin : ''}`)
+    + (s.a && s.a.src ? ` · <a href="${esc(s.a.src)}" target="_blank" rel="noopener">${T().source}</a>` : '') + attrChips(s) + `<br>${T().phMeta}` : '';
   if (!s) { el.innerHTML = ''; document.getElementById('phTable').innerHTML = ''; document.getElementById('phNote').textContent = ''; return; }
   const peers = f.pl === 'II' ? FUNDS.filter(g => g.pl === 'II' && g.g === f.g && g.p !== f.p && g.q.some(m => m && m.has(ST.pos))) : [];
   DATA.providers.forEach(p => { p.label = p.id; });
@@ -346,10 +458,75 @@ function renderAlt() {
   document.getElementById('altNote').textContent = (none.length ? T().altNone(none.join(', ')) + ' ' : '') + T().altNote;
 }
 
+/* ---------- 4. palyginimas grupėje ---------- */
+const PG_COLS = [['eq', 'thEq'], ['bd', 'thBd'], ['alt', 'thAlt'], ['cash', 'thCash'], ['idx', 'thIdx'], ['ter', 'thTer'], ['em', 'thEm'], ['emW', 'thEmW'], ['gold', 'thGold'], ['sfdr', 'thSfdr']];
+const PG_REG = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'unk'];
+function peerRow(f, qi) {
+  const L = lookThrough(f, qi);
+  const r = { f, emUnk: L.emUnk, eq: L.b.eq || 0, bd: L.b.bd || 0, alt: L.b.alt || 0, cash: L.b.cash || 0, idx: L.idx, ter: L.ter, em: L.em, emW: L.emW, gold: L.gold, sfdr: L.sfdr };
+  PG_REG.forEach(k => { r['r_' + k] = L.reg[k] || 0; });
+  return r;
+}
+function renderPeers() {
+  const groups = [...new Set(FUNDS.filter(f => f.pl === 'II').map(f => f.g))].sort((a, b) => (a === 'turto' ? '9' : a).localeCompare(b === 'turto' ? '9' : b)).concat(['III']);
+  const own = fundBy[ST.fund].pl === 'III' ? 'III' : fundBy[ST.fund].g;
+  if (!groups.includes(ST.pg)) ST.pg = own;
+  if (!(ST.pgq >= 0 && ST.pgq < NQ)) ST.pgq = NQ - 1;
+  const gName = g => g === 'III' ? T().pgIII : g === 'turto' ? T().turto : T().born + ' ' + g.replace('-', '–');
+  const bar = document.getElementById('pgBar');
+  bar.innerHTML = field(T().group, `<select id="pgG">${groups.map(g => `<option value="${g}"${g === ST.pg ? ' selected' : ''}>${gName(g)}</option>`).join('')}</select>`)
+    + field(T().quarter, quarterSelect('pgQ', ST.pgq, 0));
+  bar.querySelector('#pgG').addEventListener('change', e => { ST.pg = e.target.value; save(); renderPeers(); });
+  bar.querySelector('#pgQ').addEventListener('change', e => { ST.pgq = +e.target.value; save(); renderPeers(); });
+  const qi = ST.pgq;
+  const funds = FUNDS.filter(f => f.q[qi] && (ST.pg === 'III' ? f.pl === 'III' : f.pl === 'II' && f.g === ST.pg))
+    .sort((a, b) => a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
+  const rows = funds.map(f => peerRow(f, qi));
+  const cols = PG_COLS.concat(PG_REG.filter(k => rows.some(r => r['r_' + k] > 0.05)).map(k => ['r_' + k, null, k]));
+  const maxOf = k => Math.max(...rows.map(r => r[k] || 0));
+  const mx = Object.fromEntries(cols.map(([k]) => [k, maxOf(k)]));
+  const colr = k => k === 'ter' ? 'var(--s6)' : k === 'gold' ? '#c9a227' : k === 'em' || k === 'r_em' ? '#d0453f' : k.startsWith('r_') ? REG_COL[k.slice(2)] : 'var(--s1)';
+  const cell = (r, k) => { const v = r[k]; if (v == null || (!v && k !== 'ter')) return '<td>–</td>';
+    return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' ? num(v, 2) + '%' : num(v, 1)}</td>`; };
+  const nm = r => `${r.f.p}${ST.pg === 'III' ? ' ' + fundName(r.f).replace(r.f.p, '').trim() : ''}`;
+  const tb = document.getElementById('pgTable');
+  const nReg = cols.length - PG_COLS.length;
+  tb.innerHTML = `<thead><tr><th class="l" rowspan="2">${T().thFund}</th>${PG_COLS.map(([, t]) => `<th rowspan="2">${T()[t]}</th>`).join('')}${nReg ? `<th colspan="${nReg}" style="text-align:center">${T().thReg}</th>` : ''}</tr>
+    <tr>${cols.slice(PG_COLS.length).map(([, , r]) => `<th>${T().reg[r]}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map(r => `<tr data-c="${r.f.c}"><td class="l">${sw(r.f.p)}${esc(ST.pg === 'III' ? fundName(r.f) : r.f.p)}</td>${cols.map(([k]) => cell(r, k)).join('')}</tr>`).join('') + '</tbody>';
+  tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
+    ST.fund = tr.dataset.c; ST.fq = qi; ST.ft = 'all'; ST.pos = null; fcLimit = 40; save(); renderFund();
+    document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
+  }));
+  // signalai
+  const sig = [], list = a => a.map(nm).join(', ');
+  const ext = (k, what, p = 1) => {
+    const xs = rows.filter(r => r[k] != null); if (xs.length < 2) return;
+    const hi = xs.reduce((a, b) => b[k] > a[k] ? b : a), lo = xs.reduce((a, b) => b[k] < a[k] ? b : a);
+    if (hi[k] - lo[k] < 0.5) return;
+    const zero = xs.filter(r => r[k] < 0.05), loTxt = zero.length ? T().sigLeast(what, list(zero), '0%') : T().sigLeast(what, nm(lo), wFmt(lo[k], p));
+    sig.push(`${T().sigMost(what, nm(hi), wFmt(hi[k], p))}; ${loTxt}`);
+  };
+  if (rows.length > 1) {
+    ext('eq', T().wEq); ext('alt', T().wAlt); ext('idx', T().wIdx);
+    const noEm = rows.filter(r => r.em < 0.05 && r.emW < 0.05 && r.emUnk < 1 && r.eq > 1);
+    if (noEm.length) sig.push(T().sigNoEm(list(noEm)));
+    ext('em', T().wEm);
+    const ters = rows.filter(r => r.ter != null);
+    if (ters.length > 1) { const lo = ters.reduce((a, b) => b.ter < a.ter ? b : a), hi = ters.reduce((a, b) => b.ter > a.ter ? b : a);
+      sig.push(T().sigTer(nm(lo), num(lo.ter, 2) + '%', nm(hi), num(hi.ter, 2) + '%')); }
+    const gold = rows.filter(r => r.gold > 0.05);
+    sig.push(gold.length ? T().sigGold(gold.map(r => `${nm(r)} ${wFmt(r.gold, 1)}`).join(', ')) : T().sigNoGold);
+    ext('r_na', T().wNa); if (rows.some(r => r.r_baltic > 0.5)) ext('r_baltic', T().wBaltic);
+  }
+  document.getElementById('pgSignals').innerHTML = sig.length ? `<b>${T().pgSig}</b><ul>${sig.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+  document.getElementById('pgNote').textContent = T().pgNote;
+}
+
 function renderAll() {
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
-  ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderTopChanges(); renderAlt(); renderFund();
+  ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
+  renderTopChanges(); renderAlt(); renderPeers(); renderFund();
 }
 renderHeader('portfolios', renderAll);
 renderAll();
