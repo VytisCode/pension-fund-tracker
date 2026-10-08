@@ -5,6 +5,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 
 const I18N = {
   en: {
+    refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
     siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
@@ -15,6 +16,7 @@ const I18N = {
     periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
   },
   lt: {
+    refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
     siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
@@ -44,7 +46,7 @@ function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div><div class="fresh" id="fresh"></div>
     <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a><a href="aum.html" data-p="aum"></a><a href="portfolios.html" data-p="portfolios"></a><a href="reports.html" data-p="reports"></a></nav></div>
-    <div class="top-tools"><div class="seg" id="lang" role="group" aria-label="Language">
+    <div class="top-tools"><a class="btn" id="refresh" href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
       <div class="seg" id="theme" role="group">
         <button type="button" data-theme="light"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
@@ -53,6 +55,7 @@ function renderHeader(active, onLang) {
     document.documentElement.lang = lang;
     document.title = T().siteTitle;
     document.getElementById('title').textContent = T().siteTitle;
+    const rb = document.getElementById('refresh'); rb.title = T().refreshTip; rb.querySelector('span').textContent = T().refresh;
     const el = document.documentElement, dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
     const tb = document.getElementById('theme'); tb.setAttribute('aria-label', T().theme);
     tb.querySelectorAll('button').forEach(b => { b.setAttribute('aria-pressed', (b.dataset.theme === 'dark') === dark); b.title = b.dataset.theme === 'dark' ? (lang === 'lt' ? 'Tamsi tema' : 'Dark theme') : (lang === 'lt' ? 'Šviesi tema' : 'Light theme'); b.setAttribute('aria-label', b.title); });
