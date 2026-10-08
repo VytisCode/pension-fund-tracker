@@ -29793,6 +29793,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-02,LUMINOR,Luminor ateitis 16–50,0.8678,29725686,
 2026-10-05,LUMINOR,Luminor ateitis 16–50,0.8763,30028857,
 2026-10-06,LUMINOR,Luminor ateitis 16–50,0.8788,30117467,
+2026-10-07,LUMINOR,Luminor ateitis 16–50,0.8753,29994932,
 2004-10-26,LUMINOR,Luminor ateitis 50–58,0.28962002,,
 2004-10-27,LUMINOR,Luminor ateitis 50–58,0.28927247,,
 2004-10-28,LUMINOR,Luminor ateitis 50–58,0.28927247,,
@@ -35305,6 +35306,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-02,LUMINOR,Luminor ateitis 50–58,0.6938,68113781,
 2026-10-05,LUMINOR,Luminor ateitis 50–58,0.697,68430256,
 2026-10-06,LUMINOR,Luminor ateitis 50–58,0.6992,68652005,
+2026-10-07,LUMINOR,Luminor ateitis 50–58,0.6976,68480226,
 2013-10-07,LUMINOR,Luminor ateitis 58+,0.28962002,,
 2013-10-08,LUMINOR,Luminor ateitis 58+,0.28962002,,
 2013-10-09,LUMINOR,Luminor ateitis 58+,0.28962002,,
@@ -38574,6 +38576,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-02,LUMINOR,Luminor ateitis 58+,0.2996,8842469,
 2026-10-05,LUMINOR,Luminor ateitis 58+,0.2995,8840263,
 2026-10-06,LUMINOR,Luminor ateitis 58+,0.3004,8865637,
+2026-10-07,LUMINOR,Luminor ateitis 58+,0.3,8855149,
 2026-01-21,LUMINOR,Luminor ateitis akcijų index,1.0,,
 2026-01-22,LUMINOR,Luminor ateitis akcijų index,1.0,,
 2026-01-23,LUMINOR,Luminor ateitis akcijų index,0.9992,,
@@ -38753,6 +38756,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-02,LUMINOR,Luminor ateitis akcijų index,1.1562,1801865,
 2026-10-05,LUMINOR,Luminor ateitis akcijų index,1.1674,1826567,
 2026-10-06,LUMINOR,Luminor ateitis akcijų index,1.1711,1833631,
+2026-10-07,LUMINOR,Luminor ateitis akcijų index,1.1669,1839058,
 2021-05-24,LUMINOR,Luminor tvari ateitis index,1.0,,
 2021-05-25,LUMINOR,Luminor tvari ateitis index,1.0,,
 2021-05-26,LUMINOR,Luminor tvari ateitis index,1.0,,
@@ -40105,6 +40109,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-02,LUMINOR,Luminor tvari ateitis index,1.5723,8471909,
 2026-10-05,LUMINOR,Luminor tvari ateitis index,1.5834,8535477,
 2026-10-06,LUMINOR,Luminor tvari ateitis index,1.5912,8582591,
+2026-10-07,LUMINOR,Luminor tvari ateitis index,1.5818,8533253,
 2022-01-03,SEB,SEB index. Klimato ateitis,1.0,,100.0
 2022-01-04,SEB,SEB index. Klimato ateitis,0.9955,,99.6498
 2022-01-05,SEB,SEB index. Klimato ateitis,0.991,,97.787
