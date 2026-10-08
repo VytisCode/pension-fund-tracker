@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pension fund tracker</title>
+<meta name="description" content="Lithuanian pension funds: one manager's report tables">
+<link rel="stylesheet" href="style.css?v=d6571321">
+<style>
+  h2.sec { margin: 26px 0 4px; font-size: 19px; }
+  p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 920px; }
+  .rbar { margin: 4px 0 12px; }
+  table.rt { font-size: 13px; }
+  table.rt th { white-space: normal; vertical-align: bottom; }
+  table.rt td.l, table.rt th.l { text-align: left; white-space: nowrap; }
+  table.rt td.rk { color: var(--text-3); font-size: 11.5px; text-align: center; width: 22px; }
+  table.rt tr.sep td { background: var(--surface); font-weight: 600; text-align: left; }
+  table.rt tr.tot td { border-top: 2px solid var(--line); font-weight: 700; }
+  table.rt td.bl, table.rt th.bl { border-left: 1px solid var(--line); }
+  table.rt td.hc { color: #1a1a19; }
+  table.rt td.hc.b { font-weight: 700; }
+  table.rt td.na { color: var(--text-3); }
+  .good { background: #b9e3a6; color: #1a1a19; } .bad { background: #f4b0aa; color: #1a1a19; }
+  .up { color: var(--s5); font-weight: 600; } .down { color: #d0453f; font-weight: 600; }
+  .rsub { color: var(--text-3); font-size: 12px; }
+  .bar select { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <div class="bar sticky" id="mgrBar"></div>
+
+  <h2 class="sec" id="calTitle"></h2>
+  <p class="lead" id="calLead"></p>
+  <section class="card"><div class="scroll"><table class="rt" id="calTable"></table></div><p class="note" id="calNote"></p></section>
+
+  <h2 class="sec" id="monTitle"></h2>
+  <section class="card"><div class="scroll"><table class="rt" id="monTable"></table></div><p class="note" id="monNote"></p></section>
+
+  <h2 class="sec" id="kpiTitle"></h2>
+  <p class="lead" id="kpiLead"></p>
+  <div class="bar rbar" id="kpiBar"></div>
+  <section class="card"><div class="scroll"><table class="rt" id="kpiTable"></table></div><p class="note" id="kpiNote"></p></section>
+
+  <footer id="foot"></footer>
+</div>
+<script src="common.js?v=eae6ffb7"></script>
+<script src="data_rep.js?v=299be6a7"></script>
+<script src="rep.js?v=061e0f2b"></script>
+</body>
+</html>
