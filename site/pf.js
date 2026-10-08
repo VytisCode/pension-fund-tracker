@@ -155,7 +155,7 @@ addStrings({
   sigDur: (a, av, b, bv) => `Ilgiausia obligacijų trukmė (jautriausios palūkanų pokyčiams): ${a} (${av}); trumpiausia: ${b} (${bv}).`,
   bondNote: 'Tiesiogiai turimų obligacijų YTM ir modifikuota trukmė ketvirčio pabaigoje, svertiniai pagal vertę. Sąlygos (kuponas, išpirkimo data) – iš ES registro ESMA FIRDS, kaina = vertė ÷ nominalas iš Lietuvos banko ataskaitos (su sukauptomis palūkanomis). Laikoma, kad kuponas mokamas kartą per metus (USD – du kartus), pajamingumas – iki galutinio išpirkimo (ne iki pirmalaikio). Kintamų palūkanų obligacijos įskaičiuojamos su trukme ≈ 0 ir neįskaičiuojamos į YTM. Obligacijų fondai neįtraukti.',
 });
-const REG = { global: 'glob', global_dm: 'gdm', us: 'na', north_america: 'na', europe: 'eu', eurozone: 'eu', japan: 'jp', asia_pacific_dm: 'ap', em: 'em', em_ex_china: 'em', other: 'oth' };
+const REG = { global: 'glob', global_dm: 'gdm', us: 'na', north_america: 'na', europe: 'eu', eurozone: 'eu', uk: 'eu', china: 'em', japan: 'jp', asia_pacific_dm: 'ap', em: 'em', em_ex_china: 'em', other: 'oth' };
 const REG_KEYS = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'oth', 'unk'];
 const REG_COL = { na: 'var(--s1)', eu: 'var(--s2)', baltic: 'var(--s5)', gdm: 'var(--s3)', glob: 'var(--s4)', jp: 'var(--s6)', ap: '#8e7cc3', em: '#d0453f', oth: 'var(--axis)', unk: 'var(--grid)' };
 const CTY_EU = new Set('AT BE BG CH CY CZ DE DK ES FI FR GB GR HR HU IE IS IT LI LU MT NL NO PL PT RO SE SI SK JE GG IM FO'.split(' '));
