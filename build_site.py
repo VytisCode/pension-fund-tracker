@@ -104,6 +104,7 @@ def main() -> None:
     build_pillar3(ver)
     build_portfolios(ver)
     build_aum(ver)
+    build_reports(ver)
 
 
 def build_pillar3(ver: dict) -> None:
@@ -268,6 +269,24 @@ def build_aum(ver: dict) -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "aum.html").write_text(text, encoding="utf-8")
     print(f"docs/data_aum.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}, išmokėjimų: {len(payload['payouts'])}")
+
+
+def build_reports(ver: dict) -> None:
+    """Ataskaitų polapis: docs/data_rep.js (žr. reports.py) + site/reports.html, site/rep.js."""
+    import reports
+
+    payload = reports.build()
+    payload["generated"] = datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
+    data_js = "const REP=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data_rep.js").write_text(data_js, encoding="utf-8")
+    shutil.copyfile(SITE / "reports.html", DOCS / "reports.html")
+    shutil.copyfile(SITE / "rep.js", DOCS / "rep.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js")}}
+    text = (DOCS / "reports.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "data_rep.js", "rep.js"):
+        text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
+    (DOCS / "reports.html").write_text(text, encoding="utf-8")
+    print(f"docs/data_rep.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")
 
 
 if __name__ == "__main__":

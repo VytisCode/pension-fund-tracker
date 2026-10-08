@@ -78,13 +78,13 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 11. **Lankstus laikotarpis linijiniuose grafikuose:** „Visa istorija“ lieka; papildomai „nuo [fondo] pradžios“ ir mygtukas „nuo jauniausio fondo pradžios“. – *patvirtinta*
 
 **B. Naujas puslapis „Ataskaitos“ (Reports)**
-12. **Puslapis su valdymo bendrovės pasirinkimu** viršuje; visos lentelės rodo tik jos duomenis. – *patvirtinta*
+12. **Puslapis su valdymo bendrovės pasirinkimu** viršuje; visos lentelės rodo tik jos duomenis. – *atlikta (puslapis „Ataskaitos“, 2026-10-08: grąža nuo 2019 m. ir mėnesių grąža kaip savininko lentelėse)*
 13. **Lentelė nr. 1 – rodikliai per laikotarpius** kiekvienam bendrovės fondui: vid. vieneto vertės pokytis, vid. lyginamojo indekso pokytis, abiejų standartiniai nuokrypiai, fondo ir indekso metinė grąža; laikotarpiai 6 mėn., 1, 3, 5 m., nuo pradžios. – *patvirtinta*
 14. **Eksportas į Excel ir PDF.** – *patvirtinta*
-15. **Lentelė nr. 2 – fondas prieš indeksą:** fondo grąža, indekso grąža, skirtumas, bruto grąža (be valdymo mokesčio). – *patvirtinta*
+15. **Lentelė nr. 2 – fondas prieš indeksą:** fondo grąža, indekso grąža, skirtumas, bruto grąža (be valdymo mokesčio). – *atlikta (KPI lentelėje: Grynoji/Bruto − SAA, laikotarpiai YTD, 1, 3, 5 m., kaip savininko „Baltic YTD / 3Y“)*
 16. **Valdymo mokesčiai** kiekvienam fondui; mokestis skaičiuojamas proporcingai laikotarpiui. – *patvirtinta*
-17. **Lentelė nr. 3 – „Performance KPI“:** fondas, grąža, peer median (be tos bendrovės), gross return, SAA (indekso grąža), Active / Local Active / Local Passive Manager (pasirenkami), rank in risk class, risk class (akcijų dalis %), fondų skaičius klasėje, AUM, dalis bendrovės turte; apačioje AUM pasverta grąža ir bendras AUM. – *patvirtinta*
-18. **Atskiros „Performance KPI“ lentelės** II ir III pakopai. – *patvirtinta*
+17. **Lentelė nr. 3 – „Performance KPI“:** fondas, grąža, peer median (be tos bendrovės), gross return, SAA (indekso grąža), Active / Local Active / Local Passive Manager (pasirenkami), rank in risk class, risk class (akcijų dalis %), fondų skaičius klasėje, AUM, dalis bendrovės turte; apačioje AUM pasverta grąža ir bendras AUM. – *atlikta (2026-10-08; palyginimo stulpeliai – 3 pasirenkami valdytojai, numatyta Swedbank, Artea, Goindex; 2026 m. mokestis – prielaida 0,40 % / 0,20 %, kol savininkas nepatvirtins)*
+18. **Atskiros „Performance KPI“ lentelės** II ir III pakopai. – *atlikta (2026-10-08)*
 
 ---
 
