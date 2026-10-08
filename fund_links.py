@@ -20,3 +20,7 @@ LUMINOR_TABLE_URLS = [
     "https://luminor.lt/lt/pensiju-fondai",
     "https://www.luminor.lt/lt/pensiju-fondai",
 ]
+
+# Nerizikinga palūkanų norma (Sharpe koeficientui): ECB euro trumpalaikių palūkanų norma €STR
+ECB_ESTR_API = "https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?lastNObservations=1&format=csvdata"
+ECB_ESTR_PAGE = "https://data.ecb.europa.eu/data/datasets/EST/EST.B.EU000A2X2A25.WT"
