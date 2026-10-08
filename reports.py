@@ -5,6 +5,8 @@
 - Strategijos akcijų (rizikingų aktyvų) dalis ir 2025 m. BAR (atskaitymai nuo turto) – iš Lietuvos banko II pakopos
   rezultatų failo imports/lb_results/2-pakopa-rezultatai-YYYYMMDD.xlsx (vieša LB ataskaita).
 - Paskutiniai grynieji aktyvai (AUM) – iš kasdienių duomenų.
+- Kasdienės vieneto vertės ir indeksai nuo 2018-12 (docs/rep_daily.js, kraunama atskirai): standartiniam nuokrypiui
+  ir Excel atsisiuntimams su skaičiavimais.
 - Dabartiniai mokesčiai nuo turto – data/fees.csv (LB mokesčių failai, žr. import_lb_fees.py). II pakopoje mažesnis
   mokestis (0,4 %, Goindex 0,35 %) taikomas, kai bendrovės visų pensijų fondų (II ir III pakopos) turto vidutinė
   metinė vertė praėjusiais metais viršijo 2,5 mlrd. Eur (vertinama pagal LB ketvirčių pabaigos sumas).
@@ -125,7 +127,7 @@ def build():
     large = large_companies(fee_year)
     last_day = max(r[-1][0] for r in list(d2.values()) + list(d3.values()))
     ends = month_ends("2018-12-01", last_day)
-    funds = []
+    funds, daily = [], []
     for pillar, data in (("II", d2), ("III", d3)):
         for (prov, name), rows in sorted(data.items()):
             if pillar == "II":
@@ -151,8 +153,12 @@ def build():
                 "risky": risky, "bar": bar,
                 "fee": (lambda x: (x[1] if prov in large else x[0]) if x else None)(fees.get((pillar, prov, g if pillar == "II" else name))),
                 "aum": round(aum[1]) if aum[1] else None, "aumd": day_number(aum[0]) if aum[0] else None,
+                "s0": [day_number(rows[0][0]), rows[0][1]],
             })
-    return {"months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date, "feeYear": fee_year, "large": sorted(large)}
+            days = [day_number(r[0]) for r in rows]
+            daily.append([days[0], [b - a for a, b in zip(days, days[1:])], [r[1] for r in rows],
+                          [r[3] for r in rows] if has_bm else 0])
+    return {"months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date, "feeYear": fee_year, "large": sorted(large), "_daily": daily}
 
 
 if __name__ == "__main__":

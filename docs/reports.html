@@ -24,10 +24,13 @@
   .good { background: #b9e3a6; color: #1a1a19; } .bad { background: #f4b0aa; color: #1a1a19; }
   .up { color: var(--s5); font-weight: 600; } .down { color: #d0453f; font-weight: 600; }
   .rsub { color: var(--text-3); font-size: 12px; }
+  h2.sec .btn.xls { font-size: 12px; padding: 3px 9px; margin-left: 8px; vertical-align: 2px; font-weight: 500; }
+  #pop { max-width: 560px; white-space: pre-line; }
+  table.lbt td:not(.l), table.lbt th:not(.l) { min-width: 70px; }
   .bar select { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
 </style>
 </head>
-<body>
+<body data-daily="rep_daily.js?v=467e71d5">
 <div class="wrap">
   <header id="top"></header>
   <div class="bar sticky" id="mgrBar"></div>
@@ -44,10 +47,17 @@
   <div class="bar rbar" id="kpiBar"></div>
   <section class="card"><div class="scroll"><table class="rt" id="kpiTable"></table></div><p class="note" id="kpiNote"></p></section>
 
+  <h2 class="sec" id="lbTitle"></h2>
+  <p class="lead" id="lbLead"></p>
+  <div class="bar rbar" id="lbBar"></div>
+  <section class="card"><div class="scroll"><table class="rt lbt" id="lbTable"></table></div>
+    <div class="scroll" style="margin-top:14px"><table class="rt lbt" id="lbYears"></table></div><p class="note" id="lbNote"></p></section>
+
   <footer id="foot"></footer>
 </div>
+<div id="pop" role="tooltip"></div>
 <script src="common.js?v=eae6ffb7"></script>
-<script src="data_rep.js?v=b470eb4d"></script>
-<script src="rep.js?v=b6c42f7d"></script>
+<script src="data_rep.js?v=b9b99ef4"></script>
+<script src="rep.js?v=ae00833e"></script>
 </body>
 </html>

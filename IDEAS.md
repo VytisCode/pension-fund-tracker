@@ -242,3 +242,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** žemėlapyje matyti visi 48 fondai, bet sunku pasakyti, ar konkretus fondas savo grupėje uždirba daugiau už tą pačią riziką.
 - **Nauda:** kiekvienos amžiaus grupės vidurkis žemėlapyje rodomas kaip didesnis žiedas. Iškart matyti, kurie fondai yra aukščiau už savo grupės vidurkį (geriau), o kurie žemiau.
+
+### Ataskaitos: ketvirčiai, LB lentelė, metodika ir Excel su formulėmis
+- **Būsena:** atlikta (2026-10-08)
+- **Autorius:** savininkas
+- **Kodėl:** ataskaitos ruošiamos kas ketvirtį (Q3 YTD, Q4 YTD), o skaičiai tikrinami savarankiškai.
+- **Nauda:** Performance KPI – pasirenkama ketvirčio pabaiga ir vaizdai YTD / 3 m. sukaupta / 3 m. metinė (taip pat 1 m. ir 5 m.); nauja Lietuvos banko formos fondo lentelė (vidutinis pokytis, standartinis nuokrypis, metų grąža); prie kiekvienos lentelės ⓘ su metodika ir Excel failas su naudotais duomenimis ir formulėmis. AUM puslapyje procentai su 2 skaičiais po kablelio.
