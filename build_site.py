@@ -222,6 +222,9 @@ def build_portfolios(ver: dict) -> None:
         names.setdefault(r["pos_id"], {}).setdefault(r["name"], 0)
         names[r["pos_id"]][r["name"]] += 1
         meta[r["pos_id"]] = (r["type"], r["country"], r["currency"], r["kis_type"])  # naujausi duomenys
+    # tikri pavadinimai pagal ISIN (tools/fetch_isin_names.py, OpenFIGI) – kai ataskaitoje nurodyta tik valdymo bendrovė
+    figi_path = ROOT / "data" / "isin_names.csv"
+    figi = {r["isin"]: r["name"] for r in csv.DictReader(figi_path.open(encoding="utf-8", newline=""))} if figi_path.exists() else {}
     sec_ids = sorted(names)
     si = {p: i for i, p in enumerate(sec_ids)}
     secs = []
@@ -231,7 +234,7 @@ def build_portfolios(ver: dict) -> None:
         secs.append([name, PF_TYPES[kind], country, cur, kis,
                      p if re.match(r"^[A-Z]{2}[A-Z0-9]{9}\d$", p) else "",
                      int(kind == "fund" and bool(COMPANY_NAME.search(name))),  # 1 = žinoma tik valdymo bendrovė
-                     alt_kind(kind, kis, " ".join(names[p]))])
+                     alt_kind(kind, kis, " ".join(names[p])), figi.get(p, "")])
     funds = {}
     for r in rows:
         f = funds.setdefault(r["fund_code"], {"c": r["fund_code"], "p": r["provider"], "pl": r["pillar"], "r": []})
