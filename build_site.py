@@ -228,6 +228,9 @@ def build_portfolios(ver: dict) -> None:
     # fondų ir ETF aprašai (data/fund_attributes.csv, surinkta iš fondų puslapių ir justETF): pilnas pavadinimas ir požymiai
     attr_path = ROOT / "data" / "fund_attributes.csv"
     attrs = {r["isin"]: r for r in csv.DictReader(attr_path.open(encoding="utf-8", newline=""))} if attr_path.exists() else {}
+    # obligacijų sąlygos (data/security_terms.csv, ESMA FIRDS) – pajamingumui ir trukmei (žr. bonds.py)
+    import bonds
+    terms = bonds.load_terms()
     sec_ids = sorted(names)
     si = {p: i for i, p in enumerate(sec_ids)}
     secs = []
@@ -243,7 +246,21 @@ def build_portfolios(ver: dict) -> None:
                      int(co), alt_kind(kind, kis, " ".join(names[p])), full,
                      # [turto klasė, regionas, EM, indeksinis/aktyvus, SFDR, TER %, valiuta apdrausta, tema, šaltinis]
                      [a["asset_class"], a["region"], a["em"], a["approach"], a["sfdr"], float(ter) if ter else None,
-                      a["currency_hedged"], a["theme"], a["source_url"]] if a else 0])
+                      a["currency_hedged"], a["theme"], a["source_url"]] if a else 0,
+                     # obligacijoms: [išpirkimo data, kuponas %, 1 = kintamos palūkanos]
+                     [terms[p]["maturity"], float(terms[p]["coupon"]) if terms[p]["coupon"] else None, int(terms[p]["floating"] == "1")]
+                     if kind == "bond" and terms.get(p, {}).get("maturity") else 0])
+    # obligacijų YTM ir trukmė kiekvieno ketvirčio pabaigoje: bm[pozicija] = [ketvirtis, YTM %, mod. trukmė, metai iki išpirkimo, ...]
+    bm = {}
+    seen = set()
+    for r in rows:
+        key = (r["date"], r["pos_id"])
+        if r["type"] != "bond" or key in seen or not r["qty"]:
+            continue
+        seen.add(key)
+        m = bonds.metrics(r["pos_id"], r["date"], float(r["value"]), float(r["qty"]), r["currency"], terms)
+        if m:
+            bm.setdefault(si[r["pos_id"]], []).extend([qi[r["date"]], None if m[0] is None else round(m[0], 2), round(m[1], 2), round(m[2], 2)])
     funds = {}
     for r in rows:
         f = funds.setdefault(r["fund_code"], {"c": r["fund_code"], "p": r["provider"], "pl": r["pillar"], "r": []})
@@ -255,7 +272,7 @@ def build_portfolios(ver: dict) -> None:
     for f in sorted(funds.values(), key=lambda f: (f["pl"], f["p"], f["c"])):
         label, group = pf_fund_label(f["c"], f["p"], f["pl"], f["name"])
         out.append({"c": f["c"], "n": label, "full": f["name"], "p": f["p"], "pl": f["pl"], "g": group, "r": f["r"]})
-    payload = {"quarters": quarters, "secs": secs, "funds": out}
+    payload = {"quarters": quarters, "secs": secs, "funds": out, "bm": bm}
     data_js = "const PF=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_pf.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "portfolios.html", DOCS / "portfolios.html")
