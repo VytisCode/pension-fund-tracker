@@ -21,7 +21,7 @@ addStrings({
   altLead: 'Share of illiquid alternative funds – private equity and venture capital, infrastructure and energy, real estate, private debt, forests – in each portfolio. They cannot be sold quickly, so when participants leave a fund (for example after the 2026 pension reform) and liquid securities are sold, the share of alternatives grows by itself.',
   alts: { pe: 'Private equity & venture', infra: 'Infrastructure & energy', re: 'Real estate', debt: 'Private debt', forest: 'Forest & land', hedge: 'Hedge funds' },
   altNone: m => `No alternative funds at all: ${m}.`, altShort: 'alternatives', altAll: 'Alternative funds', kAlt: 'Alternatives',
-  altChart: 'Share of alternatives in the manager’s portfolios (all funds of the pillar together), %',
+  altChart: 'Share of alternatives in the manager’s portfolios (all funds of the pillar together), %', fromQ: 'From', toQ: 'To',
   thAltV: 'Alternatives, value', thAltMix: 'Of which', thChgAlt: 'Alternatives value', thChgTot: 'Whole fund (net assets)', thChg: (a, b) => `Change ${a} → ${b}`,
   altNote: 'Alternative = Bank of Lithuania fund types 5 (real estate), 6 (hedge) and 7 (other: private equity, venture, infrastructure, private debt), excluding exchange-traded ETF/UCITS funds. The split by kind is based on the fund name. The last two columns compare the value of alternatives and the value of the whole fund (sum of all positions ≈ net assets) between the two chosen quarters; for example, a fund that paid out to participants leaving after the reform shrank from 59.6 m € to 37.1 m € (−38 %). If alternatives’ value barely changes while the whole fund shrinks, the higher share comes from selling liquid assets. Click a fund to open its portfolio.',
   fund: 'Fund', kTotal: 'Portfolio value', kPos: 'Positions', kTop10: 'Top 10 positions', kNew: 'New / sold out',
@@ -51,7 +51,7 @@ addStrings({
   altLead: 'Nelikvidžių alternatyvių fondų – privataus ir rizikos kapitalo, infrastruktūros ir energetikos, nekilnojamo turto, privačios skolos, miškų – dalis kiekviename portfelyje. Jų greitai parduoti negalima, todėl kai dalyviai palieka fondą (pvz. po 2026 m. pensijų reformos) ir parduodami likvidūs vertybiniai popieriai, alternatyvų dalis išauga savaime.',
   alts: { pe: 'Privatus ir rizikos kapitalas', infra: 'Infrastruktūra ir energetika', re: 'Nekilnojamas turtas', debt: 'Privati skola', forest: 'Miškai ir žemė', hedge: 'Rizikos draudimo fondai' },
   altNone: m => `Alternatyvių fondų neturi: ${m}.`, altShort: 'alternatyvios', altAll: 'Alternatyvūs fondai', kAlt: 'Alternatyvios',
-  altChart: 'Alternatyvų dalis valdytojo portfeliuose (visi pakopos fondai kartu), %',
+  altChart: 'Alternatyvų dalis valdytojo portfeliuose (visi pakopos fondai kartu), %', fromQ: 'Nuo', toQ: 'Iki',
   thAltV: 'Alternatyvų vertė', thAltMix: 'Iš jų', thChgAlt: 'Alternatyvų vertė', thChgTot: 'Viso fondo turtas', thChg: (a, b) => `Pokytis ${a} → ${b}`,
   altNote: 'Alternatyvios = Lietuvos banko KIS tipai 5 (nekilnojamas turtas), 6 (rizikos draudimo) ir 7 (kiti: privatus ir rizikos kapitalas, infrastruktūra, privati skola), išskyrus biržoje prekiaujamus ETF / UCITS fondus. Skirstymas pagal rūšį – pagal fondo pavadinimą. Paskutiniai du stulpeliai lygina alternatyvų vertę ir viso fondo turtą (visų pozicijų suma ≈ grynieji aktyvai) tarp dviejų pasirinktų ketvirčių; pvz. fondas, išmokėjęs pinigus po reformos pasitraukusiems dalyviams, sumažėjo nuo 59,6 iki 37,1 mln. € (−38 %). Jei alternatyvų vertė beveik nesikeičia, o viso fondo turtas mažėja, didesnė dalis atsiranda dėl likvidaus turto pardavimo. Paspaudus fondą atidaromas jo portfelis.',
   fund: 'Fondas', kTotal: 'Portfelio vertė', kPos: 'Pozicijų', kTop10: '10 didžiausių pozicijų', kNew: 'Naujos / parduotos',
@@ -500,10 +500,13 @@ function altMix(f, qi) { const m = {}; if (f.q[qi]) f.q[qi].forEach((x, si) => {
 function renderAlt() {
   const pl = ST.apl || 'II', bar = document.getElementById('altBar');
   bar.innerHTML = field(T().pillar, seg('apl', [['II', 'II'], ['III', 'III']], pl))
-    + field(T().quarter, quarterSelect('altQ0', ST.aq0 ?? NQ - 3, 0)) + `<span class="pfsub">→ ${qLabel(NQ - 1)}</span>`;
+    + field(T().fromQ, quarterSelect('altQ0', ST.aq0 ?? NQ - 3, 0)) + field(T().toQ, quarterSelect('altQ1', ST.aq1 ?? NQ - 1, 1));
   wireSegs(bar, { apl: v => { ST.apl = v; save(); renderAlt(); } });
-  const q1 = NQ - 1, q0 = Math.min(ST.aq0 ?? NQ - 3, q1 - 1);
-  bar.querySelector('#altQ0').addEventListener('change', e => { ST.aq0 = +e.target.value; save(); renderAlt(); });
+  const q1 = Math.min(NQ - 1, Math.max(1, ST.aq1 ?? NQ - 1)), q0 = Math.min(ST.aq0 ?? NQ - 3, q1 - 1);
+  bar.querySelector('#altQ0').value = q0; bar.querySelector('#altQ1').value = q1;
+  // pradžia visada ankstesnė už pabaigą: pakeitus vieną, kitas pritaikomas
+  bar.querySelector('#altQ0').addEventListener('change', e => { ST.aq0 = +e.target.value; if ((ST.aq1 ?? NQ - 1) <= ST.aq0) ST.aq1 = ST.aq0 + 1; save(); renderAlt(); });
+  bar.querySelector('#altQ1').addEventListener('change', e => { ST.aq1 = +e.target.value; if ((ST.aq0 ?? NQ - 3) >= ST.aq1) ST.aq0 = ST.aq1 - 1; save(); renderAlt(); });
   // grafikas: valdytojų bendra alternatyvų dalis kiekvieno ketvirčio pabaigoje
   const series = MGRS.map(m => {
     const fs = FUNDS.filter(f => f.pl === pl && f.p === m), pts = [];
@@ -518,11 +521,11 @@ function renderAlt() {
   const paint = () => drawColumns(el, cq, series.map(r => ({ id: r.provider, label: r.provider, vals: cq.map(i => at(r, i)) })), [], { height: 300 });
   renderAlt.paint = paint; paint();
   document.getElementById('altChartMeta').textContent = T().altChart;
-  document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${num(r.points[r.points.length - 1][1], 1)}%</b></span>`).join('');
+  document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${at(r, q1) == null ? '–' : num(at(r, q1), 1) + '%'}</b></span>`).join('');
   // lentelė: kiekvienas fondas – dalis per paskutinius ketvirčius ir pokytis nuo pasirinkto ketvirčio
   const cols = []; for (let i = Math.max(0, q1 - 7); i <= q1; i++) cols.push(i);
   if (!cols.includes(q0)) cols.unshift(q0);
-  const live = FUNDS.filter(f => f.pl === pl && f.last === q1);
+  const live = FUNDS.filter(f => f.pl === pl && f.q[q1]);
   const funds = live.filter(f => cols.concat([q0]).some(i => altShare(f, i) > 0));
   const none = [...new Set(live.filter(f => !funds.includes(f)).map(f => f.p))];
   const order = g => g === 'turto' ? '0' : g;
