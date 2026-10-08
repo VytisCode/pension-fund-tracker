@@ -1,0 +1,71 @@
+pillar,provider,fund,group,fee,fee_large,source
+II,SEB,SEB pensija 1961–1967,1961-1967,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB pensija 1968–1974,1968-1974,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB pensija 1975–1981,1975-1981,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB pensija 1982–1988,1982-1988,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB pensija 1989–1995,1989-1995,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB pensija 1996–2002,1996-2002,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB pensija 2003-2009,2003-2009,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SEB,SEB TIPF **,turto,0.2,0.2,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 1961-1967 Index Plus,1961-1967,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 1968-1974 Index Plus,1968-1974,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 1975-1981 Index Plus,1975-1981,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 1982-1988 Index Plus,1982-1988,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 1989-1995 Index Plus,1989-1995,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 1996-2002 Index Plus,1996-2002,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea pensija 2003-2009 Index Plus,2003-2009,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ARTEA,Artea TIPF **,turto,0.2,0.2,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 1961-1967,1961-1967,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 1968-1974,1968-1974,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 1975-1981,1975-1981,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 1982-1988,1982-1988,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 1989-1995,1989-1995,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 1996-2002,1996-2002,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank pensija 2003-2009,2003-2009,0.4,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,SWEDBANK,Swedbank TIPF **,turto,0.2,0.2,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 1961 - 1967,1961-1967,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 1968 - 1974,1968-1974,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 1975 - 1981,1975-1981,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 1982 - 1988,1982-1988,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 1989 - 1995,1989-1995,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 1996 - 2002,1996-2002,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor 2003 - 2009,2003-2009,0.49,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,LUMINOR,Luminor TIPF **,turto,0.19,0.19,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz X1 1961 - 1967,1961-1967,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz X2 1968 - 1974,1968-1974,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz X3 1975 - 1981,1975-1981,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz Y1 1982 - 1988,1982-1988,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz Y2 1989 - 1995,1989-1995,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz Y3 1996 - 2002,1996-2002,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz D1 2003 - 2009,2003-2009,0.5,0.4,pf-ii-mokesciai-2026-05-15.xls
+II,ALLIANZ,Allianz S TIPF **,turto,0.2,0.2,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 1961–1967,1961-1967,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 1968–1974,1968-1974,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 1975–1981,1975-1981,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 1982–1988,1982-1988,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 1989–1995,1989-1995,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 1996–2002,1996-2002,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex pensija 2003–2009,2003-2009,0.45,0.35,pf-ii-mokesciai-2026-05-15.xls
+II,GOINDEX,Goindex TIPF **,turto,0.18,0.18,pf-ii-mokesciai-2026-05-15.xls
+III,SEB,SEB pensija 18+,,0.85,0.85,PF_III_mokesciai_2026-01-21.xlsx
+III,SEB,SEB pensija 50+,,0.75,0.75,PF_III_mokesciai_2026-01-21.xlsx
+III,SEB,SEB pensija 58+,,0.65,0.65,PF_III_mokesciai_2026-01-21.xlsx
+III,SEB,SEB index. Klimato ateitis,,0.39,0.39,PF_III_mokesciai_2026-01-21.xlsx
+III,LUMINOR,Luminor ateitis 58+,,0.65,0.65,PF_III_mokesciai_2026-01-21.xlsx
+III,LUMINOR,Luminor ateitis 50–58,,0.8,0.8,PF_III_mokesciai_2026-01-21.xlsx
+III,LUMINOR,Luminor ateitis 16–50,,1.0,1.0,PF_III_mokesciai_2026-01-21.xlsx
+III,LUMINOR,Luminor tvari ateitis index,,0.4,0.4,PF_III_mokesciai_2026-01-21.xlsx
+III,LUMINOR,Luminor ateitis akcijų index,,0.49,0.49,PF_III_mokesciai_2026-01-21.xlsx
+III,ARTEA,Artea Ambicingas Active 16+,,1.5,1.5,PF_III_mokesciai_2026-01-21.xlsx
+III,ARTEA,Artea Stabilus 58+,,1.0,1.0,PF_III_mokesciai_2026-01-21.xlsx
+III,ARTEA,Artea Subalansuotas 47+,,0.8,0.8,PF_III_mokesciai_2026-01-21.xlsx
+III,ARTEA,Artea Ambicingas 16+,,0.8,0.8,PF_III_mokesciai_2026-01-21.xlsx
+III,ARTEA,Artea Ambicingas Index 16+,,0.59,0.59,PF_III_mokesciai_2026-01-21.xlsx
+III,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),,0.6,0.6,PF_III_mokesciai_2026-01-21.xlsx
+III,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),,0.6,0.6,PF_III_mokesciai_2026-01-21.xlsx
+III,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),,0.6,0.6,PF_III_mokesciai_2026-01-21.xlsx
+III,SWEDBANK,Swedbank Pensijos fondas 18+,,0.7,0.7,PF_III_mokesciai_2026-01-21.xlsx
+III,SWEDBANK,Swedbank Pensijos fondas 50+,,0.7,0.7,PF_III_mokesciai_2026-01-21.xlsx
+III,SWEDBANK,Swedbank Pensijos fondas 60+,,0.7,0.7,PF_III_mokesciai_2026-01-21.xlsx
+III,GOINDEX,Goindex pasaulio akcijų,,0.55,0.55,PF_III_mokesciai_2026-01-21.xlsx
+III,GOINDEX,Goindex subalansuotas,,0.55,0.55,PF_III_mokesciai_2026-01-21.xlsx

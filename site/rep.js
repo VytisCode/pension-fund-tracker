@@ -12,11 +12,11 @@ addStrings({
   kpiLead: 'Returns of the manager’s funds for the chosen period compared with the other managers’ funds in the same group and with the fund’s benchmark (SAA).',
   period: 'Period', per: { ytd: 'YTD', '1y': '1 year', '3y': '3 years', '5y': '5 years' }, endAt: 'To', endMonth: 'last month-end', endLast: 'latest day',
   cmp: 'Compare with',
-  thNet: 'Net return', thMed: 'Peer median', thGross: 'Gross return', thSaa: 'SAA (benchmark)', thNetD: 'Net − SAA', thGrossD: 'Gross − SAA',
+  thNet: 'Net return', thMed: 'Peer median', thGross: 'Gross return', thFee: 'Fee now, % a year', thSaa: 'SAA (benchmark)', thNetD: 'Net − SAA', thGrossD: 'Gross − SAA',
   thRank: 'Ranking in risk class', thN: 'Number of funds in risk class', thRisk: 'Risk class', thAum: 'AUM, €', thShare: 'Share',
   eq: v => `${num(v, 0)}% equity`, total: 'Total', pl2: 'II pillar', pl3: 'III pillar',
   cats: { bond: 'Bond funds', mixed: 'Mixed funds', equity: 'Equity funds' }, cpf: 'Capital preservation fund',
-  kpiNote: (a, e, lb) => `Period ${a} → ${e}; returns are cumulative. Peer median = median of the other managers’ funds in the same group (risk class = birth-year group in the II pillar, fund type in the III pillar). Ranking 1 = best in the group. Gross = net + fees added back pro rata: until 2025 the 2025 BAR of each fund (Bank of Lithuania, ${lb}), from 2026 assumed 0.40 % a year (0.20 % for capital preservation funds). SAA = the fund’s benchmark index, published daily only by SEB and Goindex. Risk class = equity share in the fund strategy (Bank of Lithuania). Total = AUM-weighted return.`,
+  kpiNote: (a, e, lb, lg) => `Period ${a} → ${e}; returns are cumulative. Peer median = median of the other managers’ funds in the same group (risk class = birth-year group in the II pillar, fund type in the III pillar). Ranking 1 = best in the group. Gross = net + fees added back pro rata: until 2025 the 2025 BAR of each fund (Bank of Lithuania, ${lb}), from 2026 the fee published by the Bank of Lithuania (0.40 % instead of 0.50 % for managers whose pension funds averaged over €2.5 bn last year, now ${lg}); III pillar: the published asset management fee for the whole period. SAA = the fund’s benchmark index, published daily only by SEB and Goindex. Risk class = equity share in the fund strategy (Bank of Lithuania). Total = AUM-weighted return.`,
   foot: 'Sources: providers’ unit values and net assets (collected automatically), Bank of Lithuania results reports. For information only, not investment advice.',
 }, {
   mgr: 'Valdytojas', calTitle: 'Grąža nuo 2019 m.',
@@ -31,11 +31,11 @@ addStrings({
   kpiLead: 'Valdytojo fondų grąža pasirinktu laikotarpiu, palyginti su kitų valdytojų tos pačios grupės fondais ir su fondo lyginamuoju indeksu (SAA).',
   period: 'Laikotarpis', per: { ytd: 'YTD', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai' }, endAt: 'Iki', endMonth: 'paskutinės mėn. pabaigos', endLast: 'paskutinės dienos',
   cmp: 'Palyginti su',
-  thNet: 'Grynoji grąža', thMed: 'Peer median', thGross: 'Bruto grąža', thSaa: 'SAA (indeksas)', thNetD: 'Grynoji − SAA', thGrossD: 'Bruto − SAA',
+  thNet: 'Grynoji grąža', thMed: 'Peer median', thGross: 'Bruto grąža', thFee: 'Mokestis dabar, % per metus', thSaa: 'SAA (indeksas)', thNetD: 'Grynoji − SAA', thGrossD: 'Bruto − SAA',
   thRank: 'Vieta rizikos klasėje', thN: 'Fondų skaičius klasėje', thRisk: 'Rizikos klasė', thAum: 'AUM, €', thShare: 'Dalis',
   eq: v => `${num(v, 0)}% akcijų`, total: 'Iš viso', pl2: 'II pakopa', pl3: 'III pakopa',
   cats: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fondai', equity: 'Akcijų fondai' }, cpf: 'Turto išsaugojimo fondas',
-  kpiNote: (a, e, lb) => `Laikotarpis ${a} → ${e}; grąža sukaupta per visą laikotarpį. Peer median = kitų valdytojų tos pačios grupės fondų grąžos mediana (rizikos klasė: II pakopoje – gimimo metų grupė, III pakopoje – fondo tipas). Vieta 1 = geriausias grupėje. Bruto = grynoji grąža + proporcingai pridėti atskaitymai: iki 2025 m. – kiekvieno fondo 2025 m. BAR (Lietuvos bankas, ${lb}), nuo 2026 m. – prielaida 0,40 % per metus (turto išsaugojimo fondams 0,20 %). SAA = fondo lyginamasis indeksas, kasdien jį skelbia tik SEB ir Goindex. Rizikos klasė = akcijų dalis fondo strategijoje (Lietuvos bankas). Iš viso = AUM pasverta grąža.`,
+  kpiNote: (a, e, lb, lg) => `Laikotarpis ${a} → ${e}; grąža sukaupta per visą laikotarpį. Peer median = kitų valdytojų tos pačios grupės fondų grąžos mediana (rizikos klasė: II pakopoje – gimimo metų grupė, III pakopoje – fondo tipas). Vieta 1 = geriausias grupėje. Bruto = grynoji grąža + proporcingai pridėti atskaitymai: iki 2025 m. – kiekvieno fondo 2025 m. BAR (Lietuvos bankas, ${lb}), nuo 2026 m. – Lietuvos banko skelbiamas mokestis (0,40 % vietoj 0,50 % bendrovėms, kurių pensijų fondų turto vidurkis praėjusiais metais viršijo 2,5 mlrd. Eur, dabar: ${lg}); III pakopa – skelbiamas valdymo mokestis nuo turto visam laikotarpiui. SAA = fondo lyginamasis indeksas, kasdien jį skelbia tik SEB ir Goindex. Rizikos klasė = akcijų dalis fondo strategijoje (Lietuvos bankas). Iš viso = AUM pasverta grąža.`,
   foot: 'Šaltiniai: bendrovių skelbiamos vieneto vertės ir grynieji aktyvai (renkami automatiškai), Lietuvos banko rezultatų ataskaitos. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 
@@ -44,7 +44,7 @@ const MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR
 var DATA = { providers: MGRS.map(m => ({ id: m, label: MLABEL[m] })) };
 const ORDER2 = ['turto', '1961-1967', '1968-1974', '1975-1981', '1982-1988', '1989-1995', '1996-2002', '2003-2009'];
 const ORDER3 = ['bond', 'mixed', 'equity'];
-const FEE_FROM_2026 = { life: 0.40, turto: 0.20 };        // prielaida (savininko SEB lentelė), kol nėra tikslių 2026 m. duomenų
+const FEE_FROM_2026 = { life: 0.40, turto: 0.20 };        // atsarginė reikšmė, jei fondo nėra data/fees.csv
 const M = REP.months, NM = M.length;
 const field = (label, html) => `<label class="field">${label} ${html}</label>`;
 function seg(id, opts, cur) {
@@ -70,12 +70,13 @@ function ret(f, a, b, bm) {                 // grąža %, null jei nėra abiejų
 }
 function firstIdx(f, from) { for (let i = from; i < NM; i++) if (f.m[i] != null) return i; return null; }
 function feeFor(f, d0, d1) {                // atskaitymai % per laikotarpį (proporcingai dienoms)
-  if (f.pl !== 'II' || f.bar == null) return null;
+  if (f.pl === 'III' ? f.fee == null : f.bar == null && f.fee == null) return null;
   let s = 0;
   for (let y = yearOf(d0); y <= yearOf(d1); y++) {
     const ys = Math.round(Date.UTC(y, 0, 1) / DAY), ye = Math.round(Date.UTC(y + 1, 0, 1) / DAY);
     const days = Math.max(0, Math.min(d1, ye) - Math.max(d0, ys));
-    const rate = y >= 2026 ? FEE_FROM_2026[f.g === 'turto' ? 'turto' : 'life'] : f.bar;
+    // II pakopa: iki 2025 m. – fondo 2025 m. BAR, nuo 2026 m. – LB skelbiamas mokestis; III pakopa – LB skelbiamas mokestis
+    const rate = f.pl === 'III' ? f.fee : y >= 2026 ? (f.fee ?? FEE_FROM_2026[f.g === 'turto' ? 'turto' : 'life']) : (f.bar ?? f.fee);
     s += rate * days / (ye - ys);
   }
   return s;
@@ -163,7 +164,7 @@ function renderKpi() {
     if (!fs.length) continue;
     const aumTot = fs.reduce((a, f) => a + (f.aum || 0), 0);
     let wsum = 0, wret = 0;
-    body += `<tr class="sep"><td colspan="15">${pl === 'II' ? T().pl2 : T().pl3}</td></tr>`;
+    body += `<tr class="sep"><td colspan="16">${pl === 'II' ? T().pl2 : T().pl3}</td></tr>`;
     body += fs.map(f => {
       const peers = REP.funds.filter(x => x.pl === pl && x.g === f.g);
       const net = r(f), med = median(peers.filter(x => x.p !== f.p).map(r));
@@ -174,15 +175,15 @@ function renderKpi() {
       if (net != null && f.aum) { wsum += f.aum; wret += f.aum * net; }
       const vs = (a, b) => a == null || b == null ? '' : a >= b ? 'good' : 'bad';
       const risk = pl === 'II' ? (f.risky == null ? '–' : T().eq(f.risky)) : (f.risky || '–');
-      return `<tr><td class="l">${shortName(f)}</td><td>${pc(net)}</td><td class="${vs(net, med)}">${pc(med)}</td><td>${pc(gross)}</td><td class="${vs(gross, saa)}">${pc(saa)}</td>`
+      return `<tr><td class="l">${shortName(f)}</td><td>${pc(net)}</td><td class="${vs(net, med)}">${pc(med)}</td><td>${pc(gross)}</td><td class="rsub">${f.fee == null ? '–' : num(f.fee, 2)}</td><td class="${vs(gross, saa)}">${pc(saa)}</td>`
         + `<td class="${net != null && saa != null ? (net >= saa ? 'up' : 'down') : ''}">${net != null && saa != null ? pp(net - saa) : '–'}</td><td class="${gross != null && saa != null ? (gross >= saa ? 'up' : 'down') : ''}">${gross != null && saa != null ? pp(gross - saa) : '–'}</td>`
         + cmpv.map((v, k) => `<td class="${k ? '' : 'bl'}">${pl === 'II' ? pc(v) : ''}</td>`).join('')
         + `<td class="bl">${rk ?? '–'}</td><td>${n || '–'}</td><td>${risk}</td><td class="bl">${f.aum ? num(f.aum, 0) : '–'}</td><td>${f.aum && aumTot ? pc(f.aum / aumTot * 100) : '–'}</td></tr>`;
     }).join('');
-    body += `<tr class="tot"><td class="l">${T().total}</td><td>${wsum ? pc(wret / wsum) : '–'}</td><td colspan="11"></td><td class="bl">${num(aumTot, 0)}</td><td>100%</td></tr>`;
+    body += `<tr class="tot"><td class="l">${T().total}</td><td>${wsum ? pc(wret / wsum) : '–'}</td><td colspan="12"></td><td class="bl">${num(aumTot, 0)}</td><td>100%</td></tr>`;
   }
-  document.getElementById('kpiTable').innerHTML = `<thead><tr><th class="l">${T().thFund}</th><th>${T().thNet}</th><th>${T().thMed}</th><th>${T().thGross}</th><th>${T().thSaa}</th><th>${T().thNetD}</th><th>${T().thGrossD}</th>${cols.map((m, k) => `<th class="${k ? '' : 'bl'}">${MLABEL[m]}</th>`).join('')}<th class="bl">${T().thRank}</th><th>${T().thN}</th><th>${T().thRisk}</th><th class="bl">${T().thAum}</th><th>${T().thShare}</th></tr></thead><tbody>${body}</tbody>`;
-  document.getElementById('kpiNote').textContent = T().kpiNote(short(M[ai]), short(endDay), REP.lbDate ? `${REP.lbDate.slice(0, 4)}-${REP.lbDate.slice(4, 6)}-${REP.lbDate.slice(6)}` : '');
+  document.getElementById('kpiTable').innerHTML = `<thead><tr><th class="l">${T().thFund}</th><th>${T().thNet}</th><th>${T().thMed}</th><th>${T().thGross}</th><th>${T().thFee}</th><th>${T().thSaa}</th><th>${T().thNetD}</th><th>${T().thGrossD}</th>${cols.map((m, k) => `<th class="${k ? '' : 'bl'}">${MLABEL[m]}</th>`).join('')}<th class="bl">${T().thRank}</th><th>${T().thN}</th><th>${T().thRisk}</th><th class="bl">${T().thAum}</th><th>${T().thShare}</th></tr></thead><tbody>${body}</tbody>`;
+  document.getElementById('kpiNote').textContent = T().kpiNote(short(M[ai]), short(endDay), REP.lbDate ? `${REP.lbDate.slice(0, 4)}-${REP.lbDate.slice(4, 6)}-${REP.lbDate.slice(6)}` : '', (REP.large || []).map(m => MLABEL[m]).join(', '));
 }
 
 function renderAllParts() {

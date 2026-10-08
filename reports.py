@@ -5,6 +5,9 @@
 - Strategijos akcijų (rizikingų aktyvų) dalis ir 2025 m. BAR (atskaitymai nuo turto) – iš Lietuvos banko II pakopos
   rezultatų failo imports/lb_results/2-pakopa-rezultatai-YYYYMMDD.xlsx (vieša LB ataskaita).
 - Paskutiniai grynieji aktyvai (AUM) – iš kasdienių duomenų.
+- Dabartiniai mokesčiai nuo turto – data/fees.csv (LB mokesčių failai, žr. import_lb_fees.py). II pakopoje mažesnis
+  mokestis (0,4 %, Goindex 0,35 %) taikomas, kai bendrovės visų pensijų fondų (II ir III pakopos) turto vidutinė
+  metinė vertė praėjusiais metais viršijo 2,5 mlrd. Eur (vertinama pagal LB ketvirčių pabaigos sumas).
 """
 import csv
 import re
@@ -82,6 +85,29 @@ def read_lb_results():
     return out, re.search(r"(\d{8})", files[-1].name).group(1)
 
 
+def read_fees():
+    """{(pakopa, tiekėjas, grupė arba fondas): (mokestis, mokestis didelei bendrovei)}"""
+    path, out = ROOT / "data" / "fees.csv", {}
+    if path.exists():
+        with path.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                key = r["group"] if r["pillar"] == "II" else r["fund"]
+                out[(r["pillar"], r["provider"], key)] = (float(r["fee"]), float(r["fee_large"]))
+    return out
+
+
+def large_companies(year):
+    """Bendrovės, kurių II+III pakopos fondų turto vidurkis praėjusiais metais (LB ketvirčių pabaigos) > 2,5 mlrd. Eur"""
+    tot = defaultdict(lambda: defaultdict(float))
+    path = ROOT / "data" / "portfolios.csv"
+    if path.exists():
+        with path.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                if r["date"].startswith(str(year - 1)):
+                    tot[r["provider"].upper()][r["date"]] += float(r["value"])
+    return {p for p, by_q in tot.items() if by_q and sum(by_q.values()) / len(by_q) > 2.5e9}
+
+
 def lb_code(provider, group):
     pref = {v: k for k, v in LB_PROVIDER.items()}[provider]
     if group == "turto":
@@ -95,6 +121,8 @@ def build():
 
     d2, d3 = read(ROOT / "data" / "nav_history.csv"), read(ROOT / "data" / "pillar3_history.csv")
     lb, lb_date = read_lb_results()
+    fees, fee_year = read_fees(), date.today().year
+    large = large_companies(fee_year)
     last_day = max(r[-1][0] for r in list(d2.values()) + list(d3.values()))
     ends = month_ends("2018-12-01", last_day)
     funds = []
@@ -121,9 +149,10 @@ def build():
                 "bm": at_month_ends(rows, ends, 3) if has_bm else None,
                 "bld": day_number(bm_last[0]) if bm_last else None, "blv": bm_last[3] if bm_last else None,
                 "risky": risky, "bar": bar,
+                "fee": (lambda x: (x[1] if prov in large else x[0]) if x else None)(fees.get((pillar, prov, g if pillar == "II" else name))),
                 "aum": round(aum[1]) if aum[1] else None, "aumd": day_number(aum[0]) if aum[0] else None,
             })
-    return {"months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date}
+    return {"months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date, "feeYear": fee_year, "large": sorted(large)}
 
 
 if __name__ == "__main__":
