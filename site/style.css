@@ -242,3 +242,7 @@ tr.gstart:first-child td { border-top: 0; }
 .idxchips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 .idxchips .chip .sw { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: 3px; }
 tr.idxrow td { color: var(--text-2); background: color-mix(in srgb, var(--text-3) 7%, var(--card)); }
+
+/* mokesčių poveikis */
+.feebar { display: inline-block; width: 60px; height: 8px; margin-right: 8px; vertical-align: 0; background: var(--grid); border-radius: 4px; overflow: hidden; }
+.feebar i { display: block; height: 100%; background: var(--dneg); border-radius: 4px; }
