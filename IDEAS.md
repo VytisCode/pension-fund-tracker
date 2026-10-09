@@ -27,7 +27,81 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-07 (vakaras).** Duomenų atnaujinimas vis dar „stringa“: GitHub tvarkaraštis paleidžia tik apie 2 iš 12 suplanuotų paleidimų per dieną. Todėl kiekvienas ciklas tikrina `python update.py status` ir `python pillar3.py status`: jei darbo dieną po 13:00 Vilniaus laiku dar trūksta laukiamos dienos duomenų, o „Update fund data“ per paskutinę valandą nebuvo paleistas ir dabar nevyksta, ciklas jį paleidžia pats (`actions_run_trigger`, `update.yml`, `main`) ir parašo apie tai laiške.
 - **2026-10-07 (vakaras).** Savininkas turi kasdienius AUM (grynųjų aktyvų) duomenis nuo ~2026-03-23 kitame kompiuteryje ir pabandys juos atsiųsti (svarbiausia Swedbank ir Luminor II pakopa 03-23–06-01, Swedbank III pakopa). Kai atsiųs – importuoti į istoriją ir patikslinti puslapio „Turtas (AUM)“ balandžio išmokėjimus. **2026-10-08: gauta** (tik II pakopa, 2026-03-23–10-06; III pakopos duomenų faile nėra). Importuota `import_owner_aum.py` (tik tušti laukai; nukopijuotos Swedbank eilutės 05-19 ir 05-28 bei 1968–1974 m. fondo 04-16 reikšmė praleistos). Balandžio išmokėjimai dabar pagal tikras dienas: Swedbank ir Luminor 04-07.
 - **2026-10-08 (laiškas, 09:12).** (1) Grąžos ir rizikos žemėlapyje reikia savų mygtukų laikotarpiui, fondams (amžiaus grupėms) ir valdytojams keisti, o taškų spalvos turi būti pagal valdytoją – dabar sunku susiorientuoti. – *atlikta (PR #30, 2026-10-08)*. (2) Risk-free rate: gerai, kad galima įrašyti savo skaičių, bet jis turi periodiškai pats atsinaujinti iš patikimo šaltinio, o šalia turi būti „i“ mygtukas su paaiškinimu, iš kur paimtas. Visi fondų dalyviai – EUR investuotojai. – *atlikta (PR #34, 2026-10-08): numatyta norma – ECB €STR, atnaujinama kiekvieną kartą generuojant svetainę; šalia „i“ su šaltiniu ir data; savo skaičių galima įrašyti, mygtukas „Grąžinti €STR“.*
+- **2026-10-09 (projekto pokalbis, 21:40).** Patvirtinti audito punktai – žr. skyrių „Audito užduotys (2026-10-09)“. Savaitgalį savininkas tik tvirtina PR, informaciją nori gauti tik el. paštu; užduočių eilę nustato Claude, padaryti kuo daugiau.
 - **2026-10-09 (laiškas, 16:30).** Mokesčių poveikis (Meet 9) rodyti **ir eurais, ir procentais**. – *atlikta (Meet 9)*
+
+---
+
+## Audito užduotys (2026-10-09) – PIRMENYBĖ
+
+Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai) ir patvirtino žemiau esančius. Numeriai – audito numeriai (pilnas tekstas: projekto failas `notes/auditas-2026-10-09.md`; čia surašyta viskas, ko reikia darbui). Visi žemiau – **patvirtinta**, pirmenybė prieš kitas idėjas. Vienas punktas = vienas PR. Eiliškumą nustato Claude (savininkas taip paprašė); siūloma eilė – kaip surašyta. Savaitgalį (10-10–10-11) savininkas labai užsiėmęs: tik tvirtina PR telefone, **visą informaciją nori gauti tik el. paštu**. Savininko Claude savaitės limitas 10-09 vakare jau 80 % (atsinaujina antradienį 21:00) – jei limitas baigsis, ciklą praleisti ir paminėti kitame laiške.
+
+**Pirmadienio (10-12) laiške priminti savininkui:**
+- **#1** SEB mokestis rodomas 0,50 %, LB faile yra ir 0,40 % (`fee_large`). Savininkas sako, kad sumažintas mokestis buvo taikomas labai trumpai; jis pabandys rasti, kiek laiko. Kol neatsakė – nieko nekeisti.
+- **#11** Artea Ambicingas Active 16+ didžiausias kritimas −78,8 % (2007–2009). Savininkas patikrins prie kompiuterio.
+
+**Nedaryti (savininkas atmetė):** #3 (reformos pardavimų neatskirti – reforma tęsis iki 2027 m. pabaigos), #4, #29, #33, #35, #37, #47, #56, #58, #62. **#13** – stulpelio „Sodra €“ neslėpti (gali prireikti, jei atsiras 2004 m. fondų duomenys).
+
+### 1. Klaidos ir smulkūs taisymai
+- **#18** [Rezultatai → Visa rinka] „Turto išsaugojimo“ užrašas užlipa ant pirmo langelio. Heatmap lentelėse rašyti **„TIF“**, užvedus pelę – „Turto išsaugojimo fondas“.
+- **#20 + lipnios antraštės** Portfeliai telefone 4 px platesni už ekraną (`tcTable` apvalkalas). **Papildomai (savininkas):** visose lentelėse antraštės eilutė turi būti fiksuota (sticky), kad slenkant žemyn matytųsi, kokie duomenys stulpeliuose.
+- **#19** [III pakopa, telefone] puslapis 590 px pločio – kaltas „Pradžia“ `select.st` su ilgu tekstu. `max-width:100%` arba trumpesnis tekstas.
+- **#21** [III pakopa → Visi III pakopos fondai] lentelė nukirsta ir kompiuteryje (matosi tik „A…“). Šešėlis/rodyklė dešiniame krašte arba mažiau stulpelių.
+- **#22** Visos plačios lentelės telefone – šešėlis kraštuose, kad matytųsi, jog galima slinkti; pirmas stulpelis užšaldytas. Bendras sprendimas `style.css` `.scroll`.
+- **#10** Visoje svetainėje „1 m.“/„3 m.“ painiojasi su „1 mėn.“/„3 mėn.“ – rašyti „1 metai“, „3 metai“, „5 metai“, „10 metų“; III pakopos lentelėse nurodyti, ar sukaupta, ar metinė.
+- **#2** [Portfeliai] obligacijos, kurių išpirkimo data ≤ ketvirčio pabaiga, žymimos ne „Pardavė visą“, o **„Išpirkta“** (atskira, gerai matoma žyma; savininkas nori, kad būtų matoma).
+- **#5** [Rezultatai → Bendra reitingų lentelė] Goindex lyginamas 16 kartų, kiti 30. Jungiklis „tik bendri laikotarpiai“ (kur dalyvauja visi 6) ir pastaba po lentele.
+- **#6** [Rezultatai → Automatinė santrauka] „Didžiausias 1 d. pokytis“ rodyti du stulpelius: didžiausias kilimas ir didžiausias kritimas.
+- **#7** [Rezultatai, 2003–2009 grupė] Savininko sprendimas: fondai, kurių vieneto vertė prasidėjo nuo 1 € 2025-01-02, turi būti įtraukti, kai pasirinkta „Šie metai“, „2025“ ir pan. Skaičiuoti nuo bendros datos – laikotarpio pradžios taškas tokiems fondams = pirmoji vertė (1,00 € 2025-01-02), kad SEB/Swedbank (nuo 2024-12-31) ir kiti (nuo 2025-01-02) būtų lyginami tarpusavyje, o ne atmetami dėl vienos dienos skirtumo.
+- **#8** [III pakopa] „Nuo bendros pradžios“ – meniu su daug pasirinkimų: kiekvieno fondo pavadinimas ir jo pradžios data („Nuo Luminor ateitis akcijų index pradžios (2026-01-21)“, „Nuo Goindex pasaulio akcijų pradžios (2022-08-22)“ …), kad būtų aišku, nuo kurio fondo pradžios rodoma ir skaičiuojama. Numatytoji bendra pradžia – be fondų, jaunesnių nei 1 m.
+- **#9** [III pakopa] kai grupėje ≤ 3 fondai, heatmap spalvos švelnesnės (ne ryškiai žalia už −0,8 %).
+- **#12** [Kelias į pensiją] dvi skirtingos „grąžos %“: tekste rašyti „investicijų grąža sudaro 36 % turto“, kortelėje „grąža nuo įmokų – 55,87 %“.
+- **#14** [Turtas (AUM)] ketvirčio sumas (Luminor, Swedbank iki 2025-12-31) piešti punktyru su taškais, ne ištisine linija.
+- **#15** [Ataskaitos → Grąža nuo 2019 m.] skaičius prieš fondo pavadinimą – pridėti antraštę „Vieta“.
+- **#16** [Ataskaitos ir visur, kur yra vidutinė metinė grąža] trumpiau veikiančių fondų vidurkį aiškiai pažymėti (`*` ir paaiškinimas), kad analitikas matytų, jog jis neobjektyviai palyginamas su ilgiau veikiančių; fondams < 1 m. metinės nerodyti.
+- **#17** Dienas, kai vertę skelbia tik vienas valdytojas (pvz. SEB 2026-04-06 Velykų pirmadienis), statistikoje ignoruoti (svyravimas, dienų skaičius, didžiausias pokytis). Istorinių duomenų netrinti – tik neįtraukti skaičiuojant.
+- **#24** [Kelias į pensiją → Pakeitimo norma ir turtas laike] mažų grafikų kortelės vienodo aukščio, legenda iškart po grafiku.
+- **#25** Visų grafikų X ašyje – mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), pirma žyma – laikotarpio pradžia.
+- **#26** Kiekvienam puslapiui savas `<title>` pagal kalbą („III pakopa · Pensijų fondai“).
+- **#27** Svetainės ženkliukas (SVG favicon) – dabar 404.
+- **#28** Numatytoji kalba – **LT** (EN lieka mygtuku).
+- **#30** [Ataskaitos] išversti „Performance KPI“, „Peer median“, „SAA“, „AUM“ (angliški – skliaustuose arba „i“).
+- **#31** Vienas skaičių formatas visur: **visada du skaitmenys po kablelio**, grąža su ženklu, LT – tarpas prieš %. **Papildomai:** visose stulpelinėse diagramose – reikšmės (data labels) virš stulpelių.
+- **#32** Amžiaus grupių tvarka visuose puslapiuose vienoda: turto išsaugojimo viršuje, toliau 1961–1967 … 2003–2009 (Meet A1).
+- **#34** [Rezultatai] apatinės lentelės priklauso nuo „Fondų palyginimo“ grupės: grupės pasirinkimas lipnus ir kiekvienos lentelės antraštėje grupė („Kalendorinių metų grąža · 2003–2009“).
+- **#36** Vienodas nuorodų stilius (dabar „šaltinis“ – standartinė mėlyna).
+- **#49** „–“ ir tuščios reikšmės: „Auksas –“ → „0,00 %“ arba „nėra“; lentelių „–“ su užuomina („fondas tada dar neveikė“).
+
+### 2. Jaukus dizainas (pagrindas)
+- **#38** Šilta paletė per `style.css` kintamuosius: fonas #FAF6EF, kortelės #FFFDF9, linijos #EAE2D6, tekstas #2B2622, akcentas terakota #C0643C arba giliai žalsva #2F6B5A; tamsi tema šiltai ruda-anglinė #1E1B18. Valdytojų spalvos atpažįstamos.
+- **#39** Heatmap švelnesnės spalvos: šalavijo žalia (#9DC3A5 → #5E9C76), molio raudona (#E8B4A0 → #C9765A), smėlinė vidurys; tikrinti kontrastą.
+- **#40** Šriftai: antraštėms serifinis (Fraunces arba Source Serif 4), tekstui Inter su `tabular-nums`. **Būtinai patikrinti, ar šriftas turi visas lietuviškas raides (ą č ę ė į š ų ū ž, didžiosios taip pat)** – geriausia laikyti šrifto failus repozitorijoje (`latin-ext`).
+- **#41** Nauja antraštė: ženkliukas + „Pensijų fondai“, eilutė „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ (vėluojantis – geltonas su vardu); navigacija vienoje eilutėje su ikonomis, lipni; įrankiai (Kopijuoti, Excel, Dienos lentelė, Spausdinti, Duomenys) – į „⋯ Įrankiai“ meniu; kalba ir tema – ikonos kampe.
+- **#46** Grafikai: 2 px linijos, paskutinė reikšmė etikete linijos gale, švelnesnis tinklelis, užuominos su visų fondų reikšmėmis surikiuotos. **Savininkas: per daug nesuapvalinti – analitikai mėgsta aštresnes linijas, tai ne dailės parodos puslapis.**
+- **#48** [III pakopa] to paties valdytojo keli fondai – skirtingas linijos tipas (ištisinė/punktyras/taškai) arba aiškiau skirtingi atspalviai.
+- **#45** Ilgi paaiškinimai po lentelėmis – po „Kaip skaityti? ▾“, matomas vienas sakinys.
+- **#44** Kortelių antraštė – automatinė išvada („2025 m. visi fondai krito ~20 %, atsigavo per 3 mėn.“), mažesnėmis raidėmis – lentelės pavadinimas.
+- **#50** KPI kortelės kiekvieno puslapio viršuje (kaip III pakopos puslapyje).
+- **#43** [Rezultatai ir palyginimas] ~7000 px puslapis: vidinė navigacija arba skirtukai („Santrauka · Visa rinka · Grupės palyginimas · Rizika · Mokesčiai · Kalendorius“). Nieko nepašalinti.
+- **#42** Pradžios puslapis „Šiandien trumpai“ (dabar `index.html` peradresuoja): 3–4 didelės kortelės (metų pradžios lyderis ir atsiliekantis, savaitės pokytis, II pakopos turtas iš viso), 2–3 automatiniai sakiniai, mažos kreivės, nuorodos „Plačiau →“. **Savininkas: be kreipinių į lankytoją („Labas“ ir pan.)** – dalykiškas tonas.
+- **#52** Telefone svarbiausios lentelės (santrauka, AUM) – kortelių režimu.
+- **#51** Spausdinimas / PDF: slėpti mygtukus, antraštė su data ir šaltiniais, lūžiai tarp kortelių. **Savininkas: spausdinant renkamasi iš dviejų dizainų – esamo (jaukaus) ir universalaus (neutralaus, baltas fonas, tinkamas prezentacijoms).** Lentelės ir paveikslėliai bus naudojami prezentacijose.
+
+### 3. Skaidrumas ir duomenų patikrinamumas
+- **#54** Šviežumo priminimai **visiems duomenims**, ne tik „Kelyje į pensiją“ (savininko 2026-10-09 sprendimas): LB portfelių ataskaitos, LB rezultatų ir mokesčių failai, ketvirčio AUM, indeksai, €STR. Bendras sąrašas su „kitų laukiama iki“ datomis ir viena juosta puslapio viršuje.
+- **#53** Puslapis „Apie ir metodika“: iš kur kiekvienas duomuo, kaip dažnai atnaujinama, formulės, prielaidos, žinomi netikslumai; be nuorodų į kodą ar GitHub. **Savininko papildymas (labai svarbu):** prie **kiekvienos lentelės ir diagramos** – galimybė atsisiųsti būtent to vaizdo Excel failą su: (1) naudotais pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis** (ne vien reikšmėmis), (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui (pvz. jei nesutampa su kolegos skaičiais) ir atsekti kiekvieną žingsnį. Dabartiniai Excel failai per sudėtingi suprasti. Daryti dalimis: pradėti nuo „Rezultatų“ heatmap ir rodiklių lentelių.
+- **#55** Po kiekviena lentele smulki eilutė: „Šaltinis: …, data · Metodika →“.
+- **#57** Žinomų apribojimų sąrašas „Apie“ puslapyje ir trumpai prie susijusių lentelių.
+
+### 4. Naujos funkcijos
+- **#67** „Kopijuoti vaizdą“ ir „Atsisiųsti PNG“ prie kiekvieno grafiko (savininkui labai patinka).
+- **#60** [Rezultatai] horizontali stulpelinė diagrama – laikotarpio grąža kiekvienam fondui, surikiuota, su reikšmėmis.
+- **#68** [Turtas] turto pokytį išskaidyti į grąžą, įmokas ir išmokas (reforma) – stulpeliai.
+- **#59** Automatinė **mėnesio apžvalga** (PDF, kurį savininkas galėtų persiųsti el. paštu) ir atskira **ketvirčio apžvalga** apie viską, kas svarbu: portfelių pokyčiai, išskirtinumai. Analitikai mėgsta palyginamumą: kas pasikeitė **per mėnesį, ketvirtį, YTD ir YoY**.
+- **#63** [Portfeliai] valdytojų panašumas – kiek portfelio sutampa (bendros pozicijos), unikaliausias valdytojas; lyginti įvairiais kampais (regionai, turto klasės, TER, alternatyvos), ieškoti įdomių atradimų.
+- **#61 + #64** Vieno fondo **arba vieno valdytojo** puslapis: grąžos visais laikotarpiais, vieta grupėje, mokestis, turtas, portfelio sudėtis, 10 didžiausių pozicijų, rizika. **Savininkas:** pasirinkus valdytoją, puslapis įgauna to valdytojo spalvas (Swedbank – oranžinė, SEB – žalia ir t. t.), kad jaustumeisi kaip tos bendrovės atstovas. Sujungti su #64: spausdinama vieno A4 lapo valdytojo suvestinė. Didelė užduotis – skaidyti į kelis PR.
+- **#65** [Kelias į pensiją] ateities scenarijai (pesimistinis/vidutinis/optimistinis). Savininkas klausia, kaip prognozuoti valstybinę (Sodros) pensiją – pirmiausia paieškoti oficialių prognozių (Sodros pensijų skaičiuoklė, Finansų / Socialinės apsaugos ir darbo ministerijos projekcijos, EK „Ageing Report“ ir „Pension Adequacy Report“ apie Lietuvą); jei patikimų nėra – parodyti tik kaupimo dalį ir aiškiai pažymėti prielaidas. Laiške trumpai pranešti, ką rasta.
+- **#66** Žodynėlis (užuominos ant terminų) – **neprioritetinė**, daryti paskutinę.
 
 ---
 
