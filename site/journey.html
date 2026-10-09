@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pension fund tracker</title>
+<meta name="description" content="Lithuanian II pillar: one participant's path from the first contribution to retirement">
+<link rel="stylesheet" href="style.css">
+<style>
+  h2.sec { margin: 26px 0 4px; font-size: 19px; }
+  h2.sec .btn.xls { font-size: 12px; padding: 3px 9px; margin-left: 8px; vertical-align: 2px; font-weight: 500; }
+  p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 920px; }
+  .bar select, .bar input { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .kpis.k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 860px) { .kpis, .kpis.k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .kpi .l { color: var(--text-3); font-size: 12px; }
+  .kpi .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .kpi .s { color: var(--text-3); font-size: 12px; margin-top: 2px; }
+  .kpi.hl { border-color: var(--accent); }
+  .up { color: var(--s5); } .down { color: #d0453f; }
+  .story { font-size: 14px; line-height: 1.6; max-width: 920px; margin: 0; }
+  .story p { margin: 0 0 8px; }
+  .prof { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 18px; font-size: 13px; color: var(--text-2); margin-top: 10px; }
+  @media (max-width: 860px) { .prof { grid-template-columns: 1fr; } }
+  .prof b { color: var(--text); font-weight: 600; }
+  .two { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+  .shares .row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .shares .row span:nth-child(3) { color: var(--text-3); min-width: 42px; text-align: right; }
+  .sbar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; gap: 2px; margin: 4px 0 10px; }
+  table.jt { font-size: 13px; }
+  table.jt th { white-space: normal; vertical-align: bottom; }
+  table.jt td.l, table.jt th.l { text-align: left; }
+  table.jt tr.sw td { background: color-mix(in srgb, #f2c94c 22%, var(--card)); }
+  table.jt td.bl, table.jt th.bl { border-left: 1px solid var(--line); }
+  table.jt td.est { color: var(--text-3); }
+  #pop { max-width: 560px; white-space: pre-line; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <div class="bar sticky" id="inBar"></div>
+
+  <h2 class="sec" id="sumTitle"></h2>
+  <div class="kpis" id="kpiA"></div>
+  <h2 class="sec" id="incTitle"></h2>
+  <div class="kpis k4" id="kpiB"></div>
+  <section class="card" style="margin-top:14px"><div class="story" id="story"></div><div class="prof" id="prof"></div></section>
+
+  <h2 class="sec" id="chTitle"></h2>
+  <div class="two">
+    <section class="card"><div class="meta" id="chMeta"></div><div class="chart" id="chart" style="position:relative"></div><div class="legend" id="chLegend" style="margin-top:6px"></div></section>
+    <section class="card"><div class="meta" id="shMeta"></div><div class="shares" id="shares"></div></section>
+  </div>
+
+  <h2 class="sec" id="tbTitle"></h2>
+  <p class="lead" id="tbLead"></p>
+  <div class="bar" id="tbBar" style="margin-bottom:12px"></div>
+  <section class="card"><div class="scroll"><table class="jt" id="tbl"></table></div><p class="note" id="tbNote"></p></section>
+
+  <footer id="foot"></footer>
+</div>
+<div id="pop" role="dialog"></div>
+<script src="common.js"></script>
+<script src="data.js"></script>
+<script src="data_journey.js"></script>
+<script src="journey.js"></script>
+</body>
+</html>

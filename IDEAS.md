@@ -54,6 +54,12 @@ Visos patvirtintos savininko. Pirmenybė prieš kitas idėjas.
 
 ## Savininko idėjos
 
+### Polapis „Kelias į pensiją“ (Retirement Journey)
+- **Būsena:** daroma (2026-10-09, PR laukia savininko atsakymų)
+- **Autorius:** savininkas (Excel modelis ir aprašas, 2026-10-09)
+- **Kas:** vieno dalyvio kaupimas nuo pirmos Sodros įmokos iki šiandien: įmokos pagal šaltinį, fondo vienetai, sukaupta suma, anuitetas, pakeitimo norma ir reali vertė po infliacijos. Keičiami gimimo metai, pradžia, atlyginimas, įmokų tarifas, valdytojas nuo 2019 m. ir data. Pradinės lentelės – `imports/journey/`, modelis – `site/journey.js`.
+- **Laukia iš savininko:** Excel failas (tikslios SEB pensija 2/3 vieneto vertės 2004–2018 ir VKI eilutė po 2025-06); ar ketvirtinės įmokos 2004–2010 turi būti už 3 mėn.; ar 2025-09-30 eilutė yra tik įvertinimas.
+
 ### Nerodyti vėliau atsiradusių fondų nuo dirbtinės pradžios
 - **Būsena:** atlikta (PR #2, 2026-10-06)
 - **Autorius:** savininkas
