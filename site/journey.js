@@ -718,6 +718,7 @@ function renderAll() {
   if (!SIM) return;
   renderKpis(); renderAnnuity(); renderStory(); renderCompare(); renderChart(); renderIdx(); renderGrid(); renderTable();
   document.getElementById('foot').textContent = T().foot;
+  if (typeof renderInsights === 'function') renderInsights();
 }
 document.addEventListener('click', e => {
   if (e.target.closest('.xls')) { download().catch(err => alert('Excel: ' + err)); return; }
