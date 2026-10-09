@@ -202,11 +202,27 @@ def pensions():
         b.close()
 
 
+def pensions_sdmx():
+    """Vidutinė senatvės pensija iš osp-rs.stat.gov.lt SDMX (be Cloudflare)."""
+    flows = get("osp_dataflows.xml", "https://osp-rs.stat.gov.lt/rest_xml/dataflow/")
+    if not flows:
+        return
+    txt = flows.decode("utf-8", "replace")
+    hits = re.findall(r'<str:Dataflow[^>]*id="([^"]+)"[^>]*>(.*?)</str:Dataflow>', txt, re.S)
+    keep = [(fid, re.findall(r'<com:Name[^>]*>([^<]+)</com:Name>', body)) for fid, body in hits]
+    keep = [(fid, n) for fid, n in keep if any(re.search(r"pensij|pension", x, re.I) for x in n)]
+    (OUT / "osp_pension_flows.json").write_text(json.dumps(keep, ensure_ascii=False, indent=1), encoding="utf-8")
+    log("osp pension flows", len(keep))
+    for fid, n in keep:
+        if any(re.search(r"senatv|old-age", x, re.I) for x in n) and any(re.search(r"vidutin|average", x, re.I) for x in n):
+            get(f"osp_{fid}.xml", f"https://osp-rs.stat.gov.lt/rest_xml/data/{fid}")
+
+
 if __name__ == "__main__":
     want = sys.argv[1:] or ["indexes", "cpi", "methodology", "sodra"]
     for w in want:
         try:
-            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "cpi3": cpi3, "etar": etar_browser, "pensions": pensions, "methodology": methodology, "sodra": sodra_calc}[w]()
+            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "cpi3": cpi3, "etar": etar_browser, "pensions": pensions, "pensions_sdmx": pensions_sdmx, "methodology": methodology, "sodra": sodra_calc}[w]()
         except Exception as e:  # noqa: BLE001
             log("STEP FAIL", w, repr(e))
     (OUT / "log.txt").write_text("\n".join(LOG), encoding="utf-8")
