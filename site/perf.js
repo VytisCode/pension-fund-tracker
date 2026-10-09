@@ -22,6 +22,7 @@ addStrings({
   thInception: 'Inception', thCagr: 'Return p.a. since inception', thVolAll: 'Volatility p.a. since inception', thMddAll: 'Max drawdown since inception',
   thRet1m: '1 mo', thRet3m: '3 mo', thRet6m: '6 mo', thRet1y: '1 yr', thRet3y: '3 yr p.a.', thRet5y: '5 yr p.a.',
   thR1avg: 'Rolling 1-yr: average', thR1min: 'min', thR1max: 'max', thR1pos: '% positive', thYear: 'Year',
+  csLbl: 'Chart start', csPeriod: 'Start of the period', csYoung: 'Since the youngest fund’s start', csFrom: p => `Since ${p} start`,
   ytd: 'YTD', mChart: (g, p) => `${g} · ${p}. Returns rebased to 0 % at the start of the period.`,
   mZoom: (g, a, b) => `${g} · zoomed ${a} → ${b}. Returns rebased to 0 % at the start of the zoomed range.`,
   nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
@@ -93,6 +94,7 @@ addStrings({
   thInception: 'Pradžia', thCagr: 'Metinė grąža nuo įsteigimo', thVolAll: 'Svyravimas per metus nuo įsteigimo', thMddAll: 'Didžiausias kritimas nuo įsteigimo',
   thRet1m: '1 mėn.', thRet3m: '3 mėn.', thRet6m: '6 mėn.', thRet1y: '1 m.', thRet3y: '3 m., metinė', thRet5y: '5 m., metinė',
   thR1avg: 'Slenkanti 1 m.: vidurkis', thR1min: 'min.', thR1max: 'maks.', thR1pos: '% teigiamų', thYear: 'Metai',
+  csLbl: 'Grafiko pradžia', csPeriod: 'Laikotarpio pradžia', csYoung: 'Nuo jauniausio fondo pradžios', csFrom: p => `Nuo ${p} pradžios`,
   ytd: 'Šie metai', mChart: (g, p) => `${g} · ${p}. Grąža perskaičiuota į 0 % laikotarpio pradžioje.`,
   mZoom: (g, a, b) => `${g} · priartinta ${a} → ${b}. Grąža perskaičiuota į 0 % priartinto laikotarpio pradžioje.`,
   nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
@@ -147,7 +149,7 @@ const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];          
 const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false };
+  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
@@ -439,11 +441,25 @@ function animateMr(target) {
   mrAnim = requestAnimationFrame(step);
 }
 let chartRef = null;
+/* grafiko pradžia: pagal laikotarpį (numatyta), nuo pasirinkto fondo pradžios arba nuo jauniausio fondo pradžios */
+function chartStart(g, fs, rng) {
+  const starts = fs.map(f => ({ id: f.provider, d: f.d[0] }));
+  const young = starts.length ? Math.max(...starts.map(x => x.d)) : null;
+  const sel = $('csSel'), cur = P.cs;
+  sel.innerHTML = `<option value="">${T().csPeriod}</option><option value="young">${T().csYoung}${young !== null ? ` (${iso(young)})` : ''}</option>`
+    + starts.slice().sort((a, b) => a.d - b.d).map(x => `<option value="${x.id}">${T().csFrom(labelOf(x.id))} (${iso(x.d)})</option>`).join('');
+  sel.value = cur && (cur === 'young' || starts.some(x => x.id === cur)) ? cur : '';
+  $('csLbl').textContent = T().csLbl;
+  if (!sel.value) return null;
+  const d = cur === 'young' ? young : starts.find(x => x.id === cur).d;
+  return d < rng.end ? d : null;
+}
 function drawChart() {
   if (P.group === 'all') return;
   const g = byId(P.group), rng = rangeFor(g, true);
-  const x0 = P.zoom ? P.zoom[0] : rng.anchor, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
   const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
+  const cs = chartStart(g, fs, rng), a0 = cs ?? rng.anchor;
+  const x0 = P.zoom ? P.zoom[0] : a0, x1 = P.zoom ? Math.min(P.zoom[1], rng.end) : rng.end;
   const series = buildSeries(fs, x0, x1);
   const sortedEv = EVENTS.map((e, i) => ({ day: dayOf(e.day), n: i + 1, title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day);
   if (P.view === 'diff') {                                       // skirtumas nuo grupės vidurkio arba pasirinkto tiekėjo,
@@ -463,7 +479,7 @@ function drawChart() {
     chartRef = refS ? labelOf(P.diffRef) : null;
   }
   const evs = P.events ? sortedEv.filter(e => e.day >= x0 && e.day <= x1) : [];
-  $('mChart').textContent = (P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${periodText()} (${iso(rng.anchor)} → ${iso(rng.end)})`)) + (P.view === 'diff' ? ' ' + T().mDiff(chartRef) : '');
+  $('mChart').textContent = (P.zoom ? T().mZoom(groupLabel(g), iso(x0), iso(x1)) : T().mChart(groupLabel(g), `${cs !== null ? $('csSel').selectedOptions[0].textContent.replace(/ \(.*\)$/, '') : periodText()} (${iso(a0)} → ${iso(rng.end)})`)) + (P.view === 'diff' ? ' ' + T().mDiff(chartRef) : '');
   const late = series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
   if (late.length) $('mChart').textContent += ' ' + T().notShown(late.join(', '));
   $('resetZoom').hidden = !P.zoom;
@@ -789,7 +805,7 @@ function downloadPng() {
 }
 
 /* ---------- valdikliai ---------- */
-function resetZoom() { P.zoom = null; }
+function resetZoom() { P.zoom = null; P.cs = null; }   // laikotarpio ar grupės keitimas grąžina ir pradžią į laikotarpio pradžią
 function buildControls() {
   const pe = $('periods');
   [...PRESET_IDS, 'custom'].forEach(id => {
@@ -836,7 +852,8 @@ function buildControls() {
     $('chart').addEventListener('mouseleave', () => animateMr(16));
   }
   $('diffRef').addEventListener('change', e => { P.diffRef = e.target.value; saveState(); drawChart(); });
-  $('resetZoom').addEventListener('click', () => { resetZoom(); drawChart(); });
+  $('resetZoom').addEventListener('click', () => { P.zoom = null; drawChart(); });
+  $('csSel').addEventListener('change', e => { P.cs = e.target.value || null; P.zoom = null; drawChart(); });
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
   $('btnAdv').addEventListener('click', () => { P.adv = !P.adv; saveState(); renderFunds(); });
