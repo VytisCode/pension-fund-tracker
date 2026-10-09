@@ -193,8 +193,8 @@ def pensions():
         for name, url in [("osp_rodikliai", "https://osp.stat.gov.lt/pagrindiniai-salies-rodikliai"),
                           ("sodra_rodikliai", "https://www.sodra.lt/statistika/pagrindiniai-socialiniai-rodikliai")]:
             try:
-                pg.goto(url, wait_until="networkidle", timeout=90000)
-                pg.wait_for_timeout(6000)
+                pg.goto(url, wait_until="domcontentloaded", timeout=90000)
+                pg.wait_for_timeout(15000)
                 (OUT / f"{name}.txt").write_text(pg.locator("body").inner_text(), encoding="utf-8")
                 log("ok", name)
             except Exception as e:  # noqa: BLE001
