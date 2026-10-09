@@ -9,7 +9,7 @@ Lentelės (pildomos rankomis, kai paskelbiami nauji duomenys):
 - wages.csv           – vidutinis mėnesinis darbo užmokestis (bruto, neto), osp.stat.gov.lt;
 - pensions.csv        – vidutinė senatvės pensija, osp.stat.gov.lt;
 - cpi.csv             – vartotojų kainų indeksas (VKI) pagal mėnesį;
-- min_wage.csv        – minimali mėnesinė alga (bruto – Eurostat, neto nuo 2019 m. – apskaičiuota).
+- min_wage.csv        – minimali mėnesinė alga, metų vidurkis (bruto ir neto – osp.stat.gov.lt; neto skelbiamas nuo 2010 m.).
 II pakopos fondų vieneto vertės imamos iš docs/data.js, III pakopos – iš docs/data3.js (žr. build_site.build_journey).
 """
 import csv
@@ -38,7 +38,7 @@ def build() -> dict:
         "wages": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("wages.csv")},
         "pensions": {r["year"]: _f(r["avg_old_age_pension"]) for r in _rows("pensions.csv")},
         "cpi": {r["month"]: _f(r["cpi"]) for r in _rows("cpi.csv")},
-        "minWage": [[r["from"], _f(r["gross"]), _f(r["net"])] for r in _rows("min_wage.csv")],
+        "minWage": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("min_wage.csv")},
         "annuity": ANNUITY_PER_1000,
     }
 

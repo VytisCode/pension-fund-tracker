@@ -1,21 +1,33 @@
-from,gross,net,source
-2004-01-01,130,,Eurostat earn_mw_cur
-2004-07-01,145,,Eurostat earn_mw_cur
-2005-07-01,159,,Eurostat earn_mw_cur
-2006-07-01,174,,Eurostat earn_mw_cur
-2007-07-01,203,,Eurostat earn_mw_cur
-2008-01-01,232,,Eurostat earn_mw_cur
-2013-01-01,290,,Eurostat earn_mw_cur
-2015-01-01,300,,Eurostat earn_mw_cur
-2015-07-01,325,,Eurostat earn_mw_cur
-2016-01-01,350,,Eurostat earn_mw_cur
-2016-07-01,380,,Eurostat earn_mw_cur
-2018-01-01,400,,Eurostat earn_mw_cur
-2019-01-01,555,395.77,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2020-01-01,607,437.24,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2021-01-01,642,468.41,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2022-01-01,730,533.65,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2023-01-01,840,633.20,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2024-01-01,924,708.42,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2025-01-01,1038,777.39,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
-2026-01-01,1153,846.96,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+year,gross,net,source
+1995,39,,osp.stat.gov.lt
+1996,69.5,,osp.stat.gov.lt
+1997,108.4,,osp.stat.gov.lt
+1998,120.9,,osp.stat.gov.lt
+1999,124.5,,osp.stat.gov.lt
+2000,124.5,,osp.stat.gov.lt
+2001,124.5,,osp.stat.gov.lt
+2002,124.5,,osp.stat.gov.lt
+2003,126.5,,osp.stat.gov.lt
+2004,140,,osp.stat.gov.lt
+2005,152.1,,osp.stat.gov.lt
+2006,166.5,,osp.stat.gov.lt
+2007,188.3,,osp.stat.gov.lt
+2008,231.7,,osp.stat.gov.lt
+2009,231.7,,osp.stat.gov.lt
+2010,231.7,196,osp.stat.gov.lt
+2011,231.7,196,osp.stat.gov.lt
+2012,237.7,207,osp.stat.gov.lt
+2013,289.6,238,osp.stat.gov.lt
+2014,292.2,248,osp.stat.gov.lt
+2015,312.5,261,osp.stat.gov.lt
+2016,365,315.5,osp.stat.gov.lt
+2017,380,335,osp.stat.gov.lt
+2018,400,361,osp.stat.gov.lt
+2019,555,395,osp.stat.gov.lt
+2020,607,442,osp.stat.gov.lt
+2021,642,468,osp.stat.gov.lt
+2022,730,533,osp.stat.gov.lt
+2023,840,633,osp.stat.gov.lt
+2024,924,708,osp.stat.gov.lt
+2025,1038,777,osp.stat.gov.lt
+2026,1153,,socmin.lrv.lt (net not published yet)
