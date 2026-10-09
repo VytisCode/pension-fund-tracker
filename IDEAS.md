@@ -76,7 +76,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *atlikta (PR #50, 2026-10-09)*
 9. **Mokesčių poveikis laike:** kiek valdymo mokesčiai sukaupia per 5–10 m., palyginti tarp fondų. – *patvirtinta* (dėl 5–9: įtraukti visas, nereikalingas išmesti vėliau)
 10. **Valdomo turto (AUM) kaita** kiekvienam II pakopos fondui kas ketvirtį: grafikas ir lentelė (pensijų reformos kontekstas). Pradėti nuo turimų duomenų. – *patvirtinta*
-11. **Lankstus laikotarpis linijiniuose grafikuose:** „Visa istorija“ lieka; papildomai „nuo [fondo] pradžios“ ir mygtukas „nuo jauniausio fondo pradžios“. – *patvirtinta*
+11. **Lankstus laikotarpis linijiniuose grafikuose:** „Visa istorija“ lieka; papildomai „nuo [fondo] pradžios“ ir mygtukas „nuo jauniausio fondo pradžios“. – *atlikta (PR #54, 2026-10-09: „Grafiko pradžia“ – laikotarpio pradžia, nuo bet kurio fondo pradžios arba nuo jauniausio fondo pradžios)*
 
 **B. Naujas puslapis „Ataskaitos“ (Reports)**
 12. **Puslapis su valdymo bendrovės pasirinkimu** viršuje; visos lentelės rodo tik jos duomenis. – *atlikta (puslapis „Ataskaitos“, 2026-10-08: grąža nuo 2019 m. ir mėnesių grąža kaip savininko lentelėse)*
