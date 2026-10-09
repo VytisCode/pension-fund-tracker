@@ -13,7 +13,7 @@ const PAYS = ['avg', 'mma', '50', '150', '200', '300'];
 
 addStrings({
   navJourney: 'Retirement journey',
-  inPl: 'Pillar', pl2: 'II pillar', pl3: 'III pillar',
+  inPl: 'Pillar', pl2: 'II pillar', pl3: 'III pillar', plBoth: 'II + III', plBothL: 'II and III pillars',
   inBirth: 'Born', inStart: 'Started saving', inPay: 'Salary', inRate: 'Contribution rate', rMax: 'Maximum (3 %)', rGrad: 'Gradual',
   inMgr: 'Manager', inFund: 'Fund', inC3: 'Own contribution', c3pct: '% of gross salary', c3eur: '€ per month', inAsof: 'Data until',
   pay: { avg: 'Average', mma: 'Minimum (MMA)', 50: '50 % of average', 150: '150 % of average', 200: '200 % of average', 300: '300 % of average' },
@@ -23,36 +23,47 @@ addStrings({
   kAssets: 'Accumulated pension assets', kContrib: 'Contributions (nominal)', kReal: 'Contributions in today’s prices', kGainE: 'Growth after inflation, €', kGainP: 'Growth after inflation, %',
   kState: y => `State pension (${y})`, kRr: 'Replacement rate without savings', kAnn: 'Annuity, € / month', kAddRr: 'Extra replacement rate from savings', kTotal: 'Total monthly pension',
   kNet: y => `Net salary (${y})`, kSal: 'Assets in net salaries', kYears: 'Years the annuity would cover', kRrTot: 'Total replacement rate',
-  cmpTitle: 'Average vs minimum wage, II vs III pillar', cmpLead: 'The same person (birth year, start, data date) in four cases. II pillar: 3 % of gross salary plus the state incentive, from 2019. III pillar: own contributions only, from the chosen III pillar fund’s start.',
+  cmpTitle: 'Average vs minimum wage, II vs III pillar', cmpLead: 'The same person (birth year, start, data date) in six cases. II pillar: 3 % of gross salary plus the state incentive, from 2019. III pillar: own contributions only, from the chosen III pillar fund’s start. II + III: both together, each from its own start.',
   cmpH: ['Case', 'Since', 'Own contribution, € / month', 'Of net salary', 'Own contributions', 'State', 'Assets', 'Growth after inflation', 'Annuity, € / month', 'Extra replacement rate'],
   cmpNote: 'Own contribution = the latest monthly contribution; “of net salary” = that ÷ the net salary of the same year (average and minimum wage, gross and net: Statistics Lithuania). The II pillar 3 % is always calculated from gross salary. Bold = the case shown above.',
   chTitle: 'How the assets grew', chMeta: 'Accumulated assets by source, €', shMeta: 'Where the money came from',
   srcName: { s: 'Sodra', v: 'State', d: 'Participant', r: 'Investment return' }, value: 'Assets',
   tbTitle: 'Calculation', tbLead: 'Each row is a Sodra transfer date (or a fund change, highlighted). The Excel file has every row with formulas.',
-  tbYear: 'By year', tbAll: 'All rows',
+  tbYear: 'By year', tbAll: 'All rows', tbLeadBoth: 'II and III pillar by year. The Excel file has a separate calculation sheet for each pillar with every row and formula, and a summary that adds them up.',
   th: { date: 'Date', fund: 'Fund', wage: 'Gross salary', rs: 'Sodra %', cs: 'Sodra €', ss: 'Sodra Σ', rv: 'State €/mo', rd: 'Particip. %', cv: 'State €', cd: 'Particip. €', ct: 'Contribution €',
     price: 'Unit value €', bought: 'Units bought', units: 'Units total', val: 'Assets €', sv: 'State Σ', sd: 'Particip. Σ', st: 'Contributions Σ', ret: 'Return €', retp: 'Return %',
     ann: 'Annuity €/mo', pen: 'Avg pension', net: 'Net salary', tot: 'Pension with savings', rr0: 'Repl. rate without', rr1: 'Repl. rate with', rrd: 'Extra repl. rate',
     cpi: 'CPI', real: 'Contribution in today’s prices', gainE: 'Real growth €', gainP: 'Real growth %', year: 'Year', yc: 'Contributions in year €', ye: 'Assets at year end €' },
   swRow: (a, b) => `Fund change: ${a} → ${b}`, quarter: '×3 mo.',
   estNote: e => `Estimates (no official figure yet, the latest known one is used): ${e}.`,
-  story: x => [`This participant began saving in the ${x.pl} in ${x.start}, at the age of ${x.ageStart}. Earning ${x.payL}, they have been saving for ${x.years} years. On ${x.date} the accumulated assets are ${x.assets} €, while all contributions in today’s prices are worth ${x.real} €. After inflation the assets ${x.gainP >= 0 ? 'have grown' : 'have shrunk'} by ${x.gainPs} in real terms.`,
+  story: x => [`This participant began saving in the ${x.plName} in ${x.start}, at the age of ${x.ageStart}. Earning ${x.payL}, they have been saving for ${x.years} years. On ${x.date} the accumulated assets are ${x.assets} €, while all contributions in today’s prices are worth ${x.real} €. After inflation the assets ${x.gainP >= 0 ? 'have grown' : 'have shrunk'} by ${x.gainPs} in real terms.`,
     `The participant’s own contribution is ${x.own} € a month${x.ownNet ? `, ${x.ownNet} of the net salary` : ''}. ${x.retShare >= x.maxShare ? 'Investment returns make up the largest part of the assets' : 'The largest part of the assets comes from ' + (x.maxKey === 'd' ? 'own contributions' : 'the state')} (returns: ${x.retPs}).`,
     `If they retired today, the total monthly income would be ${x.total} € – ${x.rr1} of the net salary. The assets equal ${x.sal} monthly net salaries.`],
   prof: x => [`<b>Born</b> ${x.birth}`, `<b>Started saving</b> ${x.start}, at ${x.ageStart}`, `<b>Retirement</b> ${x.ret}, at 65 (${x.left} years to go)`, `<b>Earnings</b> ${x.payL}`, `<b>Contribution</b> ${x.rateL}`, `<b>Fund path</b> ${x.path}`],
+  ann: { h: ['Sodra annuity type', '€ / month', 'Per 1000 €', 'How it works'], std: 'Standard annuity', inh: 'Inheritable standard annuity', def: 'Deferred annuity',
+    stdD: 'Paid for life; the highest monthly amount; not inherited.', inhD: 'Paid for life; if the person dies before 85, heirs get the payments due until 85.',
+    defD: s => `${s} of the assets buy an annuity paid from 85; until then the fund pays the rest as periodic payments (shown: rest ÷ months until 85, without returns).`,
+    defA: 'from 85', defP: 'until 85',
+    note: (lm, fa, x) => `2026 limits: with assets below ${lm} € the whole sum may be taken as a lump sum; above ${fa} € the part above the limit may be taken out. ${x}` },
+  grid: { title: 'Replacement rate and assets over time', lead: 'The same participant day by day: how much savings add to the pension and how the assets grew. Charts follow the owner’s Excel dashboard.',
+    rrPct: 'Replacement rate without and with savings, %', without: 'Without savings', with: 'With savings', addPct: 'Extra replacement rate, %', assets: 'Accumulated pension assets, €',
+    ret: 'Investment return, %', rrEur: 'Pension without and with savings, €', avgPen: 'Average old-age pension', penWith: 'Pension with savings', addEur: 'Extra pension from savings (annuity), €',
+    assetsC: 'Assets and contributions, €', own: 'Own contributions', allC: 'All contributions', na: 'No data for this period' },
   xls: 'Excel', xlsTip: 'Download the calculation as Excel: every row, the formulas and the input tables',
   xSheets: ['Calculation', 'Inputs', 'Summary'], xIn: ['Contribution rates, %', 'Average salary, €', 'Average old-age pension, €', 'State incentive, € / month', 'CPI', 'Minimum monthly wage, €'], xLatestCpi: 'Latest CPI (for contributions in today’s prices)',
   info: {
     sum: 'Accumulated assets = units held × unit value on the “Data until” date.\nContributions (nominal) = sum of all contributions (state + participant).\nContributions in today’s prices = each contribution × CPI(latest month) ÷ CPI(contribution month).\nGrowth after inflation = assets − contributions in today’s prices; % = that ÷ contributions in today’s prices.\nUnit values are published net of management fees, so fees are already included.',
-    inc: 'State pension = average old-age pension of the latest year published by Statistics Lithuania (not this participant’s own state pension).\nAnnuity = assets ÷ 1000 × 4.809 € (Bank of Lithuania base pension annuity table, payable from 65; for the III pillar it is only a comparable estimate).\nReplacement rate = pension ÷ the participant’s net salary of the year; extra replacement rate = annuity ÷ net salary.\nYears covered = assets ÷ (annuity × 12). This is only an estimate; Sodra’s annuity calculator gives the real amount.',
+    inc: 'State pension = average old-age pension of the latest year published by Statistics Lithuania (not this participant’s own state pension).\nAnnuity = Sodra standard pension annuity at 65: (assets − 2.5 % fee) ÷ (12 × annuity factor). The factor uses Sodra’s pricing assumptions (1.00 % return, monthly payments, 50 % women from 2026, life expectancy at 65: men 18.01, women 23.25 years – Sodra chief actuary’s 2025 report) and is matched to Sodra’s own example (15 000 € → 67.93 € a month). Result: 4.53 € a month per 1000 €. Sodra does not publish its mortality table, so the result can differ from the calculator by about 1 %. For the III pillar this is only a comparable estimate (III pillar money is paid by the fund or an insurer).\nReplacement rate = pension ÷ the participant’s net salary of the year; extra replacement rate = annuity ÷ net salary.\nYears covered = assets ÷ (annuity × 12). ',
     cmp: 'Each case is calculated with the same model as the page. II pillar: from 2019-01 (start of life-cycle funds), the chosen manager’s fund for the birth year. III pillar: the chosen III pillar fund and own contribution, from the chosen start (not before the fund started).',
+    both: 'II + III: the II and III pillar are calculated separately, each from its own start date and with its own contributions (II: 3 % + state incentive from 2019; III: own contribution only); the summary adds them up. The annuity is calculated from the combined assets.',
+    grid: 'Daily values: assets = units held × that day’s unit value (units change only on transfer dates). Investment return % = (assets − contributions) ÷ contributions. Replacement rate without savings = average old-age pension of the year ÷ the participant’s net salary of the year; with savings = (pension + annuity) ÷ net salary; extra = annuity ÷ net salary. The annuity is calculated as in the “Income” block. Pension data starts in 2018.',
     chart: 'Stacked areas = cumulative contributions by source; the green area = investment return (assets − contributions). If the return is negative the line drops into the contributions.',
     tbl: 'Since 2019 Sodra no longer diverts part of social insurance (until 2018 it did: 2–5.5 %), so its column is 0. II pillar contribution = gross salary × 3 % (gradual path: 1.8 % in 2019 rising to 3 % in 2023) + the state incentive (a fixed € amount a month, the lower one in the gradual path). III pillar contribution = gross salary × chosen % or a fixed € amount. Until 2010 Sodra transferred quarterly, so on those dates 3 months of contributions are invested. Units bought = contribution ÷ unit value on the transfer date. Assets = units total × unit value. A fund change converts the assets into the new fund’s units at that day’s unit values.',
   },
   foot: 'Sources: Sodra transfer dates, contribution rates (laws), Statistics Lithuania (average and minimum salaries, pensions, CPI), Bank of Lithuania (annuity), providers’ unit values. Model of one participant; for information only, not investment advice.',
 }, {
   navJourney: 'Kelias į pensiją',
-  inPl: 'Pakopa', pl2: 'II pakopa', pl3: 'III pakopa',
+  inPl: 'Pakopa', pl2: 'II pakopa', pl3: 'III pakopa', plBoth: 'II + III', plBothL: 'II ir III pakopos',
   inBirth: 'Gimimo metai', inStart: 'Kaupti pradėjo', inPay: 'Atlyginimas', inRate: 'Įmokų tarifas', rMax: 'Maksimalus (3 %)', rGrad: 'Laipsniškas',
   inMgr: 'Valdytojas', inFund: 'Fondas', inC3: 'Savo įmoka', c3pct: '% bruto atlyginimo', c3eur: '€ per mėn.', inAsof: 'Duomenys iki',
   pay: { avg: 'Vidutinis', mma: 'Minimalus (MMA)', 50: '50 % vidutinio', 150: '150 % vidutinio', 200: '200 % vidutinio', 300: '300 % vidutinio' },
@@ -62,29 +73,40 @@ addStrings({
   kAssets: 'Sukauptas pensijų turtas', kContrib: 'Įmokų suma (nominali)', kReal: 'Įmokų perkamoji vertė šiandien', kGainE: 'Pokytis realia verte, €', kGainP: 'Pokytis realia verte, %',
   kState: y => `Valstybinė pensija (${y})`, kRr: 'Pakeitimo norma be kaupimo', kAnn: 'Anuitetas, € / mėn.', kAddRr: 'Papildoma pakeitimo norma dėl kaupimo', kTotal: 'Bendra mėnesio išmoka',
   kNet: y => `Neto atlyginimas (${y})`, kSal: 'Sukauptų atlyginimų skaičius', kYears: 'Metų, kuriems užteks anuiteto', kRrTot: 'Bendra pakeitimo norma',
-  cmpTitle: 'Vidutinis ir minimalus atlyginimas, II ir III pakopa', cmpLead: 'Tas pats žmogus (gimimo metai, pradžia, duomenų data) keturiais atvejais. II pakopa: 3 % bruto atlyginimo ir valstybės paskata, nuo 2019 m. III pakopa: tik savo įmokos, nuo pasirinkto III pakopos fondo pradžios.',
+  cmpTitle: 'Vidutinis ir minimalus atlyginimas, II ir III pakopa', cmpLead: 'Tas pats žmogus (gimimo metai, pradžia, duomenų data) šešiais atvejais. II pakopa: 3 % bruto atlyginimo ir valstybės paskata, nuo 2019 m. III pakopa: tik savo įmokos, nuo pasirinkto III pakopos fondo pradžios. II + III: abi pakopos kartu, kiekviena nuo savo pradžios.',
   cmpH: ['Atvejis', 'Nuo', 'Savo įmoka, € / mėn.', 'Neto atlyginimo dalis', 'Savo įmokos', 'Valstybė', 'Sukaupta', 'Pokytis realia verte', 'Anuitetas, € / mėn.', 'Papildoma pakeitimo norma'],
   cmpNote: 'Savo įmoka = paskutinė mėnesio įmoka; „neto atlyginimo dalis“ = ta įmoka ÷ tų metų neto atlyginimas (vidutinis ir minimalus atlyginimas, bruto ir neto – Statistikos departamentas). II pakopos 3 % visada skaičiuojami nuo bruto atlyginimo. Paryškinta – viršuje rodomas atvejis.',
   chTitle: 'Kaip augo turtas', chMeta: 'Sukauptas turtas pagal šaltinį, €', shMeta: 'Turto formavimo šaltiniai',
   srcName: { s: 'Sodra', v: 'Valstybė', d: 'Dalyvis', r: 'Investicijų grąža' }, value: 'Turtas',
   tbTitle: 'Skaičiavimas', tbLead: 'Kiekviena eilutė – Sodros pervedimo data (arba fondo keitimas, paryškinta). Excel faile – visos eilutės su formulėmis.',
-  tbYear: 'Pagal metus', tbAll: 'Visos eilutės',
+  tbYear: 'Pagal metus', tbAll: 'Visos eilutės', tbLeadBoth: 'II ir III pakopa pagal metus. Excel faile kiekviena pakopa turi atskirą skaičiavimo lapą su visomis eilutėmis ir formulėmis, o suvestinė jas sudeda.',
   th: { date: 'Data', fund: 'Fondas', wage: 'Bruto atlyginimas', rs: 'Sodra %', cs: 'Sodra €', ss: 'Sodra Σ', rv: 'Valstybė €/mėn.', rd: 'Dalyvis %', cv: 'Valstybė €', cd: 'Dalyvis €', ct: 'Įmoka €',
     price: 'Vieneto vertė €', bought: 'Įsigyta vnt.', units: 'Vnt. iš viso', val: 'Sukaupta €', sv: 'Valstybė Σ', sd: 'Dalyvis Σ', st: 'Įmokos Σ', ret: 'Grąža €', retp: 'Grąža %',
     ann: 'Anuitetas €/mėn.', pen: 'Vid. pensija', net: 'Neto atlyginimas', tot: 'Pensija su kaupimu', rr0: 'Pakeitimo norma be kaupimo', rr1: 'Pakeitimo norma su kaupimu', rrd: 'Papildoma pakeitimo norma',
     cpi: 'VKI', real: 'Įmokos vertė šiandien', gainE: 'Pokytis realia verte €', gainP: 'Pokytis realia verte %', year: 'Metai', yc: 'Įmokos per metus €', ye: 'Turtas metų pabaigoje €' },
   swRow: (a, b) => `Fondo keitimas: ${a} → ${b}`, quarter: '×3 mėn.',
   estNote: e => `Įverčiai (oficialaus skaičiaus dar nėra, naudojamas naujausias žinomas): ${e}.`,
-  story: x => [`Šis dalyvis ${x.pl === 'II' ? 'II' : 'III'} pakopoje pradėjo kaupti ${x.start} m., būdamas ${x.ageStart} m. Uždirbdamas ${x.payL}, jis kaupia jau ${x.years} m. ${x.date} jo sukauptas turtas siekia ${x.assets} €, o visų įmokų perkamoji vertė – ${x.real} €. Tai reiškia, kad atsižvelgus į infliaciją, jo turtas ${x.gainP >= 0 ? 'išaugo' : 'sumažėjo'} ${x.gainPs} realia verte.`,
+  story: x => [`Šis dalyvis ${x.pl === 'both' ? 'II ir III pakopose' : x.pl + ' pakopoje'} pradėjo kaupti ${x.start} m., būdamas ${x.ageStart} m. Uždirbdamas ${x.payL}, jis kaupia jau ${x.years} m. ${x.date} jo sukauptas turtas siekia ${x.assets} €, o visų įmokų perkamoji vertė – ${x.real} €. Tai reiškia, kad atsižvelgus į infliaciją, jo turtas ${x.gainP >= 0 ? 'išaugo' : 'sumažėjo'} ${x.gainPs} realia verte.`,
     `Paties dalyvio įmoka – ${x.own} € per mėnesį${x.ownNet ? `, t. y. ${x.ownNet} jo neto atlyginimo` : ''}. ${x.retShare >= x.maxShare ? 'Didžiausią turto dalį sudaro investicijų grąža' : 'Didžiausia turto dalis – ' + (x.maxKey === 'd' ? 'paties dalyvio įmokos' : 'valstybės įmokos')} (grąža – ${x.retPs}).`,
     `Jei dalyvis išeitų į pensiją šiandien, bendros jo pajamos būtų ${x.total} € – tai ${x.rr1} jo neto atlyginimo. Sukauptas turtas prilygsta ${x.sal} neto atlyginimų.`],
   prof: x => [`<b>Gimimo metai</b> ${x.birth}`, `<b>Kaupti pradėjo</b> ${x.start} m., ${x.ageStart} m. amžiaus`, `<b>Pensija</b> ${x.ret} m., 65 m. (liko ${x.left} m.)`, `<b>Pajamos</b> ${x.payL}`, `<b>Įmoka</b> ${x.rateL}`, `<b>Fondų kelias</b> ${x.path}`],
+  ann: { h: ['Sodros anuiteto rūšis', '€ / mėn.', 'Už 1000 €', 'Kaip veikia'], std: 'Standartinis anuitetas', inh: 'Paveldimas standartinis anuitetas', def: 'Atidėtasis anuitetas',
+    stdD: 'Mokamas iki gyvos galvos; didžiausia mėnesio išmoka; nepaveldimas.', inhD: 'Mokamas iki gyvos galvos; mirus iki 85 m., paveldėtojai gauna išmokas, priklausančias iki 85 m.',
+    defD: s => `${s} turto perkamas anuitetas, mokamas nuo 85 m.; iki tol fondas likutį moka periodinėmis išmokomis (rodoma: likutis ÷ mėnesiai iki 85 m., be grąžos).`,
+    defA: 'nuo 85 m.', defP: 'iki 85 m.',
+    note: (lm, fa, x) => `2026 m. ribos: sukaupus mažiau nei ${lm} €, visą sumą galima atsiimti vienkartine išmoka; virš ${fa} € – ribą viršijančią dalį galima atsiimti. ${x}` },
+  grid: { title: 'Pakeitimo norma ir turtas laike', lead: 'Tas pats dalyvis kiekvieną dieną: kiek kaupimas prideda prie pensijos ir kaip augo turtas. Grafikai – kaip savininko Excel suvestinėje.',
+    rrPct: 'Pakeitimo normos be ir su kaupimu, %', without: 'Be kaupimo', with: 'Su kaupimu', addPct: 'Papildoma pakeitimo norma, %', assets: 'Sukauptas pensijų turtas, €',
+    ret: 'Investicijų grąža, %', rrEur: 'Pensija be ir su kaupimu, €', avgPen: 'Vidutinė senatvės pensija', penWith: 'Pensija su kaupimu', addEur: 'Papildoma pensija iš kaupimo (anuitetas), €',
+    assetsC: 'Sukauptas turtas ir įmokos, €', own: 'Dalyvio įmokos', allC: 'Visos įmokos', na: 'Šiam laikotarpiui duomenų nėra' },
   xls: 'Excel', xlsTip: 'Atsisiųsti skaičiavimą Excel faile: visos eilutės, formulės ir pradinės lentelės',
   xSheets: ['Skaičiavimas', 'Pradiniai duomenys', 'Suvestinė'], xIn: ['Įmokų tarifai, %', 'Vidutinis darbo užmokestis, €', 'Vidutinė senatvės pensija, €', 'Valstybės paskata, € / mėn.', 'VKI', 'Minimali mėnesinė alga, €'], xLatestCpi: 'Naujausias VKI (įmokų vertei šiandien)',
   info: {
     sum: 'Sukauptas turtas = turimų vienetų skaičius × vieneto vertė dieną „Duomenys iki“.\nĮmokų suma (nominali) = visų įmokų suma (valstybė + dalyvis).\nĮmokų perkamoji vertė šiandien = kiekviena įmoka × VKI(naujausias mėnuo) ÷ VKI(įmokos mėnuo).\nPokytis realia verte = turtas − įmokų perkamoji vertė; % = tas skirtumas ÷ įmokų perkamoji vertė.\nVieneto vertė skelbiama jau atskaičius valdymo mokesčius, todėl mokesčiai jau įskaičiuoti.',
-    inc: 'Valstybinė pensija = Statistikos departamento paskelbta naujausių metų vidutinė senatvės pensija (ne šio dalyvio asmeninė).\nAnuitetas = turtas ÷ 1000 × 4,809 € (Lietuvos banko bazinio pensijų anuiteto lentelė, mokama nuo 65 m.; III pakopai – tik palyginamas įvertis).\nPakeitimo norma = pensija ÷ dalyvio tų metų neto atlyginimas; papildoma pakeitimo norma = anuitetas ÷ neto atlyginimas.\nMetų skaičius = turtas ÷ (anuitetas × 12). Tai tik prognozė – tikslią sumą parodo Sodros anuitetų skaičiuoklė.',
+    inc: 'Valstybinė pensija = Statistikos departamento paskelbta naujausių metų vidutinė senatvės pensija (ne šio dalyvio asmeninė).\nAnuitetas = Sodros standartinis pensijų anuitetas 65 m.: (turtas − 2,5 % mokestis) ÷ (12 × anuiteto koeficientas). Koeficientas apskaičiuotas pagal Sodros prielaidas (1,00 % grąža, išmokos kas mėnesį, nuo 2026 m. 50 % moterų, tikėtina gyvenimo trukmė 65 m.: vyrų 18,01, moterų 23,25 m. – Sodros vyr. aktuaro 2025 m. ataskaita) ir suderintas su Sodros pavyzdžiu (15 000 € → 67,93 € per mėn.). Gaunama 4,53 € per mėn. už 1000 €. Sodra savo mirtingumo lentelės neskelbia, todėl nuo skaičiuoklės rezultato gali skirtis apie 1 %. III pakopai – tik palyginamas įvertis (III pakopos lėšas išmoka fondas arba draudikas).\nPakeitimo norma = pensija ÷ dalyvio tų metų neto atlyginimas; papildoma pakeitimo norma = anuitetas ÷ neto atlyginimas.\nMetų skaičius = turtas ÷ (anuitetas × 12). ',
     cmp: 'Kiekvienas atvejis skaičiuojamas tuo pačiu modeliu kaip ir visas puslapis. II pakopa: nuo 2019-01 (gyvenimo ciklo fondų pradžia), pasirinkto valdytojo gimimo metų fondas. III pakopa: pasirinktas III pakopos fondas ir savo įmoka, nuo pasirinktos pradžios (ne anksčiau nei fondas pradėjo veikti).',
+    both: 'II + III: II ir III pakopos skaičiuojamos atskirai, kiekviena nuo savo pradžios datos ir su savo įmokomis (II: 3 % + valstybės paskata nuo 2019 m.; III: tik savo įmoka); suvestinėje jos sudedamos. Anuitetas skaičiuojamas nuo bendros sukauptos sumos.',
+    grid: 'Kasdienės reikšmės: turtas = turimi vienetai × tos dienos vieneto vertė (vienetų skaičius keičiasi tik pervedimo dienomis). Investicijų grąža % = (turtas − įmokos) ÷ įmokos. Pakeitimo norma be kaupimo = tų metų vidutinė senatvės pensija ÷ dalyvio tų metų neto atlyginimas; su kaupimu = (pensija + anuitetas) ÷ neto atlyginimas; papildoma = anuitetas ÷ neto atlyginimas. Anuitetas skaičiuojamas kaip bloke „Pajamos“. Pensijų duomenys – nuo 2018 m.',
     chart: 'Spalvotos sritys = sukauptos įmokos pagal šaltinį; žalia sritis = investicijų grąža (turtas − įmokos). Kai grąža neigiama, turto linija nusileidžia žemiau įmokų.',
     tbl: 'Nuo 2019 m. Sodra nebeperveda dalies socialinio draudimo įmokų (iki 2018 m. pervesdavo 2–5,5 %), todėl jos stulpelis lygus 0. II pakopos įmoka = bruto atlyginimas × 3 % (laipsniškai: 2019 m. 1,8 %, iki 2023 m. – 3 %) + valstybės paskata (fiksuota suma per mėnesį; laipsniškai didinant – mažesnė). III pakopos įmoka = bruto atlyginimas × pasirinkti % arba fiksuota suma eurais. Iki 2010 m. Sodra pervesdavo kas ketvirtį, todėl tomis datomis investuojama 3 mėnesių įmoka. Įsigyta vnt. = įmoka ÷ vieneto vertė pervedimo dieną. Sukaupta = vienetai × vieneto vertė. Keičiant fondą, turtas tos dienos vieneto vertėmis konvertuojamas į naujo fondo vienetus.',
   },
@@ -166,8 +188,41 @@ const startDayOf = P => {
   return P.pl === 'II' ? Math.max(s, LC_START) : Math.max(s, p3Fund(P.fund3).d[0]);
 };
 
+/* ---------- anuitetas ---------- */
+function annuityOf(val, P, day) { return val / 1000 * J.annuity; }   // standartinis Sodros anuitetas 65 m. (žr. journey.py ANNUITY)
+
 /* ---------- modelis ---------- */
 function simulate(P) {
+  if (P.pl !== 'both') return simulate1(P);
+  const a = simulate1(Object.assign({}, P, { pl: 'II' })), b = simulate1(Object.assign({}, P, { pl: 'III' }));
+  return a && b ? combine(a, b, P) : a || b;
+}
+/* Abi pakopos: kiekvienai datai (bet kurios pakopos eilutei) sudedamos abiejų pakopų sumos.
+   Pakopos turtas tą dieną = jos vienetai × tos dienos vieneto vertė; sukauptos įmokos – paskutinės eilutės iki tos dienos. */
+function combine(a, b, P) {
+  const parts = [a, b], days = [...new Set(parts.flatMap(S => S.rows.map(r => r.d)))].sort((x, y) => x - y), rows = [];
+  const lastRow = (S, d) => { let r = null; for (const q of S.rows) { if (q.d > d) break; r = q; } return r; };
+  days.forEach(d => {
+    const r = { d, fund: 'II + III', val: 0, st: 0, sd: 0, sv: 0, ss: 0, realSum: 0, cs: 0, cv: 0, cd: 0, ct: 0, part: [] };
+    parts.forEach(S => {
+      const q = lastRow(S, d);
+      if (!q) { r.part.push(null); return; }
+      const pr = priceAt({ f: q.fo }, d), v = q.units * (pr ? pr[1] : q.price);
+      r.val += v; r.st += q.st; r.sd += q.sd; r.sv += q.sv; r.ss += q.ss; r.realSum += q.realSum;
+      S.rows.filter(x => x.d === d).forEach(x => { r.cs += x.cs; r.cv += x.cv; r.cd += x.cd; r.ct += x.ct; });
+      r.part.push({ val: v, st: q.st, sd: q.sd, sv: q.sv, fund: q.fund });
+    });
+    r.ret = r.val - r.st; r.retp = r.st ? r.ret / r.st : null; r.gainE = r.val - r.realSum; r.gainP = r.realSum ? r.gainE / r.realSum : null;
+    r.ann = annuityOf(r.val, P, d);
+    const pen = yearOf(d) >= 2018 ? byYear(J.pensions, yearOf(d), null) : null, net = wageAt(d, P.pay, null).n;
+    if (pen && net) { r.pen = pen; r.net = net; r.tot = pen + r.ann; r.rr0 = pen / net; r.rr1 = r.tot / net; r.rrd = r.rr1 - r.rr0; }
+    rows.push(r);
+  });
+  const lo = parts.map(S => S.lastOwn).filter(Boolean);
+  return { rows, last: rows[rows.length - 1], est: [...new Set(parts.flatMap(S => S.est))], path: [...a.path, ...b.path], cpiRef: a.cpiRef, penY: a.penY,
+    lastOwn: lo.length ? { eur: lo.reduce((x, o) => x + o.eur, 0), net: lo[0].net } : null, P, parts };
+}
+function simulate1(P) {
   const est = new Set(), rows = [];
   const asof = P.asof, startDay = startDayOf(P);
   const events = DATES.filter(([d]) => d >= startDay && d <= asof).map(([d, m]) => ({ d, m }));
@@ -186,7 +241,7 @@ function simulate(P) {
     else if (want.id !== fund.id) {               // fondo keitimas
       const p0 = priceAt(fund, e.d), p1 = priceAt(want, e.d), value = units * p0[1];
       units = value / p1[1];
-      rows.push({ d: e.d, sw: [fund.id, want.id], fund: want.id, price: p1[1], bought: units, units, val: value, cs: 0, cv: 0, cd: 0, ct: 0 });
+      rows.push({ d: e.d, sw: [fund.id, want.id], fund: want.id, fo: want.f, price: p1[1], bought: units, units, val: value, cs: 0, cv: 0, cd: 0, ct: 0 });
       fund = want; path.push([fund.id, e.d]);
       if (!e.m) continue;
     }
@@ -194,7 +249,7 @@ function simulate(P) {
     const pr = priceAt(fund, e.d);
     if (!pr) continue;
     const y = yearOf(e.d);
-    const row = { d: e.d, fund: fund.id, price: pr[1], m: 0, cs: 0, cv: 0, cd: 0 };
+    const row = { d: e.d, fund: fund.id, fo: fund.f, price: pr[1], m: 0, cs: 0, cv: 0, cd: 0 };
     if (e.m) {
       const w = wageAt(e.d, P.pay, est);
       row.m = e.m; row.wage = w.g; row.netW = w.n;
@@ -254,15 +309,17 @@ function renderBar() {
   const bar = document.getElementById('inBar'), lastY = yearOf(LAST), t = T();
   const births = []; for (let y = 1961; y <= Math.min(2009, lastY - 18); y++) births.push([y, y]);
   const yrs = a => { const o = []; for (let y = a; y <= lastY; y++) o.push([y, y]); return o; };
-  let h = field(t.inPl, seg('pl', [['II', t.pl2], ['III', t.pl3]], P.pl)) + field(t.inBirth, sel('birth', births, P.birth));
-  if (P.pl === 'II') {
-    h += field(t.inStart, sel('start2', yrs(Math.max(2019, P.birth + 18)), P.start2)) + field(t.inPay, sel('pay', PAYS.map(p => [p, t.pay[p]]), P.pay))
+  const both = P.pl === 'both', lab = (x, pl) => both ? `${x} (${pl})` : x;
+  let h = field(t.inPl, seg('pl', [['II', t.pl2], ['III', t.pl3], ['both', t.plBoth]], P.pl)) + field(t.inBirth, sel('birth', births, P.birth))
+    + field(t.inPay, sel('pay', PAYS.map(p => [p, t.pay[p]]), P.pay));
+  if (P.pl !== 'III') {
+    h += field(lab(t.inStart, 'II'), sel('start2', yrs(Math.max(2019, P.birth + 18)), P.start2))
       + field(t.inRate, seg('rate', [['max', t.rMax], ['grad', t.rGrad]], P.rate)) + field(t.inMgr, sel('mgr', MGRS.map(m => [m, MLABEL[m]]), P.mgr));
-  } else {
+  }
+  if (P.pl !== 'II') {
     const f3 = p3Fund(P.fund3);
     const opts = ['bond', 'mixed', 'equity'].map(c => `<optgroup label="${t.cat[c]}">${P3.filter(f => f.cat === c).map(f => `<option value="${f.name}"${f.name === f3.name ? ' selected' : ''}>${f.name} (${yearOf(f.d[0])})</option>`).join('')}</optgroup>`).join('');
-    h += field(t.inFund, `<select data-k="fund3">${opts}</select>`) + field(t.inStart, sel('start3', yrs(Math.max(yearOf(f3.d[0]), P.birth + 18)), P.start3))
-      + field(t.inPay, sel('pay', PAYS.map(p => [p, t.pay[p]]), P.pay))
+    h += field(lab(t.inFund, 'III'), `<select data-k="fund3">${opts}</select>`) + field(lab(t.inStart, 'III'), sel('start3', yrs(Math.max(yearOf(f3.d[0]), P.birth + 18)), P.start3))
       + field(t.inC3, seg('c3', [['pct', t.c3pct], ['eur', t.c3eur]], P.c3) + (P.c3 === 'eur'
         ? `<input type="number" data-k="c3eur" min="1" step="1" value="${P.c3eur}">` : `<input type="number" data-k="c3pct" min="0.1" step="0.5" value="${P.c3pct}">`));
   }
@@ -280,16 +337,26 @@ function renderBar() {
 const kpi = (l, v, s, cls = '') => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`;
 let SIM = null, P = null;
 const payL = p => T().payLong[p] || T().payPct(p);
+const plL = pl => pl === 'II' ? T().pl2 : pl === 'III' ? T().pl3 : T().plBothL;
 
 function renderKpis() {
   const L = SIM.last, t = T(), yAs = yearOf(P.asof);
   const gcls = L.gainE >= 0 ? 'up' : 'down';
-  document.getElementById('sumTitle').innerHTML = `${t.sumTitle} <span style="font-weight:400;font-size:13px;color:var(--text-3)">· ${P.pl === 'II' ? t.pl2 : t.pl3} · ${dots(P.asof)}</span>${ik('sum')}${xbtn()}`;
+  document.getElementById('sumTitle').innerHTML = `${t.sumTitle} <span style="font-weight:400;font-size:13px;color:var(--text-3)">· ${plL(P.pl)} · ${dots(P.asof)}</span>${ik('sum')}${xbtn()}`;
   document.getElementById('kpiA').innerHTML = kpi(t.kAssets, eur(L.val, 0), '', 'hl') + kpi(t.kContrib, eur(L.st, 0)) + kpi(t.kReal, eur(L.realSum, 0))
     + kpi(t.kGainE, `<span class="${gcls}">${L.gainE >= 0 ? '+' : '−'}${eur(Math.abs(L.gainE), 0)}</span>`) + kpi(t.kGainP, `<span class="${gcls}">${pc(L.gainP)}</span>`);
   document.getElementById('incTitle').innerHTML = `${t.incTitle}${ik('inc')}`;
   document.getElementById('kpiB').innerHTML = L.pen != null ? kpi(t.kState(SIM.penY), eur(L.pen, 0), `${t.kRr}: ${pc(L.rr0, 0)}`) + kpi(t.kAnn, eur(L.ann), `${t.kYears}: ${num(L.val / L.ann / 12, 1)}`)
     + kpi(t.kAddRr, pc(L.rrd), `${t.kRrTot}: ${pc(L.rr1)}`) + kpi(t.kTotal, eur(L.tot), `${t.kNet(yAs)}: ${eur(L.net, 0)} · ${t.kSal}: ${num(L.val / L.net, 1)}`, 'hl') : '';
+}
+function renderAnnuity() {
+  const t = T(), A = J.annuityModel, v = SIM.last.val, sh = pc(A.deferred_share65, 2), tb = document.getElementById('annTable');
+  const row = (n, e, k, d) => `<tr><td class="l">${n}</td><td>${e}</td><td>${k}</td><td class="l" style="white-space:normal">${d}</td></tr>`;
+  tb.innerHTML = `<thead><tr>${t.ann.h.map((h, i) => `<th class="${i === 0 || i === 3 ? 'l' : ''}">${h}</th>`).join('')}</tr></thead><tbody>`
+    + row(t.ann.std, eur(v / 1000 * A.std), num(A.std), t.ann.stdD) + row(t.ann.inh, eur(v / 1000 * A.inh), num(A.inh), t.ann.inhD)
+    + row(t.ann.def, `${eur(v / 1000 * A.defPer)} ${t.ann.defP}<br>${eur(v / 1000 * A.defAnn)} ${t.ann.defA}`, `${num(A.defPer)}<br>${num(A.defAnn)}`, t.ann.defD(sh)) + '</tbody>';
+  const x = v < A.lump_max ? (lang === 'lt' ? `Šio dalyvio ${eur(v, 0)} – mažiau už ribą.` : `This participant’s ${eur(v, 0)} is below the limit.`) : '';
+  document.getElementById('annNote').textContent = t.ann.note(num(A.lump_max, 0), num(A.free_above, 0), x);
 }
 function shareOf(L) {
   const tot = L.val, r = L.val - L.st;
@@ -297,8 +364,9 @@ function shareOf(L) {
 }
 function renderStory() {
   const L = SIM.last, t = T(), shares = shareOf(L), maxKey = shares.v > shares.d ? 'v' : 'd', start = yearOf(SIM.rows[0].d), o = SIM.lastOwn;
-  const rateL = P.pl === 'II' ? `${P.rate === 'max' ? t.rMax : t.rGrad}` : P.c3 === 'eur' ? `${num(P.c3eur, 0)} € / ${lang === 'lt' ? 'mėn.' : 'month'}` : `${num(P.c3pct, 1)} % ${lang === 'lt' ? 'bruto atlyginimo' : 'of gross salary'}`;
-  const x = { pl: P.pl, start, ageStart: start - P.birth, payL: payL(P.pay), years: yearOf(P.asof) - start + 1, date: dots(P.asof), assets: num(L.val, 0), real: num(L.realSum, 0),
+  const r2 = `${P.rate === 'max' ? t.rMax : t.rGrad}`, r3 = P.c3 === 'eur' ? `${num(P.c3eur, 0)} € / ${lang === 'lt' ? 'mėn.' : 'month'}` : `${num(P.c3pct, 1)} % ${lang === 'lt' ? 'bruto atlyginimo' : 'of gross salary'}`;
+  const rateL = P.pl === 'II' ? r2 : P.pl === 'III' ? r3 : `II: ${r2}; III: ${r3}`;
+  const x = { pl: P.pl, plName: plL(P.pl), start, ageStart: start - P.birth, payL: payL(P.pay), years: yearOf(P.asof) - start + 1, date: dots(P.asof), assets: num(L.val, 0), real: num(L.realSum, 0),
     gainP: L.gainP, gainPs: pc(Math.abs(L.gainP)), retShare: shares.r, maxShare: shares[maxKey], maxKey, retPs: pc(Math.max(0, shares.r), 0),
     own: o ? num(o.eur) : '–', ownNet: o && o.net ? pc(o.eur / o.net, 1) : '',
     total: L.tot != null ? num(L.tot) : '–', rr1: L.rr1 != null ? pc(L.rr1) : '–', sal: L.net ? num(L.val / L.net, 1) : '–' };
@@ -313,12 +381,12 @@ function renderCompare() {
   const t = T(), tb = document.getElementById('cmpTable');
   document.getElementById('cmpTitle').innerHTML = `${t.cmpTitle}${ik('cmp')}`;
   document.getElementById('cmpLead').textContent = t.cmpLead;
-  const cases = [['II', 'avg'], ['II', 'mma'], ['III', 'avg'], ['III', 'mma']].filter(([pl]) => pl === 'II' || P3.length);
+  const cases = [['II', 'avg'], ['II', 'mma'], ['III', 'avg'], ['III', 'mma'], ['both', 'avg'], ['both', 'mma']].filter(([pl]) => pl === 'II' || P3.length);
   tb.innerHTML = `<thead><tr>${t.cmpH.map((h, i) => `<th class="${i < 2 ? 'l' : ''}">${h}</th>`).join('')}</tr></thead><tbody>` + cases.map(([pl, pay]) => {
     const S = pl === P.pl && pay === P.pay ? SIM : simulate(params({ pl, pay, asof: ST.asof }));
     if (!S) return '';
     const L = S.last, o = S.lastOwn, cur = pl === P.pl && pay === P.pay;
-    return `<tr${cur ? ' class="cur"' : ''}><td class="l">${pl === 'II' ? t.pl2 : t.pl3} · ${t.pay[pay]}</td><td class="l">${dots(S.rows[0].d)}</td><td>${o ? num(o.eur) : ''}</td><td>${o && o.net ? pc(o.eur / o.net, 1) : '–'}</td>`
+    return `<tr${cur ? ' class="cur"' : ''}><td class="l">${pl === 'both' ? t.plBoth : pl === 'II' ? t.pl2 : t.pl3} · ${t.pay[pay]}</td><td class="l">${dots(S.rows[0].d)}</td><td>${o ? num(o.eur) : ''}</td><td>${o && o.net ? pc(o.eur / o.net, 1) : '–'}</td>`
       + `<td>${eur(L.sd, 0)}</td><td>${eur(L.sv, 0)}</td><td>${eur(L.val, 0)}</td><td class="${L.gainE >= 0 ? 'up' : 'down'}">${pc(L.gainP, 1)}</td><td>${num(L.ann)}</td><td>${L.rrd != null ? pc(L.rrd) : '–'}</td></tr>`;
   }).join('') + '</tbody>';
   document.getElementById('cmpNote').textContent = t.cmpNote;
@@ -382,6 +450,68 @@ function renderChart() {
     + `<div class="row"><b>${t.value}</b><b>${eur(SIM.last.val)}</b><span></span></div>`;
 }
 
+/* ---------- savininko Excel vizualizacijos: pakeitimo normos, turtas, grąža (kasdien) ---------- */
+/* Kasdienė eilutė: tarp pervedimų vienetų skaičius nekinta, todėl turtas = vienetai × tos dienos vieneto vertė. */
+function dailyOf(S) {
+  if (S.parts) {                       // abi pakopos: sudedamos kasdienės sumos (paskutinė žinoma kiekvienos pakopos reikšmė)
+    const ds = S.parts.map(dailyOf), days = [...new Set(ds.flatMap(x => x.map(p => p.d)))].sort((a, b) => a - b), idx = ds.map(() => -1);
+    return days.map(d => {
+      const cur = ds.map((x, i) => { while (idx[i] + 1 < x.length && x[idx[i] + 1].d <= d) idx[i]++; return idx[i] >= 0 ? x[idx[i]] : null; }).filter(Boolean);
+      const val = cur.reduce((a, p) => a + p.val, 0), st = cur.reduce((a, p) => a + p.st, 0), sd = cur.reduce((a, p) => a + p.sd, 0), ann = annuityOf(val, S.P, d), { pen, net } = cur[0];
+      return { d, val, st, sd, ret: st ? (val - st) / st : null, ann, pen, net, rr0: pen && net ? pen / net : null, rr1: pen && net ? (pen + ann) / net : null };
+    });
+  }
+  const rows = S.rows, out = [], asof = S.P.asof, cache = {};
+  const penNet = y => cache[y] || (cache[y] = (() => { const pen = y >= 2018 ? byYear(J.pensions, y, null) : null, net = wageAt(dayOf(`${y}-07-01`), S.P.pay, null).n; return [pen, net]; })());
+  rows.forEach((r, i) => {
+    const end = i + 1 < rows.length ? rows[i + 1].d : asof + 1, f = r.fo;
+    let k = lastOnOrBefore(f, r.d); if (k < 0) k = 0;
+    out.push(pt(r.d, r.val, r));
+    for (k++; k < f.d.length && f.d[k] < end; k++) if (f.d[k] > r.d) out.push(pt(f.d[k], r.units * f.v[k], r));
+  });
+  function pt(d, val, r) {
+    const [pen, net] = penNet(yearOf(d)), ann = annuityOf(val, S.P, d);
+    return { d, val, st: r.st, sd: r.sd, ret: r.st ? (val - r.st) / r.st : null, ann, pen, net, rr0: pen && net ? pen / net : null, rr1: pen && net ? (pen + ann) / net : null };
+  }
+  return out;
+}
+function renderGrid() {
+  const t = T(), D = dailyOf(SIM), L = D[D.length - 1], el = document.getElementById('mgrid'), G = t.grid;
+  document.getElementById('gridTitle').innerHTML = `${G.title}${ik('grid')}`;
+  document.getElementById('gridLead').textContent = G.lead;
+  const pts = (k, mul = 1, from = 0) => D.filter(x => x[k] != null && x.d >= from).map(x => [x.d, x[k] * mul]);
+  const rrFrom = D.find(x => x.rr0 != null)?.d ?? Infinity;
+  const C1 = 'var(--s2)', C2 = 'var(--s6)', C3 = 'var(--s5)';
+  const cards = [
+    { t: G.rrPct, s: L.rr1 != null ? `${pc(L.rr0)} → ${pc(L.rr1)}` : '', ser: [{ provider: 'a', label: G.without, color: C1, points: pts('rr0', 100, rrFrom) }, { provider: 'b', label: G.with, color: C3, points: pts('rr1', 100, rrFrom) }], fmt: v => num(v, 2) + ' %', unit: '%', zero: false },
+    { t: G.addPct, s: L.rr1 != null ? pc(L.rr1 - L.rr0) : '', ser: [{ provider: 'a', label: G.addPct, color: C3, points: D.filter(x => x.rr0 != null).map(x => [x.d, (x.rr1 - x.rr0) * 100]) }], fmt: v => num(v, 2) + ' %', unit: '%' },
+    { t: G.assets, s: eur(L.val, 0), ser: [{ provider: 'a', label: t.value, color: C3, points: pts('val') }], fmt: v => eur(v, 0), unit: ' €' },
+    { t: G.ret, s: L.ret != null ? pc(L.ret) : '', ser: [{ provider: 'a', label: G.ret, color: C3, points: pts('ret', 100) }], fmt: v => num(v, 2) + ' %', unit: '%' },
+    { t: G.rrEur, s: L.pen ? `${eur(L.pen)} → ${eur(L.pen + L.ann)}` : '', ser: [{ provider: 'a', label: G.avgPen, color: C1, points: pts('pen', 1, rrFrom) }, { provider: 'b', label: G.penWith, color: C3, points: D.filter(x => x.pen != null).map(x => [x.d, x.pen + x.ann]) }], fmt: v => eur(v), unit: ' €' },
+    { t: G.addEur, s: eur(L.ann), ser: [{ provider: 'a', label: t.kAnn, color: C3, points: D.filter(x => x.d >= Math.min(rrFrom, D[D.length - 1].d)).map(x => [x.d, x.ann]) }], fmt: v => eur(v), unit: ' €' },
+    { t: G.assetsC, s: `${eur(L.val, 0)} · ${eur(L.sd, 0)}`, ser: [{ provider: 'a', label: G.own, color: C2, points: pts('sd') }, { provider: 'b', label: G.allC, color: C1, points: pts('st') }, { provider: 'c', label: t.value, color: C3, points: pts('val') }], fmt: v => eur(v, 0), unit: ' €' },
+  ];
+  el.innerHTML = cards.map((c, i) => `<section class="card"><div class="mt">${c.t}</div><div class="ms">${c.s}</div><div class="chart" id="mg${i}"></div><div class="legend" style="font-size:12px">${c.ser.length > 1 ? c.ser.map(x => `<span><i style="background:${x.color}"></i>${x.label}</span>`).join('') : ''}</div></section>`).join('')
+    + `<section class="card"><div class="mt">${t.shMeta}</div><div class="ms">${eur(SIM.last.val, 0)}</div><div class="tmap" id="tmap"></div></section>`;
+  cards.forEach((c, i) => {
+    const box = document.getElementById('mg' + i), ser = c.ser.filter(x => x.points.length > 1);
+    if (!ser.length) { box.innerHTML = `<p class="na">${G.na}</p>`; return; }
+    const x0 = Math.min(...ser.map(x => x.points[0][0])), x1 = Math.max(...ser.map(x => x.points[x.points.length - 1][0]));
+    drawLineChart(box, ser, x0, x1, { height: 190, fmt: c.fmt, axisUnit: c.unit, mr: 8, zero: c.zero });
+  });
+  // šaltinių „treemap“: didžiausias kairėje, kiti dešinėje
+  const Lr = SIM.last, parts = [['r', Lr.val - Lr.st], ['d', Lr.sd], ['v', Lr.sv], ['s', Lr.ss]].filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+  const col = { r: 'var(--s5)', d: 'var(--s6)', v: 'var(--s1)', s: 'var(--s4)' }, tot = parts.reduce((a, x) => a + x[1], 0);
+  const tm = document.getElementById('tmap'), cell = ([k, v], ex = '') => `<div style="background:${col[k]};${ex}">${t.srcName[k]}<b>${eur(v, 0)}</b>${pc(v / tot, 0)}</div>`;
+  if (parts.length < 2) { tm.style.gridTemplateColumns = '1fr'; tm.innerHTML = parts.map(cell).join(''); return; }
+  const [a, ...rest] = parts, restSum = tot - a[1];
+  tm.style.gridTemplateColumns = `${a[1] / tot}fr ${restSum / tot}fr`;
+  tm.style.gridTemplateRows = '1fr';
+  tm.innerHTML = cell(a)
+    + `<div style="display:grid;grid-template-rows:${rest.slice(0, 1).map(x => `minmax(64px, ${x[1] / restSum}fr)`).join('')} ${rest.length > 1 ? `minmax(64px, ${(restSum - rest[0][1]) / restSum}fr)` : ''};gap:3px;padding:0;background:none">`
+    + cell(rest[0]) + (rest.length > 1 ? `<div style="display:grid;grid-template-columns:${rest.slice(1).map(x => x[1] + 'fr').join(' ')};gap:3px;padding:0;background:none">${rest.slice(1).map(x => cell(x)).join('')}</div>` : '') + '</div>';
+}
+
 /* ---------- lentelė ---------- */
 const COLS_ALL = ['date', 'fund', 'wage', 'rs', 'rd', 'rv', 'cs', 'cd', 'cv', 'ct', 'price', 'bought', 'units', 'val', 'ss', 'sd', 'sv', 'st', 'ret', 'retp', 'ann', 'pen', 'net', 'tot', 'rr0', 'rr1', 'rrd', 'cpi', 'real', 'gainE', 'gainP'];
 const shortFund = f => f.replace(/ tikslinės grupės pensijų fondas/, '').replace(/^Allianz (\w+) gimusiems (\d{4}-\d{4}) m\./, 'Allianz $2');
@@ -403,9 +533,23 @@ function renderTable() {
   document.getElementById('tbTitle').innerHTML = `${t.tbTitle}${ik('tbl')}${xbtn()}`;
   document.getElementById('tbLead').textContent = t.tbLead;
   const bar = document.getElementById('tbBar');
-  bar.innerHTML = seg('tb', [['y', t.tbYear], ['a', t.tbAll]], ST.tb);
+  bar.style.display = SIM.parts ? 'none' : '';
+  bar.innerHTML = SIM.parts ? '' : seg('tb', [['y', t.tbYear], ['a', t.tbAll]], ST.tb);
   bar.querySelectorAll('[data-seg] button').forEach(b => b.addEventListener('click', () => { ST.tb = b.dataset.v; save(); renderTable(); }));
   const tb = document.getElementById('tbl'), iv = C.indexOf('val');
+  if (SIM.parts) {             // abi pakopos: metinė lentelė su II ir III dalimis; visos eilutės – Excel lapuose
+    document.getElementById('tbLead').textContent = t.tbLeadBoth;
+    const ys = [...new Set(rows.map(r => yearOf(r.d)))], pv = (e, i, k) => e.part[i] ? num(e.part[i][k]) : '';
+    const ysum = (S, y) => S.rows.filter(r => yearOf(r.d) === y).reduce((a, r) => a + r.ct, 0);
+    tb.innerHTML = `<thead><tr><th class="l">${t.th.year}</th><th>${t.th.yc} (II)</th><th>${t.th.yc} (III)</th><th class="bl">${t.th.st}</th><th>${t.th.ye} (II)</th><th>${t.th.ye} (III)</th><th>${t.th.ye}</th><th>${t.th.ret}</th><th>${t.th.retp}</th><th class="bl">${t.th.real}</th><th>${t.th.gainP}</th><th class="bl">${t.th.ann}</th><th>${t.th.rr1}</th></tr></thead><tbody>`
+      + ys.map(y => {
+        const e = rows.filter(r => yearOf(r.d) === y).pop();
+        return `<tr><td class="l">${y}</td><td>${num(ysum(SIM.parts[0], y))}</td><td>${num(ysum(SIM.parts[1], y))}</td><td class="bl">${num(e.st)}</td><td>${pv(e, 0, 'val')}</td><td>${pv(e, 1, 'val')}</td><td>${num(e.val)}</td>`
+          + `<td class="${e.ret >= 0 ? 'up' : 'down'}">${num(e.ret)}</td><td>${e.retp == null ? '' : pc(e.retp)}</td><td class="bl">${num(e.realSum)}</td><td>${e.gainP == null ? '' : pc(e.gainP)}</td><td class="bl">${num(e.ann)}</td><td>${e.rr1 == null ? '' : pc(e.rr1)}</td></tr>`;
+      }).join('') + '</tbody>';
+    document.getElementById('tbNote').textContent = SIM.est.length ? t.estNote(SIM.est.join('; ')) : '';
+    return;
+  }
   if (ST.tb === 'a') {
     tb.innerHTML = `<thead><tr>${C.map(k => `<th class="${k === 'date' || k === 'fund' ? 'l' : ''}">${t.th[k]}</th>`).join('')}</tr></thead><tbody>`
       + rows.map(r => r.sw ? `<tr class="sw"><td class="l">${dots(r.d)}</td><td class="l" colspan="${iv - 4}">${t.swRow(shortFund(r.sw[0]), shortFund(r.sw[1]))}</td><td>${num(r.price, 4)}</td><td>${num(r.bought, 2)}</td><td>${num(r.units, 2)}</td><td>${num(r.val, 2)}</td><td colspan="${C.length - iv - 1}"></td></tr>`
@@ -424,13 +568,13 @@ function renderTable() {
 
 /* ---------- Excel su formulėmis ---------- */
 function loadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
-function book() {
-  const t = T(), rows = SIM.rows, H = t.th, lt = lang === 'lt', N = rows.length + 1;
+/* Skaičiavimo lapas vienai pakopai (S = simulate1 rezultatas) */
+function calcAoa(S) {
+  const t = T(), rows = S.rows, H = t.th, lt = lang === 'lt', N = rows.length + 1;
   // A data, B fondas, C bruto atlyginimas, D Sodra %, E dalyvis %, F valstybė €/mėn., G mėnesių sk., H Sodra €, I dalyvis €, J valstybė €, K įmoka, L vieneto vertė,
   // M įsigyta, N vnt. iš viso, O sukaupta, P Sodra Σ, Q dalyvis Σ, R valstybė Σ, S įmokos Σ, T grąža, U grąža %, V anuitetas, W vid. pensija, X neto DU,
   // Y pensija su kaupimu, Z–AB pakeitimo normos, AC VKI, AD įmokos vertė šiandien, AE Σ, AF pokytis €, AG pokytis %
-  const S = lt ? 'Sodra' : 'Sodra';
-  const head = [H.date, H.fund, H.wage, `${S} %`, H.rd, H.rv, lt ? 'Mėnesių' : 'Months', `${S} €`, H.cd, H.cv, H.ct, H.price, H.bought, H.units, H.val, `${S} Σ`, H.sd, H.sv, H.st, H.ret, H.retp, H.ann, H.pen, H.net, H.tot, H.rr0, H.rr1, H.rrd, H.cpi, H.real, `Σ ${H.real}`, H.gainE, H.gainP];
+  const head = [H.date, H.fund, H.wage, 'Sodra %', H.rd, H.rv, lt ? 'Mėnesių' : 'Months', 'Sodra €', H.cd, H.cv, H.ct, H.price, H.bought, H.units, H.val, 'Sodra Σ', H.sd, H.sv, H.st, H.ret, H.retp, H.ann, H.pen, H.net, H.tot, H.rr0, H.rr1, H.rrd, H.cpi, H.real, `Σ ${H.real}`, H.gainE, H.gainP];
   const aoa = [head], ref = rows.length + 3, cpiCell = `$AC$${ref}`;
   rows.forEach((r, i) => {
     const R = i + 2, P1 = i ? R - 1 : null, prev = c => P1 ? `${c}${P1}+` : '';
@@ -453,14 +597,40 @@ function book() {
     aoa.push(row);
   });
   aoa.push([]);
-  const refRow = new Array(33).fill(null); refRow[0] = { v: t.xLatestCpi }; refRow[28] = { v: SIM.cpiRef, z: '0.00' };
+  const refRow = new Array(33).fill(null); refRow[0] = { v: t.xLatestCpi }; refRow[28] = { v: S.cpiRef, z: '0.00' };
   aoa.push(refRow);
   aoa.push([{ v: t.info.tbl }]);
-  if (SIM.est.length) aoa.push([{ v: t.estNote(SIM.est.join('; ')) }]);
+  if (S.est.length) aoa.push([{ v: t.estNote(S.est.join('; ')) }]);
+  return { aoa, head, N };
+}
+
+/* Abiejų pakopų suvestinė: B = II, C = III, D = iš viso (formulės nurodo paskutines abiejų skaičiavimo lapų eilutes) */
+function sumBoth(calcs, names) {
+  const t = T(), lt = lang === 'lt', [a, b] = SIM.parts, L = SIM.last, z = '#,##0.00';
+  const R = (k, c) => `'${names[k]}'!${c}${calcs[k].N}`;
+  const line = (label, col, va, vb, row) => [{ v: label }, { f: R(0, col), v: va, z }, { f: R(1, col), v: vb, z }, { f: `B${row}+C${row}`, v: va + vb, z }];
+  const out = [[{ v: `${t.sumTitle} · ${plL('both')} · ${iso(SIM.P.asof)}` }], [], [{ v: lt ? 'Šaltinis' : 'Source' }, { v: t.pl2 }, { v: t.pl3 }, { v: lt ? 'Iš viso' : 'Total' }]];
+  out.push(line('Sodra', 'P', a.last.ss, b.last.ss, 4), line(t.srcName.v, 'R', a.last.sv, b.last.sv, 5), line(t.srcName.d, 'Q', a.last.sd, b.last.sd, 6));
+  out.push([{ v: lt ? 'Įmokos iš viso' : 'Contributions total' }, { f: 'B4+B5+B6', v: a.last.st, z }, { f: 'C4+C5+C6', v: b.last.st, z }, { f: 'D4+D5+D6', v: L.st, z }]);
+  out.push([{ v: t.srcName.r }, { f: 'B9-B7', v: a.last.ret, z }, { f: 'C9-C7', v: b.last.ret, z }, { f: 'D9-D7', v: L.val - L.st, z }]);
+  out.push(line(t.kAssets, 'O', a.last.val, b.last.val, 9));
+  out.push([]);
+  out.push(line(t.kReal, 'AE', a.last.realSum, b.last.realSum, 11));
+  out.push([{ v: t.kGainE }, { f: 'B9-B11', v: a.last.gainE, z }, { f: 'C9-C11', v: b.last.gainE, z }, { f: 'D9-D11', v: L.gainE, z }]);
+  out.push([{ v: t.kGainP }, { f: 'B12/B11', v: a.last.gainP, z: '0.00%' }, { f: 'C12/C11', v: b.last.gainP, z: '0.00%' }, { f: 'D12/D11', v: L.gainP, z: '0.00%' }]);
+  out.push([{ v: t.kAnn }, null, null, { f: `D9/1000*${J.annuity}`, v: L.ann, z }]);
+  out.push([{ v: t.info.both }]);
+  return out;
+}
+
+function book() {
+  const t = T(), rows = SIM.rows, H = t.th, lt = lang === 'lt';
   const cell = c => c == null ? null : c.f ? { t: 'n', f: c.f, v: c.v, z: c.z } : typeof c.v === 'number' ? { t: 'n', v: c.v, z: c.z } : { t: 's', v: c.v };
-  const CS = `'${t.xSheets[0]}'!`, L = SIM.last;
+  const parts = SIM.parts || [SIM], names = SIM.parts ? [`${t.xSheets[0]} II`, `${t.xSheets[0]} III`] : [t.xSheets[0]];
+  const calcs = parts.map(calcAoa), { head } = calcs[0];
+  const CS = `'${names[0]}'!`, L = SIM.last, N = calcs[0].N;
   // Suvestinė: kiek prisidėjo kiekvienas šaltinis (formulės nurodo paskutinę skaičiavimo eilutę)
-  const sum = [[{ v: `${t.sumTitle} · ${P.pl === 'II' ? t.pl2 : t.pl3} · ${iso(P.asof)}` }], [],
+  const sum = SIM.parts ? sumBoth(calcs, names) : [[{ v: `${t.sumTitle} · ${plL(P.pl)} · ${iso(P.asof)}` }], [],
     [{ v: lt ? 'Šaltinis' : 'Source' }, { v: '€' }, { v: lt ? 'Turto dalis' : 'Share of assets' }],
     [{ v: 'Sodra' }, { f: `${CS}P${N}`, v: L.ss, z: '#,##0.00' }, { f: `B4/B9`, v: L.ss / L.val, z: '0.0%' }],
     [{ v: t.srcName.v }, { f: `${CS}R${N}`, v: L.sv, z: '#,##0.00' }, { f: `B5/B9`, v: L.sv / L.val, z: '0.0%' }],
@@ -472,23 +642,26 @@ function book() {
     [{ v: t.kGainE }, { f: `B9-B11`, v: L.gainE, z: '#,##0.00' }], [{ v: t.kGainP }, { f: `B12/B11`, v: L.gainP, z: '0.00%' }],
     [{ v: t.kAnn }, { f: `${CS}V${N}`, v: L.ann, z: '#,##0.00' }], [],
     [{ v: t.th.year }, { v: `Sodra €` }, { v: t.th.cv }, { v: t.th.cd }, { v: t.th.yc }, { v: t.th.st }, { v: t.th.ye }, { v: t.th.ret }]];
-  [...new Set(rows.map(r => yearOf(r.d)))].forEach(y => {    // pagal metus: SUM per tų metų eilutes
+  if (!SIM.parts) [...new Set(rows.map(r => yearOf(r.d)))].forEach(y => {    // pagal metus: SUM per tų metų eilutes
     const idx = rows.map((r, i) => [r, i + 2]).filter(([r]) => yearOf(r.d) === y), a = idx[0][1], b = idx[idx.length - 1][1], rs = idx.map(x => x[0]), e = rs[rs.length - 1], s = k => rs.reduce((q, r) => q + (r[k] || 0), 0);
     sum.push([{ v: y }, { f: `SUM(${CS}H${a}:H${b})`, v: s('cs'), z: '#,##0.00' }, { f: `SUM(${CS}J${a}:J${b})`, v: s('cv'), z: '#,##0.00' }, { f: `SUM(${CS}I${a}:I${b})`, v: s('cd'), z: '#,##0.00' },
       { f: `SUM(${CS}K${a}:K${b})`, v: s('ct'), z: '#,##0.00' }, { f: `${CS}S${b}`, v: e.st, z: '#,##0.00' }, { f: `${CS}O${b}`, v: e.val, z: '#,##0.00' }, { f: `${CS}T${b}`, v: e.ret, z: '#,##0.00' }]);
   });
   const wsS = XLSX.utils.aoa_to_sheet(sum.map(r => r.map(cell))); wsS['!cols'] = [{ wch: 34 }, ...Array(7).fill({ wch: 16 })];
-  const ws = XLSX.utils.aoa_to_sheet(aoa.map(r => r.map(cell)));
-  ws['!cols'] = head.map((h, i) => ({ wch: i === 1 ? 34 : 13 }));
+  const wss = calcs.map(c => { const ws = XLSX.utils.aoa_to_sheet(c.aoa.map(r => r.map(cell))); ws['!cols'] = head.map((h, i) => ({ wch: i === 1 ? 34 : 13 })); return ws; });
   const inp = [[t.xIn[0]], ['', 'Sodra', t.srcName.v, H.rd, `${H.rd} (${t.rGrad})`], ...J.rates.map(r => r.map(x => x == null ? '' : x)), [],
     [t.xIn[1]], [H.year, 'Bruto', 'Neto'], ...Object.entries(J.wages).map(([y, w]) => [+y, w[0], w[1]]), [],
     [t.xIn[5]], [H.year, 'Bruto', 'Neto'], ...Object.entries(J.minWage).map(([y, w]) => [+y, w[0], w[1] ?? '']), [],
     [t.xIn[2]], ...Object.entries(J.pensions).map(([y, v]) => [+y, v]), [],
     [t.xIn[3]], [H.year, t.rMax, t.rGrad], ...Object.entries(J.incentive).map(([y, v]) => [+y, v[0], v[1]]), [],
-    [t.xIn[4]], ...Object.entries(J.cpi).map(([m, v]) => [m, v])];
+    [t.xIn[4]], ...Object.entries(J.cpi).map(([m, v]) => [m, v]), [],
+    [t.ann.h[0]], ...(() => { const A = J.annuityModel, lt = lang === 'lt'; return [
+      [lt ? 'Amžius' : 'Age', A.age], [lt ? 'Grąža per metus' : 'Return per year', A.rate], [lt ? 'Administravimo mokestis' : 'Administration fee', A.fee], [lt ? 'Moterų dalis' : 'Share of women', A.women],
+      [lt ? 'Anuiteto koeficientas (metais)' : 'Annuity factor (years)', A.ax], [lt ? 'Suderinimas su Sodros pavyzdžiu' : 'Match to Sodra’s example', A.cal],
+      [t.ann.std + ', € / 1000 €', A.std], [t.ann.inh + ', € / 1000 €', A.inh], [`${t.ann.def} (${t.ann.defP}), € / 1000 €`, A.defPer], [`${t.ann.def} (${t.ann.defA}), € / 1000 €`, A.defAnn]]; })()];
   const wi = XLSX.utils.aoa_to_sheet(inp); wi['!cols'] = [{ wch: 14 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 16 }];
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, wsS, t.xSheets[2]); XLSX.utils.book_append_sheet(wb, ws, t.xSheets[0]); XLSX.utils.book_append_sheet(wb, wi, t.xSheets[1]);
+  XLSX.utils.book_append_sheet(wb, wsS, t.xSheets[2]); wss.forEach((ws, i) => XLSX.utils.book_append_sheet(wb, ws, names[i])); XLSX.utils.book_append_sheet(wb, wi, t.xSheets[1]);
   return wb;
 }
 async function download() { await loadXlsx(); XLSX.writeFile(book(), `${lang === 'lt' ? 'Kelias_i_pensija' : 'Retirement_journey'}_${P.pl}_${P.birth}_${iso(P.asof)}.xlsx`); }
@@ -498,7 +671,7 @@ function renderAll() {
   P = params(); SIM = simulate(P);
   renderBar();
   if (!SIM) return;
-  renderKpis(); renderStory(); renderCompare(); renderChart(); renderTable();
+  renderKpis(); renderAnnuity(); renderStory(); renderCompare(); renderChart(); renderGrid(); renderTable();
   document.getElementById('foot').textContent = T().foot;
 }
 document.addEventListener('click', e => {
