@@ -228,3 +228,6 @@ tr.gstart:first-child td { border-top: 0; }
 /* vietos kaita laike */
 .rotchart { position: relative; width: 100%; height: 300px; }
 .rotchart svg { display: block; overflow: visible; }
+/* didžiausias kritimas */
+.ddtrack { position: relative; height: 14px; }
+.ddtrack i { position: absolute; left: 0; top: 2px; height: 10px; background: var(--dneg); border-radius: 0 4px 4px 0; }
