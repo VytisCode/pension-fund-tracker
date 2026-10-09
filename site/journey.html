@@ -56,7 +56,16 @@
   #srcBody a { color: var(--accent); }
   a.srclink { font-size: 12.5px; font-weight: 400; margin-left: 12px; color: var(--accent); text-decoration: none; white-space: nowrap; }
   a.srclink:hover { text-decoration: underline; }
-  #srcTitle { scroll-margin-top: 170px; }
+  h2.sec { scroll-margin-top: 56px; }
+  #inBar { align-items: stretch; gap: 10px 22px; }
+  #inBar .grp { display: flex; flex-direction: column; gap: 6px; padding-left: 10px; border-left: 3px solid var(--line); }
+  #inBar .grp.g2, #inBar .grp.g3 { border-left-color: var(--accent); }
+  #inBar .gl { font-size: 11px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
+  #inBar .gf { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .jnav { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 4px 2px; margin-top: 10px; padding: 6px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 12px -10px rgba(0,0,0,.35); }
+  .jnav a { font-size: 13px; color: var(--text-2); text-decoration: none; padding: 3px 9px; border-radius: 7px; }
+  .jnav a:hover { background: var(--grid); color: var(--text); }
+  @media (max-width: 700px) { .jnav { position: static; } }
   #pop { max-width: 560px; white-space: pre-line; }
   #staleBox .stale { margin: 14px 0 0; padding: 10px 14px; border: 1px solid var(--warn); border-radius: 10px; background: var(--card); font-size: 13.5px; line-height: 1.5; }
   #staleBox .stale b { color: var(--warn); }
@@ -71,25 +80,30 @@
 <body>
 <div class="wrap">
   <header id="top"></header>
-  <div class="bar sticky" id="inBar"></div>
+  <div class="bar" id="inBar"></div>
+  <nav class="jnav" id="jnav"></nav>
   <div id="staleBox"></div>
+
+  <h2 class="sec" id="schTitle"></h2>
+  <p class="lead" id="schLead"></p>
+  <section class="card"><div id="schema"></div></section>
+  <section class="card" style="margin-top:14px"><div class="story" id="story"></div><div class="prof" id="prof"></div></section>
 
   <h2 class="sec" id="sumTitle"></h2>
   <div class="kpis" id="kpiA"></div>
-  <h2 class="sec" id="incTitle"></h2>
-  <div class="kpis k4" id="kpiB"></div>
-  <section class="card" style="margin-top:14px"><div class="scroll"><table class="jt" id="annTable"></table></div><p class="note" id="annNote"></p></section>
-  <section class="card" style="margin-top:14px"><div class="story" id="story"></div><div class="prof" id="prof"></div></section>
-
-  <h2 class="sec" id="cmpTitle"></h2>
-  <p class="lead" id="cmpLead"></p>
-  <section class="card"><div class="scroll"><table class="jt" id="cmpTable"></table></div><p class="note" id="cmpNote"></p></section>
 
   <h2 class="sec" id="chTitle"></h2>
   <div class="two">
     <section class="card"><div class="meta" id="chMeta"></div><div class="chart" id="chart" style="position:relative"></div><div class="legend" id="chLegend" style="margin-top:6px"></div></section>
     <section class="card"><div class="meta" id="shMeta"></div><div class="shares" id="shares"></div></section>
   </div>
+
+  <h2 class="sec" id="annTitle"></h2>
+  <section class="card"><div class="scroll"><table class="jt" id="annTable"></table></div><p class="note" id="annNote"></p></section>
+
+  <h2 class="sec" id="cmpTitle"></h2>
+  <p class="lead" id="cmpLead"></p>
+  <section class="card"><div class="scroll"><table class="jt" id="cmpTable"></table></div><p class="note" id="cmpNote"></p></section>
 
   <h2 class="sec" id="ixTitle"></h2>
   <p class="lead" id="ixLead"></p>

@@ -288,13 +288,13 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Kas:** III pakopos lėšų negalima panaudoti Sodros anuitetui, todėl meniu pasirenkama: likti fonde ir kas mėnesį iki 85 m. parduoti vienetų dalį; atsiimti ir dalinti kas mėnesį iki 85 m. neinvestuojant; atsiimti visą sumą iš karto. Prognozių nedaroma.
 
 ### III pakopos GPM lengvata „Kelyje į pensiją“
-- **Būsena:** siūloma
+- **Būsena:** atmesta (savininkas 2026-10-09: GPM lengvata naujoms sutartims nebegalioja nuo 2025 m.)
 - **Autorius:** Claude
 - **Kodėl:** III pakopos įmokos mažina gyventojų pajamų mokestį (dalis įmokos grąžinama kitais metais), o dabar modelis rodo tik paties dalyvio įmokas.
 - **Nauda:** jungiklis „GPM lengvata“: grąžinta suma laikoma papildoma įmoka kitų metų pradžioje (ribos – pagal kiekvienų metų įstatymą). Matyti tikroji III pakopos nauda, palyginti su II pakopa.
 
 ### Darbdavio įmoka į III pakopą
-- **Būsena:** siūloma
+- **Būsena:** atlikta (2026-10-09; kartu perdėliotas puslapis ir pridėta pensijos sudėties schema, savininko prašymu)
 - **Autorius:** Claude
 - **Kodėl:** daug darbdavių moka į III pakopą už darbuotoją, ir tai dažnai didžiausias III pakopos privalumas.
 - **Nauda:** laukelis „Darbdavio įmoka, € / mėn.“ – atskira spalva grafike ir lentelėse, kaip valstybės įmoka II pakopoje.
