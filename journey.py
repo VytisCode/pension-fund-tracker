@@ -21,42 +21,27 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 SRC = ROOT / "imports" / "journey"
 
-# Sodros pensijų anuitetas (Pensijų anuitetų dydžių apskaičiavimo metodika, VSDF valdybos įsak. V-232, red. nuo 2026-01-01;
-# prielaidos – Sodros vyr. aktuaro 2025 m. ataskaita, 2026-03-25 Nr. V-142):
-# - investicijų grąža 1,00 % per metus, išmokos kas mėnesį;
-# - iš sumokėtos sumos išskaičiuojamas 2,5 % administravimo mokestis;
-# - mirtingumas: VSDF 2015–2019 m. lentelė, nuo 2026 m. 50 % moterų. Lentelė neskelbiama, todėl naudojamas Gompertz modelis,
-#   suderintas su Sodros paskelbta tikėtina gyvenimo trukme 65 m.: vyrams 18,01, moterims 23,25 m. (su 40 % moterų gaunama 20,11 m. –
-#   tiek pat, kiek ataskaitoje);
-# - galiausiai suderinta su Sodros pavyzdžiu: 15 000 € -> 67,93 € per mėn. (standartinis anuitetas, 375 € mokestis).
+# Sodros pensijų anuitetas – tikslūs Sodros anuitetų skaičiuoklės (sodra.lt/skaiciuokles/pensiju-anuitetu-skaiciuokle) rezultatai,
+# kuriuos savininkas gavo 2026-10-09: gimimo data 1961-10-09, prašymo data 2026-10-09 (lygiai 65 m.), sukaupta suma 20 000 000 €
+# (didelė suma, kad būtų matyti visi skaitmenys; tas pats santykis gaunamas ir su 20 000 € – 79,47 €).
+# Skaičiuoklė jau įvertina 2,5 % administravimo mokestį, 1 % grąžą ir Sodros mirtingumo lentelę, todėl rezultatai naudojami tiesiogiai:
+# išmoka = sukaupta suma ÷ 1000 × koeficientas. Skaičiuoklė už Cloudflare apsaugos, todėl kasmet (pasikeitus sąlygoms) – patikrinti ranka.
 ANNUITY = {
-    "age": 65, "rate": 0.01, "fee": 0.025, "women": 0.5, "guar_to": 85,
-    "men": (4.359445406036958e-05, 0.09), "wom": (4.528177910364305e-06, 0.11),
-    "example": (15000, 67.93), "deferred_share65": 0.1544,     # atidėtojo anuiteto pirkimo dalis 65 m. (Sodros veiklos planas)
-    "year": 2026,                                                # kurių metų Sodros sąlygos (ribos, moterų dalis) – kasmet patikrinti
+    "age": 65, "guar_to": 85,
+    "calc": {"date": "2026-10-09", "birth": "1961-10-09", "amount": 20_000_000,
+             "std": 79469.72, "inh": 71890.52, "def_pkb": 65430.96, "def_sodra": 65436.91, "pkb_part": 15638000.00},
+    "year": 2026,                                                # kurių metų Sodros sąlygos (ribos, skaičiuoklė) – kasmet patikrinti
     "lump_max": 16785, "free_above": 83926,                      # 2026 m. ribos: iki – galima vienkartinė išmoka; virš – perviršį galima atsiimti
 }
 
 
 def _annuity_factors(a=ANNUITY):
-    """€ per mėnesį už 1000 € sukauptos sumos: standartinis, paveldimas (iki 85 m.), atidėtasis (periodinės išmokos iki 85 m. + anuitetas nuo 85 m.)."""
-    import math
-    x, n = a["age"], 12 * 60
-    v = (1 + a["rate"]) ** (-1 / 12)
-
-    def surv(m):
-        t = m / 12
-        g = lambda ab: math.exp(-ab[0] / ab[1] * math.exp(ab[1] * x) * (math.exp(ab[1] * t) - 1))
-        return (1 - a["women"]) * g(a["men"]) + a["women"] * g(a["wom"])
-    std = sum(surv(k) * v ** k for k in range(1, n)) / 12
-    g = (a["guar_to"] - x) * 12
-    inh = sum(v ** k for k in range(1, g + 1)) / 12 + sum(surv(k) * v ** k for k in range(g + 1, n)) / 12
-    dfr = sum(surv(k) * (1 + a["rate"]) ** (-(k - g) / 12) for k in range(g + 1, n)) / 12   # atidėjimo laikotarpiu garantuota grąža 0 %
-    net = 1000 * (1 - a["fee"])
-    cal = a["example"][1] / (a["example"][0] * (1 - a["fee"]) / std / 12)
-    sh = a["deferred_share65"]
-    return {"std": net / std / 12 * cal, "inh": net / inh / 12 * cal, "defPer": 1000 * (1 - sh) / g, "defAnn": net * sh / dfr / 12 * cal,
-            "ax": std, "axInh": inh, "cal": cal, "uncal": net / std / 12}
+    """€ per mėnesį už 1000 € sukauptos sumos pagal Sodros skaičiuoklę: standartinis, paveldimas (iki 85 m.),
+    atidėtasis (pensijų kaupimo bendrovės periodinės išmokos iki 85 m. + Sodros anuitetas nuo 85 m.)."""
+    c = a["calc"]
+    k = 1000 / c["amount"]
+    return {"std": c["std"] * k, "inh": c["inh"] * k, "defPer": c["def_pkb"] * k, "defAnn": c["def_sodra"] * k,
+            "deferred_share65": 1 - c["pkb_part"] / c["amount"]}
 
 
 def _rows(name):
@@ -80,7 +65,7 @@ def build() -> dict:
         "minWage": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("min_wage.csv")},
         "annuity": round(_annuity_factors()["std"], 4),
         "fresh": freshness(),
-        "annuityModel": {**{k: (round(v, 6) if isinstance(v, float) else v) for k, v in _annuity_factors().items()}, **{k: ANNUITY[k] for k in ("age", "rate", "fee", "women", "guar_to", "lump_max", "free_above", "example", "deferred_share65")}},
+        "annuityModel": {**{k: round(v, 6) for k, v in _annuity_factors().items()}, **{k: ANNUITY[k] for k in ("age", "guar_to", "lump_max", "free_above", "calc")}},
     }
 
 
