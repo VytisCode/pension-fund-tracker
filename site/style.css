@@ -226,8 +226,9 @@ tr.gstart:first-child td { border-top: 0; }
 .reltrack i.dn { background: var(--dneg); border-radius: 4px 0 0 4px; }
 .relval { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); white-space: nowrap; }
 /* vietos kaita laike */
-.rotchart { position: relative; width: 100%; height: 300px; }
-.rotchart svg { display: block; overflow: visible; }
 /* didžiausias kritimas */
-.ddtrack { position: relative; height: 14px; }
-.ddtrack i { position: absolute; left: 0; top: 2px; height: 10px; background: var(--dneg); border-radius: 0 4px 4px 0; }
+.rdtools { margin: 0 0 10px; }
+.rdchips { margin: 0 0 8px; }
+.rdchart { position: relative; width: 100%; }
+.rdchart svg { display: block; overflow: visible; }
+.rdchart .endlab { opacity: 1; }

@@ -157,6 +157,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const wide = W > 560, m = { l: 46, r: opts.mr ?? 16, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
   if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
+  const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
   let lo = 0, hi = 0;
   series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
   const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
@@ -189,15 +190,15 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   series.slice().reverse().forEach(r => {
     let path = '', last = -1e9;
     r.points.forEach((p, i) => { if (i === 0 || i === r.points.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
-    (els[r.provider] = els[r.provider] || []).push(add('path', { d: path, fill: 'none', stroke: colorOf(r.provider), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+    (els[r.provider] = els[r.provider] || []).push(add('path', { d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
   });
   if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
     const labels = series.map(r => ({ r, y: Y(r.points[r.points.length - 1][1]) })).sort((a, b) => a.y - b.y);
     for (let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 13);
     labels.forEach(l => {
-      const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: colorOf(l.r.provider), stroke: 'var(--card)', 'stroke-width': 2 });
+      const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: sCol(l.r), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
-      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = labelOf(l.r.provider) + ' ';
+      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = sLab(l.r) + ' ';
       const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1).replace(' %', '%');
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
@@ -218,7 +219,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       .filter(o => o.v !== null).sort((a, b) => b.v - a.v);
     if (!vals.length) return;
     cross.setAttribute('x1', X(day)); cross.setAttribute('x2', X(day)); cross.setAttribute('visibility', 'visible');
-    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${colorOf(o.r.provider)}"></span>${labelOf(o.r.provider)}</span><span>${opts.fmt ? opts.fmt(o.v) : pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
+    tip.innerHTML = `<b>${iso(day)}</b>` + vals.map(o => `<div><span><span class="sw" style="background:${sCol(o.r)}"></span>${sLab(o.r)}</span><span>${opts.fmt ? opts.fmt(o.v) : pct(o.v).replace(' %', opts.unit || ' %')}</span></div>`).join('');
     tip.style.display = 'block'; place(ev);
   };
   hit.addEventListener('mousemove', move); hit.addEventListener('touchmove', e => move(e.touches[0]), { passive: true });
@@ -320,3 +321,129 @@ addStrings({
   qPlace: 'Ketvirtis', yPlace: 'Metai',
   notShown: l => `Grafike nerodoma (pradėjo vėliau nei laikotarpio pradžia): ${l}. Pasirinkite trumpesnį laikotarpį, kad juos matytumėte.`,
 });
+
+/* ---------- Kilimas ir kritimas (run-up / drawdown): rezultatų ir III pakopos puslapiai ----------
+   Stulpeliai: kiekvieno laikotarpio (mėnesio, ketvirčio ar metų) didžiausias kilimas nuo žemiausio taško (+)
+   ir didžiausias kritimas nuo aukščiausio taško (−) to laikotarpio viduje; lyginami tos pačios grupės fondai.
+   Linija: sukaupta grąža nuo pradžios ir kritimas nuo iki tol aukščiausios vertės. */
+addStrings({
+  rdMode: 'View', rdBars: 'Columns', rdLine: 'Line', rdGran: { m: 'Months', q: 'Quarters', y: 'Years' },
+  rdStart: 'From', rdIncep: 'Fund inception', rdDate: 'Chosen date', rdFund: 'Fund', rdAllDd: 'All funds – drawdown only',
+  rdUp: 'Max run-up', rdDn: 'Max drawdown', rdCum: 'Cumulative return', rdDdLine: 'Drawdown from peak',
+  rdQ: (y, q) => `Q${q} ${y}`,
+  rdCapBars: g => `${g}. For every period: the full-colour column = the largest rise of the unit value from its lowest point within that period (run-up); the pale column below zero = the deepest point the unit value reached within that period below its highest value so far since the start (drawdown – the same dips as on the line view). The first period of a fund can be partial. Click a fund to hide or show it; hover for the figures.`,
+  rdCapLine: (g, f) => `${g} · ${f}. Cumulative return = change of the unit value since the start; drawdown = how far the unit value is below its highest value so far (0 % = at a new high).`,
+  rdCapAll: g => `${g}. Each line = how far the fund’s unit value is below its highest value so far (0 % = at a new high). Click a fund to hide or show it.`,
+}, {
+  rdMode: 'Rodinys', rdBars: 'Stulpeliai', rdLine: 'Linija', rdGran: { m: 'Mėnesiai', q: 'Ketvirčiai', y: 'Metai' },
+  rdStart: 'Nuo', rdIncep: 'Fondo įsteigimo', rdDate: 'Pasirinktos datos', rdFund: 'Fondas', rdAllDd: 'Visi fondai – tik kritimas',
+  rdUp: 'Didžiausias kilimas', rdDn: 'Didžiausias kritimas', rdCum: 'Sukaupta grąža', rdDdLine: 'Kritimas nuo viršūnės',
+  rdQ: (y, q) => `${y} K${q}`,
+  rdCapBars: g => `${g}. Kiekvienam laikotarpiui: ryškus stulpelis – didžiausias vieneto vertės kilimas nuo žemiausio taško to laikotarpio viduje; blyškus stulpelis žemiau nulio – giliausias taškas per tą laikotarpį žemiau iki tol (nuo pradžios) aukščiausios vertės (kritimas – tos pačios duobės kaip linijos rodinyje). Pirmasis fondo laikotarpis gali būti nepilnas. Paspaudus fondą jis paslepiamas arba parodomas; užvedus pelę matyti skaičiai.`,
+  rdCapLine: (g, f) => `${g} · ${f}. Sukaupta grąža – vieneto vertės pokytis nuo pradžios; kritimas – kiek vieneto vertė yra žemiau iki tol aukščiausios vertės (0 % = nauja viršūnė).`,
+  rdCapAll: g => `${g}. Kiekviena linija – kiek fondo vieneto vertė yra žemiau iki tol aukščiausios vertės (0 % = nauja viršūnė). Paspaudus fondą jis paslepiamas arba parodomas.`,
+});
+const rdBucket = (day, gran) => { const t = new Date(day * DAY), y = t.getUTCFullYear(), m = t.getUTCMonth(); return gran === 'y' ? y : gran === 'q' ? y * 4 + Math.floor(m / 3) : y * 12 + m; };
+const rdBucketLabel = (k, gran) => gran === 'y' ? String(k) : gran === 'q' ? T().rdQ(Math.floor(k / 4), k % 4 + 1) : `${Math.floor(k / 12)}-${String(k % 12 + 1).padStart(2, '0')}`;
+function rdBase(f, start) { return !start || start <= f.d[0] ? 0 : lastOnOrBefore(f, start); }   // pradžios vertės indeksas
+function rdBars(f, start, gran) {           // Map laikotarpis -> { up, dn } procentais (kaip savininko Excel)
+  // up – didžiausias kilimas nuo žemiausios vertės to laikotarpio viduje; dn – giliausias taškas žemiau iki tol aukščiausios vertės (nuo pradžios)
+  const out = new Map(), ib = rdBase(f, start); let k = null, lo, up, dn, peak = f.v[ib];
+  const flush = () => { if (k !== null) out.set(k, { up: up * 100, dn: dn * 100 }); };
+  for (let i = ib + 1; i < f.d.length; i++) {
+    const key = rdBucket(f.d[i], gran), v = f.v[i];
+    if (key !== k) { flush(); k = key; lo = v; up = dn = 0; }
+    lo = Math.min(lo, v); up = Math.max(up, v / lo - 1);
+    peak = Math.max(peak, v); dn = Math.min(dn, v / peak - 1);
+  }
+  flush(); return out;
+}
+function rdLines(f, start) {                // sukaupta grąža ir kritimas nuo viršūnės
+  const ib = rdBase(f, start), base = f.v[ib], cum = [[f.d[ib], 0]], dd = [[f.d[ib], 0]]; let peak = base;
+  for (let i = ib + 1; i < f.d.length; i++) { const v = f.v[i]; peak = Math.max(peak, v); cum.push([f.d[i], (v / base - 1) * 100]); dd.push([f.d[i], (v / peak - 1) * 100]); }
+  return { cum, dd };
+}
+/* root – tuščias elementas; groups – [{ id, label, funds }]; key – būsenos raktas naršyklėje */
+function runupDrawdown(root, groups, key, defGroup) {
+  const SK = 'rdd_' + key; let st = { group: defGroup, mode: 'bar', gran: 'y', start: '', fund: null, off: [] };
+  try { Object.assign(st, JSON.parse(localStorage.getItem(SK)) || {}); } catch (e) {}
+  const save = () => { try { localStorage.setItem(SK, JSON.stringify(st)); } catch (e) {} };
+  const ctl = { render };
+  function render() {
+    const g = groups.find(x => x.id === st.group) || groups.find(x => x.id === defGroup) || groups[0]; st.group = g.id;
+    const funds = g.funds, ids = funds.map(f => f.provider);
+    if (st.fund !== 'all' && !ids.includes(st.fund)) st.fund = ids.find(id => /SEB/.test(labelOf(id))) || ids[0];
+    const off = new Set(st.off.filter(id => ids.includes(id))), on = funds.filter(f => !off.has(f.provider));
+    const first = Math.min(...funds.map(f => f.d[0])), last = Math.max(...funds.map(f => f.d[f.d.length - 1]));
+    const startDay = st.start ? Math.max(first, Math.min(dayOf(st.start), last - 1)) : 0;
+    const seg = (name, items, cur) => `<div class="seg" role="group" data-k="${name}">${items.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === cur}">${l}</button>`).join('')}</div>`;
+    const bars = st.mode === 'bar', single = !bars && st.fund !== 'all';
+    root.innerHTML = `<div class="tools rdtools">
+        <select data-k="group">${groups.map(x => `<option value="${x.id}"${x.id === g.id ? ' selected' : ''}>${x.label}</option>`).join('')}</select>
+        ${seg('mode', [['bar', T().rdBars], ['line', T().rdLine]], st.mode)}
+        ${bars ? seg('gran', [['m', T().rdGran.m], ['q', T().rdGran.q], ['y', T().rdGran.y]], st.gran) : `<label class="field"><span>${T().rdFund}</span><select data-k="fund"><option value="all">${T().rdAllDd}</option>${funds.map(f => `<option value="${f.provider}"${f.provider === st.fund ? ' selected' : ''}>${labelOf(f.provider)}</option>`).join('')}</select></label>`}
+        <label class="field"><span>${T().rdStart}</span><select data-k="start"><option value="">${T().rdIncep}</option><option value="d"${st.start ? ' selected' : ''}>${T().rdDate}</option></select></label>
+        ${st.start ? `<input type="date" data-k="date" value="${iso(startDay)}" min="${iso(first)}" max="${iso(last)}">` : ''}
+      </div>
+      ${single ? '' : `<div class="chips rdchips">${funds.map(f => `<button type="button" class="chip" data-id="${f.provider}" aria-pressed="${!off.has(f.provider)}"><i style="background:${colorOf(f.provider)}"></i>${labelOf(f.provider)}</button>`).join('')}</div>`}
+      <div class="cap rdcap"></div><div class="chart rdchart"></div>`;
+    const q = s => root.querySelector(s), set = (k, v) => { st[k] = v; save(); render(); };
+    q('[data-k=group]').onchange = e => set('group', e.target.value);
+    root.querySelectorAll('.seg button').forEach(b => b.onclick = () => set(b.parentNode.dataset.k, b.dataset.v));
+    if (q('[data-k=fund]')) q('[data-k=fund]').onchange = e => set('fund', e.target.value);
+    q('[data-k=start]').onchange = e => set('start', e.target.value ? iso(Math.max(first, shiftMonths(last, 60))) : '');
+    if (q('[data-k=date]')) q('[data-k=date]').onchange = e => { if (e.target.value) set('start', e.target.value); };
+    root.querySelectorAll('.rdchips .chip').forEach(b => b.onclick = () => {
+      const id = b.dataset.id, s = new Set(st.off); if (s.has(id)) s.delete(id); else if (on.length > 1) s.add(id); set('off', [...s]);
+    });
+    const el = q('.rdchart'), cap = q('.rdcap');
+    ctl.paint = () => {
+      if (bars) { cap.textContent = T().rdCapBars(g.label); rdDrawBars(el, on, startDay, st.gran); return; }
+      if (single) {
+        const f = funds.find(x => x.provider === st.fund), L = rdLines(f, startDay);
+        cap.textContent = T().rdCapLine(g.label, labelOf(f.provider));
+        drawLineChart(el, [{ provider: 'cum', color: colorOf(f.provider), label: T().rdCum, points: L.cum }, { provider: 'dd', color: 'var(--dneg)', label: T().rdDdLine, points: L.dd }],
+          L.cum[0][0], L.cum[L.cum.length - 1][0], { mr: el.clientWidth > 560 ? 190 : 16, fmt: v => pct(v, 2) });
+      } else {
+        const ser = on.map(f => ({ provider: f.provider, points: rdLines(f, startDay).dd }));
+        cap.textContent = T().rdCapAll(g.label);
+        drawLineChart(el, ser, Math.min(...ser.map(s => s.points[0][0])), Math.max(...ser.map(s => s.points[s.points.length - 1][0])), { mr: el.clientWidth > 560 ? 150 : 16, fmt: v => pct(v, 2) });
+      }
+    };
+    ctl.paint();
+  }
+  render();
+  return ctl;
+}
+function rdDrawBars(el, funds, start, gran) {
+  el.innerHTML = '';
+  const data = funds.map(f => ({ f, m: rdBars(f, start, gran) })), keys = [...new Set(data.flatMap(x => [...x.m.keys()]))].sort((a, b) => a - b);
+  if (!keys.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
+  let lo = 0, hi = 0; data.forEach(x => x.m.forEach(v => { lo = Math.min(lo, v.dn); hi = Math.max(hi, v.up); }));
+  const ticks = niceTicks(lo, hi); lo = Math.min(lo, ticks[0]); hi = Math.max(hi, ticks[ticks.length - 1]);
+  const W = el.clientWidth || 800, H = Math.max(280, Math.min(420, Math.round(W * 0.42))), m = { l: 46, r: 10, t: 10, b: 28 };
+  const gw = (W - m.l - m.r) / keys.length, n = data.length, bw = Math.max(1, Math.min(26, gw * 0.84 / n)), X = i => m.l + i * gw + (gw - bw * n) / 2;
+  const Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const lblEvery = Math.max(1, Math.ceil(keys.length / Math.max(1, Math.floor((W - m.l - m.r) / (gran === 'y' ? 40 : gran === 'q' ? 64 : 58)))));
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${T().rdUp} / ${T().rdDn}">`
+    + ticks.map(t => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 8}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, t % 1 ? 1 : 0)}%</text>`).join('')
+    + keys.map((k, i) => i % lblEvery ? '' : `<text x="${m.l + (i + 0.5) * gw}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--text-3)">${rdBucketLabel(k, gran)}</text>`).join('')
+    + `<rect class="rdhl" x="0" y="${m.t}" width="${gw}" height="${H - m.t - m.b}" fill="var(--hover)" visibility="hidden"/>`;
+  keys.forEach((k, i) => data.forEach((x, j) => {
+    const v = x.m.get(k); if (!v) return; const bx = (X(i) + j * bw).toFixed(1), w = Math.max(0.6, bw - (bw > 4 ? 1 : 0)).toFixed(1), c = colorOf(x.f.provider);
+    svg += `<rect x="${bx}" y="${Y(v.up).toFixed(1)}" width="${w}" height="${Math.max(0, Y(0) - Y(v.up)).toFixed(1)}" fill="${c}"/>`
+      + `<rect x="${bx}" y="${Y(0).toFixed(1)}" width="${w}" height="${Math.max(0, Y(v.dn) - Y(0)).toFixed(1)}" fill="${c}" fill-opacity="0.38"/>`;
+  }));
+  el.innerHTML = svg + '</svg>';
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);
+  const hl = el.querySelector('.rdhl'), s = el.querySelector('svg');
+  s.onmousemove = e => {
+    const r = s.getBoundingClientRect(), px = (e.clientX - r.left) * (W / r.width), i = Math.floor((px - m.l) / gw);
+    if (i < 0 || i >= keys.length) { tip.style.display = 'none'; hl.setAttribute('visibility', 'hidden'); return; }
+    const rows = data.map(x => ({ f: x.f, v: x.m.get(keys[i]) })).filter(x => x.v);
+    tip.innerHTML = `<b>${rdBucketLabel(keys[i], gran)}</b><div><span></span><span>▲ ${T().rdUp} · ▼ ${T().rdDn}</span></div>` + rows.map(x => `<div><span><span class="sw" style="background:${colorOf(x.f.provider)}"></span>${labelOf(x.f.provider)}</span><span>▲ ${pctPlain(x.v.up, 1)} · ▼ ${pctPlain(x.v.dn, 1)}</span></div>`).join('');
+    hl.setAttribute('x', m.l + i * gw); hl.setAttribute('visibility', 'visible'); tip.style.display = 'block';
+    const cx = m.l + (i + 0.5) * gw, w = tip.offsetWidth; tip.style.left = (cx + gw / 2 + 8 + w > W ? Math.max(0, cx - gw / 2 - 8 - w) : cx + gw / 2 + 8) + 'px'; tip.style.top = m.t + 'px';
+  };
+  s.onmouseleave = () => { tip.style.display = 'none'; hl.setAttribute('visibility', 'hidden'); };
+}

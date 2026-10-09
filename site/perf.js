@@ -12,10 +12,7 @@ addStrings({
   thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
   rmBest: 'Best ratio', rmAvgRank: 'Average place', rmTip: (r, v, k, n) => `Return ${r}, volatility ${v} % · place ${k} of ${n}`,
   nRmT: rf => `Return-to-risk ratio (Sharpe) = (annualised return − risk-free rate ${rf} %) ÷ annualised volatility, for the period, age groups and providers chosen above. Higher = more return per unit of risk. Colour = place within the age group (green = best); funds are compared only with the same age group. “Average place” = the provider’s average place across the chosen groups. On periods shorter than a year the annualised figures are less reliable.`,
-  hDd: 'Maximum drawdown', ddPeak: 'peak', ddTrough: 'bottom', ddRec: 'recovered', ddNoRec: 'not yet recovered',
-  capDd: t => `${t}. Each bar = the deepest fall of the unit value from a previous high within the period (smaller is better); funds are sorted from the smallest fall. Same scale for all groups. Hover for the dates.`,
-  hRot: 'Rank over time', rotWin: 'Return window',
-  capRot: (g, w) => `${g}: each provider’s place among the funds of this age group at the end of every month, by its ${w} return (1 = best). Hover for the month’s order.`,
+  hDd: 'Run-up and drawdown',
   hRisk: 'Return vs. risk', hRel: 'Return vs. age-group average', relAvg: 'average', pp: 'pp',
   capRel: t => `${t}. Each bar = the fund’s return minus the simple average of all funds in its age group, in percentage points; right of the centre line = better than average. Same scale for all groups.`, axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
   capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = provider. Choose the period, age groups and providers above the chart.`, rmGroups: 'Age groups:', rmProvs: 'Providers:', rmAll: 'All',
@@ -53,8 +50,7 @@ addStrings({
   thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
-    dd: 'Maximum drawdown = the largest percentage fall of the unit value from its highest point so far to a later low, within the selected period. It shows how much a saver could have seen the account drop at worst. The tooltip shows when the peak and the bottom were and whether the fund has already climbed back to the old high.',
-    rot: 'At every month end the funds of the chosen age group are ranked by their trailing return over the chosen window (3 months, 1 year or 3 years) – the same way as the rank tables. A flat line near the top means consistently good results; a jumping line means the place depends on the period. Funds without enough history for the window are left out for those months.',
+    dd: 'Run-up = the largest rise of the unit value from its lowest point within a month, quarter or year; drawdown = the largest fall from its highest point within that period. Together they show how widely the fund swung inside each period, not only where it ended. “Line” shows the cumulative return and how far the fund was below its previous high on every day – the deepest dip is the maximum drawdown.',
     rel: 'Shows how far each fund is above or below its peers: return over the selected period minus the simple (unweighted) average return of all funds in the same age group. Provider chips only hide bars; the average always uses all funds with fresh data.',
     rf: () => DATA.rf ? `Default: €STR (euro short-term rate) published daily by the European Central Bank – ${num(DATA.rf.value, 2)} % p.a. on ${DATA.rf.date}. It is the standard risk-free rate for euro investors (all Lithuanian pension fund members invest in EUR) and is updated automatically with the site data. Source: ${DATA.rf.source}. You can type your own value; “Use €STR” returns to the automatic one.` : 'The automatic €STR rate (European Central Bank) is not available yet, so 2 % p.a. is used. You can type your own value.',
     riskmap: 'Horizontally: volatility (annualised standard deviation of daily returns over the selected period). Vertically: return over the same period. Up and to the left is better: more return for less risk. Only funds with fresh data and at least 20 days of returns are shown.',
@@ -87,10 +83,7 @@ addStrings({
   thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
   rmBest: 'Geriausias santykis', rmAvgRank: 'Vidutinė vieta', rmTip: (r, v, k, n) => `Grąža ${r}, svyravimas ${v} % · vieta ${k} iš ${n}`,
   nRmT: rf => `Grąžos ir rizikos santykis (Sharpe) = (metinė grąža − be rizikos palūkanų norma ${rf} %) ÷ metinis svyravimas, pagal virš grafiko pasirinktą laikotarpį, amžiaus grupes ir tiekėjus. Didesnis = daugiau grąžos vienam rizikos vienetui. Spalva – vieta amžiaus grupėje (žalia = geriausia); fondai lyginami tik su tos pačios grupės fondais. „Vidutinė vieta“ – tiekėjo vidutinė vieta pasirinktose grupėse. Trumpesniais nei metų laikotarpiais metiniai skaičiai mažiau patikimi.`,
-  hDd: 'Didžiausias kritimas', ddPeak: 'viršūnė', ddTrough: 'dugnas', ddRec: 'atsigavo', ddNoRec: 'dar neatsigavo',
-  capDd: t => `${t}. Kiekviena juosta – giliausias vieneto vertės kritimas nuo ankstesnės viršūnės per laikotarpį (mažesnis – geriau); fondai surikiuoti nuo mažiausio kritimo. Visoms grupėms ta pati skalė. Užvedus pelę matyti datos.`,
-  hRot: 'Vietos kaita laike', rotWin: 'Grąžos laikotarpis',
-  capRot: (g, w) => `${g}: kiekvieno tiekėjo vieta tarp šios amžiaus grupės fondų kiekvieno mėnesio pabaigoje pagal ${w} grąžą (1 = geriausia). Užvedus pelę matyti to mėnesio eilė.`,
+  hDd: 'Kilimas ir kritimas',
   hRisk: 'Grąža ir rizika', hRel: 'Grąža palyginti su amžiaus grupės vidurkiu', relAvg: 'vidurkis', pp: 'p. p.',
   capRel: t => `${t}. Kiekviena juosta – fondo grąža minus visų tos amžiaus grupės fondų paprastas vidurkis, procentiniais punktais; dešiniau vidurio linijos – geriau už vidurkį. Visoms grupėms ta pati skalė.`, axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
   capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – tiekėjas. Laikotarpį, amžiaus grupes ir tiekėjus pasirinkite virš grafiko.`, rmGroups: 'Amžiaus grupės:', rmProvs: 'Tiekėjai:', rmAll: 'Visos',
@@ -128,8 +121,7 @@ addStrings({
   thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
-    dd: 'Didžiausias kritimas = didžiausias procentinis vieneto vertės sumažėjimas nuo iki tol aukščiausio taško iki vėlesnės žemiausios vertės per pasirinktą laikotarpį. Parodo, kiek blogiausiu atveju taupytojas galėjo matyti sumažėjusią sąskaitą. Užvedus pelę matyti, kada buvo viršūnė ir dugnas ir ar fondas jau grįžo į ankstesnę viršūnę.',
-    rot: 'Kiekvieno mėnesio pabaigoje pasirinktos amžiaus grupės fondai surikiuojami pagal pasirinkto laikotarpio (3 mėn., 1 m. ar 3 m.) grąžą iki tos dienos – taip pat, kaip vietų lentelėse. Lygi linija viršuje reiškia nuolat gerus rezultatus, šokinėjanti – kad vieta priklauso nuo laikotarpio. Fondai, kuriems trūksta istorijos tam laikotarpiui, tais mėnesiais nerodomi.',
+    dd: 'Kilimas = didžiausias vieneto vertės pakilimas nuo žemiausio taško per mėnesį, ketvirtį ar metus; kritimas = didžiausias nuosmukis nuo aukščiausio taško per tą laikotarpį. Kartu jie parodo, kaip plačiai fondas svyravo kiekvieno laikotarpio viduje, o ne tik kuo jis baigėsi. „Linija“ rodo sukauptą grąžą ir kiek kiekvieną dieną fondas buvo žemiau ankstesnės viršūnės – giliausia duobė ir yra didžiausias kritimas.',
     rel: 'Parodo, kiek kiekvienas fondas lenkia savo konkurentus arba atsilieka nuo jų: grąža per pasirinktą laikotarpį minus paprastas (nesvertinis) visų tos pačios amžiaus grupės fondų grąžos vidurkis. Tiekėjų mygtukai tik paslepia juostas – vidurkis visada skaičiuojamas iš visų fondų su šviežiais duomenimis.',
     rf: () => DATA.rf ? `Numatyta: €STR (euro trumpalaikių palūkanų norma), kurią kasdien skelbia Europos centrinis bankas – ${num(DATA.rf.value, 2)} % per metus (${DATA.rf.date}). Tai standartinė nerizikinga norma EUR investuotojams (visi Lietuvos pensijų fondų dalyviai investuoja eurais); ji atnaujinama automatiškai kartu su svetainės duomenimis. Šaltinis: ${DATA.rf.source}. Galite įrašyti savo skaičių; „Grąžinti €STR“ grąžina automatinę reikšmę.` : 'Automatinė €STR norma (Europos centrinis bankas) dar negauta, todėl naudojama 2 % per metus. Galite įrašyti savo skaičių.',
     riskmap: 'Horizontaliai – svyravimas (dienos grąžų standartinis nuokrypis, perskaičiuotas metams) pasirinktu laikotarpiu. Vertikaliai – grąža per tą patį laikotarpį. Aukščiau ir kairiau – geriau: daugiau grąžos už mažesnę riziką. Rodomi tik fondai su šviežiais duomenimis ir bent 20 dienų grąžų.',
@@ -554,7 +546,7 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
-  renderRiskMap(); renderRelative(gs); renderRankOverTime(); renderDrawdown(gs);
+  renderRiskMap(); renderRelative(gs); renderDrawdown();
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
@@ -673,103 +665,11 @@ function renderRelative(gs) {
         + `<span class="reltrack"><i class="${pos ? 'up' : 'dn'}" style="${pos ? 'left:50%' : `left:${50 - w}%`};width:${w}%"></i></span><span class="relval">${(pos ? '+' : '−') + num(Math.abs(r.d), 1)} ${T().pp}</span></div>`;
     }).join('') + '</div>').join('');
 }
-/* vietos kaita laike: kiekvieno mėnesio pabaigoje – tiekėjo vieta grupėje pagal pasirinkto lango grąžą */
-const ROT = { group: null, win: 12 };
-function rankSeries(g, win) {
-  const { end } = groupEnd(g), first = Math.min(...g.funds.map(f => f.d[0]));
-  const e = new Date(end * DAY), months = [];
-  for (let y = new Date(first * DAY).getUTCFullYear(), m = 0; ; m++) {
-    if (m > 11) { m = 0; y++; }
-    const day = Math.min(monthEnd(y, m), end); if (day > end || y > e.getUTCFullYear()) break;
-    if (day >= first) months.push(day);
-    if (day === end) break;
-  }
-  return months.map(day => {
-    const from = shiftMonths(day, win);
-    const vals = g.funds.map(f => {
-      const ie = lastOnOrBefore(f, day), ia = lastOnOrBefore(f, from);
-      if (ie < 0 || ia < 0 || f.d[ie] < day - 7 || f.d[ia] < from - 7) return { key: f.provider, v: null };   // trūksta duomenų arba fondo dar nebuvo
-      return { key: f.provider, v: f.v[ie] / f.v[ia] - 1 };
-    });
-    const r = rankOf(vals);
-    return { day, ranks: r.n >= 3 ? r.map : new Map(), n: r.n };
-  }).filter(p => p.n >= 3);
-}
-function renderRankOverTime() {
-  $('hRot').innerHTML = T().hRot + ik('rot');
-  if (!ROT.group || !byId(ROT.group)) ROT.group = P.group !== 'all' ? P.group : DATA.groups[0].id;
-  const tools = $('rotTools');
-  tools.innerHTML = `<select id="rotGroup">${DATA.groups.slice().reverse().map(g => `<option value="${g.id}"${g.id === ROT.group ? ' selected' : ''}>${groupLabel(g)}</option>`).join('')}</select>`
-    + `<div class="seg" role="group" aria-label="${T().rotWin}">${[[3, '3m'], [12, '1y'], [36, '3y']].map(([w, k]) => `<button type="button" data-w="${w}" aria-pressed="${w === ROT.win}">${T().periods[k]}</button>`).join('')}</div>`;
-  $('rotGroup').onchange = e => { ROT.group = e.target.value; renderRankOverTime(); };
-  tools.querySelectorAll('.seg button').forEach(b => b.onclick = () => { ROT.win = +b.dataset.w; renderRankOverTime(); });
-  const g = byId(ROT.group), pts = rankSeries(g, ROT.win), el = $('rotChart');
-  const provs = marketProvs().filter(p => P.provs.has(p.id) && g.funds.some(f => f.provider === p.id));
-  setCap('rotChart', T().capRot(groupLabel(g), T().periods[{ 3: '3m', 12: '1y', 36: '3y' }[ROT.win]]));
-  el.innerHTML = '';
-  if (pts.length < 2) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
-  const W = el.clientWidth, H = el.clientHeight, m = { l: 34, r: 78, t: 12, b: 26 }, nMax = Math.max(...pts.map(p => p.n));
-  const x0 = pts[0].day, x1 = pts[pts.length - 1].day;
-  const X = d => m.l + (d - x0) / (x1 - x0 || 1) * (W - m.l - m.r), Y = r => m.t + (r - 1) / (nMax - 1 || 1) * (H - m.t - m.b);
-  const short = x1 - x0 < 730, ticks = [];                          // trumpai istorijai – ketvirčių pradžios, ilgai – metai
-  for (let y = new Date(x0 * DAY).getUTCFullYear(); y <= new Date(x1 * DAY).getUTCFullYear(); y++) (short ? [0, 3, 6, 9] : [0]).forEach(mo => { const d = Math.round(Date.UTC(y, mo, 1) / DAY); if (d > x0 && d <= x1) ticks.push(d); });
-  const step = Math.ceil(ticks.length / Math.max(1, Math.floor((W - m.l - m.r) / (short ? 70 : 60))));
-  const tickLbl = d => short ? iso(d).slice(0, 7) : new Date(d * DAY).getUTCFullYear();
-  let svg = `<svg width="${W}" height="${H}" role="img" aria-label="${T().hRot}">`
-    + Array.from({ length: nMax }, (_, i) => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(i + 1)}" y2="${Y(i + 1)}" stroke="var(--grid)"/><text x="${m.l - 8}" y="${Y(i + 1) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${i + 1}</text>`).join('')
-    + ticks.filter((_, i) => i % step === 0).map(d => `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--text-3)">${tickLbl(d)}</text>`).join('');
-  provs.forEach(p => {
-    const seq = pts.map(q => ({ d: q.day, r: q.ranks.get(p.id) })), segs = []; let cur = [];
-    seq.forEach(s => { if (s.r) cur.push(s); else if (cur.length) { segs.push(cur); cur = []; } }); if (cur.length) segs.push(cur);
-    svg += segs.map(sg => `<path d="${sg.map((s, i) => `${i ? 'L' : 'M'}${X(s.d).toFixed(1)},${Y(s.r).toFixed(1)}`).join('')}" fill="none" stroke="${colorOf(p.id)}" stroke-width="2" stroke-linejoin="round"/>`).join('');
-    const last = seq[seq.length - 1];
-    if (last.r) svg += `<circle cx="${X(last.d)}" cy="${Y(last.r)}" r="4" fill="${colorOf(p.id)}" stroke="var(--card)" stroke-width="2"/><text x="${X(last.d) + 8}" y="${Y(last.r) + 4}" font-size="11" fill="var(--text-2)">${p.label}</text>`;
-  });
-  el.innerHTML = svg + `<line class="rotx" x1="0" x2="0" y1="${m.t}" y2="${H - m.b}" stroke="var(--axis)" visibility="hidden"/></svg>`;
-  const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);
-  const cross = el.querySelector('.rotx');
-  el.onmousemove = e => {
-    const r = el.getBoundingClientRect(), mx = e.clientX - r.left;
-    if (mx < m.l || mx > W - m.r) { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); return; }
-    const q = pts.reduce((b, p) => Math.abs(X(p.day) - mx) < Math.abs(X(b.day) - mx) ? p : b);
-    const rows = provs.filter(p => q.ranks.get(p.id)).sort((a, b) => q.ranks.get(a.id) - q.ranks.get(b.id));
-    tip.innerHTML = `<b>${iso(q.day).slice(0, 7)}</b>` + rows.map(p => `<div><span><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}</span><span>${q.ranks.get(p.id)} / ${q.n}</span></div>`).join('');
-    tip.style.display = 'block'; cross.setAttribute('x1', X(q.day)); cross.setAttribute('x2', X(q.day)); cross.setAttribute('visibility', 'visible');
-    const w = tip.offsetWidth; tip.style.left = (X(q.day) + 12 + w > W ? X(q.day) - w - 12 : X(q.day) + 12) + 'px'; tip.style.top = m.t + 'px';
-  };
-  el.onmouseleave = () => { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); };
-}
-/* didžiausias kritimas: giliausias vieneto vertės kritimas nuo ankstesnės viršūnės per pasirinktą laikotarpį */
-function drawdownOf(f, rng) {
-  const ia = lastOnOrBefore(f, rng.anchor), ie = lastOnOrBefore(f, rng.end);
-  if (ia < 0 || ie <= ia || f.d[ia] < rng.anchor - 7) return null;  // fondo laikotarpio pradžioje dar nebuvo
-  let peak = ia, best = { dd: 0, peak: ia, trough: ia };
-  for (let i = ia + 1; i <= ie; i++) {
-    if (f.v[i] > f.v[peak]) peak = i;
-    const dd = f.v[i] / f.v[peak] - 1;
-    if (dd < best.dd) best = { dd, peak, trough: i };
-  }
-  let rec = null; for (let i = best.trough + 1; i <= ie; i++) if (f.v[i] >= f.v[best.peak]) { rec = i; break; }
-  return { dd: best.dd * 100, peak: f.d[best.peak], trough: f.d[best.trough], rec: rec === null ? null : f.d[rec] };
-}
-function renderDrawdown(gs) {
+/* kilimas ir kritimas kiekvieno laikotarpio viduje (bendras komponentas – common.js) */
+let RDD = null;
+function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
-  const cards = DATA.groups.slice().reverse().filter(g => gs.includes(g)).map(g => {
-    const rng = rangeFor(g, false);
-    const rows = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast)).map(f => ({ f, x: drawdownOf(f, rng) })).filter(r => r.x).sort((a, b) => b.x.dd - a.x.dd);
-    return rows.length ? { g, rng, rows } : null;
-  }).filter(Boolean);
-  setCap('ddGrid', T().capDd(spanText(periodText(), cards.map(c => c.rng))));
-  const el = $('ddGrid'); el.classList.toggle('one', cards.length === 1);
-  if (!cards.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
-  const max = Math.max(...cards.flatMap(c => c.rows.map(r => -r.x.dd)), 0.01);   // bendra skalė visoms grupėms
-  el.innerHTML = cards.map(c => `<div class="card relcard"><div class="relh"><b>${groupLabel(c.g)}</b></div>`
-    + c.rows.map(r => {
-      const x = r.x, w = -x.dd / max * 100;
-      const tip = `${labelOf(r.f.provider)}: ${x.dd < 0 ? '−' : ''}${num(Math.abs(x.dd), 1)} % · ${T().ddPeak} ${iso(x.peak)} → ${T().ddTrough} ${iso(x.trough)} · ${x.rec ? `${T().ddRec} ${iso(x.rec)}` : T().ddNoRec}`;
-      return `<div class="relrow" title="${tip}"><span class="relname"><span class="sw" style="background:${colorOf(r.f.provider)}"></span>${labelOf(r.f.provider)}</span>`
-        + `<span class="ddtrack"><i style="width:${w}%"></i></span><span class="relval">${x.dd < 0 ? '−' : ''}${num(Math.abs(x.dd), 1)} %</span></div>`;
-    }).join('') + '</div>').join('');
+  RDD = runupDrawdown($('rddCard'), DATA.groups.slice().reverse().map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[0].id);
 }
 function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
@@ -1002,4 +902,4 @@ document.querySelector('#top .top-tools').prepend($('actions'));   // veiksmų m
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); renderRiskMap(); renderRankOverTime(); fitSticky(); }, 120); });
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); renderRiskMap(); RDD && RDD.paint(); fitSticky(); }, 120); });

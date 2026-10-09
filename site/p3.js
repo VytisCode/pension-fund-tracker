@@ -4,7 +4,7 @@ addStrings({
   thFund: 'Fund', thCat: 'Type', thSince: 'Since', thYtd: 'YTD', th1y: '1 yr', th3y: '3 yr p.a.', th5y: '5 yr p.a.', th10y: '10 yr p.a.',
   thIncep: 'Since start p.a.', thVol: 'Volatility 3 yr', thDd: 'Max drawdown', thRisky: 'Equities', thUnitDate: 'Unit value',
   kFunds: 'Funds tracked', kProviders: 'Providers', kAssets: 'Net assets (known), € m', kHistory: 'History from', kUntil: 'Data until',
-  allTitle: 'All Pillar III funds – key figures',
+  allTitle: 'All Pillar III funds – key figures', rddTitle: 'Run-up and drawdown',
   stLbl: 'Start', stPeriod: p => `Period above (${p})`, stCommon: 'Since common inception', stFund: n => `Since ${n} start`, eventsBtn: 'Market events', p10y: '10 yr',
   hmRet: 'Return over the period, %', hmRank: 'Rank within the group (1 = best return)',
   hmCap: e => `Periods end ${e}. Colours show the rank within each row (green = best, red = worst). “–” = the fund did not exist at the period start. Hover a cell for dates and unit values. Fund buttons above choose which funds are compared.`,
@@ -15,7 +15,7 @@ addStrings({
   thFund: 'Fondas', thCat: 'Tipas', thSince: 'Nuo', thYtd: 'Šie metai', th1y: '1 m.', th3y: '3 m. vid.', th5y: '5 m. vid.', th10y: '10 m. vid.',
   thIncep: 'Nuo pradžios vid.', thVol: 'Svyravimas 3 m.', thDd: 'Didžiausias kritimas', thRisky: 'Akcijos', thUnitDate: 'Vieneto vertė',
   kFunds: 'Fondų', kProviders: 'Bendrovių', kAssets: 'Grynieji aktyvai (žinomi), mln. €', kHistory: 'Istorija nuo', kUntil: 'Duomenys iki',
-  allTitle: 'Visi III pakopos fondai – pagrindiniai rodikliai',
+  allTitle: 'Visi III pakopos fondai – pagrindiniai rodikliai', rddTitle: 'Kilimas ir kritimas',
   stLbl: 'Pradžia', stPeriod: p => `Pagal laikotarpį viršuje (${p})`, stCommon: 'Nuo bendros pradžios', stFund: n => `Nuo ${n} pradžios`, eventsBtn: 'Rinkų įvykiai', p10y: '10 m.',
   hmRet: 'Grąža laikotarpyje, %', hmRank: 'Vieta grupėje (1 = geriausia grąža)',
   hmCap: e => `Laikotarpiai baigiasi ${e}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia). „–“ = laikotarpio pradžioje fondo dar nebuvo. Užvedus pelę ant langelio matyti datos ir vieneto vertės. Fondų mygtukais aukščiau pasirenkama, kuriuos fondus lyginti.`,
@@ -273,7 +273,10 @@ function renderAllParts() {
   document.getElementById('sub').textContent = `${T().navPillar3} · ${T().dataUntil} ${iso(LATEST)} · ${T().updated} ${DATA.generated}`;
   document.getElementById('foot').textContent = T().foot;
   renderKpis(); renderCards(); renderAll();
+  document.getElementById('rddTitle').textContent = T().rddTitle;
+  RDD = runupDrawdown(document.getElementById('rdd'), DATA.groups.filter(g => g.funds.length).map(g => ({ id: g.id, label: T().cat[g.id], funds: g.funds })), 'p3', 'equity');
 }
+let RDD = null;
 renderHeader('pillar3', () => { sync(); renderAllParts(); });
 sync(); renderAllParts();
-let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => cards.forEach(c => paintCard(c, c.hc.mr)), 120); });
+let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { cards.forEach(c => paintCard(c, c.hc.mr)); RDD && RDD.paint(); }, 120); });
