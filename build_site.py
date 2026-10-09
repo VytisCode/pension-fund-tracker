@@ -93,8 +93,9 @@ def main() -> None:
     (DOCS / "data.js").write_text(data_js, encoding="utf-8")
     # Grynieji aktyvai pagal dienas – kraunami tik spaudžiant „dienos lentelės“ Excel mygtuką
     (DOCS / "assets.js").write_text("const ASSETS=" + json.dumps(assets_js, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
-    assets = ("perf.js", "events.js", "style.css", "common.js", "data.js")
-    for name in ("index.html", "overview.html", "performance.html") + assets[:-1]:
+    build_indexes()
+    assets = ("perf.js", "events.js", "style.css", "common.js", "data.js", "data_idx.js")
+    for name in ("index.html", "overview.html", "performance.html") + assets[:-2]:
         shutil.copyfile(SITE / name, DOCS / name)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
     ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}
@@ -109,6 +110,21 @@ def main() -> None:
     build_aum(ver)
     build_reports(ver)
     build_journey(ver)
+
+
+def build_indexes() -> None:
+    """Pasaulio akcijų indeksai (data/indexes.csv, žr. indexes.py) -> docs/data_idx.js: {id: {d0, dd, v}} nuo 2003-12-31."""
+    import indexes
+    data = indexes.load()
+    out = {}
+    for name in ("MSCI_ACWI", "MSCI_WORLD", "SP500"):
+        rows = sorted((d, v) for d, v in data.get(name, {}).items() if d >= "2003-12-31")
+        if not rows:
+            continue
+        days = [day_number(d) for d, _ in rows]
+        out[name] = {"d0": days[0], "dd": [b - a for a, b in zip(days, days[1:])], "v": [round(v, 2) for _, v in rows]}
+    (DOCS / "data_idx.js").write_text("const IDX=" + json.dumps(out, separators=(",", ":")) + ";\n", encoding="utf-8")
+    print(f"docs/data_idx.js: {sum(len(x['v']) for x in out.values())} reikšmių")
 
 
 def build_pillar3(ver: dict) -> None:
@@ -340,7 +356,7 @@ def build_journey(ver: dict) -> None:
     shutil.copyfile(SITE / "journey.js", DOCS / "journey.js")
     ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_journey.js", "journey.js", "data_journey3.js")}}
     text = (DOCS / "journey.html").read_text(encoding="utf-8")
-    for n in ("style.css", "common.js", "data.js", "data_journey.js", "data_journey3.js", "journey.js"):
+    for n in ("style.css", "common.js", "data.js", "data_idx.js", "data_journey.js", "data_journey3.js", "journey.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "journey.html").write_text(text, encoding="utf-8")
     print(f"docs/data_journey.js: {len(data_js) / 1024:.0f} KB, Sodros datų: {len(payload['dates'])}")

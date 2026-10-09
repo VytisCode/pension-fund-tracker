@@ -159,7 +159,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
   series = series.filter(r => r.points.length > 1);
   const W = opts.width || el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
-  const wide = W > 560, m = { l: 46, r: opts.mr ?? 16, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
+  const wide = W > 560, m = { l: opts.ml ?? 46, r: opts.mr ?? 16, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
   if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
@@ -196,7 +196,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   series.slice().reverse().forEach(r => {
     let path = '', last = -1e9;
     r.points.forEach((p, i) => { if (i === 0 || i === r.points.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
-    (els[r.provider] = els[r.provider] || []).push(add('path', { d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+    (els[r.provider] = els[r.provider] || []).push(add('path', Object.assign({ d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, r.dash ? { 'stroke-dasharray': r.dash } : {})));
   });
   if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
     const labels = series.map(r => ({ r, y: Y(r.points[r.points.length - 1][1]) })).sort((a, b) => a.y - b.y);
@@ -263,6 +263,24 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   };
   ctl.highlight(opts.hl || null);
   return ctl;
+}
+
+/* Pasaulio akcijų indeksai palyginimui (data_idx.js, žr. indexes.py): fondo pavidalo objektai { provider, id, label, color, dash, d, v }.
+   Indeksų vertės be mokesčių, fondų vieneto vertės – jau po valdymo mokesčių. */
+const IDX_META = {
+  MSCI_ACWI: { en: 'World equity (MSCI ACWI)', lt: 'Pasaulio akcijos (MSCI ACWI)', color: '#6b7280', dash: '6 4' },
+  MSCI_WORLD: { en: 'MSCI World', lt: 'MSCI World', color: '#a3a3a3', dash: '2 3' },
+  SP500: { en: 'S&P 500', lt: 'S&P 500', color: '#b7791f', dash: '6 3 2 3' },
+};
+let IDX_CACHE = null;
+function idxFunds() {
+  if (typeof IDX === 'undefined') return [];
+  if (!IDX_CACHE) IDX_CACHE = Object.keys(IDX_META).filter(k => IDX[k]).map(k => {
+    const x = IDX[k], d = [x.d0]; x.dd.forEach(v => d.push(d[d.length - 1] + v));
+    return { provider: 'IDX_' + k, id: k, color: IDX_META[k].color, dash: IDX_META[k].dash, d, v: x.v };
+  });
+  IDX_CACHE.forEach(f => { f.label = IDX_META[f.id][lang]; });
+  return IDX_CACHE;
 }
 
 /* Grupės kortelės: grąža ir linijos laikotarpyje (naudoja ir apžvalga, ir rezultatų puslapis) */
