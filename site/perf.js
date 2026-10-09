@@ -14,6 +14,9 @@ addStrings({
   rmBest: 'Best ratio', rmAvgRank: 'Average place', rmTip: (r, v, k, n) => `Return ${r}, volatility ${v} % · place ${k} of ${n}`,
   nRmT: rf => `Return-to-risk ratio (Sharpe) = (annualised return − risk-free rate ${rf} %) ÷ annualised volatility, for the period, age groups and providers chosen above. Higher = more return per unit of risk. Colour = place within the age group (green = best); funds are compared only with the same age group. “Average place” = the provider’s average place across the chosen groups. On periods shorter than a year the annualised figures are less reliable.`,
   hDd: 'Run-up and drawdown',
+  hFee: 'Fee impact over time', feeLife: 'Life-cycle funds', feeM: 'Monthly contribution', feeR: 'Assumed return before fees, % p.a.', feeYrs: y => `${y} yr`,
+  feeRate: 'Fee, % p.a.', feeContrib: 'Paid in', feeGross: 'Final sum without fees', feeNet: 'Final sum with fees', feePaid: 'Fees paid', feeLoss: 'Lower final sum, €', feeLossPct: 'Lower final sum, %',
+  capFee: (m, y, r) => `${num(m, 0)} € every month for ${y} years at ${num(r, 1)} % a year before fees. The only difference between providers is the asset-based management fee (Bank of Lithuania list); contribution fees and the real future return are not included.`,
   hRisk: 'Return vs. risk', hRel: 'Return vs. age-group average', relAvg: 'average', pp: 'pp',
   capRel: t => `${t}. Each bar = the fund’s return minus the simple average of all funds in its age group, in percentage points; right of the centre line = better than average. Same scale for all groups.`, axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
   capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = provider. Choose the period, age groups and providers above the chart.`, rmGroups: 'Age groups:', rmProvs: 'Providers:', rmAll: 'All',
@@ -52,6 +55,7 @@ addStrings({
   thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
+    fee: 'Every month the contribution is added, the money grows at the assumed return, and the management fee (annual % ÷ 12) is deducted from the accumulated assets – the way II pillar fees are charged (daily, already included in unit values). “Fees paid” = all fees deducted; “Lower final sum” also includes the return those fees would have earned. Fees: base asset-based fee from the Bank of Lithuania list (life-cycle funds of a manager share one fee).',
     dd: 'Run-up = the largest rise of the unit value from its lowest point within a month, quarter or year; drawdown = the largest fall from its highest point within that period. Together they show how widely the fund swung inside each period, not only where it ended. “Line” shows the cumulative return and how far the fund was below its previous high on every day – the deepest dip is the maximum drawdown.',
     rel: 'Shows how far each fund is above or below its peers: return over the selected period minus the simple (unweighted) average return of all funds in the same age group. Provider chips only hide bars; the average always uses all funds with fresh data.',
     rf: () => DATA.rf ? `Default: €STR (euro short-term rate) published daily by the European Central Bank – ${num(DATA.rf.value, 2)} % p.a. on ${DATA.rf.date}. It is the standard risk-free rate for euro investors (all Lithuanian pension fund members invest in EUR) and is updated automatically with the site data. Source: ${DATA.rf.source}. You can type your own value; “Use €STR” returns to the automatic one.` : 'The automatic €STR rate (European Central Bank) is not available yet, so 2 % p.a. is used. You can type your own value.',
@@ -88,6 +92,9 @@ addStrings({
   rmBest: 'Geriausias santykis', rmAvgRank: 'Vidutinė vieta', rmTip: (r, v, k, n) => `Grąža ${r}, svyravimas ${v} % · vieta ${k} iš ${n}`,
   nRmT: rf => `Grąžos ir rizikos santykis (Sharpe) = (metinė grąža − be rizikos palūkanų norma ${rf} %) ÷ metinis svyravimas, pagal virš grafiko pasirinktą laikotarpį, amžiaus grupes ir tiekėjus. Didesnis = daugiau grąžos vienam rizikos vienetui. Spalva – vieta amžiaus grupėje (žalia = geriausia); fondai lyginami tik su tos pačios grupės fondais. „Vidutinė vieta“ – tiekėjo vidutinė vieta pasirinktose grupėse. Trumpesniais nei metų laikotarpiais metiniai skaičiai mažiau patikimi.`,
   hDd: 'Kilimas ir kritimas',
+  hFee: 'Mokesčių poveikis laike', feeLife: 'Gyvenimo ciklo fondai', feeM: 'Įmoka per mėnesį', feeR: 'Prielaidinė grąža prieš mokesčius, % per metus', feeYrs: y => `${y} m.`,
+  feeRate: 'Mokestis, % per metus', feeContrib: 'Įmokėta', feeGross: 'Sukaupta be mokesčių', feeNet: 'Sukaupta su mokesčiais', feePaid: 'Sumokėta mokesčių', feeLoss: 'Mažesnė suma, €', feeLossPct: 'Mažesnė suma, %',
+  capFee: (m, y, r) => `${num(m, 0)} € kas mėnesį ${y} m. laikotarpiu, kai grąža prieš mokesčius – ${num(r, 1)} % per metus. Valdytojai skiriasi tik valdymo mokesčiu nuo turto (Lietuvos banko sąrašas); atskaitymai nuo įmokų ir tikroji ateities grąža neįskaičiuoti.`,
   hRisk: 'Grąža ir rizika', hRel: 'Grąža palyginti su amžiaus grupės vidurkiu', relAvg: 'vidurkis', pp: 'p. p.',
   capRel: t => `${t}. Kiekviena juosta – fondo grąža minus visų tos amžiaus grupės fondų paprastas vidurkis, procentiniais punktais; dešiniau vidurio linijos – geriau už vidurkį. Visoms grupėms ta pati skalė.`, axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
   capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – tiekėjas. Laikotarpį, amžiaus grupes ir tiekėjus pasirinkite virš grafiko.`, rmGroups: 'Amžiaus grupės:', rmProvs: 'Tiekėjai:', rmAll: 'Visos',
@@ -126,6 +133,7 @@ addStrings({
   thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
+    fee: 'Kiekvieną mėnesį pridedama įmoka, pinigai auga prielaidine grąža, o valdymo mokestis (metinis % ÷ 12) atskaitomas nuo sukaupto turto – taip, kaip II pakopoje (kasdien, jau įskaičiuota į vieneto vertę). „Sumokėta mokesčių“ = visi atskaityti mokesčiai; „Mažesnė suma“ apima ir grąžą, kurią tie pinigai būtų uždirbę. Mokesčiai – bazinis mokestis nuo turto iš Lietuvos banko sąrašo (vieno valdytojo gyvenimo ciklo fondų mokestis vienodas).',
     dd: 'Kilimas = didžiausias vieneto vertės pakilimas nuo žemiausio taško per mėnesį, ketvirtį ar metus; kritimas = didžiausias nuosmukis nuo aukščiausio taško per tą laikotarpį. Kartu jie parodo, kaip plačiai fondas svyravo kiekvieno laikotarpio viduje, o ne tik kuo jis baigėsi. „Linija“ rodo sukauptą grąžą ir kiek kiekvieną dieną fondas buvo žemiau ankstesnės viršūnės – giliausia duobė ir yra didžiausias kritimas.',
     rel: 'Parodo, kiek kiekvienas fondas lenkia savo konkurentus arba atsilieka nuo jų: grąža per pasirinktą laikotarpį minus paprastas (nesvertinis) visų tos pačios amžiaus grupės fondų grąžos vidurkis. Tiekėjų mygtukai tik paslepia juostas – vidurkis visada skaičiuojamas iš visų fondų su šviežiais duomenimis.',
     rf: () => DATA.rf ? `Numatyta: €STR (euro trumpalaikių palūkanų norma), kurią kasdien skelbia Europos centrinis bankas – ${num(DATA.rf.value, 2)} % per metus (${DATA.rf.date}). Tai standartinė nerizikinga norma EUR investuotojams (visi Lietuvos pensijų fondų dalyviai investuoja eurais); ji atnaujinama automatiškai kartu su svetainės duomenimis. Šaltinis: ${DATA.rf.source}. Galite įrašyti savo skaičių; „Grąžinti €STR“ grąžina automatinę reikšmę.` : 'Automatinė €STR norma (Europos centrinis bankas) dar negauta, todėl naudojama 2 % per metus. Galite įrašyti savo skaičių.',
@@ -587,7 +595,7 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
-  renderRiskMap(); renderRelative(gs); renderDrawdown();
+  renderRiskMap(); renderRelative(gs); renderDrawdown(); renderFees();
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
@@ -711,6 +719,45 @@ let RDD = null;
 function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
   RDD = runupDrawdown($('rddCard'), DATA.groups.slice().reverse().map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[0].id);
+}
+/* mokesčių poveikis: kas mėnesį įmokama suma, prielaidinė grąža prieš mokesčius, valdymo mokestis nuo turto */
+const FEEP = { kind: 'life', m: 100, y: 10, r: 5 };
+function feeSim(fee, m, y, r) {
+  const g = Math.pow(1 + r / 100, 1 / 12) - 1, f = fee / 100 / 12;
+  let gross = 0, net = 0, paid = 0;
+  for (let i = 0; i < y * 12; i++) { gross = (gross + m) * (1 + g); net = (net + m) * (1 + g); const c = net * f; paid += c; net -= c; }
+  return { gross, net, paid, contrib: m * y * 12 };
+}
+function renderFees() {
+  $('hFee').innerHTML = T().hFee + ik('fee');
+  const tools = $('feeTools');
+  if (!tools.dataset.ready) {                                    // valdikliai kuriami vieną kartą, kad įvedimo laukai neprarastų žymeklio
+    tools.dataset.ready = '1';
+    tools.innerHTML = `<div class="seg" id="feeKind" role="group"></div>`
+      + `<label class="field"><span id="feeLblM"></span><input class="small-in" type="number" id="feeM" min="0" step="10" value="${FEEP.m}"> €</label>`
+      + `<div class="seg" id="feeYears" role="group">${[5, 10, 20, 30].map(y => `<button type="button" data-y="${y}"></button>`).join('')}</div>`
+      + `<label class="field"><span id="feeLblR"></span><input class="small-in" type="number" id="feeR" min="-5" max="15" step="0.5" value="${FEEP.r}"> %</label>`;
+    $('feeKind').innerHTML = ['life', 'turto'].map(k => `<button type="button" data-k="${k}"></button>`).join('');
+    $('feeKind').onclick = e => { const b = e.target.closest('button'); if (b) { FEEP.kind = b.dataset.k; renderFees(); } };
+    $('feeYears').onclick = e => { const b = e.target.closest('button'); if (b) { FEEP.y = +b.dataset.y; renderFees(); } };
+    $('feeM').oninput = e => { const v = parseFloat(e.target.value); if (isFinite(v) && v >= 0) { FEEP.m = v; renderFees(); } };
+    $('feeR').oninput = e => { const v = parseFloat(e.target.value); if (isFinite(v)) { FEEP.r = v; renderFees(); } };
+  }
+  $('feeKind').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.k === 'life' ? T().feeLife : T().turto; b.setAttribute('aria-pressed', b.dataset.k === FEEP.kind); });
+  $('feeYears').querySelectorAll('button').forEach(b => { b.textContent = T().feeYrs(+b.dataset.y); b.setAttribute('aria-pressed', +b.dataset.y === FEEP.y); });
+  $('feeLblM').textContent = T().feeM; $('feeLblR').textContent = T().feeR;
+  const grp = FEEP.kind === 'life' ? '1996-2002' : 'turto';      // gyvenimo ciklo fondų mokestis visose amžiaus grupėse vienodas
+  const rows = marketProvs().map(p => ({ p, fee: typeof FEES !== 'undefined' ? FEES[`${p.id}|${grp}`] : undefined })).filter(x => x.fee != null)
+    .map(x => ({ ...x, s: feeSim(x.fee, FEEP.m, FEEP.y, FEEP.r) })).sort((a, b) => a.fee - b.fee || a.p.label.localeCompare(b.p.label));
+  setCap('feeTbl', T().capFee(FEEP.m, FEEP.y, FEEP.r));
+  if (!rows.length) { $('feeTbl').innerHTML = `<tbody><tr><td class="na">${T().noData}</td></tr></tbody>`; return; }
+  const eur = v => num(v, 0) + ' €', maxLoss = Math.max(...rows.map(r => r.s.gross - r.s.net), 1);
+  $('feeTbl').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().feeRate}</th><th>${T().feeContrib}</th><th>${T().feeGross}</th><th>${T().feeNet}</th><th>${T().feePaid}</th><th>${T().feeLoss}</th><th>${T().feeLossPct}</th></tr></thead><tbody>`
+    + rows.map(r => {
+      const loss = r.s.gross - r.s.net;
+      return `<tr><td class="name"><span class="sw" style="background:${colorOf(r.p.id)}"></span>${r.p.label}</td><td>${num(r.fee, 2)} %</td><td>${eur(r.s.contrib)}</td><td>${eur(r.s.gross)}</td><td>${eur(r.s.net)}</td><td>${eur(r.s.paid)}</td>`
+        + `<td><span class="feebar"><i style="width:${loss / maxLoss * 100}%"></i></span>${eur(loss)}</td><td>${num(loss / r.s.gross * 100, 1)} %</td></tr>`;
+    }).join('') + '</tbody>';
 }
 function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
