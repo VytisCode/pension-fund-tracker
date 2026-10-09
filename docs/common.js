@@ -163,7 +163,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
-  let lo = 0, hi = 0;
+  let lo = opts.zero === false ? Infinity : 0, hi = opts.zero === false ? -Infinity : 0;    // zero: false – ašis neprivalo apimti nulio
   series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
   const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
   const X = d => m.l + (d - x0) / (x1 - x0) * (W - m.l - m.r);
@@ -178,7 +178,8 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
     const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + (opts.axisUnit ?? '%');
   });
   const years = (x1 - x0) / 365, ticks = [], cur = new Date(x0 * DAY);
-  if (years > 5) { for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += years > 6 ? 2 : 1) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }
+  if (years > 5) { const yStep = Math.max(years > 6 ? 2 : 1, Math.ceil(years * 40 / (W - m.l - m.r)));   // siauruose grafikuose – rečiau
+    for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += yStep) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }
   else if (years > 1.2) {
     const stepM = years > 3 ? 6 : 3;
     for (let t = Date.UTC(cur.getUTCFullYear(), 0, 1); t / DAY < x1; ) {

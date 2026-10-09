@@ -39,6 +39,16 @@
   table.jt tr.sw td { background: color-mix(in srgb, #f2c94c 22%, var(--card)); }
   table.jt td.bl, table.jt th.bl { border-left: 1px solid var(--line); }
   table.jt td.est { color: var(--text-3); }
+  .mgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1100px) { .mgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .mgrid { grid-template-columns: 1fr; } }
+  .mgrid .card { padding: 10px 12px; margin: 0; }
+  .mgrid .mt { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .mgrid .ms { font-size: 12px; color: var(--text-3); min-height: 16px; }
+  .mgrid .chart { position: relative; }
+  .tmap { display: grid; height: 220px; gap: 3px; margin-top: 6px; }
+  .tmap div { border-radius: 6px; padding: 8px; color: #fff; font-size: 12px; line-height: 1.35; overflow: hidden; }
+  .tmap div b { display: block; font-size: 15px; }
   #pop { max-width: 560px; white-space: pre-line; }
 </style>
 </head>
@@ -51,6 +61,7 @@
   <div class="kpis" id="kpiA"></div>
   <h2 class="sec" id="incTitle"></h2>
   <div class="kpis k4" id="kpiB"></div>
+  <section class="card" style="margin-top:14px"><div class="scroll"><table class="jt" id="annTable"></table></div><p class="note" id="annNote"></p></section>
   <section class="card" style="margin-top:14px"><div class="story" id="story"></div><div class="prof" id="prof"></div></section>
 
   <h2 class="sec" id="cmpTitle"></h2>
@@ -62,6 +73,10 @@
     <section class="card"><div class="meta" id="chMeta"></div><div class="chart" id="chart" style="position:relative"></div><div class="legend" id="chLegend" style="margin-top:6px"></div></section>
     <section class="card"><div class="meta" id="shMeta"></div><div class="shares" id="shares"></div></section>
   </div>
+
+  <h2 class="sec" id="gridTitle"></h2>
+  <p class="lead" id="gridLead"></p>
+  <div class="mgrid" id="mgrid"></div>
 
   <h2 class="sec" id="tbTitle"></h2>
   <p class="lead" id="tbLead"></p>
