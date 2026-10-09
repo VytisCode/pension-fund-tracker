@@ -7,7 +7,7 @@
 addStrings({
   in: {
     title: 'Market insights', lead: 'The whole II pillar market, each manager and each fund over the chosen period: how much participants earned from investments, the asset-weighted average return, money flows and payouts under the 2026 reform.',
-    loading: 'Loading market data…', per: 'Period', ytd: 'This year', m12: 'Last 12 months', all: 'Since 2019', q: 'Quarter',
+    loading: 'Loading market data…', per: 'Period', ytd: 'This year', m12: 'Last 12 months', all: 'Since 2019', q: 'This quarter', to: 'Up to', latest: d => `Latest data (${d})`, qEnd: (y, q) => `End of Q${q} ${y}`, custom: 'Other date…',
     k: ['II pillar assets', 'Investment earnings', 'Average return (asset-weighted)', 'Net flows', 'Reform payouts'],
     ks: (a, b) => `${a} → ${b}`, mln: 'm €', bn: 'bn €',
     mTitle: 'By manager', fTitle: 'By fund', pTitle: 'Reform payouts by quarter', grp: 'Group', allG: 'All groups', turto: 'Asset preservation',
@@ -16,13 +16,13 @@ addStrings({
     hP: ['Quarter', 'Manager', 'Payout date(s)', 'Paid out, m €', 'Assets before, m €', '% of assets'],
     total: 'Whole market',
     txt: x => [
-      `From ${x.since} to ${x.end} II pillar participants earned <b>${x.eAll}</b> from investments; over the last 12 months – <b>${x.e12}</b>, this year – <b>${x.eYtd}</b>.`,
+      `From ${x.since} to ${x.end} II pillar participants earned <b>${x.eAll}</b> from investments; over the last 12 months – <b>${x.e12}</b>, year to date – <b>${x.eYtd}</b>.`,
       `In the chosen period (${x.per}) the asset-weighted average return was <b>${x.avg}</b>. The best manager was ${x.bestM} (${x.bestMr}), the weakest – ${x.worstM} (${x.worstMr}).`,
       `The most was earned by ${x.topE} (${x.topEv}) – it manages ${x.topEs} of the market. The best fund was ${x.bestF} (${x.bestFr}), the weakest – ${x.worstF} (${x.worstFr}).`,
-      x.pay ? `Under the 2026 reform ${x.pay} have been paid out so far (${x.payP} of the assets before the payouts); the largest share left ${x.payTop} (${x.payTopP}).` : ''],
+      x.pay ? `Under the 2026 reform ${x.pay} have been paid out up to this date (${x.payP} of the assets before the payouts); the largest share left ${x.payTop} (${x.payTopP}).` : ''],
     note: 'Swedbank and Luminor daily assets exist only from 2026; earlier their assets are Bank of Lithuania quarter-end figures, so their earnings and flows are estimates. Data starts in 2019 (life-cycle funds), so earnings before 2019 are not included.',
     info: {
-      ins: 'Investment earnings between two asset observations = assets at the start × the change in unit value (daily data). For quarterly data (Swedbank and Luminor before 2026): earnings = return × (assets at start + assets at end ÷ (1 + return)) ÷ 2, i.e. contributions and payouts are assumed spread evenly. Net flows = change in assets − earnings (contributions minus payouts and fund switches). For periods that cut through a quarter, quarterly earnings are split by days.\nAverage return = returns of the funds weighted by their assets at the start of the period (funds that started later are weighted by their first assets).\nReform payouts = days when assets fell more than the unit value explains (see the Assets page).',
+      ins: 'Investment earnings between two asset observations = assets at the start × the change in unit value (daily data). For quarterly data (Swedbank and Luminor before 2026): earnings = return × (assets at start + assets at end ÷ (1 + return)) ÷ 2, i.e. contributions and payouts are assumed spread evenly. Net flows = change in assets − earnings (contributions minus payouts and fund switches). For periods that cut through a quarter, quarterly earnings are split by days.\nUp to: every period ends on the chosen date (latest data by default). Associations and the Bank of Lithuania usually publish figures at quarter end, so to compare with them pick the same quarter end.\nAverage return = returns of the funds weighted by their assets at the start of the period (funds that started later are weighted by their first assets).\nReform payouts = days when assets fell more than the unit value explains (see the Assets page).',
       pay: 'Payouts under the 2026 pension reform: on the payout days, flow = assets(t) − assets(t−1) × unit value(t) ÷ unit value(t−1). Share = paid out ÷ assets before the payout (the same method as the Assets page).',
     },
     xls: 'Excel', xSheets: ['Managers', 'Funds', 'Payouts', 'Monthly data'],
@@ -30,7 +30,7 @@ addStrings({
 }, {
   in: {
     title: 'Rinkos įžvalgos', lead: 'Visa II pakopos rinka, kiekvienas valdytojas ir fondas pasirinktu laikotarpiu: kiek dalyviai uždirbo iš investicijų, turtu svertinė vidutinė grąža, pinigų srautai ir išmokos pagal 2026 m. reformą.',
-    loading: 'Kraunami rinkos duomenys…', per: 'Laikotarpis', ytd: 'Šie metai', m12: 'Pastarieji 12 mėn.', all: 'Nuo 2019 m.', q: 'Ketvirtis',
+    loading: 'Kraunami rinkos duomenys…', per: 'Laikotarpis', ytd: 'Šie metai', m12: 'Pastarieji 12 mėn.', all: 'Nuo 2019 m.', q: 'Šis ketvirtis', to: 'Iki', latest: d => `Naujausi duomenys (${d})`, qEnd: (y, q) => `${y} m. ${q} ketv. pabaiga`, custom: 'Kita data…',
     k: ['II pakopos turtas', 'Investicijų uždarbis', 'Vidutinė grąža (svertinė pagal turtą)', 'Grynasis srautas', 'Reformos išmokos'],
     ks: (a, b) => `${a} → ${b}`, mln: 'mln. €', bn: 'mlrd. €',
     mTitle: 'Pagal valdytoją', fTitle: 'Pagal fondą', pTitle: 'Reformos išmokos pagal ketvirtį', grp: 'Grupė', allG: 'Visos grupės', turto: 'Turto išsaugojimo',
@@ -39,22 +39,22 @@ addStrings({
     hP: ['Ketvirtis', 'Valdytojas', 'Išmokėjimo data (-os)', 'Išmokėta, mln. €', 'Turtas prieš, mln. €', '% turto'],
     total: 'Visa rinka',
     txt: x => [
-      `Nuo ${x.since} iki ${x.end} II pakopos dalyviai iš investicijų uždirbo <b>${x.eAll}</b>, per pastaruosius 12 mėn. – <b>${x.e12}</b>, o šiais metais – <b>${x.eYtd}</b>.`,
+      `Nuo ${x.since} iki ${x.end} II pakopos dalyviai iš investicijų uždirbo <b>${x.eAll}</b>, per pastaruosius 12 mėn. – <b>${x.e12}</b>, o nuo metų pradžios – <b>${x.eYtd}</b>.`,
       `Pasirinktu laikotarpiu (${x.per}) turtu svertinė vidutinė grąža – <b>${x.avg}</b>. Geriausiai sekėsi ${x.bestM} (${x.bestMr}), silpniausiai – ${x.worstM} (${x.worstMr}).`,
       `Daugiausia uždirbo ${x.topE} (${x.topEv}) – jis valdo ${x.topEs} rinkos. Geriausias fondas – ${x.bestF} (${x.bestFr}), silpniausias – ${x.worstF} (${x.worstFr}).`,
-      x.pay ? `Pagal 2026 m. reformą iki šiol išmokėta ${x.pay} (${x.payP} turto prieš išmokas); didžiausia dalis išėjo iš ${x.payTop} (${x.payTopP}).` : ''],
+      x.pay ? `Pagal 2026 m. reformą iki šios datos išmokėta ${x.pay} (${x.payP} turto prieš išmokas); didžiausia dalis išėjo iš ${x.payTop} (${x.payTopP}).` : ''],
     note: 'Swedbank ir Luminor kasdienis turtas yra tik nuo 2026 m.; anksčiau – Lietuvos banko ketvirčio pabaigos duomenys, todėl jų uždarbis ir srautai – įverčiai. Duomenys nuo 2019 m. (gyvenimo ciklo fondai), todėl ankstesnio uždarbio čia nėra.',
     info: {
-      ins: 'Investicijų uždarbis tarp dviejų turto taškų = turtas pradžioje × vieneto vertės pokytis (kasdieniai duomenys). Ketvirtiniams duomenims (Swedbank ir Luminor iki 2026 m.): uždarbis = grąža × (turtas pradžioje + turtas pabaigoje ÷ (1 + grąža)) ÷ 2, t. y. laikoma, kad įmokos ir išmokos pasiskirsto tolygiai. Grynasis srautas = turto pokytis − uždarbis (įmokos minus išmokos ir perėjimai). Jei laikotarpis kerta ketvirtį, ketvirčio uždarbis dalijamas pagal dienas.\nVidutinė grąža = fondų grąžos, svertinės pagal jų turtą laikotarpio pradžioje (vėliau pradėję fondai – pagal pirmą turtą).\nReformos išmokos = dienos, kai turtas sumažėjo labiau, nei paaiškina vieneto vertės pokytis (žr. puslapį „Turtas“).',
+      ins: 'Investicijų uždarbis tarp dviejų turto taškų = turtas pradžioje × vieneto vertės pokytis (kasdieniai duomenys). Ketvirtiniams duomenims (Swedbank ir Luminor iki 2026 m.): uždarbis = grąža × (turtas pradžioje + turtas pabaigoje ÷ (1 + grąža)) ÷ 2, t. y. laikoma, kad įmokos ir išmokos pasiskirsto tolygiai. Grynasis srautas = turto pokytis − uždarbis (įmokos minus išmokos ir perėjimai). Jei laikotarpis kerta ketvirtį, ketvirčio uždarbis dalijamas pagal dienas.\n„Iki“: visi laikotarpiai baigiasi pasirinkta data (numatyta – naujausi duomenys). Asociacijos ir Lietuvos bankas skaičius dažniausiai skelbia ketvirčio pabaigai, todėl norint palyginti su jais, pasirinkite tą pačią ketvirčio pabaigą.\nVidutinė grąža = fondų grąžos, svertinės pagal jų turtą laikotarpio pradžioje (vėliau pradėję fondai – pagal pirmą turtą).\nReformos išmokos = dienos, kai turtas sumažėjo labiau, nei paaiškina vieneto vertės pokytis (žr. puslapį „Turtas“).',
       pay: 'Išmokos pagal 2026 m. pensijų reformą: išmokėjimo dienomis srautas = turtas(t) − turtas(t−1) × vieneto vertė(t) ÷ vieneto vertė(t−1). Dalis = išmokėta ÷ turtas prieš išmokėjimą (tas pats metodas kaip puslapyje „Turtas“).',
     },
     xls: 'Excel', xSheets: ['Valdytojai', 'Fondai', 'Išmokos', 'Mėnesių duomenys'],
   },
 });
 
-const IN = { per: 'ytd', grp: '', loaded: false, F: null };
-try { const s = JSON.parse(localStorage.getItem('insState') || '{}'); if (s.per) IN.per = s.per; if (typeof s.grp === 'string') IN.grp = s.grp; } catch (e) {}
-const inSave = () => { try { localStorage.setItem('insState', JSON.stringify({ per: IN.per, grp: IN.grp })); } catch (e) {} };
+const IN = { per: 'ytd', grp: '', to: '', loaded: false, F: null };      // to: '' = naujausi duomenys, kitaip ISO data
+try { const s = JSON.parse(localStorage.getItem('insState') || '{}'); if (s.per) IN.per = s.per; if (typeof s.grp === 'string') IN.grp = s.grp; if (typeof s.to === 'string') IN.to = s.to; } catch (e) {}
+const inSave = () => { try { localStorage.setItem('insState', JSON.stringify({ per: IN.per, grp: IN.grp, to: IN.to })); } catch (e) {} };
 const mE = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), p);
 const mLabel = (x, t) => Math.abs(x) >= 1000 ? `${num(x / 1000, 2)} ${t.in.bn}` : `${num(x, 1)} ${t.in.mln}`;
 const pcIn = (x, p = 2) => (x < 0 ? '−' : x > 0 ? '+' : '') + num(Math.abs(x) * 100, p) + ' %';
@@ -87,12 +87,16 @@ function inLoad() {
     s.onload = () => { IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = no; document.head.appendChild(s);
   });
 }
-const inEnd = () => Math.min(LAST, Math.max(...IN.F.map(f => f.d[f.d.length - 1])));
+const inLatest = () => Math.min(LAST, Math.max(...IN.F.map(f => f.d[f.d.length - 1])));
+const inEnd = () => { const L = inLatest(), d = /^\d{4}-\d{2}-\d{2}$/.test(IN.to) ? dayOf(IN.to) : L; return Math.max(dayOf('2019-01-31'), Math.min(L, d)); };
+/* ketvirčių pabaigos nuo naujausios atgal iki 2019 m. I ketv. */
+function inQEnds() { const L = inLatest(), out = []; for (let y = yearOf(L); y >= 2019; y--) for (let q = 4; q >= 1; q--) { const d = Math.round(Date.UTC(y, 3 * q, 0) / DAY); if (d <= L) out.push([iso(d), y, q]); } return out; }
 function inRange(per, end) {
   const y = yearOf(end);
   if (per === 'ytd') return [dayOf(`${y - 1}-12-31`), end];
   if (per === 'm12') return [shiftMonths(end, 12), end];
   if (per === 'all') return [dayOf('2018-12-31'), end];
+  if (per === 'q') { const [Y, M] = iso(end).split('-').map(Number), q0 = Math.round(Date.UTC(Y, 3 * Math.ceil(M / 3) - 3, 0) / DAY); return [q0 === end ? Math.round(Date.UTC(Y, M - 3, 0) / DAY) : q0, end]; }
   let m;
   if ((m = /^y(\d{4})$/.exec(per))) return [dayOf(`${+m[1] - 1}-12-31`), Math.min(end, dayOf(`${m[1]}-12-31`))];
   return [dayOf(`${y - 1}-12-31`), end];
@@ -116,7 +120,7 @@ function inAgg(rows) {
   return { e: rows.reduce((s, x) => s + x.e, 0), fl: rows.reduce((s, x) => s + x.fl, 0), pay: rows.reduce((s, x) => s + x.pay, 0),
     aEnd: rows.reduce((s, x) => s + (x.aEnd || 0), 0), a0: rows.reduce((s, x) => s + (x.a0 || 0), 0), r: sw ? w.reduce((s, x) => s + x.a0 * x.r, 0) / sw : null };
 }
-function inPerLabel(per) { const t = T().in; if (per === 'ytd') return t.ytd; if (per === 'm12') return t.m12; if (per === 'all') return t.all; return per.slice(1); }
+function inPerLabel(per) { const t = T().in; if (per === 'ytd') return t.ytd; if (per === 'm12') return t.m12; if (per === 'all') return t.all; if (per === 'q') return t.q; return per.slice(1); }
 
 function renderInsights() {
   const t = T(), X = t.in, box = document.getElementById('insBody');
@@ -124,15 +128,20 @@ function renderInsights() {
   document.getElementById('insTitle').innerHTML = `${X.title}${ik('ins')}<button type="button" class="btn xls ins-xls" title="Excel">⤓ ${X.xls}</button>`;
   document.getElementById('insLead').textContent = X.lead;
   if (!IN.loaded) { box.innerHTML = `<p class="note">${X.loading}</p>`; inLoad().then(renderInsights).catch(() => {}); return; }
-  const end = inEnd(), [a, b] = inRange(IN.per, end), ys = []; for (let y = yearOf(end) - 1; y >= 2019; y--) ys.push(['y' + y, String(y)]);
-  const pers = [['ytd', X.ytd], ['m12', X.m12], ...ys, ['all', X.all]];
+  const end = inEnd(), ys = []; for (let y = yearOf(end) - 1; y >= 2019; y--) ys.push(['y' + y, String(y)]);
+  if (/^y\d{4}$/.test(IN.per) && !ys.some(([v]) => v === IN.per)) IN.per = 'ytd';     // pasirinkti metai vėlesni už „Iki“ datą
+  const [a, b] = inRange(IN.per, end);
+  const pers = [['ytd', X.ytd], ['q', X.q], ['m12', X.m12], ...ys, ['all', X.all]];
+  const qe = inQEnds(), custom = IN.to && !qe.some(([d]) => d === IN.to);
+  const toSel = `<select data-ins="to" style="font:inherit;font-size:13px;padding:4px 6px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text)"><option value="">${X.latest(dots(inLatest()))}</option>${qe.map(([d, y, q]) => `<option value="${d}"${d === IN.to ? ' selected' : ''}>${X.qEnd(y, q)}</option>`).join('')}<option value="custom"${custom ? ' selected' : ''}>${X.custom}</option></select>`
+    + (custom || IN.toCustom ? ` <input type="date" data-ins="toD" min="2019-01-31" max="${iso(inLatest())}" value="${iso(end)}" style="font:inherit;font-size:13px;padding:3px 6px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text)">` : '');
   const rows = IN.F.map(f => inFund(f, a, b)), tot = inAgg(rows);
   const byM = MGRS.map(m => ({ m, ...inAgg(rows.filter(x => x.f.p === m)) })).filter(x => x.aEnd > 0).sort((p, q) => q.aEnd - p.aEnd);
   // tekstas: visada ir nuo 2019, 12 mėn., šie metai
   const sumE = (p0, p1) => IN.F.reduce((s, f) => s + inFund(f, p0, p1).e, 0);
   const ranked = byM.filter(x => x.r != null).sort((p, q) => q.r - p.r), topE = byM.slice().sort((p, q) => q.e - p.e)[0];
   const fr = rows.filter(x => x.r != null && !x.partial && x.f.g !== 'turto').sort((p, q) => q.r - p.r);
-  const pays = AUM.payouts.filter(p => !p.est), payT = pays.reduce((s, p) => s + p.flow, 0), payB = (() => { const fq = {}; pays.forEach(p => { if (!fq[p.p] || p.q < fq[p.p].q) fq[p.p] = p; }); return Object.values(fq).reduce((s, p) => s + p.base, 0); })();
+  const pays = AUM.payouts.filter(p => !p.est && (p.dates || []).every(d => dayOf(d) <= end)), payT = pays.reduce((s, p) => s + p.flow, 0), payB = (() => { const fq = {}; pays.forEach(p => { if (!fq[p.p] || p.q < fq[p.p].q) fq[p.p] = p; }); return Object.values(fq).reduce((s, p) => s + p.base, 0); })();
   const payM = MGRS.map(m => { const ps = pays.filter(p => p.p === m); const first = ps.slice().sort((x, y) => x.q < y.q ? -1 : 1)[0]; return { m, flow: ps.reduce((s, p) => s + p.flow, 0), base: first ? first.base : 0 }; }).filter(x => x.base).sort((p, q) => (p.flow / p.base) - (q.flow / q.base));
   const x = { since: dots(dayOf('2019-01-02')), end: dots(end), eAll: mLabel(sumE(dayOf('2018-12-31'), end), t), e12: mLabel(sumE(shiftMonths(end, 12), end), t), eYtd: mLabel(sumE(dayOf(`${yearOf(end) - 1}-12-31`), end), t),
     per: inPerLabel(IN.per), avg: tot.r != null ? pcIn(tot.r) : '–', bestM: MLABEL[ranked[0]?.m] || '–', bestMr: ranked[0] ? pcIn(ranked[0].r) : '', worstM: MLABEL[ranked[ranked.length - 1]?.m] || '–', worstMr: ranked.length ? pcIn(ranked[ranked.length - 1].r) : '',
@@ -145,7 +154,7 @@ function renderInsights() {
   const payQ = pays.slice().sort((p, q) => p.q < q.q ? -1 : p.q > q.q ? 1 : p.flow - q.flow);
   const th = (h, i) => `<th class="${i === 0 ? 'l' : ''}">${h}</th>`;
   const cls = v => v >= 0 ? 'up' : 'down';
-  box.innerHTML = `<div class="bar" style="margin-bottom:12px">${field(X.per, `<div class="seg" role="group" data-ins="per">${pers.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === IN.per}">${l}</button>`).join('')}</div>`)}</div>`
+  box.innerHTML = `<div class="bar" style="margin-bottom:12px">${field(X.per, `<div class="seg" role="group" data-ins="per">${pers.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === IN.per}">${l}</button>`).join('')}</div>`)}${field(X.to, toSel)}</div>`
     + `<div class="kpis">${kp(X.k[0], mLabel(tot.aEnd, t), dots(b), 'hl')}${kp(X.k[1], `<span class="${cls(tot.e)}">${mLabel(tot.e, t)}</span>`, X.ks(dots(a), dots(b)))}${kp(X.k[2], tot.r != null ? `<span class="${cls(tot.r)}">${pcIn(tot.r)}</span>` : '–', inPerLabel(IN.per))}${kp(X.k[3], mLabel(tot.fl, t), '')}${kp(X.k[4], mLabel(tot.pay, t), '')}</div>`
     + `<section class="card" style="margin-top:14px"><div class="story">${X.txt(x).filter(Boolean).map(s => `<p>${s}</p>`).join('')}</div></section>`
     + `<h3 class="sub3">${X.mTitle}</h3><section class="card"><div class="scroll"><table class="jt" id="insM"><thead><tr>${X.hM.map(th).join('')}</tr></thead><tbody>`
@@ -158,6 +167,8 @@ function renderInsights() {
     + payQ.map(p => `<tr><td class="l">${lang === 'lt' ? p.q.replace('-', ' K') : 'Q' + p.q.slice(5) + ' ' + p.q.slice(0, 4)}</td><td class="l">${MLABEL[p.p]}</td><td class="l">${(p.dates || []).map(d => dots(dayOf(d))).join(', ')}</td><td class="down">${mE(p.flow)}</td><td>${mE(p.base)}</td><td>${pc(-p.flow / p.base, 2)}</td></tr>`).join('') + '</tbody></table></div></section>'
     + `<p class="note">${X.note}</p>`;
   box.querySelectorAll('[data-ins="per"] button').forEach(btn => btn.addEventListener('click', () => { IN.per = btn.dataset.v; inSave(); renderInsights(); }));
+  box.querySelector('[data-ins="to"]').addEventListener('change', e => { const v = e.target.value; if (v === 'custom') { IN.toCustom = true; IN.to = iso(end); } else { IN.toCustom = false; IN.to = v; } inSave(); renderInsights(); });
+  const tD = box.querySelector('[data-ins="toD"]'); if (tD) tD.addEventListener('change', e => { if (e.target.value) { IN.to = e.target.value; inSave(); renderInsights(); } });
   box.querySelector('[data-ins="grp"]').addEventListener('change', e => { IN.grp = e.target.value; inSave(); renderInsights(); });
   IN.last = { a, b, rows, byM, tot, payQ };
 }
