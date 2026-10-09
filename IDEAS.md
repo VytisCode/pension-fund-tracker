@@ -32,7 +32,7 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 
 ## Klausimas savininkui
 
-Kokį laikotarpį dažniausiai žiūrite, kai lyginate fondus: šiuos metus (YTD), 1 m., 3 m. ar visą istoriją? Jį padaryčiau numatytuoju, kad atidarius svetainę iškart matytumėte tai, ko reikia.
+Kitas darbas – „Mokesčių poveikis laike“ (Meet 9). Kaip jums aiškiau: **eurais** (pvz., kiek mokesčių sumokėtų taupytojas, kas mėnesį įmokantis 100 € per 10 metų, kiekvienam valdytojui) ar **procentais** (kiek mokesčiai sumažina sukauptą sumą)?
 
 ---
 
@@ -73,7 +73,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 5. **Grąžos ir rizikos žemėlapis:** taškinė diagrama (horizontaliai svyravimai, vertikaliai grąža, spalva pagal gimimo grupę). – *atlikta (PR #25, 2026-10-08)*
 6. **Santykinė grąža prieš grupės vidurkį:** juostinė diagrama, nulis = grupės vidurkis. – *atlikta (PR #41, 2026-10-08)*
 7. **Reitingo kaita laike:** fondo vieta kas mėnesį ar ketvirtį. – *atlikta (PR #43, 2026-10-08)*
-8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *patvirtinta*
+8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *atlikta (PR #50, 2026-10-09)*
 9. **Mokesčių poveikis laike:** kiek valdymo mokesčiai sukaupia per 5–10 m., palyginti tarp fondų. – *patvirtinta* (dėl 5–9: įtraukti visas, nereikalingas išmesti vėliau)
 10. **Valdomo turto (AUM) kaita** kiekvienam II pakopos fondui kas ketvirtį: grafikas ir lentelė (pensijų reformos kontekstas). Pradėti nuo turimų duomenų. – *patvirtinta*
 11. **Lankstus laikotarpis linijiniuose grafikuose:** „Visa istorija“ lieka; papildomai „nuo [fondo] pradžios“ ir mygtukas „nuo jauniausio fondo pradžios“. – *patvirtinta*
@@ -262,3 +262,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** naujoji „grąža palyginti su grupės vidurkiu“ diagrama rodo tik vieną laikotarpį, todėl nematyti, ar fondas lenkia konkurentus nuolat, ar tik pastaruoju metu.
 - **Nauda:** linijinis grafikas, kur nulis yra grupės vidurkis, o kiekvieno valdytojo linija rodo sukauptą skirtumą nuo jo per laiką. Iškart matyti, kada fondas pradėjo atsilikti ar lenkti kitus.
+
+### Atsigavimo laikas po didžiausio kritimo
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** didžiausio kritimo juostos rodo, kiek fondas nukrito, bet ne kiek laiko užtruko grįžti į ankstesnę viršūnę. Taupytojui tai dažnai svarbiau nei pats kritimo gylis.
+- **Nauda:** šalia kritimo – skaičius „atsigavo per N mėn.“ arba „dar neatsigavo“. Matyti, kurie valdytojai po krizių atsigauna greičiau.

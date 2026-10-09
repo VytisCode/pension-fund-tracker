@@ -12,6 +12,8 @@ addStrings({
   thCmp: 'Comparisons', thFirst: '1st places', thFirstPct: '% 1st', thTop2: '% 1st–2nd', thAvgRank: 'Avg. rank',
   rmBest: 'Best ratio', rmAvgRank: 'Average place', rmTip: (r, v, k, n) => `Return ${r}, volatility ${v} % · place ${k} of ${n}`,
   nRmT: rf => `Return-to-risk ratio (Sharpe) = (annualised return − risk-free rate ${rf} %) ÷ annualised volatility, for the period, age groups and providers chosen above. Higher = more return per unit of risk. Colour = place within the age group (green = best); funds are compared only with the same age group. “Average place” = the provider’s average place across the chosen groups. On periods shorter than a year the annualised figures are less reliable.`,
+  hDd: 'Maximum drawdown', ddPeak: 'peak', ddTrough: 'bottom', ddRec: 'recovered', ddNoRec: 'not yet recovered',
+  capDd: t => `${t}. Each bar = the deepest fall of the unit value from a previous high within the period (smaller is better); funds are sorted from the smallest fall. Same scale for all groups. Hover for the dates.`,
   hRot: 'Rank over time', rotWin: 'Return window',
   capRot: (g, w) => `${g}: each provider’s place among the funds of this age group at the end of every month, by its ${w} return (1 = best). Hover for the month’s order.`,
   hRisk: 'Return vs. risk', hRel: 'Return vs. age-group average', relAvg: 'average', pp: 'pp',
@@ -51,6 +53,7 @@ addStrings({
   thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
+    dd: 'Maximum drawdown = the largest percentage fall of the unit value from its highest point so far to a later low, within the selected period. It shows how much a saver could have seen the account drop at worst. The tooltip shows when the peak and the bottom were and whether the fund has already climbed back to the old high.',
     rot: 'At every month end the funds of the chosen age group are ranked by their trailing return over the chosen window (3 months, 1 year or 3 years) – the same way as the rank tables. A flat line near the top means consistently good results; a jumping line means the place depends on the period. Funds without enough history for the window are left out for those months.',
     rel: 'Shows how far each fund is above or below its peers: return over the selected period minus the simple (unweighted) average return of all funds in the same age group. Provider chips only hide bars; the average always uses all funds with fresh data.',
     rf: () => DATA.rf ? `Default: €STR (euro short-term rate) published daily by the European Central Bank – ${num(DATA.rf.value, 2)} % p.a. on ${DATA.rf.date}. It is the standard risk-free rate for euro investors (all Lithuanian pension fund members invest in EUR) and is updated automatically with the site data. Source: ${DATA.rf.source}. You can type your own value; “Use €STR” returns to the automatic one.` : 'The automatic €STR rate (European Central Bank) is not available yet, so 2 % p.a. is used. You can type your own value.',
@@ -84,6 +87,8 @@ addStrings({
   thCmp: 'Palyginimų', thFirst: '1 vietų', thFirstPct: '% 1 vietų', thTop2: '% 1–2 vietų', thAvgRank: 'Vid. vieta',
   rmBest: 'Geriausias santykis', rmAvgRank: 'Vidutinė vieta', rmTip: (r, v, k, n) => `Grąža ${r}, svyravimas ${v} % · vieta ${k} iš ${n}`,
   nRmT: rf => `Grąžos ir rizikos santykis (Sharpe) = (metinė grąža − be rizikos palūkanų norma ${rf} %) ÷ metinis svyravimas, pagal virš grafiko pasirinktą laikotarpį, amžiaus grupes ir tiekėjus. Didesnis = daugiau grąžos vienam rizikos vienetui. Spalva – vieta amžiaus grupėje (žalia = geriausia); fondai lyginami tik su tos pačios grupės fondais. „Vidutinė vieta“ – tiekėjo vidutinė vieta pasirinktose grupėse. Trumpesniais nei metų laikotarpiais metiniai skaičiai mažiau patikimi.`,
+  hDd: 'Didžiausias kritimas', ddPeak: 'viršūnė', ddTrough: 'dugnas', ddRec: 'atsigavo', ddNoRec: 'dar neatsigavo',
+  capDd: t => `${t}. Kiekviena juosta – giliausias vieneto vertės kritimas nuo ankstesnės viršūnės per laikotarpį (mažesnis – geriau); fondai surikiuoti nuo mažiausio kritimo. Visoms grupėms ta pati skalė. Užvedus pelę matyti datos.`,
   hRot: 'Vietos kaita laike', rotWin: 'Grąžos laikotarpis',
   capRot: (g, w) => `${g}: kiekvieno tiekėjo vieta tarp šios amžiaus grupės fondų kiekvieno mėnesio pabaigoje pagal ${w} grąžą (1 = geriausia). Užvedus pelę matyti to mėnesio eilė.`,
   hRisk: 'Grąža ir rizika', hRel: 'Grąža palyginti su amžiaus grupės vidurkiu', relAvg: 'vidurkis', pp: 'p. p.',
@@ -123,6 +128,7 @@ addStrings({
   thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
+    dd: 'Didžiausias kritimas = didžiausias procentinis vieneto vertės sumažėjimas nuo iki tol aukščiausio taško iki vėlesnės žemiausios vertės per pasirinktą laikotarpį. Parodo, kiek blogiausiu atveju taupytojas galėjo matyti sumažėjusią sąskaitą. Užvedus pelę matyti, kada buvo viršūnė ir dugnas ir ar fondas jau grįžo į ankstesnę viršūnę.',
     rot: 'Kiekvieno mėnesio pabaigoje pasirinktos amžiaus grupės fondai surikiuojami pagal pasirinkto laikotarpio (3 mėn., 1 m. ar 3 m.) grąžą iki tos dienos – taip pat, kaip vietų lentelėse. Lygi linija viršuje reiškia nuolat gerus rezultatus, šokinėjanti – kad vieta priklauso nuo laikotarpio. Fondai, kuriems trūksta istorijos tam laikotarpiui, tais mėnesiais nerodomi.',
     rel: 'Parodo, kiek kiekvienas fondas lenkia savo konkurentus arba atsilieka nuo jų: grąža per pasirinktą laikotarpį minus paprastas (nesvertinis) visų tos pačios amžiaus grupės fondų grąžos vidurkis. Tiekėjų mygtukai tik paslepia juostas – vidurkis visada skaičiuojamas iš visų fondų su šviežiais duomenimis.',
     rf: () => DATA.rf ? `Numatyta: €STR (euro trumpalaikių palūkanų norma), kurią kasdien skelbia Europos centrinis bankas – ${num(DATA.rf.value, 2)} % per metus (${DATA.rf.date}). Tai standartinė nerizikinga norma EUR investuotojams (visi Lietuvos pensijų fondų dalyviai investuoja eurais); ji atnaujinama automatiškai kartu su svetainės duomenimis. Šaltinis: ${DATA.rf.source}. Galite įrašyti savo skaičių; „Grąžinti €STR“ grąžina automatinę reikšmę.` : 'Automatinė €STR norma (Europos centrinis bankas) dar negauta, todėl naudojama 2 % per metus. Galite įrašyti savo skaičių.',
@@ -548,7 +554,7 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
-  renderRiskMap(); renderRelative(gs); renderRankOverTime();
+  renderRiskMap(); renderRelative(gs); renderRankOverTime(); renderDrawdown(gs);
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
@@ -732,6 +738,38 @@ function renderRankOverTime() {
     const w = tip.offsetWidth; tip.style.left = (X(q.day) + 12 + w > W ? X(q.day) - w - 12 : X(q.day) + 12) + 'px'; tip.style.top = m.t + 'px';
   };
   el.onmouseleave = () => { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); };
+}
+/* didžiausias kritimas: giliausias vieneto vertės kritimas nuo ankstesnės viršūnės per pasirinktą laikotarpį */
+function drawdownOf(f, rng) {
+  const ia = lastOnOrBefore(f, rng.anchor), ie = lastOnOrBefore(f, rng.end);
+  if (ia < 0 || ie <= ia || f.d[ia] < rng.anchor - 7) return null;  // fondo laikotarpio pradžioje dar nebuvo
+  let peak = ia, best = { dd: 0, peak: ia, trough: ia };
+  for (let i = ia + 1; i <= ie; i++) {
+    if (f.v[i] > f.v[peak]) peak = i;
+    const dd = f.v[i] / f.v[peak] - 1;
+    if (dd < best.dd) best = { dd, peak, trough: i };
+  }
+  let rec = null; for (let i = best.trough + 1; i <= ie; i++) if (f.v[i] >= f.v[best.peak]) { rec = i; break; }
+  return { dd: best.dd * 100, peak: f.d[best.peak], trough: f.d[best.trough], rec: rec === null ? null : f.d[rec] };
+}
+function renderDrawdown(gs) {
+  $('hDd').innerHTML = T().hDd + ik('dd');
+  const cards = DATA.groups.slice().reverse().filter(g => gs.includes(g)).map(g => {
+    const rng = rangeFor(g, false);
+    const rows = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast)).map(f => ({ f, x: drawdownOf(f, rng) })).filter(r => r.x).sort((a, b) => b.x.dd - a.x.dd);
+    return rows.length ? { g, rng, rows } : null;
+  }).filter(Boolean);
+  setCap('ddGrid', T().capDd(spanText(periodText(), cards.map(c => c.rng))));
+  const el = $('ddGrid'); el.classList.toggle('one', cards.length === 1);
+  if (!cards.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
+  const max = Math.max(...cards.flatMap(c => c.rows.map(r => -r.x.dd)), 0.01);   // bendra skalė visoms grupėms
+  el.innerHTML = cards.map(c => `<div class="card relcard"><div class="relh"><b>${groupLabel(c.g)}</b></div>`
+    + c.rows.map(r => {
+      const x = r.x, w = -x.dd / max * 100;
+      const tip = `${labelOf(r.f.provider)}: ${x.dd < 0 ? '−' : ''}${num(Math.abs(x.dd), 1)} % · ${T().ddPeak} ${iso(x.peak)} → ${T().ddTrough} ${iso(x.trough)} · ${x.rec ? `${T().ddRec} ${iso(x.rec)}` : T().ddNoRec}`;
+      return `<div class="relrow" title="${tip}"><span class="relname"><span class="sw" style="background:${colorOf(r.f.provider)}"></span>${labelOf(r.f.provider)}</span>`
+        + `<span class="ddtrack"><i style="width:${w}%"></i></span><span class="relval">${x.dd < 0 ? '−' : ''}${num(Math.abs(x.dd), 1)} %</span></div>`;
+    }).join('') + '</div>').join('');
 }
 function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
