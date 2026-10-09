@@ -58,12 +58,21 @@
   a.srclink:hover { text-decoration: underline; }
   #srcTitle { scroll-margin-top: 170px; }
   #pop { max-width: 560px; white-space: pre-line; }
+  #staleBox .stale { margin: 14px 0 0; padding: 10px 14px; border: 1px solid var(--warn); border-radius: 10px; background: var(--card); font-size: 13.5px; line-height: 1.5; }
+  #staleBox .stale b { color: var(--warn); }
+  #staleBox .stale ul { margin: 4px 0 0; padding-left: 20px; }
+  #staleBox .stale a, #srcBody a { color: var(--accent); }
+  table.fresht { border-collapse: collapse; font-size: 13px; margin: 4px 0 6px; }
+  table.fresht th, table.fresht td { text-align: left; padding: 4px 14px 4px 0; border-bottom: 1px solid var(--grid); }
+  table.fresht th { color: var(--text-3); font-weight: 500; }
+  table.fresht td.late { color: var(--warn); font-weight: 600; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header id="top"></header>
   <div class="bar sticky" id="inBar"></div>
+  <div id="staleBox"></div>
 
   <h2 class="sec" id="sumTitle"></h2>
   <div class="kpis" id="kpiA"></div>
