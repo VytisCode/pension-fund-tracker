@@ -281,3 +281,20 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** „Ataskaitų“ puslapyje daug lentelių, o svarbiausius skaičius tenka susirinkti iš kelių vietų.
 - **Nauda:** viršuje 4 kortelės pasirinktam valdytojui: vidutinė vieta tarp konkurentų, geriausias ir silpniausias fondas, turto (AUM) pokytis per ketvirtį. Patogu pradėti pokalbį ar pristatymą.
+
+### III pakopos išmokėjimo būdas „Kelyje į pensiją“
+- **Būsena:** atlikta (2026-10-09)
+- **Autorius:** savininkas (2026-10-09)
+- **Kas:** III pakopos lėšų negalima panaudoti Sodros anuitetui, todėl meniu pasirenkama: likti fonde ir kas mėnesį iki 85 m. parduoti vienetų dalį; atsiimti ir dalinti kas mėnesį iki 85 m. neinvestuojant; atsiimti visą sumą iš karto. Prognozių nedaroma.
+
+### III pakopos GPM lengvata „Kelyje į pensiją“
+- **Būsena:** siūloma
+- **Autorius:** Claude
+- **Kodėl:** III pakopos įmokos mažina gyventojų pajamų mokestį (dalis įmokos grąžinama kitais metais), o dabar modelis rodo tik paties dalyvio įmokas.
+- **Nauda:** jungiklis „GPM lengvata“: grąžinta suma laikoma papildoma įmoka kitų metų pradžioje (ribos – pagal kiekvienų metų įstatymą). Matyti tikroji III pakopos nauda, palyginti su II pakopa.
+
+### Darbdavio įmoka į III pakopą
+- **Būsena:** siūloma
+- **Autorius:** Claude
+- **Kodėl:** daug darbdavių moka į III pakopą už darbuotoją, ir tai dažnai didžiausias III pakopos privalumas.
+- **Nauda:** laukelis „Darbdavio įmoka, € / mėn.“ – atskira spalva grafike ir lentelėse, kaip valstybės įmoka II pakopoje.
