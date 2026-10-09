@@ -124,6 +124,27 @@ def ideas_section() -> list:
     return out
 
 
+def stale_section(today: str) -> list:
+    """Pasenę „Kelio į pensiją“ pradiniai duomenys – kartą per mėnesį (pirmoje to mėnesio ataskaitoje)."""
+    try:
+        last = json.loads(REPORT_STATE.read_text(encoding="utf-8")).get("last_sent", "")
+    except (OSError, ValueError):
+        last = ""
+    if last[:7] == today[:7]:
+        return []
+    try:
+        import journey
+        late = journey.stale(datetime.strptime(today, "%Y-%m-%d").date())
+    except Exception as e:  # noqa: BLE001
+        return ["", f"Duomenų šviežumo patikra nepavyko: {e!r}"]
+    if not late:
+        return []
+    return ["", "Pasenę duomenys (priminimas kartą per mėnesį, kol neatnaujinta):"] + [
+        f"  ⚠ {f['lt']}: turime {f['last']}, naujų laukta iki {f['due']} – "
+        + ("automatinis atnaujinimas dar nerado" if f["auto"] else "reikia atnaujinti rankiniu būdu") + f" ({f['url']})"
+        for f in late]
+
+
 def build() -> tuple:
     existing = store.load()
     expected = u.expected_date()
@@ -142,6 +163,7 @@ def build() -> tuple:
     runs = runs_today(today)
     if runs:
         body += ["", runs]
+    body += stale_section(today)
     body += ideas_section()
     body += ["", f"Svetainė: {SITE_URL}"]
     return subject, mask("\n".join(body))

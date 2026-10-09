@@ -184,11 +184,45 @@ def etar_browser():
         b.close()
 
 
+def pensions():
+    """Vidutinė senatvės pensija: osp.stat.gov.lt pagrindiniai rodikliai ir sodra.lt statistika (puslapiai generuojami JS)."""
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        b = p.chromium.launch(headless=False)
+        pg = b.new_page(locale="lt-LT")
+        for name, url in [("osp_rodikliai", "https://osp.stat.gov.lt/pagrindiniai-salies-rodikliai"),
+                          ("sodra_rodikliai", "https://www.sodra.lt/statistika/pagrindiniai-socialiniai-rodikliai")]:
+            try:
+                pg.goto(url, wait_until="domcontentloaded", timeout=90000)
+                pg.wait_for_timeout(15000)
+                (OUT / f"{name}.txt").write_text(pg.locator("body").inner_text(), encoding="utf-8")
+                log("ok", name)
+            except Exception as e:  # noqa: BLE001
+                log("fail", name, repr(e)[:200])
+        b.close()
+
+
+def pensions_sdmx():
+    """Vidutinė senatvės pensija iš osp-rs.stat.gov.lt SDMX (be Cloudflare)."""
+    flows = get("osp_dataflows.xml", "https://osp-rs.stat.gov.lt/rest_xml/dataflow/")
+    if not flows:
+        return
+    txt = flows.decode("utf-8", "replace")
+    hits = re.findall(r'<str:Dataflow[^>]*id="([^"]+)"[^>]*>(.*?)</str:Dataflow>', txt, re.S)
+    keep = [(fid, re.findall(r'<com:Name[^>]*>([^<]+)</com:Name>', body)) for fid, body in hits]
+    keep = [(fid, n) for fid, n in keep if any(re.search(r"pensij|pension", x, re.I) for x in n)]
+    (OUT / "osp_pension_flows.json").write_text(json.dumps(keep, ensure_ascii=False, indent=1), encoding="utf-8")
+    log("osp pension flows", len(keep))
+    for fid, n in keep:
+        if any(re.search(r"senatv|old-age", x, re.I) for x in n) and any(re.search(r"vidutin|average", x, re.I) for x in n):
+            get(f"osp_{fid}.xml", f"https://osp-rs.stat.gov.lt/rest_xml/data/{fid}")
+
+
 if __name__ == "__main__":
     want = sys.argv[1:] or ["indexes", "cpi", "methodology", "sodra"]
     for w in want:
         try:
-            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "cpi3": cpi3, "etar": etar_browser, "methodology": methodology, "sodra": sodra_calc}[w]()
+            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "cpi3": cpi3, "etar": etar_browser, "pensions": pensions, "pensions_sdmx": pensions_sdmx, "methodology": methodology, "sodra": sodra_calc}[w]()
         except Exception as e:  # noqa: BLE001
             log("STEP FAIL", w, repr(e))
     (OUT / "log.txt").write_text("\n".join(LOG), encoding="utf-8")

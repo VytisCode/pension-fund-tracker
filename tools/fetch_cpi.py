@@ -38,7 +38,7 @@ def read():
 
 def write(rows: dict):
     with OUT.open("w", encoding="utf-8", newline="") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["month", "cpi"])
         for m in sorted(rows):
             w.writerow([m, f"{rows[m]:.4f}"])
