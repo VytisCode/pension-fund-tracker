@@ -232,3 +232,8 @@ tr.gstart:first-child td { border-top: 0; }
 .rdchart { position: relative; width: 100%; }
 .rdchart svg { display: block; overflow: visible; }
 .rdchart .endlab { opacity: 1; }
+.dlwrap { position: relative; }
+.dlpanel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 50; width: min(380px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.12); display: grid; gap: 8px; }
+.dlpanel .field { display: grid; gap: 3px; }
+.dlpanel select { width: 100%; }
+.dlpanel .note { margin: 0; font-size: 12px; }

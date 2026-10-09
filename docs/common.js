@@ -56,7 +56,7 @@ function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div><div class="fresh" id="fresh"></div>
     <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a><a href="aum.html" data-p="aum"></a><a href="portfolios.html" data-p="portfolios"></a><a href="reports.html" data-p="reports"></a></nav></div>
-    <div class="top-tools"><a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a><div class="seg" id="lang" role="group" aria-label="Language">
+    <div class="top-tools"><div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div><a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a><div class="seg" id="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
       <div class="seg" id="theme" role="group">
         <button type="button" data-theme="light"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
@@ -78,6 +78,7 @@ function renderHeader(active, onLang) {
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+    document.getElementById('dlBtn').textContent = '⬇ ' + T().dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
     if (active === 'performance' || active === 'overview') document.getElementById('fresh').innerHTML = freshnessHTML();
   };
   h.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
@@ -90,6 +91,9 @@ function renderHeader(active, onLang) {
     apply();
   }));
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
+  const dlb = document.getElementById('dlBtn'), dlp = document.getElementById('dlPanel');
+  dlb.addEventListener('click', () => { dlp.hidden = !dlp.hidden; dlb.setAttribute('aria-expanded', !dlp.hidden); if (!dlp.hidden) dlRender(); });
+  document.addEventListener('click', e => { if (e.isTrusted && !dlp.hidden && !e.target.closest('.dlwrap')) { dlp.hidden = true; dlb.setAttribute('aria-expanded', false); } });
   apply();
   return apply;
 }
@@ -446,4 +450,100 @@ function rdDrawBars(el, funds, start, gran) {
     const cx = m.l + (i + 0.5) * gw, w = tip.offsetWidth; tip.style.left = (cx + gw / 2 + 8 + w > W ? Math.max(0, cx - gw / 2 - 8 - w) : cx + gw / 2 + 8) + 'px'; tip.style.top = m.t + 'px';
   };
   s.onmouseleave = () => { tip.style.display = 'none'; hl.setAttribute('visibility', 'hidden'); };
+}
+
+/* ---------- Neapdorotų duomenų atsisiuntimas (antraštės mygtukas „Duomenys“, visuose puslapiuose) ----------
+   Duomenų failai (data.js, data3.js, data_pf.js) įkeliami atskirai ir vykdomi atskiroje funkcijoje, kad nesusimaišytų su puslapio DATA. */
+addStrings({
+  dlBtn: 'Data', dlWhat: 'What to download', dlNav2: 'Unit values – all Pillar II funds', dlNav3: 'Unit values – all Pillar III funds',
+  dlPf: 'Portfolios with instrument details', dlPillar: 'Pillar', dlMgr: 'Manager', dlFund: 'Fund', dlAll: 'All', dlFrom: 'From quarter', dlTo: 'To quarter',
+  dlGo: 'Download (.xlsx)', dlBusy: 'Preparing…', dlFail: 'Could not prepare the file (no internet?).',
+  dlNoteNav: 'Excel file with two sheets: “Table” – one column per fund, one row per day; “List” – one row per fund and day. Unit values as published by the managers, full history.',
+  dlNotePf: 'One row per position per quarter end (Bank of Lithuania reports), with our extra details: asset class, region, emerging markets, index/active, SFDR, TER, currency hedging, and for bonds – maturity, coupon, yield to maturity and duration. Blank = not known.',
+  dlCols: { q: 'Quarter end', mgr: 'Manager', pl: 'Pillar', code: 'Fund code', fund: 'Fund', grp: 'Group', pos: 'Position', isin: 'ISIN', issuer: 'Issuer / company', type: 'Type', alt: 'Alternative kind', cty: 'Country', cur: 'Currency', units: 'Units / nominal', val: 'Value, €', w: 'Weight, %', ac: 'Asset class', reg: 'Region', em: 'Emerging markets', ap: 'Approach', sfdr: 'SFDR', ter: 'TER, %', hdg: 'Currency hedged', th: 'Theme', src: 'Source', mat: 'Maturity', cpn: 'Coupon, %', frn: 'Floating rate', ytm: 'Yield to maturity, %', md: 'Modified duration', yrs: 'Years to maturity', date: 'Date', unit: 'Unit value' },
+  dlTypes: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' }, dlYes: 'yes', dlNo: 'no', dlCat: { bond: 'Bond', mixed: 'Mixed', equity: 'Equity' },
+}, {
+  dlBtn: 'Duomenys', dlWhat: 'Ką atsisiųsti', dlNav2: 'Vieneto vertės – visi II pakopos fondai', dlNav3: 'Vieneto vertės – visi III pakopos fondai',
+  dlPf: 'Portfeliai su priemonių informacija', dlPillar: 'Pakopa', dlMgr: 'Valdytojas', dlFund: 'Fondas', dlAll: 'Visi', dlFrom: 'Nuo ketvirčio', dlTo: 'Iki ketvirčio',
+  dlGo: 'Atsisiųsti (.xlsx)', dlBusy: 'Ruošiama…', dlFail: 'Nepavyko paruošti failo (nėra interneto?).',
+  dlNoteNav: 'Excel failas su dviem lapais: „Lentelė“ – kiekvienas fondas atskirame stulpelyje, kiekviena diena eilutėje; „Sąrašas“ – po eilutę kiekvienam fondui ir dienai. Vieneto vertės, kaip jas skelbia valdytojai, visa istorija.',
+  dlNotePf: 'Po eilutę kiekvienai pozicijai kiekvieno ketvirčio pabaigoje (Lietuvos banko ataskaitos) su mūsų surinkta papildoma informacija: turto klasė, regionas, besivystančios rinkos, indeksinis / aktyvus, SFDR, TER, valiutos apsauga, o obligacijoms – išpirkimo data, kuponas, pajamingumas iki išpirkimo ir trukmė. Tuščia = nežinoma.',
+  dlCols: { q: 'Ketvirčio pabaiga', mgr: 'Valdytojas', pl: 'Pakopa', code: 'Fondo kodas', fund: 'Fondas', grp: 'Grupė', pos: 'Pozicija', isin: 'ISIN', issuer: 'Emitentas / bendrovė', type: 'Tipas', alt: 'Alternatyvios rūšis', cty: 'Šalis', cur: 'Valiuta', units: 'Vienetai / nominalas', val: 'Vertė, €', w: 'Svoris, %', ac: 'Turto klasė', reg: 'Regionas', em: 'Besivystančios rinkos', ap: 'Valdymo būdas', sfdr: 'SFDR', ter: 'TER, %', hdg: 'Valiutos apsauga', th: 'Tema', src: 'Šaltinis', mat: 'Išpirkimo data', cpn: 'Kuponas, %', frn: 'Kintama palūkanų norma', ytm: 'Pajamingumas iki išpirkimo, %', md: 'Modifikuota trukmė', yrs: 'Metai iki išpirkimo', date: 'Data', unit: 'Vieneto vertė' },
+  dlTypes: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' }, dlYes: 'taip', dlNo: 'ne', dlCat: { bond: 'Obligacijų', mixed: 'Mišrus', equity: 'Akcijų' },
+});
+const DL = { what: 'nav2', pl: 'II', mgr: '', fund: '', q0: null, q1: null, cache: {} };
+function dlLoad(file, name) {             // grąžina failo kintamąjį (DATA ar PF), neliečiant puslapio kintamųjų
+  if (!DL.cache[file]) DL.cache[file] = fetch(file, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(file); return r.text(); }).then(t => new Function(t + `;return ${name};`)());
+  return DL.cache[file];
+}
+function dlXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+async function dlRender() {
+  const p = document.getElementById('dlPanel'), t = T();
+  let pf = null; if (DL.what === 'pf') { try { pf = await dlLoad('data_pf.js', 'PF'); } catch (e) { pf = null; } }
+  const opt = (v, l, cur) => `<option value="${v}"${v === cur ? ' selected' : ''}>${l}</option>`;
+  let extra = '';
+  if (pf) {
+    const nq = pf.quarters.length; if (DL.q1 === null || DL.q1 >= nq) DL.q1 = nq - 1; if (DL.q0 === null || DL.q0 > DL.q1) DL.q0 = DL.q1;
+    const fs = pf.funds.filter(f => (!DL.pl || f.pl === DL.pl) && (!DL.mgr || f.p === DL.mgr)); if (!fs.some(f => f.c === DL.fund)) DL.fund = '';
+    const mgrs = [...new Set(pf.funds.map(f => f.p))].sort(), ql = i => pf.quarters[i];
+    extra = `<label class="field"><span>${t.dlPillar}</span><select data-k="pl">${opt('', t.dlAll, DL.pl)}${opt('II', 'II', DL.pl)}${opt('III', 'III', DL.pl)}</select></label>
+      <label class="field"><span>${t.dlMgr}</span><select data-k="mgr">${opt('', t.dlAll, DL.mgr)}${mgrs.map(m => opt(m, m, DL.mgr)).join('')}</select></label>
+      <label class="field"><span>${t.dlFund}</span><select data-k="fund">${opt('', t.dlAll, DL.fund)}${fs.map(f => opt(f.c, f.full || f.n, DL.fund)).join('')}</select></label>
+      <label class="field"><span>${t.dlFrom}</span><select data-k="q0">${pf.quarters.map((q, i) => opt(String(i), ql(i), String(DL.q0))).join('')}</select></label>
+      <label class="field"><span>${t.dlTo}</span><select data-k="q1">${pf.quarters.map((q, i) => opt(String(i), ql(i), String(DL.q1))).join('')}</select></label>`;
+  }
+  p.innerHTML = `<label class="field"><span>${t.dlWhat}</span><select data-k="what">${opt('nav2', t.dlNav2, DL.what)}${opt('nav3', t.dlNav3, DL.what)}${opt('pf', t.dlPf, DL.what)}</select></label>
+    ${extra}<p class="note">${DL.what === 'pf' ? t.dlNotePf : t.dlNoteNav}</p><button class="btn dlgo" type="button">${t.dlGo}</button>`;
+  p.querySelectorAll('select').forEach(sel => sel.addEventListener('change', () => {
+    const k = sel.dataset.k; DL[k] = k === 'q0' || k === 'q1' ? +sel.value : sel.value;
+    if (k === 'q0' && DL.q1 < DL.q0) DL.q1 = DL.q0; if (k === 'q1' && DL.q0 > DL.q1) DL.q0 = DL.q1;
+    dlRender();
+  }));
+  const go = p.querySelector('.dlgo');
+  go.addEventListener('click', async () => {
+    go.disabled = true; go.textContent = t.dlBusy;
+    try { await dlXlsx(); await (DL.what === 'pf' ? dlPortfolios() : dlNav(DL.what === 'nav3')); }
+    catch (e) { alert(t.dlFail); }
+    go.disabled = false; go.textContent = t.dlGo;
+  });
+}
+const dlDays = f => f.d || (() => { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); return d; })();
+async function dlNav(p3) {
+  const D = await dlLoad(p3 ? 'data3.js' : 'data.js', 'DATA'), t = T(), c = t.dlCols;
+  const label = id => (D.providers.find(p => p.id === id) || {}).label || id;
+  const brand = b => b === 'SWEDBANK' ? 'Swedbank' : b === 'GOINDEX' ? 'Goindex' : b[0] + b.slice(1).toLowerCase().replace(/^eb$/, 'EB');
+  const funds = D.groups.flatMap(g => g.funds.map(f => ({ g: p3 ? t.dlCat[g.id] || g.id : g.id, name: f.name, mgr: p3 ? brand(f.brand) : label(f.provider), d: dlDays(f), v: f.v })));
+  const days = [...new Set(funds.flatMap(f => f.d))].sort((a, b) => a - b), pos = new Map(days.map((d, i) => [d, i]));
+  const wide = [[c.date, ...funds.map(f => f.name)]], grid = days.map(d => [iso(d), ...funds.map(() => null)]);
+  funds.forEach((f, j) => f.d.forEach((d, i) => { grid[pos.get(d)][j + 1] = f.v[i]; }));
+  const long = [[c.date, c.mgr, c.grp, c.fund, c.unit]];
+  funds.forEach(f => f.d.forEach((d, i) => long.push([iso(d), f.mgr, f.g, f.name, f.v[i]])));
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet(wide.concat(grid)); ws1['!cols'] = [{ wch: 11 }, ...funds.map(() => ({ wch: 14 }))]; ws1['!freeze'] = { xSplit: 1, ySplit: 1 };
+  const ws2 = XLSX.utils.aoa_to_sheet(long); ws2['!cols'] = [{ wch: 11 }, { wch: 12 }, { wch: 10 }, { wch: 48 }, { wch: 12 }];
+  XLSX.utils.book_append_sheet(wb, ws1, lang === 'lt' ? 'Lentelė' : 'Table'); XLSX.utils.book_append_sheet(wb, ws2, lang === 'lt' ? 'Sąrašas' : 'List');
+  XLSX.writeFile(wb, `${lang === 'lt' ? 'Vieneto_vertes' : 'Unit_values'}_${p3 ? 'III' : 'II'}_${String(D.generated).slice(0, 10)}.xlsx`);
+}
+async function dlPortfolios() {
+  const PF = await dlLoad('data_pf.js', 'PF'), t = T(), c = t.dlCols;
+  const bm = {}; Object.entries(PF.bm || {}).forEach(([si, a]) => { const m = bm[si] = new Map(); for (let i = 0; i < a.length; i += 4) m.set(a[i], a.slice(i + 1, i + 4)); });
+  const yn = x => x === true || x === 1 || x === '1' || x === 'yes' ? t.dlYes : x === false || x === 0 || x === '0' || x === 'no' ? t.dlNo : (x ?? '');
+  const cols = ['q', 'mgr', 'pl', 'code', 'fund', 'grp', 'pos', 'isin', 'issuer', 'type', 'alt', 'cty', 'cur', 'units', 'val', 'w', 'ac', 'reg', 'em', 'ap', 'sfdr', 'ter', 'hdg', 'th', 'src', 'mat', 'cpn', 'frn', 'ytm', 'md', 'yrs'];
+  const rows = [cols.map(k => c[k])];
+  PF.funds.filter(f => (!DL.pl || f.pl === DL.pl) && (!DL.mgr || f.p === DL.mgr) && (!DL.fund || f.c === DL.fund)).forEach(f => {
+    const tot = {}; for (let i = 0; i < f.r.length; i += 4) if (f.r[i] >= DL.q0 && f.r[i] <= DL.q1) tot[f.r[i]] = (tot[f.r[i]] || 0) + f.r[i + 3];
+    for (let i = 0; i < f.r.length; i += 4) {
+      const qi = f.r[i]; if (qi < DL.q0 || qi > DL.q1) continue;
+      const si = f.r[i + 1], s = PF.secs[si], a = s[9] || [], b = s[10] || [], y = bm[si] && bm[si].get(qi);
+      rows.push([PF.quarters[qi], f.p, f.pl, f.c, f.full || f.n, f.g || '', s[8] || s[0], s[5] || '', s[8] ? s[0] : '', t.dlTypes[s[1]] || s[1], s[7] || '', s[2] || '', s[3] || '',
+        f.r[i + 2], f.r[i + 3], tot[qi] ? +(f.r[i + 3] / tot[qi] * 100).toFixed(4) : null,
+        a[0] || '', a[1] || '', yn(a[2]), a[3] || '', a[4] || '', a[5] ?? '', yn(a[6]), a[7] || '', a[8] || '',
+        b[0] || '', b[1] ?? '', b.length ? yn(b[2]) : '', y ? y[0] : '', y && y[1] !== null ? y[1] : '', y ? y[2] : '']);
+    }
+  });
+  const ws = XLSX.utils.aoa_to_sheet(rows), wb = XLSX.utils.book_new();
+  ws['!cols'] = cols.map(k => ({ wch: { fund: 40, pos: 40, issuer: 28, src: 30 }[k] || 12 })); ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length - 1, c: cols.length - 1 } }) };
+  XLSX.utils.book_append_sheet(wb, ws, lang === 'lt' ? 'Portfeliai' : 'Portfolios');
+  const tag = [DL.pl, DL.fund || DL.mgr].filter(Boolean).join('_').replace(/[^\w-]+/g, '-');
+  XLSX.writeFile(wb, `${lang === 'lt' ? 'Portfeliai' : 'Portfolios'}${tag ? '_' + tag : ''}_${PF.quarters[DL.q0]}_${PF.quarters[DL.q1]}.xlsx`);
 }
