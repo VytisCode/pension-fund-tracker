@@ -1,0 +1,21 @@
+from,gross,net,source
+2004-01-01,130,,Eurostat earn_mw_cur
+2004-07-01,145,,Eurostat earn_mw_cur
+2005-07-01,159,,Eurostat earn_mw_cur
+2006-07-01,174,,Eurostat earn_mw_cur
+2007-07-01,203,,Eurostat earn_mw_cur
+2008-01-01,232,,Eurostat earn_mw_cur
+2013-01-01,290,,Eurostat earn_mw_cur
+2015-01-01,300,,Eurostat earn_mw_cur
+2015-07-01,325,,Eurostat earn_mw_cur
+2016-01-01,350,,Eurostat earn_mw_cur
+2016-07-01,380,,Eurostat earn_mw_cur
+2018-01-01,400,,Eurostat earn_mw_cur
+2019-01-01,555,395.77,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2020-01-01,607,437.24,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2021-01-01,642,468.41,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2022-01-01,730,533.65,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2023-01-01,840,633.20,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2024-01-01,924,708.42,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2025-01-01,1038,777.39,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
+2026-01-01,1153,846.96,Eurostat earn_mw_cur; net = gross - 19.5% social insurance - 20% income tax on (gross - NPD)
