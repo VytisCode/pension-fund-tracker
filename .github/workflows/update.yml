@@ -101,10 +101,16 @@ jobs:
         continue-on-error: true
         run: python -u tools/fetch_cpi.py
 
+      # Vidutinė senatvės pensija (ketvirtiniai duomenys) iš Valstybės duomenų agentūros.
+      - name: Average old-age pension (State Data Agency)
+        if: always()
+        continue-on-error: true
+        run: python -u tools/fetch_pension.py
+
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv; then
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
             python build_site.py
@@ -156,7 +162,7 @@ jobs:
           if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
           if [ -f data/security_terms.csv ]; then git add data/security_terms.csv; fi
           if [ -f data/indexes.csv ]; then git add data/indexes.csv; fi
-          git add imports/journey/cpi.csv
+          git add imports/journey/cpi.csv imports/journey/pensions.csv
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

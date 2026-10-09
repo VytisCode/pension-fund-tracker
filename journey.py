@@ -7,13 +7,14 @@ Lentelės (pildomos rankomis, kai paskelbiami nauji duomenys):
 - rates.csv           – įmokų tarifai % nuo datos (Sodra, valstybė, dalyvis; dalyvio laipsniškas tarifas 2019–2023);
 - state_incentive.csv – valstybės paskata € per mėnesį nuo 2019 m. (max = dalyvis moka 3 %, min = laipsniškai didina);
 - wages.csv           – vidutinis mėnesinis darbo užmokestis (bruto, neto), osp.stat.gov.lt;
-- pensions.csv        – vidutinė senatvės pensija, osp.stat.gov.lt;
+- pensions.csv        – vidutinė senatvės pensija, osp.stat.gov.lt (nuo 2025 m. – S3R892 ketvirčių vidurkis, prideda tools/fetch_pension.py);
 - cpi.csv             – vartotojų kainų indeksas (VKI, 2025 = 100) pagal mėnesį, Valstybės duomenų agentūra
                         (osp-rs.stat.gov.lt, S7R330_M2020121_2, CP00); naujus mėnesius prideda tools/fetch_cpi.py;
 - min_wage.csv        – minimali mėnesinė alga, metų vidurkis (bruto ir neto – osp.stat.gov.lt; neto skelbiamas nuo 2010 m.).
 II pakopos fondų vieneto vertės imamos iš docs/data.js, III pakopos – iš docs/data3.js (žr. build_site.build_journey).
 """
 import csv
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -72,6 +73,7 @@ def build() -> dict:
         "incentive": {r["year"]: [_f(r["max_eur"]), _f(r["min_eur"])] for r in _rows("state_incentive.csv")},
         "wages": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("wages.csv")},
         "pensions": {r["year"]: _f(r["avg_old_age_pension"]) for r in _rows("pensions.csv")},
+        "pensionsQ": {r["year"]: int(m.group(1)) for r in _rows("pensions.csv") if (m := re.search(r"\((\d) ketv\.\)", r["source"]))},
         "cpi": {r["month"]: _f(r["cpi"]) for r in _rows("cpi.csv")},
         "minWage": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("min_wage.csv")},
         "annuity": round(_annuity_factors()["std"], 4),
