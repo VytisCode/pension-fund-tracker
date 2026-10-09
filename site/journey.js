@@ -25,12 +25,12 @@ addStrings({
   kNet: y => `Net salary (${y})`, kSal: 'Assets in net salaries', kYears: 'Years the annuity would cover', kRrTot: 'Total replacement rate',
   cmpTitle: 'Average vs minimum wage, II vs III pillar', cmpLead: 'The same person (birth year, start, data date) in four cases. II pillar: 3 % of gross salary plus the state incentive, from 2019. III pillar: own contributions only, from the chosen III pillar fund’s start.',
   cmpH: ['Case', 'Since', 'Own contribution, € / month', 'Of net salary', 'Own contributions', 'State', 'Assets', 'Growth after inflation', 'Annuity, € / month', 'Extra replacement rate'],
-  cmpNote: 'Own contribution = the latest monthly contribution; “of net salary” = that ÷ the net salary of the same month (net minimum wage is calculated from 2019: gross − 19.5 % social insurance − 20 % income tax on gross − NPD). The II pillar 3 % is always calculated from gross salary. Bold = the case shown above.',
+  cmpNote: 'Own contribution = the latest monthly contribution; “of net salary” = that ÷ the net salary of the same year (average and minimum wage, gross and net: Statistics Lithuania). The II pillar 3 % is always calculated from gross salary. Bold = the case shown above.',
   chTitle: 'How the assets grew', chMeta: 'Accumulated assets by source, €', shMeta: 'Where the money came from',
-  srcName: { v: 'State', d: 'Participant', r: 'Investment return' }, value: 'Assets',
+  srcName: { s: 'Sodra', v: 'State', d: 'Participant', r: 'Investment return' }, value: 'Assets',
   tbTitle: 'Calculation', tbLead: 'Each row is a Sodra transfer date (or a fund change, highlighted). The Excel file has every row with formulas.',
   tbYear: 'By year', tbAll: 'All rows',
-  th: { date: 'Date', fund: 'Fund', wage: 'Gross salary', rv: 'State €/mo', rd: 'Particip. %', cv: 'State €', cd: 'Particip. €', ct: 'Contribution €',
+  th: { date: 'Date', fund: 'Fund', wage: 'Gross salary', rs: 'Sodra %', cs: 'Sodra €', ss: 'Sodra Σ', rv: 'State €/mo', rd: 'Particip. %', cv: 'State €', cd: 'Particip. €', ct: 'Contribution €',
     price: 'Unit value €', bought: 'Units bought', units: 'Units total', val: 'Assets €', sv: 'State Σ', sd: 'Particip. Σ', st: 'Contributions Σ', ret: 'Return €', retp: 'Return %',
     ann: 'Annuity €/mo', pen: 'Avg pension', net: 'Net salary', tot: 'Pension with savings', rr0: 'Repl. rate without', rr1: 'Repl. rate with', rrd: 'Extra repl. rate',
     cpi: 'CPI', real: 'Contribution in today’s prices', gainE: 'Real growth €', gainP: 'Real growth %', year: 'Year', yc: 'Contributions in year €', ye: 'Assets at year end €' },
@@ -41,15 +41,15 @@ addStrings({
     `If they retired today, the total monthly income would be ${x.total} € – ${x.rr1} of the net salary. The assets equal ${x.sal} monthly net salaries.`],
   prof: x => [`<b>Born</b> ${x.birth}`, `<b>Started saving</b> ${x.start}, at ${x.ageStart}`, `<b>Retirement</b> ${x.ret}, at 65 (${x.left} years to go)`, `<b>Earnings</b> ${x.payL}`, `<b>Contribution</b> ${x.rateL}`, `<b>Fund path</b> ${x.path}`],
   xls: 'Excel', xlsTip: 'Download the calculation as Excel: every row, the formulas and the input tables',
-  xSheets: ['Calculation', 'Inputs'], xIn: ['Contribution rates, %', 'Average salary, €', 'Average old-age pension, €', 'State incentive, € / month', 'CPI', 'Minimum monthly wage, €'], xLatestCpi: 'Latest CPI (for contributions in today’s prices)',
+  xSheets: ['Calculation', 'Inputs', 'Summary'], xIn: ['Contribution rates, %', 'Average salary, €', 'Average old-age pension, €', 'State incentive, € / month', 'CPI', 'Minimum monthly wage, €'], xLatestCpi: 'Latest CPI (for contributions in today’s prices)',
   info: {
     sum: 'Accumulated assets = units held × unit value on the “Data until” date.\nContributions (nominal) = sum of all contributions (state + participant).\nContributions in today’s prices = each contribution × CPI(latest month) ÷ CPI(contribution month).\nGrowth after inflation = assets − contributions in today’s prices; % = that ÷ contributions in today’s prices.\nUnit values are published net of management fees, so fees are already included.',
     inc: 'State pension = average old-age pension of the latest year published by Statistics Lithuania (not this participant’s own state pension).\nAnnuity = assets ÷ 1000 × 4.809 € (Bank of Lithuania base pension annuity table, payable from 65; for the III pillar it is only a comparable estimate).\nReplacement rate = pension ÷ the participant’s net salary of the year; extra replacement rate = annuity ÷ net salary.\nYears covered = assets ÷ (annuity × 12). This is only an estimate; Sodra’s annuity calculator gives the real amount.',
     cmp: 'Each case is calculated with the same model as the page. II pillar: from 2019-01 (start of life-cycle funds), the chosen manager’s fund for the birth year. III pillar: the chosen III pillar fund and own contribution, from the chosen start (not before the fund started).',
     chart: 'Stacked areas = cumulative contributions by source; the green area = investment return (assets − contributions). If the return is negative the line drops into the contributions.',
-    tbl: 'II pillar contribution = gross salary × 3 % (gradual path: 1.8 % in 2019 rising to 3 % in 2023) + the state incentive (a fixed € amount a month, the lower one in the gradual path). III pillar contribution = gross salary × chosen % or a fixed € amount. Until 2010 Sodra transferred quarterly, so on those dates 3 months of contributions are invested. Units bought = contribution ÷ unit value on the transfer date. Assets = units total × unit value. A fund change converts the assets into the new fund’s units at that day’s unit values.',
+    tbl: 'Since 2019 Sodra no longer diverts part of social insurance (until 2018 it did: 2–5.5 %), so its column is 0. II pillar contribution = gross salary × 3 % (gradual path: 1.8 % in 2019 rising to 3 % in 2023) + the state incentive (a fixed € amount a month, the lower one in the gradual path). III pillar contribution = gross salary × chosen % or a fixed € amount. Until 2010 Sodra transferred quarterly, so on those dates 3 months of contributions are invested. Units bought = contribution ÷ unit value on the transfer date. Assets = units total × unit value. A fund change converts the assets into the new fund’s units at that day’s unit values.',
   },
-  foot: 'Sources: Sodra transfer dates, contribution rates (laws), Statistics Lithuania (salaries, pensions, CPI), Eurostat (minimum wage), Bank of Lithuania (annuity), providers’ unit values. Model of one participant; for information only, not investment advice.',
+  foot: 'Sources: Sodra transfer dates, contribution rates (laws), Statistics Lithuania (average and minimum salaries, pensions, CPI), Bank of Lithuania (annuity), providers’ unit values. Model of one participant; for information only, not investment advice.',
 }, {
   navJourney: 'Kelias į pensiją',
   inPl: 'Pakopa', pl2: 'II pakopa', pl3: 'III pakopa',
@@ -64,12 +64,12 @@ addStrings({
   kNet: y => `Neto atlyginimas (${y})`, kSal: 'Sukauptų atlyginimų skaičius', kYears: 'Metų, kuriems užteks anuiteto', kRrTot: 'Bendra pakeitimo norma',
   cmpTitle: 'Vidutinis ir minimalus atlyginimas, II ir III pakopa', cmpLead: 'Tas pats žmogus (gimimo metai, pradžia, duomenų data) keturiais atvejais. II pakopa: 3 % bruto atlyginimo ir valstybės paskata, nuo 2019 m. III pakopa: tik savo įmokos, nuo pasirinkto III pakopos fondo pradžios.',
   cmpH: ['Atvejis', 'Nuo', 'Savo įmoka, € / mėn.', 'Neto atlyginimo dalis', 'Savo įmokos', 'Valstybė', 'Sukaupta', 'Pokytis realia verte', 'Anuitetas, € / mėn.', 'Papildoma pakeitimo norma'],
-  cmpNote: 'Savo įmoka = paskutinė mėnesio įmoka; „neto atlyginimo dalis“ = ta įmoka ÷ to mėnesio neto atlyginimas (minimalios algos neto apskaičiuotas nuo 2019 m.: bruto − 19,5 % socialinio draudimo − 20 % GPM nuo bruto − NPD). II pakopos 3 % visada skaičiuojami nuo bruto atlyginimo. Paryškinta – viršuje rodomas atvejis.',
+  cmpNote: 'Savo įmoka = paskutinė mėnesio įmoka; „neto atlyginimo dalis“ = ta įmoka ÷ tų metų neto atlyginimas (vidutinis ir minimalus atlyginimas, bruto ir neto – Statistikos departamentas). II pakopos 3 % visada skaičiuojami nuo bruto atlyginimo. Paryškinta – viršuje rodomas atvejis.',
   chTitle: 'Kaip augo turtas', chMeta: 'Sukauptas turtas pagal šaltinį, €', shMeta: 'Turto formavimo šaltiniai',
-  srcName: { v: 'Valstybė', d: 'Dalyvis', r: 'Investicijų grąža' }, value: 'Turtas',
+  srcName: { s: 'Sodra', v: 'Valstybė', d: 'Dalyvis', r: 'Investicijų grąža' }, value: 'Turtas',
   tbTitle: 'Skaičiavimas', tbLead: 'Kiekviena eilutė – Sodros pervedimo data (arba fondo keitimas, paryškinta). Excel faile – visos eilutės su formulėmis.',
   tbYear: 'Pagal metus', tbAll: 'Visos eilutės',
-  th: { date: 'Data', fund: 'Fondas', wage: 'Bruto atlyginimas', rv: 'Valstybė €/mėn.', rd: 'Dalyvis %', cv: 'Valstybė €', cd: 'Dalyvis €', ct: 'Įmoka €',
+  th: { date: 'Data', fund: 'Fondas', wage: 'Bruto atlyginimas', rs: 'Sodra %', cs: 'Sodra €', ss: 'Sodra Σ', rv: 'Valstybė €/mėn.', rd: 'Dalyvis %', cv: 'Valstybė €', cd: 'Dalyvis €', ct: 'Įmoka €',
     price: 'Vieneto vertė €', bought: 'Įsigyta vnt.', units: 'Vnt. iš viso', val: 'Sukaupta €', sv: 'Valstybė Σ', sd: 'Dalyvis Σ', st: 'Įmokos Σ', ret: 'Grąža €', retp: 'Grąža %',
     ann: 'Anuitetas €/mėn.', pen: 'Vid. pensija', net: 'Neto atlyginimas', tot: 'Pensija su kaupimu', rr0: 'Pakeitimo norma be kaupimo', rr1: 'Pakeitimo norma su kaupimu', rrd: 'Papildoma pakeitimo norma',
     cpi: 'VKI', real: 'Įmokos vertė šiandien', gainE: 'Pokytis realia verte €', gainP: 'Pokytis realia verte %', year: 'Metai', yc: 'Įmokos per metus €', ye: 'Turtas metų pabaigoje €' },
@@ -80,15 +80,15 @@ addStrings({
     `Jei dalyvis išeitų į pensiją šiandien, bendros jo pajamos būtų ${x.total} € – tai ${x.rr1} jo neto atlyginimo. Sukauptas turtas prilygsta ${x.sal} neto atlyginimų.`],
   prof: x => [`<b>Gimimo metai</b> ${x.birth}`, `<b>Kaupti pradėjo</b> ${x.start} m., ${x.ageStart} m. amžiaus`, `<b>Pensija</b> ${x.ret} m., 65 m. (liko ${x.left} m.)`, `<b>Pajamos</b> ${x.payL}`, `<b>Įmoka</b> ${x.rateL}`, `<b>Fondų kelias</b> ${x.path}`],
   xls: 'Excel', xlsTip: 'Atsisiųsti skaičiavimą Excel faile: visos eilutės, formulės ir pradinės lentelės',
-  xSheets: ['Skaičiavimas', 'Pradiniai duomenys'], xIn: ['Įmokų tarifai, %', 'Vidutinis darbo užmokestis, €', 'Vidutinė senatvės pensija, €', 'Valstybės paskata, € / mėn.', 'VKI', 'Minimali mėnesinė alga, €'], xLatestCpi: 'Naujausias VKI (įmokų vertei šiandien)',
+  xSheets: ['Skaičiavimas', 'Pradiniai duomenys', 'Suvestinė'], xIn: ['Įmokų tarifai, %', 'Vidutinis darbo užmokestis, €', 'Vidutinė senatvės pensija, €', 'Valstybės paskata, € / mėn.', 'VKI', 'Minimali mėnesinė alga, €'], xLatestCpi: 'Naujausias VKI (įmokų vertei šiandien)',
   info: {
     sum: 'Sukauptas turtas = turimų vienetų skaičius × vieneto vertė dieną „Duomenys iki“.\nĮmokų suma (nominali) = visų įmokų suma (valstybė + dalyvis).\nĮmokų perkamoji vertė šiandien = kiekviena įmoka × VKI(naujausias mėnuo) ÷ VKI(įmokos mėnuo).\nPokytis realia verte = turtas − įmokų perkamoji vertė; % = tas skirtumas ÷ įmokų perkamoji vertė.\nVieneto vertė skelbiama jau atskaičius valdymo mokesčius, todėl mokesčiai jau įskaičiuoti.',
     inc: 'Valstybinė pensija = Statistikos departamento paskelbta naujausių metų vidutinė senatvės pensija (ne šio dalyvio asmeninė).\nAnuitetas = turtas ÷ 1000 × 4,809 € (Lietuvos banko bazinio pensijų anuiteto lentelė, mokama nuo 65 m.; III pakopai – tik palyginamas įvertis).\nPakeitimo norma = pensija ÷ dalyvio tų metų neto atlyginimas; papildoma pakeitimo norma = anuitetas ÷ neto atlyginimas.\nMetų skaičius = turtas ÷ (anuitetas × 12). Tai tik prognozė – tikslią sumą parodo Sodros anuitetų skaičiuoklė.',
     cmp: 'Kiekvienas atvejis skaičiuojamas tuo pačiu modeliu kaip ir visas puslapis. II pakopa: nuo 2019-01 (gyvenimo ciklo fondų pradžia), pasirinkto valdytojo gimimo metų fondas. III pakopa: pasirinktas III pakopos fondas ir savo įmoka, nuo pasirinktos pradžios (ne anksčiau nei fondas pradėjo veikti).',
     chart: 'Spalvotos sritys = sukauptos įmokos pagal šaltinį; žalia sritis = investicijų grąža (turtas − įmokos). Kai grąža neigiama, turto linija nusileidžia žemiau įmokų.',
-    tbl: 'II pakopos įmoka = bruto atlyginimas × 3 % (laipsniškai: 2019 m. 1,8 %, iki 2023 m. – 3 %) + valstybės paskata (fiksuota suma per mėnesį; laipsniškai didinant – mažesnė). III pakopos įmoka = bruto atlyginimas × pasirinkti % arba fiksuota suma eurais. Iki 2010 m. Sodra pervesdavo kas ketvirtį, todėl tomis datomis investuojama 3 mėnesių įmoka. Įsigyta vnt. = įmoka ÷ vieneto vertė pervedimo dieną. Sukaupta = vienetai × vieneto vertė. Keičiant fondą, turtas tos dienos vieneto vertėmis konvertuojamas į naujo fondo vienetus.',
+    tbl: 'Nuo 2019 m. Sodra nebeperveda dalies socialinio draudimo įmokų (iki 2018 m. pervesdavo 2–5,5 %), todėl jos stulpelis lygus 0. II pakopos įmoka = bruto atlyginimas × 3 % (laipsniškai: 2019 m. 1,8 %, iki 2023 m. – 3 %) + valstybės paskata (fiksuota suma per mėnesį; laipsniškai didinant – mažesnė). III pakopos įmoka = bruto atlyginimas × pasirinkti % arba fiksuota suma eurais. Iki 2010 m. Sodra pervesdavo kas ketvirtį, todėl tomis datomis investuojama 3 mėnesių įmoka. Įsigyta vnt. = įmoka ÷ vieneto vertė pervedimo dieną. Sukaupta = vienetai × vieneto vertė. Keičiant fondą, turtas tos dienos vieneto vertėmis konvertuojamas į naujo fondo vienetus.',
   },
-  foot: 'Šaltiniai: Sodros pervedimų datos, įmokų tarifai (įstatymai), Statistikos departamentas (atlyginimai, pensijos, VKI), Eurostat (minimali alga), Lietuvos bankas (anuitetas), bendrovių vieneto vertės. Vieno dalyvio modelis; informacinė medžiaga, ne investavimo rekomendacija.',
+  foot: 'Šaltiniai: Sodros pervedimų datos, įmokų tarifai (įstatymai), Statistikos departamentas (vidutinis ir minimalus atlyginimas, pensijos, VKI), Lietuvos bankas (anuitetas), bendrovių vieneto vertės. Vieno dalyvio modelis; informacinė medžiaga, ne investavimo rekomendacija.',
 });
 
 const J = JDATA;
@@ -110,7 +110,6 @@ const dots = d => iso(d).replace(/-/g, '.');
 /* ---------- pradiniai duomenys ---------- */
 const DATES = J.dates.map(([d, m]) => [dayOf(d), m]);
 const RATES = J.rates.map(([d, s, v, p, g]) => ({ d: dayOf(d), s, v, p, g }));
-const MMA = J.minWage.map(([d, g, n]) => ({ d: dayOf(d), g, n }));
 const lcFund = (mgr, g) => { for (const gr of DATA.groups) for (const f of gr.funds) if (f.provider === mgr && gr.id === g) return f; return null; };
 const groupOf = y => GRPS.find(g => { const [a, b] = g.split('-').map(Number); return y >= a && y <= b; });
 /* reikšmė pagal metus: oficiali arba naujausia žinoma (pažymima kaip įvertis) */
@@ -122,7 +121,13 @@ function byYear(tbl, y, est, what) {
 }
 /* atlyginimas dienai: { g: bruto, n: neto (gali nebūti) } pagal pasirinktą lygį */
 function wageAt(day, pay, est) {
-  if (pay === 'mma') { const m = MMA.filter(x => x.d <= day).pop() || MMA[0]; return { g: m.g, n: m.n }; }
+  if (pay === 'mma') {          // oficiali metų vidutinė MMA (bruto, neto); neto dar nepaskelbtas – pagal naujausią neto ir bruto santykį
+    const y = yearOf(day), m = byYear(J.minWage, y, est, 'MMA');
+    if (m[1] != null || y < 2010) return { g: m[0], n: m[1] };
+    const ky = Math.max(...Object.keys(J.minWage).map(Number).filter(k => J.minWage[k][1] != null)), k = J.minWage[ky];
+    if (est) est.add(`${lang === 'lt' ? 'MMA neto' : 'Net MMA'} ${y} ≈ ${lang === 'lt' ? 'bruto' : 'gross'} × ${ky} ${lang === 'lt' ? 'neto ir bruto santykis' : 'net-to-gross ratio'}`);
+    return { g: m[0], n: m[0] * k[1] / k[0] };
+  }
   const w = byYear(J.wages, yearOf(day), est, T().th.wage), k = pay === 'avg' ? 1 : +pay / 100;
   return { g: w[0] * k, n: w[1] * k };
 }
@@ -181,7 +186,7 @@ function simulate(P) {
     else if (want.id !== fund.id) {               // fondo keitimas
       const p0 = priceAt(fund, e.d), p1 = priceAt(want, e.d), value = units * p0[1];
       units = value / p1[1];
-      rows.push({ d: e.d, sw: [fund.id, want.id], fund: want.id, price: p1[1], bought: units, units, val: value, cv: 0, cd: 0, ct: 0 });
+      rows.push({ d: e.d, sw: [fund.id, want.id], fund: want.id, price: p1[1], bought: units, units, val: value, cs: 0, cv: 0, cd: 0, ct: 0 });
       fund = want; path.push([fund.id, e.d]);
       if (!e.m) continue;
     }
@@ -189,19 +194,20 @@ function simulate(P) {
     const pr = priceAt(fund, e.d);
     if (!pr) continue;
     const y = yearOf(e.d);
-    const row = { d: e.d, fund: fund.id, price: pr[1], m: 0, cv: 0, cd: 0 };
+    const row = { d: e.d, fund: fund.id, price: pr[1], m: 0, cs: 0, cv: 0, cd: 0 };
     if (e.m) {
       const w = wageAt(e.d, P.pay, est);
       row.m = e.m; row.wage = w.g; row.netW = w.n;
       if (P.pl === 'II') {
         const r = RATES.filter(x => x.d <= e.d).pop(), grad = P.rate === 'grad' && r.g != null;
+        row.rs = r.s; row.cs = row.wage * r.s / 100 * e.m;
         row.rd = grad ? r.g : r.p; row.cd = row.wage * row.rd / 100 * e.m;
         row.rv = incentive(y, grad, est); row.cv = (row.rv || 0) * e.m;
       } else if (P.c3 === 'eur') { row.fixed = P.c3eur; row.cd = P.c3eur * e.m; }
       else { row.rd = P.c3pct; row.cd = row.wage * P.c3pct / 100 * e.m; }
       lastOwn = { eur: row.cd / e.m, net: w.n, d: e.d };
     }
-    row.ct = row.cv + row.cd;
+    row.ct = row.cs + row.cv + row.cd;
     row.bought = row.ct / pr[1]; units += row.bought; row.units = units; row.val = units * pr[1];
     if (e.val) row.valOnly = true;
     rows.push(row);
@@ -209,10 +215,10 @@ function simulate(P) {
   if (!rows.length) return null;
   // sukaupti stulpeliai, pensija, infliacija
   const cpiRef = cpiAt(asof, est);
-  let realSum = 0, cv = 0, cd = 0;
+  let realSum = 0, cs = 0, cv = 0, cd = 0;
   rows.forEach(r => {
-    cv += r.cv; cd += r.cd;
-    r.sv = cv; r.sd = cd; r.st = cv + cd; r.ret = r.val - r.st; r.retp = r.st ? r.ret / r.st : null;
+    cs += r.cs; cv += r.cv; cd += r.cd;
+    r.ss = cs; r.sv = cv; r.sd = cd; r.st = cs + cv + cd; r.ret = r.val - r.st; r.retp = r.st ? r.ret / r.st : null;
     const y = yearOf(r.d);
     r.cpi = cpiAt(r.d, est); r.real = r.ct && r.cpi ? r.ct * cpiRef / r.cpi : 0; realSum += r.real; r.realSum = realSum;
     r.gainE = r.val - realSum; r.gainP = realSum ? r.gainE / realSum : null;
@@ -377,20 +383,21 @@ function renderChart() {
 }
 
 /* ---------- lentelė ---------- */
-const COLS_ALL = ['date', 'fund', 'wage', 'rd', 'rv', 'cd', 'cv', 'ct', 'price', 'bought', 'units', 'val', 'sd', 'sv', 'st', 'ret', 'retp', 'ann', 'pen', 'net', 'tot', 'rr0', 'rr1', 'rrd', 'cpi', 'real', 'gainE', 'gainP'];
+const COLS_ALL = ['date', 'fund', 'wage', 'rs', 'rd', 'rv', 'cs', 'cd', 'cv', 'ct', 'price', 'bought', 'units', 'val', 'ss', 'sd', 'sv', 'st', 'ret', 'retp', 'ann', 'pen', 'net', 'tot', 'rr0', 'rr1', 'rrd', 'cpi', 'real', 'gainE', 'gainP'];
 const shortFund = f => f.replace(/ tikslinės grupės pensijų fondas/, '').replace(/^Allianz (\w+) gimusiems (\d{4}-\d{4}) m\./, 'Allianz $2');
 function cellOf(r, k) {
   const v = r[k], n = (x, p) => x == null ? '' : num(x, p);
   switch (k) {
     case 'date': return dots(r.d);
     case 'fund': return shortFund(r.fund);
+    case 'rs': return v == null ? '' : num(v, 2);
     case 'rd': return v == null ? (r.fixed ? `${num(r.fixed, 2)} €` : '') : num(v, 2) + (r.m === 3 ? ` <span style="color:var(--text-3)">${T().quarter}</span>` : '');
     case 'retp': case 'rr0': case 'rr1': case 'rrd': case 'gainP': return v == null ? '' : pc(v);
     case 'price': return n(v, 4);
     default: return n(v, 2);
   }
 }
-function cols() { return SIM.last.sv > 0 ? COLS_ALL : COLS_ALL.filter(k => !['rv', 'cv', 'sv'].includes(k)); }
+function cols() { return SIM.last.sv > 0 ? COLS_ALL : COLS_ALL.filter(k => !['rs', 'rv', 'cs', 'cv', 'ss', 'sv'].includes(k)); }
 function renderTable() {
   const t = T(), rows = SIM.rows, C = cols();
   document.getElementById('tbTitle').innerHTML = `${t.tbTitle}${ik('tbl')}${xbtn()}`;
@@ -405,10 +412,10 @@ function renderTable() {
         : `<tr>${C.map(k => `<td class="${k === 'date' || k === 'fund' ? 'l' : ''}">${cellOf(r, k)}</td>`).join('')}</tr>`).join('') + '</tbody>';
   } else {
     const ys = [...new Set(rows.map(r => yearOf(r.d)))], st = SIM.last.sv > 0;
-    tb.innerHTML = `<thead><tr><th class="l">${t.th.year}</th><th class="l">${t.th.fund}</th><th>${t.th.cd}</th>${st ? `<th>${t.th.cv}</th>` : ''}<th>${t.th.yc}</th><th class="bl">${t.th.st}</th><th>${t.th.ye}</th><th>${t.th.ret}</th><th>${t.th.retp}</th><th class="bl">${t.th.real}</th><th>${t.th.gainP}</th><th class="bl">${t.th.ann}</th><th>${t.th.rr1}</th></tr></thead><tbody>`
+    tb.innerHTML = `<thead><tr><th class="l">${t.th.year}</th><th class="l">${t.th.fund}</th>${st ? `<th>${t.th.cs}</th>` : ''}<th>${t.th.cd}</th>${st ? `<th>${t.th.cv}</th>` : ''}<th>${t.th.yc}</th><th class="bl">${t.th.st}</th><th>${t.th.ye}</th><th>${t.th.ret}</th><th>${t.th.retp}</th><th class="bl">${t.th.real}</th><th>${t.th.gainP}</th><th class="bl">${t.th.ann}</th><th>${t.th.rr1}</th></tr></thead><tbody>`
       + ys.map(y => {
         const rs = rows.filter(r => yearOf(r.d) === y), e = rs[rs.length - 1], s = k => rs.reduce((a, r) => a + (r[k] || 0), 0);
-        return `<tr><td class="l">${y}</td><td class="l">${shortFund(e.fund)}</td><td>${num(s('cd'))}</td>${st ? `<td>${num(s('cv'))}</td>` : ''}<td>${num(s('ct'))}</td><td class="bl">${num(e.st)}</td><td>${num(e.val)}</td>`
+        return `<tr><td class="l">${y}</td><td class="l">${shortFund(e.fund)}</td>${st ? `<td>${num(s('cs'))}</td>` : ''}<td>${num(s('cd'))}</td>${st ? `<td>${num(s('cv'))}</td>` : ''}<td>${num(s('ct'))}</td><td class="bl">${num(e.st)}</td><td>${num(e.val)}</td>`
           + `<td class="${e.ret >= 0 ? 'up' : 'down'}">${num(e.ret)}</td><td>${e.retp == null ? '' : pc(e.retp)}</td><td class="bl">${num(e.realSum)}</td><td>${e.gainP == null ? '' : pc(e.gainP)}</td><td class="bl">${num(e.ann)}</td><td>${e.rr1 == null ? '' : pc(e.rr1)}</td></tr>`;
       }).join('') + '</tbody>';
   }
@@ -418,47 +425,70 @@ function renderTable() {
 /* ---------- Excel su formulėmis ---------- */
 function loadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 function book() {
-  const t = T(), rows = SIM.rows, H = t.th;
-  // A data, B fondas, C bruto atlyginimas, D dalyvio %, E valstybė €/mėn., F mėnesių sk., G dalyvio €, H valstybės €, I įmoka, J vieneto vertė, K įsigyta, L vnt. iš viso, M sukaupta,
-  // N dalyvis Σ, O valstybė Σ, P įmokos Σ, Q grąža, R grąža %, S anuitetas, T vid. pensija, U neto DU, V pensija su kaupimu, W–Y pakeitimo normos, Z VKI, AA įmokos vertė šiandien, AB Σ, AC pokytis €, AD pokytis %
-  const head = [H.date, H.fund, H.wage, H.rd, H.rv, lang === 'lt' ? 'Mėnesių' : 'Months', H.cd, H.cv, H.ct, H.price, H.bought, H.units, H.val, H.sd, H.sv, H.st, H.ret, H.retp, H.ann, H.pen, H.net, H.tot, H.rr0, H.rr1, H.rrd, H.cpi, H.real, `Σ ${H.real}`, H.gainE, H.gainP];
-  const aoa = [head], ref = rows.length + 3, cpiCell = `$Z$${ref}`;
+  const t = T(), rows = SIM.rows, H = t.th, lt = lang === 'lt', N = rows.length + 1;
+  // A data, B fondas, C bruto atlyginimas, D Sodra %, E dalyvis %, F valstybė €/mėn., G mėnesių sk., H Sodra €, I dalyvis €, J valstybė €, K įmoka, L vieneto vertė,
+  // M įsigyta, N vnt. iš viso, O sukaupta, P Sodra Σ, Q dalyvis Σ, R valstybė Σ, S įmokos Σ, T grąža, U grąža %, V anuitetas, W vid. pensija, X neto DU,
+  // Y pensija su kaupimu, Z–AB pakeitimo normos, AC VKI, AD įmokos vertė šiandien, AE Σ, AF pokytis €, AG pokytis %
+  const S = lt ? 'Sodra' : 'Sodra';
+  const head = [H.date, H.fund, H.wage, `${S} %`, H.rd, H.rv, lt ? 'Mėnesių' : 'Months', `${S} €`, H.cd, H.cv, H.ct, H.price, H.bought, H.units, H.val, `${S} Σ`, H.sd, H.sv, H.st, H.ret, H.retp, H.ann, H.pen, H.net, H.tot, H.rr0, H.rr1, H.rrd, H.cpi, H.real, `Σ ${H.real}`, H.gainE, H.gainP];
+  const aoa = [head], ref = rows.length + 3, cpiCell = `$AC$${ref}`;
   rows.forEach((r, i) => {
     const R = i + 2, P1 = i ? R - 1 : null, prev = c => P1 ? `${c}${P1}+` : '';
     const f = (x, v, z) => ({ f: x, v, z });
     const row = [{ v: iso(r.d) }, { v: r.sw ? t.swRow(r.sw[0], r.sw[1]) : r.fund }];
-    if (r.sw) row.push(null, null, null, null, { v: 0 }, { v: 0 }, { v: 0 }, { v: r.price, z: '0.0000' }, f(`M${P1}/J${R}`, r.bought, '0.00'), f(`K${R}`, r.units, '0.00'));
+    if (r.sw) row.push(null, null, null, null, null, { v: 0 }, { v: 0 }, { v: 0 }, { v: 0 }, { v: r.price, z: '0.0000' }, f(`O${P1}/L${R}`, r.bought, '0.00'), f(`M${R}`, r.units, '0.00'));
     else {
-      row.push(r.wage != null ? { v: r.wage, z: '0.00' } : null, r.rd != null ? { v: r.rd / 100, z: '0.00%' } : null, r.rv != null ? { v: r.rv, z: '0.00' } : null, { v: r.m || 0 },
-        r.rd != null ? f(`C${R}*D${R}*F${R}`, r.cd, '0.00') : { v: r.cd, z: '0.00' },
-        r.rv != null ? f(`E${R}*F${R}`, r.cv, '0.00') : { v: 0 },
-        f(`G${R}+H${R}`, r.ct, '0.00'), { v: r.price, z: '0.0000' }, f(`I${R}/J${R}`, r.bought, '0.00'), f(`${prev('L')}K${R}`, r.units, '0.00'));
+      row.push(r.wage != null ? { v: r.wage, z: '0.00' } : null, { v: (r.rs || 0) / 100, z: '0.00%' }, r.rd != null ? { v: r.rd / 100, z: '0.00%' } : null, r.rv != null ? { v: r.rv, z: '0.00' } : null, { v: r.m || 0 },
+        r.wage != null ? f(`C${R}*D${R}*G${R}`, r.cs, '0.00') : { v: 0 },
+        r.rd != null ? f(`C${R}*E${R}*G${R}`, r.cd, '0.00') : r.fixed != null ? f(`${r.fixed}*G${R}`, r.cd, '0.00') : { v: r.cd, z: '0.00' },
+        r.rv != null ? f(`F${R}*G${R}`, r.cv, '0.00') : { v: 0 },
+        f(`H${R}+I${R}+J${R}`, r.ct, '0.00'), { v: r.price, z: '0.0000' }, f(`K${R}/L${R}`, r.bought, '0.00'), f(`${prev('N')}M${R}`, r.units, '0.00'));
     }
-    row.push(f(`L${R}*J${R}`, r.val, '0.00'), f(`${prev('N')}G${R}`, r.sd, '0.00'), f(`${prev('O')}H${R}`, r.sv, '0.00'), f(`N${R}+O${R}`, r.st, '0.00'),
-      f(`M${R}-P${R}`, r.ret, '0.00'), r.st ? f(`Q${R}/P${R}`, r.retp, '0.00%') : null, f(`M${R}/1000*${J.annuity}`, r.ann, '0.00'),
+    row.push(f(`N${R}*L${R}`, r.val, '0.00'), f(`${prev('P')}H${R}`, r.ss, '0.00'), f(`${prev('Q')}I${R}`, r.sd, '0.00'), f(`${prev('R')}J${R}`, r.sv, '0.00'), f(`P${R}+Q${R}+R${R}`, r.st, '0.00'),
+      f(`O${R}-S${R}`, r.ret, '0.00'), r.st ? f(`T${R}/S${R}`, r.retp, '0.00%') : null, f(`O${R}/1000*${J.annuity}`, r.ann, '0.00'),
       r.pen != null ? { v: r.pen, z: '0.00' } : null, r.net != null ? { v: r.net, z: '0.00' } : null,
-      r.pen != null ? f(`T${R}+S${R}`, r.tot, '0.00') : null, r.pen != null ? f(`T${R}/U${R}`, r.rr0, '0.00%') : null, r.pen != null ? f(`V${R}/U${R}`, r.rr1, '0.00%') : null, r.pen != null ? f(`X${R}-W${R}`, r.rrd, '0.00%') : null,
-      r.cpi != null ? { v: r.cpi, z: '0.00' } : null, r.cpi != null ? f(`I${R}*${cpiCell}/Z${R}`, r.real, '0.00') : { v: 0 }, f(`${prev('AB')}AA${R}`, r.realSum, '0.00'),
-      f(`M${R}-AB${R}`, r.gainE, '0.00'), r.realSum ? f(`AC${R}/AB${R}`, r.gainP, '0.00%') : null);
+      r.pen != null ? f(`W${R}+V${R}`, r.tot, '0.00') : null, r.pen != null ? f(`W${R}/X${R}`, r.rr0, '0.00%') : null, r.pen != null ? f(`Y${R}/X${R}`, r.rr1, '0.00%') : null, r.pen != null ? f(`AA${R}-Z${R}`, r.rrd, '0.00%') : null,
+      r.cpi != null ? { v: r.cpi, z: '0.00' } : null, r.cpi != null ? f(`K${R}*${cpiCell}/AC${R}`, r.real, '0.00') : { v: 0 }, f(`${prev('AE')}AD${R}`, r.realSum, '0.00'),
+      f(`O${R}-AE${R}`, r.gainE, '0.00'), r.realSum ? f(`AF${R}/AE${R}`, r.gainP, '0.00%') : null);
     aoa.push(row);
   });
   aoa.push([]);
-  const refRow = new Array(30).fill(null); refRow[0] = { v: t.xLatestCpi }; refRow[25] = { v: SIM.cpiRef, z: '0.00' };
+  const refRow = new Array(33).fill(null); refRow[0] = { v: t.xLatestCpi }; refRow[28] = { v: SIM.cpiRef, z: '0.00' };
   aoa.push(refRow);
   aoa.push([{ v: t.info.tbl }]);
   if (SIM.est.length) aoa.push([{ v: t.estNote(SIM.est.join('; ')) }]);
   const cell = c => c == null ? null : c.f ? { t: 'n', f: c.f, v: c.v, z: c.z } : typeof c.v === 'number' ? { t: 'n', v: c.v, z: c.z } : { t: 's', v: c.v };
+  const CS = `'${t.xSheets[0]}'!`, L = SIM.last;
+  // Suvestinė: kiek prisidėjo kiekvienas šaltinis (formulės nurodo paskutinę skaičiavimo eilutę)
+  const sum = [[{ v: `${t.sumTitle} · ${P.pl === 'II' ? t.pl2 : t.pl3} · ${iso(P.asof)}` }], [],
+    [{ v: lt ? 'Šaltinis' : 'Source' }, { v: '€' }, { v: lt ? 'Turto dalis' : 'Share of assets' }],
+    [{ v: 'Sodra' }, { f: `${CS}P${N}`, v: L.ss, z: '#,##0.00' }, { f: `B4/B9`, v: L.ss / L.val, z: '0.0%' }],
+    [{ v: t.srcName.v }, { f: `${CS}R${N}`, v: L.sv, z: '#,##0.00' }, { f: `B5/B9`, v: L.sv / L.val, z: '0.0%' }],
+    [{ v: t.srcName.d }, { f: `${CS}Q${N}`, v: L.sd, z: '#,##0.00' }, { f: `B6/B9`, v: L.sd / L.val, z: '0.0%' }],
+    [{ v: lt ? 'Įmokos iš viso' : 'Contributions total' }, { f: `B4+B5+B6`, v: L.st, z: '#,##0.00' }, { f: `B7/B9`, v: L.st / L.val, z: '0.0%' }],
+    [{ v: t.srcName.r }, { f: `B9-B7`, v: L.ret, z: '#,##0.00' }, { f: `B8/B9`, v: L.ret / L.val, z: '0.0%' }],
+    [{ v: t.kAssets }, { f: `${CS}O${N}`, v: L.val, z: '#,##0.00' }, { f: `B9/B9`, v: 1, z: '0.0%' }], [],
+    [{ v: t.kReal }, { f: `${CS}AE${N}`, v: L.realSum, z: '#,##0.00' }],
+    [{ v: t.kGainE }, { f: `B9-B11`, v: L.gainE, z: '#,##0.00' }], [{ v: t.kGainP }, { f: `B12/B11`, v: L.gainP, z: '0.00%' }],
+    [{ v: t.kAnn }, { f: `${CS}V${N}`, v: L.ann, z: '#,##0.00' }], [],
+    [{ v: t.th.year }, { v: `Sodra €` }, { v: t.th.cv }, { v: t.th.cd }, { v: t.th.yc }, { v: t.th.st }, { v: t.th.ye }, { v: t.th.ret }]];
+  [...new Set(rows.map(r => yearOf(r.d)))].forEach(y => {    // pagal metus: SUM per tų metų eilutes
+    const idx = rows.map((r, i) => [r, i + 2]).filter(([r]) => yearOf(r.d) === y), a = idx[0][1], b = idx[idx.length - 1][1], rs = idx.map(x => x[0]), e = rs[rs.length - 1], s = k => rs.reduce((q, r) => q + (r[k] || 0), 0);
+    sum.push([{ v: y }, { f: `SUM(${CS}H${a}:H${b})`, v: s('cs'), z: '#,##0.00' }, { f: `SUM(${CS}J${a}:J${b})`, v: s('cv'), z: '#,##0.00' }, { f: `SUM(${CS}I${a}:I${b})`, v: s('cd'), z: '#,##0.00' },
+      { f: `SUM(${CS}K${a}:K${b})`, v: s('ct'), z: '#,##0.00' }, { f: `${CS}S${b}`, v: e.st, z: '#,##0.00' }, { f: `${CS}O${b}`, v: e.val, z: '#,##0.00' }, { f: `${CS}T${b}`, v: e.ret, z: '#,##0.00' }]);
+  });
+  const wsS = XLSX.utils.aoa_to_sheet(sum.map(r => r.map(cell))); wsS['!cols'] = [{ wch: 34 }, ...Array(7).fill({ wch: 16 })];
   const ws = XLSX.utils.aoa_to_sheet(aoa.map(r => r.map(cell)));
   ws['!cols'] = head.map((h, i) => ({ wch: i === 1 ? 34 : 13 }));
   const inp = [[t.xIn[0]], ['', 'Sodra', t.srcName.v, H.rd, `${H.rd} (${t.rGrad})`], ...J.rates.map(r => r.map(x => x == null ? '' : x)), [],
     [t.xIn[1]], [H.year, 'Bruto', 'Neto'], ...Object.entries(J.wages).map(([y, w]) => [+y, w[0], w[1]]), [],
-    [t.xIn[5]], [lang === 'lt' ? 'Nuo' : 'From', 'Bruto', 'Neto'], ...J.minWage.map(r => r.map(x => x == null ? '' : x)), [],
+    [t.xIn[5]], [H.year, 'Bruto', 'Neto'], ...Object.entries(J.minWage).map(([y, w]) => [+y, w[0], w[1] ?? '']), [],
     [t.xIn[2]], ...Object.entries(J.pensions).map(([y, v]) => [+y, v]), [],
     [t.xIn[3]], [H.year, t.rMax, t.rGrad], ...Object.entries(J.incentive).map(([y, v]) => [+y, v[0], v[1]]), [],
     [t.xIn[4]], ...Object.entries(J.cpi).map(([m, v]) => [m, v])];
   const wi = XLSX.utils.aoa_to_sheet(inp); wi['!cols'] = [{ wch: 14 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 16 }];
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, t.xSheets[0]); XLSX.utils.book_append_sheet(wb, wi, t.xSheets[1]);
+  XLSX.utils.book_append_sheet(wb, wsS, t.xSheets[2]); XLSX.utils.book_append_sheet(wb, ws, t.xSheets[0]); XLSX.utils.book_append_sheet(wb, wi, t.xSheets[1]);
   return wb;
 }
 async function download() { await loadXlsx(); XLSX.writeFile(book(), `${lang === 'lt' ? 'Kelias_i_pensija' : 'Retirement_journey'}_${P.pl}_${P.birth}_${iso(P.asof)}.xlsx`); }
