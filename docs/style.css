@@ -237,3 +237,8 @@ tr.gstart:first-child td { border-top: 0; }
 .dlpanel .field { display: grid; gap: 3px; }
 .dlpanel select { width: 100%; }
 .dlpanel .note { margin: 0; font-size: 12px; }
+
+/* pasaulio akcijų indeksų palyginimas */
+.idxchips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.idxchips .chip .sw { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: 3px; }
+tr.idxrow td { color: var(--text-2); background: color-mix(in srgb, var(--text-3) 7%, var(--card)); }

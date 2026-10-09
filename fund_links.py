@@ -24,3 +24,10 @@ LUMINOR_TABLE_URLS = [
 # Nerizikinga palūkanų norma (Sharpe koeficientui): ECB euro trumpalaikių palūkanų norma €STR
 ECB_ESTR_API = "https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?lastNObservations=1&format=csvdata"
 ECB_ESTR_PAGE = "https://data.ecb.europa.eu/data/datasets/EST/EST.B.EU000A2X2A25.WT"
+
+# Pasaulio akcijų indeksai palyginimui (žr. indexes.py): MSCI grynosios grąžos (NETR) indeksai eurais iš MSCI,
+# S&P 500 su dividendais (USD, Yahoo) perskaičiuojamas į eurus pagal ECB EUR/USD kursą.
+MSCI_LEVELS_API = ("https://app2.msci.com/products/service/index/indexmaster/getLevelDataForGraph"
+                   "?currency_symbol=EUR&index_variant=NETR&start_date={start}&end_date={end}&data_frequency=DAILY&index_codes={code}")
+YAHOO_CHART_API = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?period1={p1}&period2={p2}&interval=1d"
+ECB_EURUSD_API = "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod={start}"

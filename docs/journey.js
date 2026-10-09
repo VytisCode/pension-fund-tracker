@@ -40,6 +40,9 @@ addStrings({
     `The participant’s own contribution is ${x.own} € a month${x.ownNet ? `, ${x.ownNet} of the net salary` : ''}. ${x.retShare >= x.maxShare ? 'Investment returns make up the largest part of the assets' : 'The largest part of the assets comes from ' + (x.maxKey === 'd' ? 'own contributions' : 'the state')} (returns: ${x.retPs}).`,
     `If they retired today, the total monthly income would be ${x.total} € – ${x.rr1} of the net salary. The assets equal ${x.sal} monthly net salaries.`],
   prof: x => [`<b>Born</b> ${x.birth}`, `<b>Started saving</b> ${x.start}, at ${x.ageStart}`, `<b>Retirement</b> ${x.ret}, at 65 (${x.left} years to go)`, `<b>Earnings</b> ${x.payL}`, `<b>Contribution</b> ${x.rateL}`, `<b>Fund path</b> ${x.path}`],
+  ix: { title: 'Compared with world equities', lead: 'What if the same contributions, on the same dates, had gone into a world equity index instead of the pension fund?',
+    meta: 'Assets, € (the fund vs the same contributions in an index)', fund: 'This pension path', h: ['', 'Assets', 'Return, €', 'Return, %', 'Annual return (IRR)', 'Difference vs fund'],
+    note: 'Indexes have no fees or taxes; the fund unit values are already net of fees. Pension funds also hold bonds, so in rising markets they usually lag equities.' },
   ann: { h: ['Sodra annuity type', '€ / month', 'Per 1000 €', 'How it works'], std: 'Standard annuity', inh: 'Inheritable standard annuity', def: 'Deferred annuity',
     stdD: 'Paid for life; the highest monthly amount; not inherited.', inhD: 'Paid for life; if the person dies before 85, heirs get the payments due until 85.',
     defD: s => `${s} of the assets buy an annuity paid from 85; until then the fund pays the rest as periodic payments (shown: rest ÷ months until 85, without returns).`,
@@ -56,6 +59,7 @@ addStrings({
     inc: 'State pension = average old-age pension of the latest year published by Statistics Lithuania (not this participant’s own state pension).\nAnnuity = Sodra standard pension annuity at 65: (assets − 2.5 % fee) ÷ (12 × annuity factor). The factor uses Sodra’s pricing assumptions (1.00 % return, monthly payments, 50 % women from 2026, life expectancy at 65: men 18.01, women 23.25 years – Sodra chief actuary’s 2025 report) and is matched to Sodra’s own example (15 000 € → 67.93 € a month). Result: 4.53 € a month per 1000 €. Sodra does not publish its mortality table, so the result can differ from the calculator by about 1 %. For the III pillar this is only a comparable estimate (III pillar money is paid by the fund or an insurer).\nReplacement rate = pension ÷ the participant’s net salary of the year; extra replacement rate = annuity ÷ net salary.\nYears covered = assets ÷ (annuity × 12). ',
     cmp: 'Each case is calculated with the same model as the page. II pillar: from 2019-01 (start of life-cycle funds), the chosen manager’s fund for the birth year. III pillar: the chosen III pillar fund and own contribution, from the chosen start (not before the fund started).',
     both: 'II + III: the II and III pillar are calculated separately, each from its own start date and with its own contributions (II: 3 % + state incentive from 2019; III: own contribution only); the summary adds them up. The annuity is calculated from the combined assets.',
+    ix: 'Each contribution (state + participant, the amount and date from the calculation table) buys index units at that day’s index value; assets = units × the index value on each day. Indexes: MSCI ACWI and MSCI World Net Return in EUR (MSCI), S&P 500 Total Return converted to EUR at the ECB rate. Annual return (IRR) = the money-weighted return that turns the contributions into today’s assets (the same method for the fund and for the indexes). Index values have no fees.',
     grid: 'Daily values: assets = units held × that day’s unit value (units change only on transfer dates). Investment return % = (assets − contributions) ÷ contributions. Replacement rate without savings = average old-age pension of the year ÷ the participant’s net salary of the year; with savings = (pension + annuity) ÷ net salary; extra = annuity ÷ net salary. The annuity is calculated as in the “Income” block. Pension data starts in 2018.',
     chart: 'Stacked areas = cumulative contributions by source; the green area = investment return (assets − contributions). If the return is negative the line drops into the contributions.',
     tbl: 'Since 2019 Sodra no longer diverts part of social insurance (until 2018 it did: 2–5.5 %), so its column is 0. II pillar contribution = gross salary × 3 % (gradual path: 1.8 % in 2019 rising to 3 % in 2023) + the state incentive (a fixed € amount a month, the lower one in the gradual path). III pillar contribution = gross salary × chosen % or a fixed € amount. Until 2010 Sodra transferred quarterly, so on those dates 3 months of contributions are invested. Units bought = contribution ÷ unit value on the transfer date. Assets = units total × unit value. A fund change converts the assets into the new fund’s units at that day’s unit values.',
@@ -90,6 +94,9 @@ addStrings({
     `Paties dalyvio įmoka – ${x.own} € per mėnesį${x.ownNet ? `, t. y. ${x.ownNet} jo neto atlyginimo` : ''}. ${x.retShare >= x.maxShare ? 'Didžiausią turto dalį sudaro investicijų grąža' : 'Didžiausia turto dalis – ' + (x.maxKey === 'd' ? 'paties dalyvio įmokos' : 'valstybės įmokos')} (grąža – ${x.retPs}).`,
     `Jei dalyvis išeitų į pensiją šiandien, bendros jo pajamos būtų ${x.total} € – tai ${x.rr1} jo neto atlyginimo. Sukauptas turtas prilygsta ${x.sal} neto atlyginimų.`],
   prof: x => [`<b>Gimimo metai</b> ${x.birth}`, `<b>Kaupti pradėjo</b> ${x.start} m., ${x.ageStart} m. amžiaus`, `<b>Pensija</b> ${x.ret} m., 65 m. (liko ${x.left} m.)`, `<b>Pajamos</b> ${x.payL}`, `<b>Įmoka</b> ${x.rateL}`, `<b>Fondų kelias</b> ${x.path}`],
+  ix: { title: 'Palyginimas su pasaulio akcijomis', lead: 'Kas būtų, jei tos pačios įmokos tomis pačiomis dienomis būtų investuotos ne į pensijų fondą, o į pasaulio akcijų indeksą?',
+    meta: 'Turtas, € (fondas ir tos pačios įmokos indekse)', fund: 'Šis pensijų kelias', h: ['', 'Sukaupta', 'Grąža, €', 'Grąža, %', 'Metinė grąža (IRR)', 'Skirtumas nuo fondo'],
+    note: 'Indeksai be mokesčių; fondų vieneto vertės jau po valdymo mokesčių. Pensijų fondai turi ir obligacijų, todėl kylant rinkoms paprastai atsilieka nuo akcijų.' },
   ann: { h: ['Sodros anuiteto rūšis', '€ / mėn.', 'Už 1000 €', 'Kaip veikia'], std: 'Standartinis anuitetas', inh: 'Paveldimas standartinis anuitetas', def: 'Atidėtasis anuitetas',
     stdD: 'Mokamas iki gyvos galvos; didžiausia mėnesio išmoka; nepaveldimas.', inhD: 'Mokamas iki gyvos galvos; mirus iki 85 m., paveldėtojai gauna išmokas, priklausančias iki 85 m.',
     defD: s => `${s} turto perkamas anuitetas, mokamas nuo 85 m.; iki tol fondas likutį moka periodinėmis išmokomis (rodoma: likutis ÷ mėnesiai iki 85 m., be grąžos).`,
@@ -106,6 +113,7 @@ addStrings({
     inc: 'Valstybinė pensija = Statistikos departamento paskelbta naujausių metų vidutinė senatvės pensija (ne šio dalyvio asmeninė).\nAnuitetas = Sodros standartinis pensijų anuitetas 65 m.: (turtas − 2,5 % mokestis) ÷ (12 × anuiteto koeficientas). Koeficientas apskaičiuotas pagal Sodros prielaidas (1,00 % grąža, išmokos kas mėnesį, nuo 2026 m. 50 % moterų, tikėtina gyvenimo trukmė 65 m.: vyrų 18,01, moterų 23,25 m. – Sodros vyr. aktuaro 2025 m. ataskaita) ir suderintas su Sodros pavyzdžiu (15 000 € → 67,93 € per mėn.). Gaunama 4,53 € per mėn. už 1000 €. Sodra savo mirtingumo lentelės neskelbia, todėl nuo skaičiuoklės rezultato gali skirtis apie 1 %. III pakopai – tik palyginamas įvertis (III pakopos lėšas išmoka fondas arba draudikas).\nPakeitimo norma = pensija ÷ dalyvio tų metų neto atlyginimas; papildoma pakeitimo norma = anuitetas ÷ neto atlyginimas.\nMetų skaičius = turtas ÷ (anuitetas × 12). ',
     cmp: 'Kiekvienas atvejis skaičiuojamas tuo pačiu modeliu kaip ir visas puslapis. II pakopa: nuo 2019-01 (gyvenimo ciklo fondų pradžia), pasirinkto valdytojo gimimo metų fondas. III pakopa: pasirinktas III pakopos fondas ir savo įmoka, nuo pasirinktos pradžios (ne anksčiau nei fondas pradėjo veikti).',
     both: 'II + III: II ir III pakopos skaičiuojamos atskirai, kiekviena nuo savo pradžios datos ir su savo įmokomis (II: 3 % + valstybės paskata nuo 2019 m.; III: tik savo įmoka); suvestinėje jos sudedamos. Anuitetas skaičiuojamas nuo bendros sukauptos sumos.',
+    ix: 'Kiekviena įmoka (valstybės + dalyvio, suma ir data – iš skaičiavimo lentelės) perka indekso vienetų tos dienos indekso verte; turtas = vienetai × kiekvienos dienos indekso vertė. Indeksai: MSCI ACWI ir MSCI World grynosios grąžos eurais (MSCI), S&P 500 su dividendais, perskaičiuotas į eurus pagal ECB kursą. Metinė grąža (IRR) = pinigais svertinė grąža, kuri įmokas paverčia šiandieniniu turtu (tas pats metodas fondui ir indeksams). Indeksai be mokesčių.',
     grid: 'Kasdienės reikšmės: turtas = turimi vienetai × tos dienos vieneto vertė (vienetų skaičius keičiasi tik pervedimo dienomis). Investicijų grąža % = (turtas − įmokos) ÷ įmokos. Pakeitimo norma be kaupimo = tų metų vidutinė senatvės pensija ÷ dalyvio tų metų neto atlyginimas; su kaupimu = (pensija + anuitetas) ÷ neto atlyginimas; papildoma = anuitetas ÷ neto atlyginimas. Anuitetas skaičiuojamas kaip bloke „Pajamos“. Pensijų duomenys – nuo 2018 m.',
     chart: 'Spalvotos sritys = sukauptos įmokos pagal šaltinį; žalia sritis = investicijų grąža (turtas − įmokos). Kai grąža neigiama, turto linija nusileidžia žemiau įmokų.',
     tbl: 'Nuo 2019 m. Sodra nebeperveda dalies socialinio draudimo įmokų (iki 2018 m. pervesdavo 2–5,5 %), todėl jos stulpelis lygus 0. II pakopos įmoka = bruto atlyginimas × 3 % (laipsniškai: 2019 m. 1,8 %, iki 2023 m. – 3 %) + valstybės paskata (fiksuota suma per mėnesį; laipsniškai didinant – mažesnė). III pakopos įmoka = bruto atlyginimas × pasirinkti % arba fiksuota suma eurais. Iki 2010 m. Sodra pervesdavo kas ketvirtį, todėl tomis datomis investuojama 3 mėnesių įmoka. Įsigyta vnt. = įmoka ÷ vieneto vertė pervedimo dieną. Sukaupta = vienetai × vieneto vertė. Keičiant fondą, turtas tos dienos vieneto vertėmis konvertuojamas į naujo fondo vienetus.',
@@ -450,6 +458,43 @@ function renderChart() {
     + `<div class="row"><b>${t.value}</b><b>${eur(SIM.last.val)}</b><span></span></div>`;
 }
 
+/* ---------- palyginimas su pasaulio akcijų indeksais: tos pačios įmokos tomis pačiomis dienomis ---------- */
+function xirr(flows) {                     // flows: [[diena, suma]] (įmokos neigiamos, galutinis turtas teigiamas) -> metinė grąža
+  const npv = r => flows.reduce((a, [d, c]) => a + c / Math.pow(1 + r, (d - flows[0][0]) / 365.25), 0);
+  let lo = -0.99, hi = 1;
+  if (npv(lo) * npv(hi) > 0) return null;
+  for (let k = 0; k < 100; k++) { const m = (lo + hi) / 2; (npv(lo) * npv(m) <= 0) ? hi = m : lo = m; }
+  return (lo + hi) / 2;
+}
+function idxPath(f, rows, asof) {
+  let units = 0, j = 0; const pts = [], flows = [];
+  const cont = rows.filter(r => r.ct > 0);
+  if (!cont.length || f.d[0] > cont[0].d) return null;
+  for (let k = lastOnOrBefore(f, cont[0].d); k < f.d.length && f.d[k] <= asof; k++) {
+    while (j < cont.length && cont[j].d <= f.d[k]) { const i = lastOnOrBefore(f, cont[j].d); units += cont[j].ct / f.v[i]; flows.push([cont[j].d, -cont[j].ct]); j++; }
+    if (k >= 0) pts.push([f.d[k], units * f.v[k]]);
+  }
+  const val = pts.length ? pts[pts.length - 1][1] : 0;
+  return { pts, val, irr: xirr([...flows, [asof, val]]) };
+}
+function renderIdx() {
+  const t = T(), X = t.ix, fs = idxFunds(), L = SIM.last, el = document.getElementById('ixChart');
+  document.getElementById('ixTitle').innerHTML = `${X.title}${ik('ix')}`;
+  document.getElementById('ixLead').textContent = X.lead; document.getElementById('ixMeta').textContent = X.meta;
+  const cont = SIM.rows.filter(r => r.ct > 0), fundFlows = [...cont.map(r => [r.d, -r.ct]), [P.asof, L.val]];
+  const D = dailyOf(SIM), fundIrr = xirr(fundFlows);
+  const paths = fs.map(f => ({ f, p: idxPath(f, SIM.rows, P.asof) })).filter(x => x.p);
+  const ser = [{ provider: 'fund', label: X.fund, color: 'var(--s5)', points: D.map(x => [x.d, x.val]) }, ...paths.map(({ f, p }) => ({ provider: f.provider, label: f.label, color: f.color, dash: f.dash, points: p.pts }))];
+  const x0 = D[0].d, x1 = D[D.length - 1].d;
+  drawLineChart(el, ser, x0, x1, { height: 320, fmt: v => eur(v, 0), axisUnit: ' €', ml: 70 });
+  document.getElementById('ixLegend').innerHTML = ser.map(x => `<span><i style="background:${x.color}"></i>${x.label}</span>`).join('');
+  const row = (n, val, irr, sw, cls = '') => `<tr class="${cls}"><td class="l">${sw}${n}</td><td>${eur(val, 0)}</td><td class="${val >= L.st ? 'up' : 'down'}">${eur(val - L.st, 0)}</td><td>${pc((val - L.st) / L.st)}</td><td>${irr == null ? '–' : pc(irr)}</td><td>${cls ? '' : `<span class="${val - L.val >= 0 ? 'up' : 'down'}">${val - L.val >= 0 ? '+' : '−'}${eur(Math.abs(val - L.val), 0)}</span>`}</td></tr>`;
+  const sw = c => `<span class="sw" style="display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:3px;background:${c}"></span>`;
+  document.getElementById('ixTable').innerHTML = `<thead><tr>${X.h.map((h, i) => `<th class="${i ? '' : 'l'}">${h}</th>`).join('')}</tr></thead><tbody>`
+    + row(X.fund, L.val, fundIrr, sw('var(--s5)'), 'cur') + paths.map(({ f, p }) => row(f.label, p.val, p.irr, sw(f.color))).join('') + '</tbody>';
+  document.getElementById('ixNote').textContent = `${lang === 'lt' ? 'Įmokos' : 'Contributions'}: ${eur(L.st, 0)}. ${X.note}`;
+}
+
 /* ---------- savininko Excel vizualizacijos: pakeitimo normos, turtas, grąža (kasdien) ---------- */
 /* Kasdienė eilutė: tarp pervedimų vienetų skaičius nekinta, todėl turtas = vienetai × tos dienos vieneto vertė. */
 function dailyOf(S) {
@@ -497,7 +542,7 @@ function renderGrid() {
     const box = document.getElementById('mg' + i), ser = c.ser.filter(x => x.points.length > 1);
     if (!ser.length) { box.innerHTML = `<p class="na">${G.na}</p>`; return; }
     const x0 = Math.min(...ser.map(x => x.points[0][0])), x1 = Math.max(...ser.map(x => x.points[x.points.length - 1][0]));
-    drawLineChart(box, ser, x0, x1, { height: 190, fmt: c.fmt, axisUnit: c.unit, mr: 8, zero: c.zero });
+    drawLineChart(box, ser, x0, x1, { height: 190, fmt: c.fmt, axisUnit: c.unit, mr: 8, zero: c.zero, ml: c.unit === ' €' ? 62 : 46 });
   });
   // šaltinių „treemap“: didžiausias kairėje, kiti dešinėje
   const Lr = SIM.last, parts = [['r', Lr.val - Lr.st], ['d', Lr.sd], ['v', Lr.sv], ['s', Lr.ss]].filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
@@ -671,8 +716,9 @@ function renderAll() {
   P = params(); SIM = simulate(P);
   renderBar();
   if (!SIM) return;
-  renderKpis(); renderAnnuity(); renderStory(); renderCompare(); renderChart(); renderGrid(); renderTable();
+  renderKpis(); renderAnnuity(); renderStory(); renderCompare(); renderChart(); renderIdx(); renderGrid(); renderTable();
   document.getElementById('foot').textContent = T().foot;
+  if (typeof renderInsights === 'function') renderInsights();
 }
 document.addEventListener('click', e => {
   if (e.target.closest('.xls')) { download().catch(err => alert('Excel: ' + err)); return; }

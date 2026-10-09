@@ -89,10 +89,22 @@ jobs:
         continue-on-error: true
         run: python -u tools/fetch_security_terms.py
 
+      # Pasaulio akcijų indeksai palyginimui (MSCI World, MSCI ACWI, S&P 500 eurais; nemokami viešai skelbiami duomenys).
+      - name: World equity indexes (MSCI, S&P 500)
+        if: always()
+        continue-on-error: true
+        run: python -u indexes.py update
+
+      # Vartotojų kainų indeksas (VKI, 2025 = 100) iš Valstybės duomenų agentūros – tik kai paskelbtas naujas mėnuo.
+      - name: Consumer price index (State Data Agency)
+        if: always()
+        continue-on-error: true
+        run: python -u tools/fetch_cpi.py
+
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv; then
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
             python build_site.py
@@ -143,6 +155,8 @@ jobs:
           if [ -f data/risk_free.json ]; then git add data/risk_free.json; fi
           if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
           if [ -f data/security_terms.csv ]; then git add data/security_terms.csv; fi
+          if [ -f data/indexes.csv ]; then git add data/indexes.csv; fi
+          git add imports/journey/cpi.csv
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

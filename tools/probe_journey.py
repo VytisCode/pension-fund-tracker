@@ -151,6 +151,15 @@ def cpi2():
         get(f"osp_{fid}.xml", f"https://osp-rs.stat.gov.lt/rest_xml/data/{fid}")
 
 
+def cpi3():
+    for i, u in enumerate(["https://osp-rs.stat.gov.lt/rest_xml/data/S7R330_M2020121_2/CP00.nera",
+                           "https://osp-rs.stat.gov.lt/rest_xml/data/S7R330_M2020121_2/CP00..",
+                           "https://osp-rs.stat.gov.lt/rest_xml/data/S7R330_M2020121_2/CP00",
+                           "https://osp-rs.stat.gov.lt/rest_xml/data/S7R330_M2020121_2/CP00.nera.?startPeriod=2026M01",
+                           "https://osp-rs.stat.gov.lt/rest_xml/datastructure/LSD/M2020121_2"]):
+        get(f"cpi3_{i}.xml", u)
+
+
 def etar_browser():
     """e-tar.lt grąžina 403 paprastoms užklausoms – bandoma per naršyklę."""
     from playwright.sync_api import sync_playwright
@@ -179,7 +188,7 @@ if __name__ == "__main__":
     want = sys.argv[1:] or ["indexes", "cpi", "methodology", "sodra"]
     for w in want:
         try:
-            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "etar": etar_browser, "methodology": methodology, "sodra": sodra_calc}[w]()
+            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "cpi3": cpi3, "etar": etar_browser, "methodology": methodology, "sodra": sodra_calc}[w]()
         except Exception as e:  # noqa: BLE001
             log("STEP FAIL", w, repr(e))
     (OUT / "log.txt").write_text("\n".join(LOG), encoding="utf-8")

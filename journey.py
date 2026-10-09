@@ -8,8 +8,8 @@ Lentelės (pildomos rankomis, kai paskelbiami nauji duomenys):
 - state_incentive.csv – valstybės paskata € per mėnesį nuo 2019 m. (max = dalyvis moka 3 %, min = laipsniškai didina);
 - wages.csv           – vidutinis mėnesinis darbo užmokestis (bruto, neto), osp.stat.gov.lt;
 - pensions.csv        – vidutinė senatvės pensija, osp.stat.gov.lt;
-- cpi.csv             – vartotojų kainų indeksas (VKI, 2015 = 100) pagal mėnesį, Valstybės duomenų agentūra (osp-rs.stat.gov.lt, S7R260);
-                        nuo 2026-01 – VKI (2025 = 100, S7R330) × 1,5911 (2025 m. abiejų bazių santykis);
+- cpi.csv             – vartotojų kainų indeksas (VKI, 2025 = 100) pagal mėnesį, Valstybės duomenų agentūra
+                        (osp-rs.stat.gov.lt, S7R330_M2020121_2, CP00); naujus mėnesius prideda tools/fetch_cpi.py;
 - min_wage.csv        – minimali mėnesinė alga, metų vidurkis (bruto ir neto – osp.stat.gov.lt; neto skelbiamas nuo 2010 m.).
 II pakopos fondų vieneto vertės imamos iš docs/data.js, III pakopos – iš docs/data3.js (žr. build_site.build_journey).
 """
