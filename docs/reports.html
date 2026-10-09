@@ -27,13 +27,16 @@
   h2.sec .btn.xls { font-size: 12px; padding: 3px 9px; margin-left: 8px; vertical-align: 2px; font-weight: 500; }
   #pop { max-width: 560px; white-space: pre-line; }
   table.lbt td:not(.l), table.lbt th:not(.l) { min-width: 70px; }
-  .bar select { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  @media print { h2.sec .btn.xls { display: none; } h2.sec { margin-top: 14px; } }
+  .bar .field { max-width: 100%; min-width: 0; flex-wrap: wrap; }   /* siaurame ekrane pasirinkimai neplatina puslapio */
+  .bar select { max-width: 100%; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
 </style>
 </head>
 <body data-daily="rep_daily.js?v=d85878bb">
 <div class="wrap">
   <header id="top"></header>
   <div class="bar sticky" id="mgrBar"></div>
+  <div class="printonly" id="printMeta"></div>
 
   <h2 class="sec" id="calTitle"></h2>
   <p class="lead" id="calLead"></p>
@@ -58,6 +61,6 @@
 <div id="pop" role="tooltip"></div>
 <script src="common.js?v=3871c03f"></script>
 <script src="data_rep.js?v=f85c9a5e"></script>
-<script src="rep.js?v=e7e74a9c"></script>
+<script src="rep.js?v=7a63034f"></script>
 </body>
 </html>

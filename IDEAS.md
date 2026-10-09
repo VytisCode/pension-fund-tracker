@@ -88,7 +88,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 **B. Naujas puslapis „Ataskaitos“ (Reports)**
 12. **Puslapis su valdymo bendrovės pasirinkimu** viršuje; visos lentelės rodo tik jos duomenis. – *atlikta (puslapis „Ataskaitos“, 2026-10-08: grąža nuo 2019 m. ir mėnesių grąža kaip savininko lentelėse)*
 13. **Lentelė nr. 1 – rodikliai per laikotarpius** kiekvienam bendrovės fondui: vid. vieneto vertės pokytis, vid. lyginamojo indekso pokytis, abiejų standartiniai nuokrypiai, fondo ir indekso metinė grąža; laikotarpiai 6 mėn., 1, 3, 5 m., nuo pradžios. – *patvirtinta*
-14. **Eksportas į Excel ir PDF.** – *patvirtinta*
+14. **Eksportas į Excel ir PDF.** – *atlikta (Excel – kiekvienai „Ataskaitų“ lentelei su formulėmis; PDF – mygtukas „Spausdinti / PDF“, PR #60, 2026-10-09)*
 15. **Lentelė nr. 2 – fondas prieš indeksą:** fondo grąža, indekso grąža, skirtumas, bruto grąža (be valdymo mokesčio). – *atlikta (KPI lentelėje: Grynoji/Bruto − SAA, laikotarpiai YTD, 1, 3, 5 m., kaip savininko „Baltic YTD / 3Y“)*
 16. **Valdymo mokesčiai** kiekvienam fondui; mokestis skaičiuojamas proporcingai laikotarpiui. – *patvirtinta*
 17. **Lentelė nr. 3 – „Performance KPI“:** fondas, grąža, peer median (be tos bendrovės), gross return, SAA (indekso grąža), Active / Local Active / Local Passive Manager (pasirenkami), rank in risk class, risk class (akcijų dalis %), fondų skaičius klasėje, AUM, dalis bendrovės turte; apačioje AUM pasverta grąža ir bendras AUM. – *atlikta (2026-10-08; palyginimo stulpeliai – 3 pasirenkami valdytojai, numatyta Swedbank, Artea, Goindex; 2026 m. mokestis – prielaida 0,40 % / 0,20 %, kol savininkas nepatvirtins)*
@@ -275,3 +275,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** didžiausio kritimo juostos rodo, kiek fondas nukrito, bet ne kiek laiko užtruko grįžti į ankstesnę viršūnę. Taupytojui tai dažnai svarbiau nei pats kritimo gylis.
 - **Nauda:** šalia kritimo – skaičius „atsigavo per N mėn.“ arba „dar neatsigavo“. Matyti, kurie valdytojai po krizių atsigauna greičiau.
+
+### „Ataskaitų“ santrauka viršuje
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** „Ataskaitų“ puslapyje daug lentelių, o svarbiausius skaičius tenka susirinkti iš kelių vietų.
+- **Nauda:** viršuje 4 kortelės pasirinktam valdytojui: vidutinė vieta tarp konkurentų, geriausias ir silpniausias fondas, turto (AUM) pokytis per ketvirtį. Patogu pradėti pokalbį ar pristatymą.

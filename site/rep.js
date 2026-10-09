@@ -1,6 +1,7 @@
 /* Ataskaitų polapis: vieno valdytojo visų fondų lentelės (kalendorinių metų ir mėnesių grąža, Performance KPI,
    LB stiliaus fondo rodikliai). Kiekviena lentelė turi metodikos paaiškinimą (ⓘ) ir Excel atsisiuntimą su formulėmis. */
 addStrings({
+  pdf: 'Print / PDF', pdfTip: 'Opens the print window – choose “Save as PDF” as the printer to get a PDF of all tables for the chosen manager.',
   mgr: 'Manager', calTitle: 'Returns since 2019',
   calLead: 'Every fund of the selected manager: total and average annual return since the end of 2018, then each calendar year. The current year runs to the latest unit value.',
   thFund: 'Fund', thTot: 'Total for the whole period', thAvg: 'Average annual', ytdCol: y => `${y} (YTD)`,
@@ -39,6 +40,7 @@ addStrings({
   },
   foot: 'Sources: providers’ unit values and net assets (collected automatically), Bank of Lithuania results reports and fee files. For information only, not investment advice.',
 }, {
+  pdf: 'Spausdinti / PDF', pdfTip: 'Atveria spausdinimo langą – spausdintuvu pasirinkite „Išsaugoti kaip PDF“ ir gausite visų pasirinkto valdytojo lentelių PDF.',
   mgr: 'Valdytojas', calTitle: 'Grąža nuo 2019 m.',
   calLead: 'Visi pasirinkto valdytojo fondai: bendra ir vidutinė metinė grąža nuo 2018 m. pabaigos, tada kiekvieni kalendoriniai metai. Šie metai – iki paskutinės vieneto vertės.',
   thFund: 'Fondas', thTot: 'Bendra per visą laikotarpį', thAvg: 'Vidutinė metinė', ytdCol: y => `${y} (YTD)`,
@@ -449,7 +451,9 @@ async function download(k) {
 function renderAllParts() {
   document.getElementById('sub').textContent = `${T().navReports} · ${T().updated} ${REP.generated}`;
   const bar = document.getElementById('mgrBar');
-  bar.innerHTML = field(T().mgr, seg('m', MGRS.map(m => [m, MLABEL[m]]), ST.m));
+  bar.innerHTML = field(T().mgr, seg('m', MGRS.map(m => [m, MLABEL[m]]), ST.m)) + `<button class="btn" type="button" id="btnPdf" title="${T().pdfTip}">${T().pdf}</button>`;
+  document.getElementById('btnPdf').onclick = () => window.print();
+  document.getElementById('printMeta').textContent = `${T().siteTitle} · ${T().mgr}: ${MLABEL[ST.m]} · ${T().updated} ${REP.generated}`;
   wire(bar, { m: v => { ST.m = v; save(); renderAllParts(); } });
   ['calLead', 'kpiLead', 'lbLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
   renderCal(); renderMonths(); renderKpi(); renderLb();
