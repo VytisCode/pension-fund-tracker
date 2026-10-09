@@ -101,7 +101,8 @@ def sodra_calc():
                 except Exception as e:  # noqa: BLE001
                     resp_bodies.append({"url": r.url, "err": repr(e)})
         pg.on("response", on_resp)
-        pg.goto(url, wait_until="networkidle", timeout=90000)
+        pg.goto(url, wait_until="domcontentloaded", timeout=90000)
+        pg.wait_for_timeout(8000)
         (OUT / "sodra_calc.html").write_text(pg.content(), encoding="utf-8")
         frames = [f.url for f in pg.frames]
         log("frames", frames)
@@ -144,11 +145,41 @@ def sodra_calc():
             get(f"sodra_js_{i}.js", r["url"])
 
 
+def cpi2():
+    for fid in ["S7R260_M2020121", "S7R260_M2020122", "S7R260_M2020121_1", "S7R260_M2020122_1",
+                "S7R330_M2020121_2", "S7R330_M2020121_3", "S7R330_M2020122_4", "S7R330_M2020122_2"]:
+        get(f"osp_{fid}.xml", f"https://osp-rs.stat.gov.lt/rest_xml/data/{fid}")
+
+
+def etar_browser():
+    """e-tar.lt grąžina 403 paprastoms užklausoms – bandoma per naršyklę."""
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        b = p.chromium.launch(headless=False)
+        pg = b.new_page(locale="lt-LT")
+        for name, url in [("etar_asr", "https://www.e-tar.lt/portal/lt/legalAct/a20d8f20a59111ea9515f752ff221ec9/asr"),
+                          ("etar_print", "https://www.e-tar.lt/portal/lt/legalActPrint?documentId=a20d8f20a59111ea9515f752ff221ec9")]:
+            try:
+                pg.goto(url, wait_until="domcontentloaded", timeout=90000)
+                pg.wait_for_timeout(10000)
+                (OUT / f"{name}.html").write_text(pg.content(), encoding="utf-8")
+                (OUT / f"{name}.txt").write_text(pg.locator("body").inner_text(), encoding="utf-8")
+                for fr in pg.frames[1:]:
+                    try:
+                        (OUT / f"{name}_frame.txt").write_text(fr.locator("body").inner_text(), encoding="utf-8")
+                    except Exception:  # noqa: BLE001
+                        pass
+                log("etar ok", name)
+            except Exception as e:  # noqa: BLE001
+                log("etar fail", name, repr(e)[:200])
+        b.close()
+
+
 if __name__ == "__main__":
     want = sys.argv[1:] or ["indexes", "cpi", "methodology", "sodra"]
     for w in want:
         try:
-            {"indexes": indexes, "cpi": cpi, "methodology": methodology, "sodra": sodra_calc}[w]()
+            {"indexes": indexes, "cpi": cpi, "cpi2": cpi2, "etar": etar_browser, "methodology": methodology, "sodra": sodra_calc}[w]()
         except Exception as e:  # noqa: BLE001
             log("STEP FAIL", w, repr(e))
     (OUT / "log.txt").write_text("\n".join(LOG), encoding="utf-8")
