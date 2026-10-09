@@ -55,10 +55,11 @@ Visos patvirtintos savininko. Pirmenybė prieš kitas idėjas.
 ## Savininko idėjos
 
 ### Polapis „Kelias į pensiją“ (Retirement Journey)
-- **Būsena:** daroma (2026-10-09, PR laukia savininko atsakymų)
+- **Būsena:** daroma (PR #53, 2026-10-09)
 - **Autorius:** savininkas (Excel modelis ir aprašas, 2026-10-09)
-- **Kas:** vieno dalyvio kaupimas nuo pirmos Sodros įmokos iki šiandien: įmokos pagal šaltinį, fondo vienetai, sukaupta suma, anuitetas, pakeitimo norma ir reali vertė po infliacijos. Keičiami gimimo metai, pradžia, atlyginimas, įmokų tarifas, valdytojas nuo 2019 m. ir data. Pradinės lentelės – `imports/journey/`, modelis – `site/journey.js`.
-- **Laukia iš savininko:** Excel failas (tikslios SEB pensija 2/3 vieneto vertės 2004–2018 ir VKI eilutė po 2025-06); ar ketvirtinės įmokos 2004–2010 turi būti už 3 mėn.; ar 2025-09-30 eilutė yra tik įvertinimas.
+- **Kas:** vieno dalyvio kaupimas nuo pirmos įmokos iki šiandien: įmokos pagal šaltinį, fondo vienetai, sukaupta suma, anuitetas, pakeitimo norma ir reali vertė po infliacijos. Keičiami pakopa, gimimo metai, pradžia, atlyginimas (vidutinis, MMA, % vidutinio), įmokų tarifas, valdytojas / III pakopos fondas, savo įmoka (% bruto arba € per mėn.) ir data. Lentelė „Vidutinis ir minimalus atlyginimas, II ir III pakopa“. Pradinės lentelės – `imports/journey/`, modelis – `site/journey.js`.
+- **Savininko sprendimai (2026-10-09):** II pakopa kol kas skaičiuojama nuo gyvenimo ciklo fondų pradžios (2019-01); III pakopa – nuo fondo pradžios, tomis pačiomis Sodros datomis, be valstybės paskatos; II pakopos 3 % – nuo bruto, dalyvio išlaidos rodomos kaip neto atlyginimo dalis; 2025-09-30 papildoma eilutė Excel'yje – ignoruoti.
+- **Laukia iš savininko:** Excel failas (VKI po 2025-06; vėliau – senųjų SEB pensija 2/3 fondų istorija, jei norėsime II pakopą nuo 2004 m.).
 
 ### Nerodyti vėliau atsiradusių fondų nuo dirbtinės pradžios
 - **Būsena:** atlikta (PR #2, 2026-10-06)

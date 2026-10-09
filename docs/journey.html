@@ -11,6 +11,8 @@
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
   h2.sec .btn.xls { font-size: 12px; padding: 3px 9px; margin-left: 8px; vertical-align: 2px; font-weight: 500; }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 920px; }
+  .bar input[type=number] { width: 80px; }
+  table.jt tr.cur td { font-weight: 650; }
   .bar select, .bar input { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
   .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
   .kpis.k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -51,6 +53,10 @@
   <div class="kpis k4" id="kpiB"></div>
   <section class="card" style="margin-top:14px"><div class="story" id="story"></div><div class="prof" id="prof"></div></section>
 
+  <h2 class="sec" id="cmpTitle"></h2>
+  <p class="lead" id="cmpLead"></p>
+  <section class="card"><div class="scroll"><table class="jt" id="cmpTable"></table></div><p class="note" id="cmpNote"></p></section>
+
   <h2 class="sec" id="chTitle"></h2>
   <div class="two">
     <section class="card"><div class="meta" id="chMeta"></div><div class="chart" id="chart" style="position:relative"></div><div class="legend" id="chLegend" style="margin-top:6px"></div></section>
@@ -67,7 +73,8 @@
 <div id="pop" role="dialog"></div>
 <script src="common.js?v=8d0bb8a0"></script>
 <script src="data.js?v=c0773e6a"></script>
-<script src="data_journey.js?v=c3512fa7"></script>
-<script src="journey.js?v=e8c686f7"></script>
+<script src="data_journey.js?v=457d62ef"></script>
+<script src="data_journey3.js?v=b184458b"></script>
+<script src="journey.js?v=53a2d322"></script>
 </body>
 </html>

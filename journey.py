@@ -9,8 +9,8 @@ Lentelės (pildomos rankomis, kai paskelbiami nauji duomenys):
 - wages.csv           – vidutinis mėnesinis darbo užmokestis (bruto, neto), osp.stat.gov.lt;
 - pensions.csv        – vidutinė senatvės pensija, osp.stat.gov.lt;
 - cpi.csv             – vartotojų kainų indeksas (VKI) pagal mėnesį;
-- old_funds.csv       – iki 2019 m. veikusių fondų (SEB pensija 2, SEB pensija 3) vieneto vertė eurais.
-Gyvenimo ciklo fondų vieneto vertės imamos iš docs/data.js (tas pats DATA, kurį naudoja kiti puslapiai).
+- min_wage.csv        – minimali mėnesinė alga (bruto – Eurostat, neto nuo 2019 m. – apskaičiuota).
+II pakopos fondų vieneto vertės imamos iš docs/data.js, III pakopos – iš docs/data3.js (žr. build_site.build_journey).
 """
 import csv
 from pathlib import Path
@@ -19,7 +19,6 @@ ROOT = Path(__file__).parent
 SRC = ROOT / "imports" / "journey"
 
 ANNUITY_PER_1000 = 4.8090   # LB bazinio pensijų anuiteto dydis: € per mėnesį už 1000 € (nuo 65 m.)
-LTL_PER_EUR = 3.4528        # iki 2015 m. litų vertės perskaičiuotos eurais
 
 
 def _rows(name):
@@ -39,9 +38,8 @@ def build() -> dict:
         "wages": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("wages.csv")},
         "pensions": {r["year"]: _f(r["avg_old_age_pension"]) for r in _rows("pensions.csv")},
         "cpi": {r["month"]: _f(r["cpi"]) for r in _rows("cpi.csv")},
-        "old": [[r["date"], r["fund"], _f(r["unit_value_eur"])] for r in _rows("old_funds.csv")],
+        "minWage": [[r["from"], _f(r["gross"]), _f(r["net"])] for r in _rows("min_wage.csv")],
         "annuity": ANNUITY_PER_1000,
-        "ltl": LTL_PER_EUR,
     }
 
 
