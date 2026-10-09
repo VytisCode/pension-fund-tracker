@@ -1,0 +1,7 @@
+OK osp_dataflows.xml 7403520 https://osp-rs.stat.gov.lt/rest_xml/dataflow/
+osp pension flows 62
+OK osp_S3R892_M3160409.xml 32509 https://osp-rs.stat.gov.lt/rest_xml/data/S3R892_M3160409
+OK osp_S3R0164_M3160410.xml 979968 https://osp-rs.stat.gov.lt/rest_xml/data/S3R0164_M3160410
+OK osp_S3R0300_M3160402_5.xml 976776 https://osp-rs.stat.gov.lt/rest_xml/data/S3R0300_M3160402_5
+OK osp_S3R0244_M3160412.xml 32138 https://osp-rs.stat.gov.lt/rest_xml/data/S3R0244_M3160412
+OK osp_S3R0503_M3160414.xml 5634 https://osp-rs.stat.gov.lt/rest_xml/data/S3R0503_M3160414

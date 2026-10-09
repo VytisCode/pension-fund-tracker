@@ -1,0 +1,436 @@
+[
+ [
+  "S3R387_M3160301",
+  [
+   "S3R387 - Pensijų gavėjų skaičius metų pabaigoje (be išmokų gavėjų užsienyje) (pagal ESSPROS)",
+   "S3R387 - Number of pension beneficiaries (not incl. living outside the country) at the end of the year (according to ESSPROS)"
+  ]
+ ],
+ [
+  "S3R388_M3160302_3",
+  [
+   "S3R388 - Pensijų gavėjų skaičius metų pabaigoje (pagal ESSPROS)",
+   "S3R388 - Number of pension beneficiaries at the end of the year (according to ESSPROS)"
+  ]
+ ],
+ [
+  "S3R571_M3160405",
+  [
+   "S3R571 - Valstybinio socialinio draudimo pensijų, mokamų užsienio valstybėse gyvenantiems Lietuvos piliečiams, gavėjai metų pabaigoje",
+   "S3R571 - Recipients of State social insurance pensions paid to Lithuanian nationals living abroad at the end of the year"
+  ]
+ ],
+ [
+  "S3R572_M3160404_2",
+  [
+   "S3R572 - Valstybinio socialinio draudimo senatvės, invalidumo ir netekto darbingumo pensijų dydžiai metų pabaigoje",
+   "S3R572 - State social insurance old-age, disability and work incapacity pension rates at the end of the year"
+  ]
+ ],
+ [
+  "S3R573_M3160404_1",
+  [
+   "S3R573 - Valstybinio socialinio draudimo senatvės, invalidumo ir netekto darbingumo pensijų gavėjai metų pabaigoje",
+   "S3R573 - Recipients of State social insurance old-age, disability and work incapacity pensions at the end of the year"
+  ]
+ ],
+ [
+  "S3R574_M3160402_3",
+  [
+   "S3R574 - Vidutinė valstybinio socialinio draudimo pensija",
+   "S3R574 - Average State social insurance pension"
+  ]
+ ],
+ [
+  "S3R634_M3160401_2",
+  [
+   "S3R634 - Vidutinis metinis valstybines pensijas gaunančių asmenų skaičius",
+   "S3R634 - Average annual number of recipients of State pensions"
+  ]
+ ],
+ [
+  "S3R636_M3160402_1",
+  [
+   "S3R636 - Vidutinis metinis valstybinio socialinio draudimo pensijas gaunančių asmenų skaičius",
+   "S3R636 - Average annual number of recipients of State social insurance pensions"
+  ]
+ ],
+ [
+  "S3R688_M3160402_4",
+  [
+   "S3R688 - Valstybinio socialinio draudimo senatvės ir netekto darbingumo (invalidumo) pensijas gaunančių asmenų skaičius, tenkantis 1 tūkst. darbingo amžiaus gyventojų",
+   "S3R688 - Number of recipients of State social insurance Old-age and Work incapacity (Disability) pensions per 1000 working-age population"
+  ]
+ ],
+ [
+  "S7R119_M2020115",
+  [
+   "S7R119 - Vartotojų kainų pokyčiai, apskaičiuoti pagal pensininkų  vartotojų kainų indeksą",
+   "S7R119 - Pensioner consumer price index-based consumer price changes"
+  ]
+ ],
+ [
+  "S8R244_M4100207",
+  [
+   "S8R244 - Kitų finansinių paslaugų, išskyrus draudimo ir pensijų lėšų kaupimo, įmonių balansas",
+   "S8R244 - Balance sheet variables of enterprises engaged in other activities auxiliary to financial services, except insurance and pension funding"
+  ]
+ ],
+ [
+  "S8R245_M4100209",
+  [
+   "S8R245 - Kitų finansinių paslaugų, išskyrus draudimo ir pensijų lėšų kaupimo, įmonių investicinė veikla",
+   "S8R245 - Investment activity of enterprises engaged in other activities auxiliary to financial services, except insurance and pension funding"
+  ]
+ ],
+ [
+  "S8R246_M4100208",
+  [
+   "S8R246 - Kitų finansinių paslaugų, išskyrus draudimo ir pensijų lėšų kaupimo, įmonių pelno (nuostolių) ataskaita",
+   "S8R246 - Profit (loss) statement variables of enterprises engaged in other activities auxiliary to financial services, except insurance and pension funding"
+  ]
+ ],
+ [
+  "S8R247_M4100409",
+  [
+   "S8R247 - Kitų pagalbinių finansinių paslaugų, išskyrus draudimo ir pensijų lėšų kaupimo, įmonių balansas",
+   "S8R247 - Balance sheet variables of enterprises engaged in other activities auxiliary to financial services, except insurance and pension funding"
+  ]
+ ],
+ [
+  "S8R248_M4100410",
+  [
+   "S8R248 - Kitų pagalbinių finansinių paslaugų, išskyrus draudimo ir pensijų lėšų kaupimo, įmonių pelno (nuostolių) ataskaita",
+   "S8R248 - Profit (loss) statement variables of enterprises engaged in other activities auxiliary to financial services, except insurance and pension funding"
+  ]
+ ],
+ [
+  "S8R375_M4100307",
+  [
+   "S8R375 - Pensijų fondų dalyvių skaičius",
+   "S8R375 - Number of members of pension funds"
+  ]
+ ],
+ [
+  "S8R376_M4100303",
+  [
+   "S8R376 - Pensijų fondų grynųjų aktyvų ataskaita",
+   "S8R376 - Statement of net assets of pension funds"
+  ]
+ ],
+ [
+  "S8R377_M4100304",
+  [
+   "S8R377 - Pensijų fondų grynųjų aktyvų pokyčio ataskaita",
+   "S8R377 - Statement of changes in net assets of pension funds"
+  ]
+ ],
+ [
+  "S3R209_M3160110",
+  [
+   "S3R209 - Išlaidos pensijoms",
+   "S3R209 - Expenditure on pensions"
+  ]
+ ],
+ [
+  "S3R210_M3160302_2",
+  [
+   "S3R210 - Išlaidos pensijoms (pagal ESSPROS), palyginti su bendruoju vidaus produktu",
+   "S3R210 - Expenditure on pensions (according to ESSPROS), compared to gross domestic product"
+  ]
+ ],
+ [
+  "S3R214_M3160402_2",
+  [
+   "S3R214 - Išlaidos valstybinio socialinio draudimo pensijoms",
+   "S3R214 - Expenditure on State social insurance pensions"
+  ]
+ ],
+ [
+  "S3R892_M3160409",
+  [
+   "S3R892 - Vidutinė valstybinio socialinio draudimo senatvės pensija (ketvirtiniai duomenys)",
+   "S3R892 - Average state social insurance old-age pension (quarterly data)"
+  ]
+ ],
+ [
+  "SSSS11R005_MIS1976_226_1_1",
+  [
+   "SSSS11R005 - Asmenys, gaunantieji pensijas pagal Pensijų ir pašalpų kolūkių nariams įstatymą",
+   "SSSS11R005 - Pension beneficiaries according to the Law on Pensions and Benefits for Kolkhoz Members"
+  ]
+ ],
+ [
+  "SSSS11R006_MIS1965_201_1_1",
+  [
+   "SSSS11R006 - Asmenys, gaunantys pensijas",
+   "SSSS11R006 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSSS11R006_MIS1971_286_2_1",
+  [
+   "SSSS11R006 - Asmenys, gaunantys pensijas",
+   "SSSS11R006 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSSS11R006_MIS1976_226_1_2",
+  [
+   "SSSS11R006 - Asmenys, gaunantys pensijas",
+   "SSSS11R006 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSSS11R006_MIS1981_176_2_1",
+  [
+   "SSSS11R006 - Asmenys, gaunantys pensijas",
+   "SSSS11R006 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSSS11R006_MIS1991_107_3_1",
+  [
+   "SSSS11R006 - Asmenys, gaunantys pensijas",
+   "SSSS11R006 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSSS11R006_MIS1991_108_1_1",
+  [
+   "SSSS11R006 - Asmenys, gaunantys pensijas",
+   "SSSS11R006 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSSS11R007_MIS1981_176_2_2",
+  [
+   "SSSS11R007 - Asmenys, gaunantys senatvės pensijas",
+   "SSSS11R007 - Number of pension beneficiaries"
+  ]
+ ],
+ [
+  "SSST1305R004_MIS1965_117_1_4",
+  [
+   "SSST1305R004 - Išsiųsta piniginių perlaidų ir pensijų išmokėjimų",
+   "SSST1305R004 - Remittances and pension payments sent"
+  ]
+ ],
+ [
+  "SSST1305R004_MIS1981_123_2_4",
+  [
+   "SSST1305R004 - Išsiųsta piniginių perlaidų ir pensijų išmokėjimų",
+   "SSST1305R004 - Remittances and pension payments sent"
+  ]
+ ],
+ [
+  "SSST1305R004_MIS1986_100_1_3",
+  [
+   "SSST1305R004 - Išsiųsta piniginių perlaidų ir pensijų išmokėjimų",
+   "SSST1305R004 - Remittances and pension payments sent"
+  ]
+ ],
+ [
+  "SSST1305R004_MIS1991_193_3_3",
+  [
+   "SSST1305R004 - Išsiųsta piniginių perlaidų ir pensijų išmokėjimų",
+   "SSST1305R004 - Remittances and pension payments sent"
+  ]
+ ],
+ [
+  "S3R805_M3160301_1",
+  [
+   "S3R805 - Pensijų gavėjų skaičius metų pabaigoje (su išmokų gavėjais užsienyje) (pagal ESSPROS)",
+   "S3R805 - Number of pension beneficiaries (incl. living outside the country) at the end of the year (according to ESSPROS)"
+  ]
+ ],
+ [
+  "S3R0154_M3080602",
+  [
+   "S3R0154 - Absoliutaus skurdo lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0154 - Absolute poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R0154_M3080608",
+  [
+   "S3R0154 - Absoliutaus skurdo lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0154 - Absolute poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R0154_M3080604_1",
+  [
+   "S3R0154 - Absoliutaus skurdo lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0154 - Absolute poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R0154_M3080603_1",
+  [
+   "S3R0154 - Absoliutaus skurdo lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0154 - Absolute poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R0154_M3080604_2",
+  [
+   "S3R0154 - Absoliutaus skurdo lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0154 - Absolute poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R0164_M3160410",
+  [
+   "S3R0164 - Vidutinis metinis valstybinio socialinio draudimo išankstinę senatvės pensiją gaunančių asmenų skaičius",
+   "S3R0164 - Average annual number of recipients of State social insurance Anticipatory Old-age pension"
+  ]
+ ],
+ [
+  "S3R0167_M3160411",
+  [
+   "S3R0167 - Moterų ir vyrų valstybinio socialinio draudimo senatvės pensijos atotrūkis metų pabaigoje",
+   "S3R0167 - Gender State social insurance Old-age pension gap at the end of the year"
+  ]
+ ],
+ [
+  "S7R285_M2040224",
+  [
+   "S7R285 - Socialinio draudimo sistemoje sukaupti pensiniai įsipareigojimai / teisės",
+   "S7R285 - Accrued-to-date pension entitlements in social insurance"
+  ]
+ ],
+ [
+  "S3R0300_M3160402_5",
+  [
+   "S3R0300 - Vidutinis metinis valstybinio socialinio draudimo išankstinę senatvės pensiją gaunančių asmenų skaičius, tenkantis 10 tūkst. darbingo amžiaus gyventojų",
+   "S3R0300 - Average annual number of recipients of State social insurance anticipatory old-age pension per 10000 working-age population"
+  ]
+ ],
+ [
+  "S3R0310_M3080317",
+  [
+   "S3R0310 - 18 metų ir vyresnių asmenų skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0310 - At-risk-of-poverty rate of persons aged 18 and over before social benefits other than pensions"
+  ]
+ ],
+ [
+  "S3R0310_M3080318",
+  [
+   "S3R0310 - 18 metų ir vyresnių asmenų skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R0310 - At-risk-of-poverty rate of persons aged 18 and over before social benefits other than pensions"
+  ]
+ ],
+ [
+  "S3R454_M3080302",
+  [
+   "S3R454 - Skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R454 - At-risk-of-poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R454_M3080310",
+  [
+   "S3R454 - Skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R454 - At-risk-of-poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R454_M3080304_1",
+  [
+   "S3R454 - Skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R454 - At-risk-of-poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R454_M3080303_1",
+  [
+   "S3R454 - Skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R454 - At-risk-of-poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R454_M3080304_2",
+  [
+   "S3R454 - Skurdo rizikos lygis iki socialinių išmokų, išskyrus pensijas",
+   "S3R454 - At-risk-of-poverty rate before social transfers, excluding pensions"
+  ]
+ ],
+ [
+  "S3R499_M3160406",
+  [
+   "S3R499 - Šalpos ir valstybinių pensijų neįgaliesiems gavėjai metų pabaigoje",
+   "S3R499 - Recipients of social assistance and State pensions for the disabled at the end of the year"
+  ]
+ ],
+ [
+  "S3R500_M3160407",
+  [
+   "S3R500 - Šalpos pensijų ir šalpos kompensacijų gavėjai metų pabaigoje",
+   "S3R500 - Recipients of social assistance pensions and relief compensations at the end of the year"
+  ]
+ ],
+ [
+  "S3R0244_M3160412",
+  [
+   "S3R0244 - Vidutinės valstybinio socialinio draudimo senatvės pensijos indeksas",
+   "S3R0244 - Indice of average monthly state social insurance old-age pension"
+  ]
+ ],
+ [
+  "S3R0489_M3031032",
+  [
+   "S3R0489 - 50-74 metų gyventojai, gaunantys senatvės pensiją",
+   "S3R0489 - 50-74 year old persons receiving old age pension"
+  ]
+ ],
+ [
+  "S3R0489_M3031033",
+  [
+   "S3R0489 - 50-74 metų gyventojai, gaunantys senatvės pensiją",
+   "S3R0489 - 50-74 year old persons receiving old age pension"
+  ]
+ ],
+ [
+  "S3R0490_M3031036",
+  [
+   "S3R0490 - 50-74 metų gyventojai, gaunantys senatvės pensiją ir dirbantys toliau",
+   "S3R0490 - 50-74 year old persons receiving old age pension and continuing to work"
+  ]
+ ],
+ [
+  "S3R0491_M3031037",
+  [
+   "S3R0491 - 50-74 metų gyventojai, nedirbę prieš išeinant į pensiją",
+   "S3R0491 - Persons aged 50-74 who did not work before retirement"
+  ]
+ ],
+ [
+  "S3R0492_M3031035",
+  [
+   "S3R0492 - 50-74 metų gyventojai, nustoję dirbti, kai pradėjo gauti senatvės pensiją",
+   "S3R0492 - 50-74 year old persons who stopped working with the beginning of old age pension"
+  ]
+ ],
+ [
+  "S3R0493_M3031034",
+  [
+   "S3R0493 - 50-74 metų gyventojų situacija per 6 mėnesius nuo pirmosios senatvės pensijos gavimo",
+   "S3R0493 - Situation of 50-74 old persons during the first 6 months since receiving first old age pension"
+  ]
+ ],
+ [
+  "S3R0503_M3160414",
+  [
+   "S3R0503 - Vidutinės mėnesinės valstybinio socialinio draudimo senatvės pensijos ir vidutinio mėnesinio neto darbo užmokesčio santykis",
+   "S3R0503 - The ratio of the average monthly state social insurance old-age pension to the average earnings (monthly)"
+  ]
+ ],
+ [
+  "S3R0533_M3160415",
+  [
+   "S3R0533 - Pensijų gavėjų skaičius (pagal ESSPROS), palyginti su bendru nuolatinių gyventojų skaičiumi",
+   "S3R0533 - Number of pension beneficiaries (according to ESSPROS), compared to the total resident population"
+  ]
+ ]
+]
