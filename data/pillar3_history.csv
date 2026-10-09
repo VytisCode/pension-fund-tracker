@@ -5725,6 +5725,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,ARTEA,Artea Ambicingas 16+,1.3069,161944737.02,
 2026-10-06,ARTEA,Artea Ambicingas 16+,1.3104,162448945.18,
 2026-10-07,ARTEA,Artea Ambicingas 16+,1.3047,161784971.59,
+2026-10-08,ARTEA,Artea Ambicingas 16+,1.2977,161058165.62,
 2004-12-20,ARTEA,Artea Ambicingas Active 16+,0.28962002,,
 2004-12-21,ARTEA,Artea Ambicingas Active 16+,0.28962002,,
 2004-12-22,ARTEA,Artea Ambicingas Active 16+,0.28962002,,
@@ -11240,6 +11241,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,ARTEA,Artea Ambicingas Active 16+,0.7371,37664154.35,
 2026-10-06,ARTEA,Artea Ambicingas Active 16+,0.7408,37887790.91,
 2026-10-07,ARTEA,Artea Ambicingas Active 16+,0.737,37728578.71,
+2026-10-08,ARTEA,Artea Ambicingas Active 16+,0.7354,37777696.85,
 2024-11-05,ARTEA,Artea Ambicingas Index 16+,1.0,10590,
 2024-11-06,ARTEA,Artea Ambicingas Index 16+,1.0,62139.5,
 2024-11-07,ARTEA,Artea Ambicingas Index 16+,1.0016,62664.8,
@@ -11723,6 +11725,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,ARTEA,Artea Ambicingas Index 16+,1.2889,21361411.21,
 2026-10-06,ARTEA,Artea Ambicingas Index 16+,1.2943,21492076.7,
 2026-10-07,ARTEA,Artea Ambicingas Index 16+,1.2887,21450840.65,
+2026-10-08,ARTEA,Artea Ambicingas Index 16+,1.2811,21515494.66,
 2004-12-20,ARTEA,Artea Stabilus 58+,0.28962002,,
 2004-12-21,ARTEA,Artea Stabilus 58+,0.28962002,,
 2004-12-22,ARTEA,Artea Stabilus 58+,0.28962002,,
@@ -17238,6 +17241,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,ARTEA,Artea Stabilus 58+,0.5444,15674253.35,
 2026-10-06,ARTEA,Artea Stabilus 58+,0.5462,15727487.06,
 2026-10-07,ARTEA,Artea Stabilus 58+,0.5458,15692262.83,
+2026-10-08,ARTEA,Artea Stabilus 58+,0.5457,15668801.01,
 2007-10-13,ARTEA,Artea Subalansuotas 47+,0.2896,,
 2007-10-14,ARTEA,Artea Subalansuotas 47+,0.2896,,
 2007-10-20,ARTEA,Artea Subalansuotas 47+,0.2896,,
@@ -22937,6 +22941,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,ARTEA,Artea Subalansuotas 47+,0.7959,43782944.84,
 2026-10-06,ARTEA,Artea Subalansuotas 47+,0.7982,43996433.34,
 2026-10-07,ARTEA,Artea Subalansuotas 47+,0.7964,43899532.63,
+2026-10-08,ARTEA,Artea Subalansuotas 47+,0.7942,43820811.89,
 2022-08-22,GOINDEX,Goindex pasaulio akcijų,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pasaulio akcijų,1.0,,0.9964
 2022-08-24,GOINDEX,Goindex pasaulio akcijų,0.9999,,0.9977
@@ -23976,6 +23981,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,GOINDEX,Goindex pasaulio akcijų,1.6425,37281135.65,
 2026-10-06,GOINDEX,Goindex pasaulio akcijų,1.6498,37603511.5,
 2026-10-07,GOINDEX,Goindex pasaulio akcijų,1.6447,37671819.19,
+2026-10-08,GOINDEX,Goindex pasaulio akcijų,1.6359,37615612.99,
 2022-08-22,GOINDEX,Goindex subalansuotas,1.0,,1.0
 2022-08-23,GOINDEX,Goindex subalansuotas,1.0,,0.9977
 2022-08-24,GOINDEX,Goindex subalansuotas,1.0,,0.9979
@@ -25015,6 +25021,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,GOINDEX,Goindex subalansuotas,1.4079,4917638.43,
 2026-10-06,GOINDEX,Goindex subalansuotas,1.4119,4940019.09,
 2026-10-07,GOINDEX,Goindex subalansuotas,1.4086,4948730.42,
+2026-10-08,GOINDEX,Goindex subalansuotas,1.4035,4933225.31,
 2007-10-01,LUMINOR,Luminor ateitis 16–50,0.28962002,,
 2007-10-02,LUMINOR,Luminor ateitis 16–50,0.28962002,,
 2007-10-03,LUMINOR,Luminor ateitis 16–50,0.28962002,,
@@ -29794,6 +29801,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,LUMINOR,Luminor ateitis 16–50,0.8763,30028857,
 2026-10-06,LUMINOR,Luminor ateitis 16–50,0.8788,30117467,
 2026-10-07,LUMINOR,Luminor ateitis 16–50,0.8753,29994932,
+2026-10-08,LUMINOR,Luminor ateitis 16–50,0.8697,29794697,
 2004-10-26,LUMINOR,Luminor ateitis 50–58,0.28962002,,
 2004-10-27,LUMINOR,Luminor ateitis 50–58,0.28927247,,
 2004-10-28,LUMINOR,Luminor ateitis 50–58,0.28927247,,
@@ -35307,6 +35315,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,LUMINOR,Luminor ateitis 50–58,0.697,68430256,
 2026-10-06,LUMINOR,Luminor ateitis 50–58,0.6992,68652005,
 2026-10-07,LUMINOR,Luminor ateitis 50–58,0.6976,68480226,
+2026-10-08,LUMINOR,Luminor ateitis 50–58,0.6954,68264912,
 2013-10-07,LUMINOR,Luminor ateitis 58+,0.28962002,,
 2013-10-08,LUMINOR,Luminor ateitis 58+,0.28962002,,
 2013-10-09,LUMINOR,Luminor ateitis 58+,0.28962002,,
@@ -38577,6 +38586,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,LUMINOR,Luminor ateitis 58+,0.2995,8840263,
 2026-10-06,LUMINOR,Luminor ateitis 58+,0.3004,8865637,
 2026-10-07,LUMINOR,Luminor ateitis 58+,0.3,8855149,
+2026-10-08,LUMINOR,Luminor ateitis 58+,0.3,8882257,
 2026-01-21,LUMINOR,Luminor ateitis akcijų index,1.0,,
 2026-01-22,LUMINOR,Luminor ateitis akcijų index,1.0,,
 2026-01-23,LUMINOR,Luminor ateitis akcijų index,0.9992,,
@@ -38757,6 +38767,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,LUMINOR,Luminor ateitis akcijų index,1.1674,1826567,
 2026-10-06,LUMINOR,Luminor ateitis akcijų index,1.1711,1833631,
 2026-10-07,LUMINOR,Luminor ateitis akcijų index,1.1669,1839058,
+2026-10-08,LUMINOR,Luminor ateitis akcijų index,1.1594,1842470,
 2021-05-24,LUMINOR,Luminor tvari ateitis index,1.0,,
 2021-05-25,LUMINOR,Luminor tvari ateitis index,1.0,,
 2021-05-26,LUMINOR,Luminor tvari ateitis index,1.0,,
@@ -40110,6 +40121,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,LUMINOR,Luminor tvari ateitis index,1.5834,8535477,
 2026-10-06,LUMINOR,Luminor tvari ateitis index,1.5912,8582591,
 2026-10-07,LUMINOR,Luminor tvari ateitis index,1.5818,8533253,
+2026-10-08,LUMINOR,Luminor tvari ateitis index,1.5727,8502419,
 2022-01-03,SEB,SEB index. Klimato ateitis,1.0,,100.0
 2022-01-04,SEB,SEB index. Klimato ateitis,0.9955,,99.6498
 2022-01-05,SEB,SEB index. Klimato ateitis,0.991,,97.787
@@ -41353,6 +41365,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SEB,SEB index. Klimato ateitis,1.5119,,
 2026-10-06,SEB,SEB index. Klimato ateitis,1.5181,,
 2026-10-07,SEB,SEB index. Klimato ateitis,1.5135,,
+2026-10-08,SEB,SEB index. Klimato ateitis,1.5028,,
 2004-10-27,SEB,SEB pensija 18+,0.2896,,
 2004-10-28,SEB,SEB pensija 18+,0.2896,,
 2004-10-29,SEB,SEB pensija 18+,0.2896,,
@@ -47079,6 +47092,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SEB,SEB pensija 18+,1.2217,,
 2026-10-06,SEB,SEB pensija 18+,1.2276,,
 2026-10-07,SEB,SEB pensija 18+,1.2237,,
+2026-10-08,SEB,SEB pensija 18+,1.2171,,
 2020-04-10,SEB,SEB pensija 50+,1.0,,100.0
 2020-04-13,SEB,SEB pensija 50+,1.0,,100.0
 2020-04-14,SEB,SEB pensija 50+,1.0,,100.0
@@ -48773,6 +48787,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SEB,SEB pensija 50+,1.6037,,
 2026-10-06,SEB,SEB pensija 50+,1.6087,,
 2026-10-07,SEB,SEB pensija 50+,1.6063,,
+2026-10-08,SEB,SEB pensija 50+,1.6007,,
 2004-10-27,SEB,SEB pensija 58+,0.2896,,
 2004-10-28,SEB,SEB pensija 58+,0.2896,,
 2004-10-29,SEB,SEB pensija 58+,0.2896,,
@@ -54499,6 +54514,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SEB,SEB pensija 58+,0.4388,,
 2026-10-06,SEB,SEB pensija 58+,0.4396,,
 2026-10-07,SEB,SEB pensija 58+,0.4397,,
+2026-10-08,SEB,SEB pensija 58+,0.4393,,
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,
 2022-04-08,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,
 2022-04-11,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,
@@ -55631,6 +55647,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SWEDBANK,Swedbank Pensijos fondas 18+,1.5153,,
 2026-10-06,SWEDBANK,Swedbank Pensijos fondas 18+,1.5243,,
 2026-10-07,SWEDBANK,Swedbank Pensijos fondas 18+,1.5113,,
+2026-10-08,SWEDBANK,Swedbank Pensijos fondas 18+,1.5114,,
 2019-12-02,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.0,,
 2019-12-03,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),0.9991,,
 2019-12-04,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),0.9989,,
@@ -57353,6 +57370,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.91,,
 2026-10-06,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.9216,,
 2026-10-07,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.905,,
+2026-10-08,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.9057,,
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 50+,1.0,,
 2022-04-08,SWEDBANK,Swedbank Pensijos fondas 50+,1.0,,
 2022-04-11,SWEDBANK,Swedbank Pensijos fondas 50+,1.0,,
@@ -58485,6 +58503,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SWEDBANK,Swedbank Pensijos fondas 50+,1.2479,,
 2026-10-06,SWEDBANK,Swedbank Pensijos fondas 50+,1.2536,,
 2026-10-07,SWEDBANK,Swedbank Pensijos fondas 50+,1.2466,,
+2026-10-08,SWEDBANK,Swedbank Pensijos fondas 50+,1.2467,,
 2019-12-02,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.0,,
 2019-12-03,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),0.9976,,
 2019-12-04,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),0.9951,,
@@ -60207,6 +60226,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3255,,
 2026-10-06,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3311,,
 2026-10-07,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3269,,
+2026-10-08,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.323,,
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 60+,1.0,,
 2022-04-08,SWEDBANK,Swedbank Pensijos fondas 60+,1.0,,
 2022-04-11,SWEDBANK,Swedbank Pensijos fondas 60+,1.0,,
@@ -61339,6 +61359,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SWEDBANK,Swedbank Pensijos fondas 60+,1.1341,,
 2026-10-06,SWEDBANK,Swedbank Pensijos fondas 60+,1.1379,,
 2026-10-07,SWEDBANK,Swedbank Pensijos fondas 60+,1.1353,,
+2026-10-08,SWEDBANK,Swedbank Pensijos fondas 60+,1.1334,,
 2019-12-02,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0,,
 2019-12-03,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),0.9933,,
 2019-12-04,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),0.9851,,
@@ -63061,3 +63082,4 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-05,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0867,,
 2026-10-06,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0912,,
 2026-10-07,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0877,,
+2026-10-08,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0863,,
