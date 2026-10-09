@@ -6,6 +6,8 @@ addStrings({
   chTitle: 'Net assets (AUM)',
   chLead: 'How much money the funds manage. Daily net assets from the providers; where daily figures are not yet collected, quarter-end values from the Bank of Lithuania portfolio reports are used.',
   gtTitle: 'Change in net assets',
+  qtTitle: 'Net assets at quarter end, by fund', qtNow: 'Latest',
+  qtNote: 'Net assets (€ m) of each fund on the last day of each quarter (the latest value on or before that day); the small figure is the change from the previous quarter. Pillar and age group follow the choice above the chart. Older quarters use Bank of Lithuania quarter-end data where daily figures are not available; “–” = no data for that fund.',
   poTitle: 'Payouts under the pension reform',
   poLead: 'Since 2026 participants who chose to leave the II pillar are paid out at the start of each quarter (by the 15th). A payout shows up as a sudden fall in net assets that the unit value does not explain. The table shows when each manager paid out and how much the funds lost.',
   pillar: 'Pillar', view: 'Show', vMgr: 'Managers (all funds)', vGrp: 'Group', show: 'Values', sEur: '€ m', sPct: 'Change, %',
@@ -31,6 +33,8 @@ addStrings({
   chTitle: 'Fondų turtas (AUM)',
   chLead: 'Kiek pinigų valdo fondai. Kasdieniai grynieji aktyvai – iš bendrovių; kur kasdienių duomenų dar nerenkame, naudojamos ketvirčio pabaigos sumos iš Lietuvos banko portfelių ataskaitų.',
   gtTitle: 'Turto pokytis',
+  qtTitle: 'Turtas ketvirčių pabaigose pagal fondą', qtNow: 'Naujausia',
+  qtNote: 'Kiekvieno fondo turtas (mln. €) paskutinę ketvirčio dieną (paskutinė žinoma reikšmė iki tos dienos); mažas skaičius – pokytis nuo ankstesnio ketvirčio. Pakopa ir amžiaus grupė – kaip pasirinkta virš grafiko. Senesniems ketvirčiams, kur kasdienių duomenų nėra, naudojami Lietuvos banko ketvirčio pabaigos duomenys; „–“ = to fondo duomenų nėra.',
   poTitle: 'Išmokėjimai pagal pensijų reformą',
   poLead: 'Nuo 2026 m. iš II pakopos pasitraukti nusprendusiems dalyviams lėšos išmokamos kiekvieno ketvirčio pradžioje (iki 15 d.). Išmokėjimas matyti kaip staigus turto sumažėjimas, kurio nepaaiškina vieneto vertės pokytis. Lentelėje – kada kiekvienas valdytojas išmokėjo ir kiek fondai neteko turto.',
   pillar: 'Pakopa', view: 'Rodyti', vMgr: 'Valdytojus (visi fondai)', vGrp: 'Grupę', show: 'Reikšmės', sEur: 'mln. €', sPct: 'Pokytis, %',
@@ -182,6 +186,35 @@ function renderGrowth() {
   document.getElementById('gtNote').textContent = T().gtNote;
 }
 
+/* ---------- 2b. turtas ketvirčių pabaigose pagal fondą ---------- */
+function renderQuarters() {
+  const fs = fundsOf(ST.pl, ST.g).slice();
+  const gOrder = ST.pl === 'II' ? GROUPS2.slice().reverse() : ['bond', 'mixed', 'equity'];
+  fs.sort((a, b) => gOrder.indexOf(a.g) - gOrder.indexOf(b.g) || PO_MGRS.indexOf(a.p) - PO_MGRS.indexOf(b.p));
+  const last = Math.max(...fs.map(f => f.d[f.d.length - 1]));
+  const ends = []; const e = new Date(last * DAY);
+  for (let y = e.getUTCFullYear(), q = Math.floor(e.getUTCMonth() / 3) - 1; ends.length < 8; q--) {   // paskutiniai 8 pilni ketvirčiai
+    if (q < 0) { q = 3; y--; }
+    ends.unshift({ d: Math.round(Date.UTC(y, (q + 1) * 3, 0) / DAY), lbl: `${y} Q${q + 1}` });
+  }
+  const cols = ends.concat([{ d: last, lbl: iso(last), now: true }]);
+  const cell = (v, prev) => v == null ? '<td class="bl">–</td>'
+    : `<td class="bl">${mEur(v)}${prev ? `<div class="pfsub ${cls(v - prev)}">${signed((v / prev - 1) * 100, x => num(x, 1))}%</div>` : ''}</td>`;
+  const row = (label, vals, isTot) => `<tr class="${isTot ? 'tot' : ''}"><td class="l">${label}</td>${vals.map((v, i) => cell(v, i ? vals[i - 1] : null)).join('')}</tr>`;
+  const valsOf = f => cols.map(c => valueAt(f, c.d));
+  let body = '', curG = null;
+  const all = fs.map(f => ({ f, v: valsOf(f) }));
+  all.forEach(({ f, v }) => {
+    if (ST.g === 'all' && f.g !== curG) { curG = f.g; body += `<tr class="sep"><td class="l" colspan="${cols.length + 1}">${grpLabel(ST.pl, f.g)}</td></tr>`; }
+    body += row(sw(f.p) + MLABEL[f.p], v);
+  });
+  const tot = cols.map((_, i) => { const xs = all.map(r => r.v[i]); return xs.some(x => x == null) ? null : xs.reduce((s, x) => s + x, 0); });
+  document.getElementById('qtTitle').textContent = `${T().qtTitle} · ${ST.pl === 'II' ? 'II' : 'III'} ${lang === 'lt' ? 'pakopa' : 'pillar'}${ST.g === 'all' ? '' : ' · ' + grpLabel(ST.pl, ST.g)}`;
+  document.getElementById('qtTable').innerHTML = `<thead><tr><th class="l">${T().thFund}</th>${cols.map(c => `<th class="bl">${c.now ? T().qtNow + '<br>' + c.lbl : c.lbl}</th>`).join('')}</tr></thead><tbody>`
+    + body + (all.length > 1 ? row(T().total, tot, true) : '') + '</tbody>';
+  document.getElementById('qtNote').textContent = T().qtNote;
+}
+
 /* ---------- 3. išmokėjimai ---------- */
 function payHeat(v, lo, hi) {        // žalia (mažiausia dalis) -> geltona -> raudona (didžiausia)
   const t = hi > lo ? (v - lo) / (hi - lo) : 0.5;
@@ -299,7 +332,7 @@ async function payXls() { await loadXlsx(); XLSX.writeFile(payBook(), `${lang ==
 function renderAllParts() {
   document.getElementById('sub').textContent = `${T().navAum} · ${T().updated} ${AUM.generated}`;
   ['chTitle', 'chLead', 'poTitle', 'poLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderChart(); renderGrowth(); renderPayouts();
+  renderChart(); renderGrowth(); renderQuarters(); renderPayouts();
 }
 renderHeader('aum', renderAllParts);
 renderAllParts();

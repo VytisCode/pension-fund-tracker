@@ -27,12 +27,13 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-07 (vakaras).** Duomenų atnaujinimas vis dar „stringa“: GitHub tvarkaraštis paleidžia tik apie 2 iš 12 suplanuotų paleidimų per dieną. Todėl kiekvienas ciklas tikrina `python update.py status` ir `python pillar3.py status`: jei darbo dieną po 13:00 Vilniaus laiku dar trūksta laukiamos dienos duomenų, o „Update fund data“ per paskutinę valandą nebuvo paleistas ir dabar nevyksta, ciklas jį paleidžia pats (`actions_run_trigger`, `update.yml`, `main`) ir parašo apie tai laiške.
 - **2026-10-07 (vakaras).** Savininkas turi kasdienius AUM (grynųjų aktyvų) duomenis nuo ~2026-03-23 kitame kompiuteryje ir pabandys juos atsiųsti (svarbiausia Swedbank ir Luminor II pakopa 03-23–06-01, Swedbank III pakopa). Kai atsiųs – importuoti į istoriją ir patikslinti puslapio „Turtas (AUM)“ balandžio išmokėjimus. **2026-10-08: gauta** (tik II pakopa, 2026-03-23–10-06; III pakopos duomenų faile nėra). Importuota `import_owner_aum.py` (tik tušti laukai; nukopijuotos Swedbank eilutės 05-19 ir 05-28 bei 1968–1974 m. fondo 04-16 reikšmė praleistos). Balandžio išmokėjimai dabar pagal tikras dienas: Swedbank ir Luminor 04-07.
 - **2026-10-08 (laiškas, 09:12).** (1) Grąžos ir rizikos žemėlapyje reikia savų mygtukų laikotarpiui, fondams (amžiaus grupėms) ir valdytojams keisti, o taškų spalvos turi būti pagal valdytoją – dabar sunku susiorientuoti. – *atlikta (PR #30, 2026-10-08)*. (2) Risk-free rate: gerai, kad galima įrašyti savo skaičių, bet jis turi periodiškai pats atsinaujinti iš patikimo šaltinio, o šalia turi būti „i“ mygtukas su paaiškinimu, iš kur paimtas. Visi fondų dalyviai – EUR investuotojai. – *atlikta (PR #34, 2026-10-08): numatyta norma – ECB €STR, atnaujinama kiekvieną kartą generuojant svetainę; šalia „i“ su šaltiniu ir data; savo skaičių galima įrašyti, mygtukas „Grąžinti €STR“.*
+- **2026-10-09 (laiškas, 16:30).** Mokesčių poveikis (Meet 9) rodyti **ir eurais, ir procentais**. – *Meet 9 – kita užduotis*
 
 ---
 
 ## Klausimas savininkui
 
-Kitas darbas – „Mokesčių poveikis laike“ (Meet 9). Kaip jums aiškiau: **eurais** (pvz., kiek mokesčių sumokėtų taupytojas, kas mėnesį įmokantis 100 € per 10 metų, kiekvienam valdytojui) ar **procentais** (kiek mokesčiai sumažina sukauptą sumą)?
+*(Atsakyta 2026-10-09: ir eurais, ir procentais. Kitas pirmas dienos ciklas įrašo naują klausimą.)*
 
 ---
 
@@ -82,7 +83,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 7. **Reitingo kaita laike:** fondo vieta kas mėnesį ar ketvirtį. – *atlikta (PR #43, 2026-10-08)*
 8. **Max drawdown pagal grupę:** juostos su giliausiu kiekvieno fondo kritimu. – *atlikta (PR #50, 2026-10-09)*
 9. **Mokesčių poveikis laike:** kiek valdymo mokesčiai sukaupia per 5–10 m., palyginti tarp fondų. – *patvirtinta* (dėl 5–9: įtraukti visas, nereikalingas išmesti vėliau)
-10. **Valdomo turto (AUM) kaita** kiekvienam II pakopos fondui kas ketvirtį: grafikas ir lentelė (pensijų reformos kontekstas). Pradėti nuo turimų duomenų. – *patvirtinta*
+10. **Valdomo turto (AUM) kaita** kiekvienam II pakopos fondui kas ketvirtį: grafikas ir lentelė (pensijų reformos kontekstas). Pradėti nuo turimų duomenų. – *atlikta (puslapis „Turtas (AUM)“: grafikas ir pokyčiai – kita sesija; lentelė „Turtas ketvirčių pabaigose pagal fondą“ – PR #64, 2026-10-09)*
 11. **Lankstus laikotarpis linijiniuose grafikuose:** „Visa istorija“ lieka; papildomai „nuo [fondo] pradžios“ ir mygtukas „nuo jauniausio fondo pradžios“. – *atlikta (PR #54, 2026-10-09: „Grafiko pradžia“ – laikotarpio pradžia, nuo bet kurio fondo pradžios arba nuo jauniausio fondo pradžios)*
 
 **B. Naujas puslapis „Ataskaitos“ (Reports)**
