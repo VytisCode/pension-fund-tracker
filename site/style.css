@@ -103,6 +103,8 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 .chip i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
 .chip[aria-pressed="false"] { opacity: .45; }
 .chip[aria-pressed="false"] i { background: var(--axis) !important; }
+select { max-width: 100%; }
+.field > select { min-width: 0; }
 select, input[type="date"] { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px; }
 .field { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
 .bar { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
@@ -202,7 +204,10 @@ tr.gstart:first-child td { border-top: 0; }
 .scroll.stick { overflow: visible; }
 .stick table thead th { position: sticky; top: var(--stick, 0px); z-index: 4; background: var(--card); box-shadow: inset 0 -1px 0 var(--line); border-bottom: 0; padding-top: 6px; }
 .two .stick table thead th, .sec > .stick table thead th { background: var(--surface); }
-@media print { .stick table thead th { position: static; } }
+.scroll.stickbox { max-height: 80vh; overflow: auto; }
+.stickbox table thead th { position: sticky; top: 0; z-index: 4; background: var(--card); box-shadow: inset 0 -1px 0 var(--line); border-bottom: 0; }
+.two .stickbox table thead th, .sec > .stickbox table thead th { background: var(--surface); }
+@media print { .stick table thead th, .stickbox table thead th { position: static; } .scroll.stickbox { max-height: none; overflow: visible; } }
 .ovwrap { max-width: 760px; margin-top: 8px; }
 /* grąžos ir rizikos žemėlapis */
 .riskmap { position: relative; width: 100%; height: 360px; }

@@ -540,11 +540,6 @@ function renderCoverage(gs, ALL) {
   const c = $('cov'); c.hidden = !lines.length;
   c.innerHTML = lines.length ? `<b>${T().covTitle}</b>${ik('coverage')}` + lines.map(l => `<div>${l}</div>`).join('') : '';
 }
-function fitSticky() {          // lentelių antraštės lieka matomos slenkant; jei lentelė platesnė už ekraną (telefone) – įprastas slinkimas į šonus
-  const bar = $('periodbar');
-  document.documentElement.style.setProperty('--stick', (getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight : 0) + 'px');
-  document.querySelectorAll('.scroll').forEach(sc => { sc.classList.remove('stick'); if (sc.scrollWidth <= sc.clientWidth + 1) sc.classList.add('stick'); });
-}
 let lastParts = [];
 // heatmap lentelėse – trumpas pavadinimas, kad neužliptų ant langelių (auditas #18)
 const groupShort = g => g.id === 'turto' && lang === 'lt' ? '<abbr class="tif" title="Turto išsaugojimo fondas">TIF</abbr>' : groupLabel(g);

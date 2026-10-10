@@ -101,6 +101,21 @@ function renderHeader(active, onLang) {
 
 /* Duomenų šviežumas: kiekvieno tiekėjo seniausia iš paskutinių fondų verčių dienų (uždaryti fondai,
    neatnaujinti > 30 d., neskaičiuojami). Atsiliekantys nuo naujausios dienos paryškinami. */
+// Lentelių antraštės lieka matomos slenkant (auditas #20). Telpanti lentelė – antraštė prilimpa ekrano viršuje (po lipnia juosta);
+// platesnė už ekraną – lentelė gauna aukščio ribą, o antraštė prilimpa jos viduje
+function fitSticky() {
+  const bar = [...document.querySelectorAll('.bar.sticky, .jnav')].find(b => getComputedStyle(b).position === 'sticky');
+  document.documentElement.style.setProperty('--stick', (bar ? bar.offsetHeight : 0) + 'px');
+  document.querySelectorAll('.scroll').forEach(sc => {
+    if (!sc.querySelector('thead')) return;
+    sc.classList.remove('stick', 'stickbox');
+    const fits = sc.scrollWidth <= sc.clientWidth + 1 && getComputedStyle(sc).maxHeight === 'none';   // savo aukščio ribą turinčios lentelės lieka dėžutėje
+    sc.classList.add(fits ? 'stick' : 'stickbox');
+  });
+}
+{ let q = 0; const later = () => { if (!q) q = requestAnimationFrame(() => { q = 0; fitSticky(); }); };
+  addEventListener('DOMContentLoaded', () => { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); later(); });
+  addEventListener('resize', later); }
 function businessDaysBetween(a, b) {      // darbo dienos intervale (a, b]
   let n = 0; for (let d = a + 1; d <= b; d++) { const w = new Date(d * DAY).getUTCDay(); if (w !== 0 && w !== 6) n++; }
   return n;
