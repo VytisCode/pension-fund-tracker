@@ -106,7 +106,7 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 select { max-width: 100%; }
 .field > select { min-width: 0; }
 select, input[type="date"] { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px; }
-.field { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
+.field { display: inline-flex; max-width: 100%; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
 .bar { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
 .sticky { position: sticky; top: 0; z-index: 5; box-shadow: 0 6px 12px -10px rgba(0,0,0,.35); }
 .group-h { margin: 18px 0 6px; font-size: 14px; color: var(--text-2); font-weight: 600; }
