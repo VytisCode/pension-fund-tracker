@@ -29,7 +29,7 @@ const I18N = {
 };
 function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt, lt); }
 
-let lang = 'en';                        // numatytoji kalba – anglų
+let lang = 'lt';                        // numatytoji kalba – lietuvių (auditas #28)
 try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
 const T = () => I18N[lang];
 const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
