@@ -74,6 +74,10 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 
 /* ---- bendri papildymai ---- */
 .nav { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+/* vienodas nuorodų stilius visoje svetainėje (auditas #36) */
+a { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 2px; }
+a:hover { text-decoration-color: currentColor; }
+a.btn { text-decoration: none; }
 .nav a { color: var(--text-2); text-decoration: none; padding: 6px 12px; border-radius: 8px; font-size: 14px; border: 1px solid transparent; }
 .nav a:hover { background: var(--hover); }
 .nav a[aria-current="page"] { color: var(--text); border-color: var(--line); background: var(--card); font-weight: 600; }
