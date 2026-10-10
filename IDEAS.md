@@ -379,3 +379,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** 2022–2023 m. infliacija Lietuvoje siekė iki ~20 %, todėl nominali grąža klaidina: fondas su +5 % per metus galėjo realiai prarasti vertę. Analitikai pensijų fondus dažnai vertina pagal realiąją grąžą.
 - **Nauda:** jungiklis „Nominali / reali“ grąžos lentelėse ir grafike; infliacija – Eurostat HICP Lietuvai (nemokamas viešas šaltinis, atnaujinamas kas mėnesį). Matyti, ar fondai išsaugo perkamąją galią.
+
+### „Kiek dabar būtų verta?“ skaičiuoklė
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** draugams ir kolegoms dažniausiai įdomu ne procentai, o paprastas klausimas: „jei būčiau įdėjęs 1000 € tą dieną, kiek turėčiau dabar?“.
+- **Nauda:** mažas laukelis „Rezultatų“ puslapyje: suma, data ir amžiaus grupė, o rezultatas – kiekvieno valdytojo dabartinė vertė eurais, surikiuota. Skaičiuojama tik iš jau turimų vieneto verčių; nieko papildomai rinkti nereikia.
