@@ -96,7 +96,7 @@ def main() -> None:
     build_indexes()
     build_fees()
     assets = ("perf.js", "events.js", "style.css", "common.js", "data.js", "data_idx.js", "data_fee.js")
-    for name in ("index.html", "overview.html", "performance.html") + assets[:-3]:
+    for name in ("index.html", "overview.html", "performance.html") + assets[:-3] + ("favicon.svg",):
         shutil.copyfile(SITE / name, DOCS / name)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
     ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}
