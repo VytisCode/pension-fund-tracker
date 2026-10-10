@@ -152,7 +152,7 @@ const ST = Object.assign({ pl: 'II', birth: 1984, start2: 2019, start3: 2004, pa
   (() => { try { const s = JSON.parse(localStorage.getItem('jrnstate2')) || {}; return s; } catch (e) { return {}; } })());
 const save = () => { try { localStorage.setItem('jrnstate2', JSON.stringify(ST)); } catch (e) {} };
 const eur = (x, p = 2) => num(x, p) + ' €';
-const pc = (x, p = 2) => (x < 0 ? '−' : '') + num(Math.abs(x) * 100, p) + ' %';
+const pc = (x, p = 2) => (x < 0 ? '−' : '') + num(Math.abs(x) * 100, 2) + pctSfx();
 const yearOf = d => new Date(d * DAY).getUTCFullYear();
 const dots = d => iso(d).replace(/-/g, '.');
 
@@ -632,10 +632,10 @@ function renderGrid() {
   const rrFrom = D.find(x => x.rr0 != null)?.d ?? Infinity;
   const C1 = 'var(--s2)', C2 = 'var(--s6)', C3 = 'var(--s5)';
   const cards = [
-    { t: G.rrPct, s: L.rr1 != null ? `${pc(L.rr0)} → ${pc(L.rr1)}` : '', ser: [{ provider: 'a', label: G.without, color: C1, points: pts('rr0', 100, rrFrom) }, { provider: 'b', label: G.with, color: C3, points: pts('rr1', 100, rrFrom) }], fmt: v => num(v, 2) + ' %', unit: '%', zero: false },
-    { t: G.addPct, s: L.rr1 != null ? pc(L.rr1 - L.rr0) : '', ser: [{ provider: 'a', label: G.addPct, color: C3, points: D.filter(x => x.rr0 != null).map(x => [x.d, (x.rr1 - x.rr0) * 100]) }], fmt: v => num(v, 2) + ' %', unit: '%' },
+    { t: G.rrPct, s: L.rr1 != null ? `${pc(L.rr0)} → ${pc(L.rr1)}` : '', ser: [{ provider: 'a', label: G.without, color: C1, points: pts('rr0', 100, rrFrom) }, { provider: 'b', label: G.with, color: C3, points: pts('rr1', 100, rrFrom) }], fmt: v => num(v, 2) + pctSfx(), unit: '%', zero: false },
+    { t: G.addPct, s: L.rr1 != null ? pc(L.rr1 - L.rr0) : '', ser: [{ provider: 'a', label: G.addPct, color: C3, points: D.filter(x => x.rr0 != null).map(x => [x.d, (x.rr1 - x.rr0) * 100]) }], fmt: v => num(v, 2) + pctSfx(), unit: '%' },
     { t: G.assets, s: eur(L.val, 0), ser: [{ provider: 'a', label: t.value, color: C3, points: pts('val') }], fmt: v => eur(v, 0), unit: ' €' },
-    { t: G.ret, s: L.ret != null ? pc(L.ret) : '', ser: [{ provider: 'a', label: G.ret, color: C3, points: pts('ret', 100) }], fmt: v => num(v, 2) + ' %', unit: '%' },
+    { t: G.ret, s: L.ret != null ? pc(L.ret) : '', ser: [{ provider: 'a', label: G.ret, color: C3, points: pts('ret', 100) }], fmt: v => num(v, 2) + pctSfx(), unit: '%' },
     { t: G.rrEur, s: L.pen ? `${eur(L.pen)} → ${eur(L.pen + L.ann)}` : '', ser: [{ provider: 'a', label: G.avgPen, color: C1, points: pts('pen', 1, rrFrom) }, { provider: 'b', label: G.penWith, color: C3, points: D.filter(x => x.pen != null).map(x => [x.d, x.pen + x.ann]) }], fmt: v => eur(v), unit: ' €' },
     { t: G.addEur, s: eur(L.ann), ser: [{ provider: 'a', label: t.kAnn, color: C3, points: D.filter(x => x.d >= Math.min(rrFrom, D[D.length - 1].d)).map(x => [x.d, x.ann]) }], fmt: v => eur(v), unit: ' €' },
     { t: G.assetsC, s: `${eur(L.val, 0)} · ${eur(L.sd, 0)}`, ser: [{ provider: 'a', label: G.own, color: C2, points: pts('sd') }, { provider: 'b', label: G.allC, color: C1, points: pts('st') }, { provider: 'c', label: t.value, color: C3, points: pts('val') }], fmt: v => eur(v, 0), unit: ' €' },

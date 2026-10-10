@@ -260,7 +260,7 @@ function drawColumns(el, cats, bars, dots, opts = {}) {
   const add = (tag, attrs, parent = svg) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
   ticks.forEach(t => {
     add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
-    add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }).textContent = num(t, t % 1 ? 1 : 0) + '%';
+    add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }).textContent = num(t, t % 1 ? 1 : 0) + pctSfx();
   });
   const every = Math.ceil(46 / gw);
   const hov = add('rect', { y: m.t, height: H - m.t - m.b, width: gw, fill: 'var(--hover)', visibility: 'hidden' });
