@@ -246,3 +246,6 @@ tr.idxrow td { color: var(--text-2); background: color-mix(in srgb, var(--text-3
 /* mokesčių poveikis */
 .feebar { display: inline-block; width: 60px; height: 8px; margin-right: 8px; vertical-align: 0; background: var(--grid); border-radius: 4px; overflow: hidden; }
 .feebar i { display: block; height: 100%; background: var(--dneg); border-radius: 4px; }
+
+/* trumpinys „TIF“ heatmap lentelėse */
+abbr.tif { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
