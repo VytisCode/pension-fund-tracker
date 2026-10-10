@@ -24,7 +24,7 @@ const I18N = {
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
-    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 m.', '3y': '3 m.', '5y': '5 m.', max: 'Visa istorija', custom: 'Pasirinktas' },
+    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
   },
 };
 function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt, lt); }
