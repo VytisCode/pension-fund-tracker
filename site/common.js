@@ -6,7 +6,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
-    siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
+    siteTitle: 'Pension fund tracker', naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
@@ -17,7 +17,7 @@ const I18N = {
   },
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
-    siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
+    siteTitle: 'Pensijų fondų sekimas', naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
@@ -115,7 +115,10 @@ function fitSticky() {
     sc.classList.toggle('freeze', !fits && !!th0 && th0.offsetWidth >= 80 && th0.offsetWidth < sc.clientWidth / 2);
     if (!sc.dataset.edges) { sc.dataset.edges = 1; sc.addEventListener('scroll', () => scrollEdges(sc), { passive: true }); }
     scrollEdges(sc);
+    sc.querySelectorAll('thead tr').forEach((tr, i, rows) => tr.style.setProperty('--rowoff', (i ? rows[i - 1].offsetTop + rows[i - 1].offsetHeight - rows[0].offsetTop : 0) + 'px'));   // kelių eilučių antraštė
   });
+  // „–“ langeliai: užuomina, kodėl reikšmės nėra (auditas #49)
+  document.querySelectorAll('td').forEach(td => { if (!td.title && td.textContent.trim() === '–') td.title = T().naTip; });
 }
 // plačios lentelės: šešėlis prie užšaldyto pirmo stulpelio ir išblukęs dešinys kraštas rodo, kad galima slinkti į šonus (auditas #21, #22)
 function scrollEdges(sc) {
