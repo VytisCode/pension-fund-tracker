@@ -59,7 +59,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 **Nedaryti (savininkas atmetė):** #3 (reformos pardavimų neatskirti – reforma tęsis iki 2027 m. pabaigos), #4, #29, #33, #35, #37, #47, #56, #58, #62. **#13** – stulpelio „Sodra €“ neslėpti (gali prireikti, jei atsiras 2004 m. fondų duomenys).
 
 **Paketai (2026-10-10, eilės tvarka; vienas paketas = vienas ciklas = vienas PR):**
-1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49.
+1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49. – *atlikta, išskyrus #31 (PR #75, 2026-10-10); #31 – kitame cikle*
 2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34.
 3. **Statistikos tikslumas:** #15, #16, #17.
 4. **III pakopa:** #8, #9, #48.
@@ -83,7 +83,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#19** [III pakopa, telefone] puslapis 590 px pločio – kaltas „Pradžia“ `select.st` su ilgu tekstu. `max-width:100%` arba trumpesnis tekstas. – *atlikta (PR #71, 2026-10-10)*
 - **#21** [III pakopa → Visi III pakopos fondai] lentelė nukirsta ir kompiuteryje (matosi tik „A…“). Šešėlis/rodyklė dešiniame krašte arba mažiau stulpelių. – *atlikta (PR #72, 2026-10-10)*
 - **#22** Visos plačios lentelės telefone – šešėlis kraštuose, kad matytųsi, jog galima slinkti; pirmas stulpelis užšaldytas. Bendras sprendimas `style.css` `.scroll`. – *atlikta (PR #72, 2026-10-10)*
-- **#10** Visoje svetainėje „1 m.“/„3 m.“ painiojasi su „1 mėn.“/„3 mėn.“ – rašyti „1 metai“, „3 metai“, „5 metai“, „10 metų“; III pakopos lentelėse nurodyti, ar sukaupta, ar metinė.
+- **#10** Visoje svetainėje „1 m.“/„3 m.“ painiojasi su „1 mėn.“/„3 mėn.“ – rašyti „1 metai“, „3 metai“, „5 metai“, „10 metų“; III pakopos lentelėse nurodyti, ar sukaupta, ar metinė. – *atlikta (PR #75, 2026-10-10)*
 - **#2** [Portfeliai] obligacijos, kurių išpirkimo data ≤ ketvirčio pabaiga, žymimos ne „Pardavė visą“, o **„Išpirkta“** (atskira, gerai matoma žyma; savininkas nori, kad būtų matoma).
 - **#5** [Rezultatai → Bendra reitingų lentelė] Goindex lyginamas 16 kartų, kiti 30. Jungiklis „tik bendri laikotarpiai“ (kur dalyvauja visi 6) ir pastaba po lentele.
 - **#6** [Rezultatai → Automatinė santrauka] „Didžiausias 1 d. pokytis“ rodyti du stulpelius: didžiausias kilimas ir didžiausias kritimas.
@@ -97,15 +97,15 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#17** Dienas, kai vertę skelbia tik vienas valdytojas (pvz. SEB 2026-04-06 Velykų pirmadienis), statistikoje ignoruoti (svyravimas, dienų skaičius, didžiausias pokytis). Istorinių duomenų netrinti – tik neįtraukti skaičiuojant.
 - **#24** [Kelias į pensiją → Pakeitimo norma ir turtas laike] mažų grafikų kortelės vienodo aukščio, legenda iškart po grafiku.
 - **#25** Visų grafikų X ašyje – mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), pirma žyma – laikotarpio pradžia.
-- **#26** Kiekvienam puslapiui savas `<title>` pagal kalbą („III pakopa · Pensijų fondai“).
+- **#26** Kiekvienam puslapiui savas `<title>` pagal kalbą („III pakopa · Pensijų fondai“). – *atlikta (PR #75, 2026-10-10)*
 - **#27** Svetainės ženkliukas (SVG favicon) – dabar 404. – *atlikta (PR #68, 2026-10-10)*
-- **#28** Numatytoji kalba – **LT** (EN lieka mygtuku).
-- **#30** [Ataskaitos] išversti „Performance KPI“, „Peer median“, „SAA“, „AUM“ (angliški – skliaustuose arba „i“).
+- **#28** Numatytoji kalba – **LT** (EN lieka mygtuku). – *atlikta (PR #75, 2026-10-10)*
+- **#30** [Ataskaitos] išversti „Performance KPI“, „Peer median“, „SAA“, „AUM“ (angliški – skliaustuose arba „i“). – *atlikta (PR #75, 2026-10-10)*
 - **#31** Vienas skaičių formatas visur: **visada du skaitmenys po kablelio**, grąža su ženklu, LT – tarpas prieš %. **Papildomai:** visose stulpelinėse diagramose – reikšmės (data labels) virš stulpelių.
 - **#32** Amžiaus grupių tvarka visuose puslapiuose vienoda: turto išsaugojimo viršuje, toliau 1961–1967 … 2003–2009 (Meet A1).
 - **#34** [Rezultatai] apatinės lentelės priklauso nuo „Fondų palyginimo“ grupės: grupės pasirinkimas lipnus ir kiekvienos lentelės antraštėje grupė („Kalendorinių metų grąža · 2003–2009“).
-- **#36** Vienodas nuorodų stilius (dabar „šaltinis“ – standartinė mėlyna).
-- **#49** „–“ ir tuščios reikšmės: „Auksas –“ → „0,00 %“ arba „nėra“; lentelių „–“ su užuomina („fondas tada dar neveikė“).
+- **#36** Vienodas nuorodų stilius (dabar „šaltinis“ – standartinė mėlyna). – *atlikta (PR #75, 2026-10-10)*
+- **#49** „–“ ir tuščios reikšmės: „Auksas –“ → „0,00 %“ arba „nėra“; lentelių „–“ su užuomina („fondas tada dar neveikė“). – *atlikta (PR #75, 2026-10-10)*
 
 ### 2. Jaukus dizainas (pagrindas)
 - **#38** Šilta paletė per `style.css` kintamuosius: fonas #FAF6EF, kortelės #FFFDF9, linijos #EAE2D6, tekstas #2B2622, akcentas terakota #C0643C arba giliai žalsva #2F6B5A; tamsi tema šiltai ruda-anglinė #1E1B18. Valdytojų spalvos atpažįstamos.

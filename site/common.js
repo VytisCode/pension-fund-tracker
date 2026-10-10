@@ -6,7 +6,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
-    siteTitle: 'Pension fund tracker', theme: 'Theme', period: 'Period', locale: 'en-GB',
+    siteTitle: 'Pension fund tracker', naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
@@ -17,19 +17,19 @@ const I18N = {
   },
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
-    siteTitle: 'Pensijų fondų sekimas', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
+    siteTitle: 'Pensijų fondų sekimas', naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
-    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 m.', '3y': '3 m.', '5y': '5 m.', max: 'Visa istorija', custom: 'Pasirinktas' },
+    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
   },
 };
 function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt, lt); }
 
-let lang = 'en';                        // numatytoji kalba – anglų
+let lang = 'lt';                        // numatytoji kalba – lietuvių (auditas #28)
 try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
 const T = () => I18N[lang];
 const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
@@ -63,7 +63,6 @@ function renderHeader(active, onLang) {
         <button type="button" data-theme="dark"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></div>`;
   const apply = () => {
     document.documentElement.lang = lang;
-    document.title = T().siteTitle;
     document.getElementById('title').textContent = T().siteTitle;
     const rb = document.getElementById('refresh'); rb.title = T().refreshTip; rb.querySelector('span').textContent = T().refresh; rb.hidden = !isOwner();
     const el = document.documentElement, dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
@@ -78,6 +77,7 @@ function renderHeader(active, onLang) {
     h.querySelector('[data-p="journey"]').textContent = T().navJourney;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
+    document.title = `${h.querySelector(`.nav a[data-p="${active}"]`).textContent} · ${T().siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
     document.getElementById('dlBtn').textContent = '⬇ ' + T().dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
     if (active === 'performance' || active === 'overview') document.getElementById('fresh').innerHTML = freshnessHTML();
@@ -115,7 +115,10 @@ function fitSticky() {
     sc.classList.toggle('freeze', !fits && !!th0 && th0.offsetWidth >= 80 && th0.offsetWidth < sc.clientWidth / 2);
     if (!sc.dataset.edges) { sc.dataset.edges = 1; sc.addEventListener('scroll', () => scrollEdges(sc), { passive: true }); }
     scrollEdges(sc);
+    sc.querySelectorAll('thead tr').forEach((tr, i, rows) => tr.style.setProperty('--rowoff', (i ? rows[i - 1].offsetTop + rows[i - 1].offsetHeight - rows[0].offsetTop : 0) + 'px'));   // kelių eilučių antraštė
   });
+  // „–“ langeliai: užuomina, kodėl reikšmės nėra (auditas #49)
+  document.querySelectorAll('td').forEach(td => { if (!td.title && td.textContent.trim() === '–') td.title = T().naTip; });
 }
 // plačios lentelės: šešėlis prie užšaldyto pirmo stulpelio ir išblukęs dešinys kraštas rodo, kad galima slinkti į šonus (auditas #21, #22)
 function scrollEdges(sc) {

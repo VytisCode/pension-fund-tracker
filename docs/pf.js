@@ -449,7 +449,7 @@ function renderLook(f, qi) {
     + k(T().lkIdx, wFmt(L.idx, 1), T().lkIdxSub(wFmt(L.act, 1)))
     + k(T().lkTer, L.ter == null ? '–' : num(L.ter, 2) + '%', L.ter == null ? '' : T().lkTerSub(share(L.terW, L.fw)))
     + k(T().lkEm, wFmt(L.em, 1), L.emW ? T().lkEmSub(wFmt(L.emW, 1)) : '')
-    + k(T().lkGold, wFmt(L.gold, 1)) + k(T().lkSfdr, wFmt(L.sfdr, 1))
+    + k(T().lkGold, num(L.gold || 0, 1) + '%') + k(T().lkSfdr, wFmt(L.sfdr, 1))
     + k(T().lkCov, share(L.desc, L.fw)) + '</div>'
     + (eq ? `<div class="meta">${T().lkEq(wFmt(eq, 1))}</div><div class="comp">${regs.map(r => `<span style="width:${L.reg[r] / eq * 100}%;background:${REG_COL[r]}" title="${T().reg[r]} ${wFmt(L.reg[r], 1)}"></span>`).join('')}</div>
       <div class="complg lkreg">${regs.map(r => `<span data-r="${r}" title="${T().regPick}"${ST.fr === r ? ' class="on"' : ''}><i style="background:${REG_COL[r]}"></i>${T().reg[r]} <b>${wFmt(L.reg[r], 1)}</b></span>`).join('')}</div>` : '')
@@ -582,7 +582,7 @@ function renderPeers() {
   const maxOf = k => Math.max(...rows.map(r => r[k] || 0));
   const mx = Object.fromEntries(cols.map(([k]) => [k, maxOf(k)]));
   const colr = k => k === 'ytm' || k === 'md' ? 'var(--s2)' : k === 'ter' ? 'var(--s6)' : k === 'gold' ? '#c9a227' : k === 'em' || k === 'r_em' ? '#d0453f' : k.startsWith('r_') ? REG_COL[k.slice(2)] : 'var(--s1)';
-  const cell = (r, k) => { const v = r[k]; if (v == null || (!v && k !== 'ter')) return '<td>–</td>';
+  const cell = (r, k) => { const v = r[k]; if (v == null || (!v && (k === 'ytm' || k === 'md'))) return '<td>–</td>';   // nulinė dalis rodoma kaip 0, ne „–“ (auditas #49)
     return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' || k === 'ytm' ? num(v, 2) + '%' : num(v, 1)}</td>`; };
   const nm = r => `${r.f.p}${ST.pg === 'III' ? ' ' + fundName(r.f).replace(r.f.p, '').trim() : ''}`;
   const tb = document.getElementById('pgTable');
