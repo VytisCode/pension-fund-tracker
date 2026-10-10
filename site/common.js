@@ -32,9 +32,11 @@ function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt,
 let lang = 'lt';                        // numatytoji kalba – lietuvių (auditas #28)
 try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
 const T = () => I18N[lang];
+// Vienas skaičių formatas visur (auditas #31): procentai – visada 2 skaitmenys po kablelio, LT – tarpas prieš %
+const pctSfx = () => lang === 'lt' ? ' %' : '%';
 const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
-const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), p) + ' %';
-const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), p) + '%';
+const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), 2) + pctSfx();
+const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), 2) + pctSfx();
 const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
 const labelOf = id => DATA.providers.find(p => p.id === id).label;
 const groupLabel = g => g.id === 'turto' ? T().turto : g.id.replace('-', '–');
@@ -232,7 +234,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: sCol(l.r), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
       if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = sLab(l.r) + ' ';
-      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1).replace(' %', '%');
+      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1);
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });

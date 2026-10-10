@@ -100,7 +100,7 @@ function eur(v) {
   if (a >= 1e3) return `${s}${num(a / 1e3, 0)} ${lang === 'lt' ? 'tūkst. €' : 'k €'}`;
   return `${s}${num(a, 0)} €`;
 }
-const wFmt = (w, p = 2) => w ? num(w, p) + '%' : '–';
+const wFmt = (w, p = 2) => w ? num(w, 2) + pctSfx() : '–';
 const pp = d => (d >= 0.005 ? '+' : d <= -0.005 ? '−' : '') + num(Math.abs(d), 2);
 const badge = a => `<span class="badge b-${a}">${T().acts[a]}</span>`;
 const MIN_CHANGE = 0.005;                                   // < 0,5 % vienetų pokytis laikomas nepasikeitusiu (apvalinimai)
@@ -207,9 +207,9 @@ function lookThrough(f, qi) {
 function attrChips(s, qi) {
   if (s.t === 'b') {
     const m = s.bt ? bondAt(s.si, qi) : null, c = [];
-    if (m && m.y != null) c.push(`${T().ytm} ${num(m.y, 2)}%`);
+    if (m && m.y != null) c.push(`${T().ytm} ${num(m.y, 2)}${pctSfx()}`);
     if (m) c.push(`${T().dur} ${num(m.md, 1)}`);
-    if (s.bt) { if (s.bt.frn) c.push(T().frn); else if (s.bt.cpn != null) c.push(`${T().cpn} ${num(s.bt.cpn, 2)}%`); c.push(`${T().matL} ${s.bt.mat}`); }
+    if (s.bt) { if (s.bt.frn) c.push(T().frn); else if (s.bt.cpn != null) c.push(`${T().cpn} ${num(s.bt.cpn, 2)}${pctSfx()}`); c.push(`${T().matL} ${s.bt.mat}`); }
     return c.length ? `<span class="tags">${c.map(x => `<span>${esc(x)}</span>`).join('')}</span>` : '';
   }
   if (!s.a) return '';
@@ -219,7 +219,7 @@ function attrChips(s, qi) {
   if (a.em && s.a.ac !== 'private_equity' && s.a.ac !== 'real_estate') c.push(T().emL[a.em]);
   if (a.th === 'gold') c.push(T().gold);
   if (a.sfdr) c.push('SFDR ' + a.sfdr);
-  if (a.ter != null) c.push('TER ' + num(a.ter, 2) + '%');
+  if (a.ter != null) c.push('TER ' + num(a.ter, 2) + pctSfx());
   if (a.hdg === 'yes') c.push(T().hedged);
   return `<span class="tags">${c.map(x => `<span>${esc(x)}</span>`).join('')}</span>`;
 }
@@ -249,7 +249,7 @@ function drawColumns(el, cats, bars, dots, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
   if (!cats.length) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return; }
   const W = el.clientWidth || 600, H = opts.height || 280, m = { l: 44, r: 8, t: 12, b: 28 };
-  const fmt = opts.fmt || (v => num(v, 1) + '%');
+  const fmt = opts.fmt || (v => num(v, 2) + pctSfx());
   let hi = 0; bars.concat(dots).forEach(s => s.vals.forEach(v => { if (v != null) hi = Math.max(hi, v); }));
   const ticks = niceTicks(0, hi * 1.05 || 1); hi = Math.max(hi * 1.05, ticks[ticks.length - 1]) || 1;
   const n = cats.length, nb = Math.max(1, bars.length), gw = (W - m.l - m.r) / n, inner = gw * (nb > 1 ? 0.84 : 0.62);
@@ -427,7 +427,7 @@ function renderFund() {
       <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s, r.exit ? ST.fq - 1 : ST.fq)}</td>
       <td>${r.exit ? '–' : eur(r.v)}</td><td>${wFmt(r.w)}</td>
       <td class="${r.dw > 0 ? 'up' : r.dw < 0 ? 'down' : ''}">${r.dw == null ? '–' : pp(r.dw)}</td>
-      <td class="${r.dq > 0 ? 'up' : r.dq < 0 ? 'down' : ''}">${r.dq == null || r.act === '' ? '–' : (r.dq > 0 ? '+' : '−') + num(Math.abs(r.dq), 0) + '%'}</td>
+      <td class="${r.dq > 0 ? 'up' : r.dq < 0 ? 'down' : ''}">${r.dq == null || r.act === '' ? '–' : (r.dq > 0 ? '+' : '−') + num(Math.abs(r.dq), 2) + pctSfx()}</td>
       <td class="l">${r.act ? badge(r.act) : ''}</td></tr>`).join('') + '</tbody>';
   tb.querySelectorAll('tbody tr').forEach(tr => tr.addEventListener('click', () => { ST.pos = +tr.dataset.si; save(); renderFund(); }));
   const more = document.getElementById('fcMore');
@@ -447,14 +447,14 @@ function renderLook(f, qi) {
   const eq = L.b.eq || 0, regs = REG_KEYS.filter(r => L.reg[r] > 0.05);
   el.innerHTML = `<h3 class="lk">${T().lkTitle}</h3><div class="kpis lkk">`
     + k(T().lkIdx, wFmt(L.idx, 1), T().lkIdxSub(wFmt(L.act, 1)))
-    + k(T().lkTer, L.ter == null ? '–' : num(L.ter, 2) + '%', L.ter == null ? '' : T().lkTerSub(share(L.terW, L.fw)))
+    + k(T().lkTer, L.ter == null ? '–' : num(L.ter, 2) + pctSfx(), L.ter == null ? '' : T().lkTerSub(share(L.terW, L.fw)))
     + k(T().lkEm, wFmt(L.em, 1), L.emW ? T().lkEmSub(wFmt(L.emW, 1)) : '')
-    + k(T().lkGold, num(L.gold || 0, 1) + '%') + k(T().lkSfdr, wFmt(L.sfdr, 1))
+    + k(T().lkGold, num(L.gold || 0, 2) + pctSfx()) + k(T().lkSfdr, wFmt(L.sfdr, 1))
     + k(T().lkCov, share(L.desc, L.fw)) + '</div>'
     + (eq ? `<div class="meta">${T().lkEq(wFmt(eq, 1))}</div><div class="comp">${regs.map(r => `<span style="width:${L.reg[r] / eq * 100}%;background:${REG_COL[r]}" title="${T().reg[r]} ${wFmt(L.reg[r], 1)}"></span>`).join('')}</div>
       <div class="complg lkreg">${regs.map(r => `<span data-r="${r}" title="${T().regPick}"${ST.fr === r ? ' class="on"' : ''}><i style="background:${REG_COL[r]}"></i>${T().reg[r]} <b>${wFmt(L.reg[r], 1)}</b></span>`).join('')}</div>` : '')
     + (L.bw > 0.5 ? `<div class="meta" style="margin-top:12px">${T().lkBond(wFmt(L.bw, 1))}</div><div class="kpis lkk">`
-      + k(T().lkYtm, L.ytm == null ? '–' : num(L.ytm, 2) + '%', T().lkBondCov(share(L.bdW, L.bw)))
+      + k(T().lkYtm, L.ytm == null ? '–' : num(L.ytm, 2) + pctSfx(), T().lkBondCov(share(L.bdW, L.bw)))
       + k(T().lkDur, L.md == null ? '–' : num(L.md, 1), L.frn > 0.05 ? T().lkFrn(share(L.frn, L.bw)) : '')
       + k(T().lkYrs, L.yrs == null ? '–' : `${num(L.yrs, 1)} ${T().yrs}`) + '</div>' : '')
     + `<p class="note">${T().lkNote}${L.bw > 0.5 ? ' ' + T().bondNote : ''}</p>`;
@@ -484,7 +484,7 @@ function renderPosition() {
   const cats = []; for (let i = q0; i <= f.last; i++) cats.push(i);
   const wAt = (g, i) => g.q[i] ? (g.q[i].get(ST.pos)?.v || 0) / g.tot[i] * 100 : null;
   const paint = () => drawColumns(el, cats, [{ id: f.p, label: fundName(f), vals: cats.map(i => wAt(f, i)) }],
-    peers.map(g => ({ id: g.p, label: fundName(g), vals: cats.map(i => wAt(g, i)) })), { height: 260, fmt: v => num(v, 2) + '%' });
+    peers.map(g => ({ id: g.p, label: fundName(g), vals: cats.map(i => wAt(g, i)) })), { height: 260, fmt: v => num(v, 2) + pctSfx() });
   paint(); renderPosition.paint = paint;
   document.getElementById('phNote').innerHTML = peers.length ? `<span class="legend">${series.map(r => `<span${r.provider === f.p ? ' style="font-weight:700;color:var(--text)"' : ''}><i style="background:${colorOf(r.provider)}"></i>${esc(labelOf(r.provider))}</span>`).join('')}</span>${T().phPeers}` : '';
   // ketvirčių lentelė (naujausi viršuje): vienetai, vertė, svoris
@@ -521,7 +521,7 @@ function renderAlt() {
   const paint = () => drawColumns(el, cq, series.map(r => ({ id: r.provider, label: r.provider, vals: cq.map(i => at(r, i)) })), [], { height: 300 });
   renderAlt.paint = paint; paint();
   document.getElementById('altChartMeta').textContent = T().altChart;
-  document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${at(r, q1) == null ? '–' : num(at(r, q1), 1) + '%'}</b></span>`).join('');
+  document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${at(r, q1) == null ? '–' : num(at(r, q1), 2) + pctSfx()}</b></span>`).join('');
   // lentelė: kiekvienas fondas – dalis per paskutinius ketvirčius ir pokytis nuo pasirinkto ketvirčio
   const cols = []; for (let i = Math.max(0, q1 - 7); i <= q1; i++) cols.push(i);
   if (!cols.includes(q0)) cols.unshift(q0);
@@ -532,7 +532,7 @@ function renderAlt() {
   funds.sort((a, b) => order(b.g).localeCompare(order(a.g)) || a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
   const maxA = Math.max(1, ...funds.flatMap(f => cols.map(i => altShare(f, i))));
   const cell = v => `<td style="background:color-mix(in srgb, #c9a227 ${Math.round(v / maxA * 85)}%, transparent)">${v ? num(v, 1) : '–'}</td>`;
-  const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 0)}%<br><small class="pfsub" style="font-weight:400">${eur(a)} →<br>${eur(b)}</small></td>` : '<td>–</td>';
+  const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 2)}${pctSfx()}<br><small class="pfsub" style="font-weight:400">${eur(a)} →<br>${eur(b)}</small></td>` : '<td>–</td>';
   let lastG = null;
   const tb = document.getElementById('altTable');
   tb.innerHTML = `<thead><tr><th class="l">${T().thFund}</th>${cols.map(i => `<th>${qLabel(i)}</th>`).join('')}<th>${T().thDw}</th>
@@ -544,7 +544,7 @@ function renderAlt() {
       const a1 = altShare(f, q1), a0 = altShare(f, q0), mix = altMix(f, q1), mt = Object.values(mix).reduce((x, y) => x + y, 0);
       return sep + `<tr data-c="${f.c}"><td class="l">${sw(f.p)}${esc(fundName(f))}</td>${cols.map(i => cell(altShare(f, i))).join('')}
         <td class="${a1 > a0 ? 'up' : a1 < a0 ? 'down' : ''}">${f.q[q0] ? pp(a1 - a0) : '–'}</td><td>${mt ? eur(mt) : '–'}</td>
-        <td class="l pfsub">${Object.entries(mix).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${T().alts[k]} ${num(v / mt * 100, 0)}%`).join(' · ')}</td>
+        <td class="l pfsub">${Object.entries(mix).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${T().alts[k]} ${num(v / mt * 100, 2)}${pctSfx()}`).join(' · ')}</td>
         ${chg(altValue(f, q0), altValue(f, q1))}${chg(f.tot[q0], f.tot[q1])}</tr>`;
     }).join('') + '</tbody>';
   tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
@@ -583,7 +583,7 @@ function renderPeers() {
   const mx = Object.fromEntries(cols.map(([k]) => [k, maxOf(k)]));
   const colr = k => k === 'ytm' || k === 'md' ? 'var(--s2)' : k === 'ter' ? 'var(--s6)' : k === 'gold' ? '#c9a227' : k === 'em' || k === 'r_em' ? '#d0453f' : k.startsWith('r_') ? REG_COL[k.slice(2)] : 'var(--s1)';
   const cell = (r, k) => { const v = r[k]; if (v == null || (!v && (k === 'ytm' || k === 'md'))) return '<td>–</td>';   // nulinė dalis rodoma kaip 0, ne „–“ (auditas #49)
-    return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' || k === 'ytm' ? num(v, 2) + '%' : num(v, 1)}</td>`; };
+    return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' || k === 'ytm' ? num(v, 2) + pctSfx() : num(v, 2)}</td>`; };
   const nm = r => `${r.f.p}${ST.pg === 'III' ? ' ' + fundName(r.f).replace(r.f.p, '').trim() : ''}`;
   const tb = document.getElementById('pgTable');
   const nReg = cols.length - PG_COLS.length;
