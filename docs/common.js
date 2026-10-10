@@ -108,10 +108,19 @@ function fitSticky() {
   document.documentElement.style.setProperty('--stick', (bar ? bar.offsetHeight : 0) + 'px');
   document.querySelectorAll('.scroll').forEach(sc => {
     if (!sc.querySelector('thead')) return;
-    sc.classList.remove('stick', 'stickbox');
+    sc.classList.remove('stick', 'stickbox', 'freeze');
     const fits = sc.scrollWidth <= sc.clientWidth + 1 && getComputedStyle(sc).maxHeight === 'none';   // savo aukščio ribą turinčios lentelės lieka dėžutėje
     sc.classList.add(fits ? 'stick' : 'stickbox');
+    const th0 = sc.querySelector('thead th');   // pirmas stulpelis užšaldomas, kai jame pavadinimas (ne siauras numeris)
+    sc.classList.toggle('freeze', !fits && !!th0 && th0.offsetWidth >= 80 && th0.offsetWidth < sc.clientWidth / 2);
+    if (!sc.dataset.edges) { sc.dataset.edges = 1; sc.addEventListener('scroll', () => scrollEdges(sc), { passive: true }); }
+    scrollEdges(sc);
   });
+}
+// plačios lentelės: šešėlis prie užšaldyto pirmo stulpelio ir išblukęs dešinys kraštas rodo, kad galima slinkti į šonus (auditas #21, #22)
+function scrollEdges(sc) {
+  sc.classList.toggle('sl', sc.scrollLeft > 1);
+  sc.classList.toggle('sr', sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 1);
 }
 { let q = 0; const later = () => { if (!q) q = requestAnimationFrame(() => { q = 0; fitSticky(); }); };
   addEventListener('DOMContentLoaded', () => { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); later(); });
