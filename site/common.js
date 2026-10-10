@@ -63,7 +63,6 @@ function renderHeader(active, onLang) {
         <button type="button" data-theme="dark"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></div>`;
   const apply = () => {
     document.documentElement.lang = lang;
-    document.title = T().siteTitle;
     document.getElementById('title').textContent = T().siteTitle;
     const rb = document.getElementById('refresh'); rb.title = T().refreshTip; rb.querySelector('span').textContent = T().refresh; rb.hidden = !isOwner();
     const el = document.documentElement, dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
@@ -78,6 +77,7 @@ function renderHeader(active, onLang) {
     h.querySelector('[data-p="journey"]').textContent = T().navJourney;
     h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
     h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
+    document.title = `${h.querySelector(`.nav a[data-p="${active}"]`).textContent} · ${T().siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
     document.getElementById('dlBtn').textContent = '⬇ ' + T().dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
     if (active === 'performance' || active === 'overview') document.getElementById('fresh').innerHTML = freshnessHTML();
