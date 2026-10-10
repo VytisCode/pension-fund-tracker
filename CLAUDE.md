@@ -12,7 +12,7 @@ Analitinė svetainė, sekanti Lietuvos II pakopos pensijų fondų rezultatus. Sk
 2. **Viskas nemokama.** Jei sprendimas kainuotų pinigų (įrankis, servisas, prenumerata) — nesiimk jo. Sustok, paaiškink kodėl verta mokėti, kiek kainuotų, ir lauk patvirtinimo.
 3. **Repozitorijas ir svetainė vieši.** Todėl į repozitoriją niekada nekelti jokių asmeninių duomenų, paties savininko failų ar slaptažodžių. Svetainei pridėti `noindex`, kad paieškos sistemos jos nerodytų.
 4. **Savininkas — pradedantysis.** Kai reikia jo veiksmų (pvz. nustatymų GitHub'e), aiškink lėtai, paprastai, žingsnis po žingsnio.
-5. **Mažais žingsniais.** Vienas pakeitimų pasiūlymas (Pull Request) = viena aiški užduotis. Pull Request aprašyme paprastais žodžiais paaiškink, kas padaryta ir kaip patikrinti.
+5. **Aiškiais žingsniais.** Vienas pakeitimų pasiūlymas (Pull Request) = viena aiški užduotis. Vystymo ciklo paketas (keli susiję punktai, žr. `IDEAS.md` „Ciklo darbo apimtis“) laikomas viena užduotimi. Pull Request aprašyme paprastais žodžiais paaiškink, kas padaryta ir kaip patikrinti.
 6. **Slaptažodžiai ir raktai** — niekada nerašyti į kodą. Tik per GitHub Secrets.
 
 ## Fondai ir duomenys
@@ -60,13 +60,13 @@ Savininkas yra vadovas: jis meta idėjas, o Claude savarankiškai vysto ir tobul
 - bet ką, kas pašalina esamą funkciją ar keičia fondų palyginimo logiką;
 - bet ką, kas kainuotų pinigų.
 
-**Dažnis.** Vystymo ciklas vyksta **kasdien**, kol savininkas pasakys, kad dashboard išvystytas iki galo. Tada pereinama į priežiūros režimą: tik duomenų rinkimas, gedimų taisymas ir kasdienė ataskaita, o naujas idėjas savininkas pateiks pats. Ciklai turi būti nedideli, kad tilptų į savininko Pro limitą. Jei limitas baigiasi, praleisti ciklą ir paminėti tai ataskaitoje.
+**Dažnis.** Vystymo ciklas vyksta **kasdien**, kol savininkas pasakys, kad dashboard išvystytas iki galo. Tada pereinama į priežiūros režimą: tik duomenų rinkimas, gedimų taisymas ir kasdienė ataskaita, o naujas idėjas savininkas pateiks pats. Kiekvienas ciklas daro vieną paketą susijusių darbų (savininko sprendimas 2026-10-10), bet turi tilpti į savininko Pro limitą. Jei limitas baigiasi, praleisti ciklą ir paminėti tai ataskaitoje.
 
 **Aktyvumas.** Kiekvieno vystymo ciklo metu Claude:
 1. peržiūri dashboard savininko akimis — investicijų analitiko, lyginančio pensijų fondus;
 2. įrašo į `IDEAS.md` 1–3 naujas idėjas su trumpu paaiškinimu, kuo jos naudingos;
 3. užduoda savininkui **vieną** klausimą apie jo poreikius (pvz. kokius rodiklius jis žiūri darbe, ką rodo draugams), kad geriau suprastų, ko reikia;
-4. įgyvendina vieną patvirtintą idėją arba smulkų patobulinimą.
+4. įgyvendina vieną paketą: 3–7 susijusias patvirtintas idėjas ar smulkius patobulinimus (žr. `IDEAS.md` „Ciklo darbo apimtis“).
 
 Idėjos ir klausimas įtraukiami į kasdienę ataskaitą. Savininko atsakymus (laišku ar per GitHub) įrašyti į `IDEAS.md`, kad nedingtų.
 

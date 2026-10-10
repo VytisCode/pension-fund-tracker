@@ -29,18 +29,53 @@ Kad Claude imtųsi idėjos, pakeiskite jos būseną į **patvirtinta** arba ties
 - **2026-10-08 (laiškas, 09:12).** (1) Grąžos ir rizikos žemėlapyje reikia savų mygtukų laikotarpiui, fondams (amžiaus grupėms) ir valdytojams keisti, o taškų spalvos turi būti pagal valdytoją – dabar sunku susiorientuoti. – *atlikta (PR #30, 2026-10-08)*. (2) Risk-free rate: gerai, kad galima įrašyti savo skaičių, bet jis turi periodiškai pats atsinaujinti iš patikimo šaltinio, o šalia turi būti „i“ mygtukas su paaiškinimu, iš kur paimtas. Visi fondų dalyviai – EUR investuotojai. – *atlikta (PR #34, 2026-10-08): numatyta norma – ECB €STR, atnaujinama kiekvieną kartą generuojant svetainę; šalia „i“ su šaltiniu ir data; savo skaičių galima įrašyti, mygtukas „Grąžinti €STR“.*
 - **2026-10-09 (projekto pokalbis, 21:40).** Patvirtinti audito punktai – žr. skyrių „Audito užduotys (2026-10-09)“. Savaitgalį savininkas tik tvirtina PR, informaciją nori gauti tik el. paštu; užduočių eilę nustato Claude, padaryti kuo daugiau.
 - **2026-10-09 (laiškas, 16:30).** Mokesčių poveikis (Meet 9) rodyti **ir eurais, ir procentais**. – *atlikta (Meet 9)*
+- **2026-10-10 (laiškas, 09:12).** Ryto laiško naujai idėjai „Realioji grąža (po infliacijos)“ savininkas **pritaria** – būsena *patvirtinta*. Atsakymas į klausimą: kolegoms ir draugams pirmiausia rodo **„Performance & peers“** vaizdą, kaip savo darbo Excel lentelėse (nuotrauka laiške): pasirinktos pradžios ir pabaigos datos (pvz. 2025-12-31–2026-10-06), II pakopos fondai pagal grupes (išmokų fondas, 1961–1967 … 2003–2009) × valdytojai (SEB, Swedbank, Artea, Allianz, Luminor, Goindex) keturiose heatmap lentelėse: grąža (sukaupta) + grupės mediana be SEB; skirtumas nuo konkurentų (SEB minus kiekvienas, ir jų vidurkis); vieta grupėje (1–6, žalia gerai, raudona blogai); metinė grąža. SEB – atskaitos fondas. Naudoti kuriant pradžios puslapį (#42). (Atsakymas buvo praleistas 10-10 ciklų – savininkas tai priminė.)
+- **2026-10-10 (projekto pokalbis, 14:58).** Savininkas **atmeta visas naujas idėjas** – visos Claude idėjos su būsena „nauja“ pažymėtos **atmesta (2026-10-10)**, taip pat ir popietės laiško idėja „Kiek dabar būtų verta?“. Jų nedaryti ir nesiūlyti iš naujo. (Ryte patvirtinta „Realioji grąža“ lieka patvirtinta.)
+- **2026-10-10 (projekto pokalbis, 14:58).** Vienas ciklas atlieka per mažai darbo. **Nuo šiol kiekvienas ciklas daro vieną didesnį paketą** – žr. skyrių „Ciklo darbo apimtis“ žemiau. Ši taisyklė pakeičia ankstesnes „vieną idėją per ciklą“ ir „vienas audito punktas = vienas PR“.
+
+---
+
+## Ciklo darbo apimtis (savininko sprendimas 2026-10-10) – GALIOJA VISIEMS CIKLAMS
+
+Savininkas paprašė apjungti užduotis, nes vienas ciklas padarydavo per mažai. Todėl:
+
+1. **Vienas ciklas = vienas paketas.** Paketą sudaro **3–7 susiję patvirtinti punktai** (tas pats puslapis, tie patys failai ar ta pati tema) – pvz. žemiau esantys audito paketai. Vienas didelis punktas (pvz. #53, #61) gali būti visas ciklo paketas.
+2. **Vienas paketas = viena šaka ir vienas PR.** Kiekvienam punktui – atskiras commit'as, kad būtų aišku, kas kur pakeista. PR aprašyme – punktų sąrašas ir kaip kiekvieną patikrinti. Patikra (build, Playwright) – vieną kartą visam paketui.
+3. **IDEAS.md pakeitimai (būsenos, nauja idėja, klausimas, savininko atsakymai) – tame pačiame paketo PR**, ne atskirame PR.
+4. **Paketų eilė** – žemiau, skyriuje „Audito užduotys“ → „Paketai“. Imti pirmą nebaigtą paketą. Jei paketo dalis nespėta – sujungti tai, kas baigta ir patikrinta, o likusius punktus palikti kitam ciklui (laiške parašyti).
+5. **Limitas.** Paketas turi baigtis patikrintu ir sujungtu PR. Jei Pro limitas baigiasi – ciklą praleisti ir paminėti kitame laiške (kaip anksčiau).
+6. Laiške „Ką padariau“ – visi paketo punktai su audito numeriais.
 
 ---
 
 ## Audito užduotys (2026-10-09) – PIRMENYBĖ
 
-Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai) ir patvirtino žemiau esančius. Numeriai – audito numeriai (pilnas tekstas: projekto failas `notes/auditas-2026-10-09.md`; čia surašyta viskas, ko reikia darbui). Visi žemiau – **patvirtinta**, pirmenybė prieš kitas idėjas. Vienas punktas = vienas PR. Eiliškumą nustato Claude (savininkas taip paprašė); siūloma eilė – kaip surašyta. Savaitgalį (10-10–10-11) savininkas labai užsiėmęs: tik tvirtina PR telefone, **visą informaciją nori gauti tik el. paštu**. Savininko Claude savaitės limitas 10-09 vakare jau 80 % (atsinaujina antradienį 21:00) – jei limitas baigsis, ciklą praleisti ir paminėti kitame laiške.
+Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai) ir patvirtino žemiau esančius. Numeriai – audito numeriai (pilnas tekstas: projekto failas `notes/auditas-2026-10-09.md`; čia surašyta viskas, ko reikia darbui). Visi žemiau – **patvirtinta**, pirmenybė prieš kitas idėjas. Nuo 2026-10-10 punktai daromi **paketais** (žr. „Ciklo darbo apimtis“ ir „Paketai“ žemiau); eiliškumą nustato Claude (savininkas taip paprašė). Savaitgalį (10-10–10-11) savininkas labai užsiėmęs: tik tvirtina PR telefone, **visą informaciją nori gauti tik el. paštu**. Savininko Claude savaitės limitas 10-09 vakare jau 80 % (atsinaujina antradienį 21:00) – jei limitas baigsis, ciklą praleisti ir paminėti kitame laiške.
 
 **Pirmadienio (10-12) laiške priminti savininkui:**
 - **#1** SEB mokestis rodomas 0,50 %, LB faile yra ir 0,40 % (`fee_large`). Savininkas sako, kad sumažintas mokestis buvo taikomas labai trumpai; jis pabandys rasti, kiek laiko. Kol neatsakė – nieko nekeisti.
 - **#11** Artea Ambicingas Active 16+ didžiausias kritimas −78,8 % (2007–2009). Savininkas patikrins prie kompiuterio.
 
 **Nedaryti (savininkas atmetė):** #3 (reformos pardavimų neatskirti – reforma tęsis iki 2027 m. pabaigos), #4, #29, #33, #35, #37, #47, #56, #58, #62. **#13** – stulpelio „Sodra €“ neslėpti (gali prireikti, jei atsiras 2004 m. fondų duomenys).
+
+**Paketai (2026-10-10, eilės tvarka; vienas paketas = vienas ciklas = vienas PR):**
+1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49.
+2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34.
+3. **Statistikos tikslumas:** #15, #16, #17.
+4. **III pakopa:** #8, #9, #48.
+5. **Grafikai:** #25, #14, #24, #12, #46.
+6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10).
+7. **Jaukus dizainas – pagrindas:** #38, #39, #40.
+8. **Antraštė ir puslapių tvarka:** #41, #45, #44, #43.
+9. **Pradžios puslapis ir KPI kortelės:** #42 (pagal savininko „Performance & peers“ atsakymą 2026-10-10), #50, #52.
+10. **Šviežumas ir šaltiniai:** #54, #55, #57.
+11. **„Apie ir metodika“ + Excel su formulėmis:** #53 (gali užimti 2 ciklus).
+12. **Grafikų eksportas ir naujos diagramos:** #67, #60, #68.
+13. **Spausdinimas:** #51.
+14. **Fondo / valdytojo puslapis:** #61 + #64 (2–3 ciklai).
+15. **Apžvalgos ir kita:** #59, #63, #65; paskutinis – #66.
+
+#1 ir #11 – laukia savininko atsakymo (žr. aukščiau), į paketus neįtraukti.
 
 ### 1. Klaidos ir smulkūs taisymai
 - **#18** [Rezultatai → Visa rinka] „Turto išsaugojimo“ užrašas užlipa ant pirmo langelio. Heatmap lentelėse rašyti **„TIF“**, užvedus pelę – „Turto išsaugojimo fondas“. – *atlikta (PR #67, 2026-10-10)*
@@ -250,13 +285,13 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Priežiūra:** kas ketvirtį, atėjus naujai LB ataskaitai, aprašyti naujai atsiradusius fondus (keletas eilučių `data/fund_attributes.csv`).
 
 ### Portfeliai: sudėties kitimas laike
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** fondo kortelėje dabar matyti tik vieno ketvirčio sudėtis (akcijos, fondai, obligacijos, pinigai).
 - **Nauda:** grafikas, kaip nuo 2019 m. keitėsi akcijų, obligacijų, Lietuvos investicijų ir valiutų dalys; galima palyginti visų valdytojų tos pačios grupės fondus vienoje vietoje.
 
 ### Portfeliai: kas turi šią poziciją
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** įdomu matyti, kurie fondai turi, pvz., Nvidia ar Ignitis obligacijas ir kiek.
 - **Nauda:** paieška pagal pavadinimą ar ISIN – lentelė su visais fondais, kuriuose ta pozicija yra, jos svoriu ir pokyčiu.
@@ -328,7 +363,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** vakariniame laiške viena eilutė: kada vyko paleidimai ir kada kiekvienas valdytojas paskelbė vertę. Per kelias savaites paaiškės, kada geriausia rinkti duomenis, ir bus galima sumažinti nereikalingų paleidimų.
 
 ### Grupių vidurkiai grąžos ir rizikos žemėlapyje
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** žemėlapyje matyti visi 48 fondai, bet sunku pasakyti, ar konkretus fondas savo grupėje uždirba daugiau už tą pačią riziką.
 - **Nauda:** kiekvienos amžiaus grupės vidurkis žemėlapyje rodomas kaip didesnis žiedas. Iškart matyti, kurie fondai yra aukščiau už savo grupės vidurkį (geriau), o kurie žemiau.
@@ -340,19 +375,19 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** Performance KPI – pasirenkama ketvirčio pabaiga ir vaizdai YTD / 3 m. sukaupta / 3 m. metinė (taip pat 1 m. ir 5 m.); nauja Lietuvos banko formos fondo lentelė (vidutinis pokytis, standartinis nuokrypis, metų grąža); prie kiekvienos lentelės ⓘ su metodika ir Excel failas su naudotais duomenimis ir formulėmis. AUM puslapyje procentai su 2 skaičiais po kablelio.
 
 ### Santykinės grąžos kaita laike
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** naujoji „grąža palyginti su grupės vidurkiu“ diagrama rodo tik vieną laikotarpį, todėl nematyti, ar fondas lenkia konkurentus nuolat, ar tik pastaruoju metu.
 - **Nauda:** linijinis grafikas, kur nulis yra grupės vidurkis, o kiekvieno valdytojo linija rodo sukauptą skirtumą nuo jo per laiką. Iškart matyti, kada fondas pradėjo atsilikti ar lenkti kitus.
 
 ### Atsigavimo laikas po didžiausio kritimo
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** didžiausio kritimo juostos rodo, kiek fondas nukrito, bet ne kiek laiko užtruko grįžti į ankstesnę viršūnę. Taupytojui tai dažnai svarbiau nei pats kritimo gylis.
 - **Nauda:** šalia kritimo – skaičius „atsigavo per N mėn.“ arba „dar neatsigavo“. Matyti, kurie valdytojai po krizių atsigauna greičiau.
 
 ### „Ataskaitų“ santrauka viršuje
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** „Ataskaitų“ puslapyje daug lentelių, o svarbiausius skaičius tenka susirinkti iš kelių vietų.
 - **Nauda:** viršuje 4 kortelės pasirinktam valdytojui: vidutinė vieta tarp konkurentų, geriausias ir silpniausias fondas, turto (AUM) pokytis per ketvirtį. Patogu pradėti pokalbį ar pristatymą.
@@ -375,13 +410,13 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** laukelis „Darbdavio įmoka, € / mėn.“ – atskira spalva grafike ir lentelėse, kaip valstybės įmoka II pakopoje.
 
 ### Realioji grąža (po infliacijos)
-- **Būsena:** nauja
+- **Būsena:** patvirtinta (savininkas, laiškas 2026-10-10 09:12)
 - **Autorius:** Claude
 - **Kodėl:** 2022–2023 m. infliacija Lietuvoje siekė iki ~20 %, todėl nominali grąža klaidina: fondas su +5 % per metus galėjo realiai prarasti vertę. Analitikai pensijų fondus dažnai vertina pagal realiąją grąžą.
 - **Nauda:** jungiklis „Nominali / reali“ grąžos lentelėse ir grafike; infliacija – Eurostat HICP Lietuvai (nemokamas viešas šaltinis, atnaujinamas kas mėnesį). Matyti, ar fondai išsaugo perkamąją galią.
 
 ### „Kiek dabar būtų verta?“ skaičiuoklė
-- **Būsena:** nauja
+- **Būsena:** atmesta (savininkas 2026-10-10: visos naujos idėjos atmestos; nesiūlyti iš naujo)
 - **Autorius:** Claude
 - **Kodėl:** draugams ir kolegoms dažniausiai įdomu ne procentai, o paprastas klausimas: „jei būčiau įdėjęs 1000 € tą dieną, kiek turėčiau dabar?“.
 - **Nauda:** mažas laukelis „Rezultatų“ puslapyje: suma, data ir amžiaus grupė, o rezultatas – kiekvieno valdytojo dabartinė vertė eurais, surikiuota. Skaičiuojama tik iš jau turimų vieneto verčių; nieko papildomai rinkti nereikia.
