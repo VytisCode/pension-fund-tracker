@@ -32,9 +32,11 @@ function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt,
 let lang = 'lt';                        // numatytoji kalba – lietuvių (auditas #28)
 try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
 const T = () => I18N[lang];
+// Vienas skaičių formatas visur (auditas #31): procentai – visada 2 skaitmenys po kablelio, LT – tarpas prieš %
+const pctSfx = () => lang === 'lt' ? ' %' : '%';
 const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
-const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), p) + ' %';
-const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), p) + '%';
+const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), 2) + pctSfx();
+const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), 2) + pctSfx();
 const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
 const labelOf = id => DATA.providers.find(p => p.id === id).label;
 const groupLabel = g => g.id === 'turto' ? T().turto : g.id.replace('-', '–');
@@ -232,7 +234,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: sCol(l.r), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
       if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = sLab(l.r) + ' ';
-      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1).replace(' %', '%');
+      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1);
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
@@ -474,16 +476,19 @@ function rdDrawBars(el, funds, start, gran) {
   const ticks = niceTicks(lo, hi); lo = Math.min(lo, ticks[0]); hi = Math.max(hi, ticks[ticks.length - 1]);
   const W = el.clientWidth || 800, H = Math.max(280, Math.min(420, Math.round(W * 0.42))), m = { l: 46, r: 10, t: 10, b: 28 };
   const gw = (W - m.l - m.r) / keys.length, n = data.length, bw = Math.max(1, Math.min(26, gw * 0.84 / n)), X = i => m.l + i * gw + (gw - bw * n) / 2;
+  if (bw >= 22) { m.b = 42; m.t = 16; }   // vieta reikšmėms virš ir po stulpeliais
   const Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
   const lblEvery = Math.max(1, Math.ceil(keys.length / Math.max(1, Math.floor((W - m.l - m.r) / (gran === 'y' ? 40 : gran === 'q' ? 64 : 58)))));
   let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${T().rdUp} / ${T().rdDn}">`
-    + ticks.map(t => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 8}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, t % 1 ? 1 : 0)}%</text>`).join('')
+    + ticks.map(t => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 8}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, t % 1 ? 1 : 0)}${pctSfx()}</text>`).join('')
     + keys.map((k, i) => i % lblEvery ? '' : `<text x="${m.l + (i + 0.5) * gw}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--text-3)">${rdBucketLabel(k, gran)}</text>`).join('')
     + `<rect class="rdhl" x="0" y="${m.t}" width="${gw}" height="${H - m.t - m.b}" fill="var(--hover)" visibility="hidden"/>`;
   keys.forEach((k, i) => data.forEach((x, j) => {
     const v = x.m.get(k); if (!v) return; const bx = (X(i) + j * bw).toFixed(1), w = Math.max(0.6, bw - (bw > 4 ? 1 : 0)).toFixed(1), c = colorOf(x.f.provider);
     svg += `<rect x="${bx}" y="${Y(v.up).toFixed(1)}" width="${w}" height="${Math.max(0, Y(0) - Y(v.up)).toFixed(1)}" fill="${c}"/>`
-      + `<rect x="${bx}" y="${Y(0).toFixed(1)}" width="${w}" height="${Math.max(0, Y(v.dn) - Y(0)).toFixed(1)}" fill="${c}" fill-opacity="0.38"/>`;
+      + `<rect x="${bx}" y="${Y(0).toFixed(1)}" width="${w}" height="${Math.max(0, Y(v.dn) - Y(0)).toFixed(1)}" fill="${c}" fill-opacity="0.38"/>`
+      + (bw >= 22 ? `<text x="${(+bx + bw / 2).toFixed(1)}" y="${(Y(v.up) - 3).toFixed(1)}" text-anchor="middle" font-size="8.5" fill="var(--text-2)">${num(v.up, 2)}</text>`   // reikšmės prie stulpelių (auditas #31)
+        + (v.dn < 0 ? `<text x="${(+bx + bw / 2).toFixed(1)}" y="${(Y(v.dn) + 11).toFixed(1)}" text-anchor="middle" font-size="8.5" fill="var(--text-3)">${num(v.dn, 2)}</text>` : '') : '');
   }));
   el.innerHTML = svg + '</svg>';
   const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);

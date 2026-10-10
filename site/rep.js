@@ -17,7 +17,7 @@ addStrings({
   cmp: 'Compare with',
   thNet: 'Net return', thMed: 'Peer median', thGross: 'Gross return', thFee: 'Fee now, % a year', thSaa: 'SAA (benchmark)', thNetD: 'Net − SAA', thGrossD: 'Gross − SAA',
   thRank: 'Ranking in risk class', thN: 'Number of funds in risk class', thRisk: 'Risk class', thAum: 'AUM, €', thShare: 'Share',
-  eq: v => `${num(v, 0)}% equity`, total: 'Total', pl2: 'II pillar', pl3: 'III pillar',
+  eq: v => `${num(v, 2)}${pctSfx()} equity`, total: 'Total', pl2: 'II pillar', pl3: 'III pillar',
   kpiNote: (a, e, ann) => `Period ${a} → ${e}; ${ann ? 'returns are annualized (average a year)' : 'returns are cumulative for the whole period'}. Ranking 1 = best in the group. Method: (i) next to the title.`,
   lbTitle: 'Fund indicators (Bank of Lithuania layout)',
   lbLead: 'One fund at a time, as in the Bank of Lithuania fund results tables: average unit value and benchmark change and their standard deviation from 6 months to since start, then each calendar year.',
@@ -56,7 +56,7 @@ addStrings({
   cmp: 'Palyginti su',
   thNet: 'Grynoji grąža', thMed: 'Konkurentų mediana (Peer median)', thGross: 'Bruto grąža', thFee: 'Mokestis dabar, % per metus', thSaa: 'Lyginamasis indeksas (SAA)', thNetD: 'Grynoji − indeksas', thGrossD: 'Bruto − indeksas',
   thRank: 'Vieta rizikos klasėje', thN: 'Fondų skaičius klasėje', thRisk: 'Rizikos klasė', thAum: 'Turtas (AUM), €', thShare: 'Dalis',
-  eq: v => `${num(v, 0)}% akcijų`, total: 'Iš viso', pl2: 'II pakopa', pl3: 'III pakopa',
+  eq: v => `${num(v, 2)}${pctSfx()} akcijų`, total: 'Iš viso', pl2: 'II pakopa', pl3: 'III pakopa',
   kpiNote: (a, e, ann) => `Laikotarpis ${a} → ${e}; ${ann ? 'grąža metinė (vidutiniškai per metus)' : 'grąža sukaupta per visą laikotarpį'}. Vieta 1 = geriausias grupėje. Metodika: (i) prie pavadinimo.`,
   lbTitle: 'Fondo rodikliai (Lietuvos banko forma)',
   lbLead: 'Vienas fondas, kaip Lietuvos banko fondų rezultatų lentelėse: vidutinis vieneto vertės ir lyginamojo indekso pokytis ir jų standartinis nuokrypis nuo 6 mėn. iki viso laikotarpio, tada kiekvieni kalendoriniai metai.',
@@ -199,7 +199,7 @@ function heat(v, scale) {
   const t = Math.min(1, Math.abs(v) / scale);
   return `background:${v >= 0 ? `hsl(135,45%,${92 - 37 * t}%)` : `hsl(5,75%,${92 - 27 * t}%)`}`;
 }
-const pc = (v, p = 2) => v == null ? '–' : `${v < 0 ? '−' : ''}${num(Math.abs(v), p)}%`;
+const pc = (v, p = 2) => v == null ? '–' : `${v < 0 ? '−' : ''}${num(Math.abs(v), 2)}${pctSfx()}`;
 const pp = (v, p = 2) => v == null ? '–' : `${v > 0 ? '+' : v < 0 ? '−' : ''}${num(Math.abs(v), p)}`;
 const hcell = (v, scale, extra = '', cls = '') => v == null ? `<td class="na ${cls}">–</td>` : `<td class="hc ${cls}" style="${heat(v, scale)}">${pc(v)}${extra}</td>`;
 const ranks = vals => vals.map(v => v == null ? null : 1 + vals.filter(o => o != null && o > v).length);
@@ -380,7 +380,7 @@ function renderLb() {
   }).concat([xb.rec(f, `${bm ? T().lbIdx : T().lbFund} · ${T().sinceStart}`, s, bi, { bm })]);
   const a1 = yr(false), a2 = hasB ? yr(true) : null;
   const cell = c => c.v == null ? `<td class="na">${c.wait ? T().loading : '–'}</td>` : `<td>${num(c.v, 2)}</td>`;
-  const cellP = (c, j) => `<td class="${j === years.length ? 'bl ' : ''}${c.v == null ? 'na' : ''}">${c.v == null ? '–' : `${num(c.v, 2)}%${c.part ? '*' : ''}`}</td>`;
+  const cellP = (c, j) => `<td class="${j === years.length ? 'bl ' : ''}${c.v == null ? 'na' : ''}">${c.v == null ? '–' : `${num(c.v, 2)}${pctSfx()}${c.part ? '*' : ''}`}</td>`;
   const dash = k => Array(k).fill('<td class="na">–</td>').join('');
   const line = (label, cs) => `<tr><td class="l">${label}</td>${cs ? cs.map(cell).join('') : dash(wins.length)}</tr>`;
   document.getElementById('lbTable').innerHTML = `<thead><tr><th class="l">${shortName(f)}</th>${T().lbCols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>`

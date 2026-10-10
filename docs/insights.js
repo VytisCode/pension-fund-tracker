@@ -57,7 +57,7 @@ try { const s = JSON.parse(localStorage.getItem('insState') || '{}'); if (s.per)
 const inSave = () => { try { localStorage.setItem('insState', JSON.stringify({ per: IN.per, grp: IN.grp, to: IN.to })); } catch (e) {} };
 const mE = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), p);
 const mLabel = (x, t) => Math.abs(x) >= 1000 ? `${num(x / 1000, 2)} ${t.in.bn}` : `${num(x, 1)} ${t.in.mln}`;
-const pcIn = (x, p = 2) => (x < 0 ? '−' : x > 0 ? '+' : '') + num(Math.abs(x) * 100, p) + ' %';
+const pcIn = (x, p = 2) => (x < 0 ? '−' : x > 0 ? '+' : '') + num(Math.abs(x) * 100, 2) + pctSfx();
 
 /* fondų intervalai: [pradžia, pabaiga, uždarbis, srautas, išmokos] (m€) */
 const inKey = n => n.replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();     // pavadinimuose pasitaiko skirtingų brūkšnių

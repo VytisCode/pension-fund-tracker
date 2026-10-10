@@ -339,7 +339,7 @@ const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 
 const MARKET_ORDER = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // lentelių stulpelių tvarka
 const marketProvs = () => MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
 const retOf = (g, pid, rng) => { const f = g.funds.find(x => x.provider === pid); if (!f || isStale(f, rng.overallLast)) return null; const s = seriesOf(f, rng.anchor, rng.end); return s ? s.ret : null; };
-const fmtP = (v, p = 1) => pct(v, p).replace(' %', '%');
+const fmtP = (v, p = 1) => pct(v, p);
 
 /* ---------- 0. automatinė santrauka ---------- */
 function renderSummary() {
@@ -440,7 +440,7 @@ function renderOverall() {
   const mark = (v, k, dir, txt) => `<td class="${dir * v === bst(k, dir) ? 'best' : ''}">${txt}</td>`;
   const bFirst = Math.max(...list.map(x => x.first / x.cmp)), bTop2 = Math.max(...list.map(x => x.top2 / x.cmp)), bAvg = Math.min(...list.map(x => x.avg));
   $('tOv').innerHTML = `<thead><tr>${th(T().thRank, 'overall')}<th style="text-align:left">${T().thFund}</th><th>${T().thCmp}</th><th>${T().thFirst}</th><th>${T().thFirstPct}</th><th>${T().thTop2}</th><th>${T().thAvgRank}</th></tr></thead><tbody>`
-    + list.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="name"><span class="sw" style="background:${colorOf(x.id)}"></span>${labelOf(x.id)}</td><td>${x.cmp}</td><td>${x.first}</td><td class="${x.first / x.cmp === bFirst ? 'best' : ''}">${num(x.first / x.cmp * 100, 0)}%</td><td class="${x.top2 / x.cmp === bTop2 ? 'best' : ''}">${num(x.top2 / x.cmp * 100, 0)}%</td><td class="${x.avg === bAvg ? 'best' : ''}">${num(x.avg, 2)}</td></tr>`).join('') + '</tbody>';
+    + list.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="name"><span class="sw" style="background:${colorOf(x.id)}"></span>${labelOf(x.id)}</td><td>${x.cmp}</td><td>${x.first}</td><td class="${x.first / x.cmp === bFirst ? 'best' : ''}">${num(x.first / x.cmp * 100, 2)}${pctSfx()}</td><td class="${x.top2 / x.cmp === bTop2 ? 'best' : ''}">${num(x.top2 / x.cmp * 100, 2)}${pctSfx()}</td><td class="${x.avg === bAvg ? 'best' : ''}">${num(x.avg, 2)}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ---------- 2. fondų palyginimas ---------- */
@@ -505,7 +505,7 @@ function drawChart() {
   chartState = { ctl: null, series, x0, x1, evs, opt };
   paintChart();
   const fin = $('finals'); const narrow = W <= 560;                    // siaurame ekrane galutinės reikšmės – po grafiku
-  fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${o.r.color || colorOf(o.r.provider)}"></i>${o.r.label || labelOf(o.r.provider)} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
+  fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${o.r.color || colorOf(o.r.provider)}"></i>${o.r.label || labelOf(o.r.provider)} <b>${pct(o.v, 1)}</b></span>`).join('') : '';
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
 }
 function renderIdxChips() {
@@ -569,8 +569,8 @@ function renderFunds() {
     + parts.map(pt => {
       const rk = rankOf(pt.all.map(s => ({ key: s.f.provider, v: s.ret })));
       const bestOf = (key, dir) => { const vs = pt.all.map(s => s[key]).filter(v => v !== null); return vs.length ? (dir > 0 ? Math.max(...vs) : Math.min(...vs)) : null; };
-      return pt.all.map((s, i) => tr(i === 0, `<td class="n">${rk.map.get(s.f.provider) || ''}</td>${nm(s)}${cell(s.ret, v => pct(v), bestOf('ret', 1))}${cell(s.vol, v => num(v, 1) + ' %', bestOf('vol', -1))}${cell(s.mdd, v => num(v, 1) + ' %', bestOf('mdd', 1))}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), bestOf('cagr', 1))}${cell(s.volAll, v => num(v, 1) + ' %', bestOf('volAll', -1))}${cell(s.mddAll, v => num(v, 1) + ' %', bestOf('mddAll', 1))}`)).join('')
-        + idxOf(pt).map(f => { const s = idxStats(f, pt.rng, grpStart(pt.g)); return `<tr class="idxrow"><td class="n"></td>${idxName(f)}${cell(s.ret, v => pct(v), null)}${cell(s.vol, v => num(v, 1) + ' %', null)}${cell(s.mdd, v => num(v, 1) + ' %', null)}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), null)}${cell(s.volAll, v => num(v, 1) + ' %', null)}${cell(s.mddAll, v => num(v, 1) + ' %', null)}</tr>`; }).join('');
+      return pt.all.map((s, i) => tr(i === 0, `<td class="n">${rk.map.get(s.f.provider) || ''}</td>${nm(s)}${cell(s.ret, v => pct(v), bestOf('ret', 1))}${cell(s.vol, v => num(v, 2) + pctSfx(), bestOf('vol', -1))}${cell(s.mdd, v => num(v, 2) + pctSfx(), bestOf('mdd', 1))}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), bestOf('cagr', 1))}${cell(s.volAll, v => num(v, 2) + pctSfx(), bestOf('volAll', -1))}${cell(s.mddAll, v => num(v, 2) + pctSfx(), bestOf('mddAll', 1))}`)).join('')
+        + idxOf(pt).map(f => { const s = idxStats(f, pt.rng, grpStart(pt.g)); return `<tr class="idxrow"><td class="n"></td>${idxName(f)}${cell(s.ret, v => pct(v), null)}${cell(s.vol, v => num(v, 2) + pctSfx(), null)}${cell(s.mdd, v => num(v, 2) + pctSfx(), null)}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), null)}${cell(s.volAll, v => num(v, 2) + pctSfx(), null)}${cell(s.mddAll, v => num(v, 2) + pctSfx(), null)}</tr>`; }).join('');
     }).join('') + '</tbody>';
 
   const endAll = Math.max(...rngs.map(r => r.end));
@@ -580,8 +580,8 @@ function renderFunds() {
   const lastYear = new Date(endAll * DAY).getUTCFullYear();
   setCap('tCal', T().capCal(years[0], lastYear, ALL ? [...new Set(rngs.map(r => iso(r.end)))].join(' / ') : iso(rngs[0].end)));
   $('tCal').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${years.map(y => `<th>${y === lastYear ? T().ytd : y}</th>`).join('')}</tr></thead><tbody>`
-    + calP.map(({ pt, cal }) => cal.map((x, i) => tr(i === 0, `${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1).replace(' %', '%')}${c.partial ? '*' : ''}</td>`; }).join('')}`)).join('')
-      + idxOf(pt).map(f => { const c = calendarReturns(idxSince(f, grpStart(pt.g)), pt.rng.end); return `<tr class="idxrow">${idxName(f)}${years.map(y => c[y] ? `<td>${pct(c[y].ret, 1).replace(' %', '%')}</td>` : '<td class="na">–</td>').join('')}</tr>`; }).join('')).join('') + '</tbody>';
+    + calP.map(({ pt, cal }) => cal.map((x, i) => tr(i === 0, `${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1)}${c.partial ? '*' : ''}</td>`; }).join('')}`)).join('')
+      + idxOf(pt).map(f => { const c = calendarReturns(idxSince(f, grpStart(pt.g)), pt.rng.end); return `<tr class="idxrow">${idxName(f)}${years.map(y => c[y] ? `<td>${pct(c[y].ret, 1)}</td>` : '<td class="na">–</td>').join('')}</tr>`; }).join('')).join('') + '</tbody>';
 
   setCap('tRoll', T().capRoll(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end)));
   const keys = [[1, 'thRet1m'], [3, 'thRet3m'], [6, 'thRet6m'], [12, 'thRet1y'], [36, 'thRet3y'], [60, 'thRet5y']];
@@ -589,7 +589,7 @@ function renderFunds() {
     + parts.map(pt => {
       const rol = pt.all.map(s => ({ s, r: rolling(s.f, groupEnd(pt.g).end) }));
       const rb = k => { const vs = rol.map(x => x.r[k]).filter(v => v !== null && v !== undefined); return vs.length ? Math.max(...vs) : null; };
-      return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1).replace(' %', '%'), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.min, 1).replace(' %', '%')}</td><td>${pct(x.r.r1.max, 1).replace(' %', '%')}</td><td>${num(x.r.r1.pos, 0)}%</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
+      return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1)}</td><td>${pct(x.r.r1.min, 1)}</td><td>${pct(x.r.r1.max, 1)}</td><td>${num(x.r.r1.pos, 2)}${pctSfx()}</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
   renderRiskMap(); renderRelative(gs); renderDrawdown(); renderFees();
@@ -795,7 +795,7 @@ function renderAdvanced(parts, ALL) {
   const d = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d)}</span>` : '–', y = x => x ? `${fmtP(x.v, 1)} <span class="na">${x.y}</span>` : '–';
   const m = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d).slice(0, 7)}</span>` : '–';
   $('tAdv').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().thAnn}</th>${th(T().thVol, 'vol')}${th(T().thSharpe, 'sharpe')}${th(T().thBestD, 'bestworst')}<th>${T().thWorstD}</th><th>${T().thBestM}</th><th>${T().thWorstM}</th><th>${T().thBestY}</th><th>${T().thWorstY}</th>${th(T().thPosM, 'posm')}</tr></thead><tbody>`
-    + rows.map(({ s, a, first }) => `<tr${ALL && first ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}${ALL ? ` <span class="na">${groupLabel(s.g)}</span>` : ''}</td><td>${a.ann === null ? '–' : fmtP(a.ann, 1)}</td><td>${a.vol === null ? '–' : num(a.vol, 1) + ' %'}</td><td>${a.sharpe === null ? '–' : num(a.sharpe, 2)}</td><td>${d(a.bestD)}</td><td>${d(a.worstD)}</td><td>${m(a.bestM)}</td><td>${m(a.worstM)}</td><td>${y(a.bestY)}</td><td>${y(a.worstY)}</td><td>${a.posM === null ? '–' : num(a.posM, 0) + '%'}</td></tr>`).join('') + '</tbody>';
+    + rows.map(({ s, a, first }) => `<tr${ALL && first ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}${ALL ? ` <span class="na">${groupLabel(s.g)}</span>` : ''}</td><td>${a.ann === null ? '–' : fmtP(a.ann, 1)}</td><td>${a.vol === null ? '–' : num(a.vol, 2) + pctSfx()}</td><td>${a.sharpe === null ? '–' : num(a.sharpe, 2)}</td><td>${d(a.bestD)}</td><td>${d(a.worstD)}</td><td>${m(a.bestM)}</td><td>${m(a.worstM)}</td><td>${y(a.bestY)}</td><td>${y(a.worstY)}</td><td>${a.posM === null ? '–' : num(a.posM, 2) + pctSfx()}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ---------- eksportas ---------- */
