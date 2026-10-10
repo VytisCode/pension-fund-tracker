@@ -43,7 +43,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 **Nedaryti (savininkas atmetė):** #3 (reformos pardavimų neatskirti – reforma tęsis iki 2027 m. pabaigos), #4, #29, #33, #35, #37, #47, #56, #58, #62. **#13** – stulpelio „Sodra €“ neslėpti (gali prireikti, jei atsiras 2004 m. fondų duomenys).
 
 ### 1. Klaidos ir smulkūs taisymai
-- **#18** [Rezultatai → Visa rinka] „Turto išsaugojimo“ užrašas užlipa ant pirmo langelio. Heatmap lentelėse rašyti **„TIF“**, užvedus pelę – „Turto išsaugojimo fondas“.
+- **#18** [Rezultatai → Visa rinka] „Turto išsaugojimo“ užrašas užlipa ant pirmo langelio. Heatmap lentelėse rašyti **„TIF“**, užvedus pelę – „Turto išsaugojimo fondas“. – *atlikta (PR #67, 2026-10-10)*
 - **#20 + lipnios antraštės** Portfeliai telefone 4 px platesni už ekraną (`tcTable` apvalkalas). **Papildomai (savininkas):** visose lentelėse antraštės eilutė turi būti fiksuota (sticky), kad slenkant žemyn matytųsi, kokie duomenys stulpeliuose.
 - **#19** [III pakopa, telefone] puslapis 590 px pločio – kaltas „Pradžia“ `select.st` su ilgu tekstu. `max-width:100%` arba trumpesnis tekstas.
 - **#21** [III pakopa → Visi III pakopos fondai] lentelė nukirsta ir kompiuteryje (matosi tik „A…“). Šešėlis/rodyklė dešiniame krašte arba mažiau stulpelių.

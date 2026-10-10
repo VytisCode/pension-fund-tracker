@@ -406,9 +406,9 @@ function renderMarket() {
     avgRank[p.id] = k.length ? k.reduce((s, x) => s + x, 0) / k.length : null;
   });
   const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] })));
-  const retBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => { const v = r.vals[p.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(p.id), r.n)}">${pct(v, 1)}</td>`; }).join('')}</tr>`).join('')
+  const retBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => { const v = r.vals[p.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(p.id), r.n)}">${pct(v, 1)}</td>`; }).join('')}</tr>`).join('')
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRet[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(arRank.map.get(p.id), arRank.n)}">${pct(avgRet[p.id], 1)}</td>`).join('')}</tr>`;
-  const rankBody = rows.map(r => `<tr><td>${groupLabel(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('')
+  const rankBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('')
     + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRank[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(akRank.map.get(p.id), akRank.n)}">${num(avgRank[p.id], 1)}</td>`).join('')}</tr>`;
   const spanAll = spanText(periodText() + (P.gx ? ' · ' + T().gxBtn : ''), rows.map(r => r.g.rngM));
   $('btnGx').textContent = T().gxBtn; $('btnGx').setAttribute('aria-pressed', P.gx);
@@ -546,6 +546,8 @@ function fitSticky() {          // lentelių antraštės lieka matomos slenkant;
   document.querySelectorAll('.scroll').forEach(sc => { sc.classList.remove('stick'); if (sc.scrollWidth <= sc.clientWidth + 1) sc.classList.add('stick'); });
 }
 let lastParts = [];
+// heatmap lentelėse – trumpas pavadinimas, kad neužliptų ant langelių (auditas #18)
+const groupShort = g => g.id === 'turto' && lang === 'lt' ? '<abbr class="tif" title="Turto išsaugojimo fondas">TIF</abbr>' : groupLabel(g);
 const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
@@ -688,7 +690,7 @@ function renderRiskTable(pts) {
   const ak = rankOf(provs.map(pr => ({ key: pr.id, v: avgRank[pr.id] === null ? null : -avgRank[pr.id] })));
   const best = rows.map(r => { const id = [...r.ranks].find(([, k]) => k === 1); return id ? id[0] : null; });
   tb.innerHTML = `<thead><tr><th style="text-align:left">${T().group}</th>${provs.map(pr => `<th><span class="sw" style="background:${colorOf(pr.id)}"></span>${pr.label}</th>`).join('')}<th style="text-align:left">${T().rmBest}</th></tr></thead><tbody>`
-    + rows.map((r, i) => `<tr><td>${groupLabel(r.g)}</td>${provs.map(pr => { const v = r.vals[pr.id], p = r.info[pr.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(pr.id), r.n)}" title="${T().rmTip(fmtP(p.y, 2), num(p.x, 1), r.ranks.get(pr.id), r.n)}">${num(v, 2)}</td>`; }).join('')}<td style="text-align:left">${best[i] ? labelOf(best[i]) : '–'}</td></tr>`).join('')
+    + rows.map((r, i) => `<tr><td>${groupShort(r.g)}</td>${provs.map(pr => { const v = r.vals[pr.id], p = r.info[pr.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(pr.id), r.n)}" title="${T().rmTip(fmtP(p.y, 2), num(p.x, 1), r.ranks.get(pr.id), r.n)}">${num(v, 2)}</td>`; }).join('')}<td style="text-align:left">${best[i] ? labelOf(best[i]) : '–'}</td></tr>`).join('')
     + (rows.length > 1 ? `<tr class="avg"><td>${T().rmAvgRank}</td>${provs.map(pr => avgRank[pr.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(ak.map.get(pr.id), ak.n)}">${num(avgRank[pr.id], 1)}</td>`).join('')}<td style="text-align:left">${(() => { const id = [...ak.map].find(([, k]) => k === 1); return id ? labelOf(id[0]) : '–'; })()}</td></tr>` : '')
     + '</tbody>';
 }
