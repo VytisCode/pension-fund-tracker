@@ -270,6 +270,7 @@ function drawColumns(el, cats, bars, dots, opts = {}) {
       const v = b.vals[i]; if (!v) return;
       const x = gx(i) + (gw - nb * (bw + (nb > 1 ? 2 : 0))) / 2 + k * (bw + (nb > 1 ? 2 : 0)) + (nb > 1 ? 1 : 0), y = Y(v), h = base - y, r = Math.min(4, bw / 2, h);
       add('path', { d: `M${x} ${base}V${y + r}Q${x} ${y} ${x + r} ${y}H${x + bw - r}Q${x + bw} ${y} ${x + bw} ${y + r}V${base}Z`, fill: colorOf(b.id) });
+      if (bw >= 26) add('text', { x: x + bw / 2, y: y - 4, 'text-anchor': 'middle', fill: 'var(--text-2)', 'font-size': 10, 'font-variant-numeric': 'tabular-nums' }).textContent = num(v, 2);   // reikšmė virš stulpelio (auditas #31)
     });
     dots.forEach(d => { const v = d.vals[i]; if (v == null) return; add('circle', { cx: gx(i) + gw / 2, cy: Y(v), r: 4.5, fill: colorOf(d.id), stroke: 'var(--card)', 'stroke-width': 2 }); });
   });

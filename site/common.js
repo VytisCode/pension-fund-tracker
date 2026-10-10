@@ -485,7 +485,9 @@ function rdDrawBars(el, funds, start, gran) {
   keys.forEach((k, i) => data.forEach((x, j) => {
     const v = x.m.get(k); if (!v) return; const bx = (X(i) + j * bw).toFixed(1), w = Math.max(0.6, bw - (bw > 4 ? 1 : 0)).toFixed(1), c = colorOf(x.f.provider);
     svg += `<rect x="${bx}" y="${Y(v.up).toFixed(1)}" width="${w}" height="${Math.max(0, Y(0) - Y(v.up)).toFixed(1)}" fill="${c}"/>`
-      + `<rect x="${bx}" y="${Y(0).toFixed(1)}" width="${w}" height="${Math.max(0, Y(v.dn) - Y(0)).toFixed(1)}" fill="${c}" fill-opacity="0.38"/>`;
+      + `<rect x="${bx}" y="${Y(0).toFixed(1)}" width="${w}" height="${Math.max(0, Y(v.dn) - Y(0)).toFixed(1)}" fill="${c}" fill-opacity="0.38"/>`
+      + (bw >= 22 ? `<text x="${(+bx + bw / 2).toFixed(1)}" y="${(Y(v.up) - 3).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="var(--text-2)">${num(v.up, 2)}</text>`   // reikšmės prie stulpelių (auditas #31)
+        + (v.dn < 0 ? `<text x="${(+bx + bw / 2).toFixed(1)}" y="${(Y(v.dn) + 11).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="var(--text-3)">${num(v.dn, 2)}</text>` : '') : '');
   }));
   el.innerHTML = svg + '</svg>';
   const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);
