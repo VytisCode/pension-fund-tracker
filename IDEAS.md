@@ -107,7 +107,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 
 ## Klausimas savininkui
 
-*(Atsakyta 2026-10-09: ir eurais, ir procentais. Kitas pirmas dienos ciklas įrašo naują klausimą.)*
+**2026-10-10:** Kai dashboard rodote kolegai ar draugui, kurį puslapį ar lentelę atidarote pirmiausia, ir koks skaičius jiems įdomiausias? (Tai padės nuspręsti, kas turi būti naujame pradžios puslapyje „Šiandien trumpai“, auditas #42.)
 
 ---
 
@@ -373,3 +373,9 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Autorius:** Claude
 - **Kodėl:** daug darbdavių moka į III pakopą už darbuotoją, ir tai dažnai didžiausias III pakopos privalumas.
 - **Nauda:** laukelis „Darbdavio įmoka, € / mėn.“ – atskira spalva grafike ir lentelėse, kaip valstybės įmoka II pakopoje.
+
+### Realioji grąža (po infliacijos)
+- **Būsena:** nauja
+- **Autorius:** Claude
+- **Kodėl:** 2022–2023 m. infliacija Lietuvoje siekė iki ~20 %, todėl nominali grąža klaidina: fondas su +5 % per metus galėjo realiai prarasti vertę. Analitikai pensijų fondus dažnai vertina pagal realiąją grąžą.
+- **Nauda:** jungiklis „Nominali / reali“ grąžos lentelėse ir grafike; infliacija – Eurostat HICP Lietuvai (nemokamas viešas šaltinis, atnaujinamas kas mėnesį). Matyti, ar fondai išsaugo perkamąją galią.
