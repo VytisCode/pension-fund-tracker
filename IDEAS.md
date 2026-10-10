@@ -59,7 +59,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 **Nedaryti (savininkas atmetė):** #3 (reformos pardavimų neatskirti – reforma tęsis iki 2027 m. pabaigos), #4, #29, #33, #35, #37, #47, #56, #58, #62. **#13** – stulpelio „Sodra €“ neslėpti (gali prireikti, jei atsiras 2004 m. fondų duomenys).
 
 **Paketai (2026-10-10, eilės tvarka; vienas paketas = vienas ciklas = vienas PR):**
-1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49. – *atlikta, išskyrus #31 (PR #75, 2026-10-10); #31 – kitame cikle*
+1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49. – *atlikta (PR #75 ir #76, 2026-10-10)*
 2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34.
 3. **Statistikos tikslumas:** #15, #16, #17.
 4. **III pakopa:** #8, #9, #48.
@@ -101,7 +101,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#27** Svetainės ženkliukas (SVG favicon) – dabar 404. – *atlikta (PR #68, 2026-10-10)*
 - **#28** Numatytoji kalba – **LT** (EN lieka mygtuku). – *atlikta (PR #75, 2026-10-10)*
 - **#30** [Ataskaitos] išversti „Performance KPI“, „Peer median“, „SAA“, „AUM“ (angliški – skliaustuose arba „i“). – *atlikta (PR #75, 2026-10-10)*
-- **#31** Vienas skaičių formatas visur: **visada du skaitmenys po kablelio**, grąža su ženklu, LT – tarpas prieš %. **Papildomai:** visose stulpelinėse diagramose – reikšmės (data labels) virš stulpelių.
+- **#31** Vienas skaičių formatas visur: **visada du skaitmenys po kablelio**, grąža su ženklu, LT – tarpas prieš %. **Papildomai:** visose stulpelinėse diagramose – reikšmės (data labels) virš stulpelių. – *atlikta (PR #76, 2026-10-10)*
 - **#32** Amžiaus grupių tvarka visuose puslapiuose vienoda: turto išsaugojimo viršuje, toliau 1961–1967 … 2003–2009 (Meet A1).
 - **#34** [Rezultatai] apatinės lentelės priklauso nuo „Fondų palyginimo“ grupės: grupės pasirinkimas lipnus ir kiekvienos lentelės antraštėje grupė („Kalendorinių metų grąža · 2003–2009“).
 - **#36** Vienodas nuorodų stilius (dabar „šaltinis“ – standartinė mėlyna). – *atlikta (PR #75, 2026-10-10)*
