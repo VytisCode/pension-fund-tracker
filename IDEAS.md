@@ -63,7 +63,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#24** [Kelias į pensiją → Pakeitimo norma ir turtas laike] mažų grafikų kortelės vienodo aukščio, legenda iškart po grafiku.
 - **#25** Visų grafikų X ašyje – mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), pirma žyma – laikotarpio pradžia.
 - **#26** Kiekvienam puslapiui savas `<title>` pagal kalbą („III pakopa · Pensijų fondai“).
-- **#27** Svetainės ženkliukas (SVG favicon) – dabar 404.
+- **#27** Svetainės ženkliukas (SVG favicon) – dabar 404. – *atlikta (PR #68, 2026-10-10)*
 - **#28** Numatytoji kalba – **LT** (EN lieka mygtuku).
 - **#30** [Ataskaitos] išversti „Performance KPI“, „Peer median“, „SAA“, „AUM“ (angliški – skliaustuose arba „i“).
 - **#31** Vienas skaičių formatas visur: **visada du skaitmenys po kablelio**, grąža su ženklu, LT – tarpas prieš %. **Papildomai:** visose stulpelinėse diagramose – reikšmės (data labels) virš stulpelių.
