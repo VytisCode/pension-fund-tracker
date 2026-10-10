@@ -44,7 +44,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 
 ### 1. Klaidos ir smulkūs taisymai
 - **#18** [Rezultatai → Visa rinka] „Turto išsaugojimo“ užrašas užlipa ant pirmo langelio. Heatmap lentelėse rašyti **„TIF“**, užvedus pelę – „Turto išsaugojimo fondas“. – *atlikta (PR #67, 2026-10-10)*
-- **#20 + lipnios antraštės** Portfeliai telefone 4 px platesni už ekraną (`tcTable` apvalkalas). **Papildomai (savininkas):** visose lentelėse antraštės eilutė turi būti fiksuota (sticky), kad slenkant žemyn matytųsi, kokie duomenys stulpeliuose.
+- **#20 + lipnios antraštės** Portfeliai telefone 4 px platesni už ekraną (`tcTable` apvalkalas). **Papildomai (savininkas):** visose lentelėse antraštės eilutė turi būti fiksuota (sticky), kad slenkant žemyn matytųsi, kokie duomenys stulpeliuose. – *atlikta (PR #70, 2026-10-10)*
 - **#19** [III pakopa, telefone] puslapis 590 px pločio – kaltas „Pradžia“ `select.st` su ilgu tekstu. `max-width:100%` arba trumpesnis tekstas.
 - **#21** [III pakopa → Visi III pakopos fondai] lentelė nukirsta ir kompiuteryje (matosi tik „A…“). Šešėlis/rodyklė dešiniame krašte arba mažiau stulpelių.
 - **#22** Visos plačios lentelės telefone – šešėlis kraštuose, kad matytųsi, jog galima slinkti; pirmas stulpelis užšaldytas. Bendras sprendimas `style.css` `.scroll`.
