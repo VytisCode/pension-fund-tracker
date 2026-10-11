@@ -16,7 +16,7 @@ addStrings({
   asof: 'As of', asLast: 'latest day', asMonth: 'latest month-end', qLabel: (y, q, d) => `${y} Q${q} (${d})`,
   cmp: 'Compare with',
   thNet: 'Net return', thMed: 'Peer median', thGross: 'Gross return', thFee: 'Fee now, % a year', thSaa: 'SAA (benchmark)', thNetD: 'Net − SAA', thGrossD: 'Gross − SAA',
-  thRank: 'Ranking in risk class', thN: 'Number of funds in risk class', thRisk: 'Risk class', thAum: 'AUM, €', thShare: 'Share',
+  thPlace: 'Rank', placeTip: 'Rank within the group by return over the period (1 = best)', thRank: 'Ranking in risk class', thN: 'Number of funds in risk class', thRisk: 'Risk class', thAum: 'AUM, €', thShare: 'Share',
   eq: v => `${num(v, 2)}${pctSfx()} equity`, total: 'Total', pl2: 'II pillar', pl3: 'III pillar',
   kpiNote: (a, e, ann) => `Period ${a} → ${e}; ${ann ? 'returns are annualized (average a year)' : 'returns are cumulative for the whole period'}. Ranking 1 = best in the group. Method: (i) next to the title.`,
   lbTitle: 'Fund indicators (Bank of Lithuania layout)',
@@ -55,7 +55,7 @@ addStrings({
   asof: 'Data', asLast: 'paskutinė diena', asMonth: 'paskutinė mėn. pabaiga', qLabel: (y, q, d) => `${y} Q${q} (${d})`,
   cmp: 'Palyginti su',
   thNet: 'Grynoji grąža', thMed: 'Konkurentų mediana (Peer median)', thGross: 'Bruto grąža', thFee: 'Mokestis dabar, % per metus', thSaa: 'Lyginamasis indeksas (SAA)', thNetD: 'Grynoji − indeksas', thGrossD: 'Bruto − indeksas',
-  thRank: 'Vieta rizikos klasėje', thN: 'Fondų skaičius klasėje', thRisk: 'Rizikos klasė', thAum: 'Turtas (AUM), €', thShare: 'Dalis',
+  thPlace: 'Vieta', placeTip: 'Vieta grupėje pagal grąžą per laikotarpį (1 = geriausia)', thRank: 'Vieta rizikos klasėje', thN: 'Fondų skaičius klasėje', thRisk: 'Rizikos klasė', thAum: 'Turtas (AUM), €', thShare: 'Dalis',
   eq: v => `${num(v, 2)}${pctSfx()} akcijų`, total: 'Iš viso', pl2: 'II pakopa', pl3: 'III pakopa',
   kpiNote: (a, e, ann) => `Laikotarpis ${a} → ${e}; ${ann ? 'grąža metinė (vidutiniškai per metus)' : 'grąža sukaupta per visą laikotarpį'}. Vieta 1 = geriausias grupėje. Metodika: (i) prie pavadinimo.`,
   lbTitle: 'Fondo rodikliai (Lietuvos banko forma)',
@@ -250,7 +250,7 @@ function renderCal() {
     body += rows.map((r, k) => `<tr><td class="rk" title="${T().rkTip}">${rk[k] ?? ''}</td><td class="l">${shortName(r.f)}</td>${hcell(r.tot.v, 150, r.part ? '*' : '')}<td class="hc b">${pc(r.avg.v)}</td>${r.ys.map((x, j) => x.v != null ? `<td class="hc${j ? '' : ' bl'}" style="${heat(x.v, 25)}">${pc(x.v)}${x.part ? '*' : ''}</td>` : `<td class="na${j ? '' : ' bl'}">–</td>`).join('')}</tr>`).join('');
   }
   head('calTitle', T().calTitle, 'cal');
-  document.getElementById('calTable').innerHTML = `<thead><tr><th></th><th class="l">${T().thFund}</th><th>${T().thTot}</th><th>${T().thAvg}</th>${years.map((y, j) => `<th class="${j ? '' : 'bl'}">${j ? y : T().ytdCol(y)}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
+  document.getElementById('calTable').innerHTML = `<thead><tr><th title="${T().placeTip}">${T().thPlace}</th><th class="l">${T().thFund}</th><th>${T().thTot}</th><th>${T().thAvg}</th>${years.map((y, j) => `<th class="${j ? '' : 'bl'}">${j ? y : T().ytdCol(y)}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
   const e = Math.max(...fundsOf('II', ST.m).concat(fundsOf('III', ST.m)).map(f => f.ld));
   document.getElementById('calNote').textContent = T().calNote(short(M[i0]), short(e));
   MODELS.cal = Object.assign(xb, { name: `${MLABEL[ST.m]} ${T().calTitle}` });
@@ -275,7 +275,7 @@ function renderMonths() {
     body += `<tr class="sep"><td colspan="15">${pl === 'II' ? T().pl2 : T().pl3}</td></tr>`;
     body += rows.map((r, k) => `<tr><td class="rk" title="${T().rkTip}">${rk[k] ?? ''}</td><td class="l">${shortName(r.f)}</td>${hcell(r.ytd.v, 20, '', 'b')}${r.ms.map((x, j) => x === undefined ? `<td class="na${j ? '' : ' bl'}"></td>` : x.v == null ? `<td class="na${j ? '' : ' bl'}">–</td>` : `<td class="hc${j ? '' : ' bl'}" style="${heat(x.v, 6)}">${pc(x.v)}</td>`).join('')}</tr>`).join('');
   }
-  document.getElementById('monTable').innerHTML = `<thead><tr><th></th><th class="l">${T().thFund}</th><th>${T().ytd}</th>${T().months.map((m, j) => `<th class="${j ? '' : 'bl'}">${m}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
+  document.getElementById('monTable').innerHTML = `<thead><tr><th title="${T().placeTip}">${T().thPlace}</th><th class="l">${T().thFund}</th><th>${T().ytd}</th>${T().months.map((m, j) => `<th class="${j ? '' : 'bl'}">${m}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
   document.getElementById('monNote').textContent = T().monNote(short(e));
   MODELS.mon = Object.assign(xb, { name: `${MLABEL[ST.m]} ${T().monTitle(y)}` });
 }
