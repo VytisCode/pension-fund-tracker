@@ -63,7 +63,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34. – *atlikta (PR #77, 2026-10-11)*
 3. **Statistikos tikslumas:** #15, #16, #17. – *atlikta (PR #78, 2026-10-11)*
 4. **III pakopa:** #8, #9, #48. – *atlikta (PR #79, 2026-10-11)*
-5. **Grafikai:** #25, #14, #24, #12, #46.
+5. **Grafikai:** #25, #14, #24, #12, #46. – *atlikta (PR #80, 2026-10-11)*
 6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10).
 7. **Jaukus dizainas – pagrindas:** #38, #39, #40.
 8. **Antraštė ir puslapių tvarka:** #41, #45, #44, #43.
@@ -90,13 +90,13 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#7** [Rezultatai, 2003–2009 grupė] Savininko sprendimas: fondai, kurių vieneto vertė prasidėjo nuo 1 € 2025-01-02, turi būti įtraukti, kai pasirinkta „Šie metai“, „2025“ ir pan. Skaičiuoti nuo bendros datos – laikotarpio pradžios taškas tokiems fondams = pirmoji vertė (1,00 € 2025-01-02), kad SEB/Swedbank (nuo 2024-12-31) ir kiti (nuo 2025-01-02) būtų lyginami tarpusavyje, o ne atmetami dėl vienos dienos skirtumo. – *atlikta (PR #77, 2026-10-11)*
 - **#8** [III pakopa] „Nuo bendros pradžios“ – meniu su daug pasirinkimų: kiekvieno fondo pavadinimas ir jo pradžios data („Nuo Luminor ateitis akcijų index pradžios (2026-01-21)“, „Nuo Goindex pasaulio akcijų pradžios (2022-08-22)“ …), kad būtų aišku, nuo kurio fondo pradžios rodoma ir skaičiuojama. Numatytoji bendra pradžia – be fondų, jaunesnių nei 1 m. – *atlikta (PR #79, 2026-10-11)*
 - **#9** [III pakopa] kai grupėje ≤ 3 fondai, heatmap spalvos švelnesnės (ne ryškiai žalia už −0,8 %). – *atlikta (PR #79, 2026-10-11)*
-- **#12** [Kelias į pensiją] dvi skirtingos „grąžos %“: tekste rašyti „investicijų grąža sudaro 36 % turto“, kortelėje „grąža nuo įmokų – 55,87 %“.
-- **#14** [Turtas (AUM)] ketvirčio sumas (Luminor, Swedbank iki 2025-12-31) piešti punktyru su taškais, ne ištisine linija.
+- **#12** [Kelias į pensiją] dvi skirtingos „grąžos %“: tekste rašyti „investicijų grąža sudaro 36 % turto“, kortelėje „grąža nuo įmokų – 55,87 %“. – *atlikta (PR #80, 2026-10-11)*
+- **#14** [Turtas (AUM)] ketvirčio sumas (Luminor, Swedbank iki 2025-12-31) piešti punktyru su taškais, ne ištisine linija. – *atlikta (PR #80, 2026-10-11)*
 - **#15** [Ataskaitos → Grąža nuo 2019 m.] skaičius prieš fondo pavadinimą – pridėti antraštę „Vieta“. – *atlikta (PR #78, 2026-10-11)*
 - **#16** [Ataskaitos ir visur, kur yra vidutinė metinė grąža] trumpiau veikiančių fondų vidurkį aiškiai pažymėti (`*` ir paaiškinimas), kad analitikas matytų, jog jis neobjektyviai palyginamas su ilgiau veikiančių; fondams < 1 m. metinės nerodyti. – *atlikta (PR #78, 2026-10-11)*
 - **#17** Dienas, kai vertę skelbia tik vienas valdytojas (pvz. SEB 2026-04-06 Velykų pirmadienis), statistikoje ignoruoti (svyravimas, dienų skaičius, didžiausias pokytis). Istorinių duomenų netrinti – tik neįtraukti skaičiuojant. – *atlikta (PR #78, 2026-10-11)*
-- **#24** [Kelias į pensiją → Pakeitimo norma ir turtas laike] mažų grafikų kortelės vienodo aukščio, legenda iškart po grafiku.
-- **#25** Visų grafikų X ašyje – mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), pirma žyma – laikotarpio pradžia.
+- **#24** [Kelias į pensiją → Pakeitimo norma ir turtas laike] mažų grafikų kortelės vienodo aukščio, legenda iškart po grafiku. – *atlikta (PR #80, 2026-10-11)*
+- **#25** Visų grafikų X ašyje – mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), pirma žyma – laikotarpio pradžia. – *atlikta (PR #80, 2026-10-11)*
 - **#26** Kiekvienam puslapiui savas `<title>` pagal kalbą („III pakopa · Pensijų fondai“). – *atlikta (PR #75, 2026-10-10)*
 - **#27** Svetainės ženkliukas (SVG favicon) – dabar 404. – *atlikta (PR #68, 2026-10-10)*
 - **#28** Numatytoji kalba – **LT** (EN lieka mygtuku). – *atlikta (PR #75, 2026-10-10)*
@@ -112,7 +112,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#39** Heatmap švelnesnės spalvos: šalavijo žalia (#9DC3A5 → #5E9C76), molio raudona (#E8B4A0 → #C9765A), smėlinė vidurys; tikrinti kontrastą.
 - **#40** Šriftai: antraštėms serifinis (Fraunces arba Source Serif 4), tekstui Inter su `tabular-nums`. **Būtinai patikrinti, ar šriftas turi visas lietuviškas raides (ą č ę ė į š ų ū ž, didžiosios taip pat)** – geriausia laikyti šrifto failus repozitorijoje (`latin-ext`).
 - **#41** Nauja antraštė: ženkliukas + „Pensijų fondai“, eilutė „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ (vėluojantis – geltonas su vardu); navigacija vienoje eilutėje su ikonomis, lipni; įrankiai (Kopijuoti, Excel, Dienos lentelė, Spausdinti, Duomenys) – į „⋯ Įrankiai“ meniu; kalba ir tema – ikonos kampe.
-- **#46** Grafikai: 2 px linijos, paskutinė reikšmė etikete linijos gale, švelnesnis tinklelis, užuominos su visų fondų reikšmėmis surikiuotos. **Savininkas: per daug nesuapvalinti – analitikai mėgsta aštresnes linijas, tai ne dailės parodos puslapis.**
+- **#46** Grafikai: 2 px linijos, paskutinė reikšmė etikete linijos gale, švelnesnis tinklelis, užuominos su visų fondų reikšmėmis surikiuotos. **Savininkas: per daug nesuapvalinti – analitikai mėgsta aštresnes linijas, tai ne dailės parodos puslapis.** – *atlikta (PR #80, 2026-10-11)*
 - **#48** [III pakopa] to paties valdytojo keli fondai – skirtingas linijos tipas (ištisinė/punktyras/taškai) arba aiškiau skirtingi atspalviai. – *atlikta (PR #79, 2026-10-11)*
 - **#45** Ilgi paaiškinimai po lentelėmis – po „Kaip skaityti? ▾“, matomas vienas sakinys.
 - **#44** Kortelių antraštė – automatinė išvada („2025 m. visi fondai krito ~20 %, atsigavo per 3 mėn.“), mažesnėmis raidėmis – lentelės pavadinimas.

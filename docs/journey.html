@@ -43,10 +43,11 @@
   .mgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
   @media (max-width: 1100px) { .mgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 600px) { .mgrid { grid-template-columns: 1fr; } }
-  .mgrid .card { padding: 10px 12px; margin: 0; }
-  .mgrid .mt { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .mgrid .card { padding: 10px 12px; margin: 0; display: flex; flex-direction: column; }   /* vienodo aukščio kortelės, grafikai vienoje linijoje (auditas #24) */
+  .mgrid .mt { font-size: 13px; font-weight: 600; margin-bottom: 2px; min-height: 2.6em; }
   .mgrid .ms { font-size: 12px; color: var(--text-3); min-height: 16px; }
   .mgrid .chart { position: relative; }
+  .mgrid .legend { margin-top: 2px; }
   .tmap { display: grid; height: 220px; gap: 3px; margin-top: 6px; }
   .tmap div { border-radius: 6px; padding: 8px; color: #fff; font-size: 12px; line-height: 1.35; overflow: hidden; }
   .tmap div b { display: block; font-size: 15px; }
@@ -130,12 +131,12 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="dialog"></div>
-<script src="common.js?v=144f2599"></script>
+<script src="common.js?v=1f138947"></script>
 <script src="data.js?v=3b7b1645"></script>
 <script src="data_idx.js?v=5a910891"></script>
 <script src="data_journey.js?v=5f38f7f1"></script>
 <script src="data_journey3.js?v=ce4dfb55"></script>
-<script src="journey.js?v=8043cc5b"></script>
+<script src="journey.js?v=24f39719"></script>
 <script src="insights.js?v=5907c7a9"></script>
 </body>
 </html>
