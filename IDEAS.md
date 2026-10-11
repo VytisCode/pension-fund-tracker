@@ -61,7 +61,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 **Paketai (2026-10-10, eilės tvarka; vienas paketas = vienas ciklas = vienas PR):**
 1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49. – *atlikta (PR #75 ir #76, 2026-10-10)*
 2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34. – *atlikta (PR #77, 2026-10-11)*
-3. **Statistikos tikslumas:** #15, #16, #17.
+3. **Statistikos tikslumas:** #15, #16, #17. – *atlikta (PR #78, 2026-10-11)*
 4. **III pakopa:** #8, #9, #48.
 5. **Grafikai:** #25, #14, #24, #12, #46.
 6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10).
@@ -92,9 +92,9 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#9** [III pakopa] kai grupėje ≤ 3 fondai, heatmap spalvos švelnesnės (ne ryškiai žalia už −0,8 %).
 - **#12** [Kelias į pensiją] dvi skirtingos „grąžos %“: tekste rašyti „investicijų grąža sudaro 36 % turto“, kortelėje „grąža nuo įmokų – 55,87 %“.
 - **#14** [Turtas (AUM)] ketvirčio sumas (Luminor, Swedbank iki 2025-12-31) piešti punktyru su taškais, ne ištisine linija.
-- **#15** [Ataskaitos → Grąža nuo 2019 m.] skaičius prieš fondo pavadinimą – pridėti antraštę „Vieta“.
-- **#16** [Ataskaitos ir visur, kur yra vidutinė metinė grąža] trumpiau veikiančių fondų vidurkį aiškiai pažymėti (`*` ir paaiškinimas), kad analitikas matytų, jog jis neobjektyviai palyginamas su ilgiau veikiančių; fondams < 1 m. metinės nerodyti.
-- **#17** Dienas, kai vertę skelbia tik vienas valdytojas (pvz. SEB 2026-04-06 Velykų pirmadienis), statistikoje ignoruoti (svyravimas, dienų skaičius, didžiausias pokytis). Istorinių duomenų netrinti – tik neįtraukti skaičiuojant.
+- **#15** [Ataskaitos → Grąža nuo 2019 m.] skaičius prieš fondo pavadinimą – pridėti antraštę „Vieta“. – *atlikta (PR #78, 2026-10-11)*
+- **#16** [Ataskaitos ir visur, kur yra vidutinė metinė grąža] trumpiau veikiančių fondų vidurkį aiškiai pažymėti (`*` ir paaiškinimas), kad analitikas matytų, jog jis neobjektyviai palyginamas su ilgiau veikiančių; fondams < 1 m. metinės nerodyti. – *atlikta (PR #78, 2026-10-11)*
+- **#17** Dienas, kai vertę skelbia tik vienas valdytojas (pvz. SEB 2026-04-06 Velykų pirmadienis), statistikoje ignoruoti (svyravimas, dienų skaičius, didžiausias pokytis). Istorinių duomenų netrinti – tik neįtraukti skaičiuojant. – *atlikta (PR #78, 2026-10-11)*
 - **#24** [Kelias į pensiją → Pakeitimo norma ir turtas laike] mažų grafikų kortelės vienodo aukščio, legenda iškart po grafiku.
 - **#25** Visų grafikų X ašyje – mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), pirma žyma – laikotarpio pradžia.
 - **#26** Kiekvienam puslapiui savas `<title>` pagal kalbą („III pakopa · Pensijų fondai“). – *atlikta (PR #75, 2026-10-10)*
