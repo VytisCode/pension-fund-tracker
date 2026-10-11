@@ -60,7 +60,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 
 **Paketai (2026-10-10, eilės tvarka; vienas paketas = vienas ciklas = vienas PR):**
 1. **Tekstai ir skaičių formatas:** #10, #26, #28, #30, #31, #36, #49. – *atlikta (PR #75 ir #76, 2026-10-10)*
-2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34.
+2. **„Rezultatų“ puslapis:** #5, #6, #7, #32, #34. – *atlikta (PR #77, 2026-10-11)*
 3. **Statistikos tikslumas:** #15, #16, #17.
 4. **III pakopa:** #8, #9, #48.
 5. **Grafikai:** #25, #14, #24, #12, #46.
@@ -85,9 +85,9 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#22** Visos plačios lentelės telefone – šešėlis kraštuose, kad matytųsi, jog galima slinkti; pirmas stulpelis užšaldytas. Bendras sprendimas `style.css` `.scroll`. – *atlikta (PR #72, 2026-10-10)*
 - **#10** Visoje svetainėje „1 m.“/„3 m.“ painiojasi su „1 mėn.“/„3 mėn.“ – rašyti „1 metai“, „3 metai“, „5 metai“, „10 metų“; III pakopos lentelėse nurodyti, ar sukaupta, ar metinė. – *atlikta (PR #75, 2026-10-10)*
 - **#2** [Portfeliai] obligacijos, kurių išpirkimo data ≤ ketvirčio pabaiga, žymimos ne „Pardavė visą“, o **„Išpirkta“** (atskira, gerai matoma žyma; savininkas nori, kad būtų matoma).
-- **#5** [Rezultatai → Bendra reitingų lentelė] Goindex lyginamas 16 kartų, kiti 30. Jungiklis „tik bendri laikotarpiai“ (kur dalyvauja visi 6) ir pastaba po lentele.
-- **#6** [Rezultatai → Automatinė santrauka] „Didžiausias 1 d. pokytis“ rodyti du stulpelius: didžiausias kilimas ir didžiausias kritimas.
-- **#7** [Rezultatai, 2003–2009 grupė] Savininko sprendimas: fondai, kurių vieneto vertė prasidėjo nuo 1 € 2025-01-02, turi būti įtraukti, kai pasirinkta „Šie metai“, „2025“ ir pan. Skaičiuoti nuo bendros datos – laikotarpio pradžios taškas tokiems fondams = pirmoji vertė (1,00 € 2025-01-02), kad SEB/Swedbank (nuo 2024-12-31) ir kiti (nuo 2025-01-02) būtų lyginami tarpusavyje, o ne atmetami dėl vienos dienos skirtumo.
+- **#5** [Rezultatai → Bendra reitingų lentelė] Goindex lyginamas 16 kartų, kiti 30. Jungiklis „tik bendri laikotarpiai“ (kur dalyvauja visi 6) ir pastaba po lentele. – *atlikta (PR #77, 2026-10-11)*
+- **#6** [Rezultatai → Automatinė santrauka] „Didžiausias 1 d. pokytis“ rodyti du stulpelius: didžiausias kilimas ir didžiausias kritimas. – *atlikta (PR #77, 2026-10-11)*
+- **#7** [Rezultatai, 2003–2009 grupė] Savininko sprendimas: fondai, kurių vieneto vertė prasidėjo nuo 1 € 2025-01-02, turi būti įtraukti, kai pasirinkta „Šie metai“, „2025“ ir pan. Skaičiuoti nuo bendros datos – laikotarpio pradžios taškas tokiems fondams = pirmoji vertė (1,00 € 2025-01-02), kad SEB/Swedbank (nuo 2024-12-31) ir kiti (nuo 2025-01-02) būtų lyginami tarpusavyje, o ne atmetami dėl vienos dienos skirtumo. – *atlikta (PR #77, 2026-10-11)*
 - **#8** [III pakopa] „Nuo bendros pradžios“ – meniu su daug pasirinkimų: kiekvieno fondo pavadinimas ir jo pradžios data („Nuo Luminor ateitis akcijų index pradžios (2026-01-21)“, „Nuo Goindex pasaulio akcijų pradžios (2022-08-22)“ …), kad būtų aišku, nuo kurio fondo pradžios rodoma ir skaičiuojama. Numatytoji bendra pradžia – be fondų, jaunesnių nei 1 m.
 - **#9** [III pakopa] kai grupėje ≤ 3 fondai, heatmap spalvos švelnesnės (ne ryškiai žalia už −0,8 %).
 - **#12** [Kelias į pensiją] dvi skirtingos „grąžos %“: tekste rašyti „investicijų grąža sudaro 36 % turto“, kortelėje „grąža nuo įmokų – 55,87 %“.
@@ -102,8 +102,8 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#28** Numatytoji kalba – **LT** (EN lieka mygtuku). – *atlikta (PR #75, 2026-10-10)*
 - **#30** [Ataskaitos] išversti „Performance KPI“, „Peer median“, „SAA“, „AUM“ (angliški – skliaustuose arba „i“). – *atlikta (PR #75, 2026-10-10)*
 - **#31** Vienas skaičių formatas visur: **visada du skaitmenys po kablelio**, grąža su ženklu, LT – tarpas prieš %. **Papildomai:** visose stulpelinėse diagramose – reikšmės (data labels) virš stulpelių. – *atlikta (PR #76, 2026-10-10)*
-- **#32** Amžiaus grupių tvarka visuose puslapiuose vienoda: turto išsaugojimo viršuje, toliau 1961–1967 … 2003–2009 (Meet A1).
-- **#34** [Rezultatai] apatinės lentelės priklauso nuo „Fondų palyginimo“ grupės: grupės pasirinkimas lipnus ir kiekvienos lentelės antraštėje grupė („Kalendorinių metų grąža · 2003–2009“).
+- **#32** Amžiaus grupių tvarka visuose puslapiuose vienoda: turto išsaugojimo viršuje, toliau 1961–1967 … 2003–2009 (Meet A1). – *atlikta (PR #77, 2026-10-11)*
+- **#34** [Rezultatai] apatinės lentelės priklauso nuo „Fondų palyginimo“ grupės: grupės pasirinkimas lipnus ir kiekvienos lentelės antraštėje grupė („Kalendorinių metų grąža · 2003–2009“). – *atlikta (PR #77, 2026-10-11)*
 - **#36** Vienodas nuorodų stilius (dabar „šaltinis“ – standartinė mėlyna). – *atlikta (PR #75, 2026-10-10)*
 - **#49** „–“ ir tuščios reikšmės: „Auksas –“ → „0,00 %“ arba „nėra“; lentelių „–“ su užuomina („fondas tada dar neveikė“). – *atlikta (PR #75, 2026-10-10)*
 
@@ -142,7 +142,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 
 ## Klausimas savininkui
 
-**2026-10-10:** Kai dashboard rodote kolegai ar draugui, kurį puslapį ar lentelę atidarote pirmiausia, ir koks skaičius jiems įdomiausias? (Tai padės nuspręsti, kas turi būti naujame pradžios puslapyje „Šiandien trumpai“, auditas #42.)
+**2026-10-11:** Jūsų „Performance & peers“ lentelėse SEB yra atskaitos fondas (skirtumas „SEB minus kiti“, mediana be SEB). Kuriant pradžios puslapį (#42): ar atskaitos valdytojas svetainėje turi būti visada SEB, ar geriau leisti lankytojui pasirinkti valdytoją (numatytas – SEB)?
 
 ---
 
