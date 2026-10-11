@@ -6,7 +6,7 @@ const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
-    siteTitle: 'Pension fund tracker', naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
+    siteTitle: 'Pension fund tracker', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
@@ -17,7 +17,7 @@ const I18N = {
   },
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
-    siteTitle: 'Pensijų fondų sekimas', naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
+    siteTitle: 'Pensijų fondų sekimas', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
@@ -203,29 +203,33 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const add = (tag, attrs, parent = svg) => { const n = document.createElementNS(ns, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
 
   niceTicks(lo, hi).forEach(t => {
-    add('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 });
+    add('line', Object.assign({ x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 }, t === 0 ? {} : { 'stroke-opacity': 0.7, 'stroke-dasharray': '2 3' }));   // švelnesnis tinklelis (auditas #46)
     const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + (opts.axisUnit ?? '%');
   });
-  const years = (x1 - x0) / 365, ticks = [], cur = new Date(x0 * DAY);
-  if (years > 5) { const yStep = Math.max(years > 6 ? 2 : 1, Math.ceil(years * 40 / (W - m.l - m.r)));   // siauruose grafikuose – rečiau
+  // X ašis (auditas #25): pirma žyma – laikotarpio pradžia; toliau mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), ilgiems laikotarpiams – metai
+  const years = (x1 - x0) / 365, ticks = [], cur = new Date(x0 * DAY), plotW = W - m.l - m.r;
+  if (years > 5) { const yStep = Math.max(years > 6 ? 2 : 1, Math.ceil(years * 40 / plotW));   // siauruose grafikuose – rečiau
     for (let y = cur.getUTCFullYear() + 1; Date.UTC(y, 0, 1) / DAY < x1; y += yStep) ticks.push([Math.round(Date.UTC(y, 0, 1) / DAY), String(y)]); }
-  else if (years > 1.2) {
-    const stepM = years > 3 ? 6 : 3;
-    for (let t = Date.UTC(cur.getUTCFullYear(), 0, 1); t / DAY < x1; ) {
-      const dt = new Date(t); if (t / DAY > x0) ticks.push([Math.round(t / DAY), iso(Math.round(t / DAY)).slice(0, 7)]);
-      t = Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth() + stepM, 1);
+  else {
+    const months = years * 12, maxT = Math.max(2, Math.floor(plotW / 62)), stepM = [1, 2, 3, 6, 12].find(k => months / k <= maxT) || 12;
+    for (let t = Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth() + 1, 1); t / DAY < x1; ) {
+      const dt = new Date(t), mo = dt.getUTCMonth();
+      if (mo % stepM === 0) ticks.push([Math.round(t / DAY), (mo === 0 || !ticks.length ? dt.getUTCFullYear() + ' ' : '') + T().monShort[mo]]);
+      t = Date.UTC(dt.getUTCFullYear(), mo + 1, 1);
     }
-  } else { for (let k = 0; k < 6; k++) { const d = Math.round(x0 + (x1 - x0) * k / 5); ticks.push([d, iso(d).slice(years > 0.4 ? 0 : 5)]); } }
+  }
+  const tickTxt = (x, label, anchor) => { const tx = add('text', { x, y: H - 6, 'text-anchor': anchor, fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = label; };
+  tickTxt(m.l, iso(x0), 'start');
   ticks.forEach(([d, label]) => {
-    if (d <= x0 || d > x1) return;
-    const tx = add('text', { x: X(d), y: H - 6, 'text-anchor': 'middle', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = label;
+    if (d <= x0 || d > x1 || X(d) - m.l < 78) return;      // neužlipti ant pradžios žymos
+    tickTxt(X(d), label, 'middle');
   });
 
   const step = Math.max(1, Math.floor((x1 - x0) / (W * 1.2)));
   series.slice().reverse().forEach(r => {
     let path = '', last = -1e9;
     r.points.forEach((p, i) => { if (i === 0 || i === r.points.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
-    (els[r.provider] = els[r.provider] || []).push(add('path', Object.assign({ d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, r.dash ? { 'stroke-dasharray': r.dash } : {})));
+    (els[r.provider] = els[r.provider] || []).push(add('path', Object.assign({ d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'miter', 'stroke-miterlimit': 2, 'stroke-linecap': 'butt' }, r.dash ? { 'stroke-dasharray': r.dash } : {})));
   });
   if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
     const labels = series.map(r => ({ r, y: Y(r.points[r.points.length - 1][1]) })).sort((a, b) => a.y - b.y);
