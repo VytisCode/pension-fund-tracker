@@ -98,9 +98,16 @@ const shortName = l => l.replace('Pensijos fondas ', '').replace(' (apriboto nut
 const HM_PERIODS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', '10y'];
 const ALL_EVENTS = () => EVENTS.map(e => ({ day: dayOf(e.day), title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day).map((e, i) => ({ ...e, n: i + 1 }));
 
+// bendra pradžia – jauniausio pasirinkto fondo pradžia, neskaičiuojant fondų, jaunesnių nei 1 metai (auditas #8)
+function commonOf(sel, end) {
+  if (!sel.length) return { d: end, f: null };
+  const old = sel.filter(f => end - f.d[0] >= 365), use = old.length ? old : sel;
+  const f = use.reduce((a, b) => (b.d[0] > a.d[0] ? b : a));
+  return { d: f.d[0], f };
+}
 function cardRange(g, st, sel) {                  // grafiko ir reitingo langas
   const { end, overallLast } = groupEnd(g);
-  if (st.start === 'common') return { anchor: Math.max(...sel.map(f => f.d[0])), end, overallLast, label: T().stCommon };
+  if (st.start === 'common') return { anchor: commonOf(sel, end).d, end, overallLast, label: T().stCommon };
   if (st.start !== 'period') { const f = g.funds.find(x => x.provider === st.start); return { anchor: f.d[0], end, overallLast, label: T().stFund(labelOf(f.provider)) }; }
   const r = presetRangeF(period, end, sel, maxAnchorOf(sel));
   return { ...r, overallLast, label: periodLabel(period) };
@@ -128,7 +135,7 @@ function heatTables(g, data) {
   const { sel, rng } = data, fs = sel.slice().sort((a, b) => g.funds.indexOf(a) - g.funds.indexOf(b));
   const end = rng.end, rows = [];
   HM_PERIODS.forEach(per => rows.push({ label: per === '10y' ? T().p10y : T().periods[per], ...windowFor(per, end, sel) }));
-  const common = Math.max(...sel.map(f => f.d[0]));
+  const common = commonOf(sel, end).d;
   rows.push({ label: `${T().stCommon} (${iso(common)})`, anchor: common, end });
   if (data.st.start !== 'period' && data.st.start !== 'common' && rng.anchor !== common) rows.push({ label: `${rng.label} (${iso(rng.anchor)})`, anchor: rng.anchor, end, cur: true });
   rows.forEach(r => {
@@ -152,10 +159,10 @@ function renderCard(g, card) {
   const data = compute(g), st = data.st;
   const late = data.series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
   const starts = g.funds.slice().sort((a, b) => a.d[0] - b.d[0]);
-  const common = Math.max(...data.sel.map(f => f.d[0]));
+  const cm = commonOf(data.sel, data.rng.end), common = cm.d;
   card.innerHTML = `<h2>${T().cat[g.id]}</h2>
     <div class="tools" style="margin:0 0 8px"><label class="field"><span>${T().stLbl}</span><select class="st">
-      <option value="period">${T().stPeriod(periodLabel(period))}</option><option value="common">${T().stCommon} (${iso(common)})</option>
+      <option value="period">${T().stPeriod(periodLabel(period))}</option><option value="common">${T().stCommon}${cm.f ? ` – ${labelOf(cm.f.provider)}` : ''} (${iso(common)})</option>
       ${starts.map(f => `<option value="${f.provider}">${T().stFund(labelOf(f.provider))} (${iso(f.d[0])})</option>`).join('')}</select></label>
       <button class="btn ev" type="button" aria-pressed="${st.events}">${T().eventsBtn}</button></div>
     <div class="chips" style="margin:0 0 10px"></div>
