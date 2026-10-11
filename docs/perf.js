@@ -29,7 +29,7 @@ addStrings({
   csLbl: 'Chart start', csPeriod: 'Start of the period', csYoung: 'Since the youngest fund’s start', csFrom: p => `Since ${p} start`,
   ytd: 'YTD', mChart: (g, p) => `${g} · ${p}. Returns rebased to 0 % at the start of the period.`,
   mZoom: (g, a, b) => `${g} · zoomed ${a} → ${b}. Returns rebased to 0 % at the start of the zoomed range.`,
-  nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
+  nFund: 'Volatility = standard deviation of daily returns × √252 (days with no price change are excluded; days when only one manager published a value – e.g. SEB on public holidays – are skipped in daily statistics, the change is measured to the next common day). Annualised return = compound annual growth between the first and last available price (shown only for histories of at least one year). Max drawdown = largest peak-to-trough fall. * = fund started during that year (return since inception). Rolling returns longer than one year are annualised. Unit values are already net of fees and taxes. Past performance is not a guide to future returns.',
   foot: 'Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
   share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', allFunds: 'All funds', allNote: 'The chart is drawn for one age group at a time – pick a group above to see it. The tables below show all funds; ranks and highlighted best values are within each age group.', capMetrics2: '“Since inception” columns: each fund’s first date → end date.', xlsxDay: 'Daily table (.xlsx)', xlsxDayTip: 'Same layout as the old daily file (fund, date, unit value, net assets): one row per fund for the chosen date; default = latest. If a fund has no value on that day, its last earlier value is used.', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
   viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in % (0 = ${r || 'group average'}).`,
@@ -107,7 +107,7 @@ addStrings({
   csLbl: 'Grafiko pradžia', csPeriod: 'Laikotarpio pradžia', csYoung: 'Nuo jauniausio fondo pradžios', csFrom: p => `Nuo ${p} pradžios`,
   ytd: 'Šie metai', mChart: (g, p) => `${g} · ${p}. Grąža perskaičiuota į 0 % laikotarpio pradžioje.`,
   mZoom: (g, a, b) => `${g} · priartinta ${a} → ${b}. Grąža perskaičiuota į 0 % priartinto laikotarpio pradžioje.`,
-  nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
+  nFund: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 (dienos be kainos pokyčio neįtraukiamos; dienos, kai vertę paskelbė tik vienas valdytojas – pvz. SEB per šventes – dienos statistikoje praleidžiamos, pokytis skaičiuojamas iki kitos bendros dienos). Metinė grąža = sudėtinis metinis augimas tarp pirmos ir paskutinės turimos kainos (rodoma tik bent vienerių metų istorijai). Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki dugno. * = fondas pradėjo veikti tais metais (grąža nuo įsteigimo). Ilgesnė nei metų slenkanti grąža perskaičiuota metine. Vieneto vertė jau yra po mokesčių ir mokesčių fondui. Praeities rezultatai negarantuoja ateities grąžos.',
   foot: 'Duomenys renkami automatiškai iš tiekėjų svetainių ir API; tai informacinė medžiaga, ne investavimo rekomendacija.',
   share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', allFunds: 'Visi fondai', allNote: 'Grafikas braižomas vienai amžiaus grupei – pasirinkite grupę aukščiau, kad jį pamatytumėte. Lentelėse žemiau rodomi visi fondai; vietos ir paryškintos geriausios reikšmės skaičiuojamos kiekvienoje amžiaus grupėje.', capMetrics2: 'Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → pabaigos data.', xlsxDay: 'Dienos lentelė (.xlsx)', xlsxDayTip: 'Toks pat išdėstymas kaip senajame dienos faile (fondas, data, vieneto vertė, grynieji aktyvai): po eilutę kiekvienam fondui pasirinktai dienai; pagal nutylėjimą – naujausia. Jei fondas tą dieną vertės neturi, imama paskutinė ankstesnė.', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
   viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentais (0 = ${r || 'grupės vidurkis'}).`,
@@ -250,8 +250,9 @@ const th = (label, k, style = '') => `<th${style ? ` style="${style}"` : ''}>${l
 function stdev(a) { const n = a.length; if (n < 2) return null; const m = a.reduce((s, x) => s + x, 0) / n; return Math.sqrt(a.reduce((s, x) => s + (x - m) * (x - m), 0) / (n - 1)); }
 function riskStats(f, ia, ie) {            // svyravimas ir didžiausias kritimas tarp indeksų
   const r = []; let peak = f.v[ia], mdd = 0;
-  for (let i = ia + 1; i <= ie; i++) {
-    const x = f.v[i] / f.v[i - 1] - 1; if (x !== 0) r.push(x);
+  const ix = statIdx(f, ia, ie);
+  for (let k = 1; k < ix.length; k++) {
+    const i = ix[k], x = f.v[i] / f.v[ix[k - 1]] - 1; if (x !== 0) r.push(x);
     if (f.v[i] > peak) peak = f.v[i];
     mdd = Math.min(mdd, f.v[i] / peak - 1);
   }
@@ -316,8 +317,9 @@ function advStats(f, rng, rf) {
   const s = seriesOf(f, rng.anchor, rng.end); if (!s) return null;
   const { ia, ie } = s, days = f.d[ie] - f.d[ia];
   let bestD = null, worstD = null;
-  for (let i = ia + 1; i <= ie; i++) {
-    const x = (f.v[i] / f.v[i - 1] - 1) * 100;
+  const ix = statIdx(f, ia, ie);
+  for (let k = 1; k < ix.length; k++) {
+    const i = ix[k], x = (f.v[i] / f.v[ix[k - 1]] - 1) * 100;
     if (!bestD || x > bestD.v) bestD = { v: x, d: f.d[i] };
     if (!worstD || x < worstD.v) worstD = { v: x, d: f.d[i] };
   }
@@ -358,7 +360,7 @@ function renderSummary() {
       if (isStale(f, overallLast)) return;
       const s = seriesOf(f, anchor, end); if (!s) return;
       items.push({ p: f.provider, r: s.ret });
-      for (let i = s.ia + 1; i <= s.ie; i++) { const x = (f.v[i] / f.v[i - 1] - 1) * 100; if (!move || Math.abs(x) > Math.abs(move.v)) move = { p: f.provider, g, v: x, d: f.d[i] }; }
+      const ix = statIdx(f, s.ia, s.ie); for (let k = 1; k < ix.length; k++) { const i = ix[k], x = (f.v[i] / f.v[ix[k - 1]] - 1) * 100; if (!move || Math.abs(x) > Math.abs(move.v)) move = { p: f.provider, g, v: x, d: f.d[i] }; }
     });
     if (items.length < 2) return;
     items.sort((a, b) => b.r - a.r); ng++;
@@ -373,7 +375,7 @@ function renderSummary() {
   if (move) parts.push(T().sumMove(labelOf(move.p), groupLabel(move.g), fmtP(move.v, 2), iso(move.d)));
   $('sumText').innerHTML = ng ? `<p class="sumline">${parts.join(' ')}</p>` : `<p class="na">${T().sumNoData}</p>`;
   const cellMove = (g, anchor, end, dir) => {   // dir > 0 – didžiausias kilimas, dir < 0 – didžiausias kritimas (auditas #6)
-    let best = null; g.funds.forEach(f => { if (isStale(f, groupEnd(g).overallLast)) return; const s = seriesOf(f, anchor, end); if (!s) return; for (let i = s.ia + 1; i <= s.ie; i++) { const x = (f.v[i] / f.v[i - 1] - 1) * 100; if (x * dir > 0 && (!best || x * dir > best.v * dir)) best = { p: f.provider, v: x, d: f.d[i] }; } });
+    let best = null; g.funds.forEach(f => { if (isStale(f, groupEnd(g).overallLast)) return; const s = seriesOf(f, anchor, end); if (!s) return; const ix = statIdx(f, s.ia, s.ie); for (let k = 1; k < ix.length; k++) { const i = ix[k], x = (f.v[i] / f.v[ix[k - 1]] - 1) * 100; if (x * dir > 0 && (!best || x * dir > best.v * dir)) best = { p: f.provider, v: x, d: f.d[i] }; } });
     return best ? `${labelOf(best.p)} ${fmtP(best.v, 2)} <span class="na">${iso(best.d)}</span>` : '–';
   };
   const sw = p => `<span class="sw" style="background:${colorOf(p)}"></span>`;
