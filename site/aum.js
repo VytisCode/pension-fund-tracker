@@ -61,7 +61,7 @@ addStrings({
 const MGRS = ['ALLIANZ', 'ARTEA', 'GOINDEX', 'LUMINOR', 'SEB', 'SWEDBANK'];       // tvarka = spalvos --s1..--s6
 const MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var DATA = { providers: MGRS.map(m => ({ id: m, label: MLABEL[m] })) };
-const GROUPS2 = ['2003-2009', '1996-2002', '1989-1995', '1982-1988', '1975-1981', '1968-1974', '1961-1967', 'turto'];
+const GROUPS2 = ['turto', '1961-1967', '1968-1974', '1975-1981', '1982-1988', '1989-1995', '1996-2002', '2003-2009'];   // vienoda tvarka visur (auditas #32)
 const sw = m => `<span class="sw" style="background:${colorOf(m)}"></span>`;
 const mEur = v => num(v, Math.abs(v) < 10 ? 2 : Math.abs(v) < 100 ? 1 : 0);
 const signed = (v, f) => (v > 0 ? '+' : v < 0 ? '−' : '') + f(Math.abs(v));
@@ -189,7 +189,7 @@ function renderGrowth() {
 /* ---------- 2b. turtas ketvirčių pabaigose pagal fondą ---------- */
 function renderQuarters() {
   const fs = fundsOf(ST.pl, ST.g).slice();
-  const gOrder = ST.pl === 'II' ? GROUPS2.slice().reverse() : ['bond', 'mixed', 'equity'];
+  const gOrder = ST.pl === 'II' ? GROUPS2 : ['bond', 'mixed', 'equity'];
   fs.sort((a, b) => gOrder.indexOf(a.g) - gOrder.indexOf(b.g) || PO_MGRS.indexOf(a.p) - PO_MGRS.indexOf(b.p));
   const last = Math.max(...fs.map(f => f.d[f.d.length - 1]));
   const ends = []; const e = new Date(last * DAY);

@@ -5,7 +5,7 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
-  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', ovLong: '1 yr and longer', ovPick: 'Periods included:',
+  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
   gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
   nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
@@ -52,7 +52,7 @@ addStrings({
   sumNoData: 'Not enough data.', sumLatest: d => `Latest data: <b>${d}</b>.`,
   sumLead: (p, k, n) => `<b>${p}</b> led in ${k} of ${n} age groups.`, sumLag: (p, k, n) => `<b>${p}</b> lagged in ${k} of ${n} age groups.`,
   sumMove: (p, g, v, d) => `Largest one-day move: <b>${p}</b> (${g}) <b>${v}</b> on ${d}.`,
-  thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
+  thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move', thUp1: 'Largest 1-day rise', thDn1: 'Largest 1-day fall',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
     fee: 'Every month the contribution is added, the money grows at the assumed return, and the management fee (annual % ÷ 12) is deducted from the accumulated assets – the way II pillar fees are charged (daily, already included in unit values). “Fees paid” = all fees deducted; “Lower final sum” also includes the return those fees would have earned. Fees: base asset-based fee from the Bank of Lithuania list (life-cycle funds of a manager share one fee).',
@@ -83,7 +83,7 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
-  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
+  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
   gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
   nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
@@ -130,7 +130,7 @@ addStrings({
   sumNoData: 'Duomenų nepakanka.', sumLatest: d => `Naujausi duomenys: <b>${d}</b>.`,
   sumLead: (p, k, n) => `<b>${p}</b> pirmavo ${k} iš ${n} amžiaus grupių.`, sumLag: (p, k, n) => `<b>${p}</b> atsiliko ${k} iš ${n} amžiaus grupių.`,
   sumMove: (p, g, v, d) => `Didžiausias vienos dienos pokytis: <b>${p}</b> (${g}) <b>${v}</b>, ${d}.`,
-  thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
+  thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis', thUp1: 'Didžiausias 1 d. kilimas', thDn1: 'Didžiausias 1 d. kritimas',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
     fee: 'Kiekvieną mėnesį pridedama įmoka, pinigai auga prielaidine grąža, o valdymo mokestis (metinis % ÷ 12) atskaitomas nuo sukaupto turto – taip, kaip II pakopoje (kasdien, jau įskaičiuota į vieneto vertę). „Sumokėta mokesčių“ = visi atskaityti mokesčiai; „Mažesnė suma“ apima ir grąžą, kurią tie pinigai būtų uždirbę. Mokesčiai – bazinis mokestis nuo turto iš Lietuvos banko sąrašo (vieno valdytojo gyvenimo ciklo fondų mokestis vienodas).',
@@ -160,8 +160,10 @@ addStrings({
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
 const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
-const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false, idx: new Set(['MSCI_ACWI', 'SP500']) };
+// amžiaus grupių tvarka visur vienoda: turto išsaugojimo, 1961–1967 … 2003–2009 (auditas #32)
+DATA.groups.sort((a, b) => (a.id === 'turto' ? '0' : a.id).localeCompare(b.id === 'turto' ? '0' : b.id));
+const P = { period: 'ytd', from: '', to: '', group: DATA.groups[DATA.groups.length - 1].id, provs: new Set(DATA.providers.map(p => p.id)),
+  hmGroup: DATA.groups[DATA.groups.length - 1].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false, idx: new Set(['MSCI_ACWI', 'SP500']) };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
@@ -370,14 +372,14 @@ function renderSummary() {
   if (top(lag)) { const [p, k] = top(lag); parts.push(T().sumLag(labelOf(p), k, ng)); }
   if (move) parts.push(T().sumMove(labelOf(move.p), groupLabel(move.g), fmtP(move.v, 2), iso(move.d)));
   $('sumText').innerHTML = ng ? `<p class="sumline">${parts.join(' ')}</p>` : `<p class="na">${T().sumNoData}</p>`;
-  const cellMove = (g, anchor, end) => {
-    let best = null; g.funds.forEach(f => { if (isStale(f, groupEnd(g).overallLast)) return; const s = seriesOf(f, anchor, end); if (!s) return; for (let i = s.ia + 1; i <= s.ie; i++) { const x = (f.v[i] / f.v[i - 1] - 1) * 100; if (!best || Math.abs(x) > Math.abs(best.v)) best = { p: f.provider, v: x, d: f.d[i] }; } });
+  const cellMove = (g, anchor, end, dir) => {   // dir > 0 – didžiausias kilimas, dir < 0 – didžiausias kritimas (auditas #6)
+    let best = null; g.funds.forEach(f => { if (isStale(f, groupEnd(g).overallLast)) return; const s = seriesOf(f, anchor, end); if (!s) return; for (let i = s.ia + 1; i <= s.ie; i++) { const x = (f.v[i] / f.v[i - 1] - 1) * 100; if (x * dir > 0 && (!best || x * dir > best.v * dir)) best = { p: f.provider, v: x, d: f.d[i] }; } });
     return best ? `${labelOf(best.p)} ${fmtP(best.v, 2)} <span class="na">${iso(best.d)}</span>` : '–';
   };
   const sw = p => `<span class="sw" style="background:${colorOf(p)}"></span>`;
   if (rows.length) setCap('tSum', spanText(winLabel(P.sumWin), rows));
-  $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thMove}</th></tr></thead><tbody>`
-    + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end)}</td></tr>`).join('') + '</tbody>';
+  $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thUp1}</th><th>${T().thDn1}</th></tr></thead><tbody>`
+    + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end, 1)}</td><td>${cellMove(r.g, r.anchor, r.end, -1)}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ---------- 1. visos rinkos lentelės ---------- */
@@ -388,7 +390,7 @@ function renderMarket() {
   const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
   // eilutės pagal riziką: viršuje turto išsaugojimo, toliau vyresni, jauniausi (2003–2009) apačioje
   const gxStarts = [];
-  const rows = DATA.groups.slice().reverse().map(g => {
+  const rows = DATA.groups.map(g => {
     const rng = rangeFor(g), vals = {};
     if (P.gx) {                                   // visi nuo Goindex fondo pradžios (arba nuo vėlesnės laikotarpio pradžios)
       const gf = g.funds.find(f => f.provider === 'GOINDEX');
@@ -426,13 +428,21 @@ function renderOverall() {
   $('ovPers').querySelectorAll('button').forEach(b => { b.textContent = T().periods[b.dataset.p]; b.setAttribute('aria-pressed', P.ovP.has(b.dataset.p)); });
   const isSet = ids => ids.length === P.ovP.size && ids.every(x => P.ovP.has(x));
   $('ovPreset').querySelectorAll('button').forEach(b => { b.textContent = T()[b.dataset.k]; b.setAttribute('aria-pressed', isSet(OV_PRESETS[b.dataset.k])); });
+  let cseg = $('ovCommon');   // jungiklis „tik bendri palyginimai“ – kur dalyvauja visi valdytojai (auditas #5)
+  if (!cseg) {
+    cseg = document.createElement('div'); cseg.className = 'seg'; cseg.id = 'ovCommon'; cseg.setAttribute('role', 'group');
+    cseg.innerHTML = '<button type="button" data-v="0"></button><button type="button" data-v="1"></button>';
+    $('ovPreset').after(cseg);
+    cseg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; P.ovCommon = b.dataset.v === '1'; renderOverall(); });
+  }
+  cseg.querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === '1' ? T().ovCommonOn : T().ovCommonOff; b.setAttribute('aria-pressed', String(!!P.ovCommon === (b.dataset.v === '1'))); });
   const pers = PERIOD_IDS.filter(p => P.ovP.has(p)), st = {}, perTxt = pers.map(p => T().periods[p]).join(', ');
   setCap('tOv', T().capOv(perTxt, iso(LATEST)));
-  $('nOv').textContent = T().nOv(perTxt, DATA.groups.length);
+  $('nOv').textContent = T().nOv(perTxt, DATA.groups.length) + ' ' + T().ovCommonNote;
   DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, top2: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
-    if (n < 3) return;
+    if (n < 3 || (P.ovCommon && n < DATA.providers.length)) return;
     map.forEach((rank, id) => { const s = st[id]; s.cmp++; s.rs += rank; if (rank === 1) s.first++; if (rank <= 2) s.top2++; });
   }));
   const list = DATA.providers.filter(p => st[p.id].cmp).map(p => ({ id: p.id, ...st[p.id], avg: st[p.id].rs / st[p.id].cmp })).sort((a, b) => a.avg - b.avg);
@@ -547,8 +557,9 @@ const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
   $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
-  $('hMetrics').innerHTML = T().hMetrics + ik('ret'); $('hCal').innerHTML = T().hCal + ik('cal'); $('hRoll').innerHTML = T().hRoll + ik('roll'); $('nFund').textContent = T().nFund;
-  $('hQP').innerHTML = T().hQP + ik('rank'); $('hHm').innerHTML = T().hHm + ik('heat');
+  const gTag = ` <span class="gtag">· ${groupName(P.group)}</span>`;   // lentelės antraštėje – pasirinkta grupė (auditas #34)
+  $('hMetrics').innerHTML = T().hMetrics + gTag + ik('ret'); $('hCal').innerHTML = T().hCal + gTag + ik('cal'); $('hRoll').innerHTML = T().hRoll + gTag + ik('roll'); $('nFund').textContent = T().nFund;
+  $('hQP').innerHTML = T().hQP + gTag + ik('rank'); $('hHm').innerHTML = T().hHm + ik('heat');
   const parts = gs.map(g => {
     const rng = rangeFor(g, true);
     const all = g.funds.filter(f => P.provs.has(f.provider)).map(f => { const s = fundStats(f, rng); if (s) s.g = g; return s; }).filter(Boolean);
@@ -601,7 +612,7 @@ const RM = { per: null, groups: null, provs: null };
 function renderRiskMap() {
   $('hRisk').innerHTML = T().hRisk + ik('riskmap');
   if (!RM.per) { RM.per = PERIOD_IDS.includes(P.period) ? P.period : 'ytd'; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id)); }
-  const tools = $('rmTools'), groupsByRisk = DATA.groups.slice().reverse();      // turto, 1961 … 2003
+  const tools = $('rmTools'), groupsByRisk = DATA.groups;      // turto, 1961 … 2003
   const chip = (id, on, label, color) => `<button type="button" class="chip" data-id="${id}" aria-pressed="${on}">${color ? `<i style="background:${color}"></i>` : ''}${label}</button>`;
   tools.innerHTML = `<div class="seg" data-k="per" role="group" aria-label="${T().period}">${PERIOD_IDS.map(id => `<button type="button" data-id="${id}" aria-pressed="${id === RM.per}">${T().periods[id]}</button>`).join('')}</div>`
     + `<div class="chips" data-k="groups"><span class="rmlbl">${T().rmGroups}</span>${chip('all', RM.groups.size === DATA.groups.length, T().rmAll)}${groupsByRisk.map(g => chip(g.id, RM.groups.has(g.id), groupLabel(g))).join('')}</div>`
@@ -692,7 +703,7 @@ function renderRiskTable(pts) {
 /* santykinė grąža: fondo grąža minus visų grupės fondų paprastas vidurkis (procentiniai punktai) */
 function renderRelative(gs) {
   $('hRel').innerHTML = T().hRel + ik('rel');
-  const order = DATA.groups.slice().reverse();                     // turto, 1961 … 2003 – kaip rinkos lentelėse
+  const order = DATA.groups;                     // turto, 1961 … 2003 – kaip rinkos lentelėse
   const cards = order.filter(g => gs.includes(g)).map(g => {
     const rng = rangeFor(g, false);
     const all = g.funds.map(f => fundStats(f, rng)).filter(s => s && s.ret !== null);
@@ -715,7 +726,7 @@ function renderRelative(gs) {
 let RDD = null;
 function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
-  RDD = runupDrawdown($('rddCard'), DATA.groups.slice().reverse().map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[0].id);
+  RDD = runupDrawdown($('rddCard'), DATA.groups.map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[DATA.groups.length - 1].id);
 }
 /* mokesčių poveikis: kas mėnesį įmokama suma, prielaidinė grąža prieš mokesčius, valdymo mokestis nuo turto */
 const FEEP = { kind: 'life', m: 100, y: 10, r: 5 };

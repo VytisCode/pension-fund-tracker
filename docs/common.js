@@ -314,8 +314,10 @@ function idxFunds() {
 
 /* Grupės kortelės: grąža ir linijos laikotarpyje (naudoja ir apžvalga, ir rezultatų puslapis) */
 function seriesOf(f, anchor, end) {
-  const ie = lastOnOrBefore(f, end), ia = lastOnOrBefore(f, anchor);
-  if (ie < 0 || ia < 0 || f.d[0] > anchor) return null;
+  const ie = lastOnOrBefore(f, end); let ia = lastOnOrBefore(f, anchor);
+  // fondas, įsteigtas ≤7 d. po laikotarpio pradžios už 1,00 € (pvz. 2003–2009 fondai 2025-01-02), skaičiuojamas nuo pirmos vertės (auditas #7)
+  if (ia < 0 && f.d[0] - anchor <= 7 && Math.abs(f.v[0] - 1) < 0.005) ia = 0;
+  if (ie < 0 || ia < 0 || ie < ia) return null;
   const base = f.v[ia], points = [[anchor, 0]];
   for (let i = ia + 1; i <= ie; i++) if (f.d[i] > anchor) points.push([f.d[i], (f.v[i] / base - 1) * 100]);
   return { ret: (f.v[ie] / base - 1) * 100, points, ia, ie };
