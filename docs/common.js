@@ -344,14 +344,23 @@ function statIdx(f, ia, ie) {            // indeksai be „vienišų“ dienų (
   for (let i = ia + 1; i <= ie; i++) if (i === ie || !L.has(f.d[i])) out.push(i);
   return out;
 }
+// Reali grąža (po infliacijos): grąža perskaičiuojama pagal Lietuvos VKI (CPI iš data_cpi.js; tik „Rezultatų“ puslapyje)
+let REAL = false;
+function cpiAt(day) {
+  if (!REAL || typeof CPI === 'undefined') return null;
+  const k = iso(day).slice(0, 7); if (CPI[k] != null) return CPI[k];
+  const ks = Object.keys(CPI), last = ks[ks.length - 1];
+  return k > last ? CPI[last] : null;            // naujausių mėnesių VKI dar neskelbtas – imamas paskutinis žinomas
+}
+const realRet = (r, d0, d1) => { const c0 = cpiAt(d0), c1 = cpiAt(d1); return c0 && c1 ? ((1 + r / 100) / (c1 / c0) - 1) * 100 : r; };
 function seriesOf(f, anchor, end) {
   const ie = lastOnOrBefore(f, end); let ia = lastOnOrBefore(f, anchor);
   // fondas, įsteigtas ≤7 d. po laikotarpio pradžios už 1,00 € (pvz. 2003–2009 fondai 2025-01-02), skaičiuojamas nuo pirmos vertės (auditas #7)
   if (ia < 0 && f.d[0] - anchor <= 7 && Math.abs(f.v[0] - 1) < 0.005) ia = 0;
   if (ie < 0 || ia < 0 || ie < ia) return null;
   const base = f.v[ia], points = [[anchor, 0]];
-  for (let i = ia + 1; i <= ie; i++) if (f.d[i] > anchor) points.push([f.d[i], (f.v[i] / base - 1) * 100]);
-  return { ret: (f.v[ie] / base - 1) * 100, points, ia, ie };
+  for (let i = ia + 1; i <= ie; i++) if (f.d[i] > anchor) points.push([f.d[i], realRet((f.v[i] / base - 1) * 100, anchor, f.d[i])]);
+  return { ret: realRet((f.v[ie] / base - 1) * 100, anchor, f.d[ie]), points, ia, ie };
 }
 
 

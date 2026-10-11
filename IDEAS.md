@@ -64,7 +64,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 3. **Statistikos tikslumas:** #15, #16, #17. – *atlikta (PR #78, 2026-10-11)*
 4. **III pakopa:** #8, #9, #48. – *atlikta (PR #79, 2026-10-11)*
 5. **Grafikai:** #25, #14, #24, #12, #46. – *atlikta (PR #80, 2026-10-11)*
-6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10).
+6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10). – *atlikta (PR #81, 2026-10-11)*
 7. **Jaukus dizainas – pagrindas:** #38, #39, #40.
 8. **Antraštė ir puslapių tvarka:** #41, #45, #44, #43.
 9. **Pradžios puslapis ir KPI kortelės:** #42 (pagal savininko „Performance & peers“ atsakymą 2026-10-10), #50, #52.
@@ -84,7 +84,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#21** [III pakopa → Visi III pakopos fondai] lentelė nukirsta ir kompiuteryje (matosi tik „A…“). Šešėlis/rodyklė dešiniame krašte arba mažiau stulpelių. – *atlikta (PR #72, 2026-10-10)*
 - **#22** Visos plačios lentelės telefone – šešėlis kraštuose, kad matytųsi, jog galima slinkti; pirmas stulpelis užšaldytas. Bendras sprendimas `style.css` `.scroll`. – *atlikta (PR #72, 2026-10-10)*
 - **#10** Visoje svetainėje „1 m.“/„3 m.“ painiojasi su „1 mėn.“/„3 mėn.“ – rašyti „1 metai“, „3 metai“, „5 metai“, „10 metų“; III pakopos lentelėse nurodyti, ar sukaupta, ar metinė. – *atlikta (PR #75, 2026-10-10)*
-- **#2** [Portfeliai] obligacijos, kurių išpirkimo data ≤ ketvirčio pabaiga, žymimos ne „Pardavė visą“, o **„Išpirkta“** (atskira, gerai matoma žyma; savininkas nori, kad būtų matoma).
+- **#2** [Portfeliai] obligacijos, kurių išpirkimo data ≤ ketvirčio pabaiga, žymimos ne „Pardavė visą“, o **„Išpirkta“** (atskira, gerai matoma žyma; savininkas nori, kad būtų matoma). – *atlikta (PR #81, 2026-10-11)*
 - **#5** [Rezultatai → Bendra reitingų lentelė] Goindex lyginamas 16 kartų, kiti 30. Jungiklis „tik bendri laikotarpiai“ (kur dalyvauja visi 6) ir pastaba po lentele. – *atlikta (PR #77, 2026-10-11)*
 - **#6** [Rezultatai → Automatinė santrauka] „Didžiausias 1 d. pokytis“ rodyti du stulpelius: didžiausias kilimas ir didžiausias kritimas. – *atlikta (PR #77, 2026-10-11)*
 - **#7** [Rezultatai, 2003–2009 grupė] Savininko sprendimas: fondai, kurių vieneto vertė prasidėjo nuo 1 € 2025-01-02, turi būti įtraukti, kai pasirinkta „Šie metai“, „2025“ ir pan. Skaičiuoti nuo bendros datos – laikotarpio pradžios taškas tokiems fondams = pirmoji vertė (1,00 € 2025-01-02), kad SEB/Swedbank (nuo 2024-12-31) ir kiti (nuo 2025-01-02) būtų lyginami tarpusavyje, o ne atmetami dėl vienos dienos skirtumo. – *atlikta (PR #77, 2026-10-11)*
@@ -410,7 +410,7 @@ Visos šio skyriaus užduotys yra savininko, būsena **patvirtinta**. Daromos ei
 - **Nauda:** laukelis „Darbdavio įmoka, € / mėn.“ – atskira spalva grafike ir lentelėse, kaip valstybės įmoka II pakopoje.
 
 ### Realioji grąža (po infliacijos)
-- **Būsena:** patvirtinta (savininkas, laiškas 2026-10-10 09:12)
+- **Būsena:** atlikta (PR #81, 2026-10-11: jungiklis „Nominali / Reali“ „Rezultatų“ puslapyje; infliacija – Lietuvos VKI iš Valstybės duomenų agentūros, kuris jau atnaujinamas automatiškai)
 - **Autorius:** Claude
 - **Kodėl:** 2022–2023 m. infliacija Lietuvoje siekė iki ~20 %, todėl nominali grąža klaidina: fondas su +5 % per metus galėjo realiai prarasti vertę. Analitikai pensijų fondus dažnai vertina pagal realiąją grąžą.
 - **Nauda:** jungiklis „Nominali / reali“ grąžos lentelėse ir grafike; infliacija – Eurostat HICP Lietuvai (nemokamas viešas šaltinis, atnaujinamas kas mėnesį). Matyti, ar fondai išsaugo perkamąją galią.

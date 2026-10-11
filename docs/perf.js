@@ -5,7 +5,7 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
-  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
+  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', realOff: 'Nominal', realOn: 'Real (after inflation)', realTip: m => `Real return = nominal return adjusted for Lithuanian inflation (consumer price index, State Data Agency; latest month ${m}). Applies to period returns, rankings and charts; volatility and calendar-year tables stay nominal.`, ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
   gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
   nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
@@ -83,7 +83,7 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
-  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
+  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', realOff: 'Nominali', realOn: 'Reali (po infliacijos)', realTip: m => `Reali grąža = nominali grąža, atėmus Lietuvos infliaciją (vartotojų kainų indeksas, Valstybės duomenų agentūra; paskutinis mėnuo ${m}). Taikoma laikotarpio grąžai, reitingams ir grafikams; svyravimas ir kalendorinių metų lentelės lieka nominalios.`, ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
   gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
   nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
@@ -169,11 +169,12 @@ const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
   if (PRESET_IDS.includes(s.period) || s.period === 'custom' || isCalPeriod(s.period)) P.period = s.period;
+  P.real = s.real === true && typeof CPI !== 'undefined'; REAL = P.real;
   if (typeof s.from === 'string') P.from = s.from; if (typeof s.to === 'string') P.to = s.to;
   if (s.group === 'all' || byId(s.group)) P.group = s.group;
   if (byId(s.hmGroup)) P.hmGroup = s.hmGroup;
@@ -991,6 +992,19 @@ function labelControls() {
   syncSumWin(); syncView();
 }
 function syncAll() {
+  let rs = $('realSeg');   // nominali / reali grąža (patvirtinta idėja „Realioji grąža“, 2026-10-10)
+  if (!rs && typeof CPI !== 'undefined') {
+    rs = document.createElement('div'); rs.className = 'seg'; rs.id = 'realSeg'; rs.setAttribute('role', 'group');
+    rs.innerHTML = '<button type="button" data-v="0"></button><button type="button" data-v="1"></button>';
+    $('groupField').after(rs);
+    rs.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; P.real = b.dataset.v === '1'; REAL = P.real; saveState(); syncAll(); });
+  }
+  if (rs) {
+    rs.querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === '1' ? T().realOn : T().realOff; b.setAttribute('aria-pressed', String(!!P.real === (b.dataset.v === '1'))); });
+    const ks = Object.keys(CPI); rs.title = T().realTip(ks[ks.length - 1]);
+    let rn = $('realNote'); if (!rn) { rn = document.createElement('p'); rn.className = 'note'; rn.id = 'realNote'; rn.style.margin = '6px 0 0'; $('periodbar').after(rn); }
+    rn.hidden = !P.real; rn.textContent = P.real ? T().realTip(ks[ks.length - 1]) : '';
+  }
   $('periods').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === P.period));
   syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);

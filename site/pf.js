@@ -9,14 +9,14 @@ addStrings({
   quarter: 'Quarter', vs: 'vs', pillar: 'Pillar', all: 'All', manager: 'Manager', level: 'Show by',
   lvMgr: 'Manager', lvFund: 'Fund', assetType: 'Assets', action: 'Change', sortBy: 'Sort by',
   sortEur: 'Amount, €', sortW: 'Weight change',
-  acts: { all: 'All', buy: 'Bought', sell: 'Sold', new: 'New', exit: 'Sold out' },
+  acts: { all: 'All', buy: 'Bought', sell: 'Sold', new: 'New', exit: 'Sold out', matured: 'Matured' },
   types: { all: 'All securities', e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' },
   kis: { 1: 'bond fund', 2: 'mixed fund', 3: 'equity fund', 4: 'money market fund', 5: 'real estate fund', 6: 'hedge fund', 7: 'other fund (private equity etc.)' },
   thMgr: 'Manager', thFund: 'Fund', thPos: 'Position', thAct: 'Change', thTrade: 'Traded (est.)', thValue: 'Value at end', thW0: 'Weight before',
   thW1: 'Weight after', thDw: 'Change, pp', thType: 'Type', thCty: 'Country', thW: 'Weight', thDq: 'Units change',
   thQ: 'Quarter', thUnits: 'Units', nFunds: n => `${n} fund${n === 1 ? '' : 's'}`,
   more: n => `Show ${n} more`, noRows: 'No changes match the filters.',
-  tcNote: q => `Weight = share of the manager’s (or fund’s) portfolio in the selected pillar. “New” = not held at the end of the previous quarter, “Sold out” = no longer held. Cash, deposits and derivatives have no units, so they are not listed here – see the fund portfolio below. Data: Bank of Lithuania, quarterly pension fund portfolio reports (${q}).`,
+  tcNote: q => `Weight = share of the manager’s (or fund’s) portfolio in the selected pillar. “New” = not held at the end of the previous quarter, “Sold out” = no longer held; “Matured” = the bond reached its maturity date by the quarter end (not sold – the issuer repaid it). Cash, deposits and derivatives have no units, so they are not listed here – see the fund portfolio below. Data: Bank of Lithuania, quarterly pension fund portfolio reports (${q}).`,
   altTitle: 'Alternative investments',
   altLead: 'Share of illiquid alternative funds – private equity and venture capital, infrastructure and energy, real estate, private debt, forests – in each portfolio. They cannot be sold quickly, so when participants leave a fund (for example after the 2026 pension reform) and liquid securities are sold, the share of alternatives grows by itself.',
   alts: { pe: 'Private equity & venture', infra: 'Infrastructure & energy', re: 'Real estate', debt: 'Private debt', forest: 'Forest & land', hedge: 'Hedge funds' },
@@ -39,14 +39,14 @@ addStrings({
   quarter: 'Ketvirtis', vs: 'palyginti su', pillar: 'Pakopa', all: 'Visi', manager: 'Valdytojas', level: 'Rodyti pagal',
   lvMgr: 'Valdytoją', lvFund: 'Fondą', assetType: 'Turtas', action: 'Pokytis', sortBy: 'Rikiuoti pagal',
   sortEur: 'Sumą, €', sortW: 'Svorio pokytį',
-  acts: { all: 'Visi', buy: 'Pirko', sell: 'Pardavė', new: 'Nauja', exit: 'Pardavė visą' },
+  acts: { all: 'Visi', buy: 'Pirko', sell: 'Pardavė', new: 'Nauja', exit: 'Pardavė visą', matured: 'Išpirkta' },
   types: { all: 'Visi vertybiniai popieriai', e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' },
   kis: { 1: 'obligacijų fondas', 2: 'mišrus fondas', 3: 'akcijų fondas', 4: 'pinigų rinkos fondas', 5: 'nekilnojamo turto fondas', 6: 'rizikos draudimo fondas', 7: 'kitas fondas (privataus kapitalo ir pan.)' },
   thMgr: 'Valdytojas', thFund: 'Fondas', thPos: 'Pozicija', thAct: 'Pokytis', thTrade: 'Sandorių suma (įvert.)', thValue: 'Vertė pabaigoje', thW0: 'Svoris prieš',
   thW1: 'Svoris po', thDw: 'Pokytis, p. p.', thType: 'Tipas', thCty: 'Šalis', thW: 'Svoris', thDq: 'Vienetų pokytis',
   thQ: 'Ketvirtis', thUnits: 'Vienetai', nFunds: n => `${n} fond${n === 1 ? 'as' : n < 10 ? 'ai' : 'ų'}`,
   more: n => `Rodyti dar ${n}`, noRows: 'Pagal pasirinktus filtrus pokyčių nėra.',
-  tcNote: q => `Svoris = dalis valdytojo (ar fondo) portfelio pasirinktoje pakopoje. „Nauja“ = ankstesnio ketvirčio pabaigoje nebuvo, „Pardavė visą“ = nebeliko. Pinigai, indėliai ir išvestinės priemonės neturi vienetų, todėl čia nerodomi – žr. fondo portfelį žemiau. Duomenys: Lietuvos bankas, ketvirtinės pensijų fondų portfelių ataskaitos (${q}).`,
+  tcNote: q => `Svoris = dalis valdytojo (ar fondo) portfelio pasirinktoje pakopoje. „Nauja“ = ankstesnio ketvirčio pabaigoje nebuvo, „Pardavė visą“ = nebeliko; „Išpirkta“ = obligacijos išpirkimo data sukako iki ketvirčio pabaigos (fondas jos nepardavė – emitentas grąžino pinigus). Pinigai, indėliai ir išvestinės priemonės neturi vienetų, todėl čia nerodomi – žr. fondo portfelį žemiau. Duomenys: Lietuvos bankas, ketvirtinės pensijų fondų portfelių ataskaitos (${q}).`,
   altTitle: 'Alternatyvios investicijos',
   altLead: 'Nelikvidžių alternatyvių fondų – privataus ir rizikos kapitalo, infrastruktūros ir energetikos, nekilnojamo turto, privačios skolos, miškų – dalis kiekviename portfelyje. Jų greitai parduoti negalima, todėl kai dalyviai palieka fondą (pvz. po 2026 m. pensijų reformos) ir parduodami likvidūs vertybiniai popieriai, alternatyvų dalis išauga savaime.',
   alts: { pe: 'Privatus ir rizikos kapitalas', infra: 'Infrastruktūra ir energetika', re: 'Nekilnojamas turtas', debt: 'Privati skola', forest: 'Miškai ir žemė', hedge: 'Rizikos draudimo fondai' },
@@ -103,6 +103,7 @@ function eur(v) {
 const wFmt = (w, p = 2) => w ? num(w, 2) + pctSfx() : '–';
 const pp = d => (d >= 0.005 ? '+' : d <= -0.005 ? '−' : '') + num(Math.abs(d), 2);
 const badge = a => `<span class="badge b-${a}">${T().acts[a]}</span>`;
+const matured = (sec, qi) => !!(sec && sec.bt && sec.bt.mat && sec.bt.mat <= Q[qi]);   // obligacija išpirkta iki ketvirčio pabaigos – ne „Pardavė visą“, o „Išpirkta“ (auditas #2)
 const MIN_CHANGE = 0.005;                                   // < 0,5 % vienetų pokytis laikomas nepasikeitusiu (apvalinimai)
 
 /* ---------- fondų ir ETF požymiai (data/fund_attributes.csv) ---------- */
@@ -314,8 +315,8 @@ function changes() {
     if (ST.type !== 'all' && s.t !== ST.type) return;
     const [u0, u1] = P.u, du = u1 - u0;
     if (Math.abs(du) <= MIN_CHANGE * Math.max(Math.abs(u0), Math.abs(u1))) return;
-    const act = u0 === 0 ? 'new' : u1 === 0 ? 'exit' : du > 0 ? 'buy' : 'sell';
-    if (ST.act !== 'all' && !(ST.act === act || (ST.act === 'buy' && act === 'new') || (ST.act === 'sell' && act === 'exit'))) return;
+    const act = u0 === 0 ? 'new' : u1 === 0 ? (matured(s, q1) ? 'matured' : 'exit') : du > 0 ? 'buy' : 'sell';
+    if (ST.act !== 'all' && !(ST.act === act || (ST.act === 'buy' && act === 'new') || (ST.act === 'sell' && (act === 'exit' || act === 'matured')))) return;
     const price = u1 ? P.v[1] / u1 : P.v[0] / u0;
     const w0 = U.tot0 ? P.v[0] / U.tot0 * 100 : 0, w1 = U.tot1 ? P.v[1] / U.tot1 * 100 : 0;
     rows.push({ U, P, s, act, trade: du * price, w0, w1, dw: w1 - w0 });
@@ -384,7 +385,7 @@ function fundRows(f, qi) {
     rows.push({ si, s: S[si], v: x.v, u: x.u, w: w1, dw: m0 ? w1 - w0 : null, dq: p && p.u && x.u != null ? (x.u / p.u - 1) * 100 : null, act });
   });
   const exits = [];
-  if (m0) m0.forEach((p, si) => { if (!m1.has(si)) exits.push({ si, s: S[si], v: 0, u: 0, w: 0, dw: -p.v / t0 * 100, dq: -100, act: 'exit', exit: true }); });
+  if (m0) m0.forEach((p, si) => { if (!m1.has(si)) exits.push({ si, s: S[si], v: 0, u: 0, w: 0, dw: -p.v / t0 * 100, dq: -100, act: matured(S[si], qi) ? 'matured' : 'exit', exit: true }); });
   return { rows, exits };
 }
 function renderFund() {

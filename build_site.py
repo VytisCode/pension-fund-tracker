@@ -95,8 +95,9 @@ def main() -> None:
     (DOCS / "assets.js").write_text("const ASSETS=" + json.dumps(assets_js, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     build_indexes()
     build_fees()
-    assets = ("perf.js", "events.js", "style.css", "common.js", "data.js", "data_idx.js", "data_fee.js")
-    for name in ("index.html", "overview.html", "performance.html") + assets[:-3] + ("favicon.svg",):
+    build_cpi()
+    assets = ("perf.js", "events.js", "style.css", "common.js", "data.js", "data_idx.js", "data_fee.js", "data_cpi.js")
+    for name in ("index.html", "overview.html", "performance.html") + assets[:-4] + ("favicon.svg",):
         shutil.copyfile(SITE / name, DOCS / name)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
     ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}
@@ -111,6 +112,19 @@ def main() -> None:
     build_aum(ver)
     build_reports(ver)
     build_journey(ver)
+
+
+def build_cpi() -> None:
+    """Lietuvos vartotojų kainų indeksas (imports/journey/cpi.csv, Valstybės duomenų agentūra) -> docs/data_cpi.js: {"YYYY-MM": indeksas}.
+    Naudojama realiajai grąžai (po infliacijos) „Rezultatų“ puslapyje."""
+    cpi = {}
+    path = ROOT / "imports" / "journey" / "cpi.csv"
+    if path.exists():
+        with path.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                if r.get("month") and r.get("cpi"):
+                    cpi[r["month"]] = round(float(r["cpi"]), 4)
+    (DOCS / "data_cpi.js").write_text("const CPI=" + json.dumps(cpi, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 
 def build_fees() -> None:
