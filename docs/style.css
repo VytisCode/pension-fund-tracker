@@ -1,29 +1,36 @@
 :root {
   color-scheme: light;
-  --surface: #fcfcfb; --card: #ffffff; --line: #e6e5e1;
-  --text: #0b0b0b; --text-2: #52514e; --text-3: #7b7a75;
-  --grid: #ebeae6; --axis: #b9b8b2; --accent: #256abf; --hover: #f3f2ef; --warn: #a35400; --dpos: #256abf; --dneg: #c4560c;
+  /* šilta paletė (auditas #38) */
+  --surface: #faf6ef; --card: #fffdf9; --line: #eae2d6;
+  --text: #2b2622; --text-2: #5a5149; --text-3: #7a6f64;
+  --grid: #efe8dd; --axis: #bdb2a3; --accent: #2f6b5a; --on-accent: #ffffff; --hover: #f3ece1; --warn: #a35400; --dpos: #2f6b5a; --dneg: #c0643c;
   --s1: #2b8de0; --s2: #2b3a93; --s3: #12b5b0; --s4: #8a43c4; --s5: #2f8f12; --s6: #ff7a2a;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
-    --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
-    --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a; --dpos: #6da7ec; --dneg: #f0904a;
+    --surface: #1e1b18; --card: #26221e; --line: #3a342d;
+    --text: #f3ece2; --text-2: #cfc4b6; --text-3: #a0958a;
+    --grid: #332e28; --axis: #5e554b; --accent: #7dbba6; --on-accent: #10231c; --hover: #2e2924; --warn: #f0a24a; --dpos: #7dbba6; --dneg: #e39a75;
     --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --surface: #131312; --card: #1a1a19; --line: #2d2d2b;
-  --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
-  --grid: #2a2a28; --axis: #55554f; --accent: #6da7ec; --hover: #242422; --warn: #f0a24a; --dpos: #6da7ec; --dneg: #f0904a;
+  --surface: #1e1b18; --card: #26221e; --line: #3a342d;
+  --text: #f3ece2; --text-2: #cfc4b6; --text-3: #a0958a;
+  --grid: #332e28; --axis: #5e554b; --accent: #7dbba6; --on-accent: #10231c; --hover: #2e2924; --warn: #f0a24a; --dpos: #7dbba6; --dneg: #e39a75;
   --s1: #2f86e0; --s2: #9fb4ff; --s3: #17b8b0; --s4: #c25fe0; --s5: #4fb022; --s6: #ff7a2a;
 }
+/* Šriftai (auditas #40): tekstui Inter, antraštėms Source Serif 4. Failai repozitorijoje (fonts/), „latin“ + „latin-ext“ – visos lietuviškos raidės */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url(fonts/inter-latin-ext-wght-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url(fonts/inter-latin-wght-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 200 900; font-display: swap; src: url(fonts/source-serif-4-latin-ext-wght-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 200 900; font-display: swap; src: url(fonts/source-serif-4-latin-wght-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--surface); color: var(--text);
-  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  font: 15px/1.45 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: "Source Serif 4", Georgia, "Times New Roman", serif; font-weight: 600; }
 .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 56px; }
 header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
 h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
@@ -37,7 +44,7 @@ h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
 .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; background: var(--card); overflow: hidden; }
 .seg button { border: 0; background: transparent; color: var(--text-2); padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--line); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent, #fff); }
 .seg button:hover:not([aria-pressed="true"]) { background: var(--hover); }
 .lang { margin-left: auto; }
 .theme { border: 1px solid var(--line); background: var(--card); color: var(--text-2);
@@ -99,8 +106,9 @@ a.btn { text-decoration: none; }
 .mx td:first-child { background: transparent; color: var(--text); font-weight: 400; border-bottom: 1px solid var(--line); }
 .mx tr.avg td { border-top: 2px solid var(--line); font-weight: 700; }
 .mx td[class^="rk"] { color: #1a1a19; }
-.rk1 { background: #63be7b; } .rk2 { background: #a1d07e; } .rk3 { background: #d6e382; }
-.rk4 { background: #ffe884; } .rk5 { background: #fbaa77; } .rk6 { background: #f8696b; }
+/* švelnesnės heatmap spalvos: šalavijo žalia – smėlinė – molio raudona (auditas #39) */
+.rk1 { background: #5e9c76; } .rk2 { background: #9dc3a5; } .rk3 { background: #cfddbf; }
+.rk4 { background: #f1e3c4; } .rk5 { background: #e8b4a0; } .rk6 { background: #c9765a; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--card); color: var(--text-2);
   border-radius: 999px; padding: 5px 12px 5px 9px; font: inherit; font-size: 13px; cursor: pointer; }
@@ -125,7 +133,7 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 /* ---- rezultatų puslapio papildymai ---- */
 .btn { border: 1px solid var(--line); background: var(--card); color: var(--text-2); border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
 .btn:hover { background: var(--hover); }
-.btn[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent, #fff); border-color: var(--accent); }
 .btn[hidden] { display: none; }
 .tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 0; }
 .tools .grow { flex: 1; }
@@ -196,7 +204,7 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 .seg select.segsel { border: 0; border-left: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--text-2); padding: 7px 8px; font: inherit; font-size: 13px; cursor: pointer; }
 .seg select.segsel:first-child { border-left: 0; }
 .seg select.segsel:hover:not(.active) { background: var(--hover); }
-.seg select.segsel.active { background: var(--accent); color: #fff; }
+.seg select.segsel.active { background: var(--accent); color: var(--on-accent, #fff); }
 .seg select.segsel option { background: var(--card); color: var(--text); }
 .xlday { display: inline-flex; gap: 6px; align-items: center; }
 @media print { .xlday { display: none !important; } }
