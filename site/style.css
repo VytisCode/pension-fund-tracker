@@ -263,3 +263,7 @@ tr.idxrow td { color: var(--text-2); background: color-mix(in srgb, var(--text-3
 
 /* trumpinys „TIF“ heatmap lentelėse */
 abbr.tif { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+
+/* pasirinktos grupės žymė lentelių antraštėse (auditas #34) */
+.gtag { font-weight: 500; color: var(--text-2); }
+#groupField select { font-weight: 600; }

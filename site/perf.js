@@ -549,8 +549,9 @@ const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
   $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
-  $('hMetrics').innerHTML = T().hMetrics + ik('ret'); $('hCal').innerHTML = T().hCal + ik('cal'); $('hRoll').innerHTML = T().hRoll + ik('roll'); $('nFund').textContent = T().nFund;
-  $('hQP').innerHTML = T().hQP + ik('rank'); $('hHm').innerHTML = T().hHm + ik('heat');
+  const gTag = ` <span class="gtag">· ${groupName(P.group)}</span>`;   // lentelės antraštėje – pasirinkta grupė (auditas #34)
+  $('hMetrics').innerHTML = T().hMetrics + gTag + ik('ret'); $('hCal').innerHTML = T().hCal + gTag + ik('cal'); $('hRoll').innerHTML = T().hRoll + gTag + ik('roll'); $('nFund').textContent = T().nFund;
+  $('hQP').innerHTML = T().hQP + gTag + ik('rank'); $('hHm').innerHTML = T().hHm + ik('heat');
   const parts = gs.map(g => {
     const rng = rangeFor(g, true);
     const all = g.funds.filter(f => P.provs.has(f.provider)).map(f => { const s = fundStats(f, rng); if (s) s.g = g; return s; }).filter(Boolean);
