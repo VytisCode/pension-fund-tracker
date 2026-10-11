@@ -530,7 +530,7 @@ function renderAlt() {
   const funds = live.filter(f => cols.concat([q0]).some(i => altShare(f, i) > 0));
   const none = [...new Set(live.filter(f => !funds.includes(f)).map(f => f.p))];
   const order = g => g === 'turto' ? '0' : g;
-  funds.sort((a, b) => order(b.g).localeCompare(order(a.g)) || a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
+  funds.sort((a, b) => order(a.g).localeCompare(order(b.g)) || a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
   const maxA = Math.max(1, ...funds.flatMap(f => cols.map(i => altShare(f, i))));
   const cell = v => `<td style="background:color-mix(in srgb, #c9a227 ${Math.round(v / maxA * 85)}%, transparent)">${v ? num(v, 1) : '–'}</td>`;
   const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 2)}${pctSfx()}<br><small class="pfsub" style="font-weight:400">${eur(a)} →<br>${eur(b)}</small></td>` : '<td>–</td>';
@@ -565,7 +565,7 @@ function peerRow(f, qi) {
   return r;
 }
 function renderPeers() {
-  const groups = [...new Set(FUNDS.filter(f => f.pl === 'II').map(f => f.g))].sort((a, b) => (a === 'turto' ? '9' : a).localeCompare(b === 'turto' ? '9' : b)).concat(['III']);
+  const groups = [...new Set(FUNDS.filter(f => f.pl === 'II').map(f => f.g))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b)).concat(['III']);
   const own = fundBy[ST.fund].pl === 'III' ? 'III' : fundBy[ST.fund].g;
   if (!groups.includes(ST.pg)) ST.pg = own;
   if (!(ST.pgq >= 0 && ST.pgq < NQ)) ST.pgq = NQ - 1;

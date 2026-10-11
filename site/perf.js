@@ -160,8 +160,10 @@ addStrings({
 const PERIOD_IDS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'];            // lentelėms „pagal laikotarpį“ ir bendram reitingui
 const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
-const P = { period: 'ytd', from: '', to: '', group: DATA.groups[0].id, provs: new Set(DATA.providers.map(p => p.id)),
-  hmGroup: DATA.groups[0].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false, idx: new Set(['MSCI_ACWI', 'SP500']) };
+// amžiaus grupių tvarka visur vienoda: turto išsaugojimo, 1961–1967 … 2003–2009 (auditas #32)
+DATA.groups.sort((a, b) => (a.id === 'turto' ? '0' : a.id).localeCompare(b.id === 'turto' ? '0' : b.id));
+const P = { period: 'ytd', from: '', to: '', group: DATA.groups[DATA.groups.length - 1].id, provs: new Set(DATA.providers.map(p => p.id)),
+  hmGroup: DATA.groups[DATA.groups.length - 1].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false, idx: new Set(['MSCI_ACWI', 'SP500']) };
 const $ = id => document.getElementById(id);
 const byId = id => DATA.groups.find(g => g.id === id);
 
@@ -388,7 +390,7 @@ function renderMarket() {
   const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
   // eilutės pagal riziką: viršuje turto išsaugojimo, toliau vyresni, jauniausi (2003–2009) apačioje
   const gxStarts = [];
-  const rows = DATA.groups.slice().reverse().map(g => {
+  const rows = DATA.groups.map(g => {
     const rng = rangeFor(g), vals = {};
     if (P.gx) {                                   // visi nuo Goindex fondo pradžios (arba nuo vėlesnės laikotarpio pradžios)
       const gf = g.funds.find(f => f.provider === 'GOINDEX');
@@ -601,7 +603,7 @@ const RM = { per: null, groups: null, provs: null };
 function renderRiskMap() {
   $('hRisk').innerHTML = T().hRisk + ik('riskmap');
   if (!RM.per) { RM.per = PERIOD_IDS.includes(P.period) ? P.period : 'ytd'; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id)); }
-  const tools = $('rmTools'), groupsByRisk = DATA.groups.slice().reverse();      // turto, 1961 … 2003
+  const tools = $('rmTools'), groupsByRisk = DATA.groups;      // turto, 1961 … 2003
   const chip = (id, on, label, color) => `<button type="button" class="chip" data-id="${id}" aria-pressed="${on}">${color ? `<i style="background:${color}"></i>` : ''}${label}</button>`;
   tools.innerHTML = `<div class="seg" data-k="per" role="group" aria-label="${T().period}">${PERIOD_IDS.map(id => `<button type="button" data-id="${id}" aria-pressed="${id === RM.per}">${T().periods[id]}</button>`).join('')}</div>`
     + `<div class="chips" data-k="groups"><span class="rmlbl">${T().rmGroups}</span>${chip('all', RM.groups.size === DATA.groups.length, T().rmAll)}${groupsByRisk.map(g => chip(g.id, RM.groups.has(g.id), groupLabel(g))).join('')}</div>`
@@ -692,7 +694,7 @@ function renderRiskTable(pts) {
 /* santykinė grąža: fondo grąža minus visų grupės fondų paprastas vidurkis (procentiniai punktai) */
 function renderRelative(gs) {
   $('hRel').innerHTML = T().hRel + ik('rel');
-  const order = DATA.groups.slice().reverse();                     // turto, 1961 … 2003 – kaip rinkos lentelėse
+  const order = DATA.groups;                     // turto, 1961 … 2003 – kaip rinkos lentelėse
   const cards = order.filter(g => gs.includes(g)).map(g => {
     const rng = rangeFor(g, false);
     const all = g.funds.map(f => fundStats(f, rng)).filter(s => s && s.ret !== null);
@@ -715,7 +717,7 @@ function renderRelative(gs) {
 let RDD = null;
 function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
-  RDD = runupDrawdown($('rddCard'), DATA.groups.slice().reverse().map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[0].id);
+  RDD = runupDrawdown($('rddCard'), DATA.groups.map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[DATA.groups.length - 1].id);
 }
 /* mokesčių poveikis: kas mėnesį įmokama suma, prielaidinė grąža prieš mokesčius, valdymo mokestis nuo turto */
 const FEEP = { kind: 'life', m: 100, y: 10, r: 5 };
