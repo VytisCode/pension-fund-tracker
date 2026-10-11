@@ -197,7 +197,7 @@ const ref = c => c && c.n ? c : null;
 function heat(v, scale) {
   if (v == null) return '';
   const t = Math.min(1, Math.abs(v) / scale);
-  return `background:${v >= 0 ? `hsl(135,45%,${92 - 37 * t}%)` : `hsl(5,75%,${92 - 27 * t}%)`}`;
+  return `background:${v >= 0 ? `hsl(142,26%,${93 - 44 * t}%)` : `hsl(15,50%,${92 - 35 * t}%)`}`;
 }
 const pc = (v, p = 2) => v == null ? '–' : `${v < 0 ? '−' : ''}${num(Math.abs(v), 2)}${pctSfx()}`;
 const pp = (v, p = 2) => v == null ? '–' : `${v > 0 ? '+' : v < 0 ? '−' : ''}${num(Math.abs(v), p)}`;

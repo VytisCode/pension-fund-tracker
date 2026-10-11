@@ -219,7 +219,7 @@ function renderQuarters() {
 /* ---------- 3. išmokėjimai ---------- */
 function payHeat(v, lo, hi) {        // žalia (mažiausia dalis) -> geltona -> raudona (didžiausia)
   const t = hi > lo ? (v - lo) / (hi - lo) : 0.5;
-  return `hsl(${Math.round(125 * (1 - t))},70%,${t < 0.5 ? 78 - 10 * t : 73 - 8 * (t - 0.5)}%)`;
+  return `hsl(${Math.round(142 - 127 * t)},${t < 0.5 ? 30 : 45}%,${t < 0.5 ? 80 - 10 * t : 75 - 18 * (t - 0.5)}%)`;   // šalavijo žalia → molio raudona (auditas #39)
 }
 function renderPaySummary() {
   const ev = (m, q) => AUM.payouts.find(e => e.p === m && e.q === q);
