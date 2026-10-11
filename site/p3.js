@@ -127,7 +127,12 @@ function compute(g) {
     return { f, ret: s ? s.ret : null, unit: ie >= 0 ? f.v[ie] : null, stale };
   });
   rows.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
-  return { st, sel, live, rows, rng, series: buildSeries(live, rng.anchor, rng.end) };
+  const series = buildSeries(live, rng.anchor, rng.end), seen = {};
+  series.forEach(r => {   // to paties valdytojo antras, trečias fondas – punktyras, taškai (auditas #48)
+    const b = DATA.providers.find(p => p.id === r.provider).brand, k = seen[b] = (seen[b] ?? -1) + 1;
+    if (k) r.dash = ['', '7 4', '2 3', '10 3 2 3'][k % 4];
+  });
+  return { st, sel, live, rows, rng, series };
 }
 const rankOf = vals => { const ok = vals.filter(o => o.v !== null).sort((a, b) => b.v - a.v), map = new Map(); ok.forEach((o, i) => map.set(o.key, i + 1)); return { map, n: ok.length }; };
 const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1) + (n <= 3 ? ' soft' : '');   // ≤3 fondai – švelnesnės spalvos (auditas #9)
@@ -178,7 +183,8 @@ function renderCard(g, card) {
   const chips = card.querySelector('.chips');
   g.funds.forEach(f => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', st.provs.has(f.provider));
-    b.innerHTML = `<i style="background:${colorOf(f.provider)}"></i>${labelOf(f.provider)}`;
+    const dash = (data.series.find(r => r.provider === f.provider) || {}).dash;
+    b.innerHTML = (dash ? `<svg width="16" height="10" aria-hidden="true"><line x1="1" y1="5" x2="15" y2="5" stroke="${colorOf(f.provider)}" stroke-width="2.5" stroke-dasharray="${dash}"/></svg>` : `<i style="background:${colorOf(f.provider)}"></i>`) + labelOf(f.provider);
     b.addEventListener('click', () => { if (st.provs.has(f.provider)) { if (st.provs.size > 1) st.provs.delete(f.provider); } else st.provs.add(f.provider); if (st.start === f.provider && !st.provs.has(f.provider)) st.start = 'period'; saveCards(); renderCard(g, card); });
     b.addEventListener('dblclick', () => { st.pin = st.pin === f.provider ? null : f.provider; c.ctl && c.ctl.highlight(st.pin); });
     b.addEventListener('mouseenter', () => c.ctl && c.ctl.highlight(f.provider)); b.addEventListener('mouseleave', () => c.ctl && c.ctl.highlight(st.pin));
