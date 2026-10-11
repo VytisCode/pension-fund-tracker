@@ -313,6 +313,25 @@ function idxFunds() {
 }
 
 /* Grupės kortelės: grąža ir linijos laikotarpyje (naudoja ir apžvalga, ir rezultatų puslapis) */
+// Dienos, kai vertę paskelbė tik vienas valdytojas (pvz. SEB per šventes), dienos statistikoje neįtraukiamos (auditas #17).
+// Istoriniai duomenys nekeičiami – tik skaičiuojant tokia diena praleidžiama (pokytis skaičiuojamas iki kitos bendros dienos).
+let LONE = null;
+function loneDays() {
+  if (LONE) return LONE;
+  const by = new Map(), first = {};
+  (typeof DATA !== 'undefined' && DATA.groups ? DATA.groups : []).forEach(g => g.funds.forEach(f => {
+    first[f.provider] = Math.min(first[f.provider] ?? Infinity, f.d[0]);
+    f.d.forEach(d => { if (!by.has(d)) by.set(d, new Set()); by.get(d).add(f.provider); });
+  }));
+  const starts = Object.values(first);
+  LONE = new Set([...by].filter(([d, ps]) => ps.size === 1 && starts.filter(x => x <= d).length >= 2).map(([d]) => d));
+  return LONE;
+}
+function statIdx(f, ia, ie) {            // indeksai be „vienišų“ dienų (paskutinis visada lieka)
+  const L = loneDays(), out = [ia];
+  for (let i = ia + 1; i <= ie; i++) if (i === ie || !L.has(f.d[i])) out.push(i);
+  return out;
+}
 function seriesOf(f, anchor, end) {
   const ie = lastOnOrBefore(f, end); let ia = lastOnOrBefore(f, anchor);
   // fondas, įsteigtas ≤7 d. po laikotarpio pradžios už 1,00 € (pvz. 2003–2009 fondai 2025-01-02), skaičiuojamas nuo pirmos vertės (auditas #7)

@@ -8,7 +8,7 @@ addStrings({
   stLbl: 'Start', stPeriod: p => `Period above (${p})`, stCommon: 'Since common inception', stFund: n => `Since ${n} start`, eventsBtn: 'Market events', p10y: '10 yr',
   hmRet: 'Return over the period, %', hmRank: 'Rank within the group (1 = best return)',
   hmCap: e => `Periods end ${e}. Colours show the rank within each row (green = best, red = worst). “–” = the fund did not exist at the period start. Hover a cell for dates and unit values. Fund buttons above choose which funds are compared.`,
-  allNote: 'p.a. = average annual return (geometric), calculated from unit values like the Bank of Lithuania does. Volatility = annualised standard deviation of monthly returns over the last 3 years. Max drawdown = largest fall from a previous peak since the fund started. Equities = maximum share of risky assets per the Bank of Lithuania (30 Jun 2026). Click a column header to sort. Bold = best in its category.',
+  shortTip: y => `The fund has existed for ${y} years – a shorter history than the oldest fund in its category, so its average is not directly comparable`, allNote: '* next to “Since start p.a.” = the fund has a shorter history than the oldest fund in its category, so the average covers a different (shorter) period and is not directly comparable; funds younger than 1 year show no average. p.a. = average annual return (geometric), calculated from unit values like the Bank of Lithuania does. Volatility = annualised standard deviation of monthly returns over the last 3 years. Max drawdown = largest fall from a previous peak since the fund started. Equities = maximum share of risky assets per the Bank of Lithuania (30 Jun 2026). Click a column header to sort. Bold = best in its category.',
   foot: 'Pillar III (voluntary) pension funds. Unit value histories from the providers (full history from each fund\'s start where available); returns do not include contribution fees. For information only, not investment advice.',
 }, {
   cat: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fondai', equity: 'Akcijų fondai' },
@@ -19,7 +19,7 @@ addStrings({
   stLbl: 'Pradžia', stPeriod: p => `Pagal laikotarpį viršuje (${p})`, stCommon: 'Nuo bendros pradžios', stFund: n => `Nuo ${n} pradžios`, eventsBtn: 'Rinkų įvykiai', p10y: '10 metų',
   hmRet: 'Grąža laikotarpyje, %', hmRank: 'Vieta grupėje (1 = geriausia grąža)',
   hmCap: e => `Laikotarpiai baigiasi ${e}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia). „–“ = laikotarpio pradžioje fondo dar nebuvo. Užvedus pelę ant langelio matyti datos ir vieneto vertės. Fondų mygtukais aukščiau pasirenkama, kuriuos fondus lyginti.`,
-  allNote: 'vid. = vidutinė metinė grąža (geometrinė), skaičiuojama iš vieneto verčių kaip Lietuvos banko ataskaitose. Svyravimas = mėnesinių grąžų standartinis nuokrypis per 3 metus, perskaičiuotas į metinį. Didžiausias kritimas = didžiausias vertės kritimas nuo ankstesnės viršūnės nuo fondo pradžios. Akcijos = didžiausia rizikingų aktyvų dalis pagal Lietuvos banką (2026-06-30). Paspaudus stulpelio pavadinimą lentelė rikiuojama. Paryškinta = geriausias savo kategorijoje.',
+  shortTip: y => `Fondas veikia ${y} m. – trumpiau nei seniausias jo kategorijos fondas, todėl vidurkis tiesiogiai nepalyginamas`, allNote: '* prie „Nuo pradžios vid.“ = fondas veikia trumpiau nei seniausias jo kategorijos fondas, todėl vidurkis apima kitą (trumpesnį) laikotarpį ir tiesiogiai nepalyginamas; fondams, veikiantiems mažiau nei 1 metus, vidurkis nerodomas. vid. = vidutinė metinė grąža (geometrinė), skaičiuojama iš vieneto verčių kaip Lietuvos banko ataskaitose. Svyravimas = mėnesinių grąžų standartinis nuokrypis per 3 metus, perskaičiuotas į metinį. Didžiausias kritimas = didžiausias vertės kritimas nuo ankstesnės viršūnės nuo fondo pradžios. Akcijos = didžiausia rizikingų aktyvų dalis pagal Lietuvos banką (2026-06-30). Paspaudus stulpelio pavadinimą lentelė rikiuojama. Paryškinta = geriausias savo kategorijoje.',
   foot: 'III pakopos (savanoriškieji) pensijų fondai. Vieneto verčių istorija iš bendrovių (kur įmanoma – nuo fondo pradžios); grąža neįvertina atskaitymų nuo įmokų. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 
@@ -219,10 +219,12 @@ function renderAll() {
     const vals = rows.filter(r => r.f.cat === cat && r.m[c.k] !== null).map(r => r.m[c.k]);
     if (vals.length > 1) best[cat + c.k] = c.low ? Math.min(...vals) : Math.max(...vals);
   }));
-  const fmt = (v, c, cat) => v === null ? '<span class="na">–</span>' : `<span class="${best[cat + c.k] === v ? 'best' : ''}">${pctPlain(v, 2)}</span>`;
+  const oldest = {}; ['bond', 'mixed', 'equity'].forEach(cat => { oldest[cat] = Math.max(0, ...rows.filter(r => r.f.cat === cat).map(r => r.m.yrs)); });
+  const short = r => r.m.yrs < oldest[r.f.cat] - 1;   // trumpesnė istorija nei seniausio grupės fondo – vidurkis nepalyginamas tiesiogiai (auditas #16)
+  const fmt = (v, c, cat, r) => v === null ? '<span class="na">–</span>' : `<span class="${best[cat + c.k] === v ? 'best' : ''}"${c.k === 'incep' && short(r) ? ` title="${T().shortTip(num(r.m.yrs, 1))}"` : ''}>${pctPlain(v, 2)}${c.k === 'incep' && short(r) ? '*' : ''}</span>`;
   const head = `<thead><tr><th data-k="name">${T().thFund}</th><th data-k="since">${T().thSince}</th><th data-k="unit">${T().thUnitDate}</th>${COLS.map(c => `<th data-k="${c.k}">${T()[c.t]}</th>`).join('')}<th data-k="assets">${T().thAssets}</th><th data-k="risky">${T().thRisky}</th></tr></thead>`;
   const line = r => `<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;background:${colorOf(r.f.provider)}"></span>${r.f.name}</td>
-    <td>${iso(r.f.d[0])}</td><td>${num(r.m.last, 4)}</td>${COLS.map(c => `<td>${fmt(r.m[c.k], c, r.f.cat)}</td>`).join('')}
+    <td>${iso(r.f.d[0])}</td><td>${num(r.m.last, 4)}</td>${COLS.map(c => `<td>${fmt(r.m[c.k], c, r.f.cat, r)}</td>`).join('')}
     <td>${r.f.assets ? num(r.f.assets / 1e6, 1) : '<span class="na">–</span>'}</td><td>${r.f.risky}</td></tr>`;
   let body = '';
   if (!sortKey) {
