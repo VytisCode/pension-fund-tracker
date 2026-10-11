@@ -5,7 +5,7 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
-  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', ovLong: '1 yr and longer', ovPick: 'Periods included:',
+  hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
   gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
   nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
@@ -83,7 +83,7 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
-  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
+  hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
   gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
   nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
@@ -428,13 +428,21 @@ function renderOverall() {
   $('ovPers').querySelectorAll('button').forEach(b => { b.textContent = T().periods[b.dataset.p]; b.setAttribute('aria-pressed', P.ovP.has(b.dataset.p)); });
   const isSet = ids => ids.length === P.ovP.size && ids.every(x => P.ovP.has(x));
   $('ovPreset').querySelectorAll('button').forEach(b => { b.textContent = T()[b.dataset.k]; b.setAttribute('aria-pressed', isSet(OV_PRESETS[b.dataset.k])); });
+  let cseg = $('ovCommon');   // jungiklis „tik bendri palyginimai“ – kur dalyvauja visi valdytojai (auditas #5)
+  if (!cseg) {
+    cseg = document.createElement('div'); cseg.className = 'seg'; cseg.id = 'ovCommon'; cseg.setAttribute('role', 'group');
+    cseg.innerHTML = '<button type="button" data-v="0"></button><button type="button" data-v="1"></button>';
+    $('ovPreset').after(cseg);
+    cseg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; P.ovCommon = b.dataset.v === '1'; renderOverall(); });
+  }
+  cseg.querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === '1' ? T().ovCommonOn : T().ovCommonOff; b.setAttribute('aria-pressed', String(!!P.ovCommon === (b.dataset.v === '1'))); });
   const pers = PERIOD_IDS.filter(p => P.ovP.has(p)), st = {}, perTxt = pers.map(p => T().periods[p]).join(', ');
   setCap('tOv', T().capOv(perTxt, iso(LATEST)));
-  $('nOv').textContent = T().nOv(perTxt, DATA.groups.length);
+  $('nOv').textContent = T().nOv(perTxt, DATA.groups.length) + ' ' + T().ovCommonNote;
   DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, top2: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
-    if (n < 3) return;
+    if (n < 3 || (P.ovCommon && n < DATA.providers.length)) return;
     map.forEach((rank, id) => { const s = st[id]; s.cmp++; s.rs += rank; if (rank === 1) s.first++; if (rank <= 2) s.top2++; });
   }));
   const list = DATA.providers.filter(p => st[p.id].cmp).map(p => ({ id: p.id, ...st[p.id], avg: st[p.id].rs / st[p.id].cmp })).sort((a, b) => a.avg - b.avg);
