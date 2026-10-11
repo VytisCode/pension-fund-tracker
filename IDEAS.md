@@ -65,7 +65,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 4. **III pakopa:** #8, #9, #48. – *atlikta (PR #79, 2026-10-11)*
 5. **Grafikai:** #25, #14, #24, #12, #46. – *atlikta (PR #80, 2026-10-11)*
 6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10). – *atlikta (PR #81, 2026-10-11)*
-7. **Jaukus dizainas – pagrindas:** #38, #39, #40.
+7. **Jaukus dizainas – pagrindas:** #38, #39, #40. – *atlikta (PR #82, 2026-10-11; akcentas – giliai žalsva #2F6B5A, nes ant terakotos baltas tekstas per blankus)*
 8. **Antraštė ir puslapių tvarka:** #41, #45, #44, #43.
 9. **Pradžios puslapis ir KPI kortelės:** #42 (pagal savininko „Performance & peers“ atsakymą 2026-10-10), #50, #52.
 10. **Šviežumas ir šaltiniai:** #54, #55, #57.
@@ -108,9 +108,9 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#49** „–“ ir tuščios reikšmės: „Auksas –“ → „0,00 %“ arba „nėra“; lentelių „–“ su užuomina („fondas tada dar neveikė“). – *atlikta (PR #75, 2026-10-10)*
 
 ### 2. Jaukus dizainas (pagrindas)
-- **#38** Šilta paletė per `style.css` kintamuosius: fonas #FAF6EF, kortelės #FFFDF9, linijos #EAE2D6, tekstas #2B2622, akcentas terakota #C0643C arba giliai žalsva #2F6B5A; tamsi tema šiltai ruda-anglinė #1E1B18. Valdytojų spalvos atpažįstamos.
-- **#39** Heatmap švelnesnės spalvos: šalavijo žalia (#9DC3A5 → #5E9C76), molio raudona (#E8B4A0 → #C9765A), smėlinė vidurys; tikrinti kontrastą.
-- **#40** Šriftai: antraštėms serifinis (Fraunces arba Source Serif 4), tekstui Inter su `tabular-nums`. **Būtinai patikrinti, ar šriftas turi visas lietuviškas raides (ą č ę ė į š ų ū ž, didžiosios taip pat)** – geriausia laikyti šrifto failus repozitorijoje (`latin-ext`).
+- **#38** Šilta paletė per `style.css` kintamuosius: fonas #FAF6EF, kortelės #FFFDF9, linijos #EAE2D6, tekstas #2B2622, akcentas terakota #C0643C arba giliai žalsva #2F6B5A; tamsi tema šiltai ruda-anglinė #1E1B18. Valdytojų spalvos atpažįstamos. – *atlikta (PR #82, 2026-10-11)*
+- **#39** Heatmap švelnesnės spalvos: šalavijo žalia (#9DC3A5 → #5E9C76), molio raudona (#E8B4A0 → #C9765A), smėlinė vidurys; tikrinti kontrastą. – *atlikta (PR #82, 2026-10-11)*
+- **#40** Šriftai: antraštėms serifinis (Fraunces arba Source Serif 4), tekstui Inter su `tabular-nums`. **Būtinai patikrinti, ar šriftas turi visas lietuviškas raides (ą č ę ė į š ų ū ž, didžiosios taip pat)** – geriausia laikyti šrifto failus repozitorijoje (`latin-ext`). – *atlikta (PR #82, 2026-10-11)*
 - **#41** Nauja antraštė: ženkliukas + „Pensijų fondai“, eilutė „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ (vėluojantis – geltonas su vardu); navigacija vienoje eilutėje su ikonomis, lipni; įrankiai (Kopijuoti, Excel, Dienos lentelė, Spausdinti, Duomenys) – į „⋯ Įrankiai“ meniu; kalba ir tema – ikonos kampe.
 - **#46** Grafikai: 2 px linijos, paskutinė reikšmė etikete linijos gale, švelnesnis tinklelis, užuominos su visų fondų reikšmėmis surikiuotos. **Savininkas: per daug nesuapvalinti – analitikai mėgsta aštresnes linijas, tai ne dailės parodos puslapis.** – *atlikta (PR #80, 2026-10-11)*
 - **#48** [III pakopa] to paties valdytojo keli fondai – skirtingas linijos tipas (ištisinė/punktyras/taškai) arba aiškiau skirtingi atspalviai. – *atlikta (PR #79, 2026-10-11)*

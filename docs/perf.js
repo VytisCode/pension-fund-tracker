@@ -780,7 +780,7 @@ function renderRanksByPeriod(gs, ALL) {
 }
 function heatColor(v) {
   const t = Math.min(1, Math.abs(v) / 6);
-  return v >= 0 ? `hsl(135,45%,${92 - 37 * t}%)` : `hsl(5,75%,${92 - 27 * t}%)`;
+  return v >= 0 ? `hsl(142,26%,${93 - 44 * t}%)` : `hsl(15,50%,${92 - 35 * t}%)`;   // šalavijo žalia / molio raudona (auditas #39)
 }
 function renderHeatmap(g, ALL) {
   const hg = $('hmGroup'); hg.hidden = !ALL; if (ALL) { hg.innerHTML = DATA.groups.map(x => `<option value="${x.id}">${groupLabel(x)}</option>`).join(''); hg.value = g.id; }
