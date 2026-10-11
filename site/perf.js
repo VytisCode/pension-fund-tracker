@@ -52,7 +52,7 @@ addStrings({
   sumNoData: 'Not enough data.', sumLatest: d => `Latest data: <b>${d}</b>.`,
   sumLead: (p, k, n) => `<b>${p}</b> led in ${k} of ${n} age groups.`, sumLag: (p, k, n) => `<b>${p}</b> lagged in ${k} of ${n} age groups.`,
   sumMove: (p, g, v, d) => `Largest one-day move: <b>${p}</b> (${g}) <b>${v}</b> on ${d}.`,
-  thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move',
+  thGroup: 'Group', thLeader: 'Leader', thLagger: 'Laggard', thSpread: 'Spread, %', thMove: 'Largest 1-day move', thUp1: 'Largest 1-day rise', thDn1: 'Largest 1-day fall',
   nSum: 'Computed automatically from the latest data in each age group; leader / laggard by return over the window.',
   info: {
     fee: 'Every month the contribution is added, the money grows at the assumed return, and the management fee (annual % ÷ 12) is deducted from the accumulated assets – the way II pillar fees are charged (daily, already included in unit values). “Fees paid” = all fees deducted; “Lower final sum” also includes the return those fees would have earned. Fees: base asset-based fee from the Bank of Lithuania list (life-cycle funds of a manager share one fee).',
@@ -130,7 +130,7 @@ addStrings({
   sumNoData: 'Duomenų nepakanka.', sumLatest: d => `Naujausi duomenys: <b>${d}</b>.`,
   sumLead: (p, k, n) => `<b>${p}</b> pirmavo ${k} iš ${n} amžiaus grupių.`, sumLag: (p, k, n) => `<b>${p}</b> atsiliko ${k} iš ${n} amžiaus grupių.`,
   sumMove: (p, g, v, d) => `Didžiausias vienos dienos pokytis: <b>${p}</b> (${g}) <b>${v}</b>, ${d}.`,
-  thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis',
+  thGroup: 'Grupė', thLeader: 'Lyderis', thLagger: 'Atsiliekantis', thSpread: 'Skirtumas, %', thMove: 'Didžiausias 1 d. pokytis', thUp1: 'Didžiausias 1 d. kilimas', thDn1: 'Didžiausias 1 d. kritimas',
   nSum: 'Skaičiuojama automatiškai iš naujausių kiekvienos amžiaus grupės duomenų; lyderis / atsiliekantis – pagal grąžą pasirinktame lange.',
   info: {
     fee: 'Kiekvieną mėnesį pridedama įmoka, pinigai auga prielaidine grąža, o valdymo mokestis (metinis % ÷ 12) atskaitomas nuo sukaupto turto – taip, kaip II pakopoje (kasdien, jau įskaičiuota į vieneto vertę). „Sumokėta mokesčių“ = visi atskaityti mokesčiai; „Mažesnė suma“ apima ir grąžą, kurią tie pinigai būtų uždirbę. Mokesčiai – bazinis mokestis nuo turto iš Lietuvos banko sąrašo (vieno valdytojo gyvenimo ciklo fondų mokestis vienodas).',
@@ -372,14 +372,14 @@ function renderSummary() {
   if (top(lag)) { const [p, k] = top(lag); parts.push(T().sumLag(labelOf(p), k, ng)); }
   if (move) parts.push(T().sumMove(labelOf(move.p), groupLabel(move.g), fmtP(move.v, 2), iso(move.d)));
   $('sumText').innerHTML = ng ? `<p class="sumline">${parts.join(' ')}</p>` : `<p class="na">${T().sumNoData}</p>`;
-  const cellMove = (g, anchor, end) => {
-    let best = null; g.funds.forEach(f => { if (isStale(f, groupEnd(g).overallLast)) return; const s = seriesOf(f, anchor, end); if (!s) return; for (let i = s.ia + 1; i <= s.ie; i++) { const x = (f.v[i] / f.v[i - 1] - 1) * 100; if (!best || Math.abs(x) > Math.abs(best.v)) best = { p: f.provider, v: x, d: f.d[i] }; } });
+  const cellMove = (g, anchor, end, dir) => {   // dir > 0 – didžiausias kilimas, dir < 0 – didžiausias kritimas (auditas #6)
+    let best = null; g.funds.forEach(f => { if (isStale(f, groupEnd(g).overallLast)) return; const s = seriesOf(f, anchor, end); if (!s) return; for (let i = s.ia + 1; i <= s.ie; i++) { const x = (f.v[i] / f.v[i - 1] - 1) * 100; if (x * dir > 0 && (!best || x * dir > best.v * dir)) best = { p: f.provider, v: x, d: f.d[i] }; } });
     return best ? `${labelOf(best.p)} ${fmtP(best.v, 2)} <span class="na">${iso(best.d)}</span>` : '–';
   };
   const sw = p => `<span class="sw" style="background:${colorOf(p)}"></span>`;
   if (rows.length) setCap('tSum', spanText(winLabel(P.sumWin), rows));
-  $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thMove}</th></tr></thead><tbody>`
-    + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end)}</td></tr>`).join('') + '</tbody>';
+  $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thUp1}</th><th>${T().thDn1}</th></tr></thead><tbody>`
+    + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end, 1)}</td><td>${cellMove(r.g, r.anchor, r.end, -1)}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ---------- 1. visos rinkos lentelės ---------- */
