@@ -6,7 +6,7 @@ addStrings({
   calLead: 'Every fund of the selected manager: total and average annual return since the end of 2018, then each calendar year. The current year runs to the latest unit value.',
   thFund: 'Fund', thTot: 'Total for the whole period', thAvg: 'Average annual', ytdCol: y => `${y} (YTD)`,
   rkTip: 'Place among this manager’s funds in this table (1 = highest total return)',
-  calNote: (a, e) => `Period ${a} → ${e}. * = the fund started later, so the figure covers only part of the period. Colour: green = gain, red = loss.`,
+  calNote: (a, e) => `Period ${a} → ${e}. * = the fund started later, so the figure covers only part of the period – its average annual return is not directly comparable with funds that ran the whole period. Funds younger than 1 year show no average. Colour: green = gain, red = loss.`,
   monTitle: y => `Monthly returns ${y}`, ytd: 'Year to date',
   monNote: e => `Month-end unit values; the last month runs to the latest value (${e}).`,
   months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -16,7 +16,7 @@ addStrings({
   asof: 'As of', asLast: 'latest day', asMonth: 'latest month-end', qLabel: (y, q, d) => `${y} Q${q} (${d})`,
   cmp: 'Compare with',
   thNet: 'Net return', thMed: 'Peer median', thGross: 'Gross return', thFee: 'Fee now, % a year', thSaa: 'SAA (benchmark)', thNetD: 'Net − SAA', thGrossD: 'Gross − SAA',
-  thPlace: 'Rank', placeTip: 'Rank within the group by return over the period (1 = best)', thRank: 'Ranking in risk class', thN: 'Number of funds in risk class', thRisk: 'Risk class', thAum: 'AUM, €', thShare: 'Share',
+  thPlace: 'Rank', avgTip: 'The fund started later – average over a shorter period, not directly comparable', placeTip: 'Rank within the group by return over the period (1 = best)', thRank: 'Ranking in risk class', thN: 'Number of funds in risk class', thRisk: 'Risk class', thAum: 'AUM, €', thShare: 'Share',
   eq: v => `${num(v, 2)}${pctSfx()} equity`, total: 'Total', pl2: 'II pillar', pl3: 'III pillar',
   kpiNote: (a, e, ann) => `Period ${a} → ${e}; ${ann ? 'returns are annualized (average a year)' : 'returns are cumulative for the whole period'}. Ranking 1 = best in the group. Method: (i) next to the title.`,
   lbTitle: 'Fund indicators (Bank of Lithuania layout)',
@@ -45,7 +45,7 @@ addStrings({
   calLead: 'Visi pasirinkto valdytojo fondai: bendra ir vidutinė metinė grąža nuo 2018 m. pabaigos, tada kiekvieni kalendoriniai metai. Šie metai – iki paskutinės vieneto vertės.',
   thFund: 'Fondas', thTot: 'Bendra per visą laikotarpį', thAvg: 'Vidutinė metinė', ytdCol: y => `${y} (YTD)`,
   rkTip: 'Vieta tarp šio valdytojo fondų šioje lentelėje (1 = didžiausia bendra grąža)',
-  calNote: (a, e) => `Laikotarpis ${a} → ${e}. * = fondas pradėjo veikti vėliau, todėl skaičius apima tik dalį laikotarpio. Spalva: žalia = pelnas, raudona = nuostolis.`,
+  calNote: (a, e) => `Laikotarpis ${a} → ${e}. * = fondas pradėjo veikti vėliau, todėl skaičius apima tik dalį laikotarpio – jo vidutinė metinė grąža tiesiogiai nepalyginama su visą laikotarpį veikusiais fondais. Fondams, veikiantiems mažiau nei 1 metus, vidurkis nerodomas. Spalva: žalia = pelnas, raudona = nuostolis.`,
   monTitle: y => `Mėnesių grąža ${y} m.`, ytd: 'Nuo metų pradžios',
   monNote: e => `Mėnesių pabaigos vieneto vertės; paskutinis mėnuo – iki paskutinės vertės (${e}).`,
   months: ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'],
@@ -55,7 +55,7 @@ addStrings({
   asof: 'Data', asLast: 'paskutinė diena', asMonth: 'paskutinė mėn. pabaiga', qLabel: (y, q, d) => `${y} Q${q} (${d})`,
   cmp: 'Palyginti su',
   thNet: 'Grynoji grąža', thMed: 'Konkurentų mediana (Peer median)', thGross: 'Bruto grąža', thFee: 'Mokestis dabar, % per metus', thSaa: 'Lyginamasis indeksas (SAA)', thNetD: 'Grynoji − indeksas', thGrossD: 'Bruto − indeksas',
-  thPlace: 'Vieta', placeTip: 'Vieta grupėje pagal grąžą per laikotarpį (1 = geriausia)', thRank: 'Vieta rizikos klasėje', thN: 'Fondų skaičius klasėje', thRisk: 'Rizikos klasė', thAum: 'Turtas (AUM), €', thShare: 'Dalis',
+  thPlace: 'Vieta', avgTip: 'Fondas pradėjo vėliau – vidurkis per trumpesnį laikotarpį, tiesiogiai nepalyginamas', placeTip: 'Vieta grupėje pagal grąžą per laikotarpį (1 = geriausia)', thRank: 'Vieta rizikos klasėje', thN: 'Fondų skaičius klasėje', thRisk: 'Rizikos klasė', thAum: 'Turtas (AUM), €', thShare: 'Dalis',
   eq: v => `${num(v, 2)}${pctSfx()} akcijų`, total: 'Iš viso', pl2: 'II pakopa', pl3: 'III pakopa',
   kpiNote: (a, e, ann) => `Laikotarpis ${a} → ${e}; ${ann ? 'grąža metinė (vidutiniškai per metus)' : 'grąža sukaupta per visą laikotarpį'}. Vieta 1 = geriausias grupėje. Metodika: (i) prie pavadinimo.`,
   lbTitle: 'Fondo rodikliai (Lietuvos banko forma)',
@@ -247,7 +247,7 @@ function renderCal() {
     xb.table.push(['', pl === 'II' ? T().pl2 : T().pl3]);
     rows.forEach((r, k) => xb.table.push([rk[k], shortName(r.f), ref(r.tot), ref(r.avg), ...r.ys.map(ref)]));
     body += `<tr class="sep"><td colspan="${4 + years.length}">${pl === 'II' ? T().pl2 : T().pl3}</td></tr>`;
-    body += rows.map((r, k) => `<tr><td class="rk" title="${T().rkTip}">${rk[k] ?? ''}</td><td class="l">${shortName(r.f)}</td>${hcell(r.tot.v, 150, r.part ? '*' : '')}<td class="hc b">${pc(r.avg.v)}</td>${r.ys.map((x, j) => x.v != null ? `<td class="hc${j ? '' : ' bl'}" style="${heat(x.v, 25)}">${pc(x.v)}${x.part ? '*' : ''}</td>` : `<td class="na${j ? '' : ' bl'}">–</td>`).join('')}</tr>`).join('');
+    body += rows.map((r, k) => `<tr><td class="rk" title="${T().rkTip}">${rk[k] ?? ''}</td><td class="l">${shortName(r.f)}</td>${hcell(r.tot.v, 150, r.part ? '*' : '')}<td class="hc b"${r.part && r.avg.v != null ? ` title="${T().avgTip}"` : ''}>${pc(r.avg.v)}${r.part && r.avg.v != null ? '*' : ''}</td>${r.ys.map((x, j) => x.v != null ? `<td class="hc${j ? '' : ' bl'}" style="${heat(x.v, 25)}">${pc(x.v)}${x.part ? '*' : ''}</td>` : `<td class="na${j ? '' : ' bl'}">–</td>`).join('')}</tr>`).join('');
   }
   head('calTitle', T().calTitle, 'cal');
   document.getElementById('calTable').innerHTML = `<thead><tr><th title="${T().placeTip}">${T().thPlace}</th><th class="l">${T().thFund}</th><th>${T().thTot}</th><th>${T().thAvg}</th>${years.map((y, j) => `<th class="${j ? '' : 'bl'}">${j ? y : T().ytdCol(y)}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
