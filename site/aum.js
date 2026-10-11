@@ -126,7 +126,8 @@ function renderChart() {
       pts.push([day, ST.unit === 'pct' ? (r.s.a[i] / base - 1) * 100 : r.s.a[i]]);
     }
     if (ST.unit === 'pct' && r.s.d[0] > x0) return null;     // pradėjo vėliau – procentinis pokytis neteisingas
-    return { provider: r.m, points: pts };
+    const qEnd = Math.max(-Infinity, ...r.fs.filter(f => f.q > 0).map(f => f.d[f.q - 1]));   // iki šios dienos – tik ketvirčio sumos (auditas #14)
+    return { provider: r.m, points: pts, dashUntil: qEnd > x0 ? qEnd : null };
   }).filter(Boolean);
   if (!Array.isArray(ST.off)) ST.off = [];
   const shown = series.filter(r => !ST.off.includes(r.provider));

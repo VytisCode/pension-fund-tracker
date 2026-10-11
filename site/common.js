@@ -228,7 +228,15 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const step = Math.max(1, Math.floor((x1 - x0) / (W * 1.2)));
   series.slice().reverse().forEach(r => {
     let path = '', last = -1e9;
-    r.points.forEach((p, i) => { if (i === 0 || i === r.points.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
+    let pts = r.points;
+    if (r.dashUntil) {   // retos (ketvirčio) reikšmės – punktyras su taškais, toliau ištisinė linija (auditas #14)
+      const q = pts.filter(p => p[0] <= r.dashUntil);
+      pts = pts.slice(Math.max(0, q.length - 1));
+      els[r.provider] = els[r.provider] || [];
+      if (q.length > 1) els[r.provider].push(add('path', { d: q.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join(''), fill: 'none', stroke: sCol(r), 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }));
+      q.forEach(p => els[r.provider].push(add('circle', { cx: X(p[0]).toFixed(1), cy: Y(p[1]).toFixed(1), r: 2.6, fill: sCol(r) })));
+    }
+    pts.forEach((p, i) => { if (i === 0 || i === pts.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
     (els[r.provider] = els[r.provider] || []).push(add('path', Object.assign({ d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'miter', 'stroke-miterlimit': 2, 'stroke-linecap': 'butt' }, r.dash ? { 'stroke-dasharray': r.dash } : {})));
   });
   if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
