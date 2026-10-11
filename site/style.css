@@ -267,3 +267,6 @@ abbr.tif { text-decoration: underline dotted; text-underline-offset: 3px; cursor
 /* pasirinktos grupės žymė lentelių antraštėse (auditas #34) */
 .gtag { font-weight: 500; color: var(--text-2); }
 #groupField select { font-weight: 600; }
+
+/* švelnesnės heatmap spalvos, kai lyginami tik 2–3 fondai (auditas #9) */
+td.soft { background-image: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,.55)); }

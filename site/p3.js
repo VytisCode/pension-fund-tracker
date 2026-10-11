@@ -130,7 +130,7 @@ function compute(g) {
   return { st, sel, live, rows, rng, series: buildSeries(live, rng.anchor, rng.end) };
 }
 const rankOf = vals => { const ok = vals.filter(o => o.v !== null).sort((a, b) => b.v - a.v), map = new Map(); ok.forEach((o, i) => map.set(o.key, i + 1)); return { map, n: ok.length }; };
-const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1);
+const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1) + (n <= 3 ? ' soft' : '');   // ≤3 fondai – švelnesnės spalvos (auditas #9)
 function heatTables(g, data) {
   const { sel, rng } = data, fs = sel.slice().sort((a, b) => g.funds.indexOf(a) - g.funds.indexOf(b));
   const end = rng.end, rows = [];
