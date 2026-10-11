@@ -149,7 +149,7 @@ function renderInsights() {
     bestF: fr[0] ? shortFund(fr[0].f.n) : '–', bestFr: fr[0] ? pcIn(fr[0].r) : '', worstF: fr.length ? shortFund(fr[fr.length - 1].f.n) : '–', worstFr: fr.length ? pcIn(fr[fr.length - 1].r) : '',
     pay: payT ? mLabel(-payT, t) : '', payP: payB ? pc(-payT / payB, 1) : '', payTop: MLABEL[payM[0]?.m], payTopP: payM[0] ? pc(-payM[0].flow / payM[0].base, 1) : '' };
   const kp = (l, v, s, cls = '') => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`;
-  const grps = [...new Set(IN.F.map(f => f.g))].sort((p, q) => p === 'turto' ? 1 : q === 'turto' ? -1 : p < q ? -1 : 1);
+  const grps = [...new Set(IN.F.map(f => f.g))].sort((p, q) => p === 'turto' ? -1 : q === 'turto' ? 1 : p < q ? -1 : 1);
   const fRows = rows.filter(r => !IN.grp || r.f.g === IN.grp).filter(r => r.aEnd || r.e).sort((p, q) => q.e - p.e);
   const payQ = pays.slice().sort((p, q) => p.q < q.q ? -1 : p.q > q.q ? 1 : p.flow - q.flow);
   const th = (h, i) => `<th class="${i === 0 ? 'l' : ''}">${h}</th>`;
