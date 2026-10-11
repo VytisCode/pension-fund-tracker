@@ -98,9 +98,16 @@ const shortName = l => l.replace('Pensijos fondas ', '').replace(' (apriboto nut
 const HM_PERIODS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', '10y'];
 const ALL_EVENTS = () => EVENTS.map(e => ({ day: dayOf(e.day), title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day).map((e, i) => ({ ...e, n: i + 1 }));
 
+// bendra pradžia – jauniausio pasirinkto fondo pradžia, neskaičiuojant fondų, jaunesnių nei 1 metai (auditas #8)
+function commonOf(sel, end) {
+  if (!sel.length) return { d: end, f: null };
+  const old = sel.filter(f => end - f.d[0] >= 365), use = old.length ? old : sel;
+  const f = use.reduce((a, b) => (b.d[0] > a.d[0] ? b : a));
+  return { d: f.d[0], f };
+}
 function cardRange(g, st, sel) {                  // grafiko ir reitingo langas
   const { end, overallLast } = groupEnd(g);
-  if (st.start === 'common') return { anchor: Math.max(...sel.map(f => f.d[0])), end, overallLast, label: T().stCommon };
+  if (st.start === 'common') return { anchor: commonOf(sel, end).d, end, overallLast, label: T().stCommon };
   if (st.start !== 'period') { const f = g.funds.find(x => x.provider === st.start); return { anchor: f.d[0], end, overallLast, label: T().stFund(labelOf(f.provider)) }; }
   const r = presetRangeF(period, end, sel, maxAnchorOf(sel));
   return { ...r, overallLast, label: periodLabel(period) };
@@ -120,15 +127,20 @@ function compute(g) {
     return { f, ret: s ? s.ret : null, unit: ie >= 0 ? f.v[ie] : null, stale };
   });
   rows.sort((a, b) => (b.ret ?? -1e9) - (a.ret ?? -1e9));
-  return { st, sel, live, rows, rng, series: buildSeries(live, rng.anchor, rng.end) };
+  const series = buildSeries(live, rng.anchor, rng.end), seen = {};
+  series.forEach(r => {   // to paties valdytojo antras, trečias fondas – punktyras, taškai (auditas #48)
+    const b = DATA.providers.find(p => p.id === r.provider).brand, k = seen[b] = (seen[b] ?? -1) + 1;
+    if (k) r.dash = ['', '7 4', '2 3', '10 3 2 3'][k % 4];
+  });
+  return { st, sel, live, rows, rng, series };
 }
 const rankOf = vals => { const ok = vals.filter(o => o.v !== null).sort((a, b) => b.v - a.v), map = new Map(); ok.forEach((o, i) => map.set(o.key, i + 1)); return { map, n: ok.length }; };
-const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1);
+const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1) + (n <= 3 ? ' soft' : '');   // ≤3 fondai – švelnesnės spalvos (auditas #9)
 function heatTables(g, data) {
   const { sel, rng } = data, fs = sel.slice().sort((a, b) => g.funds.indexOf(a) - g.funds.indexOf(b));
   const end = rng.end, rows = [];
   HM_PERIODS.forEach(per => rows.push({ label: per === '10y' ? T().p10y : T().periods[per], ...windowFor(per, end, sel) }));
-  const common = Math.max(...sel.map(f => f.d[0]));
+  const common = commonOf(sel, end).d;
   rows.push({ label: `${T().stCommon} (${iso(common)})`, anchor: common, end });
   if (data.st.start !== 'period' && data.st.start !== 'common' && rng.anchor !== common) rows.push({ label: `${rng.label} (${iso(rng.anchor)})`, anchor: rng.anchor, end, cur: true });
   rows.forEach(r => {
@@ -152,10 +164,10 @@ function renderCard(g, card) {
   const data = compute(g), st = data.st;
   const late = data.series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
   const starts = g.funds.slice().sort((a, b) => a.d[0] - b.d[0]);
-  const common = Math.max(...data.sel.map(f => f.d[0]));
+  const cm = commonOf(data.sel, data.rng.end), common = cm.d;
   card.innerHTML = `<h2>${T().cat[g.id]}</h2>
     <div class="tools" style="margin:0 0 8px"><label class="field"><span>${T().stLbl}</span><select class="st">
-      <option value="period">${T().stPeriod(periodLabel(period))}</option><option value="common">${T().stCommon} (${iso(common)})</option>
+      <option value="period">${T().stPeriod(periodLabel(period))}</option><option value="common">${T().stCommon}${cm.f ? ` – ${labelOf(cm.f.provider)}` : ''} (${iso(common)})</option>
       ${starts.map(f => `<option value="${f.provider}">${T().stFund(labelOf(f.provider))} (${iso(f.d[0])})</option>`).join('')}</select></label>
       <button class="btn ev" type="button" aria-pressed="${st.events}">${T().eventsBtn}</button></div>
     <div class="chips" style="margin:0 0 10px"></div>
@@ -171,7 +183,8 @@ function renderCard(g, card) {
   const chips = card.querySelector('.chips');
   g.funds.forEach(f => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', st.provs.has(f.provider));
-    b.innerHTML = `<i style="background:${colorOf(f.provider)}"></i>${labelOf(f.provider)}`;
+    const dash = (data.series.find(r => r.provider === f.provider) || {}).dash;
+    b.innerHTML = (dash ? `<svg width="16" height="10" aria-hidden="true"><line x1="1" y1="5" x2="15" y2="5" stroke="${colorOf(f.provider)}" stroke-width="2.5" stroke-dasharray="${dash}"/></svg>` : `<i style="background:${colorOf(f.provider)}"></i>`) + labelOf(f.provider);
     b.addEventListener('click', () => { if (st.provs.has(f.provider)) { if (st.provs.size > 1) st.provs.delete(f.provider); } else st.provs.add(f.provider); if (st.start === f.provider && !st.provs.has(f.provider)) st.start = 'period'; saveCards(); renderCard(g, card); });
     b.addEventListener('dblclick', () => { st.pin = st.pin === f.provider ? null : f.provider; c.ctl && c.ctl.highlight(st.pin); });
     b.addEventListener('mouseenter', () => c.ctl && c.ctl.highlight(f.provider)); b.addEventListener('mouseleave', () => c.ctl && c.ctl.highlight(st.pin));
