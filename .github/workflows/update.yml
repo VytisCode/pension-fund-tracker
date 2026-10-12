@@ -3,14 +3,16 @@ name: Update fund data
 # Darbo dienomis du kartus per valandą (:07 ir :37) nuo ~14:07 iki ~19:37 Vilniaus laiku vasarą
 # (žiemą, UTC+2, viena valanda anksčiau: ~13:07–18:37). Minutės ne apvalios, nes GitHub
 # per pilnas valandas dažniausiai vėlina arba praleidžia suplanuotus paleidimus.
-# Be to ryte (~07:37 vasarą, antradienį–šeštadienį) papildomas paleidimas praėjusios dienos spragoms užpildyti.
+# Ryte (~07:37 vasarą, pirmadienį–šeštadienį) papildomas paleidimas praėjusios darbo dienos spragoms užpildyti.
 # Kiekvienas tiekėjas tikrinamas tik jei saugykloje dar nėra laukiamos dienos duomenų,
 # todėl kai viskas jau atnaujinta, paleidimas baigiasi per kelias sekundes.
-# Ranka: Actions → "Update fund data" → Run workflow ok2
+# GitHub tvarkaraštis nepatikimas, todėl darbą papildomai paleidžia išorinis Cloudflare „žadintuvas“
+# (infra/trigger-worker) per workflow_dispatch. Tokie paleidimai neišmetami.
+# Ranka: Actions → "Update fund data" → Run workflow
 on:
   schedule:
     - cron: "7,37 11-16 * * 1-5"
-    - cron: "37 4 * * 2-6"
+    - cron: "37 4 * * 1-6"
   workflow_dispatch:
     inputs:
       send_report:
@@ -37,7 +39,7 @@ jobs:
       LUMINOR_PROXY_USERNAME: ${{ secrets.LUMINOR_PROXY_USERNAME }}
       LUMINOR_PROXY_PASSWORD: ${{ secrets.LUMINOR_PROXY_PASSWORD }}
       LUMINOR_BROWSER_RETRIES: "6"
-      CATCHUP: ${{ github.event.schedule == '37 4 * * 2-6' && 'true' || 'false' }}
+      CATCHUP: ${{ github.event.schedule == '37 4 * * 1-6' && 'true' || 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -116,12 +118,13 @@ jobs:
             python build_site.py
           fi
 
-      # Viena kasdienė ataskaita el. paštu: pirmame paleidime po 16:00 UTC (~19:00 Vilniaus laiku vasarą)
+      # Viena kasdienė ataskaita el. paštu: pirmame paleidime po 16:00 UTC (~19:00 Vilniaus laiku vasarą),
+      # nesvarbu, ar jį paleido tvarkaraštis, ar išorinis žadintuvas (daily_report.py siunčia tik kartą per dieną),
       # arba paleidus ranka su „send_report“. Jei Gmail nustatymų (Secrets) dar nėra – ataskaita
       # vieną kartą per dieną paskelbiama kaip „Issue“ komentaras.
       - name: Daily report (e-mail)
         id: report
-        if: always() && ((github.event_name == 'schedule' && github.event.schedule != '37 4 * * 2-6') || inputs.send_report)
+        if: always() && (github.event.schedule != '37 4 * * 1-6' || inputs.send_report)
         continue-on-error: true
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
@@ -170,23 +173,3 @@ jobs:
             git pull --rebase origin main
             git push
           fi
-
-      # GitHub tvarkaraštis dažnai praleidžia paleidimus, todėl kiekvienas paleidimas, jei dar trūksta
-      # duomenų ir dar ne vėlu (13:00–19:30 Vilniaus laiku), po 30 min. pats paleidžia kitą bandymą.
-      # Taip pakanka, kad per dieną suveiktų bent vienas paleidimas (tvarkaraščio, ranka ar Claude ciklo).
-      - name: Schedule next attempt (if data still missing)
-        if: always()
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          NOW=$(TZ=Europe/Vilnius date +%H%M)
-          if [ "$NOW" -lt 1300 ] || [ "$NOW" -ge 1930 ]; then
-            echo "Ne rinkimo laikas ($NOW) – kito bandymo neplanuojame."; exit 0
-          fi
-          if ! python update.py status 2>/dev/null | grep -q "trūksta"; then
-            echo "Visi II pakopos duomenys surinkti – kito bandymo nereikia."; exit 0
-          fi
-          echo "Dar trūksta duomenų – kitas bandymas po 30 min."
-          sleep 1800
-          gh workflow run update.yml --ref main
