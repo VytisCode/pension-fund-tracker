@@ -1,63 +1,4 @@
-10-08 14:35, laukiama diena: 2026-10-07
-  ! Artea pensija 2003-2009: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-09-22 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-09-23 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-09-24 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-09-25 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-22 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-23 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-24 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-25 – praleista
-ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-10-07
-ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-10-07
-GOINDEX: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-07
-
-III pakopa – Vilnius: 2026-10-08 14:36, laukiama diena: 2026-10-07
-ARTEA: gauta 22938 eil., nauja/pakeista 5; viskas iki 2026-10-07
-GOINDEX: gauta 2 eil., nauja/pakeista 2; viskas iki 2026-10-07
-
-Vilnius: 2026-10-08 14:36, laukiama diena: 2026-10-07
-SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-SWEDBANK: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-07
-LUMINOR: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: jau atnaujinta iki 2026-10-07
-
-III pakopa – Vilnius: 2026-10-08 14:38, laukiama diena: 2026-10-07
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
-SWEDBANK: gauta 6 eil., nauja/pakeista 6; viskas iki 2026-10-07
-LUMINOR: gauta 5 eil., nauja/pakeista 0; dar trūksta: Luminor ateitis 58+, Luminor ateitis 50–58, Luminor ateitis 16–50, Luminor tvari ateitis index, Luminor ateitis akcijų index
-
-Vilnius: 2026-10-08 15:10, laukiama diena: 2026-10-07
-SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-SWEDBANK: jau atnaujinta iki 2026-10-07
-LUMINOR: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: jau atnaujinta iki 2026-10-07
-
-III pakopa – Vilnius: 2026-10-08 15:11, laukiama diena: 2026-10-07
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+ta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-10-07
 LUMINOR: gauta 5 eil., nauja/pakeista 0; dar trūksta: Luminor ateitis 58+, Luminor ateitis 50–58, Luminor ateitis 16–50, Luminor tvari ateitis index, Luminor ateitis akcijų index
 
@@ -249,4 +190,64 @@ III pakopa – Vilnius: 2026-10-13 14:19, laukiama diena: 2026-10-12
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: gauta 6 eil., nauja/pakeista 6; viskas iki 2026-10-12
 LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-10-12
+
+Vilnius: 2026-10-13 14:46, laukiama diena: 2026-10-12
+  ! Artea pensija 2003-2009: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-01 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-01 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-01 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-01 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-01 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-01 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-25 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-28 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-29 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-09-30 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-01 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-25 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-28 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-29 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-09-30 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-01 – praleista
+ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-10-12
+ALLIANZ: jau atnaujinta iki 2026-10-12
+GOINDEX: jau atnaujinta iki 2026-10-12
+
+III pakopa – Vilnius: 2026-10-13 14:46, laukiama diena: 2026-10-12
+ARTEA: gauta 22953 eil., nauja/pakeista 5; viskas iki 2026-10-12
+GOINDEX: jau atnaujinta iki 2026-10-12
+
+Vilnius: 2026-10-13 14:46, laukiama diena: 2026-10-12
+SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+SWEDBANK: jau atnaujinta iki 2026-10-12
+LUMINOR: jau atnaujinta iki 2026-10-12
+GOINDEX: jau atnaujinta iki 2026-10-12
+
+III pakopa – Vilnius: 2026-10-13 14:47, laukiama diena: 2026-10-12
+SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+SWEDBANK: jau atnaujinta iki 2026-10-12
+LUMINOR: jau atnaujinta iki 2026-10-12
 
