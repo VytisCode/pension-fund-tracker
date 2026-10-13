@@ -446,6 +446,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz D1 gimusiems 2003-2009 m.,1.2162,2084379.52,
 2026-10-08,ALLIANZ,Allianz D1 gimusiems 2003-2009 m.,1.2096,2073144.45,
 2026-10-09,ALLIANZ,Allianz D1 gimusiems 2003-2009 m.,1.2141,2081101.04,
+2026-10-12,ALLIANZ,Allianz D1 gimusiems 2003-2009 m.,1.2175,2086982.33,
 2019-01-02,ALLIANZ,Allianz S turto išsaugojimo,1.0,,
 2019-01-03,ALLIANZ,Allianz S turto išsaugojimo,1.0,,
 2019-01-04,ALLIANZ,Allianz S turto išsaugojimo,1.0,,
@@ -2402,6 +2403,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz S turto išsaugojimo,1.175,30426602.98,
 2026-10-08,ALLIANZ,Allianz S turto išsaugojimo,1.1739,30377428.12,
 2026-10-09,ALLIANZ,Allianz S turto išsaugojimo,1.1754,30457083.66,
+2026-10-12,ALLIANZ,Allianz S turto išsaugojimo,1.1757,30486626.37,
 2019-01-02,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.0,,
 2019-01-03,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.0,,
 2019-01-04,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.0,,
@@ -4358,6 +4360,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.4494,154061316.18,
 2026-10-08,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.4472,153674346.68,
 2026-10-09,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.4499,153796990.81,
+2026-10-12,ALLIANZ,Allianz X1 gimusiems 1961-1967 m.,1.4515,153818203.69,
 2019-01-02,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,1.0,,
 2019-01-03,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,1.0,,
 2019-01-04,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,1.0,,
@@ -6314,6 +6317,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,2.003,170945020.4,
 2026-10-08,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,1.9949,170253930.58,
 2026-10-09,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,1.9983,170529949.75,
+2026-10-12,ALLIANZ,Allianz X2 gimusiems 1968-1974 m.,2.0023,170884527.57,
 2019-01-02,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,1.0,,
 2019-01-03,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,1.0,,
 2019-01-04,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,1.0,,
@@ -8270,6 +8274,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,2.3082,176940815.49,
 2026-10-08,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,2.2967,176063879.31,
 2026-10-09,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,2.3016,176408160.4,
+2026-10-12,ALLIANZ,Allianz X3 gimusiems 1975-1981 m.,2.309,176918737.51,
 2019-01-02,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,1.0,,
 2019-01-03,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,1.0,,
 2019-01-04,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,1.0,,
@@ -10226,6 +10231,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,2.3485,144594262.32,
 2026-10-08,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,2.3353,143812110.76,
 2026-10-09,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,2.3401,144061337.34,
+2026-10-12,ALLIANZ,Allianz Y1 gimusiems 1982-1988 m.,2.3482,144536340.52,
 2019-01-02,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,1.0,,
 2019-01-03,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,1.0,,
 2019-01-04,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,1.0,,
@@ -12182,6 +12188,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,2.3409,77262517.04,
 2026-10-08,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,2.3254,76738548.61,
 2026-10-09,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,2.3313,76942186.52,
+2026-10-12,ALLIANZ,Allianz Y2 gimusiems 1989-1995 m.,2.3377,77154902.52,
 2019-01-02,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,1.0,,
 2019-01-03,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,1.0,,
 2019-01-04,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,1.0,,
@@ -14138,6 +14145,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,2.3358,30884505.27,
 2026-10-08,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,2.3221,30706336.8,
 2026-10-09,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,2.3287,30809493.45,
+2026-10-12,ALLIANZ,Allianz Y3 gimusiems 1996-2002 m.,2.3337,30868337.67,
 2019-01-02,ARTEA,Artea pensija 1961-1967,1,0,
 2019-01-03,ARTEA,Artea pensija 1961-1967,1,0,
 2019-01-04,ARTEA,Artea pensija 1961-1967,1,0,
@@ -29556,6 +29564,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 1961-1967,1.2732,9523159.07,
 2026-10-08,GOINDEX,Goindex pensija 1961-1967,1.2711000000000001,9522895.97,
 2026-10-09,GOINDEX,Goindex pensija 1961-1967,1.2731,9553822.68,
+2026-10-12,GOINDEX,Goindex pensija 1961-1967,1.2737,9550776.61,
 2022-08-22,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
@@ -30597,6 +30606,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 1968-1974,1.6379000000000001,33141237.83,
 2026-10-08,GOINDEX,Goindex pensija 1968-1974,1.63,33024764.31,
 2026-10-09,GOINDEX,Goindex pensija 1968-1974,1.6360000000000001,33191928.29,
+2026-10-12,GOINDEX,Goindex pensija 1968-1974,1.6419000000000001,33316385.62,
 2022-08-22,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
@@ -31638,6 +31648,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 1975-1981,1.6656,50893568.79,
 2026-10-08,GOINDEX,Goindex pensija 1975-1981,1.6566,50604434,
 2026-10-09,GOINDEX,Goindex pensija 1975-1981,1.6637,50847166.89,
+2026-10-12,GOINDEX,Goindex pensija 1975-1981,1.6703999999999999,51108890.34,
 2022-08-22,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
@@ -32679,6 +32690,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 1982-1988,1.6734,53949956.7,
 2026-10-08,GOINDEX,Goindex pensija 1982-1988,1.6644,53652743.29,
 2026-10-09,GOINDEX,Goindex pensija 1982-1988,1.6715,53882266.3,
+2026-10-12,GOINDEX,Goindex pensija 1982-1988,1.6782,54112322.33,
 2022-08-22,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
@@ -33720,6 +33732,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 1989-1995,1.6639,42102183.01,
 2026-10-08,GOINDEX,Goindex pensija 1989-1995,1.655,41890541.96,
 2026-10-09,GOINDEX,Goindex pensija 1989-1995,1.6621000000000001,42194387.48,
+2026-10-12,GOINDEX,Goindex pensija 1989-1995,1.6686999999999999,42375813.86,
 2022-08-22,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
@@ -34761,6 +34774,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 1996-2002,1.6678,23398965.71,
 2026-10-08,GOINDEX,Goindex pensija 1996-2002,1.6588,23273272.64,
 2026-10-09,GOINDEX,Goindex pensija 1996-2002,1.6658,23367588.76,
+2026-10-12,GOINDEX,Goindex pensija 1996-2002,1.6724999999999999,23468013.85,
 2025-01-02,GOINDEX,Goindex pensija 2003-2009,1.0,1093916,1.0
 2025-01-03,GOINDEX,Goindex pensija 2003-2009,1.0,1095326,1.0072
 2025-01-06,GOINDEX,Goindex pensija 2003-2009,1.0022,1097778,1.0032
@@ -35208,6 +35222,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensija 2003-2009,1.2671000000000001,4374157.79,
 2026-10-08,GOINDEX,Goindex pensija 2003-2009,1.2603,4349178.77,
 2026-10-09,GOINDEX,Goindex pensija 2003-2009,1.2657,4367848.97,
+2026-10-12,GOINDEX,Goindex pensija 2003-2009,1.2707,4385278.2,
 2022-08-22,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
@@ -36249,6 +36264,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0841,1423847.2,
 2026-10-08,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0834,1471489.43,
 2026-10-09,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0839,1469190.14,
+2026-10-12,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0834,1481515.27,
 2019-01-02,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
@@ -38204,6 +38220,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.5727,70872189,
 2026-10-08,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.5701,70674140,
 2026-10-09,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.5734,70814579,
+2026-10-12,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.5752,70819832,
 2019-01-02,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,1.0,,
@@ -40159,6 +40176,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,2.1083,87246809,
 2026-10-08,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,2.1012,86936239,
 2026-10-09,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,2.1091,87256814,
+2026-10-12,LUMINOR,Luminor 1968-1974 tikslinės grupės pensijų fondas,2.1137,87442066,
 2019-01-02,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,1.0,,
@@ -42114,6 +42132,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,2.3791,102621789,
 2026-10-08,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,2.3657,102067323,
 2026-10-09,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,2.3797,102635243,
+2026-10-12,LUMINOR,Luminor 1975-1981 tikslinės grupės pensijų fondas,2.3872,102978624,
 2019-01-02,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,1.0,,
@@ -44069,6 +44088,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,2.3813,96500679,
 2026-10-08,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,2.3675,95927651,
 2026-10-09,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,2.3816,96500316,
+2026-10-12,LUMINOR,Luminor 1982-1988 tikslinės grupės pensijų fondas,2.389,96829224,
 2019-01-02,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,1.0,,
@@ -46024,6 +46044,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,2.4009,47950535,
 2026-10-08,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,2.3872,47671404,
 2026-10-09,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,2.4014,47952680,
+2026-10-12,LUMINOR,Luminor 1989-1995 tikslinės grupės pensijų fondas,2.4086,48091828,
 2019-01-02,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,1.0,,
@@ -47979,6 +48000,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,2.4119,17372434,
 2026-10-08,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,2.397,17261841,
 2026-10-09,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,2.4123,17366082,
+2026-10-12,LUMINOR,Luminor 1996-2002 tikslinės grupės pensijų fondas,2.4192,17410764,
 2025-01-02,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.0,,
 2025-01-03,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.0056,,
 2025-01-06,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.0107,,
@@ -48426,6 +48448,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.2495,3678103,
 2026-10-08,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.2416,3653541,
 2026-10-09,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.2493,3676261,
+2026-10-12,LUMINOR,Luminor 2003-2009 tikslinės grupės pensijų fondas,1.2524,3685240,
 2019-01-02,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.0,,
 2019-01-03,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.0,,
 2019-01-04,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.0,,
@@ -50382,6 +50405,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.1638,13363398,
 2026-10-08,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.1619,13389582,
 2026-10-09,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.1639,13395253,
+2026-10-12,LUMINOR,Luminor pensijų turto išsaugojimo fondas,1.1645,13406455,
 2018-12-28,SEB,SEB pensija 1961-1967,1.0,,100.0
 2018-12-31,SEB,SEB pensija 1961-1967,1.0,,100.0
 2019-01-01,SEB,SEB pensija 1961-1967,1.0,,100.0
@@ -67019,6 +67043,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 1961-1967,1.5345,299813689.61,
 2026-10-08,SWEDBANK,Swedbank pensija 1961-1967,1.5334,299319947.21,
 2026-10-09,SWEDBANK,Swedbank pensija 1961-1967,1.5359,299378952,
+2026-10-12,SWEDBANK,Swedbank pensija 1961-1967,1.5373,299266570.6,
 2018-12-31,SWEDBANK,Swedbank pensija 1968-1974,0.9692,,
 2019-01-02,SWEDBANK,Swedbank pensija 1968-1974,0.9706,,
 2019-01-03,SWEDBANK,Swedbank pensija 1968-1974,0.9582,,
@@ -68976,6 +69001,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 1968-1974,1.9986,366045999.27,
 2026-10-08,SWEDBANK,Swedbank pensija 1968-1974,1.9989,366077450.74,
 2026-10-09,SWEDBANK,Swedbank pensija 1968-1974,2.0041,367035883.72,
+2026-10-12,SWEDBANK,Swedbank pensija 1968-1974,2.006,367397773.3,
 2018-12-31,SWEDBANK,Swedbank pensija 1975-1981,0.966,,
 2019-01-02,SWEDBANK,Swedbank pensija 1975-1981,0.9674,,
 2019-01-03,SWEDBANK,Swedbank pensija 1975-1981,0.955,,
@@ -70933,6 +70959,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 1975-1981,2.2704,401831851.75,
 2026-10-08,SWEDBANK,Swedbank pensija 1975-1981,2.2706,401864218.52,
 2026-10-09,SWEDBANK,Swedbank pensija 1975-1981,2.2789,403249970.78,
+2026-10-12,SWEDBANK,Swedbank pensija 1975-1981,2.2812,403689224.6,
 2018-12-31,SWEDBANK,Swedbank pensija 1982-1988,0.9685,,
 2019-01-02,SWEDBANK,Swedbank pensija 1982-1988,0.9699,,
 2019-01-03,SWEDBANK,Swedbank pensija 1982-1988,0.9575,,
@@ -72890,6 +72917,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 1982-1988,2.2637,329185560.17,
 2026-10-08,SWEDBANK,Swedbank pensija 1982-1988,2.2655,329440752.29,
 2026-10-09,SWEDBANK,Swedbank pensija 1982-1988,2.2741,330657162.03,
+2026-10-12,SWEDBANK,Swedbank pensija 1982-1988,2.2745,330722170.1,
 2018-12-31,SWEDBANK,Swedbank pensija 1989-1995,0.9697,,
 2019-01-02,SWEDBANK,Swedbank pensija 1989-1995,0.971,,
 2019-01-03,SWEDBANK,Swedbank pensija 1989-1995,0.9585,,
@@ -74847,6 +74875,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 1989-1995,2.2424,213854613.94,
 2026-10-08,SWEDBANK,Swedbank pensija 1989-1995,2.2446,214038934.22,
 2026-10-09,SWEDBANK,Swedbank pensija 1989-1995,2.2531,214827147.69,
+2026-10-12,SWEDBANK,Swedbank pensija 1989-1995,2.2535,214890427.2,
 2018-12-31,SWEDBANK,Swedbank pensija 1996-2002,0.9779,,
 2019-01-02,SWEDBANK,Swedbank pensija 1996-2002,0.9792,,
 2019-01-03,SWEDBANK,Swedbank pensija 1996-2002,0.9666,,
@@ -76804,6 +76833,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 1996-2002,2.2217,65095169.14,
 2026-10-08,SWEDBANK,Swedbank pensija 1996-2002,2.2238,65164676.79,
 2026-10-09,SWEDBANK,Swedbank pensija 1996-2002,2.2324,65431804.62,
+2026-10-12,SWEDBANK,Swedbank pensija 1996-2002,2.2326,65425042.93,
 2024-12-31,SWEDBANK,Swedbank pensija 2003-2009,1.0,,
 2025-01-02,SWEDBANK,Swedbank pensija 2003-2009,1.0,,
 2025-01-03,SWEDBANK,Swedbank pensija 2003-2009,1.0066,,
@@ -77252,6 +77282,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank pensija 2003-2009,1.1975,3968425.56,
 2026-10-08,SWEDBANK,Swedbank pensija 2003-2009,1.1941,3957852.65,
 2026-10-09,SWEDBANK,Swedbank pensija 2003-2009,1.1992,3983337.71,
+2026-10-12,SWEDBANK,Swedbank pensija 2003-2009,1.202,3991161.85,
 2019-01-01,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.0,,
 2019-01-02,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.0,,
 2019-01-03,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.0,,
@@ -79209,3 +79240,4 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-07,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.1848,55972490.91,
 2026-10-08,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.1847,55925182.08,
 2026-10-09,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.1868,55948781.33,
+2026-10-12,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.187,55931231.28,
