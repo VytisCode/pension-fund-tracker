@@ -599,12 +599,69 @@ function renderPeers() {
   document.getElementById('pgNote').textContent = T().pgNote;
 }
 
+/* ---------- 5. valdytojų panašumas (auditas #63) ----------
+   Tos pačios amžiaus grupės fondai poromis. Bendros pozicijos = Σ min(dalis A, dalis B) per tuos pačius vertybinius popierius (ISIN);
+   panašus profilis = Σ min per turto rūšis ir akcijų regionus (kaip 4 lentelėje) – pagauna ir skirtingus ETF tam pačiam indeksui. */
+addStrings({
+  smTitle: 'How similar are the managers’ portfolios', smLead: 'Funds of the same age group compared in pairs. 100 % – identical, 0 % – nothing in common. “Same holdings” counts only identical securities; “similar profile” compares asset types and equity regions, so two different ETFs on the same index count as similar.',
+  smA: 'Same holdings, %', smB: 'Similar profile, %', smAvg: 'Average with the others', smUniq: (m, v) => v === '0,0' || v === '0.0' ? `Most distinctive: <b>${m}</b> – it has no holdings in common with the other managers.` : `Most distinctive: <b>${m}</b> – on average only ${v} % of its holdings are the same as another manager’s.`,
+  smPair: (a, b, v) => `Most similar pair: <b>${a}</b> and <b>${b}</b> (${v} % same holdings).`, smPairP: (a, b, v) => `By profile the closest are <b>${a}</b> and <b>${b}</b> (${v} %).`,
+  smNote: 'Portfolio shares at the end of the quarter (Bank of Lithuania reports). Profile = equity by region + bonds, alternatives, cash and other. World equity funds are split into regions with approximate MSCI ACWI / MSCI World weights (North America 67/75 %, Europe 15/16.5 %, Japan 5/5.5 %, Asia-Pacific 2.5/3 %, emerging markets 10.5/0 %).',
+}, {
+  smTitle: 'Kiek panašūs valdytojų portfeliai', smLead: 'Tos pačios amžiaus grupės fondai lyginami poromis. 100 % – visiškai vienodi, 0 % – nieko bendro. „Bendros pozicijos“ – tik tie patys vertybiniai popieriai; „panašus profilis“ – turto rūšys ir akcijų regionai, todėl du skirtingi ETF tam pačiam indeksui laikomi panašiais.',
+  smA: 'Bendros pozicijos, %', smB: 'Panašus profilis, %', smAvg: 'Vidutiniškai su kitais', smUniq: (m, v) => v === '0,0' ? `Unikaliausias: <b>${m}</b> – neturi nė vienos bendros pozicijos su kitais valdytojais.` : `Unikaliausias: <b>${m}</b> – vidutiniškai tik ${v} % jo pozicijų sutampa su kito valdytojo.`,
+  smPair: (a, b, v) => `Panašiausia pora: <b>${a}</b> ir <b>${b}</b> (${v} % bendrų pozicijų).`, smPairP: (a, b, v) => `Pagal profilį artimiausi <b>${a}</b> ir <b>${b}</b> (${v} %).`,
+  smNote: 'Portfelio dalys ketvirčio pabaigoje (Lietuvos banko ataskaitos). Profilis = akcijos pagal regioną + obligacijos, alternatyvos, pinigai ir kita. Pasaulio akcijų fondai išskaidomi į regionus apytiksliais MSCI ACWI / MSCI World svoriais (Š. Amerika 67/75 %, Europa 15/16,5 %, Japonija 5/5,5 %, Azija ir Ramusis vand. 2,5/3 %, besivystančios rinkos 10,5/0 %).',
+});
+// pasaulio akcijų fondai išskaidomi į regionus apytiksliais MSCI ACWI / MSCI World svoriais, kad būtų palyginami su tiesiogiai turimomis akcijomis
+const SIM_SPLIT = { glob: { na: 0.67, eu: 0.15, jp: 0.05, ap: 0.025, em: 0.105 }, gdm: { na: 0.75, eu: 0.165, jp: 0.055, ap: 0.03 } };
+function simVectors(f, qi) {
+  const m = f.q[qi], t = f.tot[qi], pos = new Map(), prof = {};
+  m.forEach((x, si) => {
+    const w = x.v / t * 100, s = S[si], b = bucket(s);
+    pos.set(s.isin || 'i' + si, (pos.get(s.isin || 'i' + si) || 0) + w);
+    if (b !== 'eq') { prof['b:' + b] = (prof['b:' + b] || 0) + w; return; }
+    const r = regionOf(s), split = SIM_SPLIT[r];
+    if (split) Object.entries(split).forEach(([k, x]) => { prof['r:' + k] = (prof['r:' + k] || 0) + w * x; }); else prof['r:' + r] = (prof['r:' + r] || 0) + w;
+  });
+  return { pos, prof };
+}
+const overlap = (a, b) => { let s = 0; a.forEach((v, k) => { if (b.has(k)) s += Math.min(v, b.get(k)); }); return s; };
+const overlapO = (a, b) => Object.keys(a).reduce((s, k) => s + Math.min(a[k], b[k] || 0), 0);
+function renderSim() {
+  const groups = [...new Set(FUNDS.filter(f => f.pl === 'II').map(f => f.g))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b));
+  if (!groups.includes(ST.sg)) ST.sg = groups.includes(ST.pg) ? ST.pg : groups[groups.length - 1];
+  if (!(ST.sq >= 0 && ST.sq < NQ)) ST.sq = NQ - 1;
+  const gName = g => g === 'turto' ? T().turto : T().born + ' ' + g.replace('-', '–');
+  const bar = document.getElementById('smBar');
+  bar.innerHTML = field(T().group, `<select id="smG">${groups.map(g => `<option value="${g}"${g === ST.sg ? ' selected' : ''}>${gName(g)}</option>`).join('')}</select>`) + field(T().quarter, quarterSelect('smQ', ST.sq, 0));
+  bar.querySelector('#smG').addEventListener('change', e => { ST.sg = e.target.value; save(); renderSim(); });
+  bar.querySelector('#smQ').addEventListener('change', e => { ST.sq = +e.target.value; save(); renderSim(); });
+  const qi = ST.sq, fs = FUNDS.filter(f => f.pl === 'II' && f.g === ST.sg && f.q[qi] && f.tot[qi]).sort((a, b) => MGRS.indexOf(a.p) - MGRS.indexOf(b.p));
+  const V = fs.map(f => simVectors(f, qi));
+  const A = fs.map((_, i) => fs.map((_, j) => i === j ? 100 : overlap(V[i].pos, V[j].pos)));
+  const B = fs.map((_, i) => fs.map((_, j) => i === j ? 100 : overlapO(V[i].prof, V[j].prof)));
+  const avg = M => M.map((r, i) => r.filter((_, j) => j !== i).reduce((s, x) => s + x, 0) / Math.max(1, r.length - 1));
+  const mat = (M, col) => { const av = avg(M);
+    return `<table class="pft smt"><thead><tr><th class="l"></th>${fs.map(f => `<th>${sw(f.p)}${f.p}</th>`).join('')}<th>${T().smAvg}</th></tr></thead><tbody>`
+      + M.map((r, i) => `<tr><td class="l">${sw(fs[i].p)}${fs[i].p}</td>${r.map((v, j) => i === j ? '<td class="dg">–</td>' : `<td style="background:color-mix(in srgb, ${col} ${Math.round(v * 0.6)}%, transparent)">${num(v, 1)}</td>`).join('')}<td><b>${num(av[i], 1)}</b></td></tr>`).join('') + '</tbody></table>'; };
+  let txt = '';
+  if (fs.length > 2) {
+    const aA = avg(A), u = aA.indexOf(Math.min(...aA)); txt += `<p>${T().smUniq(fs[u].p, num(aA[u], 1))}</p>`;
+    const best = M => { let b = [0, 1]; M.forEach((r, i) => r.forEach((v, j) => { if (i < j && v > M[b[0]][b[1]]) b = [i, j]; })); return b; };
+    const [i, j] = best(A), [k, l] = best(B);
+    txt += `<p>${T().smPair(fs[i].p, fs[j].p, num(A[i][j], 1))} ${T().smPairP(fs[k].p, fs[l].p, num(B[k][l], 1))}</p>`;
+  }
+  document.getElementById('smOut').innerHTML = `<div class="smtxt">${txt}</div><div class="smgrid"><div><h3>${T().smA}</h3><div class="scroll">${mat(A, 'var(--s1)')}</div></div><div><h3>${T().smB}</h3><div class="scroll">${mat(B, 'var(--s3)')}</div></div></div>`;
+  document.getElementById('smNote').textContent = T().smNote;
+}
+
 function renderAll() {
   const qi = NQ - 1, live = FUNDS.filter(f => f.q[qi]), secs = new Set(live.flatMap(f => [...f.q[qi].keys()])).size;
   kpiRow([[T().kpQ, Q[qi]], [T().kpFunds, live.length], [T().kpPos, num(live.reduce((s, f) => s + f.q[qi].size, 0), 0)], [T().kpSecs, num(secs, 0)], [T().kpFrom, Q[0]]]);
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
-  ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderTopChanges(); renderAlt(); renderPeers(); renderFund();
+  ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'smTitle', 'smLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
+  renderTopChanges(); renderAlt(); renderPeers(); renderSim(); renderFund();
 }
 renderHeader('portfolios', renderAll);
 renderAll();
