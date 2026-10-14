@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./docs/**)",
+      "Read(./imports/**)",
+      "Read(./archyvas/IDEAS-iki-2026-10-14.md)",
+      "Read(./data/portfolios.csv)",
+      "Read(./data/nav_history.csv)",
+      "Read(./data/pillar3_history.csv)",
+      "Read(./data/indexes.csv)"
+    ]
+  }
+}
