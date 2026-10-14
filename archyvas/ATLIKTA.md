@@ -10,3 +10,4 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – 14 paketas: puslapis „Valdytojas ir fondas“ (#61 + #64) – valdytojo suvestinė ir vieno fondo kortelė (grąža ir vieta grupėje, mokestis, turtas, rizika, portfelis, 10 didžiausių pozicijų), valdytojo spalvos, vieno A4 lapo spausdinimas.
 - 2026-10-14 – #63: Portfeliuose „Kiek panašūs valdytojų portfeliai“ – bendrų pozicijų ir panašaus profilio matricos amžiaus grupei, unikaliausias valdytojas, panašiausia pora.
 - 2026-10-14 – #59: puslapis „Mėnesio apžvalga“ – bet kuris mėnuo ar ketvirtis: svarbiausi faktai, valdytojai (laikotarpis, YTD, 12 mėn.), grupių lyderiai, turto pokytis (grąža, įmokos, išmokos), III pakopa, portfelių pokyčiai per ketvirtį; spausdinimas PDF.
+- 2026-10-14 – #66: žodynėlis – 29 terminai; paaiškinimas užvedus pelę / palietus stulpelio ar KPI pavadinimą visuose puslapiuose, visas sąrašas puslapyje „Apie“.

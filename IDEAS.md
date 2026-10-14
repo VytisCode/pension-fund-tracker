@@ -42,7 +42,6 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 ### 15. Apžvalgos ir kita
 - **#65** [Kelias į pensiją] ateities scenarijai (pesimistinis/vidutinis/optimistinis). Sodros pensijai pirma ieškoti oficialių prognozių (Sodros skaičiuoklė, ministerijų projekcijos, EK „Ageing Report“, „Pension Adequacy Report“); jei nėra – rodyti tik kaupimo dalį ir pažymėti prielaidas.
-- **#66** Žodynėlis (užuominos ant terminų) – paskutinis.
 
 ## Senesnės patvirtintos idėjos (prieš imant – patikrinti, ar dar aktualu)
 

@@ -946,3 +946,58 @@ function chartTools() {
   });
 }
 if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(chartTools, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
+
+/* ---------- Žodynėlis (auditas #66) ----------
+   Užvedus pelę (telefone – palietus) ant lentelės stulpelio ar KPI pavadinimo su terminu rodomas paaiškinimas.
+   Elemento turinys nekeičiamas (tik title ir klasė), todėl nesugenda kortelės, Excel ir PNG. Visas sąrašas – puslapyje „Apie“ (#glossary). */
+const GLOSS = [
+  { id: 'ret', m: [/^grąža|grąža,|^return/i], lt: ['Grąža', 'Vieneto vertės pokytis per laikotarpį, %. Mokesčiai jau atskaityti. Jei nenurodyta „metinė“ – sukaupta per visą laikotarpį.'], en: ['Return', 'Change in unit value over the period, %. Fees are already deducted. Unless marked “annualised”, it is cumulative over the whole period.'] },
+  { id: 'uv', m: [/vieneto vert|unit value/i], lt: ['Vieneto vertė', 'Vieno fondo vieneto kaina eurais. Valdytojas ją skaičiuoja kasdien: grynieji aktyvai ÷ vienetų skaičius.'], en: ['Unit value', 'Price of one fund unit in euros, calculated daily: net assets ÷ number of units.'] },
+  { id: 'aum', m: [/grynieji aktyvai|^turtas|turtas,|net assets|^assets/i], lt: ['Grynieji aktyvai (AUM)', 'Visų fondo investicijų vertė atėmus įsipareigojimus – kiek dalyvių pinigų valdo fondas.'], en: ['Net assets (AUM)', 'Value of all the fund’s investments minus liabilities – how much of the members’ money the fund manages.'] },
+  { id: 'pp', m: [/p\. ?p\.|, pp\b|\bpp$/i], lt: ['Procentinis punktas (p. p.)', 'Skirtumas tarp dviejų procentų: 12 % ir 10 % skiriasi 2 p. p. (o ne 20 %).'], en: ['Percentage point (pp)', 'Difference between two percentages: 12 % and 10 % differ by 2 pp (not 20 %).'] },
+  { id: 'med', m: [/median/i], lt: ['Mediana', 'Vidurinė reikšmė surikiavus: pusė fondų geriau, pusė blogiau. Mažiau jautri vienam išskirtiniam fondui nei vidurkis.'], en: ['Median', 'The middle value when sorted: half of the funds did better, half worse. Less sensitive to one outlier than the average.'] },
+  { id: 'vol', m: [/svyravim|standartinis nuokryp|volatil|std/i], lt: ['Svyravimas (standartinis nuokrypis)', 'Kiek vidutiniškai grąža nukrypsta nuo savo vidurkio, perskaičiuota metams. Didesnis – vertė šokinėja labiau, rizika didesnė.'], en: ['Volatility (standard deviation)', 'How far returns typically deviate from their average, annualised. Higher means bigger swings and more risk.'] },
+  { id: 'dd', x: /\b1 d\.|1-day|one-day/i, m: [/kritim|drawdown|max fall/i], lt: ['Didžiausias kritimas', 'Didžiausias vieneto vertės sumažėjimas nuo ankstesnio piko iki dugno per laikotarpį, %.'], en: ['Maximum fall (drawdown)', 'The largest drop in unit value from a previous peak to the bottom within the period, %.'] },
+  { id: 'runup', x: /\b1 d\.|1-day|one-day/i, m: [/kilim|run-?up/i], lt: ['Kilimas', 'Didžiausias vieneto vertės padidėjimas nuo žemiausio taško iki vėlesnio piko per laikotarpį, %.'], en: ['Run-up', 'The largest rise in unit value from a low to a later peak within the period, %.'] },
+  { id: 'sharpe', m: [/sharp|šarp/i], lt: ['Sharpe koeficientas', '(Metinė grąža − nerizikinga palūkanų norma €STR) ÷ svyravimas. Rodo, kiek grąžos gauta už prisiimtą riziką; didesnis – geriau.'], en: ['Sharpe ratio', '(Annualised return − risk-free rate €STR) ÷ volatility. Return earned per unit of risk; higher is better.'] },
+  { id: 'cagr', m: [/metinė grąža|annuali[sz]ed|cagr/i], lt: ['Metinė grąža', 'Vidutinė grąža per metus, jei ji būtų buvusi vienoda kasmet: (1 + grąža)^(1 ÷ metai) − 1.'], en: ['Annualised return', 'Average yearly return if it had been the same each year: (1 + return)^(1 ÷ years) − 1.'] },
+  { id: 'ytd', m: [/nuo metų pradžios|^šie metai|ytd|this year/i], lt: ['Nuo metų pradžios (YTD)', 'Grąža nuo praėjusių metų gruodžio 31 d. iki naujausios dienos.'], en: ['Year to date (YTD)', 'Return from 31 December of last year to the latest day.'] },
+  { id: 'lc', m: [/gyvenimo ciklo|life-cycle/i], lt: ['Gyvenimo ciklo fondas', 'II pakopos fondas pagal gimimo metų grupę: jauniems daugiau akcijų, artėjant pensijai rizika automatiškai mažinama. Lyginami tik tos pačios grupės fondai.'], en: ['Life-cycle fund', 'Pillar II fund for a birth-year group: more equities when young, risk reduced automatically towards retirement. Only funds of the same group are compared.'] },
+  { id: 'tif', m: [/turto išsaugojimo|preservation/i], lt: ['Turto išsaugojimo fondas', 'II pakopos fondas pensijos amžių pasiekusiems: daugiausia obligacijos ir pinigai, maža rizika.'], en: ['Asset-preservation fund', 'Pillar II fund for those at pension age: mostly bonds and cash, low risk.'] },
+  { id: 'ter', m: [/\bter\b/i], lt: ['TER (bendrasis išlaidų koeficientas)', 'Fondo, į kurį investuojama (pvz. ETF), metinės išlaidos, % – papildomai prie pensijų fondo valdymo mokesčio.'], en: ['TER (total expense ratio)', 'Annual costs of an underlying fund (e.g. an ETF), % – in addition to the pension fund’s own fee.'] },
+  { id: 'fee', m: [/mokest|^fee|fee,/i], lt: ['Valdymo mokestis', 'Metinis mokestis valdytojui, % turto. Atskaitomas kasdien iš vieneto vertės, todėl grąžoje jau įvertintas.'], en: ['Management fee', 'Annual fee to the manager, % of assets. Deducted daily from the unit value, so already reflected in returns.'] },
+  { id: 'etf', m: [/\betf\b/i], lt: ['ETF', 'Biržoje prekiaujamas fondas, dažniausiai indeksinis (atkartoja indeksą, pvz. MSCI World), su mažomis išlaidomis.'], en: ['ETF', 'Exchange-traded fund, usually an index fund (tracks an index such as MSCI World) with low costs.'] },
+  { id: 'idx', m: [/indeksin|index fund|\bindex\b/i], lt: ['Indeksinis fondas', 'Fondas, kuris ne renkasi akcijas pats, o atkartoja rinkos indeksą. Aktyvus fondas bando indeksą aplenkti.'], en: ['Index fund', 'A fund that tracks a market index instead of picking securities. An active fund tries to beat the index.'] },
+  { id: 'sfdr', m: [/sfdr/i], lt: ['SFDR straipsnis', 'ES tvarumo atskleidimo reglamentas: 6 str. – be tvarumo tikslų, 8 str. – skatina aplinkos ar socialines savybes, 9 str. – turi tvaraus investavimo tikslą.'], en: ['SFDR article', 'EU sustainability disclosure regulation: Article 6 – no sustainability goals, Article 8 – promotes environmental or social characteristics, Article 9 – has a sustainable investment objective.'] },
+  { id: 'ytm', m: [/ytm|pajamingum|yield/i], lt: ['Pajamingumas iki išpirkimo (YTM)', 'Metinė grąža, kurią duotų obligacija, jei būtų laikoma iki išpirkimo ir emitentas sumokėtų viską laiku.'], en: ['Yield to maturity (YTM)', 'Annual return a bond would give if held to maturity and the issuer paid everything on time.'] },
+  { id: 'dur', m: [/trukm|duration/i], lt: ['Modifikuota trukmė', 'Kiek % pasikeistų obligacijos kaina, palūkanoms pasikeitus 1 p. p. Didesnė trukmė – jautresnė palūkanoms.'], en: ['Modified duration', 'How much a bond’s price would change in % if interest rates moved by 1 pp. Longer duration means more rate sensitivity.'] },
+  { id: 'alt', m: [/alternaty|alternative/i], lt: ['Alternatyvios investicijos', 'Privataus kapitalo, nekilnojamojo turto, infrastruktūros ir panašūs fondai – nekotiruojami biržoje, vertinami rečiau.'], en: ['Alternative investments', 'Private equity, real estate, infrastructure and similar funds – not exchange-listed, valued less often.'] },
+  { id: 'risky', m: [/rizikingas turtas|risky assets/i], lt: ['Rizikingas turtas', 'Lietuvos banko skaičiuojama akcijų ir panašaus rizikingo turto dalis fondo portfelyje, %.'], en: ['Risky assets', 'Share of equities and similar risky assets in the fund’s portfolio as reported by the Bank of Lithuania, %.'] },
+  { id: 'em', m: [/besivystanč|emerging/i], lt: ['Besivystančios rinkos (EM)', 'Kinija, Indija, Taivanas, Brazilija ir kt. – didesnio augimo, bet ir didesnės rizikos rinkos.'], en: ['Emerging markets (EM)', 'China, India, Taiwan, Brazil etc. – faster-growing but riskier markets.'] },
+  { id: 'estr', m: [/€str|estr/i], lt: ['€STR', 'Europos centrinio banko skelbiama vienos nakties euro palūkanų norma – naudojama kaip nerizikinga grąža.'], en: ['€STR', 'The euro overnight interest rate published by the ECB – used as the risk-free return.'] },
+  { id: 'real', m: [/reali grąža|infliacij|real return|inflation|vki|cpi/i], lt: ['Reali grąža, infliacija (VKI)', 'Reali grąža = grąža atėmus kainų augimą pagal Lietuvos vartotojų kainų indeksą (VKI).'], en: ['Real return, inflation (CPI)', 'Real return = return after price growth measured by the Lithuanian consumer price index (CPI).'] },
+  { id: 'ann', m: [/anuitet|annuit/i], lt: ['Anuitetas', 'Sodros mokama periodinė išmoka iš II pakopos sukaupto turto iki gyvos galvos (standartinis, paveldimas arba atidėtasis).'], en: ['Annuity', 'Lifelong periodic payment by Sodra from the assets saved in pillar II (standard, inheritable or deferred).'] },
+  { id: 'rr', m: [/pakeitimo norm|replacement/i], lt: ['Pakeitimo norma', 'Pensija ÷ paskutinis atlyginimas, % – kiek pajamų išlieka išėjus į pensiją.'], en: ['Replacement rate', 'Pension ÷ last wage, % – how much income remains after retiring.'] },
+  { id: 'flow', m: [/srautas|įmokos ir perėjim|išmokos|contributions|payouts|flow/i], lt: ['Įmokos, perėjimai ir išmokos', 'Turto pokytis, kurio nepaaiškina grąža: naujos įmokos, perėjimai tarp fondų ir valdytojų, išmokos (2026 m. reformos išmokos – atskirai).'], en: ['Contributions, switches and payouts', 'Change in assets not explained by returns: new contributions, switches between funds and managers, payouts (2026 reform payouts shown separately).'] },
+];
+const glossText = g => (lang === 'lt' ? g.lt : g.en);
+function glossScan() {
+  document.querySelectorAll('th, .kpi > span, .bk > .l, .alloc > span:first-child').forEach(el => {
+    const txt = el.textContent.trim();
+    if (!txt || txt.length > 60 || (el.title && !el.classList.contains('glt'))) return;
+    const g = GLOSS.find(x => !(x.x && x.x.test(txt)) && x.m.some(r => r.test(txt)));
+    if (!g) { if (el.classList.contains('glt')) { el.classList.remove('glt'); el.removeAttribute('title'); } return; }
+    const [h, d] = glossText(g); el.classList.add('glt'); el.title = `${h}: ${d}`;
+  });
+}
+(() => {
+  let tm; const run = () => { clearTimeout(tm); tm = setTimeout(glossScan, 150); };
+  document.addEventListener('DOMContentLoaded', () => { glossScan(); new MutationObserver(run).observe(document.body, { childList: true, subtree: true }); });
+  // telefone title nesimato – palietus terminą parodomas mažas langelis
+  document.addEventListener('click', e => {
+    const old = document.querySelector('.glpop'); if (old) old.remove();
+    const el = e.target.closest && e.target.closest('.glt'); if (!el || !matchMedia('(hover: none)').matches) return;
+    const p = document.createElement('div'); p.className = 'glpop'; p.textContent = el.title; document.body.append(p);
+    const r = el.getBoundingClientRect(); p.style.top = `${scrollY + r.bottom + 6}px`; p.style.left = `${Math.max(8, Math.min(r.left, innerWidth - p.offsetWidth - 8))}px`;
+  });
+})();

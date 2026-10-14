@@ -110,14 +110,15 @@ const SRC_OF = { nav: null, aum: null, p3: 'p3', pf: 'pf', rep: 'lbr', fee: 'fee
 function render() {
   const d = DOC[lang] || DOC.lt, $ = id => document.getElementById(id);
   $('h0').textContent = d.h0; $('lead').textContent = d.lead;
-  $('toc').innerHTML = d.secs.map(s => `<a href="#${s.id}">${s.h}</a>`).join('') + `<a href="#limits">${d.limits}</a>`;
+  $('toc').innerHTML = d.secs.map(s => `<a href="#${s.id}">${s.h}</a>`).join('') + `<a href="#limits">${d.limits}</a><a href="#glossary">${lang === 'lt' ? 'Žodynėlis' : 'Glossary'}</a>`;
   const lastOf = s => {
     if (typeof FRESH === 'undefined') return '';
     if (s.id === 'nav' || s.id === 'aum') return iso(FRESH.top);
     const x = (FRESH.src || []).find(v => v.k === SRC_OF[s.id]); return x ? (x.k === 'cpi' ? iso(x.d).slice(0, 7) : iso(x.d)) : '';
   };
   $('secs').innerHTML = d.secs.map(s => { const l = lastOf(s); return `<section class="card" id="${s.id}"><h2>${s.h}</h2><dl><dt>${d.src}</dt><dd>${s.src}</dd><dt>${d.upd}</dt><dd>${s.upd}</dd>${l ? `<dt>${d.last}</dt><dd>${l}</dd>` : ''}<dt>${d.calc}</dt><dd>${s.calc}</dd><dt>${d.lim}</dt><dd><ul>${s.lim.map(x => `<li>${x}</li>`).join('')}</ul></dd></dl></section>`; }).join('')
-    + `<section class="card" id="limits"><h2>${d.limits}</h2><ul>${d.limitsL.map(x => `<li>${x}</li>`).join('')}</ul></section>`;
+    + `<section class="card" id="limits"><h2>${d.limits}</h2><ul>${d.limitsL.map(x => `<li>${x}</li>`).join('')}</ul></section>`
+    + `<section class="card" id="glossary"><h2>${lang === 'lt' ? 'Žodynėlis' : 'Glossary'}</h2><p class="note">${lang === 'lt' ? 'Tie patys paaiškinimai rodomi užvedus pelę (telefone – palietus) ant punktyru pabrauktų lentelių stulpelių pavadinimų.' : 'The same explanations appear when hovering over (on a phone – tapping) the dotted-underlined column names in tables.'}</p><dl>${GLOSS.map(g => glossText(g)).sort((a, b) => a[0].localeCompare(b[0], T().locale)).map(([h, x]) => `<dt>${h}</dt><dd>${x}</dd>`).join('')}</dl></section>`;
   if (location.hash) { const el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }
 }
 renderHeader('apie', render);
