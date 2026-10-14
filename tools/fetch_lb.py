@@ -140,11 +140,12 @@ def guess():
             if d > today:
                 break
             name = pat.format(d=d, y=d[:4], m=d[4:6], dd=d[6:])
-            for url in (B + name, "https://www.lb.lt/uploads/documents/files/" + name):
+            stem = name[:-5]                  # LB kartais prideda galūnę: pf-portfeliai-20260331_.xlsx, 2_pakopa_rezultatai_20260630_3.xlsx
+            urls = [B + stem + x + ".xlsx" for x in ("", "_", "__", "_1", "__1", "_2", "_3")] + ["https://www.lb.lt/uploads/documents/files/" + name]
+            for url in urls:
                 try:
                     body = get(url)
-                except Exception as e:
-                    print(f"  {name}: {e}")
+                except Exception:
                     continue
                 if body.startswith(MAGIC[".xlsx"]):
                     print(f"  rasta tiesiogiai: {url}")
@@ -153,6 +154,8 @@ def guess():
                     else:
                         other[arch_name(url)] = url
                     break
+            else:
+                print(f"  {name}: dar nepaskelbta arba kitas vardas")
     return found, other
 
 
