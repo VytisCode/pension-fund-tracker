@@ -109,8 +109,8 @@ jobs:
         continue-on-error: true
         run: python -u tools/fetch_pension.py
 
-      # Vidutinis darbo užmokestis ir MMA (Valstybės duomenų agentūra) – tik nauji metai.
-      - name: Average wage and minimum wage (State Data Agency)
+      # Vidutinis darbo užmokestis (Valstybės duomenų agentūra) – tik nauji metai.
+      - name: Average wage (State Data Agency)
         if: always()
         continue-on-error: true
         run: python -u tools/fetch_wages.py
@@ -124,7 +124,7 @@ jobs:
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv data/fees.csv data/portfolios.csv \
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv \
              && [ -z "$(git status --porcelain -- imports/lb_results imports/lb_portfolios imports/lb_fees)" ]; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
@@ -178,7 +178,7 @@ jobs:
           if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
           if [ -f data/security_terms.csv ]; then git add data/security_terms.csv; fi
           if [ -f data/indexes.csv ]; then git add data/indexes.csv; fi
-          git add imports/journey/cpi.csv imports/journey/pensions.csv
+          git add imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv
           git add imports/lb_results imports/lb_portfolios imports/lb_fees data/portfolios.csv data/fees.csv
           if [ -n "$(ls -A imports/lb_archive 2>/dev/null)" ]; then git add imports/lb_archive; fi
           if [ -f data/lb_files.json ]; then git add data/lb_files.json; fi
