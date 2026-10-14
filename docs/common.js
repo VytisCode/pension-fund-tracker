@@ -12,7 +12,7 @@ const I18N = {
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
-    tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
+    foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
     freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
     chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
     periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
@@ -24,7 +24,7 @@ const I18N = {
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
-    tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
+    foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
     periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
@@ -170,7 +170,31 @@ function scrollEdges(sc) {
   sc.classList.toggle('sl', sc.scrollLeft > 1);
   sc.classList.toggle('sr', sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 1);
 }
-{ let q = 0; const later = () => { if (!q) q = requestAnimationFrame(() => { q = 0; fitSticky(); }); };
+// Ilgi paaiškinimai po lentelėmis (auditas #45): matomas pirmas sakinys, likusi dalis – po „Kaip skaityti? ▾“.
+// Puslapiui perrašius pastabą (kalba, laikotarpis), ji suskleidžiama iš naujo; atskleista lieka atskleista.
+const foldOpen = new Set();
+const NO_STOP = /(^|[\s(„“\"])([^\s(„“\"]{1,3}|angl|proc|pvz|plg|apyt)$/i;     // „2025 m.“, „mėn.“, „mln.“, „pvz.“ – ne sakinio pabaiga
+function foldNotes() {
+  document.querySelectorAll('p.note, div.note').forEach((n, i) => {
+    if (n.hidden || n.querySelector('.nt-btn') || n.closest('.tmpanel')) return;
+    const len = n.textContent.length; if (len < 170) return;
+    const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT); let seen = 0, node, at = -1;
+    while (at < 0 && (node = w.nextNode())) {
+      const re = /[.!?](?=\s)/g; let m;
+      while ((m = re.exec(node.data))) if (seen + m.index >= 40 && !NO_STOP.test(node.data.slice(0, m.index))) { at = m.index + 1; break; }
+      if (at < 0) seen += node.data.length;
+    }
+    if (at < 0 || len - seen - at < 60) return;            // vienas ilgas sakinys arba trumpa uodega – nesuskleidžiame
+    const r = document.createRange(); r.setStart(node, at); r.setEnd(n, n.childNodes.length);
+    const rest = document.createElement('span'); rest.className = 'nt-rest'; rest.append(r.extractContents());
+    const key = n.id || 'n' + i, btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'nt-btn';
+    const show = on => { rest.hidden = !on; btn.textContent = on ? T().foldLess : T().foldMore; btn.setAttribute('aria-expanded', on); };
+    btn.addEventListener('click', () => { const on = rest.hidden; if (on) foldOpen.add(key); else foldOpen.delete(key); show(on); });
+    n.append(rest, ' ', btn); show(foldOpen.has(key));
+  });
+}
+{ let q = 0; const later = () => { if (!q) q = requestAnimationFrame(() => { q = 0; foldNotes(); fitSticky(); }); };
   addEventListener('DOMContentLoaded', () => { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); later(); });
   addEventListener('resize', later); }
 function businessDaysBetween(a, b) {      // darbo dienos intervale (a, b]
