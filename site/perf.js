@@ -403,6 +403,7 @@ function renderSummary() {
   if (rows.length) setCap('tSum', spanText(winLabel(P.sumWin), rows));
   $('tSum').innerHTML = `<thead><tr><th style="text-align:left">${T().thGroup}</th><th>${T().thLeader}</th><th>${T().thLagger}</th><th>${T().thSpread}</th><th>${T().thUp1}</th><th>${T().thDn1}</th></tr></thead><tbody>`
     + rows.map(r => `<tr><td style="text-align:left">${groupLabel(r.g)}</td><td>${sw(r.a.p)}${labelOf(r.a.p)} ${fmtP(r.a.r, 2)}</td><td>${sw(r.b.p)}${labelOf(r.b.p)} ${fmtP(r.b.r, 2)}</td><td>${num(r.a.r - r.b.r, 2)}</td><td>${cellMove(r.g, r.anchor, r.end, 1)}</td><td>${cellMove(r.g, r.anchor, r.end, -1)}</td></tr>`).join('') + '</tbody>';
+  cardify($('tSum'));
 }
 
 /* ---------- 1. visos rinkos lentelės ---------- */

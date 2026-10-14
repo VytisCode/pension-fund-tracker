@@ -820,3 +820,23 @@ function kpiII() {                       // II pakopa iš data.js („Rezultatai
   return [[T().kpFunds, fs.length], [T().kpMgrs, DATA.providers.length], [T().kpAssets, kpMoney(live.reduce((s, f) => s + f.assets, 0)), iso(Math.max(...live.map(f => f.assetsDate)))],
     [T().kpFrom, iso(Math.min(...fs.map(f => f.d[0])))], [T().kpUntil, iso(last)]];
 }
+
+/* ---------- Telefone lentelė – kortelėmis (auditas #52) ----------
+   cardify(lentelė): kiekvienam langeliui data-l = jo stulpelio antraštė (ir su kelių eilučių antraštėmis);
+   iki 600 px pločio eilutės rodomos kaip kortelės „antraštė: reikšmė“ (CSS table.cardable). */
+function cardify(tbl) {
+  if (!tbl || !tbl.tHead) return;
+  const grid = [];
+  [...tbl.tHead.rows].forEach((tr, r) => {
+    grid[r] = grid[r] || []; let c = 0;
+    [...tr.cells].forEach(th => {
+      while (grid[r][c] !== undefined) c++;
+      for (let i = 0; i < th.rowSpan; i++) for (let j = 0; j < th.colSpan; j++) { grid[r + i] = grid[r + i] || []; grid[r + i][c + j] = th.textContent.trim(); }
+      c += th.colSpan;
+    });
+  });
+  const n = Math.max(0, ...grid.map(r => r.length)), lab = [];
+  for (let c = 0; c < n; c++) { const parts = []; grid.forEach(r => { const x = r[c]; if (x && !parts.includes(x)) parts.push(x); }); lab[c] = parts.join(' · '); }
+  [...tbl.tBodies].forEach(tb => [...tb.rows].forEach(tr => { let c = 0; [...tr.cells].forEach(td => { if (td.colSpan === 1 && lab[c]) td.dataset.l = lab[c]; c += td.colSpan; }); }));
+  tbl.classList.add('cardable');
+}

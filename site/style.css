@@ -332,3 +332,13 @@ td.soft { background-image: linear-gradient(rgba(255,255,255,.55), rgba(255,255,
 .concl { font-family: "Source Serif 4", Georgia, serif; font-size: 17px; line-height: 1.35; color: var(--text); margin: 26px 0 0; }
 .concl b { font-weight: 650; }
 .concl + .group-h { margin-top: 2px; font-size: 12.5px; font-weight: 500; color: var(--text-3); }
+/* telefone lentelės kortelėmis (auditas #52, common.js cardify) */
+@media (max-width: 600px) {
+  table.cardable { min-width: 0 !important; width: 100%; }
+  table.cardable thead { display: none; }
+  table.cardable tbody tr { display: block; border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; margin: 0 0 8px; }
+  table.cardable tbody tr.gap { display: none; }
+  table.cardable tbody td { display: block; overflow: hidden; border: 0 !important; padding: 3px 0 !important; text-align: right !important; white-space: normal; background: none; }
+  table.cardable tbody td:first-child { font-weight: 600; text-align: left !important; }
+  table.cardable tbody td:not(:first-child)[data-l]::before { content: attr(data-l); float: left; margin-right: 10px; color: var(--text-3); font-weight: 400; }
+}

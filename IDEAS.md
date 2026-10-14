@@ -37,11 +37,6 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
-### 9. Pradžios puslapis ir KPI kortelės
-- **#42** Pradžios puslapis „Šiandien trumpai“ (dabar `index.html` peradresuoja): 3–4 didelės kortelės (metų pradžios lyderis ir atsiliekantis, savaitės pokytis, II pakopos turtas iš viso), 2–3 automatiniai sakiniai, mažos kreivės, nuorodos „Plačiau →“. Remtis savininko „Performance & peers“ vaizdu (žr. sprendimus). Be kreipinių į lankytoją.
-- **#50** KPI kortelės kiekvieno puslapio viršuje (kaip III pakopos puslapyje).
-- **#52** Telefone svarbiausios lentelės (santrauka, AUM) – kortelių režimu.
-
 ### 10. Šviežumas ir šaltiniai
 - **#54** Šviežumo priminimai **visiems duomenims**: LB portfelių ataskaitos, LB rezultatų ir mokesčių failai, ketvirčio AUM, indeksai, €STR. Bendras sąrašas su „kitų laukiama iki“ datomis ir viena juosta puslapio viršuje.
 - **#55** Po kiekviena lentele smulki eilutė: „Šaltinis: …, data · Metodika →“.

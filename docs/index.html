@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<link rel="stylesheet" href="style.css?v=71ea37a0">
+<link rel="stylesheet" href="style.css?v=9e2382ec">
 <style>
   .today { display: grid; gap: 14px; }
   .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
@@ -44,8 +44,8 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=10feb26a"></script>
-<script src="common.js?v=d01844bd"></script>
+<script src="data.js?v=94628d7c"></script>
+<script src="common.js?v=6df9ad86"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
@@ -138,6 +138,7 @@ function render() {
   const sw = id => `<i style="background:${colorOf(id)}"></i>`;
   $('gT').innerHTML = `<thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th>${R ? `<th class="n">${labelOf(REF)}</th>` : ''}</tr></thead><tbody>`
     + [...c.groups].reverse().map(g => { const a = g.xs[0], b = g.xs[g.xs.length - 1]; return `<tr><td>${groupLabel(g.g)}</td><td>${sw(a[0])}${labelOf(a[0])}</td><td class="n">${pct(a[1])}</td><td>${sw(b[0])}${labelOf(b[0])}</td><td class="n">${pct(b[1])}</td><td class="n">${num(g.gap, 2)}</td>${R ? `<td class="n">${g.out[REF] == null ? '–' : pct(g.out[REF])}</td>` : ''}</tr>`; }).join('') + '</tbody>';
+  cardify($('gT'));
   $('foot').textContent = t.foot;
 }
 document.getElementById('ref').addEventListener('change', e => { REF = e.target.value; saveRef(); render(); });

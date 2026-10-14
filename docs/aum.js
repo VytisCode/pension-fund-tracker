@@ -219,6 +219,7 @@ function renderGrowth() {
     <tr>${pers.map(() => `<th class="bl">${lang === 'lt' ? 'mln. €' : '€ m'}</th><th>%</th>`).join('')}</tr></thead><tbody>`
     + rows.map((r, i) => line(sw(r.m) + MLABEL[r.m], vals[i])).join('') + (rows.length > 1 ? line(T().total, tot, true) : '') + '</tbody>';
   document.getElementById('gtNote').textContent = T().gtNote;
+  cardify(document.getElementById('gtTable'));
 }
 
 /* ---------- 2b. turtas ketvirčių pabaigose pagal fondą ---------- */
