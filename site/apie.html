@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Pensijų fondų sekimas</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .doc { display: grid; gap: 14px; max-width: 980px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
+  .doc section { scroll-margin-top: 90px; }
+  .doc h2 { margin-bottom: 8px; }
+  .doc dl { display: grid; grid-template-columns: 150px 1fr; gap: 6px 14px; margin: 0; font-size: 14px; line-height: 1.5; }
+  .doc dt { color: var(--text-3); }
+  .doc dd { margin: 0; }
+  .doc ul { margin: 0; padding-left: 18px; }
+  .doc code { font-size: 13px; background: var(--hover); padding: 1px 4px; border-radius: 4px; }
+  @media (max-width: 600px) { .doc dl { grid-template-columns: 1fr; gap: 2px; } .doc dd { margin-bottom: 8px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <main class="doc">
+    <section class="card"><h2 id="h0"></h2><p id="lead"></p><nav class="toc" id="toc"></nav></section>
+    <div class="doc" id="secs"></div>
+  </main>
+  <footer id="foot"></footer>
+</div>
+<script src="common.js"></script>
+<script>
+/* „Apie ir metodika“ (auditas #53, #57): iš kur kiekvienas duomuo, kaip dažnai atnaujinama, formulės, prielaidos, žinomi apribojimai.
+   Skyrių id naudojami nuorodose „Metodika →“ po lentelėmis (common.js srcLines). Be nuorodų į kodą. */
+const DOC = {
+lt: {
+  h0: 'Apie ir metodika', lead: 'Kiekvienam duomeniui – iš kur jis gaunamas, kaip dažnai atnaujinamas, kaip skaičiuojama ir ką reikia žinoti. Po kiekviena svetainės lentele yra nuoroda į atitinkamą skyrių.',
+  src: 'Šaltinis', upd: 'Atnaujinama', calc: 'Skaičiavimas', lim: 'Žinomi apribojimai', last: 'Paskutiniai duomenys',
+  secs: [
+    { id: 'nav', h: 'II pakopos vieneto vertės ir grąža', src: 'Valdytojų (Allianz, Artea, Goindex, Luminor, SEB, Swedbank) svetainės ir viešos duomenų sąsajos; istorija nuo 2018-12 – valdytojų failai.',
+      upd: 'Darbo dienomis po pietų kas 30 min. ir kitą rytą (jei vertė dar nepaskelbta).',
+      calc: 'Grąža = paskutinė vieneto vertė ÷ vertė laikotarpio pradžioje − 1. Vertės jau po valdymo mokesčio, todėl mokesčiai antrą kartą neatimami. Metinė grąža = (1 + grąža)^(365,25 ÷ dienos) − 1. Valdytojo grąža – jo 7 gyvenimo ciklo fondų vidurkis. Fondai lyginami tik savo gimimo metų grupėje; turto išsaugojimo – tarpusavyje. Laikotarpio pabaiga – bendra paskutinė visų atnaujintų valdytojų diena.',
+      lim: ['Valdytojai vertes skelbia skirtingu metu; vėluojantis valdytojas pažymimas antraštėje, o jo grąža skaičiuojama iki jo paskutinės dienos.', 'Luminor svetainė dažnai blokuoja automatinį skaitymą – vertės kartais ateina vėliau.', '2003–2009 fondai pradėti 2025-01-02 už 1,00 € – jų grąža skaičiuojama nuo pirmos vertės.', 'Reali grąža (be infliacijos) naudoja paskutinį paskelbtą VKI, jei naujausio mėnesio dar nėra.'] },
+    { id: 'aum', h: 'Grynieji aktyvai (AUM) ir reformos išmokos', src: 'Valdytojų skelbiami fondų grynieji aktyvai (kasdien); trūkstamos 2026 m. dienos – savininko pateiktas failas.',
+      upd: 'Kartu su vieneto vertėmis.',
+      calc: 'Pinigų srautas = aktyvai dabar − aktyvai vakar × (vieneto vertė dabar ÷ vieneto vertė vakar), t. y. aktyvų pokytis, kurio nepaaiškina grąža. Reformos išmokų diena – didelis neigiamas srautas; dalis = srautas ÷ aktyvai prieš išmoką (perskaičiuoti pagal vertės pokytį).',
+      lim: ['Įprastos įmokos ir perėjimai tarp fondų taip pat patenka į srautą – išmokų dienomis jų įtaka maža.', 'III pakopos Swedbank fondų kasdienių aktyvų nėra.'] },
+    { id: 'p3', h: 'III pakopa', src: 'Valdytojų svetainės ir duomenų sąsajos (22 fondai); Goindex, SEB ir Luminor istorija – savininko pateikti failai.',
+      upd: 'Darbo dienomis kartu su II pakopa.',
+      calc: 'Kaip II pakopoje; fondai grupuojami pagal LB kategoriją: obligacijų, mišraus investavimo, akcijų. Svyravimas – mėnesio grąžų standartinis nuokrypis × √12 per 36 mėn.',
+      lim: ['Goindex skelbia tik paskutinę vertę – istorija priklauso nuo savininko failų.', 'Kai kurie fondai įsteigti vėliau – ilgų laikotarpių grąžos jiems nėra.'] },
+    { id: 'pf', h: 'Portfeliai ir pusmečio ataskaitų lentelės', src: 'Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos (nuo 2019-09-30); vertybinių popierių pavadinimai – OpenFIGI; fondų savybės (turto klasė, regionas, SFDR, TER) – fondų dokumentai ir viešos ETF duomenų bazės; obligacijų sąlygos – ESMA FIRDS.',
+      upd: 'Kartą per ketvirtį, kai Lietuvos bankas paskelbia ataskaitą (paprastai ~3 mėn. po ketvirčio pabaigos).',
+      calc: 'Pozicijos dalis = vertė ÷ fondo grynieji aktyvai mėnesio pabaigoje. Rūšis: tiesioginės akcijos ir akcijų fondai – akcijos; obligacijos ir obligacijų fondai – vyriausybės (emitentas – valstybė ar jos agentūra) arba įmonių; pinigai, indėliai ir pinigų rinkos fondai – pinigų rinka (likutis iki 100 %). Regionas: besivystančios rinkos – ne MSCI išsivysčiusios šalys (Baltijos akcijos – besivystančios). Rizikingas turtas = akcijos + kitos investicijos. Sutikrinta su 20 SEB pusmečio ataskaitų: grąža, nuokrypis ir 10 didžiausių pozicijų sutampa, rūšių ir regionų dalys skiriasi iki ~1–4 p. p. dėl kelių vertybinių popierių priskyrimo.',
+      lim: ['SFDR straipsnis nežinomas daliai Baltijos privataus kapitalo ir nekilnojamojo turto fondų – jie rodomi eilutėje „Nežinoma“.', 'Tiesioginės akcijos, obligacijos, indėliai ir išvestinės priemonės SFDR neturi – eilutė „Neklasifikuojama“.', 'Valdytojai kai kuriuos Lietuvos obligacijų ir privataus kapitalo fondus savo ataskaitose priskiria kitaip.'] },
+    { id: 'rep', h: 'Ataskaitų lentelės (Lietuvos banko išdėstymas)', src: 'Mėnesio pabaigos vieneto vertės ir lyginamųjų indeksų vertės (valdytojai); rizikingo turto dalis pagal strategiją ir BAR – Lietuvos banko rezultatų ataskaita.',
+      upd: 'Kasdien (vertės); LB rezultatų ataskaita – kartą per ketvirtį.',
+      calc: '6 mėn. ir 1 m. – sukaupta grąža; 3, 5 m. ir nuo pradžios – metinė (metai = mėnesiai ÷ 12). Standartinis nuokrypis – dienų, kai vertė pasikeitė, grąžų imties nuokrypis × √252 (6 mėn. – × √126). Sutampa su LB lentelėmis 0,01 tikslumu.',
+      lim: ['Lyginamojo indekso vertės yra ne visiems fondams ir ne visą laikotarpį – tada langelis tuščias.'] },
+    { id: 'fee', h: 'Mokesčiai', src: 'Lietuvos banko mokesčių suvestinės (II pakopa – 2026-05-15, III pakopa – 2026-01-21); išlaidų rodikliai (BAR, BIK) – LB rezultatų ataskaita.',
+      upd: 'Kai Lietuvos bankas paskelbia naują suvestinę.',
+      calc: 'II pakopos maksimalus valdymo mokestis – įstatymo riba 0,50 % (0,40 %, kai bendrovės turtas > 2,5 mlrd. €). SEB 2026-02-03–2026-05-17 taikė 0,40 % (išskyrus turto išsaugojimo fondą).',
+      lim: ['Startinio mokesčio eurų ribos ir išimtys – tik fondo taisyklėse.'] },
+    { id: 'idx', h: 'Akcijų indeksai', src: 'MSCI World ir MSCI ACWI Net Return EUR (MSCI); S&P 500 Total Return (USD) perskaičiuotas eurais pagal ECB EUR/USD kursą.',
+      upd: 'Kasdien; S&P 500 eurais vėluoja 1–3 dienas.',
+      calc: 'Indekso grąža skaičiuojama kaip fondų. Galima atimti mokestį: vertė × (1 − mokestis)^(dienos ÷ 365,25); numatytasis tipinio ETF mokestis – ACWI ir World 0,20 %, S&P 500 0,07 %.',
+      lim: ['Indeksai neturi mokesčių, todėl be atskaitymo palyginimas fondams nepalankus.'] },
+    { id: 'estr', h: 'Nerizikinga palūkanų norma (€STR)', src: 'Europos centrinis bankas.', upd: 'Kasdien.', calc: 'Naudojama Sharpe koeficientui: (metinė grąža − €STR) ÷ metinis svyravimas.', lim: ['Naudojama paskutinė reikšmė visam laikotarpiui.'] },
+    { id: 'cpi', h: 'Infliacija (VKI)', src: 'Valstybės duomenų agentūra – Lietuvos vartotojų kainų indeksas.', upd: 'Kartą per mėnesį (~mėnesio viduryje už praėjusį mėnesį).', calc: 'Reali grąža = (1 + grąža) ÷ (VKI pabaigoje ÷ VKI pradžioje) − 1.', lim: ['Naujausiam mėnesiui naudojamas paskutinis paskelbtas indeksas.'] },
+    { id: 'journey', h: 'Kelias į pensiją', src: 'Sodra (pensijų dydžiai, datos), Valstybės duomenų agentūra (darbo užmokestis, VKI), įstatymai (įmokų tarifai, valstybės skatinamoji įmoka), fondų vieneto vertės.',
+      upd: 'Kartą per mėnesį arba kai keičiasi įstatymai.', calc: 'Modelis kaupia įmokas pagal tarifus ir fondo grąžą; prielaidos nurodytos puslapio apačioje.',
+      lim: ['Ateities pensijos dydis – modelis, ne prognozė; Sodros pensija priklauso nuo būsimų sprendimų.'] },
+  ],
+  limits: 'Bendri apribojimai', limitsL: ['Duomenys renkami automatiškai iš viešų šaltinių – klaidų pasitaiko; įtartini šuoliai (> 25 % per dieną) atmetami.', 'Tai informacinė medžiaga, ne investavimo rekomendacija.', 'Excel failuose (mygtukai „⤓“ prie lentelių) – pradiniai duomenys ir tikros Excel formulės, kad kiekvieną skaičių būtų galima perskaičiuoti.'],
+},
+en: {
+  h0: 'About and methodology', lead: 'For every piece of data: where it comes from, how often it is updated, how it is calculated and what to keep in mind. Each table on the site links to the matching section.',
+  src: 'Source', upd: 'Updated', calc: 'Calculation', lim: 'Known limitations', last: 'Latest data',
+  secs: [
+    { id: 'nav', h: 'II pillar unit values and returns', src: 'The managers’ (Allianz, Artea, Goindex, Luminor, SEB, Swedbank) websites and public data interfaces; history from 2018-12 – the managers’ files.',
+      upd: 'Business days every 30 min. in the afternoon and the next morning (if a value was not yet published).',
+      calc: 'Return = latest unit value ÷ value at the start of the period − 1. Values are net of the management fee, so fees are not deducted again. Annualised = (1 + return)^(365.25 ÷ days) − 1. A manager’s return is the average of its 7 life-cycle funds. Funds are compared only within their birth-year group; asset-preservation funds among themselves. The period ends on the latest common day of all up-to-date managers.',
+      lim: ['Managers publish at different times; a late manager is flagged in the header and its return runs to its own latest day.', 'Luminor’s website often blocks automated reading – values sometimes arrive later.', '2003–2009 funds started on 2025-01-02 at €1.00 – their return runs from the first value.', 'Real return (after inflation) uses the latest published CPI when the newest month is not out yet.'] },
+    { id: 'aum', h: 'Net assets (AUM) and reform payouts', src: 'Daily net assets published by the managers; missing 2026 days – a file from the owner.', upd: 'Together with unit values.',
+      calc: 'Money flow = assets today − assets yesterday × (unit value today ÷ unit value yesterday), i.e. the change in assets not explained by the return. A reform payout day is a large negative flow; share = flow ÷ assets before the payout (adjusted for the value change).',
+      lim: ['Regular contributions and switches also enter the flow – on payout days their effect is small.', 'There are no daily assets for Swedbank III pillar funds.'] },
+    { id: 'p3', h: 'III pillar', src: 'The managers’ websites and data interfaces (22 funds); Goindex, SEB and Luminor history – files from the owner.', upd: 'Business days, together with the II pillar.',
+      calc: 'As in the II pillar; funds are grouped by the Bank of Lithuania category: bond, mixed, equity. Volatility – standard deviation of monthly returns × √12 over 36 months.',
+      lim: ['Goindex publishes only the latest value – history depends on the owner’s files.', 'Some funds started later – long-period returns are not available for them.'] },
+    { id: 'pf', h: 'Portfolios and half-year report tables', src: 'Bank of Lithuania quarterly pension fund investment reports (from 2019-09-30); security names – OpenFIGI; fund attributes (asset class, region, SFDR, TER) – fund documents and public ETF databases; bond terms – ESMA FIRDS.',
+      upd: 'Once a quarter, when the Bank of Lithuania publishes the report (usually ~3 months after the quarter end).',
+      calc: 'Holding share = value ÷ fund net assets at the month end. Type: direct shares and equity funds – equities; bonds and bond funds – government (issuer is a state or its agency) or corporate; cash, deposits and money market funds – money market (remainder to 100 %). Region: emerging = not an MSCI developed country (Baltic shares count as emerging). Risky assets = equities + other investments. Checked against 20 SEB half-year reports: returns, standard deviation and the top 10 holdings match; type and region shares differ by up to ~1–4 pp because of how a few securities are classified.',
+      lim: ['The SFDR article is unknown for some Baltic private equity and real estate funds – they are shown as “Unknown”.', 'Direct shares, bonds, deposits and derivatives have no SFDR article – row “Not classified”.', 'Managers classify some Lithuanian bonds and private equity funds differently in their own reports.'] },
+    { id: 'rep', h: 'Report tables (Bank of Lithuania layout)', src: 'Month-end unit values and benchmark values (managers); strategy risky share and cost ratio – the Bank of Lithuania results report.', upd: 'Daily (values); the results report – once a quarter.',
+      calc: '6 months and 1 year – cumulative; 3, 5 years and since start – annualised (years = months ÷ 12). Standard deviation – sample standard deviation of daily returns on days when the value changed × √252 (6 months × √126). Matches the Bank of Lithuania tables to 0.01.',
+      lim: ['Benchmark values are missing for some funds and periods – the cell is then empty.'] },
+    { id: 'fee', h: 'Fees', src: 'Bank of Lithuania fee summaries (II pillar 2026-05-15, III pillar 2026-01-21); cost ratios – the results report.', upd: 'When the Bank of Lithuania publishes a new summary.',
+      calc: 'II pillar maximum management fee – the statutory cap of 0.50 % (0.40 % when the company’s assets exceed €2.5 bn). SEB applied 0.40 % from 2026-02-03 to 2026-05-17 (except the asset-preservation fund).', lim: ['Entry fee euro caps and exceptions are only in the fund rules.'] },
+    { id: 'idx', h: 'Equity indices', src: 'MSCI World and MSCI ACWI Net Return EUR (MSCI); S&P 500 Total Return (USD) converted to euros at the ECB EUR/USD rate.', upd: 'Daily; S&P 500 in euros lags 1–3 days.',
+      calc: 'Index returns are calculated like fund returns. A fee can be deducted: value × (1 − fee)^(days ÷ 365.25); default typical ETF fee – ACWI and World 0.20 %, S&P 500 0.07 %.', lim: ['Indices carry no fees, so without a deduction the comparison is unfavourable to funds.'] },
+    { id: 'estr', h: 'Risk-free rate (€STR)', src: 'European Central Bank.', upd: 'Daily.', calc: 'Used for the Sharpe ratio: (annual return − €STR) ÷ annual volatility.', lim: ['The latest value is used for the whole period.'] },
+    { id: 'cpi', h: 'Inflation (CPI)', src: 'State Data Agency – Lithuanian consumer price index.', upd: 'Monthly (~mid-month for the previous month).', calc: 'Real return = (1 + return) ÷ (CPI at end ÷ CPI at start) − 1.', lim: ['For the newest month the latest published index is used.'] },
+    { id: 'journey', h: 'Retirement journey', src: 'Sodra (pension amounts, dates), State Data Agency (wages, CPI), laws (contribution rates, state incentive), fund unit values.', upd: 'Monthly or when laws change.',
+      calc: 'The model accumulates contributions by the rates and the fund return; assumptions are listed at the bottom of the page.', lim: ['The future pension is a model, not a forecast; the Sodra pension depends on future decisions.'] },
+  ],
+  limits: 'General limitations', limitsL: ['Data is collected automatically from public sources – errors happen; implausible jumps (> 25 % a day) are rejected.', 'For information only, not investment advice.', 'The Excel files (“⤓” buttons next to tables) contain the raw data and real Excel formulas so every number can be recalculated.'],
+} };
+const SRC_OF = { nav: null, aum: null, p3: 'p3', pf: 'pf', rep: 'lbr', fee: 'fee2', idx: 'idx', estr: 'estr', cpi: 'cpi' };
+function render() {
+  const d = DOC[lang] || DOC.lt, $ = id => document.getElementById(id);
+  $('h0').textContent = d.h0; $('lead').textContent = d.lead;
+  $('toc').innerHTML = d.secs.map(s => `<a href="#${s.id}">${s.h}</a>`).join('') + `<a href="#limits">${d.limits}</a>`;
+  const lastOf = s => {
+    if (typeof FRESH === 'undefined') return '';
+    if (s.id === 'nav' || s.id === 'aum') return iso(FRESH.top);
+    const x = (FRESH.src || []).find(v => v.k === SRC_OF[s.id]); return x ? (x.k === 'cpi' ? iso(x.d).slice(0, 7) : iso(x.d)) : '';
+  };
+  $('secs').innerHTML = d.secs.map(s => { const l = lastOf(s); return `<section class="card" id="${s.id}"><h2>${s.h}</h2><dl><dt>${d.src}</dt><dd>${s.src}</dd><dt>${d.upd}</dt><dd>${s.upd}</dd>${l ? `<dt>${d.last}</dt><dd>${l}</dd>` : ''}<dt>${d.calc}</dt><dd>${s.calc}</dd><dt>${d.lim}</dt><dd><ul>${s.lim.map(x => `<li>${x}</li>`).join('')}</ul></dd></dl></section>`; }).join('')
+    + `<section class="card" id="limits"><h2>${d.limits}</h2><ul>${d.limitsL.map(x => `<li>${x}</li>`).join('')}</ul></section>`;
+  if (location.hash) { const el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }
+}
+renderHeader('apie', render);
+render();
+addEventListener('load', () => setTimeout(render, 300));   // FRESH įkeliamas atskirai – datos atsiranda po įkėlimo
+</script>
+</body>
+</html>

@@ -37,13 +37,8 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
-### 10. Šviežumas ir šaltiniai
-- **#54** Šviežumo priminimai **visiems duomenims**: LB portfelių ataskaitos, LB rezultatų ir mokesčių failai, ketvirčio AUM, indeksai, €STR. Bendras sąrašas su „kitų laukiama iki“ datomis ir viena juosta puslapio viršuje.
-- **#55** Po kiekviena lentele smulki eilutė: „Šaltinis: …, data · Metodika →“.
-- **#57** Žinomų apribojimų sąrašas „Apie“ puslapyje ir trumpai prie susijusių lentelių.
-
-### 11. „Apie ir metodika“ + Excel su formulėmis (gali užimti 2 ciklus)
-- **#53** Puslapis „Apie ir metodika“: iš kur kiekvienas duomuo, kaip dažnai atnaujinama, formulės, prielaidos, žinomi netikslumai; be nuorodų į kodą ar GitHub. **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. Pradėti nuo „Rezultatų“ heatmap ir rodiklių lentelių.
+### 11. Excel su formulėmis (puslapis „Apie“ jau padarytas 2026-10-14)
+- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. Pradėti nuo „Rezultatų“ heatmap ir rodiklių lentelių.
 
 ### 12. Grafikų eksportas ir naujos diagramos
 - **#67** „Kopijuoti vaizdą“ ir „Atsisiųsti PNG“ prie kiekvieno grafiko (savininkui labai patinka).

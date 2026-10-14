@@ -8,11 +8,13 @@ const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
     siteTitle: 'Pension funds', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
-    navIndex: 'Today', navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
+    navIndex: 'Today', navApie: 'About', srcPfx: 'Source:', srcMeth: 'Methodology →', srcT: { nav: 'managers’ unit values', aum: 'managers’ net assets', p3: 'managers’ III pillar values', pf: 'Bank of Lithuania portfolio reports', rep: 'unit values, benchmarks, Bank of Lithuania results report', idx: 'MSCI, S&P, ECB', journey: 'Sodra, State Data Agency, laws' }, navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
     foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
+    srcLbl: 'Other data:', srcLateLbl: 'overdue:', srcBy: d => `next by ${d}`, srcNext: d => `New data expected by ${d} (approximate)`, srcIrreg: 'Updated when the Bank of Lithuania publishes a new file',
+    srcK: { p3: 'Pillar III', pf: 'LB portfolio reports', lbr: 'LB results report', fee2: 'LB fees (II)', fee3: 'LB fees (III)', idx: 'Indices', estr: '€STR', cpi: 'Inflation (CPI)' },
     freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
     chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
     periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
@@ -20,11 +22,13 @@ const I18N = {
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
     siteTitle: 'Pensijų fondai', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
-    navIndex: 'Šiandien', navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
+    navIndex: 'Šiandien', navApie: 'Apie', srcPfx: 'Šaltinis:', srcMeth: 'Metodika →', srcT: { nav: 'valdytojų vieneto vertės', aum: 'valdytojų grynieji aktyvai', p3: 'valdytojų III pakopos vertės', pf: 'Lietuvos banko portfelių ataskaitos', rep: 'vieneto vertės, lyginamieji indeksai, LB rezultatų ataskaita', idx: 'MSCI, S&P, ECB', journey: 'Sodra, Valstybės duomenų agentūra, įstatymai' }, navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
     foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
+    srcLbl: 'Kiti duomenys:', srcLateLbl: 'vėluoja:', srcBy: d => `kitų laukiama iki ${d}`, srcNext: d => `Naujų duomenų laukiama iki ${d} (apytiksliai)`, srcIrreg: 'Atnaujinama, kai Lietuvos bankas paskelbia naują failą',
+    srcK: { p3: 'III pakopa', pf: 'LB portfelių ataskaitos', lbr: 'LB rezultatų ataskaita', fee2: 'LB mokesčiai (II)', fee3: 'LB mokesčiai (III)', idx: 'Indeksai', estr: '€STR', cpi: 'Infliacija (VKI)' },
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
     periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
@@ -58,6 +62,7 @@ function isOwner() {
 }
 // Navigacijos ikonos (auditas #41): paprastos linijinės, spalva – kaip teksto
 const NAV_ICONS = {
+  apie: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   index: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',
   performance: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   overview: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -67,7 +72,7 @@ const NAV_ICONS = {
   reports: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   journey: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
 };
-const NAV_PAGES = ['index', 'performance', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey'];
+const NAV_PAGES = ['index', 'performance', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'apie'];
 const navKey = p => 'nav' + p[0].toUpperCase() + p.slice(1);
 const svgI = (body, s = 16) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
@@ -251,7 +256,34 @@ function freshRender() {
     ? `<span class="late">${t.lateLbl} ${late.map(p => `${hEsc(p.label)} (${iso(p.d).slice(5)})`).join(', ')} <span class="chev">▾</span></span>`
     : `<span class="ok">${t.allFresh(FRESH.providers.length)} ✓ <span class="chev">▾</span></span>`);
   sb.title = t.freshMore;
-  document.getElementById('fresh').innerHTML = freshnessHTML();
+  const sl = srcLate();
+  if (sl.length) sb.innerHTML += ` <span class="late">· ${t.srcLateLbl} ${sl.map(x => t.srcK[x.k]).join(', ')}</span>`;
+  document.getElementById('fresh').innerHTML = freshnessHTML() + srcHTML();
+  srcLines();
+}
+/* Po lentele – „Šaltinis: …, data · Metodika →“ (auditas #55): elementams su data-src (raktas = „Apie“ skyriaus id) */
+function srcLines() {
+  const t = T(), dOf = k => {
+    if (typeof FRESH === 'undefined') return '';
+    if (k === 'nav' || k === 'aum' || k === 'journey') return iso(FRESH.top);
+    const x = (FRESH.src || []).find(v => v.k === ({ rep: 'lbr' }[k] || k)); return x ? iso(x.d) : '';
+  };
+  document.querySelectorAll('[data-src]').forEach(el => {
+    const k = el.dataset.src; let p = el.querySelector(':scope > p.srcl');
+    if (!p) { p = document.createElement('p'); p.className = 'srcl'; el.append(p); }
+    const d = dOf(k);
+    p.innerHTML = `${t.srcPfx} ${t.srcT[k] || ''}${d ? ', ' + d : ''} · <a href="apie.html#${k}">${t.srcMeth}</a>`;
+  });
+}
+/* Kitų duomenų šviežumas (auditas #54): data ir kada laukiama naujų; pavėlavę – antraštės juostoje */
+const srcToday = () => Math.floor(Date.now() / DAY);
+const srcLate = () => (FRESH.src || []).filter(x => x.next && srcToday() > x.next);
+function srcHTML() {
+  const t = T(); if (!FRESH.src || !FRESH.src.length) return '';
+  return `<div class="fr-src"><span class="fr-l">${t.srcLbl}</span>` + FRESH.src.map(x => {
+    const late = x.next && srcToday() > x.next, d = x.k === 'cpi' ? iso(x.d).slice(0, 7) : iso(x.d);
+    return `<span class="fr${late ? ' late' : ''}" title="${x.next ? t.srcNext(iso(x.next)) : t.srcIrreg}">${t.srcK[x.k]} ${d}${x.next ? ` <small>· ${t.srcBy(iso(x.next))}</small>` : ''}${late ? ' ⚠' : ''}</span>`;
+  }).join('') + '</div>';
 }
 function freshnessHTML() {
   return `<span class="fr-l">${T().freshLbl}</span>` + FRESH.providers.map((p, i) => {

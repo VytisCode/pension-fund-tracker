@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
 <meta name="description" content="Lithuanian pension funds: one manager's report tables">
-<link rel="stylesheet" href="style.css?v=9e2382ec">
+<link rel="stylesheet" href="style.css?v=6829a676">
 <style>
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 920px; }
@@ -44,26 +44,27 @@
 
   <h2 class="sec" id="calTitle"></h2>
   <p class="lead" id="calLead"></p>
-  <section class="card"><div class="scroll"><table class="rt" id="calTable"></table></div><p class="note" id="calNote"></p></section>
+  <section class="card" data-src="rep"><div class="scroll"><table class="rt" id="calTable"></table></div><p class="note" id="calNote"></p></section>
 
   <h2 class="sec" id="monTitle"></h2>
-  <section class="card"><div class="scroll"><table class="rt" id="monTable"></table></div><p class="note" id="monNote"></p></section>
+  <section class="card" data-src="rep"><div class="scroll"><table class="rt" id="monTable"></table></div><p class="note" id="monNote"></p></section>
 
   <h2 class="sec" id="kpiTitle"></h2>
   <p class="lead" id="kpiLead"></p>
   <div class="bar rbar" id="kpiBar"></div>
-  <section class="card"><div class="scroll"><table class="rt" id="kpiTable"></table></div><p class="note" id="kpiNote"></p></section>
+  <section class="card" data-src="rep"><div class="scroll"><table class="rt" id="kpiTable"></table></div><p class="note" id="kpiNote"></p></section>
 
   <h2 class="sec" id="hyTitle"></h2>
   <p class="lead" id="hyLead"></p>
   <div class="bar rbar" id="hyBar"></div>
   <div id="hyBody"></div>
+  <div data-src="pf"></div>
 
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="common.js?v=6df9ad86"></script>
-<script src="data_rep.js?v=7347fbea"></script>
+<script src="common.js?v=95e0c284"></script>
+<script src="data_rep.js?v=3d9fdb35"></script>
 <script src="hy.js?v=83851b25"></script>
 <script src="rep.js?v=74aaa23b"></script>
 </body>

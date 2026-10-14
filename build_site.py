@@ -98,12 +98,12 @@ def main() -> None:
     build_fees()
     build_cpi()
     assets = ("perf.js", "events.js", "style.css", "common.js", "data.js", "data_idx.js", "data_fee.js", "data_cpi.js")
-    for name in ("index.html", "overview.html", "performance.html") + assets[:-4] + ("favicon.svg",):
+    for name in ("index.html", "overview.html", "performance.html", "apie.html") + assets[:-4] + ("favicon.svg",):
         shutil.copyfile(SITE / name, DOCS / name)
     shutil.copytree(SITE / "fonts", DOCS / "fonts", dirs_exist_ok=True)   # šriftai su lietuviškomis raidėmis (Inter, Source Serif 4; OFL licencija)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
     ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}
-    for page in ("index.html", "overview.html", "performance.html"):
+    for page in ("index.html", "overview.html", "performance.html", "apie.html"):
         text = (DOCS / page).read_text(encoding="utf-8")
         for n in assets:
             text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
@@ -116,6 +116,60 @@ def main() -> None:
     build_journey(ver)
 
 
+def sources() -> list:
+    """Šviežumo sąrašas kitiems duomenims (auditas #54): [{k, d (diena), next (diena, kada laukiama naujų; None – nenuspėjama)}].
+    Ketvirtiniai LB failai: laukiama per ~100 d. po kito ketvirčio pabaigos (2026-06-30 failai gauti 2026-10-07)."""
+    import csv as _csv
+    from datetime import date as _date, timedelta
+    dn = lambda d: (d - _date(1970, 1, 1)).days
+    def qnext(d):            # kito ketvirčio pabaiga + 100 d.
+        y, m = (d.year, d.month + 3) if d.month < 10 else (d.year + 1, 3)
+        end = _date(y, m, 30 if m in (6, 9) else 31)
+        return end + timedelta(days=100)
+    out = []
+    def add(k, d, nxt):
+        if d:
+            out.append({"k": k, "d": dn(d), "next": dn(nxt) if nxt else None})
+    def last_line(path):
+        with open(path, "rb") as f:
+            f.seek(max(0, f.seek(0, 2) - 400))
+            return f.read().decode("utf-8", "ignore").strip().splitlines()[-1]
+    iso_ = lambda t: _date.fromisoformat(t[:10])
+    try:
+        d = max(iso_(r["date"]) for r in _csv.DictReader((ROOT / "data" / "pillar3_history.csv").open(encoding="utf-8")) if r["date"])
+        add("p3", d, d + timedelta(days=4))
+    except Exception:
+        pass
+    try:
+        d = iso_(last_line(ROOT / "data" / "portfolios.csv")); add("pf", d, qnext(d))
+    except Exception:
+        pass
+    res = sorted((ROOT / "imports" / "lb_results").glob("2-pakopa-rezultatai-*.xlsx"))
+    if res:
+        t = re.search(r"(\d{8})", res[-1].name).group(1); d = _date(int(t[:4]), int(t[4:6]), int(t[6:])); add("lbr", d, qnext(d))
+    for k, pat in (("fee2", "pf-ii-mokesciai-*.xls"), ("fee3", "PF_III_mokesciai_*.xlsx")):
+        fs = sorted((ROOT / "imports" / "lb_fees").glob(pat))
+        if fs:
+            add(k, iso_(re.search(r"(\d{4}-\d\d-\d\d)", fs[-1].name).group(1)), None)
+    try:
+        last = {}
+        for r in _csv.DictReader((ROOT / "data" / "indexes.csv").open(encoding="utf-8")):
+            last[r["index"]] = max(last.get(r["index"], ""), r["date"])
+        d = iso_(min(last.values())); add("idx", d, d + timedelta(days=6))   # S&P 500 eurais vėluoja keliomis dienomis (ECB kursas)
+    except Exception:
+        pass
+    try:
+        d = iso_(json.loads((ROOT / "data" / "risk_free.json").read_text())["date"]); add("estr", d, d + timedelta(days=4))
+    except Exception:
+        pass
+    try:
+        t = last_line(ROOT / "imports" / "journey" / "cpi.csv")[:7]; y, m = int(t[:4]), int(t[5:7])
+        d = _date(y, m, 1); y2, m2 = (y, m + 2) if m <= 10 else (y + 1, m - 10); add("cpi", d, _date(y2, m2, 15))
+    except Exception:
+        pass
+    return out
+
+
 def build_fresh(groups: list, generated: str) -> None:
     """Antraštės šviežumo eilutė visuose puslapiuose: docs/data_fresh.js (naujausia diena ir kiekvieno valdytojo paskutinė diena).
     Valdytojo diena – seniausia iš jo fondų paskutinių dienų; fondai, neatnaujinti > 30 d. (uždaryti), neskaičiuojami."""
@@ -126,7 +180,7 @@ def build_fresh(groups: list, generated: str) -> None:
         ds = [d for p, d in lasts if p == pid and d >= top - 30]
         if ds:
             prov.append({"id": pid, "label": label, "d": min(ds)})
-    payload = {"top": top, "generated": generated, "providers": prov}
+    payload = {"top": top, "generated": generated, "providers": prov, "src": sources()}
     (DOCS / "data_fresh.js").write_text("var FRESH=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 
