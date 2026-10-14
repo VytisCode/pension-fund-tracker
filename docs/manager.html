@@ -28,9 +28,16 @@
   .alloc .t i { display: block; height: 10px; background: var(--mc); }
   .alloc .n { text-align: right; font-variant-numeric: tabular-nums; }
   .mchart { min-height: 220px; }
+  .pick .pg { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .pick input[type="date"] { padding: 4px 8px; }
+  .apick { margin: 6px 0 8px; }
+  .lgd { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--text-2); margin-top: 6px; }
+  .lgd i { display: inline-block; width: 18px; vertical-align: middle; margin-right: 5px; }
+  .aumt { max-height: 340px; overflow: auto; margin-top: 10px; }
+  .aumt thead th { position: sticky; top: 0; background: var(--card); }
   .mgr .note { color: var(--text-3); font-size: 12px; }
   @media print {
-    .pick { display: none; }
+    .pick, .aumt, .lgd { display: none; }
     .mgr { gap: 8px; }
     .mgr .card { padding: 8px 10px; }
     .mt th, .mt td { padding: 2px 4px; font-size: 10.5px; }
@@ -45,17 +52,20 @@
 <div class="wrap">
   <header id="top"></header>
   <main class="mgr">
-    <div class="pick"><label for="selP" id="selPL"></label><select id="selP"></select><label for="selF" id="selFL"></label><select id="selF"></select><button class="btn" type="button" id="btnA4"></button></div>
+    <div class="pick bar sticky" id="pickBar"><label for="selP" id="selPL"></label><select id="selP"></select><label for="selF" id="selFL"></label><select id="selF"></select>
+      <span class="pg"><label for="dEnd" id="dEndL"></label><input type="date" id="dEnd"><button class="btn" type="button" id="btnLast" hidden></button></span>
+      <span class="pg"><label for="selX" id="selXL"></label><select id="selX"></select><span id="fromW" hidden><label for="dFrom" id="dFromL"></label> <input type="date" id="dFrom"></span></span>
+      <button class="btn" type="button" id="btnA4"></button></div>
     <div class="mband" id="band"></div>
     <div id="body" class="mgr"></div>
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=3606a719"></script>
+<script src="data.js?v=d1b828cb"></script>
 <script src="common.js?v=0ce14994"></script>
-<script src="data_rep.js?v=5cbe3ef2"></script>
+<script src="data_rep.js?v=eee58915"></script>
 <script src="data_pf.js?v=7a086588"></script>
-<script src="data_aum.js?v=d01d5ec0"></script>
-<script src="mgr.js?v=9b63a216"></script>
+<script src="data_aum.js?v=21f4cb13"></script>
+<script src="mgr.js?v=32b45f23"></script>
 </body>
 </html>

@@ -18,6 +18,9 @@ addStrings({
   types: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' },
   hPeers: 'Compared with the group', mPeers: 'Each period ends on the group’s common latest day.', hChart: '3-year return compared with the group', hRisk: 'Risk',
   rVol1: 'Volatility, 1 year', rVol3: 'Volatility, 3 years', rDd3: 'Maximum fall, 3 years', rRisky: 'Risky assets (LB)', rNote: 'Volatility – annualised standard deviation of daily changes; maximum fall – the largest drop from a peak.',
+  dEnd: 'Data to:', selX: 'Extra period:', xNone: 'none', dFrom: 'From', reset: 'Latest',
+  aV: 'Show:', vEur: '€ m', vShare: 'Market share, %', vChg: 'Change over quarter, %', sBoth: 'Pillar II and III', sFII: 'Each pillar II fund', sFIII: 'Each pillar III fund', thDate: 'Date', thSum: 'Total',
+  mShare: 'Market share – of the assets of all managers’ funds of the same pillar on that day.', mChg: 'The change includes contributions, payouts and returns.',
   noPf: 'No portfolio data for this fund.', foot: 'Returns are changes in unit value (fees already deducted), not annualised. Funds are compared only within their group. For information only, not investment advice.',
 }, {
   selP: 'Valdytojas:', selF: 'Rodyti:', allF: 'Valdytojo suvestinė (visi fondai)', optII: 'II pakopa', optIII: 'III pakopa', a4: '🖶 Vieno A4 lapo suvestinė',
@@ -34,6 +37,9 @@ addStrings({
   types: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' },
   hPeers: 'Palyginimas su grupe', mPeers: 'Kiekvienas laikotarpis baigiasi bendra naujausia grupės diena.', hChart: '3 metų grąža, palyginti su grupe', hRisk: 'Rizika',
   rVol1: 'Svyravimas, 1 metai', rVol3: 'Svyravimas, 3 metai', rDd3: 'Didžiausias kritimas, 3 metai', rRisky: 'Rizikingas turtas (LB)', rNote: 'Svyravimas – metinis dienos pokyčių standartinis nuokrypis; didžiausias kritimas – didžiausias sumažėjimas nuo piko.',
+  dEnd: 'Duomenys iki:', selX: 'Papildomas laikotarpis:', xNone: 'nerodyti', dFrom: 'Nuo', reset: 'Naujausi',
+  aV: 'Rodyti:', vEur: 'mln. €', vShare: 'Rinkos dalis, %', vChg: 'Pokytis per ketvirtį, %', sBoth: 'II ir III pakopa', sFII: 'Kiekvienas II pakopos fondas', sFIII: 'Kiekvienas III pakopos fondas', thDate: 'Data', thSum: 'Iš viso',
+  mShare: 'Rinkos dalis – nuo visų valdytojų tos pačios pakopos fondų turto tą dieną.', mChg: 'Pokytis apima įmokas, išmokas ir grąžą.',
   noPf: 'Šio fondo portfelio duomenų nėra.', foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Fondai lyginami tik savo grupėje. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 const $ = id => document.getElementById(id);
@@ -43,18 +49,23 @@ const LC = DATA.groups.filter(g => g.id !== 'turto');
 const median = xs => { const a = xs.filter(x => x != null).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
 const mean = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
 const fmt = (x, p = 2) => x == null ? '–' : num(x, p);
-const ST = { p: 'SEB', f: '' };
-try { const s = JSON.parse(localStorage.getItem('mgrState') || '{}'); if (PROVS.includes(s.p)) { ST.p = s.p; ST.f = s.f || ''; } } catch (e) {}
+const ST = { p: 'SEB', f: '', e: 0, x: '', a: 0, av: 'eur', as: 'both' };   // e – „duomenys iki“ (0 – naujausi), x – papildomas laikotarpis, a – jo pradžia, av/as – turto vaizdas
+try { const s = JSON.parse(localStorage.getItem('mgrState') || '{}'); if (PROVS.includes(s.p)) { ST.p = s.p; ST.f = s.f || ''; } ['x', 'av', 'as'].forEach(k => { if (typeof s[k] === 'string') ST[k] = s[k]; }); if (s.a > 0) ST.a = s.a; } catch (e) {}
+const LATEST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), EARLIEST = Math.min(...LC.flatMap(g => g.funds.map(f => f.d[0])));
+const asOf = () => ST.e && ST.e < LATEST ? ST.e : 0;
+const perLabel = x => x === 'custom' ? `${iso(ST.a)} –` : periodLabel(x);
+const pers = () => ST.x ? [ST.x, ...PERS] : PERS;
 (() => { const h = decodeURIComponent(location.hash.slice(1)); if (!h) return; const k = h.indexOf('/'), p = k < 0 ? h : h.slice(0, k), f = k < 0 ? '' : h.slice(k + 1); if (PROVS.includes(p)) { ST.p = p; ST.f = f || ''; } })();
 function save() { try { localStorage.setItem('mgrState', JSON.stringify(ST)); } catch (e) {} history.replaceState(null, '', '#' + encodeURIComponent(ST.p) + (ST.f ? '/' + encodeURIComponent(ST.f) : '')); }
 
 /* ---------- II pakopa: grąža, vieta ir rizika iš kasdienių verčių (data.js) ---------- */
 const PEER = new Map();                 // grupė+laikotarpis -> {end, rets: {provider: grąža}}
 function peerRets(g, per) {
-  const key = g.id + per; if (PEER.has(key)) return PEER.get(key);
-  const { end, overallLast } = groupEnd(g);
-  const r = presetRangeF(per, end, g.funds, maxAnchorOf(g.funds)), rets = {};
-  g.funds.forEach(f => { const s = f.d[f.d.length - 1] >= overallLast - 5 ? seriesOf(f, r.anchor, r.end) : null; rets[f.provider] = s ? s.ret : null; });
+  const cut = asOf(), key = [g.id, per, cut, ST.a].join('|'); if (PEER.has(key)) return PEER.get(key);
+  let { end, overallLast } = groupEnd(g); if (cut && cut < end) end = cut;
+  const r = per === 'custom' ? { anchor: ST.a, end } : presetRangeF(per, end, g.funds, maxAnchorOf(g.funds)), rets = {};
+  const live = f => { if (!cut) return f.d[f.d.length - 1] >= overallLast - 5; const i = lastOnOrBefore(f, r.end); return i >= 0 && f.d[i] >= r.end - 5; };
+  g.funds.forEach(f => { const s = live(f) && r.anchor < r.end ? seriesOf(f, r.anchor, r.end) : null; rets[f.provider] = s ? s.ret : null; });
   const out = { end: r.end, anchor: r.anchor, rets }; PEER.set(key, out); return out;
 }
 function placeOf(rets, p) {             // vieta (1 – geriausia) ir kiek fondų turi reikšmę
@@ -74,47 +85,94 @@ const repOf = (pl, p, gOrN) => REP.funds.find(x => x.pl === pl && x.p === p && (
 
 /* ---------- III pakopa: mėnesio pabaigos vertės (data_rep.js) ---------- */
 const fundsIII = p => REP.funds.filter(x => x.pl === 'III' && x.p === p).sort((a, b) => ['bond', 'mixed', 'equity'].indexOf(a.g) - ['bond', 'mixed', 'equity'].indexOf(b.g) || a.n.localeCompare(b.n));
-const M3END = (() => { const fs = REP.funds.filter(x => x.pl === 'III'); for (let i = REP.months.length - 1; i >= 0; i--) if (fs.filter(f => f.m[i] != null).length >= fs.length * 0.8) return i; return REP.months.length - 1; })();
-function retIII(f, per) {
-  const e = REP.months[M3END], t = per === 'ytd' ? Math.round(Date.UTC(new Date(e * DAY).getUTCFullYear() - 1, 11, 31) / DAY) : shiftMonths(e, { '1y': 12, '3y': 36, '5y': 60 }[per]);
-  const i0 = REP.months.findIndex(d => Math.abs(d - t) <= 3);
-  return i0 < 0 || f.m[i0] == null || f.m[M3END] == null ? null : (f.m[M3END] / f.m[i0] - 1) * 100;
+const M3E = () => { const fs = REP.funds.filter(x => x.pl === 'III'), cut = asOf(); for (let i = REP.months.length - 1; i >= 0; i--) if ((!cut || REP.months[i] <= cut + 3) && fs.filter(f => f.m[i] != null).length >= fs.length * 0.8) return i; return REP.months.length - 1; };
+const mIdx = t => REP.months.findIndex(d => Math.abs(d - t) <= 3);
+function rangeIII(per) {                 // mėnesio pabaigų indeksai [pradžia, pabaiga] arba null
+  let j = M3E(), t, m; const e = REP.months[j], U = (y, mo) => Math.round(Date.UTC(y, mo, 0) / DAY);
+  if ((m = /^q:(\d{4})-([1-4])$/.exec(per))) { t = U(+m[1], (+m[2] - 1) * 3); const k = mIdx(U(+m[1], +m[2] * 3)); if (k < 0 || k > j) return null; j = k; }
+  else if ((m = /^y:(\d{4})$/.exec(per))) { t = U(+m[1] - 1, 12); const k = mIdx(U(+m[1], 12)); if (k < 0 || k > j) return null; j = k; }
+  else if (per === 'custom') { let k = -1; REP.months.forEach((d, i) => { if (d <= ST.a + 3) k = i; }); return k < 0 || k >= j ? null : [k, j]; }
+  else t = per === 'ytd' ? U(new Date(e * DAY).getUTCFullYear() - 1, 12) : shiftMonths(e, { '1m': 1, '3m': 3, '6m': 6, '1y': 12, '3y': 36, '5y': 60 }[per]);
+  const i0 = mIdx(t); return i0 < 0 ? null : [i0, j];
 }
+function retIII(f, per) { const r = rangeIII(per); return !r || f.m[r[0]] == null || f.m[r[1]] == null ? null : (f.m[r[1]] / f.m[r[0]] - 1) * 100; }
 const peersIII = (f, per) => Object.fromEntries(REP.funds.filter(x => x.pl === 'III' && x.g === f.g).map(x => [x.n, retIII(x, per)]));
 
-/* ---------- turtas ketvirčių pabaigoje (data_aum.js) ---------- */
-function aumSeries(p, pl, only) {
-  const fs = AUM.funds.filter(f => f.p === p && f.pl === pl && (!only || f.n === only));
-  if (!fs.length) return [];
-  const last = Math.max(...fs.map(f => f.d[f.d.length - 1])), first = Math.min(...fs.map(f => f.d[0]));
-  const at = (f, day) => { let v = null; for (let i = 0; i < f.d.length && f.d[i] <= day; i++) if (day - f.d[i] <= 10) v = f.a[i]; return v; };
+/* ---------- turtas ketvirčių pabaigoje (data_aum.js): mln. €, rinkos dalis arba ketvirčio pokytis ---------- */
+const PAL = ['#1f77b4', '#d95f02', '#2ca02c', '#9467bd', '#e7298a', '#8c564b', '#17becf', '#bcbd22', '#7f7f7f', '#e6ab02', '#1b9e77', '#d62728'];
+const aumFs = (p, pl, g, n) => AUM.funds.filter(f => f.pl === pl && (!p || f.p === p) && (!g || f.g === g) && (!n || f.n === n));
+const sumAtN = (fs, d, tol = 10) => { let s = 0, ok = 0; fs.forEach(f => { const i = lastOnOrBefore(f, d); if (i >= 0 && d - f.d[i] <= tol) { s += f.a[i]; ok++; } }); return { s: ok ? s : null, n: ok }; };
+const sumAt = (fs, d, tol) => sumAtN(fs, d, tol).s;   // mln. €
+function qEnds(first, last) {
   const ends = [];
   for (let y = new Date(first * DAY).getUTCFullYear(); ; y++) { let stop = false; for (const m of [3, 6, 9, 12]) { const d = Math.round(Date.UTC(y, m, 0) / DAY); if (d > last) { stop = true; break; } if (d >= first) ends.push(d); } if (stop) break; }
-  ends.push(last);
-  return ends.map(d => { let s = 0, ok = 0; fs.forEach(f => { const v = at(f, d); if (v != null) { s += v; ok++; } }); return ok ? [d, s] : null; }).filter(Boolean);
+  if (ends[ends.length - 1] !== last) ends.push(last);
+  return ends;
 }
-function moneyChart(el, series) {        // paprasta linijinė diagrama mln. € (pradžia nuo nulio)
+const assetsII = (q, gid) => { const cut = asOf(); if (cut) return sumAt(aumFs(q, 'II', gid), cut, 92); const f = DATA.groups.find(g => g.id === gid).funds.find(x => x.provider === q); return f && f.assets ? f.assets / 1e6 : null; };
+const assetsIII = f => asOf() ? sumAt(aumFs(f.p, 'III', null, f.n), asOf(), 92) : f.aum ? f.aum / 1e6 : null;
+function aumLines() {                    // diagramos eilutės pagal pasirinkimą: [{l, c, dash, pl, fs}]
+  const t = T(), p = ST.p;
+  if (ST.f) { const k = ST.f.indexOf(':'), pl = ST.f.slice(0, k), key = ST.f.slice(k + 1); return [{ l: $('selF').selectedOptions[0].textContent, c: 'var(--mc)', pl, fs: pl === 'II' ? aumFs(p, 'II', key) : aumFs(p, 'III', null, key) }]; }
+  if (ST.as === 'II') return [{ l: t.optII, c: 'var(--mc)', pl: 'II', fs: aumFs(p, 'II') }];
+  if (ST.as === 'III') return [{ l: t.optIII, c: 'var(--mc)', pl: 'III', fs: aumFs(p, 'III') }];
+  if (ST.as === 'fII') return fundsII(p).map(({ g }, i) => ({ l: groupLabel(g), c: PAL[i % PAL.length], pl: 'II', fs: aumFs(p, 'II', g.id) }));
+  if (ST.as === 'fIII') return fundsIII(p).map((f, i) => ({ l: f.n, c: PAL[i % PAL.length], pl: 'III', fs: aumFs(p, 'III', null, f.n) }));
+  return [{ l: t.optII, c: 'var(--mc)', pl: 'II', fs: aumFs(p, 'II'), start: 1 }, { l: t.optIII, c: 'var(--mc)', dash: 1, pl: 'III', fs: aumFs(p, 'III') }];   // nuo II pakopos pradžios
+}
+function aumData() {
+  const L = aumLines().filter(x => x.fs.length); if (!L.length) return null;
+  const last = Math.min(asOf() || Infinity, Math.max(...L.flatMap(x => x.fs.map(f => f.d[f.d.length - 1]))));
+  const s0 = L.find(x => x.start), first = Math.min(...(s0 ? [s0] : L).flatMap(x => x.fs.map(f => f.d[0])));
+  const ends = qEnds(first, last), tot = {}, NF = {}, fullN = pl => NF[pl] ??= sumAtN(aumFs(null, pl), last).n;
+  const val = (x, d) => { const v = sumAt(x.fs, d); if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
+  L.forEach(x => { const raw = ends.map(d => val(x, d)); x.raw = raw; x.vals = ST.av === 'chg' ? raw.map((v, i) => i && v != null && raw[i - 1] ? (v / raw[i - 1] - 1) * 100 : null) : raw; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
+  return { L, ends };
+}
+function moneyChart(el, series, unit) {  // paprasta linijinė diagrama (mln. € arba %)
   el.innerHTML = '';
-  const start = series[0].pts.length > 1 ? series[0].pts[0][0] : -Infinity;   // nuo pirmos (II pakopos) eilutės pradžios
-  series = series.map(s => ({ ...s, pts: s.pts.filter(p => p[0] >= start) })).filter(s => s.pts.length > 1);
+  series = series.filter(s => s.pts.length > 1);
   if (!series.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
   const W = el.clientWidth || 600, H = 220, m = { l: 52, r: 12, t: 10, b: 24 };
   const x0 = Math.min(...series.map(s => s.pts[0][0])), x1 = Math.max(...series.map(s => s.pts[s.pts.length - 1][0]));
-  const hi = Math.max(...series.flatMap(s => s.pts.map(p => p[1]))) * 1.06 || 1, ticks = niceTicks(0, hi, 4);
-  const X = d => m.l + (d - x0) / (x1 - x0 || 1) * (W - m.l - m.r), Y = v => m.t + (1 - v / hi) * (H - m.t - m.b);
+  const ys = series.flatMap(s => s.pts.map(p => p[1])), hi = Math.max(0, ...ys) * 1.06 || 1, lo = Math.min(0, ...ys) * 1.06, ticks = niceTicks(lo, hi, 4);
+  const X = d => m.l + (d - x0) / (x1 - x0 || 1) * (W - m.l - m.r), Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${hEsc(T().hAum)}">`;
-  ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--grid)"/><text x="${m.l - 6}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, 0)}</text>`; });
+  ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t === 0 && lo < 0 ? 'var(--text-3)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, unit === 'eur' || Math.abs(hi - lo) > 20 ? 0 : 1)}</text>`; });
   const y0 = new Date(x0 * DAY).getUTCFullYear(), y1 = new Date(x1 * DAY).getUTCFullYear(), step = Math.ceil((y1 - y0 + 1) / 8);
   for (let y = y0 + 1; y <= y1; y += step) { const d = Math.round(Date.UTC(y, 0, 1) / DAY); s += `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${y}</text>`; }
   series.forEach(r => { s += `<polyline fill="none" stroke="${r.c}" stroke-width="2" ${r.dash ? 'stroke-dasharray="5 4"' : ''} points="${r.pts.map(p => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}"/>`; const l = r.pts[r.pts.length - 1]; s += `<circle cx="${X(l[0])}" cy="${Y(l[1])}" r="3" fill="${r.c}"/>`; });
   el.innerHTML = s + '</svg>';
   el._legend = series.map(r => ({ c: r.c, l: r.l, d: r.dash ? '5 4' : '' }));
 }
+function aumHTML() {
+  const t = T(), opt = (id, xs, v) => `<select id="${id}">${xs.map(([k, l]) => `<option value="${k}"${k === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
+  const sc = ST.f ? '' : opt('aS', [['both', t.sBoth], ['II', t.optII], ['III', t.optIII], ['fII', t.sFII], ['fIII', t.sFIII]], ST.as);
+  return `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta" id="aumM"></div><div class="pick apick">${sc}${opt('aV', [['eur', t.vEur], ['share', t.vShare], ['chg', t.vChg]], ST.av)}</div>
+    <div class="mchart" id="aumC"></div><div class="lgd" id="aumL"></div><div class="scroll aumt"><table class="mt" id="aumT"></table></div></section>`;
+}
+function drawAum() {
+  const t = T(), el = $('aumC'); if (!el) return;
+  $('aumM').textContent = t.mAum + (ST.av === 'share' ? ' ' + t.mShare : ST.av === 'chg' ? ' ' + t.mChg : '');
+  const D = aumData();
+  if (!D) { el.innerHTML = `<p class="na">${t.noData}</p>`; $('aumT').innerHTML = $('aumL').innerHTML = ''; return; }
+  moneyChart(el, D.L, ST.av);
+  $('aumL').innerHTML = D.L.length > 1 ? D.L.map(x => `<span><i style="border-top:3px ${x.dash ? 'dashed' : 'solid'} ${x.c}"></i>${hEsc(x.l)}</span>`).join('') : '';
+  const f = v => v == null ? '–' : ST.av === 'eur' ? fmt(v, 1) : ST.av === 'share' ? fmt(v, 2) : pct(v);
+  const tot = D.L.length > 1 && (ST.av === 'eur' || (ST.av === 'share' && D.L.every(x => x.pl === D.L[0].pl)));
+  const sum = i => { const xs = D.L.map(x => x.vals[i]).filter(v => v != null); return xs.length ? xs.reduce((a, b) => a + b, 0) : null; };
+  const rows = D.ends.map((d, i) => ({ d, i })).filter(r => D.L.some(x => x.vals[r.i] != null)).reverse();
+  $('aumT').innerHTML = `<thead><tr><th>${t.thDate}</th>${D.L.map(x => `<th class="n">${hEsc(x.l)}</th>`).join('')}${tot ? `<th class="n">${t.thSum}</th>` : ''}</tr></thead>`
+    + `<tbody>${rows.map(r => `<tr><td>${iso(r.d)}</td>${D.L.map(x => `<td class="n">${f(x.vals[r.i])}</td>`).join('')}${tot ? `<td class="n"><b>${f(sum(r.i))}</b></td>` : ''}</tr>`).join('')}</tbody>`;
+  $('aS')?.addEventListener('change', e => { ST.as = e.target.value; save(); drawAum(); });
+  $('aV').onchange = e => { ST.av = e.target.value; save(); drawAum(); };
+}
 
 /* ---------- portfelis (data_pf.js): naujausias ketvirtis ---------- */
 function portfolio(p, g) {               // g – grupė (vienas fondas) arba null (visi II pakopos fondai)
   const fs = PF.funds.filter(f => f.pl === 'II' && f.p === labelOf(p) && (g ? f.g === g : true));
-  let q = -1; fs.forEach(f => { for (let i = 0; i < f.r.length; i += 4) q = Math.max(q, f.r[i]); });
+  const cut = asOf(), qOk = qi => !cut || Math.round(Date.parse(PF.quarters[qi]) / DAY) <= cut;
+  let q = -1; fs.forEach(f => { for (let i = 0; i < f.r.length; i += 4) if (qOk(f.r[i])) q = Math.max(q, f.r[i]); });
   if (q < 0) return null;
   const by = new Map(); let tot = 0;
   fs.forEach(f => { for (let i = 0; i < f.r.length; i += 4) if (f.r[i] === q) { by.set(f.r[i + 1], (by.get(f.r[i + 1]) || 0) + f.r[i + 3]); tot += f.r[i + 3]; } });
@@ -136,32 +194,34 @@ function renderManager() {
   const t = T(), p = ST.p, ii = fundsII(p), iii = fundsIII(p);
   const all = DATA.groups.flatMap(g => g.funds), last = Math.max(...all.map(f => f.d[f.d.length - 1]));
   const live = all.filter(f => f.assets && f.assetsDate >= last - 10), mine = live.filter(f => f.provider === p);
-  const aII = mine.reduce((s, f) => s + f.assets, 0), aAll = live.reduce((s, f) => s + f.assets, 0), aIII = iii.reduce((s, f) => s + (f.aum || 0), 0);
+  const cut = asOf();
+  let aII = mine.reduce((s, f) => s + f.assets, 0), aAll = live.reduce((s, f) => s + f.assets, 0), aIII = iii.reduce((s, f) => s + (f.aum || 0), 0), aD = Math.max(...mine.map(f => f.assetsDate));
+  if (cut) { aII = (sumAt(aumFs(p, 'II'), cut, 92) || 0) * 1e6; aAll = (sumAt(aumFs(null, 'II'), cut, 92) || 0) * 1e6; aIII = (sumAt(aumFs(p, 'III'), cut, 92) || 0) * 1e6; aD = cut; }
   const ytdM = PROVS.map(q => ({ q, v: mean(LC.map(g => peerRets(g, 'ytd').rets[q])) })).filter(x => x.v != null).sort((a, b) => b.v - a.v);
   const me = ytdM.find(x => x.q === p);
   const feeW = (() => { let s = 0, w = 0; ii.forEach(({ g }) => { const r = repOf('II', p, g.id), f = mine.find(x => x === g.funds.find(y => y.provider === p)); if (r && r.fee != null && f) { s += r.fee * f.assets; w += f.assets; } }); return w ? s / w : null; })();
-  const yNow = new Date(last * DAY).getUTCFullYear(), pay = AUM.payouts.filter(e => e.p === p && e.q.startsWith(yNow + '-')).reduce((s, e) => s + e.flow, 0);
-  kpiRow([[t.kII, kpMoney(aII), iso(Math.max(...mine.map(f => f.assetsDate)))], [t.kShare, fmt(aII / aAll * 100, 1) + pctSfx()],
+  const yNow = new Date((cut || last) * DAY).getUTCFullYear(), pay = AUM.payouts.filter(e => e.p === p && e.q.startsWith(yNow + '-')).reduce((s, e) => s + e.flow, 0);
+  kpiRow([[t.kII, kpMoney(aII), iso(aD)], aAll && [t.kShare, fmt(aII / aAll * 100, 1) + pctSfx()],
     me && [t.kYtd, pct(me.v), t.kYtdS(ytdM.indexOf(me) + 1, ytdM.length)], feeW != null && [t.kFee, fmt(feeW, 2) + pctSfx()],
     pay ? [t.kPay(yNow), kpMoney(-pay * 1e6).replace(/^/, '−')] : null, iii.length && [t.kIII, kpMoney(aIII)]]);
   let h = '';
-  const per2 = PERS.map(per => ({ per, rs: ii.map(({ g }) => peerRets(g, per)) }));
+  const per2 = pers().map(per => ({ per, rs: ii.map(({ g }) => peerRets(g, per)) }));
   const endD = Math.max(...ii.map(({ g }) => peerRets(g, 'ytd').end));
   const cell = (v, pl) => `<td class="n${pl && pl.n > 2 && pl.k === 1 ? ' top' : pl && pl.n > 2 && pl.k === pl.n ? ' bot' : ''}">${v == null ? '–' : pct(v)}${pl ? `<small>${pl.k}/${pl.n}</small>` : ''}</td>`;
   const rows2 = ii.map(({ g, f }, i) => {
     const r = repOf('II', p, g.id), rk = risk(f, endD, 36);
-    return `<tr><td>${groupLabel(g)}</td>${per2.map(x => { const pr = x.rs[i]; return cell(pr.rets[p], placeOf(pr.rets, p)); }).join('')}<td class="n">${r && r.fee != null ? fmt(r.fee) : '–'}</td><td class="n">${f.assets ? fmt(f.assets / 1e6, 1) : '–'}</td><td class="n">${rk ? fmt(rk.vol) : '–'}</td><td class="n">${rk ? fmt(rk.dd) : '–'}</td></tr>`;
+    return `<tr><td>${groupLabel(g)}</td>${per2.map(x => { const pr = x.rs[i]; return cell(pr.rets[p], placeOf(pr.rets, p)); }).join('')}<td class="n">${r && r.fee != null ? fmt(r.fee) : '–'}</td><td class="n">${fmt(assetsII(p, g.id), 1)}</td><td class="n">${rk ? fmt(rk.vol) : '–'}</td><td class="n">${rk ? fmt(rk.dd) : '–'}</td></tr>`;
   }).join('');
-  h += `<section class="card" data-src="nav"><h2>${t.h2}</h2><div class="meta">${t.m2(iso(endD))}</div><div class="scroll"><table class="mt" id="t2"><thead><tr><th>${t.thG}</th>${PERS.map(x => `<th class="n">${T().periods[x]}</th>`).join('')}<th class="n">${t.thFee}</th><th class="n">${t.thAum}</th><th class="n">${t.thVol}</th><th class="n">${t.thDd}</th></tr></thead><tbody>${rows2}</tbody></table></div></section>`;
+  h += `<section class="card" data-src="nav"><h2>${t.h2}</h2><div class="meta">${t.m2(iso(endD))}</div><div class="scroll"><table class="mt" id="t2"><thead><tr><th>${t.thG}</th>${pers().map(x => `<th class="n">${perLabel(x)}</th>`).join('')}<th class="n">${t.thFee}</th><th class="n">${t.thAum}</th><th class="n">${t.thVol}</th><th class="n">${t.thDd}</th></tr></thead><tbody>${rows2}</tbody></table></div></section>`;
   if (iii.length) {
-    const rows3 = iii.map(f => `<tr><td>${hEsc(f.n)}</td><td>${t.cat[f.g] || f.g}</td>${PERS.map(per => { const ps = peersIII(f, per); return cell(ps[f.n], placeOf(ps, f.n)); }).join('')}<td class="n">${f.fee != null ? fmt(f.fee) : '–'}</td><td class="n">${f.aum ? fmt(f.aum / 1e6, 1) : '–'}</td></tr>`).join('');
-    h += `<section class="card" data-src="p3"><h2>${t.h3}</h2><div class="meta">${t.m3(iso(REP.months[M3END]))}</div><div class="scroll"><table class="mt" id="t3"><thead><tr><th>${t.thFund}</th><th>${t.thCat}</th>${PERS.map(x => `<th class="n">${T().periods[x]}</th>`).join('')}<th class="n">${t.thFee}</th><th class="n">${t.thAum}</th></tr></thead><tbody>${rows3}</tbody></table></div></section>`;
+    const rows3 = iii.map(f => `<tr><td>${hEsc(f.n)}</td><td>${t.cat[f.g] || f.g}</td>${pers().map(per => { const ps = peersIII(f, per); return cell(ps[f.n], placeOf(ps, f.n)); }).join('')}<td class="n">${f.fee != null ? fmt(f.fee) : '–'}</td><td class="n">${fmt(assetsIII(f), 1)}</td></tr>`).join('');
+    h += `<section class="card" data-src="p3"><h2>${t.h3}</h2><div class="meta">${t.m3(iso(REP.months[M3E()]))}</div><div class="scroll"><table class="mt" id="t3"><thead><tr><th>${t.thFund}</th><th>${t.thCat}</th>${pers().map(x => `<th class="n">${perLabel(x)}</th>`).join('')}<th class="n">${t.thFee}</th><th class="n">${t.thAum}</th></tr></thead><tbody>${rows3}</tbody></table></div></section>`;
   }
-  h += `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta">${t.mAum}</div><div class="mchart" id="aumC"></div></section>`;
+  h += aumHTML();
   h += pfHTML(portfolio(p, null), t.pfAll);
   $('body').innerHTML = h;
   cardify($('t2')); if ($('t3')) cardify($('t3'));
-  moneyChart($('aumC'), [{ l: t.optII, c: 'var(--mc)', pts: aumSeries(p, 'II') }, { l: t.optIII, c: 'var(--mc)', dash: 1, pts: aumSeries(p, 'III') }]);
+  drawAum();
 }
 
 /* ---------- vienas fondas ---------- */
@@ -171,37 +231,38 @@ function renderFund() {
   if (pl === 'II') {
     const g = DATA.groups.find(x => x.id === key), f = g.funds.find(x => x.provider === p), r = repOf('II', p, key);
     const ytd = peerRets(g, 'ytd'), pl0 = placeOf(ytd.rets, p), end = ytd.end;
-    kpiRow([[t.kUv, num(f.v[f.v.length - 1], 4), iso(f.d[f.d.length - 1])], f.assets && [t.kAs, kpMoney(f.assets), iso(f.assetsDate)],
+    const iu = asOf() ? lastOnOrBefore(f, asOf()) : f.v.length - 1, aF = assetsII(p, key);
+    kpiRow([iu >= 0 && [t.kUv, num(f.v[iu], 4), iso(f.d[iu])], aF && [t.kAs, kpMoney(aF * 1e6), iso(asOf() || f.assetsDate)],
       r && r.fee != null && [t.kFeeF, fmt(r.fee) + pctSfx()], pl0 && [t.kPlace, `${pl0.k} / ${pl0.n}`, pct(ytd.rets[p])]]);
-    const rows = [...PERS, 'max'].map(per => { const x = peerRets(g, per), v = x.rets[p], o = Object.entries(x.rets).filter(([q]) => q !== p).map(([, v]) => v), md = median(o), pl1 = placeOf(x.rets, p);
-      return `<tr><td>${T().periods[per]}<small> ${iso(x.anchor)} – ${iso(x.end)}</small></td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${md == null ? '–' : pct(md)}</td><td class="n">${v == null || md == null ? '–' : (v - md >= 0 ? '+' : '−') + num(Math.abs(v - md), 2)}</td><td class="n">${pl1 ? `${pl1.k} / ${pl1.n}` : '–'}</td></tr>`; }).join('');
+    const rows = [...pers(), 'max'].map(per => { const x = peerRets(g, per), v = x.rets[p], o = Object.entries(x.rets).filter(([q]) => q !== p).map(([, v]) => v), md = median(o), pl1 = placeOf(x.rets, p);
+      return `<tr><td>${perLabel(per)}<small> ${iso(x.anchor)} – ${iso(x.end)}</small></td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${md == null ? '–' : pct(md)}</td><td class="n">${v == null || md == null ? '–' : (v - md >= 0 ? '+' : '−') + num(Math.abs(v - md), 2)}</td><td class="n">${pl1 ? `${pl1.k} / ${pl1.n}` : '–'}</td></tr>`; }).join('');
     const peers = g.funds.map(x => ({ p: x.provider, v: ytd.rets[x.provider], r: repOf('II', x.provider, key), f: x, rk: risk(x, end, 36) })).sort((a, b) => (b.v ?? -1e9) - (a.v ?? -1e9));
-    const prow = peers.map(x => `<tr${x.p === p ? ' class="me"' : ''}><td><i class="sw" style="background:${colorOf(x.p)}"></i>${labelOf(x.p)}</td><td class="n">${x.v == null ? '–' : pct(x.v)}</td><td class="n">${x.r && x.r.fee != null ? fmt(x.r.fee) : '–'}</td><td class="n">${x.f.assets ? fmt(x.f.assets / 1e6, 1) : '–'}</td><td class="n">${x.rk ? fmt(x.rk.vol) : '–'}</td><td class="n">${x.rk ? fmt(x.rk.dd) : '–'}</td></tr>`).join('');
+    const prow = peers.map(x => `<tr${x.p === p ? ' class="me"' : ''}><td><i class="sw" style="background:${colorOf(x.p)}"></i>${labelOf(x.p)}</td><td class="n">${x.v == null ? '–' : pct(x.v)}</td><td class="n">${x.r && x.r.fee != null ? fmt(x.r.fee) : '–'}</td><td class="n">${fmt(assetsII(x.p, key), 1)}</td><td class="n">${x.rk ? fmt(x.rk.vol) : '–'}</td><td class="n">${x.rk ? fmt(x.rk.dd) : '–'}</td></tr>`).join('');
     const r1 = risk(f, end, 12), r3 = risk(f, end, 36);
     h += `<section class="card" data-src="nav"><h2>${t.hPeers} · ${groupLabel(g)}</h2><div class="meta">${t.mPeers}</div><div class="scroll"><table class="mt" id="tp"><thead><tr><th>${t.thPer}</th><th class="n">${labelOf(p)}</th><th class="n">${t.thMed}</th><th class="n">${t.thDiff}</th><th class="n">${t.thPlace}</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
     h += `<div class="two"><section class="card chart-card" data-src="nav"><h2>${t.hChart}</h2><div class="mchart" id="fC"></div></section>
       <section class="card" data-src="nav"><h2>${groupLabel(g)} · ${T().periods.ytd}</h2><div class="scroll"><table class="mt" id="tq"><thead><tr><th>${t.thFund}</th><th class="n">${T().periods.ytd}</th><th class="n">${t.thFee}</th><th class="n">${t.thAum}</th><th class="n">${t.thVol}</th><th class="n">${t.thDd}</th></tr></thead><tbody>${prow}</tbody></table></div>
       <h3>${t.hRisk}</h3><table class="mt"><tbody><tr><td>${t.rVol1}</td><td class="n">${r1 ? fmt(r1.vol) + pctSfx() : '–'}</td></tr><tr><td>${t.rVol3}</td><td class="n">${r3 ? fmt(r3.vol) + pctSfx() : '–'}</td></tr><tr><td>${t.rDd3}</td><td class="n">${r3 ? fmt(r3.dd) + pctSfx() : '–'}</td></tr>${r && r.risky != null ? `<tr><td>${t.rRisky}</td><td class="n">${fmt(r.risky, 1)}${pctSfx()}</td></tr>` : ''}</tbody></table><p class="note">${t.rNote}</p></section></div>`;
-    h += pfHTML(portfolio(p, key), t.pfOne);
+    h += aumHTML() + pfHTML(portfolio(p, key), t.pfOne);
     $('body').innerHTML = h;
-    cardify($('tp')); cardify($('tq'));
+    cardify($('tp')); cardify($('tq')); drawAum();
     const x = peerRets(g, '3y');
     drawLineChart($('fC'), buildSeries(g.funds, x.anchor, x.end), x.anchor, x.end, { height: 260 });
   } else {
     const f = REP.funds.find(x => x.pl === 'III' && x.p === p && x.n === key);
     if (!f) { ST.f = ''; return renderManager(); }
     const ytd = peersIII(f, 'ytd'), pl0 = placeOf(ytd, f.n);
-    kpiRow([[t.kUv, num(f.lv, 4), iso(f.ld)], f.aum && [t.kAs, kpMoney(f.aum), iso(f.aumd)], f.fee != null && [t.kFeeF, fmt(f.fee) + pctSfx()], pl0 && [t.kPlace, `${pl0.k} / ${pl0.n}`, pct(ytd[f.n])]]);
-    const rows = PERS.map(per => { const ps = peersIII(f, per), v = ps[f.n], md = median(Object.entries(ps).filter(([n]) => n !== f.n).map(([, v]) => v)), pl1 = placeOf(ps, f.n);
-      return `<tr><td>${T().periods[per]}</td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${md == null ? '–' : pct(md)}</td><td class="n">${v == null || md == null ? '–' : (v - md >= 0 ? '+' : '−') + num(Math.abs(v - md), 2)}</td><td class="n">${pl1 ? `${pl1.k} / ${pl1.n}` : '–'}</td></tr>`; }).join('');
+    const j3 = M3E(), uv = asOf() ? [f.m[j3], REP.months[j3]] : [f.lv, f.ld], a3 = assetsIII(f);
+    kpiRow([uv[0] != null && [t.kUv, num(uv[0], 4), iso(uv[1])], a3 && [t.kAs, kpMoney(a3 * 1e6), iso(asOf() || f.aumd)], f.fee != null && [t.kFeeF, fmt(f.fee) + pctSfx()], pl0 && [t.kPlace, `${pl0.k} / ${pl0.n}`, pct(ytd[f.n])]]);
+    const rows = pers().map(per => { const ps = peersIII(f, per), v = ps[f.n], md = median(Object.entries(ps).filter(([n]) => n !== f.n).map(([, v]) => v)), pl1 = placeOf(ps, f.n);
+      return `<tr><td>${perLabel(per)}</td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${md == null ? '–' : pct(md)}</td><td class="n">${v == null || md == null ? '–' : (v - md >= 0 ? '+' : '−') + num(Math.abs(v - md), 2)}</td><td class="n">${pl1 ? `${pl1.k} / ${pl1.n}` : '–'}</td></tr>`; }).join('');
     const peers = REP.funds.filter(x => x.pl === 'III' && x.g === f.g).map(x => ({ x, v: ytd[x.n] })).sort((a, b) => (b.v ?? -1e9) - (a.v ?? -1e9));
-    const prow = peers.map(({ x, v }) => `<tr${x === f ? ' class="me"' : ''}><td><i class="sw" style="background:${colorOf(x.p)}"></i>${hEsc(x.n)}</td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${x.fee != null ? fmt(x.fee) : '–'}</td><td class="n">${x.aum ? fmt(x.aum / 1e6, 1) : '–'}</td></tr>`).join('');
-    h += `<section class="card" data-src="p3"><h2>${t.hPeers} · ${t.cat[f.g] || f.g}</h2><div class="meta">${t.m3(iso(REP.months[M3END]))}</div><div class="scroll"><table class="mt" id="tp"><thead><tr><th>${t.thPer}</th><th class="n">${hEsc(f.n)}</th><th class="n">${t.thMed}</th><th class="n">${t.thDiff}</th><th class="n">${t.thPlace}</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+    const prow = peers.map(({ x, v }) => `<tr${x === f ? ' class="me"' : ''}><td><i class="sw" style="background:${colorOf(x.p)}"></i>${hEsc(x.n)}</td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${x.fee != null ? fmt(x.fee) : '–'}</td><td class="n">${fmt(assetsIII(x), 1)}</td></tr>`).join('');
+    h += `<section class="card" data-src="p3"><h2>${t.hPeers} · ${t.cat[f.g] || f.g}</h2><div class="meta">${t.m3(iso(REP.months[M3E()]))}</div><div class="scroll"><table class="mt" id="tp"><thead><tr><th>${t.thPer}</th><th class="n">${hEsc(f.n)}</th><th class="n">${t.thMed}</th><th class="n">${t.thDiff}</th><th class="n">${t.thPlace}</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
     h += `<section class="card" data-src="p3"><h2>${t.cat[f.g] || f.g} · ${T().periods.ytd}</h2><div class="scroll"><table class="mt" id="tq"><thead><tr><th>${t.thFund}</th><th class="n">${T().periods.ytd}</th><th class="n">${t.thFee}</th><th class="n">${t.thAum}</th></tr></thead><tbody>${prow}</tbody></table></div></section>`;
-    h += `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="mchart" id="aumC"></div></section>`;
+    h += aumHTML();
     $('body').innerHTML = h;
-    cardify($('tp')); cardify($('tq'));
-    moneyChart($('aumC'), [{ l: f.n, c: 'var(--mc)', pts: aumSeries(p, 'III', f.n) }]);
+    cardify($('tp')); cardify($('tq')); drawAum();
   }
 }
 
@@ -209,6 +270,13 @@ function render() {
   const t = T(), p = ST.p;
   document.documentElement.style.setProperty('--mc', colorOf(p));
   $('selPL').textContent = t.selP; $('selFL').textContent = t.selF; $('btnA4').textContent = t.a4;
+  $('dEndL').textContent = t.dEnd; $('selXL').textContent = t.selX; $('dFromL').textContent = t.dFrom; $('btnLast').textContent = t.reset;
+  const de = $('dEnd'); de.min = iso(EARLIEST); de.max = iso(LATEST); de.value = iso(asOf() || LATEST); $('btnLast').hidden = !asOf();
+  const co = calOptions(asOf() || LATEST, EARLIEST), o = (k, l) => `<option value="${k}">${l}</option>`;
+  $('selX').innerHTML = o('', t.xNone) + ['1m', '3m', '6m'].map(k => o(k, T().periods[k])).join('') + `<optgroup label="${lang === 'lt' ? 'Ketvirtis' : 'Quarter'}">${co.q.map(k => o(k, periodLabel(k))).join('')}</optgroup><optgroup label="${lang === 'lt' ? 'Metai' : 'Year'}">${co.y.map(k => o(k, periodLabel(k))).join('')}</optgroup>` + o('custom', T().periods.custom);
+  if (![...$('selX').options].some(x => x.value === ST.x)) ST.x = '';
+  $('selX').value = ST.x; $('fromW').hidden = ST.x !== 'custom';
+  if (ST.x === 'custom') { if (!ST.a || ST.a >= (asOf() || LATEST)) ST.a = shiftMonths(asOf() || LATEST, 12); $('dFrom').min = iso(EARLIEST); $('dFrom').max = iso((asOf() || LATEST) - 1); $('dFrom').value = iso(ST.a); }
   $('selP').innerHTML = PROVS.map(q => `<option value="${q}">${labelOf(q)}</option>`).join(''); $('selP').value = p;
   const ii = fundsII(p), iii = fundsIII(p);
   $('selF').innerHTML = `<option value="">${t.allF}</option><optgroup label="${t.optII}">${ii.map(({ g }) => `<option value="II:${g.id}">${labelOf(p)} ${groupLabel(g)}</option>`).join('')}</optgroup>`
@@ -224,6 +292,11 @@ function render() {
 }
 $('selP').addEventListener('change', e => { ST.p = e.target.value; ST.f = ''; save(); render(); });
 $('selF').addEventListener('change', e => { ST.f = e.target.value; save(); render(); });
+const dayIn = v => v ? Math.round(Date.parse(v) / DAY) : 0;
+$('dEnd').addEventListener('change', e => { const d = dayIn(e.target.value); ST.e = d && d < LATEST ? Math.max(d, EARLIEST) : 0; render(); });
+$('btnLast').addEventListener('click', () => { ST.e = 0; render(); });
+$('selX').addEventListener('change', e => { ST.x = e.target.value; save(); render(); });
+$('dFrom').addEventListener('change', e => { const d = dayIn(e.target.value); if (d) { ST.a = d; save(); render(); } });
 $('btnA4').addEventListener('click', () => { const r = document.documentElement; r.dataset.print = 'plain'; r.dataset.printA4 = '1'; setTimeout(() => window.print(), 50); });
 addEventListener('afterprint', () => { delete document.documentElement.dataset.printA4; });
 addEventListener('hashchange', () => { const h = decodeURIComponent(location.hash.slice(1)), k = h.indexOf('/'), p = k < 0 ? h : h.slice(0, k), f = k < 0 ? '' : h.slice(k + 1); if (PROVS.includes(p)) { ST.p = p; ST.f = f || ''; render(); } });
