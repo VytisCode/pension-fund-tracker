@@ -23,11 +23,14 @@ Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `
 **Duomenų rinkimas (Python):** `update.py` (kasdienis rinkimas, `python update.py status`), `sources/*.py` + `base_scraper.py` (valdytojų skaitytuvai), `fund_links.py` (visos nuorodos), `store.py` (įrašymas į `data/nav_history.csv`), `pillar3.py` (III pakopa, `status`), `riskfree.py` (€STR), `indexes.py`, `daily_report.py` (vakarinis laiškas), `notify.py` (ciklo laiškas).
 **Svetainės duomenys:** `build_site.py` generuoja `docs/` iš `site/` + `data/`; dalis duomenų – `aum.py`, `reports.py`, `portfolios.py`, `bonds.py`, `journey.py`.
 **Puslapiai (šaltinis `site/`):** `performance.html`+`perf.js` (Rezultatai), `overview.html`, `pillar3.html`+`p3.js`, `portfolios.html`+`pf.js`, `reports.html`+`rep.js`, `aum.html`+`aum.js`, `journey.html`+`journey.js`+`insights.js`; bendri `common.js`, `style.css`, `events.js`.
-**Vienkartiniai:** `import_*.py`, `backfill_*.py`, `tools/` – neskaityti, nebent užduotis apie juos.
+**Kasdien per `update.yml`:** `tools/fetch_isin_names.py`, `tools/fetch_security_terms.py`, `tools/fetch_cpi.py`, `tools/fetch_pension.py`.
+**Vienkartiniai:** `import_*.py`, `backfill_*.py`, kiti `tools/*` (`probe_*` – senos patikros) – neskaityti, nebent užduotis apie juos.
+
+**Kaip skaityti didelius JS/Python failus** (`perf.js`, `journey.js`, `common.js`, `pf.js` – 60–110 KB, kai kurios eilutės iki 4000 simbolių): niekada neskaityti viso failo. Pirma skyrių sąrašas `grep -n "^/\* ----------" site/perf.js` (Python: `grep -n "^# ---\|^def " update.py`), arba `grep -n "raktažodis"`, tada `Read` tik reikiamas eilutes (`offset`/`limit`).
 **Darbo eigos:** `.github/workflows/update.yml` (rinkimas + build + laiškas; keisti tik būtinai), `notify.yml`.
 **Idėjos:** `IDEAS.md` (aktyvus sąrašas). Ciklo nurodymas: `CIKLO-NURODYMAS.md`.
 
-**NESKAITYTI (dideli / sugeneruoti):** visas `docs/` (generuojamas – taisyti `site/`), `data/portfolios.csv` (14 MB), `data/nav_history.csv` (5 MB), `data/pillar3_history.csv` (4 MB), `data/indexes.csv`, `imports/` (pradiniai failai), `archyvas/`, `data/last_update_log.txt` (tik `tail`). Draudimai įrašyti `.claude/settings.json`.
+**NESKAITYTI (dideli / sugeneruoti):** visas `docs/` (generuojamas – taisyti `site/`), `data/portfolios.csv` (14 MB), `data/nav_history.csv` (5 MB), `data/pillar3_history.csv` (4 MB), `data/indexes.csv`, kiti `data/*.csv` (tik `head`), `imports/` (pradiniai failai), `site/fonts/`, `archyvas/`, `README.md` (žmonėms), `data/last_update_log.txt` (tik `tail -40`). Draudimai įrašyti `.claude/settings.json`.
 
 ## Patikra prieš push
 

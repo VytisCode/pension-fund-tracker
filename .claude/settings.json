@@ -3,11 +3,10 @@
     "deny": [
       "Read(./docs/**)",
       "Read(./imports/**)",
+      "Read(./site/fonts/**)",
       "Read(./archyvas/IDEAS-iki-2026-10-14.md)",
-      "Read(./data/portfolios.csv)",
-      "Read(./data/nav_history.csv)",
-      "Read(./data/pillar3_history.csv)",
-      "Read(./data/indexes.csv)"
+      "Read(./data/*.csv)",
+      "Read(./data/last_update_log.txt)"
     ]
   }
 }
