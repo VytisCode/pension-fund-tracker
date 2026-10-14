@@ -28,15 +28,9 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 
 Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #47, #56, #58, #62.
 
-## Daroma (2026-10-14 savininko užduotis)
-
-- [Rezultatai] 4 heat map lentelės kaip savininko Excel: grąža, palyginimas su konkurentais, vieta grupėje, metinė; eilutė „Vidurkis“ su tarpeliu.
-- [Rezultatai] infliacijos linija grafike „Fondų palyginimas“.
-- [Rezultatai ir visur, kur indeksai] indekso mokestis: įrašomas ranka; numatytasis – tipinio to indekso ETF mokestis; be mokesčio; pensijų fondų vidutinis mokestis.
-- [Turtas] lentelė „Grynieji aktyvai“: bet koks datų intervalas; fondų pasirinkimas (valdytojų sumos, visi valdytojo fondai, pasirinkti fondai).
-- [Ataskaitos] vietoj „Fondo rodikliai (LB išdėstymas)“ – pusmečio ataskaitos lentelės bet kuriam fondui (ir III pakopos): mokesčiai, rizikingi aktyvai, SFDR, vidutinė metinė grąža, grąža pagal metus, didžiausios pozicijos, pasiskirstymas pagal rūšį ir regionus; patikrinta su SEB 2024–2026 ataskaitomis; Excel su formulėmis puslapio viršuje.
-
 ## Ateityje (savininkas pateiks medžiagą, kai bus baigti dabartiniai darbai)
+
+- Ataskaitos: SFDR dar nežinomas ~40 mažesnių fondų (daugiausia Baltijos privataus kapitalo / NT) – papildyti `data/fund_attributes.csv`, kai bus šaltinis.
 
 - „KID Performance Scenario Calculations“ lentelė – savininkas pasidalins metodika.
 - Fondų dalyvių skaičiai iš LB ataskaitų.
