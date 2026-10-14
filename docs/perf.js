@@ -9,7 +9,7 @@ addStrings({
   hRelM: 'Relative to the peers, pp', hAnnM: 'Annualized return, %', mrefNone: 'each vs. median of the other five', mrefPick: r => `${r} minus each peer`,
   peerMed: r => r ? `Median ex ${r}` : 'Median', peerAvg: 'Peers’ avg.',
   hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', realOff: 'Nominal', realOn: 'Real (after inflation)', realTip: m => `Real return = nominal return adjusted for Lithuanian inflation (consumer price index, State Data Agency; latest month ${m}). Applies to period returns, rankings and charts; volatility and calendar-year tables stay nominal.`, ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
-  mxlTip2: 'The metrics with the daily unit values used and Excel formulas', mxl: 'Excel with formulas', mxlTip: 'The four tables with the unit values used and Excel formulas, so every number can be checked', gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
+  hBar: 'Return over the period', mxlTip2: 'The metrics with the daily unit values used and Excel formulas', mxl: 'Excel with formulas', mxlTip: 'The four tables with the unit values used and Excel formulas, so every number can be checked', gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
   nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
   nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
@@ -96,7 +96,7 @@ addStrings({
   hRelM: 'Palyginimas su konkurentais, p. p.', hAnnM: 'Metinė grąža, %', mrefNone: 'kiekvienas – su kitų penkių mediana', mrefPick: r => `${r} minus kiekvienas konkurentas`,
   peerMed: r => r ? `Mediana be ${r}` : 'Mediana', peerAvg: 'Konkurentų vid.',
   hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', realOff: 'Nominali', realOn: 'Reali (po infliacijos)', realTip: m => `Reali grąža = nominali grąža, atėmus Lietuvos infliaciją (vartotojų kainų indeksas, Valstybės duomenų agentūra; paskutinis mėnuo ${m}). Taikoma laikotarpio grąžai, reitingams ir grafikams; svyravimas ir kalendorinių metų lentelės lieka nominalios.`, ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
-  mxlTip2: 'Rodikliai su naudotomis dienų vieneto vertėmis ir Excel formulėmis', mxl: 'Excel su formulėmis', mxlTip: 'Keturios lentelės su naudotomis vieneto vertėmis ir Excel formulėmis – kiekvieną skaičių galima patikrinti', gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
+  hBar: 'Laikotarpio grąža', mxlTip2: 'Rodikliai su naudotomis dienų vieneto vertėmis ir Excel formulėmis', mxl: 'Excel su formulėmis', mxlTip: 'Keturios lentelės su naudotomis vieneto vertėmis ir Excel formulėmis – kiekvieną skaičių galima patikrinti', gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
   nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
   nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
@@ -662,6 +662,7 @@ function renderFunds() {
         + idxOf(pt).map(f => { const s = idxStats(f, pt.rng, grpStart(pt.g)); return `<tr class="idxrow"><td class="n"></td>${idxName(f)}${cell(s.ret, v => pct(v), null)}${cell(s.vol, v => num(v, 2) + pctSfx(), null)}${cell(s.mdd, v => num(v, 2) + pctSfx(), null)}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), null)}${cell(s.volAll, v => num(v, 2) + pctSfx(), null)}${cell(s.mddAll, v => num(v, 2) + pctSfx(), null)}</tr>`; }).join('');
     }).join('') + '</tbody>';
 
+  renderBars(parts);
   // automatinės išvados kortelių antraštėse (auditas #44) – kai rodoma viena grupė
   const one = !ALL && parts[0].all.filter(s => s.ret !== null);
   if (one && one.length > 1) {
@@ -1044,6 +1045,26 @@ function marketBook() {
   add(vals, S.vals, [{ wch: 11 }, ...used.map(() => ({ wch: 14 }))]);
   return wb;
 }
+/* Laikotarpio grąža stulpeliais (auditas #60): kiekvienas fondas ir pasirinkti indeksai, surikiuota, su reikšmėmis; tik vienai grupei */
+function renderBars(parts) {
+  const card = $('barCard'); if (!card) return;
+  card.hidden = parts.length !== 1; if (card.hidden) return;
+  const pt = parts[0], rows = pt.all.filter(s => s.ret !== null).map(s => ({ l: labelOf(s.f.provider), c: colorOf(s.f.provider), v: s.ret }))
+    .concat(idxOf(pt).map(f => ({ l: f.label, c: f.color, v: idxStats(f, pt.rng, grpStart(pt.g)).ret, idx: true })).filter(x => x.v !== null && x.v !== undefined))
+    .sort((a, b) => b.v - a.v);
+  $('hBar').textContent = `${T().hBar} · ${groupName(P.group)}`; $('mBar').textContent = `${periodText()}: ${iso(pt.rng.anchor)} → ${iso(pt.rng.end)}`;
+  const box = $('barChart'), W = box.clientWidth || 800, rh = 26, lw = Math.min(260, Math.max(110, W * 0.28)), vw = 70, H = rows.length * rh + 8;
+  const lo = Math.min(0, ...rows.map(r => r.v)), hi = Math.max(0, ...rows.map(r => r.v)), span = (hi - lo) || 1;
+  const X = v => lw + (v - lo) / span * (W - lw - vw - 8), esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  box.querySelectorAll('svg').forEach(n => n.remove());
+  box._legend = [];
+  box.insertAdjacentHTML('afterbegin', `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(T().hBar)}">`
+    + rows.map((r, i) => { const y = 4 + i * rh, x0 = X(Math.min(0, r.v)), w = Math.max(1, Math.abs(X(r.v) - X(0)));
+      return `<text x="${lw - 8}" y="${y + rh / 2 + 4}" text-anchor="end" font-size="13" fill="var(--text)">${esc(r.l)}</text>`
+        + `<rect x="${x0}" y="${y + 4}" width="${w}" height="${rh - 8}" rx="3" fill="${r.c}"${r.idx ? ' fill-opacity="0.45"' : ''}/>`
+        + `<text x="${r.v >= 0 ? X(r.v) + 6 : X(0) + 6}" y="${y + rh / 2 + 4}" font-size="12" fill="var(--text-2)" style="font-variant-numeric:tabular-nums">${pct(r.v)}</text>`; }).join('')
+    + `<line x1="${X(0)}" x2="${X(0)}" y1="0" y2="${H}" stroke="var(--axis)" stroke-width="1"/></svg>`);
+}
 /* Rodiklių lentelės Excel su formulėmis: kiekvienam fondui dienų vertės (laikotarpio ir visos istorijos), dienos grąža, aukščiausia vertė, kritimas;
    lentelė „Rodikliai“ – formulės, rodančios į tas dienas. Dienos – tos pačios kaip svetainėje (be „vienišų“ dienų). */
 function metricsBook() {
@@ -1277,4 +1298,4 @@ renderHeader('performance', () => { labelControls(); syncAll(); });
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); renderRiskMap(); RDD && RDD.paint(); fitSticky(); }, 120); });
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); renderRiskMap(); renderBars(lastParts); RDD && RDD.paint(); fitSticky(); }, 120); });
