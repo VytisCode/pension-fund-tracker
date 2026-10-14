@@ -32,10 +32,39 @@ body { margin: 0; background: var(--surface); color: var(--text);
   font: 15px/1.45 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
 h1, h2, h3 { font-family: "Source Serif 4", Georgia, "Times New Roman", serif; font-weight: 600; }
 .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 56px; }
-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+/* antraštė (auditas #41): ženkliukas ir pavadinimas, šviežumo eilutė, lipni navigacija, įrankiai meniu */
+header { margin-bottom: 8px; }
+.hrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; min-width: 0; }
+.brand img { display: block; flex: none; }
+.status { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-top: 8px; font-size: 13px; color: var(--text-2); }
+.stbtn { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+.stbtn b { font-weight: 600; color: var(--text); }
+.stbtn .ok { color: var(--dpos); }
+.stbtn .late { color: var(--warn); font-weight: 600; }
+.stbtn .chev { color: var(--text-3); font-size: 11px; }
+.stbtn[aria-expanded="true"] .chev { display: inline-block; transform: rotate(180deg); }
+.status .sub { margin: 0; font-size: 12px; color: var(--text-3); }
+.snav { position: sticky; top: 0; z-index: 6; background: var(--surface); margin: 0 -16px 16px; padding: 6px 16px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.snav::-webkit-scrollbar { display: none; }
+/* lipni juosta po navigacija: tarpas virš jos ir apvalūs kampai uždengti fono spalva, kad nesimatytų slenkantis turinys */
+@media (min-width: 701px) { .sticky::before, .jnav::before { content: ''; position: absolute; left: -1px; right: -1px; top: -16px; height: 30px; background: var(--surface); z-index: -1; } }
+.snav.sr { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
+.stbtn .ok, .stbtn .late { white-space: nowrap; }
+@media (max-width: 520px) { h1 { font-size: 20px; } .brand img { width: 24px; height: 24px; } .tml { display: none; } .stbtn .late { white-space: normal; } }
+.btn.ico { min-width: 34px; padding: 6px 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; }
+.tmwrap { position: relative; }
+.tmpanel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 50; width: min(320px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.14); display: grid; gap: 6px; }
+.tmpanel .top-actions { display: grid; gap: 6px; }
+.tmpanel .btn { width: 100%; text-align: left; }
+.tmpanel .xlday { display: flex; }
+.tmpanel .xlday .btn { width: auto; flex: 1; }
+.tmpanel .dlpanel { position: static; width: auto; box-shadow: none; margin-top: 6px; }
+.tm-acts:empty { display: none; }
+@media print { .snav, .stbtn .chev { display: none !important; } }
 h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
 .sub { color: var(--text-2); font-size: 13px; margin-top: 4px; }
-.fresh { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.fresh { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
 .fresh .fr { white-space: nowrap; cursor: help; }
 .fresh .fr i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: 0; }
 .fresh .fr.late { color: var(--warn); font-weight: 600; }
@@ -80,12 +109,14 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 .warn { color: var(--text-2); font-size: 13px; margin: 0 0 14px; }
 
 /* ---- bendri papildymai ---- */
-.nav { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+.nav { display: flex; flex-wrap: nowrap; gap: 2px; width: max-content; }
 /* vienodas nuorodų stilius visoje svetainėje (auditas #36) */
 a { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 2px; }
 a:hover { text-decoration-color: currentColor; }
 a.btn { text-decoration: none; }
-.nav a { color: var(--text-2); text-decoration: none; padding: 6px 12px; border-radius: 8px; font-size: 14px; border: 1px solid transparent; }
+.nav a { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; color: var(--text-2); text-decoration: none; padding: 6px 11px; border-radius: 8px; font-size: 14px; border: 1px solid transparent; }
+.nav a svg { flex: none; opacity: .7; }
+.nav a[aria-current="page"] svg { opacity: 1; color: var(--accent); }
 .nav a:hover { background: var(--hover); }
 .nav a[aria-current="page"] { color: var(--text); border-color: var(--line); background: var(--card); font-weight: 600; }
 .top-tools { display: flex; gap: 8px; align-items: center; }
@@ -120,7 +151,7 @@ select { max-width: 100%; }
 select, input[type="date"] { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px; }
 .field { display: inline-flex; max-width: 100%; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
 .bar { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
-.sticky { position: sticky; top: 0; z-index: 5; box-shadow: 0 6px 12px -10px rgba(0,0,0,.35); }
+.sticky { position: sticky; top: var(--navh, 0px); z-index: 5; box-shadow: 0 6px 12px -10px rgba(0,0,0,.35); }
 .group-h { margin: 18px 0 6px; font-size: 14px; color: var(--text-2); font-weight: 600; }
 .metrics th { white-space: normal; text-align: right; vertical-align: bottom; }
 .metrics td.n { color: var(--text-3); text-align: center; width: 28px; }
@@ -181,7 +212,7 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 }
 
 .top-actions { display: flex; gap: 8px; }
-.top-tools { flex-wrap: wrap; justify-content: flex-end; }
+.top-tools { flex: none; justify-content: flex-end; }
 #periodbar { flex-wrap: wrap; justify-content: flex-start; }
 @media print { .top-actions { display: none !important; } }
 
@@ -210,8 +241,6 @@ select, input[type="date"] { border: 1px solid var(--line); background: var(--ca
 @media print { .xlday { display: none !important; } }
 tr.gstart td { border-top: 2px solid var(--axis); }
 tr.gstart:first-child td { border-top: 0; }
-.top-actions { flex-wrap: wrap; justify-content: flex-end; }
-@media (max-width: 640px) { .top-tools { width: 100%; justify-content: flex-start; } .top-actions { justify-content: flex-start; } }
 /* lentelių antraštės lieka matomos slenkant (kai lentelė telpa ekrane) */
 .scroll.stick { overflow: visible; }
 .stick table thead th { position: sticky; top: calc(var(--stick, 0px) + var(--rowoff, 0px)); z-index: 4; background: var(--card); box-shadow: inset 0 -1px 0 var(--line); border-bottom: 0; padding-top: 6px; }

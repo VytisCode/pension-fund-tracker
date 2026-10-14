@@ -988,7 +988,6 @@ function labelControls() {
   $('idxLbl').innerHTML = T().idxLbl + ik('idx'); renderIdxChips();
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
-  $('sub').textContent = `${T().dataUntil} ${iso(Math.max(...DATA.groups.map(g => groupEnd(g).end)))} · ${T().updated} ${DATA.generated}`;
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1013,7 +1012,6 @@ function syncAll() {
 }
 buildControls(); syncChips();
 renderHeader('performance', () => { labelControls(); syncAll(); });
-document.querySelector('#top .top-tools').prepend($('actions'));   // veiksmų mygtukai – antraštėje, filtrų juosta lieka vienoje eilutėje
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();

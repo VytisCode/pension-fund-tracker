@@ -74,7 +74,6 @@ function render() {
     c.hc = hoverCompress(c.chart, mr => paintCard(c, mr));
     cards.push(c);
   });
-  document.getElementById('sub').textContent = `${T().dataUntil} ${iso(latest)} · ${T().updated} ${DATA.generated}`;
   document.getElementById('foot').textContent = T().foot;
   cards.forEach(c => paintCard(c, 16));
 }
