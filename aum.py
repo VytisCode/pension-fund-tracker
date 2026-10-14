@@ -111,7 +111,7 @@ def build():
                 continue
             funds.append({
                 "pl": pillar, "p": prov, "g": group, "n": fund, "code": code or "",
-                "d": [day_number(d) for d, _ in series], "a": [round(a / 1e6, 3) for _, a in series],
+                "d": [day_number(d) for d, _ in series], "a": [round(a / 1e6, 6) for _, a in series],
                 "q": len(q),          # kiek pirmųjų taškų – LB ketvirčio duomenys
                 "_rows": rows, "_series": series,
             })
@@ -120,7 +120,12 @@ def build():
     pay = {(e["p"], d) for e in events if not e["est"] for d in e["dates"]}
     pay_q = {(e["p"], e["q"]) for e in events if e["est"]}
     for f in funds:
-        f["dm"] = decompose(f.pop("_rows"), f.pop("_series"), f["p"], f["pl"], pay, pay_q)
+        rows, series = f.pop("_rows"), f.pop("_series")
+        f["dm"] = decompose(rows, series, f["p"], f["pl"], pay, pay_q)
+        # Excel su formulėmis (auditas #53): vieneto vertė kiekviename taške ir taškai, kurių srautas laikomas išmoka
+        uv = {d: u for d, u, _ in rows}
+        f["u"] = [round(uv.get(d) or uv_on(rows, d) or 0, 6) for d, _ in series]
+        f["pi"] = [i for i in range(1, len(series)) if is_payout(series[i][0], f["p"], f["pl"], uv, pay, pay_q)]
     return {"funds": funds, "payouts": events}
 
 
@@ -138,9 +143,14 @@ def decompose(rows, series, prov, pillar, pay, pay_q):
         k = y * 12 + m - 1
         fl = a1 - a0 * u1 / u0
         out[k][0] += a0 * (u1 / u0 - 1)
-        is_pay = pillar == "II" and ((prov, d1) in pay or (d1[5:] in ("03-31", "06-30", "09-30", "12-31") and (prov, f"{y}-{(m - 1) // 3 + 1}") in pay_q and d1 not in uv))
-        out[k][2 if is_pay else 1] += fl
+        out[k][2 if is_payout(d1, prov, pillar, uv, pay, pay_q) else 1] += fl
     return [[k, round(v[0] / 1e6, 3), round(v[1] / 1e6, 3), round(v[2] / 1e6, 3)] for k, v in sorted(out.items())]
+
+
+def is_payout(d1, prov, pillar, uv, pay, pay_q):
+    """Ar srautas iki dienos d1 – reformos išmoka (kasdienė išmokų diena arba LB ketvirčio įvertis be kasdienių duomenų)."""
+    y, m = int(d1[:4]), int(d1[5:7])
+    return pillar == "II" and ((prov, d1) in pay or (d1[5:] in ("03-31", "06-30", "09-30", "12-31") and (prov, f"{y}-{(m - 1) // 3 + 1}") in pay_q and d1 not in uv))
 
 
 def payouts(daily2, lb_tot, code_of):

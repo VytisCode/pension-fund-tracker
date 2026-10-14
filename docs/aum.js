@@ -204,6 +204,7 @@ function renderChart() {
 /* ---------- 2. turto pokyčio lentelė ---------- */
 /* Turto pokyčio išskaidymas (auditas #68): grąža, įmokos ir kiti srautai, reformos išmokos – pagal kalendorinius mėnesius (aum.py decompose) */
 function renderDecomp(raw, x0, end) {
+  renderDecomp.last = { raw, x0, end };
   const t = T(), mk = d => { const x = new Date(d * DAY); return x.getUTCFullYear() * 12 + x.getUTCMonth(); };
   const k0 = mk(x0) + 1, k1 = mk(end), mName = k => `${Math.floor(k / 12)}-${String(k % 12 + 1).padStart(2, '0')}`;
   document.getElementById('dcTitle').textContent = t.dcTitle; document.getElementById('dcLead').textContent = t.dcLead;
@@ -239,6 +240,7 @@ function renderDecomp(raw, x0, end) {
     + rows.map(r => `<tr><td class="l">${esc(r.l)}</td><td>${f(r.a0)}</td><td>${sg(r.ret)}</td><td>${sg(r.fl)}</td><td>${sg(r.pay)}</td><td><b>${sg(r.ret + r.fl + r.pay)}</b></td><td>${f(r.a1)}</td></tr>`).join('') + '</tbody>';
   cardify(tbl);
   document.getElementById('dcNote').textContent = t.dcNote;
+  const xb = document.getElementById('dcXls'); xb.textContent = '⤓ ' + (lang === 'lt' ? 'Excel su formulėmis' : 'Excel with formulas'); xb.onclick = () => decompXls().catch(err => alert('Excel: ' + err));
 }
 function renderGrowth() {
   const pers = ['3m', 'ytd', '1y', '3y'];
@@ -407,6 +409,45 @@ function payBook() {
   return wb;
 }
 async function payXls() { await loadXlsx(); XLSX.writeFile(payBook(), `${lang === 'lt' ? 'Ismokejimai' : 'Payouts'}_${String(AUM.generated).slice(0, 10)}.xlsx`); }
+
+/* ---------- turto pokyčio Excel su formulėmis (auditas #53) ----------
+   Lapas „Taškai“: kiekviena pora iš eilės einančių turto taškų – turtas ir vieneto vertė, grąža = turtas₀ × (vv₁ ÷ vv₀ − 1),
+   srautas = turtas₁ − turtas₀ × vv₁ ÷ vv₀; „Suvestinė“ sumuoja SUMIFS. Tas pats kaip svetainės lentelėje (aum.py decompose). */
+function decompBook() {
+  const { raw, x0, end } = renderDecomp.last, L = lang === 'lt', mk = d => { const x = new Date(d * DAY); return x.getUTCFullYear() * 12 + x.getUTCMonth(); };
+  const k0 = mk(x0) + 1, k1 = mk(end), M = '#,##0.000', yes = L ? 'taip' : 'yes', no = L ? 'ne' : 'no';
+  const sh = L ? ['Suvestinė', 'Taškai', 'Metodika'] : ['Summary', 'Points', 'Methodology'], C = `'${sh[1]}'`;
+  const pts = [L ? ['Eilutė', 'Fondas', 'Pradžios data', 'Turtas pradžioje, mln. €', 'Vieneto vertė pradžioje', 'Pabaigos data', 'Turtas pabaigoje, mln. €', 'Vieneto vertė pabaigoje', 'Grąža, mln. €', 'Srautas, mln. €', 'Reformos išmoka', 'Mėnuo']
+    : ['Row', 'Fund', 'Start date', 'Assets at start, € m', 'Unit value at start', 'End date', 'Assets at end, € m', 'Unit value at end', 'Return, € m', 'Flow, € m', 'Reform payout', 'Month']];
+  const lab = r => r.label || MLABEL[r.m] || r.m;
+  raw.forEach(r => r.fs.forEach(f => { const pi = new Set(f.pi || []);
+    for (let i = 1; i < f.d.length; i++) { const k = mk(f.d[i]); if (k < k0 || k > k1 || !f.u || !f.u[i] || !f.u[i - 1]) continue;
+      const n = pts.length + 1, a0 = f.a[i - 1], u0 = f.u[i - 1], a1 = f.a[i], u1 = f.u[i];
+      pts.push([lab(r), f.n, xDate(f.d[i - 1]), { t: 'n', v: a0, z: M }, u0, xDate(f.d[i]), { t: 'n', v: a1, z: M }, u1,
+        { t: 'n', v: a0 * (u1 / u0 - 1), f: `D${n}*(H${n}/E${n}-1)`, z: M }, { t: 'n', v: a1 - a0 * u1 / u0, f: `G${n}-D${n}*H${n}/E${n}`, z: M }, pi.has(i) ? yes : no, `${Math.floor(k / 12)}-${String(k % 12 + 1).padStart(2, '0')}`]); } }));
+  const N = Math.max(2, pts.length), rg = c => `${C}!$${c}$2:$${c}$${N}`;
+  const sum = [[L ? 'Eilutė' : 'Row', T().dc_ret, T().dc_fl, T().dc_pay, T().dcNet]];
+  raw.forEach(r => { const n = sum.length + 1, l = lab(r), q = `${rg('A')},"${String(l).replace(/"/g, '""')}"`;
+    const v = (col, flag) => pts.slice(1).filter(p => p[0] === l && (flag == null || p[10] === flag)).reduce((s, p) => s + p[col].v, 0);
+    sum.push([l, { t: 'n', v: v(8), f: `SUMIFS(${rg('I')},${q})`, z: M }, { t: 'n', v: v(9, no), f: `SUMIFS(${rg('J')},${q},${rg('K')},"${no}")`, z: M },
+      { t: 'n', v: v(9, yes), f: `SUMIFS(${rg('J')},${q},${rg('K')},"${yes}")`, z: M }, { t: 'n', v: v(8) + v(9), f: `B${n}+C${n}+D${n}`, z: M }]); });
+  const meth = L ? [['Metodika ir šaltiniai'], [], ['Laikotarpis', `${Math.floor(k0 / 12)}-${String(k0 % 12 + 1).padStart(2, '0')} – ${Math.floor(k1 / 12)}-${String(k1 % 12 + 1).padStart(2, '0')} (pagal taško pabaigos datos mėnesį)`], ['Atsisiųsta', String(AUM.generated)],
+    ['Šaltinis', 'Valdytojų skelbiami grynieji aktyvai ir vieneto vertės; kol nebuvo kasdienių duomenų – Lietuvos banko ketvirčio pabaigos portfelių sumos.'], [],
+    ['Grąža', 'Turtas pradžioje × (vieneto vertė pabaigoje ÷ vieneto vertė pradžioje − 1) – kiek turtas būtų pasikeitęs be jokių srautų.'],
+    ['Srautas', 'Turtas pabaigoje − turtas pradžioje × vieneto vertės pokytis: įmokos, perėjimai tarp fondų ir valdytojų, išmokos.'],
+    ['Reformos išmoka', '„taip“ – srautas reformos išmokų dieną (ar LB ketvirčio įvertis tame ketvirtyje), žr. puslapio skyrių „Išmokėjimai“.'],
+    ['Suvestinė', 'SUMIFS iš lapo „Taškai“ pagal eilutę; pokytis iš viso = grąža + srautai + išmokos.']]
+    : [['Methodology and sources'], [], ['Period', `${Math.floor(k0 / 12)}-${String(k0 % 12 + 1).padStart(2, '0')} – ${Math.floor(k1 / 12)}-${String(k1 % 12 + 1).padStart(2, '0')} (by the month of each point's end date)`], ['Downloaded', String(AUM.generated)],
+    ['Source', 'Net assets and unit values published by the managers; before daily data – Bank of Lithuania quarter-end portfolio totals.'], [],
+    ['Return', 'Assets at start × (unit value at end ÷ unit value at start − 1) – how assets would have changed with no flows.'],
+    ['Flow', 'Assets at end − assets at start × unit value change: contributions, switches between funds and managers, payouts.'],
+    ['Reform payout', '“yes” – the flow on a reform payout day (or the LB quarterly estimate in that quarter), see the “Payouts” section.'],
+    ['Summary', 'SUMIFS from the “Points” sheet by row; total change = return + flows + payouts.']];
+  const wb = XLSX.utils.book_new(), add = (rows, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
+  add(sum, sh[0], [{ wch: 30 }, ...Array(4).fill({ wch: 18 })]); add(pts, sh[1], [{ wch: 22 }, { wch: 40 }, { wch: 11 }, { wch: 14 }, { wch: 12 }, { wch: 11 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }]); add(meth, sh[2], [{ wch: 18 }, { wch: 110 }]);
+  return wb;
+}
+async function decompXls() { await loadXlsx(); XLSX.writeFile(decompBook(), `${lang === 'lt' ? 'Turto_pokytis' : 'Asset_change'}_${String(AUM.generated).slice(0, 10)}.xlsx`); }
 
 function renderAllParts() {
   const last = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), y0 = Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY);

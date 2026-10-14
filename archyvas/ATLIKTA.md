@@ -12,3 +12,4 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – #59: puslapis „Mėnesio apžvalga“ – bet kuris mėnuo ar ketvirtis: svarbiausi faktai, valdytojai (laikotarpis, YTD, 12 mėn.), grupių lyderiai, turto pokytis (grąža, įmokos, išmokos), III pakopa, portfelių pokyčiai per ketvirtį; spausdinimas PDF.
 - 2026-10-14 – #66: žodynėlis – 29 terminai; paaiškinimas užvedus pelę / palietus stulpelio ar KPI pavadinimą visuose puslapiuose, visas sąrašas puslapyje „Apie“.
 - 2026-10-14 – #53 dalis: rodiklių Excel papildytas kalendorinių metų grąža su formulėmis (lapai „Kalendoriniai metai“ ir „Metų vertės“).
+- 2026-10-14 – #53 dalis: „Turtas“ – turto pokyčio Excel su formulėmis (kiekvienas taškas: grąža ir srautas; suvestinė SUMIFS); data_aum.js papildytas vieneto vertėmis.
