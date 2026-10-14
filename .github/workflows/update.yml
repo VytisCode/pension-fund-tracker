@@ -109,6 +109,12 @@ jobs:
         continue-on-error: true
         run: python -u tools/fetch_pension.py
 
+      # Vidutinis darbo užmokestis ir MMA (Valstybės duomenų agentūra) – tik nauji metai.
+      - name: Average wage and minimum wage (State Data Agency)
+        if: always()
+        continue-on-error: true
+        run: python -u tools/fetch_wages.py
+
       # Nauji Lietuvos banko failai (portfeliai, II pakopos rezultatai, mokesčiai) – kartą per dieną, tik naujesni už turimus.
       - name: Bank of Lithuania files (portfolios, results, fees)
         if: always()
