@@ -9,7 +9,7 @@ addStrings({
   hRelM: 'Relative to the peers, pp', hAnnM: 'Annualized return, %', mrefNone: 'each vs. median of the other five', mrefPick: r => `${r} minus each peer`,
   peerMed: r => r ? `Median ex ${r}` : 'Median', peerAvg: 'Peers’ avg.',
   hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', realOff: 'Nominal', realOn: 'Real (after inflation)', realTip: m => `Real return = nominal return adjusted for Lithuanian inflation (consumer price index, State Data Agency; latest month ${m}). Applies to period returns, rankings and charts; volatility and calendar-year tables stay nominal.`, ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
-  gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
+  mxl: 'Excel with formulas', mxlTip: 'The four tables with the unit values used and Excel formulas, so every number can be checked', gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
   nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
   mMarket: p => `Period: ${p}. Colours show the rank within each row (green = best, red = worst).`,
   nMarket: 'Return = change in unit value between the period start and the latest common date in each group. “–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value.',
@@ -96,7 +96,7 @@ addStrings({
   hRelM: 'Palyginimas su konkurentais, p. p.', hAnnM: 'Metinė grąža, %', mrefNone: 'kiekvienas – su kitų penkių mediana', mrefPick: r => `${r} minus kiekvienas konkurentas`,
   peerMed: r => r ? `Mediana be ${r}` : 'Mediana', peerAvg: 'Konkurentų vid.',
   hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', realOff: 'Nominali', realOn: 'Reali (po infliacijos)', realTip: m => `Reali grąža = nominali grąža, atėmus Lietuvos infliaciją (vartotojų kainų indeksas, Valstybės duomenų agentūra; paskutinis mėnuo ${m}). Taikoma laikotarpio grąžai, reitingams ir grafikams; svyravimas ir kalendorinių metų lentelės lieka nominalios.`, ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
-  gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
+  mxl: 'Excel su formulėmis', mxlTip: 'Keturios lentelės su naudotomis vieneto vertėmis ir Excel formulėmis – kiekvieną skaičių galima patikrinti', gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
   nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
   mMarket: p => `Laikotarpis: ${p}. Spalvos rodo vietą kiekvienoje eilutėje (žalia – geriausia, raudona – prasčiausia).`,
   nMarket: 'Grąža = vieneto vertės pokytis tarp laikotarpio pradžios ir paskutinės bendros dienos grupėje. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų. Vidurkio eilutė: paprastas vidurkis tarp amžiaus grupių, kuriose fondas turi reikšmę.',
@@ -469,7 +469,7 @@ function renderMarket() {
   const annBody = rows.map(r => { const rk = rankOf(provs.map(p => ({ key: p.id, v: r.ann[p.id] }))); return `<tr><td>${groupShort(r.g)}</td>${provs.map(p => rkCell(r.ann[p.id], rk.map.get(p.id), rk.n, pc2)).join('')}</tr>`; }).join('')
     + gap(provs.length + 1) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgAnn[p.id], aaRank.map.get(p.id), aaRank.n, pc2)).join('')}</tr>`;
   const spanAll = spanText(periodText() + (P.gx ? ' · ' + T().gxBtn : ''), rows.map(r => r.g.rngM));
-  $('btnGx').textContent = T().gxBtn; $('btnGx').setAttribute('aria-pressed', P.gx);
+  $('btnGx').textContent = T().gxBtn; $('btnGx').setAttribute('aria-pressed', P.gx); $('btnMxl').textContent = '⤓ ' + T().mxl; $('btnMxl').title = T().mxlTip;
   const gxa = Math.min(...gxStarts), gxb = Math.max(...gxStarts);
   $('nGx').hidden = !P.gx; $('nGx').textContent = P.gx && gxStarts.length ? T().gxNote(gxa === gxb ? iso(gxa) : `${iso(gxa)}…${iso(gxb)}`) : '';
   ['tRet', 'tRank', 'tRelM', 'tAnnM'].forEach(id => setCap(id, spanAll));
@@ -950,6 +950,106 @@ async function exportXlsx() {
   } catch (e) { alert(T().xlsxFail); }
   btn.disabled = false; btn.textContent = T().xlsx;
 }
+/* „Visa rinka“ Excel su tikromis formulėmis (auditas #53): pradiniai duomenys → skaičiavimai → 4 lentelės → metodika.
+   Kiekvieną skaičių galima patikrinti: vertės ir datos – iš valdytojų, visa kita – Excel formulės. */
+const xlCol = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
+const xlDate = d => ({ t: 'n', v: d + 25569, z: 'yyyy-mm-dd' });
+const xlF = (f, v, z) => ({ t: 'n', f, v: v == null || !isFinite(v) ? 0 : v, z });
+function marketBook() {
+  const L = lang === 'lt', provs = marketProvs(), ref = provs.some(p => p.id === P.mref) ? P.mref : '';
+  const peers = provs.filter(p => p.id !== ref), groups = DATA.groups;
+  const S = L ? { calc: 'Skaičiavimai', vals: 'Vertės', ret: 'Grąža', rel: 'Palyginimas', rank: 'Vieta', ann: 'Metinė grąža', meth: 'Metodika ir šaltiniai', avg: 'Vidurkis', med: 'Konkurentų mediana', pavg: 'Konkurentų vidurkis' }
+    : { calc: 'Calculations', vals: 'Values', ret: 'Return', rel: 'Relative', rank: 'Rank', ann: 'Annualized', meth: 'Methodology and sources', avg: 'Average', med: 'Peer median', pavg: 'Peer average' };
+  const q = s => `'${s}'`;
+  /* 1. Skaičiavimai: viena eilutė fondui */
+  const hdr = L ? ['Grupė', 'Valdytojas', 'Fondas', 'Laikotarpio pradžia', 'Laikotarpio pabaiga', 'Pradžios vertės data', 'Pradžios vieneto vertė, €', 'Pabaigos vertės data', 'Pabaigos vieneto vertė, €', 'Grąža', 'Dienos', 'Metinė grąža']
+    : ['Group', 'Manager', 'Fund', 'Period start', 'Period end', 'Start value date', 'Start unit value, €', 'End value date', 'End unit value, €', 'Return', 'Days', 'Annualized return'];
+  if (REAL) hdr.push(L ? 'VKI pradžioje' : 'CPI at start', L ? 'VKI pabaigoje' : 'CPI at end');
+  const calc = [hdr], at = {}, used = [];
+  groups.forEach(g => {
+    const rng = g.rngM || rangeFor(g);
+    provs.forEach(p => {
+      const f = g.funds.find(x => x.provider === p.id), v = retOf(g, p.id, rng);
+      if (!f || v === null) return;
+      const s = seriesOf(f, rng.anchor, rng.end), r = calc.length + 1, d0 = Math.max(rng.anchor, f.d[0]), days = rng.end - d0;
+      const row = [groupLabel(g), p.label, f.name, xlDate(d0), xlDate(rng.end), xlDate(f.d[s.ia]), f.v[s.ia], xlDate(f.d[s.ie]), f.v[s.ie]];
+      const nom = f.v[s.ie] / f.v[s.ia] - 1;
+      row.push(REAL ? xlF(`(I${r}/G${r})/(N${r}/M${r})-1`, v / 100, '0.00%') : xlF(`I${r}/G${r}-1`, nom, '0.00%'));
+      row.push(xlF(`E${r}-D${r}`, days, '0'));
+      row.push(xlF(`(1+J${r})^(365.25/K${r})-1`, Math.pow(1 + v / 100, 365.25 / days) - 1, '0.00%'));
+      if (REAL) row.push(cpiAt(rng.anchor), cpiAt(f.d[s.ie]));
+      calc.push(row); at[g.id + '|' + p.id] = r; used.push({ g, p, f, rng });
+    });
+  });
+  /* 2. Vertės: pradiniai dienos duomenys (tik naudojami fondai, nuo laikotarpio pradžios) */
+  const d0 = Math.min(...used.map(u => { const i = lastOnOrBefore(u.f, u.rng.anchor); return i >= 0 ? u.f.d[i] : u.f.d[0]; })), d1 = Math.max(...used.map(u => u.rng.end));
+  const days = [...new Set(used.flatMap(u => u.f.d.filter(d => d >= d0 && d <= d1)))].sort((a, b) => a - b);
+  const vals = [[L ? 'Data' : 'Date', ...used.map(u => `${groupLabel(u.g)} · ${u.p.label}`)]];
+  const maps = used.map(u => new Map(u.f.d.map((d, i) => [d, u.f.v[i]])));
+  days.forEach(d => vals.push([xlDate(d), ...maps.map(m => m.has(d) ? m.get(d) : null)]));
+  /* 3. Lentelės: eilutės – grupės, stulpeliai – valdytojai */
+  const C = q(S.calc), n = groups.length, last = n + 1, colOf = i => xlCol(i + 1);
+  const cell = (g, p, c) => at[g.id + '|' + p.id] ? `${C}!${c}${at[g.id + '|' + p.id]}` : null;
+  const valOf = (g, p, c) => { const r = at[g.id + '|' + p.id]; return r ? calc[r - 1][c === 'J' ? 9 : 11].v : null; };
+  const grid = (c, extra) => {
+    const t = [[L ? 'Grupė' : 'Group', ...provs.map(p => p.label), ...(extra ? [extra] : [])]];
+    groups.forEach(g => t.push([groupLabel(g), ...provs.map(p => { const ref_ = cell(g, p, c); return ref_ ? xlF(ref_, valOf(g, p, c), '0.00%') : null; })]));
+    t.push([S.avg, ...provs.map((p, i) => xlF(`AVERAGE(${colOf(i)}2:${colOf(i)}${last})`, meanOf(groups.map(g => valOf(g, p, c))), '0.00%'))]);
+    return t;
+  };
+  const ret = grid('J', S.med), ann = grid('L');
+  const peerCols = peers.map(p => colOf(provs.indexOf(p)));
+  groups.forEach((g, k) => { const r = k + 2; const m = medianOf(peers.map(p => valOf(g, p, 'J'))); ret[r - 1].push(m == null ? null : xlF(`MEDIAN(${peerCols.map(c => c + r).join(',')})`, m, '0.00%')); });
+  ret[n + 1].push(xlF(`AVERAGE(${colOf(provs.length)}2:${colOf(provs.length)}${last})`, meanOf(groups.map(g => medianOf(peers.map(p => valOf(g, p, 'J'))))), '0.00%'));
+  const R = q(S.ret), rel = [], rank = [[L ? 'Grupė' : 'Group', ...provs.map(p => p.label)]];
+  if (ref) {
+    const rc = colOf(provs.findIndex(p => p.id === ref));
+    rel.push([L ? `Grupė (${labelOf(ref)} minus)` : `Group (${labelOf(ref)} minus)`, ...peers.map(p => p.label), S.pavg]);
+    groups.forEach((g, k) => { const r = k + 2, rv = valOf(g, provs.find(p => p.id === ref), 'J');
+      rel.push([groupLabel(g), ...peers.map(p => { const v = valOf(g, p, 'J'); return v == null || rv == null ? null : xlF(`${R}!${rc}${r}-${R}!${colOf(provs.indexOf(p))}${r}`, rv - v, '0.00%'); }),
+        rv == null ? null : xlF(`${R}!${rc}${r}-AVERAGE(${peerCols.map(c => `${R}!${c}${r}`).join(',')})`, rv - meanOf(peers.map(p => valOf(g, p, 'J'))), '0.00%')]); });
+  } else {
+    rel.push([L ? 'Grupė (valdytojas minus kitų mediana)' : 'Group (manager minus median of the others)', ...provs.map(p => p.label)]);
+    groups.forEach((g, k) => { const r = k + 2;
+      rel.push([groupLabel(g), ...provs.map((p, i) => { const v = valOf(g, p, 'J'), oth = provs.filter(o => o !== p); if (v == null) return null;
+        return xlF(`${R}!${colOf(i)}${r}-MEDIAN(${oth.map(o => `${R}!${colOf(provs.indexOf(o))}${r}`).join(',')})`, v - medianOf(oth.map(o => valOf(g, o, 'J'))), '0.00%'); })]); });
+  }
+  const rl = rel[0].length - 1;
+  rel.push([S.avg, ...Array.from({ length: rl }, (_, i) => xlF(`AVERAGE(${colOf(i)}2:${colOf(i)}${last})`, meanOf(rel.slice(1).map(x => x[i + 1] ? x[i + 1].v : null)), '0.00%'))]);
+  groups.forEach((g, k) => { const r = k + 2;
+    rank.push([groupLabel(g), ...provs.map((p, i) => valOf(g, p, 'J') == null ? null : xlF(`RANK(${R}!${colOf(i)}${r},${R}!$B${r}:$${colOf(provs.length - 1)}${r},0)`, rankOf(provs.map(o => ({ key: o.id, v: valOf(g, o, 'J') }))).map.get(p.id), '0')) ]); });
+  rank.push([S.avg, ...provs.map((p, i) => xlF(`AVERAGE(${colOf(i)}2:${colOf(i)}${last})`, meanOf(rank.slice(1).map(x => x[i + 1] ? x[i + 1].v : null)), '0.0'))]);
+  /* 4. Metodika */
+  const meth = L ? [['Metodika ir šaltiniai'], [], ['Laikotarpis', periodText() + (P.gx ? ' · nuo Goindex pradžios' : '')], ['Duomenys iki', iso(LATEST)], ['Atsisiųsta', DATA.generated],
+    ['Šaltinis', 'Valdytojų skelbiamos vieneto vertės (lapas „Vertės“) – patikrinamos valdytojų svetainėse.'], [],
+    ['Grąža', 'Pabaigos vieneto vertė ÷ pradžios vieneto vertė − 1 (lapas „Skaičiavimai“, stulpelis J). Pradžios vertė – paskutinė vertė laikotarpio pradžios dieną arba prieš ją.' + (REAL ? ' Reali grąža: dar padalinta iš VKI pokyčio (M, N stulpeliai).' : '')],
+    ['Metinė grąža', '(1 + grąža) ^ (365,25 ÷ dienos) − 1; dienos = laikotarpio pabaiga − pradžia (stulpeliai K, L).'],
+    ['Mokesčiai', 'Vieneto vertės jau po valdymo mokesčio – mokesčiai antrą kartą neatimami.'],
+    ['Palyginimas', ref ? `${labelOf(ref)} grąža minus kiekvieno konkurento grąža; paskutinis stulpelis – minus konkurentų vidurkis.` : 'Kiekvieno valdytojo grąža minus kitų valdytojų medianos toje grupėje (MEDIAN).'],
+    ['Vieta', 'RANK: 1 – didžiausia grąža grupėje.'], ['Vidurkis', 'Paprastas grupių vidurkis (AVERAGE), tušti langeliai neskaičiuojami.'],
+    ['Pastaba', 'Fondas be naujų duomenų (> 5 d. atsilikęs) arba neturintis vertės laikotarpio pradžioje – paliekamas tuščias. 2003–2009 fondai, pradėti ≤ 7 d. po laikotarpio pradžios už 1,00 €, skaičiuojami nuo pirmos vertės.']]
+    : [['Methodology and sources'], [], ['Period', periodText() + (P.gx ? ' · since Goindex start' : '')], ['Data until', iso(LATEST)], ['Downloaded', DATA.generated],
+    ['Source', 'Unit values published by the managers (sheet “Values”) – can be checked on the managers’ websites.'], [],
+    ['Return', 'End unit value ÷ start unit value − 1 (sheet “Calculations”, column J). Start value – the last value on or before the period start.' + (REAL ? ' Real return: also divided by the CPI change (columns M, N).' : '')],
+    ['Annualized', '(1 + return) ^ (365.25 ÷ days) − 1; days = period end − start (columns K, L).'],
+    ['Fees', 'Unit values are net of the management fee – fees are not deducted again.'],
+    ['Relative', ref ? `${labelOf(ref)} return minus each peer’s return; last column – minus the peer average.` : 'Each manager’s return minus the median of the other managers in the group (MEDIAN).'],
+    ['Rank', 'RANK: 1 – highest return in the group.'], ['Average', 'Simple average of groups (AVERAGE); empty cells are ignored.'],
+    ['Note', 'A fund without new data (> 5 days behind) or without a value at the period start is left empty. 2003–2009 funds that started ≤ 7 days after the period start at €1.00 run from the first value.']];
+  const wb = XLSX.utils.book_new(), add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX.utils.book_append_sheet(wb, ws, name); };
+  const wg = [{ wch: 22 }, ...provs.map(() => ({ wch: 11 })), { wch: 18 }];
+  add(meth, S.meth, [{ wch: 16 }, { wch: 110 }]);
+  add(ret, S.ret, wg); add(rel, S.rel, [{ wch: 30 }, ...Array(rl).fill({ wch: 11 })]); add(rank, S.rank, wg); add(ann, S.ann, wg);
+  add(calc, S.calc, [{ wch: 22 }, { wch: 10 }, { wch: 40 }, ...Array(hdr.length - 3).fill({ wch: 13 })]);
+  add(vals, S.vals, [{ wch: 11 }, ...used.map(() => ({ wch: 14 }))]);
+  return wb;
+}
+async function exportMarketXlsx() {
+  const btn = $('btnMxl'); btn.disabled = true;
+  try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'); XLSX.writeFile(marketBook(), `${lang === 'lt' ? 'Visa_rinka' : 'Market'}_${iso(LATEST)}.xlsx`); }
+  catch (e) { alert(T().xlsxFail); }
+  btn.disabled = false;
+}
 function downloadPng() {
   const g = byId(P.group), tmp = document.createElement('div'), W = 1100, H = 520;
   const ctl = drawLineChart(tmp, chartState.series, chartState.x0, chartState.x1, { width: W, height: H, events: chartState.evs, unit: chartState.opt.unit, axisUnit: chartState.opt.axisUnit, mr: 150 });
@@ -1002,6 +1102,7 @@ function buildControls() {
     b.addEventListener('click', () => { P.ovP = new Set(OV_PRESETS[k]); saveState(); renderOverall(); });
     $('ovPreset').appendChild(b); });
   $('btnGx').addEventListener('click', () => { P.gx = !P.gx; saveState(); renderMarket(); });
+  $('btnMxl').addEventListener('click', exportMarketXlsx);
   $('mref').addEventListener('change', e => { P.mref = e.target.value; saveState(); renderMarket(); });
   $('chips').innerHTML = '';
   DATA.providers.forEach(p => {

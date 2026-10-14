@@ -38,7 +38,7 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
 ### 11. Excel su formulėmis (puslapis „Apie“ jau padarytas 2026-10-14)
-- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. Pradėti nuo „Rezultatų“ heatmap ir rodiklių lentelių.
+- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. „Visa rinka“ 4 lentelės padarytos 2026-10-14 (mygtukas „Excel su formulėmis“); toliau – rodiklių, kalendorinių metų lentelės ir kiti puslapiai.
 
 ### 12. Grafikų eksportas ir naujos diagramos
 - **#67** „Kopijuoti vaizdą“ ir „Atsisiųsti PNG“ prie kiekvieno grafiko (savininkui labai patinka).
