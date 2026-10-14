@@ -42,6 +42,7 @@ def update_wages():
     with OUT.open(encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
     have = {int(r["year"]): r for r in rows}
+    added = False
     print("VDA vidutinis DU:", {y: (d["bruto"], d["neto"]) for y, d in sorted(data.items())[-4:]})
     for y, d in sorted(data.items()):
         if y in have:
@@ -54,10 +55,12 @@ def update_wages():
             print(f"  {y}: praleidžiama (ne kiti metai arba neįtikėtinas pokytis)")
             continue
         new = {"year": str(y), "gross": f"{d['bruto']}", "net": f"{d['neto']}", "source": "osp.stat.gov.lt"}
-        rows.append(new); have[y] = new
+        rows.append(new); have[y] = new; added = True
         print(f"  pridėta {y}: {d['bruto']} / {d['neto']}")
+    if not added:
+        return
     with OUT.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["year", "gross", "net", "source"])
+        w = csv.DictWriter(f, fieldnames=["year", "gross", "net", "source"], lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
 

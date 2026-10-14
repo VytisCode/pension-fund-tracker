@@ -128,6 +128,7 @@ jobs:
              && [ -z "$(git status --porcelain -- imports/lb_results imports/lb_portfolios imports/lb_fees)" ]; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
+            python -c "import openpyxl" 2>/dev/null || pip install -q openpyxl   # be naršyklės žingsnio nebūna įdiegta
             python build_site.py
           fi
 
