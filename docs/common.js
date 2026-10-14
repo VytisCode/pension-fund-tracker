@@ -201,6 +201,14 @@ function businessDaysBetween(a, b) {      // darbo dienos intervale (a, b]
   let n = 0; for (let d = a + 1; d <= b; d++) { const w = new Date(d * DAY).getUTCDay(); if (w !== 0 && w !== 6) n++; }
   return n;
 }
+// Kortelės antraštė – automatinė išvada (auditas #44): išvada stambiau, po ja mažiau – lentelės pavadinimas. Tuščias tekstas – išvados nėra
+function setConcl(hid, html) {
+  const h = document.getElementById(hid); if (!h) return;
+  let c = h.previousElementSibling && h.previousElementSibling.classList.contains('concl') ? h.previousElementSibling : null;
+  if (!html) { if (c) c.remove(); return; }
+  if (!c) { c = document.createElement('p'); c.className = 'concl'; h.before(c); }
+  c.innerHTML = html;
+}
 /* Šviežumo eilutė: „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ arba vėluojantis valdytojas geltonai.
    Valdytojo diena – seniausia iš jo fondų paskutinių dienų; atsiliekantys nuo naujausios dienos paryškinami. */
 function freshRender() {
