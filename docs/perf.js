@@ -26,7 +26,7 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `<b>${a}</b> earned the most (${ra}), <b>${z}</b> the least (${rz}); <b>${v}</b> was the least volatile (${rv}).`,
   cCal: (y, a, ra, z, rz) => `In ${y} the best was <b>${a}</b> (${ra}), the weakest <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Over ${y} years savings in the lowest-fee (${lo}) and highest-fee (${hi}) funds differ by <b>${d}</b>.`,
-  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Fees', 'Calendar'],
+  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Calendar'],
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
@@ -113,7 +113,7 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `Daugiausia uždirbo <b>${a}</b> (${ra}), mažiausiai – <b>${z}</b> (${rz}); mažiausiai svyravo <b>${v}</b> (${rv}).`,
   cCal: (y, a, ra, z, rz) => `${y} m. geriausias – <b>${a}</b> (${ra}), silpniausias – <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Per ${y} ${y >= 10 ? 'metų' : 'metus'} mažiausio (${lo}) ir didžiausio (${hi}) mokesčio fonduose sukauptos sumos skiriasi <b>${d}</b>.`,
-  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Mokesčiai', 'Kalendorius'],
+  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Kalendorius'],
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
@@ -690,7 +690,7 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1)}</td><td>${pct(x.r.r1.min, 1)}</td><td>${pct(x.r.r1.max, 1)}</td><td>${num(x.r.r1.pos, 2)}${pctSfx()}</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
-  renderRiskMap(); renderRelative(gs); renderDrawdown(); renderFees();
+  renderRiskMap(); renderRelative(gs); renderDrawdown();
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
@@ -814,47 +814,6 @@ let RDD = null;
 function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
   RDD = runupDrawdown($('rddCard'), DATA.groups.map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[DATA.groups.length - 1].id);
-}
-/* mokesčių poveikis: kas mėnesį įmokama suma, prielaidinė grąža prieš mokesčius, valdymo mokestis nuo turto */
-const FEEP = { kind: 'life', m: 100, y: 10, r: 5 };
-function feeSim(fee, m, y, r) {
-  const g = Math.pow(1 + r / 100, 1 / 12) - 1, f = fee / 100 / 12;
-  let gross = 0, net = 0, paid = 0;
-  for (let i = 0; i < y * 12; i++) { gross = (gross + m) * (1 + g); net = (net + m) * (1 + g); const c = net * f; paid += c; net -= c; }
-  return { gross, net, paid, contrib: m * y * 12 };
-}
-function renderFees() {
-  $('hFee').innerHTML = T().hFee + ik('fee');
-  const tools = $('feeTools');
-  if (!tools.dataset.ready) {                                    // valdikliai kuriami vieną kartą, kad įvedimo laukai neprarastų žymeklio
-    tools.dataset.ready = '1';
-    tools.innerHTML = `<div class="seg" id="feeKind" role="group"></div>`
-      + `<label class="field"><span id="feeLblM"></span><input class="small-in" type="number" id="feeM" min="0" step="10" value="${FEEP.m}"> €</label>`
-      + `<div class="seg" id="feeYears" role="group">${[5, 10, 20, 30].map(y => `<button type="button" data-y="${y}"></button>`).join('')}</div>`
-      + `<label class="field"><span id="feeLblR"></span><input class="small-in" type="number" id="feeR" min="-5" max="15" step="0.5" value="${FEEP.r}"> %</label>`;
-    $('feeKind').innerHTML = ['life', 'turto'].map(k => `<button type="button" data-k="${k}"></button>`).join('');
-    $('feeKind').onclick = e => { const b = e.target.closest('button'); if (b) { FEEP.kind = b.dataset.k; renderFees(); } };
-    $('feeYears').onclick = e => { const b = e.target.closest('button'); if (b) { FEEP.y = +b.dataset.y; renderFees(); } };
-    $('feeM').oninput = e => { const v = parseFloat(e.target.value); if (isFinite(v) && v >= 0) { FEEP.m = v; renderFees(); } };
-    $('feeR').oninput = e => { const v = parseFloat(e.target.value); if (isFinite(v)) { FEEP.r = v; renderFees(); } };
-  }
-  $('feeKind').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.k === 'life' ? T().feeLife : T().turto; b.setAttribute('aria-pressed', b.dataset.k === FEEP.kind); });
-  $('feeYears').querySelectorAll('button').forEach(b => { b.textContent = T().feeYrs(+b.dataset.y); b.setAttribute('aria-pressed', +b.dataset.y === FEEP.y); });
-  $('feeLblM').textContent = T().feeM; $('feeLblR').textContent = T().feeR;
-  const grp = FEEP.kind === 'life' ? '1996-2002' : 'turto';      // gyvenimo ciklo fondų mokestis visose amžiaus grupėse vienodas
-  const rows = marketProvs().map(p => ({ p, fee: typeof FEES !== 'undefined' ? FEES[`${p.id}|${grp}`] : undefined })).filter(x => x.fee != null)
-    .map(x => ({ ...x, s: feeSim(x.fee, FEEP.m, FEEP.y, FEEP.r) })).sort((a, b) => a.fee - b.fee || a.p.label.localeCompare(b.p.label));
-  setCap('feeTbl', T().capFee(FEEP.m, FEEP.y, FEEP.r));
-  if (!rows.length) { $('feeTbl').innerHTML = `<tbody><tr><td class="na">${T().noData}</td></tr></tbody>`; return; }
-  const eur = v => num(v, 0) + ' €', maxLoss = Math.max(...rows.map(r => r.s.gross - r.s.net), 1);
-  const lo = rows[0], hi = rows[rows.length - 1];
-  setConcl('hFee', hi.fee > lo.fee ? T().cFee(FEEP.y, `${lo.p.label} ${num(lo.fee, 2)}${pctSfx()}`, `${hi.p.label} ${num(hi.fee, 2)}${pctSfx()}`, eur(lo.s.net - hi.s.net)) : '');
-  $('feeTbl').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().feeRate}</th><th>${T().feeContrib}</th><th>${T().feeGross}</th><th>${T().feeNet}</th><th>${T().feePaid}</th><th>${T().feeLoss}</th><th>${T().feeLossPct}</th></tr></thead><tbody>`
-    + rows.map(r => {
-      const loss = r.s.gross - r.s.net;
-      return `<tr><td class="name"><span class="sw" style="background:${colorOf(r.p.id)}"></span>${r.p.label}</td><td>${num(r.fee, 2)} %</td><td>${eur(r.s.contrib)}</td><td>${eur(r.s.gross)}</td><td>${eur(r.s.net)}</td><td>${eur(r.s.paid)}</td>`
-        + `<td><span class="feebar"><i style="width:${loss / maxLoss * 100}%"></i></span>${eur(loss)}</td><td>${num(loss / r.s.gross * 100, 1)} %</td></tr>`;
-    }).join('') + '</tbody>';
 }
 function renderRanksByPeriod(gs, ALL) {
   setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
@@ -1291,7 +1250,7 @@ function labelControls() {
   $('btnCpi').textContent = T().cpiBtn; $('btnCpi').hidden = typeof CPI === 'undefined'; $('btnCpi').setAttribute('aria-pressed', !!P.cpi);
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
-  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hFee', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })));   // vidinė navigacija (auditas #43)
+  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
