@@ -21,6 +21,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta
@@ -36,7 +37,8 @@ PAGES = [
     "https://www.lb.lt/lt/pensiju-fondai-1",
 ]
 MAX_CRAWL = 25                      # jei portfelių nuorodos nerasta – papildomai peržiūrimi susiję LB puslapiai
-UA = {"User-Agent": "Mozilla/5.0 (pension fund tracker; daily public data check)"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "lt-LT,lt;q=0.9,en;q=0.8"}
 
 # rūšis: (failo vardo šablonas, katalogas, išsaugomas vardas, galūnė)
 KINDS = {
@@ -49,9 +51,47 @@ LOCAL = {"lbr": "2-pakopa-rezultatai-*.xlsx", "pf": "pf-portfeliai-*.xlsx", "fee
 MAGIC = {".xlsx": b"PK\x03\x04", ".xls": b"\xd0\xcf\x11\xe0"}
 
 
+_PW = {}
+
+
+def _browser():
+    """LB svetainė paprastoms užklausoms gali grąžinti 403 – tada naudojama naršyklė (Playwright, kaip valdytojų skaitytuvuose)."""
+    if not _PW:
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "playwright"], check=True)
+            from playwright.sync_api import sync_playwright
+        pw = sync_playwright().start()
+        try:
+            b = pw.chromium.launch()
+        except Exception:
+            subprocess.run([sys.executable, "-m", "playwright", "install", "--with-deps", "chromium"], check=True)
+            b = pw.chromium.launch()
+        ctx = b.new_context(user_agent=UA["User-Agent"], locale="lt-LT")
+        _PW.update(pw=pw, b=b, ctx=ctx, page=ctx.new_page())
+    return _PW
+
+
 def get(url: str) -> bytes:
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
-        return r.read()
+    if not _PW:
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:
+            if e.code not in (403, 429, 503):
+                raise
+            print(f"  {url}: HTTP {e.code} – bandoma per naršyklę")
+    w = _browser()
+    if re.search(r"\.xlsx?$", urllib.parse.urlparse(url).path, re.I):
+        r = w["ctx"].request.get(url, timeout=90000)
+        if not r.ok:
+            raise RuntimeError(f"HTTP {r.status}")
+        return r.body()
+    r = w["page"].goto(url, timeout=90000, wait_until="domcontentloaded")
+    if r is None or r.status >= 400:
+        raise RuntimeError(f"HTTP {r.status if r else '?'}")
+    return w["page"].content().encode("utf-8")
 
 
 def links(page: str, text: str):
@@ -200,11 +240,18 @@ def main():
     now = datetime.now(timezone(timedelta(hours=3)))
     today = now.strftime("%Y-%m-%d")
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
-    if state.get("checked") == today and "--force" not in sys.argv:
-        print("LB failai šiandien jau tikrinti.")
+    fail = state.get("fail", {})
+    if "--force" not in sys.argv and (state.get("checked") == today or (fail.get("date") == today and fail.get("n", 0) >= 3)):
+        print("LB failai šiandien jau tikrinti." if state.get("checked") == today else "LB šiandien nepasiekiamas (3 bandymai) – rytoj.")
         return
     print("Lietuvos banko failų paieška:")
     found, other = scan()
+    if not found and not other:
+        print("LB puslapiai nepasiekiami arba be failų nuorodų – bus bandoma kito paleidimo metu.")
+        state["fail"] = {"date": today, "n": (fail.get("n", 0) if fail.get("date") == today else 0) + 1}
+        STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        return
+    state.pop("fail", None)
     state["checked"] = today
     state.setdefault("files", {})
     for kind in KINDS:
