@@ -350,3 +350,18 @@ td.soft { background-image: linear-gradient(rgba(255,255,255,.55), rgba(255,255,
 :hover > .ctools, .ctools:focus-within { opacity: 1; }
 @media (hover: none) { .ctools { opacity: .8; } }
 @media print { .ctools { display: none !important; } }
+
+/* spausdinimas (auditas #51): antraštė, du dizainai, lūžiai tarp kortelių */
+.printhead { display: none; }
+.tm-print { display: contents; }
+@media print {
+  .printhead { display: block; font-size: 10.5px; color: var(--text-2); border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-bottom: 8px; }
+  .snav, .ctools, .stbtn .chev, .fresh, .srcl a { display: none !important; }
+  section.card, .card, .kpis, .bk { break-inside: avoid; }
+  h2.sec, .group-h { break-after: avoid; }
+  :root[data-print="cozy"] {
+    --surface: #faf6ef; --card: #fffdf9; --line: #eae2d6; --text: #2b2622; --text-2: #5a5149; --text-3: #7a6f64;
+    --grid: #efe8dd; --axis: #bdb2a3; --accent: #2f6b5a; --hover: #f3ece1; --dpos: #2f6b5a; --dneg: #c0643c;
+  }
+  :root[data-print="cozy"] body { background: var(--surface); }
+}

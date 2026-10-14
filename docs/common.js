@@ -8,7 +8,7 @@ const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
     siteTitle: 'Pension funds', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
-    navIndex: 'Today', navApie: 'About', srcPfx: 'Source:', srcMeth: 'Methodology →', srcT: { nav: 'managers’ unit values', aum: 'managers’ net assets', p3: 'managers’ III pillar values', pf: 'Bank of Lithuania portfolio reports', rep: 'unit values, benchmarks, Bank of Lithuania results report', idx: 'MSCI, S&P, ECB', journey: 'Sodra, State Data Agency, laws' }, navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
+    navIndex: 'Today', printCozy: 'Print / PDF (as on screen)', printPlain: 'Print / PDF (white, for presentations)', printed: 'printed', printSrc: 'sources and methodology – page “About”', navApie: 'About', srcPfx: 'Source:', srcMeth: 'Methodology →', srcT: { nav: 'managers’ unit values', aum: 'managers’ net assets', p3: 'managers’ III pillar values', pf: 'Bank of Lithuania portfolio reports', rep: 'unit values, benchmarks, Bank of Lithuania results report', idx: 'MSCI, S&P, ECB', journey: 'Sodra, State Data Agency, laws' }, navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
@@ -22,7 +22,7 @@ const I18N = {
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
     siteTitle: 'Pensijų fondai', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
-    navIndex: 'Šiandien', navApie: 'Apie', srcPfx: 'Šaltinis:', srcMeth: 'Metodika →', srcT: { nav: 'valdytojų vieneto vertės', aum: 'valdytojų grynieji aktyvai', p3: 'valdytojų III pakopos vertės', pf: 'Lietuvos banko portfelių ataskaitos', rep: 'vieneto vertės, lyginamieji indeksai, LB rezultatų ataskaita', idx: 'MSCI, S&P, ECB', journey: 'Sodra, Valstybės duomenų agentūra, įstatymai' }, navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
+    navIndex: 'Šiandien', printCozy: 'Spausdinti / PDF (kaip ekrane)', printPlain: 'Spausdinti / PDF (baltas, prezentacijoms)', printed: 'atspausdinta', printSrc: 'šaltiniai ir metodika – puslapis „Apie“', navApie: 'Apie', srcPfx: 'Šaltinis:', srcMeth: 'Metodika →', srcT: { nav: 'valdytojų vieneto vertės', aum: 'valdytojų grynieji aktyvai', p3: 'valdytojų III pakopos vertės', pf: 'Lietuvos banko portfelių ataskaitos', rep: 'vieneto vertės, lyginamieji indeksai, LB rezultatų ataskaita', idx: 'MSCI, S&P, ECB', journey: 'Sodra, Valstybės duomenų agentūra, įstatymai' }, navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
@@ -96,6 +96,17 @@ function renderHeader(active, onLang) {
   h.after(nav);
   const acts = document.getElementById('actions');
   if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
+  /* Spausdinimas (auditas #51): du dizainai – jaukus (kaip ekrane) ir baltas (prezentacijoms); antraštė su data ir šaltiniais */
+  const pr = document.createElement('div'); pr.className = 'tm-print';
+  pr.innerHTML = '<button class="btn" type="button" data-p="cozy"></button><button class="btn" type="button" data-p="plain"></button>';
+  document.getElementById('tmActs').append(pr);
+  pr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; document.documentElement.dataset.print = b.dataset.p; tmShow(false); setTimeout(() => window.print(), 50); });
+  addEventListener('afterprint', () => { delete document.documentElement.dataset.print; });
+  const ph = document.createElement('div'); ph.className = 'printhead'; h.prepend(ph);
+  const fillPh = () => { const t = T(); ph.innerHTML = `<b>${t.siteTitle} · ${t[navKey(active)]}</b> · ${typeof FRESH !== 'undefined' ? `${t.dataUntil} ${iso(FRESH.top)} · ` : ''}${t.printed} ${new Date().toISOString().slice(0, 10)} · ${t.printSrc}`; };
+  addEventListener('beforeprint', fillPh);
+  const tmb = document.getElementById('tmBtn'), tmp = document.getElementById('tmPanel');
+  const tmShow = on => { tmp.hidden = !on; tmb.setAttribute('aria-expanded', on); };
   const el = document.documentElement, isDark = () => el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
   const apply = () => {
     el.lang = lang;
@@ -113,6 +124,7 @@ function renderHeader(active, onLang) {
     });
     document.title = `${t[navKey(active)]} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
+    pr.querySelector('[data-p=cozy]').textContent = '🖶 ' + t.printCozy; pr.querySelector('[data-p=plain]').textContent = '🖶 ' + t.printPlain;
     document.getElementById('dlBtn').textContent = '⬇ ' + t.dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
     freshRender();
   };
@@ -126,8 +138,6 @@ function renderHeader(active, onLang) {
     apply();
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
-  const tmb = document.getElementById('tmBtn'), tmp = document.getElementById('tmPanel');
-  const tmShow = on => { tmp.hidden = !on; tmb.setAttribute('aria-expanded', on); };
   tmb.addEventListener('click', () => tmShow(tmp.hidden));
   const dlb = document.getElementById('dlBtn'), dlp = document.getElementById('dlPanel');
   dlb.addEventListener('click', () => { dlp.hidden = !dlp.hidden; dlb.setAttribute('aria-expanded', !dlp.hidden); if (!dlp.hidden) dlRender(); });
