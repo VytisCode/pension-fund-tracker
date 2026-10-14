@@ -126,6 +126,7 @@ def build():
                 g, risky, bar = (f[2], f[4], None) if f else (None, None, None)
             if g is None:
                 continue
+            first, all_rows = rows[0], rows      # tikroji veiklos pradžia (III pakopos fondai – nuo 2004 m. ir pan.)
             rows = [r for r in rows if r[0] >= "2018-12-01"] or rows[-1:]
             aum = next(((r[0], r[2]) for r in reversed(rows) if r[2]), (None, None))
             has_bm = any(r[3] for r in rows)
@@ -141,11 +142,13 @@ def build():
                 "fee": (lambda x: x[0] if x else None)(fees.get((pillar, prov, g if pillar == "II" else name))),
                 "aum": round(aum[1]) if aum[1] else None, "aumd": day_number(aum[0]) if aum[0] else None,
                 "s0": [day_number(rows[0][0]), rows[0][1]],
+                "i0": [day_number(first[0]), first[1]],
                 "am": [round(v) if v else None for v in at_month_ends(rows, ends, 2)],
             })
-            days = [day_number(r[0]) for r in rows]
-            daily.append([days[0], [b - a for a, b in zip(days, days[1:])], [r[1] for r in rows],
-                          [r[3] for r in rows] if has_bm else 0])
+            drows = all_rows if pillar == "III" else rows   # III pakopa: visa istorija (svyravimui nuo veiklos pradžios)
+            days = [day_number(r[0]) for r in drows]
+            daily.append([days[0], [b - a for a, b in zip(days, days[1:])], [r[1] for r in drows],
+                          [r[3] for r in drows] if has_bm else 0])
     return {"months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date, "feeYear": fee_year, "_daily": daily}
 
 

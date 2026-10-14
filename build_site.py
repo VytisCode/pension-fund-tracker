@@ -376,9 +376,12 @@ def build_reports(ver: dict) -> None:
     (DOCS / "data_rep.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "reports.html", DOCS / "reports.html")
     shutil.copyfile(SITE / "rep.js", DOCS / "rep.js")
-    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js", "rep_daily.js")}}
+    shutil.copyfile(SITE / "hy.js", DOCS / "hy.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js", "hy.js", "rep_daily.js")}}
     text = (DOCS / "reports.html").read_text(encoding="utf-8").replace("rep_daily.js", f"rep_daily.js?v={ver['rep_daily.js']}")
-    for n in ("style.css", "common.js", "data_rep.js", "rep.js"):
+    if (DOCS / "data_pf.js").exists():    # portfelių duomenys pusmečio ataskaitos lentelėms (kraunami tik prireikus)
+        text = text.replace('data-pf="data_pf.js"', f'data-pf="data_pf.js?v={hashlib.md5((DOCS / "data_pf.js").read_bytes()).hexdigest()[:8]}"')
+    for n in ("style.css", "common.js", "data_rep.js", "hy.js", "rep.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "reports.html").write_text(text, encoding="utf-8")
     print(f"docs/data_rep.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")

@@ -96,7 +96,7 @@ function seg(id, opts, cur) {
 function wire(root, handlers) {
   root.querySelectorAll('[data-seg]').forEach(g => g.querySelectorAll('button').forEach(b => b.addEventListener('click', () => handlers[g.dataset.seg](b.dataset.v))));
 }
-const ST = Object.assign({ m: 'SEB', per: 'ytd', kas: 'q', las: 'q', lf: '', c1: 'SWEDBANK', c2: 'ARTEA', c3: 'GOINDEX' },
+const ST = Object.assign({ m: 'SEB', per: 'ytd', kas: 'q', las: 'q', lf: '', hf: '', hq: '', c1: 'SWEDBANK', c2: 'ARTEA', c3: 'GOINDEX' },
   (() => { try { return JSON.parse(localStorage.getItem('repstate')) || {}; } catch (e) { return {}; } })());
 if (ST.per === '3y' || ST.per === '5y') ST.per += 'c';
 try { const q = new URLSearchParams(location.search).get('m'); if (q && MGRS.includes(q)) ST.m = q; } catch (e) {}
@@ -112,6 +112,7 @@ const short = d => iso(d).replace(/-/g, '.');
 function pt(f, i, bm) {
   if (i === 'L') return bm ? (f.blv != null ? [f.bld, f.blv] : null) : [f.ld, f.lv];
   if (i === 'S') return bm ? null : f.s0;
+  if (i === 'I') return bm ? null : f.i0;                 // tikroji veiklos pradžia (III pakopa)
   const v = bm ? f.bm && f.bm[i] : f.m[i];
   if (v != null) return [M[i], v];
   // fondas pradėjo veikti per START_GAP d. po mėnesio pabaigos (pvz. 2025-01-02) – pradžia = pirmoji vertė
@@ -355,54 +356,6 @@ function renderKpi() {
   MODELS.kpi = Object.assign(xb, { name: `${MLABEL[ST.m]} KPI ${T().per[ST.per]} ${iso(endDay)}` });
 }
 
-/* ---------- 4. LB stiliaus fondo rodikliai ---------- */
-function renderLb() {
-  const fs = fundsOf('II', ST.m).concat(fundsOf('III', ST.m));
-  if (!fs.some(f => REP.funds.indexOf(f) === +ST.lf)) ST.lf = String(REP.funds.indexOf(fs.find(f => f.g === '1975-1981') || fs[0]));
-  const f = REP.funds[+ST.lf];
-  const bar = document.getElementById('lbBar');
-  bar.innerHTML = field(T().asof, asofSel('las', false)) + field(T().fund, `<select data-f>${fs.map(x => `<option value="${REP.funds.indexOf(x)}"${x === f ? ' selected' : ''}>${shortName(x)}</option>`).join('')}</select>`);
-  bar.querySelector('select[data-a]').addEventListener('change', e => { ST.las = e.target.value; save(); renderLb(); });
-  bar.querySelector('select[data-f]').addEventListener('change', e => { ST.lf = e.target.value; save(); renderLb(); });
-  head('lbTitle', T().lbTitle, 'lb');
-
-  const xb = new XB(), bi = asofIdx(ST.las), hasB = !!f.bm;
-  const s0i = M.indexOf(f.s0[0]), s = f.m[0] != null ? 0 : s0i >= 0 && f.m[s0i] != null ? s0i : 'S', sDay = s === 'S' ? f.s0[0] : M[s];      // veiklos pradžia: 2018-12-31 arba pirmoji vertė
-  const wins = [[6, false], [12, false], [36, true], [60, true], [null, true]];   // [mėnesiai, metinė]
-  const rowRet = bm => wins.map(([n, ann], j) => {
-    const a = n == null ? s : bi - n;
-    if (n != null && (a < 0 || M[a] < sDay - START_GAP)) return { v: null };
-    const months = n ?? (s === 'S' ? null : bi - s);
-    return xb.rec(f, `${bm ? T().lbAvgB : T().lbAvg} · ${T().lbCols[j]}`, a, bi, { bm, ann, years: ann && (n != null || s !== 'S') ? months / 12 : null, months });
-  });
-  const rowStd = bm => wins.map(([n], j) => {
-    const t0 = n == null ? sDay : (bi - n >= 0 ? M[bi - n] : null);
-    if (t0 == null || t0 < sDay - START_GAP) return { v: null };
-    return xb.std(f, `${bm ? T().lbStdB : T().lbStd} · ${T().lbCols[j]}`, bm, t0, M[bi], n === 6 ? 126 : 252);
-  });
-  const r1 = rowRet(false), r2 = hasB ? rowRet(true) : null, r3 = rowStd(false), r4 = hasB ? rowStd(true) : null;
-  const y1 = yearOf(M[bi]), years = []; for (let y = y1; y >= Math.max(2019, yearOf(sDay + 1)); y--) years.push(y);
-  const yr = bm => years.map(y => {
-    const a = mIdx(y - 1, 11), b = y === y1 ? bi : mIdx(y, 11);
-    const aa = M[a] >= sDay - START_GAP ? a : s === 'S' && yearOf(sDay) === y ? s : null;
-    return aa == null ? { v: null } : Object.assign(xb.rec(f, `${bm ? T().lbIdx : T().lbFund} · ${T().lbYear(y)}`, aa, b, { bm }), { part: aa === 'S' });
-  }).concat([xb.rec(f, `${bm ? T().lbIdx : T().lbFund} · ${T().sinceStart}`, s, bi, { bm })]);
-  const a1 = yr(false), a2 = hasB ? yr(true) : null;
-  const cell = c => c.v == null ? `<td class="na">${c.wait ? T().loading : '–'}</td>` : `<td>${num(c.v, 2)}</td>`;
-  const cellP = (c, j) => `<td class="${j === years.length ? 'bl ' : ''}${c.v == null ? 'na' : ''}">${c.v == null ? '–' : `${num(c.v, 2)}${pctSfx()}${c.part ? '*' : ''}`}</td>`;
-  const dash = k => Array(k).fill('<td class="na">–</td>').join('');
-  const line = (label, cs) => `<tr><td class="l">${label}</td>${cs ? cs.map(cell).join('') : dash(wins.length)}</tr>`;
-  document.getElementById('lbTable').innerHTML = `<thead><tr><th class="l">${shortName(f)}</th>${T().lbCols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>`
-    + line(T().lbAvg, r1) + line(T().lbAvgB, r2) + line(T().lbStd, r3) + line(T().lbStdB, r4) + '</tbody>';
-  document.getElementById('lbYears').innerHTML = `<thead><tr><th class="l"></th>${years.map(y => `<th>${T().lbYear(y)}</th>`).join('')}<th class="bl">${T().sinceStart}</th></tr></thead><tbody>`
-    + [[T().lbFund, a1], [T().lbIdx, a2]].map(([l, cs]) => `<tr><td class="l">${l}</td>${cs ? cs.map(cellP).join('') : dash(years.length + 1)}</tr>`).join('') + '</tbody>';
-  document.getElementById('lbNote').textContent = T().lbNote(short(M[bi]), short(sDay));
-  const raw = c => c && c.n ? { n: c.n, v: c.v, z: '0.00' } : null;
-  xb.table.push([shortName(f), ...T().lbCols], [T().lbAvg, ...r1.map(raw)], [T().lbAvgB, ...(r2 || []).map(raw)], [T().lbStd, ...r3.map(raw)], [T().lbStdB, ...(r4 || []).map(raw)], [],
-    ['', ...years.map(T().lbYear), T().sinceStart], [T().lbFund, ...a1.map(ref)], [T().lbIdx, ...(a2 || []).map(ref)]);
-  MODELS.lb = Object.assign(xb, { name: `${shortName(f)} ${iso(M[bi])}` });
-}
-
 /* ---------- Excel ---------- */
 function loadScript(src) { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 const xd = d => ({ t: 'n', v: d + 25569, z: 'yyyy-mm-dd' });           // Excel data (dienos nuo 1900 m.)
@@ -452,20 +405,21 @@ function buildBook(k) {
   return { wb, file: `${X.name.replace(/[^\p{L}\p{N}.-]+/gu, '_')}.xlsx` };
 }
 async function download(k) {
-  await Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'), k === 'lb' ? loadDaily().then(renderLb) : null]);
-  const b = buildBook(k);
+  await Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'), k === 'hy' ? Promise.all([loadDaily(), loadPf()]).then(renderHy) : null]);
+  const b = k === 'hy' ? hyBook() : buildBook(k);
   if (b) XLSX.writeFile(b.wb, b.file);
 }
 
 function renderAllParts() {
   document.getElementById('sub').textContent = `${T().navReports} · ${T().updated} ${REP.generated}`;
   const bar = document.getElementById('mgrBar');
-  bar.innerHTML = field(T().mgr, seg('m', MGRS.map(m => [m, MLABEL[m]]), ST.m)) + `<button class="btn" type="button" id="btnPdf" title="${T().pdfTip}">${T().pdf}</button>`;
+  bar.innerHTML = field(T().mgr, seg('m', MGRS.map(m => [m, MLABEL[m]]), ST.m)) + `<button class="btn" type="button" id="btnPdf" title="${T().pdfTip}">${T().pdf}</button>`
+    + `<button class="btn xls" type="button" data-x="hy" title="${T().hyXlsTip}">⤓ ${T().hyXls}</button>`;
   document.getElementById('btnPdf').onclick = () => window.print();
   document.getElementById('printMeta').textContent = `${T().siteTitle} · ${T().mgr}: ${MLABEL[ST.m]} · ${T().updated} ${REP.generated}`;
   wire(bar, { m: v => { ST.m = v; save(); renderAllParts(); } });
-  ['calLead', 'kpiLead', 'lbLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderCal(); renderMonths(); renderKpi(); renderLb();
+  ['calLead', 'kpiLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
+  renderCal(); renderMonths(); renderKpi(); renderHy();
 }
 document.addEventListener('click', e => {
   const x = e.target.closest('.xls');
@@ -474,11 +428,11 @@ document.addEventListener('click', e => {
   if (!b) { if (!e.target.closest('#pop')) pop.style.display = 'none'; return; }
   e.stopPropagation();
   if (pop.style.display === 'block' && pop._b === b) { pop.style.display = 'none'; return; }
-  pop.textContent = T().info[b.dataset.k]; pop._b = b; pop.style.display = 'block';
+  pop.textContent = T().info[b.dataset.k] || T().infoHy; pop._b = b; pop.style.display = 'block';
   const r = b.getBoundingClientRect(), w = pop.offsetWidth;
   pop.style.left = Math.max(8, Math.min(r.left + scrollX - 8, scrollX + document.documentElement.clientWidth - w - 8)) + 'px'; pop.style.top = (r.bottom + scrollY + 6) + 'px';
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('pop').style.display = 'none'; });
 renderHeader('reports', renderAllParts);
 renderAllParts();
-loadDaily().then(renderLb);
+loadDaily().then(renderHy); loadPf().then(renderHy);

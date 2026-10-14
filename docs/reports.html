@@ -31,9 +31,12 @@
   @media print { h2.sec .btn.xls { display: none; } h2.sec { margin-top: 14px; } }
   .bar .field { max-width: 100%; min-width: 0; flex-wrap: wrap; }   /* siaurame ekrane pasirinkimai neplatina puslapio */
   .bar select { max-width: 100%; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  section.hy { margin-bottom: 12px; } section.hy h3 { font-size: 14.5px; margin: 0 0 8px; }
+  .hyhead { margin: 0 0 12px; font-size: 13.5px; }
+  .hy2 { gap: 12px; } table.rt.lbt th { min-width: 70px; }
 </style>
 </head>
-<body data-daily="rep_daily.js?v=db330587">
+<body data-daily="rep_daily.js?v=5d8d02bf" data-pf="data_pf.js?v=604336f2">
 <div class="wrap">
   <header id="top"></header>
   <div class="bar sticky" id="mgrBar"></div>
@@ -51,17 +54,17 @@
   <div class="bar rbar" id="kpiBar"></div>
   <section class="card"><div class="scroll"><table class="rt" id="kpiTable"></table></div><p class="note" id="kpiNote"></p></section>
 
-  <h2 class="sec" id="lbTitle"></h2>
-  <p class="lead" id="lbLead"></p>
-  <div class="bar rbar" id="lbBar"></div>
-  <section class="card"><div class="scroll"><table class="rt lbt" id="lbTable"></table></div>
-    <div class="scroll" style="margin-top:14px"><table class="rt lbt" id="lbYears"></table></div><p class="note" id="lbNote"></p></section>
+  <h2 class="sec" id="hyTitle"></h2>
+  <p class="lead" id="hyLead"></p>
+  <div class="bar rbar" id="hyBar"></div>
+  <div id="hyBody"></div>
 
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
 <script src="common.js?v=b154c07c"></script>
-<script src="data_rep.js?v=ff15eec0"></script>
-<script src="rep.js?v=0aead3aa"></script>
+<script src="data_rep.js?v=151e7ccb"></script>
+<script src="hy.js?v=189cc3bd"></script>
+<script src="rep.js?v=57320050"></script>
 </body>
 </html>
