@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Valdytojas ir fondas</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .mgr { display: grid; gap: 14px; }
+  .pick { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 14px; }
+  .pick select { font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); max-width: 100%; }
+  .mband { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--mc) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--mc) 45%, var(--line)); border-left: 8px solid var(--mc); }
+  .mband h2 { margin: 0; font-size: 22px; }
+  .mband .s { color: var(--text-2); font-size: 13px; }
+  .mt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .mt th, .mt td { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  .mt td.n, .mt th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .mt td.wrap { white-space: normal; min-width: 180px; }
+  .mt td.n small { color: var(--text-3); margin-left: 4px; }
+  .mt tr.me td { font-weight: 600; background: color-mix(in srgb, var(--mc) 9%, transparent); }
+  .mt td.top { color: var(--dpos); } .mt td.bot { color: var(--dneg); }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+  .alloc { display: grid; grid-template-columns: 150px 1fr 64px; gap: 4px 8px; align-items: center; font-size: 13px; }
+  .alloc .t { height: 10px; background: var(--grid); border-radius: 3px; overflow: hidden; }
+  .alloc .t i { display: block; height: 10px; background: var(--mc); }
+  .alloc .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .mchart { min-height: 220px; }
+  .mgr .note { color: var(--text-3); font-size: 12px; }
+  @media print {
+    .pick { display: none; }
+    .mgr { gap: 8px; }
+    .mgr .card { padding: 8px 10px; }
+    .mt th, .mt td { padding: 2px 4px; font-size: 10.5px; }
+    .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+    .mchart { min-height: 0; }
+    .mchart svg { max-height: 170px; }
+    html[data-print-a4] body { zoom: 0.68; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <main class="mgr">
+    <div class="pick"><label for="selP" id="selPL"></label><select id="selP"></select><label for="selF" id="selFL"></label><select id="selF"></select><button class="btn" type="button" id="btnA4"></button></div>
+    <div class="mband" id="band"></div>
+    <div id="body" class="mgr"></div>
+  </main>
+  <footer id="foot"></footer>
+</div>
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="data_rep.js"></script>
+<script src="data_pf.js"></script>
+<script src="data_aum.js"></script>
+<script src="mgr.js"></script>
+</body>
+</html>
