@@ -796,3 +796,27 @@ async function dlPortfolios() {
   const tag = [DL.pl, DL.fund || DL.mgr].filter(Boolean).join('_').replace(/[^\w-]+/g, '-');
   XLSX.writeFile(wb, `${lang === 'lt' ? 'Portfeliai' : 'Portfolios'}${tag ? '_' + tag : ''}_${PF.quarters[DL.q0]}_${PF.quarters[DL.q1]}.xlsx`);
 }
+
+/* ---------- KPI kortelės puslapio viršuje (auditas #50) ----------
+   kpiRow([[pavadinimas, reikšmė, paaiškinimas?], …]) – kortelių eilutė iškart po navigacija (arba į esamą #kpis). */
+addStrings({
+  kpFunds: 'Funds', kpMgrs: 'Managers', kpAssets: 'Net assets', kpFrom: 'History from', kpUntil: 'Data until', kpBn: 'bn €', kpMn: 'm €',
+  kpII: 'II pillar', kpIII: 'III pillar', kpYtd: 'II pillar change this year', kpPay: y => `Reform payouts ${y}`, kpQ: 'Latest portfolio report', kpPos: 'Holdings in it', kpSecs: 'Different securities',
+  kpLb: 'Bank of Lithuania results', kpMonth: 'Latest month end', kpYtdS: (v, p) => `${v} (${p})`,
+}, {
+  kpFunds: 'Fondų', kpMgrs: 'Valdytojų', kpAssets: 'Grynieji aktyvai', kpFrom: 'Istorija nuo', kpUntil: 'Duomenys iki', kpBn: 'mlrd. €', kpMn: 'mln. €',
+  kpII: 'II pakopa', kpIII: 'III pakopa', kpYtd: 'II pakopos pokytis šiais metais', kpPay: y => `Reformos išmokos ${y} m.`, kpQ: 'Naujausia portfelių ataskaita', kpPos: 'Pozicijų joje', kpSecs: 'Skirtingų vertybinių popierių',
+  kpLb: 'LB rezultatų ataskaita', kpMonth: 'Paskutinė mėnesio pabaiga', kpYtdS: (v, p) => `${v} (${p})`,
+});
+const kpMoney = eur => eur >= 1e9 ? `${num(eur / 1e9, 2)} ${T().kpBn}` : `${num(eur / 1e6, 1)} ${T().kpMn}`;
+function kpiRow(items) {
+  let el = document.getElementById('kpis');
+  if (!el) { el = document.createElement('div'); el.className = 'kpis'; el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  el.innerHTML = items.filter(Boolean).map(([k, v, s]) => `<div class="kpi"><span>${k}</span><b>${v}</b>${s ? `<small>${s}</small>` : ''}</div>`).join('');
+}
+function kpiII() {                       // II pakopa iš data.js („Rezultatai“, „Apžvalga“)
+  const fs = DATA.groups.flatMap(g => g.funds), last = Math.max(...fs.map(f => f.d[f.d.length - 1]));
+  const live = fs.filter(f => f.assets && f.assetsDate >= last - 10);
+  return [[T().kpFunds, fs.length], [T().kpMgrs, DATA.providers.length], [T().kpAssets, kpMoney(live.reduce((s, f) => s + f.assets, 0)), iso(Math.max(...live.map(f => f.assetsDate)))],
+    [T().kpFrom, iso(Math.min(...fs.map(f => f.d[0])))], [T().kpUntil, iso(last)]];
+}

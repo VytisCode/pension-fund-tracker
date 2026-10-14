@@ -1063,6 +1063,7 @@ function syncView() {
 function winLabel(w) { const v = T()['win' + w]; return typeof v === 'function' ? v(periodText()) : v; }
 function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = winLabel(b.dataset.w); b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
 function labelControls() {
+  kpiRow(kpiII());
   $('periods').setAttribute('aria-label', T().period);
   $('periods').querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
   syncCalSelects();

@@ -365,6 +365,13 @@ function payBook() {
 async function payXls() { await loadXlsx(); XLSX.writeFile(payBook(), `${lang === 'lt' ? 'Ismokejimai' : 'Payouts'}_${String(AUM.generated).slice(0, 10)}.xlsx`); }
 
 function renderAllParts() {
+  const last = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), y0 = Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY);
+  const tot = (pl, day) => AUM.funds.filter(f => f.pl === pl).reduce((s, f) => { const i = lastOnOrBefore(f, day); return s + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
+  const t2 = tot('II', last), t2y = tot('II', y0), t3 = tot('III', last), yr = new Date(last * DAY).getUTCFullYear();
+  const pay = AUM.payouts.filter(p => p.q.startsWith(String(yr))).reduce((s, p) => s + p.flow, 0);
+  kpiRow([[T().kpII, kpMoney(t2 * 1e6), iso(last)], t3 ? [T().kpIII, kpMoney(t3 * 1e6), iso(last)] : null,
+    t2y ? [T().kpYtd, kpMoney(Math.abs(t2 - t2y) * 1e6).replace(/^/, t2 >= t2y ? '+' : '−'), pct((t2 / t2y - 1) * 100)] : null,
+    pay ? [T().kpPay(yr), kpMoney(Math.abs(pay) * 1e6).replace(/^/, '−')] : null]);
   document.getElementById('sub').textContent = `${T().navAum} · ${T().updated} ${AUM.generated}`;
   ['chTitle', 'chLead', 'poTitle', 'poLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
   renderChart(); renderGrowth(); renderQuarters(); renderPayouts();

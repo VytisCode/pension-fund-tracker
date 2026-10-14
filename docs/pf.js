@@ -600,6 +600,8 @@ function renderPeers() {
 }
 
 function renderAll() {
+  const qi = NQ - 1, live = FUNDS.filter(f => f.q[qi]), secs = new Set(live.flatMap(f => [...f.q[qi].keys()])).size;
+  kpiRow([[T().kpQ, Q[qi]], [T().kpFunds, live.length], [T().kpPos, num(live.reduce((s, f) => s + f.q[qi].size, 0), 0)], [T().kpSecs, num(secs, 0)], [T().kpFrom, Q[0]]]);
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
   ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
   renderTopChanges(); renderAlt(); renderPeers(); renderFund();

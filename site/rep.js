@@ -411,6 +411,9 @@ async function download(k) {
 }
 
 function renderAllParts() {
+  const lbd = String(REP.lbDate || ''), lbIso = lbd.length === 8 ? `${lbd.slice(0, 4)}-${lbd.slice(4, 6)}-${lbd.slice(6)}` : lbd;
+  kpiRow([[T().kpFunds, REP.funds.length, `${T().kpII} ${REP.funds.filter(f => f.pl === 'II').length} · ${T().kpIII} ${REP.funds.filter(f => f.pl === 'III').length}`],
+    [T().kpMonth, iso(M[NM - 1])], lbIso ? [T().kpLb, lbIso] : null, [T().kpUntil, iso(Math.max(...REP.funds.map(f => f.ld)))]]);
   document.getElementById('sub').textContent = `${T().navReports} · ${T().updated} ${REP.generated}`;
   const bar = document.getElementById('mgrBar');
   bar.innerHTML = field(T().mgr, seg('m', MGRS.map(m => [m, MLABEL[m]]), ST.m)) + `<button class="btn" type="button" id="btnPdf" title="${T().pdfTip}">${T().pdf}</button>`
