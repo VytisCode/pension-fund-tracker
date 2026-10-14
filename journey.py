@@ -53,9 +53,27 @@ def _f(x):
     return float(x) if x not in (None, "") else None
 
 
+def _second_thursday(y: int, m: int) -> date:
+    d = date(y, m, 1)
+    return d + timedelta(days=(3 - d.weekday()) % 7 + 7)
+
+
+def sodra_dates(months_ahead: int = 24) -> list:
+    """Sodros pervedimų datos; po paskutinės žinomos (grafiko) datos – įvertis: 2-asis mėnesio ketvirtadienis
+    (2024–2026 m. grafikuose taip ~80 % mėnesių, kitais – ±1 sav.), pažymimas trečiu elementu 1. Taip puslapis veikia ir
+    Sodrai dar nepaskelbus naujų metų grafiko (savininko prašymas 2026-10-14 – kuo mažiau rankinio darbo)."""
+    out = [[r["date"], int(r["months"])] for r in _rows("sodra_dates.csv")]
+    last = date.fromisoformat(out[-1][0])
+    y, m = last.year, last.month
+    for _ in range(months_ahead):
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+        out.append([_second_thursday(y, m).isoformat(), 1, 1])
+    return out
+
+
 def build() -> dict:
     return {
-        "dates": [[r["date"], int(r["months"])] for r in _rows("sodra_dates.csv")],
+        "dates": sodra_dates(),
         "rates": [[r["from"], _f(r["sodra_pct"]), _f(r["state_pct"]), _f(r["participant_pct"]), _f(r["participant_gradual_pct"])] for r in _rows("rates.csv")],
         "incentive": {r["year"]: [_f(r["max_eur"]), _f(r["min_eur"])] for r in _rows("state_incentive.csv")},
         "wages": {r["year"]: [_f(r["gross"]), _f(r["net"])] for r in _rows("wages.csv")},
@@ -108,7 +126,7 @@ def freshness() -> list:
     add("rates", "Įmokų tarifai", "Contribution rates", str(ry), date(ry + 1, 1, 31), False,
         "https://www.sodra.lt/pensijos/papildomai-kaupiama-pensija/pagrindine-informacija")
     sd = max(r["date"] for r in _rows("sodra_dates.csv"))              # naujas grafikas reikalingas prieš baigiantis senajam
-    add("sodra_dates", "Sodros pervedimų į fondus grafikas", "Sodra transfer schedule", sd, date.fromisoformat(sd) - timedelta(days=30), False,
+    add("sodra_dates", "Sodros pervedimų į fondus grafikas", "Sodra transfer schedule", sd, date.fromisoformat(sd) + timedelta(days=365), False,   # vėliau – įvertis
         "https://www.sodra.lt/pensijos/papildomai-kaupiama-pensija/pagrindine-informacija")
     add("annuity", "Sodros anuiteto sąlygos ir ribos", "Sodra annuity conditions and limits", str(ANNUITY["year"]), date(ANNUITY["year"] + 1, 1, 31), False,
         "https://www.sodra.lt/skaiciuokles/pensiju-anuitetu-skaiciuokle")

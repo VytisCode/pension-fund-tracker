@@ -76,8 +76,8 @@ SOURCES = [
          how_lt="Kai Vyriausybė patvirtina kitų metų MMA – pranešti Claude.", how_en="When the Government sets next year’s minimum wage, tell Claude."),
     dict(id="sodra", lt="Sodros įmokų pervedimo į fondus datos", en="Dates of Sodra transfers to funds",
          url="https://www.sodra.lt/pensijos/papildomai-kaupiama-pensija/pagrindine-informacija", src_lt="Sodra", src_en="Sodra",
-         pages=["journey"], mode="manual", f_lt="kas mėnesį", f_en="monthly",
-         how_lt="Pranešti Claude naujas pervedimo datas (matyti fondo sąskaitos išraše arba Sodros svetainėje).", how_en="Tell Claude the new transfer dates (seen in the fund account statement or on the Sodra site)."),
+         pages=["journey"], mode="auto", f_lt="kartą per metus (grafikas)", f_en="yearly (schedule)",
+         how_lt="Datos po paskutinės žinomos įvertinamos automatiškai (2-asis mėnesio ketvirtadienis); paskelbus naujų metų Sodros grafiką, tikslias datas galima įrašyti.", how_en="Dates after the last known one are estimated automatically (second Thursday of the month); exact dates can be added when Sodra publishes the new schedule."),
     dict(id="rates", lt="Įmokų tarifai ir valstybės skatinamoji įmoka", en="Contribution rates and state incentive",
          url="https://www.sodra.lt/pensijos/papildomai-kaupiama-pensija/pagrindine-informacija", src_lt="Sodra, įstatymai", src_en="Sodra, laws",
          pages=["journey"], mode="manual", f_lt="kartą per metus (gruodį – kitiems metams)", f_en="yearly (December, for next year)",
@@ -130,7 +130,7 @@ def inventory(src: list, top_day: int, today: date | None = None) -> list:
             elif k == "minw":
                 y = int(_last_row(J / "min_wage.csv", "year")); last = dn(date(y, 1, 1)); fmt = "y"; nxt = dn(date(y, 11, 30))
             elif k == "sodra":
-                d = _d(_last_row(J / "sodra_dates.csv", "date")); last = dn(d); nxt = dn(d - timedelta(days=30))   # faile – ir suplanuotos datos; naujus metus įkelti iš anksto
+                d = _d(_last_row(J / "sodra_dates.csv", "date")); last = dn(d); nxt = dn(d + timedelta(days=365))   # po grafiko – įvertis (journey.sodra_dates)
             elif k == "rates":
                 y = int(_last_row(J / "state_incentive.csv", "year")); last = dn(date(y, 1, 1)); fmt = "y"; nxt = dn(date(y, 12, 31))
             elif k == "ann":
