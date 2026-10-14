@@ -30,6 +30,7 @@ addStrings({
   rg: { emEq: 'Emerging market equities', dmEq: 'Developed market equities', cb: 'Global corporate bonds', ot: 'Other investments', emGb: 'Emerging market government bonds', dmGb: 'Developed market government bonds', lt: 'Lithuanian government and corporate bonds' },
   share: 'Share, %',
   tyNote: 'Share of net assets. Money market instruments = cash, deposits, money market funds and the rest of net assets (accrued items, derivatives), so the total is 100 %.',
+  hyAll: 'All funds of the manager', hyAllNote: 'The largest holdings (table 6) are shown when a single fund is selected.', hyInd: 'Indicator', hyAllX: 'all funds',
   hyXls: 'Excel with all calculations', hyXlsTip: 'Half-year report tables of the fund chosen below: every figure is an Excel formula over the holdings, unit values and daily changes, so each number can be checked.',
   sheetPos: 'Holdings', sheetHy: 'Report tables', yes: 'Yes', no: 'No', posSum: 'Sum of holdings, €',
   posNote: 'Source: Bank of Lithuania quarterly portfolio report (value of each holding, €). Columns L–O show how each holding is assigned; the tables sheet sums column J with SUMIF by these labels and divides by net assets (row below the sum).',
@@ -65,6 +66,7 @@ addStrings({
   rg: { emEq: 'Besivystančių šalių akcijos', dmEq: 'Išsivysčiusių šalių akcijos', cb: 'Pasaulio įmonių obligacijos', ot: 'Kitos investicijos', emGb: 'Besivystančių šalių vyriausybių obligacijos', dmGb: 'Išsivysčiusių šalių vyriausybių obligacijos', lt: 'Lietuvos Respublikos vyriausybės ir įmonių obligacijos' },
   share: 'Dalis, proc.',
   tyNote: 'Dalis nuo grynųjų aktyvų. Pinigų rinkos priemonės = pinigai, indėliai, pinigų rinkos fondai ir likusi grynųjų aktyvų dalis (sukauptos sumos, išvestinės priemonės), todėl iš viso – 100 %.',
+  hyAll: 'Visi valdytojo fondai', hyAllNote: 'Didžiausios pozicijos (6 lentelė) rodomos pasirinkus vieną fondą.', hyInd: 'Rodiklis', hyAllX: 'visi fondai',
   hyXls: 'Excel su visais skaičiavimais', hyXlsTip: 'Žemiau pasirinkto fondo pusmečio ataskaitos lentelės: kiekvienas skaičius – Excel formulė iš pozicijų, vieneto verčių ir dienos pokyčių, todėl kiekvieną galima patikrinti.',
   sheetPos: 'Pozicijos', sheetHy: 'Ataskaitos lentelės', yes: 'Taip', no: 'Ne', posSum: 'Pozicijų suma, €',
   posNote: 'Šaltinis: Lietuvos banko ketvirčio portfelių ataskaita (kiekvienos pozicijos vertė, €). Stulpeliai L–O rodo, kur pozicija priskirta; lentelių lape stulpelis J sumuojamas SUMIF pagal šias žymes ir dalijamas iš grynųjų aktyvų (eilutė po suma).',
@@ -134,13 +136,13 @@ function hyQuarters() {                      // ketvirčių pabaigos (naujausia 
 }
 function renderHy() {
   const all = REP.funds.filter(f => f.p === ST.m).sort((a, b) => (a.pl > b.pl) - (a.pl < b.pl) || (a.pl === 'II' ? ORDER2.indexOf(a.g) - ORDER2.indexOf(b.g) : ORDER3.indexOf(a.g) - ORDER3.indexOf(b.g) || a.n.localeCompare(b.n)));
-  if (!all.some(f => REP.funds.indexOf(f) === +ST.hf)) ST.hf = String(REP.funds.indexOf(all.find(f => f.g === '1968-1974') || all[0]));
-  const f = REP.funds[+ST.hf];
+  if (ST.hf !== 'all' && !all.some(f => REP.funds.indexOf(f) === +ST.hf)) ST.hf = String(REP.funds.indexOf(all.find(f => f.g === '1968-1974') || all[0]));
+  const f = ST.hf === 'all' ? null : REP.funds[+ST.hf];
   const qs = hyQuarters().filter(i => !HAS_PF() || PF.quarters.includes(iso(M[i])));   // tik ketvirčiai su LB portfelių ataskaita
   if (!qs.includes(+ST.hq)) ST.hq = String(qs[0]);
   const bi = +ST.hq;
   const bar = document.getElementById('hyBar');
-  bar.innerHTML = field(T().fund, `<select data-hf>${['II', 'III'].map(pl => `<optgroup label="${pl === 'II' ? T().pl2 : T().pl3}">${all.filter(x => x.pl === pl).map(x => `<option value="${REP.funds.indexOf(x)}"${x === f ? ' selected' : ''}>${shortName(x)}</option>`).join('')}</optgroup>`).join('')}</select>`)
+  bar.innerHTML = field(T().fund, `<select data-hf><option value="all"${f ? '' : ' selected'}>${T().hyAll}</option>${['II', 'III'].map(pl => `<optgroup label="${pl === 'II' ? T().pl2 : T().pl3}">${all.filter(x => x.pl === pl).map(x => `<option value="${REP.funds.indexOf(x)}"${x === f ? ' selected' : ''}>${shortName(x)}</option>`).join('')}</optgroup>`).join('')}</select>`)
     + field(T().asof, `<select data-hq>${qs.map(i => `<option value="${i}"${i === bi ? ' selected' : ''}>${T().qLabel(yearOf(M[i]), (monthOf(M[i]) + 1) / 3, short(M[i]))}</option>`).join('')}</select>`)
     + `<button class="btn xls" type="button" data-x="hy">⤓ ${T().hyXls}</button>`;
   bar.querySelector('[data-hf]').onchange = e => { ST.hf = e.target.value; save(); renderHy(); };
@@ -150,6 +152,11 @@ function renderHy() {
   const body = document.getElementById('hyBody');
   if (!HAS_PF()) { body.innerHTML = `<p class="na">${T().hyLoading}</p>`; return; }
 
+  if (!f) { const r = hyAll(all, bi); body.innerHTML = r.out; MODELS.hy = r.xb; return; }
+  const r = hyOne(f, bi); body.innerHTML = r.out; MODELS.hy = r.xb;
+}
+/* vienas fondas: HTML ir Excel modelis (XB) */
+function hyOne(f, bi) {
   const xb = new XB(), qd = iso(M[bi]), pf = pfFundOf(f), H = holdings(pf, qd);
   const nav = f.am && f.am[bi] ? f.am[bi] : H ? H.reduce((s, h) => s + h.v, 0) : null;
   const uv = f.m[bi];
@@ -251,7 +258,6 @@ function renderHy() {
   const t5 = card(T().t5, `<table class="rt lbt"><thead><tr><th class="l">${shortName(f)}</th>${cols5.map((c, i) => `<th${i === cols5.length - 1 ? ' class="bl"' : ''}>${c}</th>`).join('')}</tr></thead><tbody>`
     + line(T().r5f, a1, cols5.length) + line(T().r5b, a2, cols5.length) + '</tbody></table>', a1.some(c => c.part) ? T().partYear : '');
   out = out.includes('<!--R45-->') ? out.replace('<!--R45-->', t4 + t5) : out + t4 + t5;
-  body.innerHTML = out;
 
   /* Excel: lentelių lapas – formulės, rodančios į „Pozicijos“ (SUMIF pagal priskyrimą) ir „Skaičiavimai“ (grąža, nuokrypis) */
   const raw = c => c && c.n ? { n: c.n, v: c.v, z: '0.00' } : null;
@@ -290,7 +296,59 @@ function renderHy() {
     t.splice(k, 0, ...t45);
   } else t.push(...t45);
   xb.name = `${shortName(f)} ${qd}`;
-  MODELS.hy = xb;
+  return { out, xb };
+}
+/* visi valdytojo fondai vienoje vietoje: kiekviena lentelė – fondai eilutėmis (savininko užduotis 2026-10-14) */
+function hyAll(all, bi) {
+  const S = T(), qd = iso(M[bi]), xb = new XB(), R = all.map(f => ({ f, h: hyOne(f, bi).xb })).map(({ f, h }) => {
+    const map = new Map();                    // fondo skaičiavimų eilutės perkeliamos į bendrą lapą (be dienos nuokrypių – jų lapas vienam fondui)
+    h.rows.forEach((r, i) => { if (!r.std) { xb.rows.push(r); map.set(i + 2, xb.rows.length + 1); } });
+    const re = c => c && c.n ? (map.has(c.n) ? { n: map.get(c.n), v: c.v } : { v: c.v, z: '0.00' }) : c && c.v != null ? { v: c.v, z: '0.00' } : null;
+    return { f, h: h.hy, re };
+  });
+  const p2 = v => v == null ? '–' : num(v, 2), card = (t, html, note = '') => `<section class="card hy"><h3>${t}</h3><div class="scroll">${html}</div>${note ? `<p class="note">${note}</p>` : ''}</section>`;
+  const tbl = (cols, rows) => `<table class="rt"><thead><tr>${cols.map((c, i) => `<th${i ? '' : ' class="l"'}>${c}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;
+  const sep = (pl, n) => `<tr class="sep"><td colspan="${n}">${pl === 'II' ? S.pl2 : S.pl3}</td></tr>`;
+  const t = xb.table, pct = v => v == null ? null : { v, z: '0.00' };
+  let out = `<div class="hyhead"><b>${MLABEL[ST.m]}</b> · ${S.hyAll} · ${short(M[bi])}</div>`;
+  t.push([`${MLABEL[ST.m]} · ${S.hyAll}`], [S.asof, qd], []);
+  /* fondai: turtas ir vieneto vertė */
+  out += card(S.hyAll, tbl([S.fund, S.hyNav + ', €', S.hyUv + ', €'], ['II', 'III'].flatMap(pl => { const xs = R.filter(x => x.f.pl === pl); return xs.length ? [sep(pl, 3), ...xs.map(x => `<tr><td class="l">${shortName(x.f)}</td><td>${x.h.nav ? num(x.h.nav, 0) : '–'}</td><td>${x.h.uv != null ? num(x.h.uv, 4) : '–'}</td></tr>`)] : []; })));
+  t.push([S.fund, S.hyNav + ', €', S.hyUv + ', €'], ...R.map(x => [shortName(x.f), x.h.nav ? { v: x.h.nav, z: '#,##0' } : null, x.h.uv != null ? { v: x.h.uv, z: '0.0000' } : null]), []);
+  /* 1. mokesčiai – II ir III pakopa atskirai (skirtingi mokesčiai) */
+  let h1 = '';
+  ['II', 'III'].forEach(pl => {
+    const xs = R.filter(x => x.f.pl === pl); if (!xs.length) return;
+    const cols = xs[0].h.fee.map(r => r[0]);
+    h1 += tbl([`${S.fund} · ${pl === 'II' ? S.pl2 : S.pl3}`, ...cols], xs.map(x => `<tr><td class="l">${shortName(x.f)}</td>${x.h.fee.map(r => `<td${r[2] === S.feeNa ? ' class="na"' : ''}>${r[2]}</td>`).join('')}</tr>`));
+    t.push([S.t1 + ' · ' + (pl === 'II' ? S.pl2 : S.pl3)], [S.fund, ...cols], ...xs.map(x => [shortName(x.f), ...x.h.fee.map(r => r[2])]), []);
+  });
+  out += card(S.t1, h1, S.feeNote(REP.feeYear, 'II'));
+  /* 2., 3., 7., 8. – iš pozicijų */
+  const block = (title, cols, val, note) => {
+    out += card(title, tbl([S.fund, ...cols.map(c => c[1])], ['II', 'III'].flatMap(pl => { const xs = R.filter(x => x.f.pl === pl); return xs.length ? [sep(pl, cols.length + 1), ...xs.map(x => `<tr><td class="l">${shortName(x.f)}</td>${cols.map(c => `<td>${p2(x.h.T7 ? val(x.h, c[0]) : null)}</td>`).join('')}</tr>`)] : []; })), note);
+    t.push([title], [S.fund, ...cols.map(c => c[1])], ...R.map(x => [shortName(x.f), ...cols.map(c => pct(x.h.T7 ? val(x.h, c[0]) : null))]), []);
+  };
+  block(S.t2, [['s', S.rsStrat + ' · ' + S.rsRisky], ['a', S.rsAct + ' · ' + S.rsRisky], ['l', S.rsAct + ' · ' + S.rsLess]], (h, k) => k === 's' ? h.strat : k === 'a' ? h.riskyAct : 100 - h.riskyAct);
+  block(S.t3, [['a8', S.sf8], ['a9', S.sf9], ['a6', S.sf6], ['direct', S.sfDirect], ['unk', S.sfUnk], ['cash', S.sfCash]], (h, k) => h.T3[k]);
+  /* 4. vidutinė grąža ir nuokrypis; 5. metų grąža – fondas ir lyginamasis indeksas */
+  const lines = (labels, pick) => R.flatMap(x => pick(x).map(([l, cs]) => ({ x, l, cs })).filter(r => r.cs && r.cs.some(c => c && c.v != null)));
+  const L4 = lines(S.r4cols, x => [[S.r4f, x.h.r[0]], [S.r4b, x.h.r[1]], [S.r4s, x.h.r[2]], [S.r4sb, x.h.r[3]]]);
+  const cellH = c => c && c.v != null ? `<td>${num(c.v, 2)}${c.part ? '*' : ''}</td>` : '<td class="na">–</td>';
+  const rows4 = (ls, n) => ['II', 'III'].flatMap(pl => { const xs = ls.filter(r => r.x.f.pl === pl); return xs.length ? [sep(pl, n), ...xs.map((r, i) => `<tr><td class="l">${i && xs[i - 1].x === r.x ? '' : shortName(r.x.f)}</td><td class="l">${r.l}</td>${r.cs.map(cellH).join('')}</tr>`)] : []; });
+  out += card(S.t4, tbl([S.fund, S.hyInd, ...S.r4cols], rows4(L4, S.r4cols.length + 2)), S.r4note);
+  t.push([S.t4], [S.fund, S.hyInd, ...S.r4cols], ...L4.map(r => [shortName(r.x.f), r.l, ...r.cs.map(r.x.re)]), []);
+  const cols5 = []; R.forEach(x => x.h.cols5.forEach(c => { if (!cols5.includes(c)) cols5.push(c); }));
+  const since = S.sinceStart; cols5.sort((a, b) => (a === since) - (b === since));
+  const al = (x, cs) => cs ? cols5.map(c => { const k = x.h.cols5.indexOf(c); return k < 0 ? null : cs[k]; }) : null;
+  const L5 = lines(cols5, x => [[S.r5f, al(x, x.h.a[0])], [S.r5b, al(x, x.h.a[1])]]);
+  out += card(S.t5, tbl([S.fund, S.hyInd, ...cols5], rows4(L5, cols5.length + 2)), L5.some(r => r.cs.some(c => c && c.part)) ? S.partYear : '');
+  t.push([S.t5], [S.fund, S.hyInd, ...cols5], ...L5.map(r => [shortName(r.x.f), r.l, ...r.cs.map(r.x.re)]), []);
+  block(S.t7, ['mm', 'eq', 'cb', 'gb', 'ot'].map(k => [k, S.ty[k]]), (h, k) => h.T7[k], S.tyNote);
+  block(S.t8, ['emEq', 'dmEq', 'cb', 'ot', 'emGb', 'dmGb', 'lt'].map(k => [k, S.rg[k]]), (h, k) => h.T8[k]);
+  out += `<p class="note">${S.hyAllNote}</p>`;
+  xb.hy = {}; xb.name = `${MLABEL[ST.m]} ${S.hyAllX} ${qd}`;
+  return { out, xb };
 }
 
 /* Excel: pozicijų lapas pridedamas prie rep.js buildBook() sukurtos knygos */
