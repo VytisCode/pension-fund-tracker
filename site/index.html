@@ -6,10 +6,143 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<meta http-equiv="refresh" content="0; url=performance.html">
-<link rel="canonical" href="performance.html">
+<link rel="stylesheet" href="style.css">
+<style>
+  .today { display: grid; gap: 14px; }
+  .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
+  .refrow select { font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  .big { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1000px) { .big { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .big { grid-template-columns: 1fr; } }
+  .bk { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .bk.hl { border-color: var(--accent); }
+  .bk .l { color: var(--text-3); font-size: 12px; }
+  .bk .v { font-size: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .bk .s { color: var(--text-2); font-size: 13px; }
+  .bk .more { margin-top: auto; padding-top: 6px; font-size: 13px; }
+  .mb { display: grid; grid-template-columns: 74px 1fr 64px; gap: 2px 6px; align-items: center; font-size: 12px; margin-top: 6px; }
+  .mb .t { height: 8px; position: relative; }
+  .mb .t i { position: absolute; top: 0; height: 8px; border-radius: 2px; }
+  .mb .t::before { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px solid var(--axis); }
+  .mb .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .says p { margin: 0 0 6px; }
+  .says p:last-child { margin: 0; }
+  .glist { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .glist td, .glist th { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+  .glist td.n, .glist th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .glist i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+</style>
 </head>
-<body><p><a href="performance.html">Performance &amp; peers</a></p>
-<script>location.replace('performance.html' + location.hash);</script>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <main class="today">
+    <div class="refrow"><label for="ref" id="refL"></label><select id="ref"></select><span class="note" id="refN"></span></div>
+    <div class="big" id="big"></div>
+    <section class="card says"><h2 id="sayH"></h2><div id="say"></div></section>
+    <section class="card"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
+  </main>
+  <footer id="foot"></footer>
+</div>
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script>
+/* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
+   (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
+   Valdytojo metų grąža = jo 7 gyvenimo ciklo fondų grąžų vidurkis (kaip „Rezultatų“ lentelės eilutė „Vidurkis“). */
+if (location.hash.length > 1) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“
+addStrings({
+  refL: 'Reference manager:', refNone: 'not chosen', refNote: 'Without a choice, each manager is compared with the median of the others.',
+  kLead: 'Year-to-date leader', kLeadS: (w, v) => `last: ${w} ${v}`, kWeek: 'Past week, average fund', kWeekS: (b, w) => `best ${b}, weakest ${w}`,
+  kAum: 'II pillar assets', kAumS: (n, d) => `${n} funds · ${d}`, kRef: m => `${m} this year`, kRefS: (k, n, d) => `place ${k} of ${n} · ${d} pp vs. the median of the others`,
+  kGap: 'Largest gap in a group', kGapS: (g, a, b) => `${g}: ${a} vs. ${b}`, more: 'More →',
+  sayH: 'In brief', gH: 'Life-cycle groups this year', gM: d => `Return from 31 December to ${d}; the leader and the last fund in each group.`,
+  thG: 'Group', thLead: 'Leader', thLast: 'Last', thGap: 'Gap, pp', thRef: r => r,
+  s1: (l, lv, w, wv) => `Since the start of the year ${l} has done best: on average ${lv} across the 7 life-cycle groups; ${w} has done worst (${wv}).`,
+  s2: (v, up) => `Over the past week the average life-cycle fund ${up ? 'rose' : 'fell'} ${v}.`,
+  s3r: (r, d, k, n) => `${r} is ${d >= 0 ? 'ahead of' : 'behind'} the median of the other managers by ${num(Math.abs(d), 2)} pp this year and ranks ${k} of ${n}.`,
+  s3: (p, v) => `Among asset-preservation funds ${p} leads this year (${v}).`,
+  bn: 'bn €', mn: 'm €',
+  foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the average of its life-cycle funds. For information only, not investment advice.',
+}, {
+  refL: 'Lyginamasis valdytojas:', refNone: 'nepasirinktas', refNote: 'Nepasirinkus kiekvienas valdytojas lyginamas su kitų mediana.',
+  kLead: 'Metų pradžios lyderis', kLeadS: (w, v) => `paskutinis: ${w} ${v}`, kWeek: 'Savaitė, vidutinis fondas', kWeekS: (b, w) => `geriausiai ${b}, silpniausiai ${w}`,
+  kAum: 'II pakopos turtas', kAumS: (n, d) => `${n} fondai · ${d}`, kRef: m => `${m} šiais metais`, kRefS: (k, n, d) => `${k} vieta iš ${n} · ${d} p. p. nuo kitų medianos`,
+  kGap: 'Didžiausias skirtumas grupėje', kGapS: (g, a, b) => `${g}: ${a} ir ${b}`, more: 'Plačiau →',
+  sayH: 'Trumpai', gH: 'Gyvenimo ciklo grupės šiais metais', gM: d => `Grąža nuo gruodžio 31 d. iki ${d}; kiekvienos grupės lyderis ir paskutinis fondas.`,
+  thG: 'Grupė', thLead: 'Lyderis', thLast: 'Paskutinis', thGap: 'Skirtumas, p. p.', thRef: r => r,
+  s1: (l, lv, w, wv) => `Nuo metų pradžios geriausiai sekasi ${l}: vidutiniškai ${lv} per 7 gyvenimo ciklo grupes; silpniausiai – ${w} (${wv}).`,
+  s2: (v, up) => `Per savaitę vidutinis gyvenimo ciklo fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`,
+  s3r: (r, d, k, n) => `${r} šiais metais ${d >= 0 ? 'lenkia' : 'atsilieka nuo'} kitų valdytojų medianos ${num(Math.abs(d), 2)} p. p. ir yra ${k} vietoje iš ${n}.`,
+  s3: (p, v) => `Tarp turto išsaugojimo fondų šiais metais pirmauja ${p} (${v}).`,
+  bn: 'mlrd. €', mn: 'mln. €',
+  foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – jo gyvenimo ciklo fondų vidurkis. Informacinė medžiaga, ne investavimo rekomendacija.',
+});
+const meanOf = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
+const medianOf = xs => { const a = xs.filter(x => x != null).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
+const LC = DATA.groups.filter(g => g.id !== 'turto'), TURTO = DATA.groups.find(g => g.id === 'turto');
+const PROVS = DATA.providers.map(p => p.id);
+let REF = '';
+try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); if (PROVS.includes(s.mref)) REF = s.mref; } catch (e) {}
+function saveRef() { try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); s.mref = REF; localStorage.setItem('perfState', JSON.stringify(s)); } catch (e) {} }
+
+function groupRets(g, per) {            // {provider: grąža %} grupėje; neatnaujinti (>5 d.) fondai – null
+  const { end, overallLast } = groupEnd(g);
+  const anchor = per === 'w' ? end - 7 : presetRangeF(per, end, g.funds, maxAnchorOf(g.funds)).anchor;
+  const out = {};
+  g.funds.forEach(f => { const s = f.d[f.d.length - 1] >= overallLast - 5 ? seriesOf(f, anchor, end) : null; out[f.provider] = s ? s.ret : null; });
+  return { out, end };
+}
+function compute() {
+  const ytd = LC.map(g => ({ g, ...groupRets(g, 'ytd') })), wk = LC.map(g => groupRets(g, 'w'));
+  const mgr = PROVS.map(p => ({ id: p, ytd: meanOf(ytd.map(r => r.out[p])), wk: meanOf(wk.map(r => r.out[p])) })).filter(m => m.ytd != null);
+  const byY = [...mgr].sort((a, b) => b.ytd - a.ytd), byW = [...mgr].filter(m => m.wk != null).sort((a, b) => b.wk - a.wk);
+  const end = Math.max(...ytd.map(r => r.end));
+  const groups = ytd.map(r => { const xs = Object.entries(r.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); return { g: r.g, xs, gap: xs.length > 1 ? xs[0][1] - xs[xs.length - 1][1] : null, out: r.out }; });
+  const allW = wk.flatMap(r => Object.values(r.out)).filter(v => v != null);
+  const live = DATA.groups.flatMap(g => g.funds).filter(f => f.assets && f.assetsDate >= end - 10);
+  const tu = TURTO ? Object.entries(groupRets(TURTO, 'ytd').out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]) : [];
+  return { mgr, byY, byW, end, groups, wAvg: meanOf(allW), aum: live.reduce((s, f) => s + f.assets, 0), nAum: live.length, aumD: Math.max(...live.map(f => f.assetsDate)), tu };
+}
+function bars(list, key) {              // mažos horizontalios juostos: nulis per vidurį
+  const m = Math.max(...list.map(x => Math.abs(x[key])), 0.01);
+  return `<div class="mb">${list.map(x => { const w = Math.abs(x[key]) / m * 50; return `<span>${labelOf(x.id)}</span><span class="t"><i style="background:${colorOf(x.id)};width:${w}%;left:${x[key] >= 0 ? 50 : 50 - w}%"></i></span><span class="n">${pct(x[key])}</span>`; }).join('')}</div>`;
+}
+const money = v => v >= 1e9 ? `${num(v / 1e9, 2)} ${T().bn}` : `${num(v / 1e6, 1)} ${T().mn}`;
+function render() {
+  const t = T(), c = compute(), $ = id => document.getElementById(id);
+  const sel = $('ref');
+  sel.innerHTML = `<option value="">${t.refNone}</option>` + c.byY.map(m => `<option value="${m.id}">${labelOf(m.id)}</option>`).join(''); sel.value = REF;
+  $('refL').textContent = t.refL; $('refN').textContent = REF ? '' : t.refNote;
+  const L = c.byY[0], W = c.byY[c.byY.length - 1], B = c.byW[0], Wk = c.byW[c.byW.length - 1];
+  const card = (l, v, s, extra = '', href = 'performance.html', hl = false) => `<div class="bk${hl ? ' hl' : ''}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span>${extra}<a class="more" href="${href}">${t.more}</a></div>`;
+  let h = card(t.kLead, `${labelOf(L.id)} ${pct(L.ytd)}`, t.kLeadS(labelOf(W.id), pct(W.ytd)), bars(c.byY, 'ytd'));
+  h += card(t.kWeek, c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(labelOf(B.id), labelOf(Wk.id)) : '', bars(c.byW, 'wk'));
+  h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), '', 'aum.html');
+  const R = REF && c.mgr.find(m => m.id === REF);
+  if (R) {
+    const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd));
+    h += card(t.kRef(labelOf(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true);
+  } else {
+    const G = c.groups.filter(g => g.gap != null).sort((a, b) => b.gap - a.gap)[0];
+    h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '');
+  }
+  $('big').innerHTML = h;
+  $('sayH').textContent = t.sayH;
+  const s = [t.s1(labelOf(L.id), pct(L.ytd), labelOf(W.id), pct(W.ytd))];
+  if (c.wAvg != null) s.push(t.s2(pctPlain(Math.abs(c.wAvg)), c.wAvg >= 0));
+  if (R) { const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd)); s.push(t.s3r(labelOf(R.id), d, k, c.byY.length)); }
+  else if (c.tu.length) s.push(t.s3(labelOf(c.tu[0][0]), pct(c.tu[0][1])));
+  $('say').innerHTML = s.map(x => `<p>${x}</p>`).join('');
+  $('gH').textContent = t.gH; $('gM').textContent = t.gM(iso(c.end)); $('gMore').textContent = t.more;
+  const sw = id => `<i style="background:${colorOf(id)}"></i>`;
+  $('gT').innerHTML = `<thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th>${R ? `<th class="n">${labelOf(REF)}</th>` : ''}</tr></thead><tbody>`
+    + [...c.groups].reverse().map(g => { const a = g.xs[0], b = g.xs[g.xs.length - 1]; return `<tr><td>${groupLabel(g.g)}</td><td>${sw(a[0])}${labelOf(a[0])}</td><td class="n">${pct(a[1])}</td><td>${sw(b[0])}${labelOf(b[0])}</td><td class="n">${pct(b[1])}</td><td class="n">${num(g.gap, 2)}</td>${R ? `<td class="n">${g.out[REF] == null ? '–' : pct(g.out[REF])}</td>` : ''}</tr>`; }).join('') + '</tbody>';
+  $('foot').textContent = t.foot;
+}
+document.getElementById('ref').addEventListener('change', e => { REF = e.target.value; saveRef(); render(); });
+renderHeader('index', render);
+render();
+</script>
 </body>
 </html>
