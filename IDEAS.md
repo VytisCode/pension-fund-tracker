@@ -43,7 +43,7 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 - **S9 tęsinys** KID: obligacijų indeksas (ECB 7 m. AAA) pradės kauptis per kasdienį paleidimą – patikrinti, ar atsirado `EUR_GOV7Y` ir ar mišrių / obligacijų fondų scenarijai protingi (SEB 50+, 58+ su PID). Kitų valdytojų PID – surinkti (savininkas atsiųs arba automatiškai).
 
-- **S1 tęsinys – automatizavimas** (šaltinių sąrašas ir tvarkaraštis jau „Apie“, pavėlavę darbai – vakariniame laiške): LB failus (portfeliai, rezultatai, mokesčiai) parsiųsti automatiškai kasdienio paleidimo metu (lb.lt iš Claude aplinkos nepasiekiamas – reikia tikslių failų adresų ir bandomojo paleidimo); vidutinį darbo užmokestį ir MMA imti iš VDA SDMX kaip VKI.
+- **S1 tęsinys – automatizavimas**: LB failai – tools/fetch_lb.py kasdien (2026-10-14). lb.lt puslapiai GitHub serveriams grąžina 403, todėl imami tiesioginiai failų adresai pagal įprastus vardus: II pakopos rezultatai ir III pakopos rezultatai veikia; portfelių, mokesčių ir lyginamųjų indeksų failų vardų nežinome (laukiama savininko nuorodų). Liko: vidutinį darbo užmokestį ir MMA imti iš VDA SDMX kaip VKI.
 
 ## Senesnės patvirtintos idėjos (prieš imant – patikrinti, ar dar aktualu)
 
