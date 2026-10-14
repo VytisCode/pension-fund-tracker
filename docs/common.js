@@ -426,14 +426,49 @@ const IDX_META = {
   MSCI_WORLD: { en: 'MSCI World', lt: 'MSCI World', color: '#a3a3a3', dash: '2 3' },
   SP500: { en: 'S&P 500', lt: 'S&P 500', color: '#b7791f', dash: '6 3 2 3' },
 };
+/* Indekso mokestis (savininko užduotis 2026-10-14): indeksų vertės be mokesčių, todėl palyginimui su fondais galima pritaikyti
+   metinį mokestį, atskaitomą kasdien: v'(t) = v(t) × (1 − mokestis)^(dienos nuo pradžios ÷ 365,25).
+   Režimai: 'etf' – tipinio to indekso ETF mokestis (numatytasis), 'none' – be mokesčio, 'avg' – rodomų pensijų fondų vidutinis
+   valdymo mokestis (puslapis nustato IDX_AVG_FEE), 'custom' – įrašytas ranka. Pasirinkimas bendras visiems puslapiams. */
+const IDX_TER = { MSCI_ACWI: 0.20, MSCI_WORLD: 0.20, SP500: 0.07 };   // iShares MSCI ACWI (SSAC), iShares Core MSCI World (IWDA), iShares Core S&P 500 (CSPX)
+const IDXFEE = { mode: 'etf', custom: 0.20 };
+try { const s = JSON.parse(localStorage.getItem('idxFee')); if (s && ['etf', 'none', 'avg', 'custom'].includes(s.mode)) IDXFEE.mode = s.mode; if (s && isFinite(s.custom)) IDXFEE.custom = +s.custom; } catch (e) {}
+let IDX_AVG_FEE = null;
+function idxFeeOf(id) {
+  if (IDXFEE.mode === 'none') return 0;
+  if (IDXFEE.mode === 'custom') return IDXFEE.custom;
+  if (IDXFEE.mode === 'avg' && IDX_AVG_FEE != null) return IDX_AVG_FEE;
+  return IDX_TER[id] || 0;
+}
+function idxFeeText(id) {                 // trumpas paaiškinimas legendoje / lentelėje
+  const f = idxFeeOf(id);
+  return f ? (lang === 'lt' ? `po ${num(f, 2)} % mokesčio` : `after ${num(f, 2)} % fee`) : (lang === 'lt' ? 'be mokesčio' : 'no fee');
+}
+function idxFeeCtl(el, onChange) {        // išskleidžiamasis sąrašas + laukelis mokesčiui įrašyti
+  if (!el) return;
+  const L = lang === 'lt'
+    ? { lbl: 'Indekso mokestis', etf: 'Tipinis ETF', none: 'Be mokesčio', avg: 'Fondų vidutinis', custom: 'Įrašyti' }
+    : { lbl: 'Index fee', etf: 'Typical ETF', none: 'No fee', avg: 'Funds’ average', custom: 'Enter' };
+  const avg = IDX_AVG_FEE != null ? ` (${num(IDX_AVG_FEE, 2)} %)` : '';
+  el.innerHTML = `<label class="field idxfee">${L.lbl} <select>${['etf', 'none', 'avg', 'custom'].filter(m => m !== 'avg' || IDX_AVG_FEE != null).map(m => `<option value="${m}"${m === IDXFEE.mode ? ' selected' : ''}>${L[m]}${m === 'avg' ? avg : ''}</option>`).join('')}</select>`
+    + `<input type="number" class="small-in" step="0.01" min="0" max="5" value="${IDXFEE.custom}"${IDXFEE.mode === 'custom' ? '' : ' hidden'}> ${IDXFEE.mode === 'custom' ? '%' : ''}</label>`;
+  const sel = el.querySelector('select'), inp = el.querySelector('input');
+  const save = () => { try { localStorage.setItem('idxFee', JSON.stringify(IDXFEE)); } catch (e) {} };
+  sel.onchange = () => { IDXFEE.mode = sel.value; save(); idxFeeCtl(el, onChange); onChange(); };
+  inp.oninput = () => { const v = parseFloat(inp.value); if (isFinite(v) && v >= 0 && v <= 5) { IDXFEE.custom = v; save(); onChange(); } };
+}
 let IDX_CACHE = null;
 function idxFunds() {
   if (typeof IDX === 'undefined') return [];
   if (!IDX_CACHE) IDX_CACHE = Object.keys(IDX_META).filter(k => IDX[k]).map(k => {
     const x = IDX[k], d = [x.d0]; x.dd.forEach(v => d.push(d[d.length - 1] + v));
-    return { provider: 'IDX_' + k, id: k, color: IDX_META[k].color, dash: IDX_META[k].dash, d, v: x.v };
+    return { provider: 'IDX_' + k, id: k, color: IDX_META[k].color, dash: IDX_META[k].dash, d, raw: x.v, v: x.v, feeKey: null };
   });
-  IDX_CACHE.forEach(f => { f.label = IDX_META[f.id][lang]; });
+  IDX_CACHE.forEach(f => {
+    const fee = idxFeeOf(f.id);
+    if (f.feeKey !== fee) { const k = 1 - fee / 100; f.v = fee ? f.raw.map((v, i) => v * Math.pow(k, (f.d[i] - f.d[0]) / 365.25)) : f.raw; f.feeKey = fee; }
+    f.fee = fee; f.label = IDX_META[f.id][lang] + (fee ? ` −${num(fee, 2)} %` : '');
+  });
   return IDX_CACHE;
 }
 
@@ -464,6 +499,12 @@ function cpiAt(day) {
   const k = iso(day).slice(0, 7); if (CPI[k] != null) return CPI[k];
   const ks = Object.keys(CPI), last = ks[ks.length - 1];
   return k > last ? CPI[last] : null;            // naujausių mėnesių VKI dar neskelbtas – imamas paskutinis žinomas
+}
+function cpiRaw(day) {                    // VKI lygis dienos mėnesiui (be REAL sąlygos) – infliacijos linijai
+  if (typeof CPI === 'undefined') return null;
+  const k = iso(day).slice(0, 7); if (CPI[k] != null) return CPI[k];
+  const ks = Object.keys(CPI), last = ks[ks.length - 1];
+  return k > last ? CPI[last] : null;
 }
 const realRet = (r, d0, d1) => { const c0 = cpiAt(d0), c1 = cpiAt(d1); return c0 && c1 ? ((1 + r / 100) / (c1 / c0) - 1) * 100 : r; };
 function seriesOf(f, anchor, end) {

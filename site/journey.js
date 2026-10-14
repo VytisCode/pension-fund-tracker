@@ -50,7 +50,7 @@ addStrings({
   prof: x => [`<b>Born</b> ${x.birth}`, `<b>Started saving</b> ${x.start}, at ${x.ageStart}`, `<b>Retirement</b> ${x.ret}, at 65 (${x.left} years to go)`, `<b>Earnings</b> ${x.payL}`, `<b>Contribution</b> ${x.rateL}`, `<b>Fund path</b> ${x.path}`],
   ix: { title: 'Compared with world equities', lead: 'What if the same contributions, on the same dates, had gone into a world equity index instead of the pension fund?',
     meta: 'Assets, € (the fund vs the same contributions in an index)', fund: 'This pension path', h: ['', 'Assets', 'Return, €', 'Return, %', 'Annual return (IRR)', 'Difference vs fund'],
-    note: 'Indexes have no fees or taxes; the fund unit values are already net of fees. Pension funds also hold bonds, so in rising markets they usually lag equities.' },
+    note: 'Index values themselves carry no fees; the fee chosen above is deducted daily. Fund unit values are already net of fees. Pension funds also hold bonds, so in rising markets they usually lag equities.' },
   ann: { h: ['Sodra annuity type', '€ / month', 'Per 1000 €', 'How it works'], std: 'Standard annuity', inh: 'Inheritable standard annuity', def: 'Deferred annuity',
     stdD: 'Paid for life; the highest monthly amount; not inherited.', inhD: 'Paid for life; if the person dies before 85, heirs get the payments due until 85.',
     defD: s => `${s} of the assets buy an annuity paid from 85; until then the pension fund pays the rest as periodic payments (shown: Sodra calculator’s preliminary first payment).`,
@@ -112,7 +112,7 @@ addStrings({
   prof: x => [`<b>Gimimo metai</b> ${x.birth}`, `<b>Kaupti pradėjo</b> ${x.start} m., ${x.ageStart} m. amžiaus`, `<b>Pensija</b> ${x.ret} m., 65 m. (liko ${x.left} m.)`, `<b>Pajamos</b> ${x.payL}`, `<b>Įmoka</b> ${x.rateL}`, `<b>Fondų kelias</b> ${x.path}`],
   ix: { title: 'Palyginimas su pasaulio akcijomis', lead: 'Kas būtų, jei tos pačios įmokos tomis pačiomis dienomis būtų investuotos ne į pensijų fondą, o į pasaulio akcijų indeksą?',
     meta: 'Turtas, € (fondas ir tos pačios įmokos indekse)', fund: 'Šis pensijų kelias', h: ['', 'Sukaupta', 'Grąža, €', 'Grąža, %', 'Metinė grąža (IRR)', 'Skirtumas nuo fondo'],
-    note: 'Indeksai be mokesčių; fondų vieneto vertės jau po valdymo mokesčių. Pensijų fondai turi ir obligacijų, todėl kylant rinkoms paprastai atsilieka nuo akcijų.' },
+    note: 'Pačios indeksų vertės be mokesčių; viršuje pasirinktas mokestis atskaitomas kasdien. Fondų vieneto vertės jau po valdymo mokesčių. Pensijų fondai turi ir obligacijų, todėl kylant rinkoms paprastai atsilieka nuo akcijų.' },
   ann: { h: ['Sodros anuiteto rūšis', '€ / mėn.', 'Už 1000 €', 'Kaip veikia'], std: 'Standartinis anuitetas', inh: 'Paveldimas standartinis anuitetas', def: 'Atidėtasis anuitetas',
     stdD: 'Mokamas iki gyvos galvos; didžiausia mėnesio išmoka; nepaveldimas.', inhD: 'Mokamas iki gyvos galvos; mirus iki 85 m., paveldėtojai gauna išmokas, priklausančias iki 85 m.',
     defD: s => `${s} turto perkamas anuitetas, mokamas nuo 85 m.; iki tol pensijų kaupimo bendrovė likutį moka periodinėmis išmokomis (rodoma: Sodros skaičiuoklės preliminari pirmoji išmoka).`,
@@ -585,6 +585,7 @@ function renderIdx() {
   const t = T(), X = t.ix, fs = idxFunds(), L = SIM.last, el = document.getElementById('ixChart');
   document.getElementById('ixTitle').innerHTML = `${X.title}${ik('ix')}`;
   document.getElementById('ixLead').textContent = X.lead; document.getElementById('ixMeta').textContent = X.meta;
+  idxFeeCtl(document.getElementById('ixFee'), renderIdx);
   const cont = SIM.rows.filter(r => r.ct > 0), fundFlows = [...cont.map(r => [r.d, -r.ct]), [P.asof, L.val]];
   const D = dailyOf(SIM), fundIrr = xirr(fundFlows);
   const paths = fs.map(f => ({ f, p: idxPath(f, SIM.rows, P.asof) })).filter(x => x.p);

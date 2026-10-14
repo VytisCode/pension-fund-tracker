@@ -5,6 +5,7 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
+  cpiBtn: 'Inflation line', cpiLine: 'Inflation (HICP, Lithuania)',
   hRelM: 'Relative to the peers, pp', hAnnM: 'Annualized return, %', mrefNone: 'each vs. median of the other five', mrefPick: r => `${r} minus each peer`,
   peerMed: r => r ? `Median ex ${r}` : 'Median', peerAvg: 'Peers’ avg.',
   hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', realOff: 'Nominal', realOn: 'Real (after inflation)', realTip: m => `Real return = nominal return adjusted for Lithuanian inflation (consumer price index, State Data Agency; latest month ${m}). Applies to period returns, rankings and charts; volatility and calendar-year tables stay nominal.`, ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
@@ -91,6 +92,7 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
+  cpiBtn: 'Infliacijos linija', cpiLine: 'Infliacija (SVKI, Lietuva)',
   hRelM: 'Palyginimas su konkurentais, p. p.', hAnnM: 'Metinė grąža, %', mrefNone: 'kiekvienas – su kitų penkių mediana', mrefPick: r => `${r} minus kiekvienas konkurentas`,
   peerMed: r => r ? `Mediana be ${r}` : 'Mediana', peerAvg: 'Konkurentų vid.',
   hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', realOff: 'Nominali', realOn: 'Reali (po infliacijos)', realTip: m => `Reali grąža = nominali grąža, atėmus Lietuvos infliaciją (vartotojų kainų indeksas, Valstybės duomenų agentūra; paskutinis mėnuo ${m}). Taikoma laikotarpio grąžai, reitingams ir grafikams; svyravimas ir kalendorinių metų lentelės lieka nominalios.`, ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
@@ -185,7 +187,7 @@ const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, mref: P.mref, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, mref: P.mref, cpi: !!P.cpi, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -205,6 +207,7 @@ function applyState(s) {
   if (s.ovH === 'all') P.ovP = new Set(PERIOD_IDS);                                   // senos nuorodos / išsaugota būsena
   if (Array.isArray(s.ovP)) { const v = s.ovP.filter(x => PERIOD_IDS.includes(x)); if (v.length) P.ovP = new Set(v); }
   if (typeof s.gx === 'boolean') P.gx = s.gx;
+  if (typeof s.cpi === 'boolean') P.cpi = s.cpi;
   if (s.mref === '' || DATA.providers.some(p => p.id === s.mref)) P.mref = s.mref;
   if (Array.isArray(s.idx)) P.idx = new Set(s.idx.filter(x => IDX_META[x]));
 }
@@ -531,6 +534,13 @@ function chartStart(g, fs, rng) {
   const d = cur === 'young' ? young : starts.find(x => x.id === cur).d;
   return d < rng.end ? d : null;
 }
+function setIdxAvgFee() {                 // rodomų pensijų fondų vidutinis valdymo mokestis (indekso mokesčio režimui „Fondų vidutinis“)
+  if (typeof FEES === 'undefined') { IDX_AVG_FEE = null; return; }
+  const gs = P.group === 'all' ? DATA.groups : [byId(P.group)], xs = [];
+  gs.forEach(g => g.funds.forEach(f => { if (P.provs.has(f.provider) && FEES[`${f.provider}|${g.id}`] != null) xs.push(FEES[`${f.provider}|${g.id}`]); }));
+  IDX_AVG_FEE = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
+  idxFeeCtl($('idxFee'), () => { renderIdxChips(); renderFunds(); });
+}
 function drawChart() {
   if (P.group === 'all') return;
   const g = byId(P.group), rng = rangeFor(g, true);
@@ -554,6 +564,18 @@ function drawChart() {
       series.forEach((r, k) => { r.points = out[k]; });
     }
     chartRef = refS ? labelOf(P.diffRef) : null;
+  }
+  if (P.view !== 'diff' && P.cpi && typeof CPI !== 'undefined') {   // sukaupta infliacija nuo grafiko pradžios (mėnesio VKI)
+    const c0 = cpiRaw(x0), pts = [[x0, 0]];
+    if (c0) {
+      for (let y = new Date(x0 * DAY).getUTCFullYear(), m = new Date(x0 * DAY).getUTCMonth(); ; m++) {
+        if (m > 11) { m = 0; y++; }
+        const d = Math.min(Math.round(Date.UTC(y, m + 1, 0) / DAY), x1); if (d <= x0) continue;
+        const c = cpiRaw(d); if (c) pts.push([d, (c / c0 - 1) * 100]);
+        if (d >= x1) break;
+      }
+      if (pts.length > 1) series.push({ provider: 'CPI', label: T().cpiLine, color: '#b45309', dash: '1 3', points: pts });
+    }
   }
   if (P.view !== 'diff') idxFunds().filter(f => P.idx.has(f.id)).forEach(f => {      // pasaulio akcijų indeksai – punktyrinės linijos
     const s = seriesOf(f, x0, x1); if (s && s.points.length > 1) series.push({ provider: f.provider, label: f.label, color: f.color, dash: f.dash, points: s.points });
@@ -610,6 +632,7 @@ const groupShort = g => g.id === 'turto' && lang === 'lt' ? '<abbr class="tif" t
 const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
+  setIdxAvgFee();
   $('hFund').textContent = T().hFund; $('lblGroup').textContent = T().group;
   const gTag = ` <span class="gtag">· ${groupName(P.group)}</span>`;   // lentelės antraštėje – pasirinkta grupė (auditas #34)
   $('hMetrics').innerHTML = T().hMetrics + gTag + ik('ret'); $('hCal').innerHTML = T().hCal + gTag + ik('cal'); $('hRoll').innerHTML = T().hRoll + gTag + ik('roll'); $('nFund').textContent = T().nFund;
@@ -1000,6 +1023,7 @@ function buildControls() {
   $('resetZoom').addEventListener('click', () => { P.zoom = null; drawChart(); });
   $('csSel').addEventListener('change', e => { P.cs = e.target.value || null; P.zoom = null; drawChart(); });
   $('btnEvents').addEventListener('click', () => { P.events = !P.events; $('btnEvents').setAttribute('aria-pressed', P.events); drawChart(); });
+  $('btnCpi').addEventListener('click', () => { P.cpi = !P.cpi; saveState(); $('btnCpi').setAttribute('aria-pressed', P.cpi); drawChart(); });
   $('btnPng').addEventListener('click', downloadPng);
   $('idxChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; const k = b.dataset.idx; P.idx.has(k) ? P.idx.delete(k) : P.idx.add(k); saveState(); renderIdxChips(); renderFunds(); });
   $('btnAdv').addEventListener('click', () => { P.adv = !P.adv; saveState(); renderFunds(); });
@@ -1048,6 +1072,7 @@ function labelControls() {
   $('foot').textContent = T().foot;
   $('btnShare').textContent = T().share; $('btnXlsx').textContent = T().xlsx; $('btnXlsxDay').textContent = T().xlsxDay; $('btnXlsxDay').title = T().xlsxDayTip; $('xlDate').title = T().xlsxDayTip; $('xlDate').min = iso(EARLIEST); $('xlDate').max = iso(LATEST); if (!$('xlDate').value) $('xlDate').value = iso(LATEST); $('btnPrint').textContent = T().print;
   $('idxLbl').innerHTML = T().idxLbl + ik('idx'); renderIdxChips();
+  $('btnCpi').textContent = T().cpiBtn; $('btnCpi').hidden = typeof CPI === 'undefined'; $('btnCpi').setAttribute('aria-pressed', !!P.cpi);
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
   addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hFee', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })));   // vidinė navigacija (auditas #43)
