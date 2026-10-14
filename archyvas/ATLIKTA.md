@@ -13,3 +13,4 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – #66: žodynėlis – 29 terminai; paaiškinimas užvedus pelę / palietus stulpelio ar KPI pavadinimą visuose puslapiuose, visas sąrašas puslapyje „Apie“.
 - 2026-10-14 – #53 dalis: rodiklių Excel papildytas kalendorinių metų grąža su formulėmis (lapai „Kalendoriniai metai“ ir „Metų vertės“).
 - 2026-10-14 – #53 dalis: „Turtas“ – turto pokyčio Excel su formulėmis (kiekvienas taškas: grąža ir srautas; suvestinė SUMIFS); data_aum.js papildytas vieneto vertėmis.
+- 2026-10-14 – #53 dalis: „III pakopa“ – visų fondų lentelės Excel su formulėmis (Istorija, Mėnesiai, Rodikliai su nuorodomis į langelius).

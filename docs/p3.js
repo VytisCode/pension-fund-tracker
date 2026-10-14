@@ -258,7 +258,52 @@ function renderAll() {
   }));
   document.getElementById('allTitle').textContent = T().allTitle;
   document.getElementById('allNote').textContent = T().allNote;
+  const xb = document.getElementById('allXls'); xb.textContent = '⤓ ' + (lang === 'lt' ? 'Excel su formulėmis' : 'Excel with formulas'); xb.onclick = () => p3Xls().catch(err => alert('Excel: ' + err));
 }
+
+/* ---------- visų fondų lentelės Excel su formulėmis (auditas #53) ----------
+   „Istorija“ – kiekvieno fondo visos vertės (data, vertė, aukščiausia iki šiol, kritimas); „Mėnesiai“ – 37 mėnesio galų vertės svyravimui;
+   „Rodikliai“ – formulės su nuorodomis į tikslius „Istorijos“ langelius (matoma, kurios dienos vertė naudota). */
+function p3LoadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.append(s); }); }
+const p3Col = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
+function p3Book() {
+  const L = lang === 'lt', t = T(), D = d => ({ t: 'n', v: d + 25569, z: 'yyyy-mm-dd' }), F = (f, v, z = '0.00%') => ({ t: 'n', f, v: v == null || !isFinite(v) ? 0 : v, z });
+  const SH = L ? ['Rodikliai', 'Mėnesiai', 'Istorija', 'Metodika'] : ['Metrics', 'Months', 'History', 'Methodology'], H = `'${SH[2]}'`, MO = `'${SH[1]}'`;
+  const hist = [[], [], L ? [] : []], mon = [[L ? 'Fondas' : 'Fund', ...Array.from({ length: 37 }, (_, k) => k === 0 ? (L ? 'prieš 36 mėn.' : '36 mo ago') : k === 36 ? (L ? 'pabaiga' : 'end') : ''), ...Array.from({ length: 36 }, (_, k) => k === 0 ? (L ? 'Mėnesio grąžos' : 'Monthly returns') : ''), L ? 'Svyravimas' : 'Volatility']];
+  hist[0] = []; hist[1] = [];
+  const met = [[t.thFund, t.thCat, t.thSince, L ? 'Paskutinė data' : 'Last date', t.thUnitDate, t.thYtd, t.th1y, t.th3y, t.th5y, t.th10y, t.thIncep, t.thVol, t.thDd]];
+  const funds = ['bond', 'mixed', 'equity'].flatMap(c => ALL.filter(f => f.cat === c));
+  funds.forEach((f, k) => {
+    const b = k * 5, [cd, cv, cp, cdd] = [0, 1, 2, 3].map(i => p3Col(b + i)), m = metrics(f), n = f.d.length;
+    hist[0][b] = f.name; [L ? 'Data' : 'Date', L ? 'Vertė' : 'Value', L ? 'Aukščiausia iki šiol' : 'Peak so far', L ? 'Kritimas nuo aukščiausios' : 'Drawdown'].forEach((h, i) => { hist[1][b + i] = h; });
+    let peak = -Infinity;
+    for (let i = 0; i < n; i++) { const r = i + 3, row = hist[r - 1] = hist[r - 1] || []; peak = Math.max(peak, f.v[i]);
+      row[b] = D(f.d[i]); row[b + 1] = f.v[i]; row[b + 2] = i ? F(`MAX(${cp}${r - 1},${cv}${r})`, peak, '0.0000') : F(`${cv}${r}`, peak, '0.0000'); row[b + 3] = F(`${cv}${r}/${cp}${r}-1`, f.v[i] / peak - 1); }
+    const ref = i => `${H}!${cv}${i + 3}`, at = day => lastOnOrBefore(f, day), last = n - 1, end = f.d[last], e = new Date(end * DAY);
+    const ytdA = Math.round(Date.UTC(e.getUTCFullYear() - 1, 11, 31) / DAY), r = met.length + 1;
+    const ann = y => { const st = shiftMonths(end, y * 12); if (f.d[0] > st + 7) return null; const i = at(st); return i < 0 ? null : F(`(${ref(last)}/${ref(i)})^(1/${y})-1`, m['r' + y] / 100); };
+    const i1 = at(shiftMonths(end, 12));
+    let vol = null;
+    if (m.vol != null) { const mr = mon.length + 1, row = [f.name];
+      for (let q = 36; q >= 0; q--) row.push({ t: 'n', f: ref(at(shiftMonths(end, q))), v: valueAt(f, shiftMonths(end, q)), z: '0.0000' });
+      for (let q = 1; q <= 36; q++) row.push(F(`${p3Col(q + 1)}${mr}/${p3Col(q)}${mr}-1`, row[q + 1].v / row[q].v - 1, '0.0000%'));
+      row.push(F(`STDEV(${p3Col(38)}${mr}:${p3Col(73)}${mr})*SQRT(12)`, m.vol / 100)); mon.push(row); vol = F(`${MO}!${p3Col(74)}${mr}`, m.vol / 100); }
+    met.push([f.name, t.cat[f.cat], D(f.d[0]), F(`${H}!${cd}${last + 3}`, end + 25569, 'yyyy-mm-dd'), F(ref(last), f.v[last], '0.0000'),
+      m.ytd == null ? null : F(`${ref(last)}/${ref(at(ytdA))}-1`, m.ytd / 100), m.r1 == null ? null : F(`${ref(last)}/${ref(i1)}-1`, m.r1 / 100),
+      ann(3), ann(5), ann(10), m.incep == null ? null : F(`(${ref(last)}/${ref(0)})^(365.25/(${H}!${cd}${last + 3}-${H}!${cd}3))-1`, m.incep / 100),
+      vol, F(`MIN(${H}!${cdd}3:${cdd}${last + 3})`, m.dd / 100)]);
+  });
+  const meth = L ? [['Metodika ir šaltiniai'], [], ['Šaltinis', 'Valdytojų skelbiamos III pakopos fondų vieneto vertės (lapas „Istorija“).'], ['Atsisiųsta', iso(Math.max(...ALL.map(f => f.d[f.d.length - 1])))], [],
+    ['Šie metai, 1 metai', 'Paskutinė vertė ÷ vertė praėjusių metų gruodžio 31 d. (ar prieš 12 mėn.; paskutinė žinoma iki tos dienos) − 1.'], ['3, 5, 10 metų', '(Paskutinė ÷ vertė prieš N metų) ^ (1 ÷ N) − 1, metinė.'],
+    ['Nuo pradžios', '(Paskutinė ÷ pirmoji vertė) ^ (365,25 ÷ dienos) − 1.'], ['Svyravimas', '37 mėnesio pabaigos vertės (lapas „Mėnesiai“), 36 mėnesio grąžų imties standartinis nuokrypis × √12.'], ['Didžiausias kritimas', 'Mažiausia „Kritimas nuo aukščiausios“ reikšmė per visą istoriją.']]
+    : [['Methodology and sources'], [], ['Source', 'Unit values of Pillar III funds published by the managers (sheet “History”).'], ['Data until', iso(Math.max(...ALL.map(f => f.d[f.d.length - 1])))], [],
+    ['YTD, 1 yr', 'Last value ÷ value on 31 December last year (or 12 months ago; last known on or before that day) − 1.'], ['3, 5, 10 yr', '(Last ÷ value N years ago) ^ (1 ÷ N) − 1, annualised.'],
+    ['Since start', '(Last ÷ first value) ^ (365.25 ÷ days) − 1.'], ['Volatility', '37 month-end values (sheet “Months”), sample standard deviation of 36 monthly returns × √12.'], ['Max drawdown', 'Lowest “Drawdown” value over the whole history.']];
+  const wb = XLSX.utils.book_new(), add = (rows, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(rows); if (cols) ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
+  add(met, SH[0], [{ wch: 44 }, { wch: 22 }, ...Array(11).fill({ wch: 12 })]); add(mon, SH[1], [{ wch: 44 }]); add(hist, SH[2]); add(meth, SH[3], [{ wch: 20 }, { wch: 110 }]);
+  return wb;
+}
+async function p3Xls() { await p3LoadXlsx(); XLSX.writeFile(p3Book(), `${lang === 'lt' ? 'III_pakopa' : 'Pillar_III'}_${iso(Math.max(...ALL.map(f => f.d[f.d.length - 1])))}.xlsx`); }
 
 /* ---------- laikotarpiai ---------- */
 const pe = document.getElementById('periods');
