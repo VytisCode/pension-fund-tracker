@@ -93,6 +93,7 @@ def main() -> None:
     (DOCS / "data.js").write_text(data_js, encoding="utf-8")
     # Grynieji aktyvai pagal dienas – kraunami tik spaudžiant „dienos lentelės“ Excel mygtuką
     (DOCS / "assets.js").write_text("const ASSETS=" + json.dumps(assets_js, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    build_fresh(groups, payload["generated"])
     build_indexes()
     build_fees()
     build_cpi()
@@ -113,6 +114,20 @@ def main() -> None:
     build_aum(ver)
     build_reports(ver)
     build_journey(ver)
+
+
+def build_fresh(groups: list, generated: str) -> None:
+    """Antraštės šviežumo eilutė visuose puslapiuose: docs/data_fresh.js (naujausia diena ir kiekvieno valdytojo paskutinė diena).
+    Valdytojo diena – seniausia iš jo fondų paskutinių dienų; fondai, neatnaujinti > 30 d. (uždaryti), neskaičiuojami."""
+    lasts = [(f["provider"], f["d"][-1]) for g in groups for f in g["funds"] if f["d"]]
+    top = max(d for _, d in lasts)
+    prov = []
+    for pid, label in PROVIDERS:
+        ds = [d for p, d in lasts if p == pid and d >= top - 30]
+        if ds:
+            prov.append({"id": pid, "label": label, "d": min(ds)})
+    payload = {"top": top, "generated": generated, "providers": prov}
+    (DOCS / "data_fresh.js").write_text("var FRESH=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 
 def build_cpi() -> None:

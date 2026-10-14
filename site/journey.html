@@ -64,7 +64,7 @@
   #inBar .grp.g2, #inBar .grp.g3 { border-left-color: var(--accent); }
   #inBar .gl { font-size: 11px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
   #inBar .gf { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
-  .jnav { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 4px 2px; margin-top: 10px; padding: 6px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 12px -10px rgba(0,0,0,.35); }
+  .jnav { position: sticky; top: var(--navh, 0px); z-index: 5; display: flex; flex-wrap: wrap; gap: 4px 2px; margin-top: 10px; padding: 6px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 12px -10px rgba(0,0,0,.35); }
   .jnav a { font-size: 13px; color: var(--text-2); text-decoration: none; padding: 3px 9px; border-radius: 7px; }
   .jnav a:hover { background: var(--grid); color: var(--text); }
   @media (max-width: 700px) { .jnav { position: static; } }

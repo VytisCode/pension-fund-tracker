@@ -1,0 +1,1 @@
+var FRESH={"top":20738,"generated":"2026-10-14 08:59","providers":[{"id":"ALLIANZ","label":"Allianz","d":20738},{"id":"ARTEA","label":"Artea","d":20738},{"id":"GOINDEX","label":"Goindex","d":20738},{"id":"LUMINOR","label":"Luminor","d":20738},{"id":"SEB","label":"SEB","d":20738},{"id":"SWEDBANK","label":"Swedbank","d":20738}]};

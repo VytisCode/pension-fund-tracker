@@ -1,27 +1,30 @@
 /* Bendras kodas visiems puslapiams: kalba, tema, antraštė, pagalbinės funkcijos, linijinė diagrama. */
 const DAY = 86400000;
+const hEsc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const iso = d => new Date(d * DAY).toISOString().slice(0, 10);
 const dayOf = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
 
 const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
-    siteTitle: 'Pension fund tracker', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
+    siteTitle: 'Pension funds', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
+    foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
     freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
     chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
     periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
   },
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
-    siteTitle: 'Pensijų fondų sekimas', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
+    siteTitle: 'Pensijų fondai', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
+    foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
     periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
@@ -43,7 +46,6 @@ const groupLabel = g => g.id === 'turto' ? T().turto : g.id.replace('-', '–');
 
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 
-/* Antraštė su navigacija, kalbos ir temos jungikliais. onLang – iš naujo nupiešia puslapį. */
 /* „Atnaujinti duomenis“ mygtukas rodomas tik savininko naršyklėje: įjungiama vieną kartą atidarius bet kurį puslapį su ?owner=1
    (išjungiama ?owner=0). Tai tik paslėpimas, ne apsauga: paleisti atnaujinimą GitHub'e vis tiek gali tik savininkas. */
 function isOwner() {
@@ -54,50 +56,89 @@ function isOwner() {
     return localStorage.getItem('owner') === '1';
   } catch (e) { return false; }
 }
+// Navigacijos ikonos (auditas #41): paprastos linijinės, spalva – kaip teksto
+const NAV_ICONS = {
+  performance: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  overview: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  pillar3: '<path d="M12 3 2 8l10 5 10-5-10-5zM2 13l10 5 10-5M2 18l10 5 10-5"/>',
+  aum: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  portfolios: '<path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+  reports: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  journey: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+};
+const NAV_PAGES = ['performance', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey'];
+const navKey = p => 'nav' + p[0].toUpperCase() + p.slice(1);
+const svgI = (body, s = 16) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+
+/* Antraštė (auditas #41): ženkliukas ir pavadinimas, šviežumo eilutė, lipni navigacija vienoje eilutėje su ikonomis,
+   įrankiai – „⋯ Įrankiai“ meniu, kalba ir tema – ikonos kampe. onLang – iš naujo nupiešia puslapį. */
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
-  h.innerHTML = `<div><h1 id="title"></h1><div class="sub" id="sub"></div><div class="fresh" id="fresh"></div>
-    <nav class="nav"><a href="performance.html" data-p="performance"></a><a href="overview.html" data-p="overview"></a><a href="pillar3.html" data-p="pillar3"></a><a href="aum.html" data-p="aum"></a><a href="portfolios.html" data-p="portfolios"></a><a href="reports.html" data-p="reports"></a><a href="journey.html" data-p="journey"></a></nav></div>
-    <div class="top-tools"><div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div><a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a><div class="seg" id="lang" role="group" aria-label="Language">
-      <button type="button" data-lang="en">EN</button><button type="button" data-lang="lt">LT</button></div>
-      <div class="seg" id="theme" role="group">
-        <button type="button" data-theme="light"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
-        <button type="button" data-theme="dark"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></div>`;
+  h.innerHTML = `<div class="hrow"><a class="brand" href="performance.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1></a>
+    <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
+      <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
+        <a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a>
+        <div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div></div></div>
+      <button class="btn ico" type="button" id="lang"></button><button class="btn ico" type="button" id="theme"></button></div></div>
+    <div class="status"><button type="button" class="stbtn" id="stBtn" aria-expanded="false"></button><span class="sub" id="sub"></span></div>
+    <div class="fresh" id="fresh" hidden></div>`;
+  const nav = document.createElement('nav');
+  nav.className = 'snav'; nav.id = 'snav';
+  nav.innerHTML = `<div class="nav">${NAV_PAGES.map(p => `<a href="${p}.html" data-p="${p}">${svgI(NAV_ICONS[p])}<span class="nl"></span></a>`).join('')}</div>`;
+  h.after(nav);
+  const acts = document.getElementById('actions');
+  if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
+  const el = document.documentElement, isDark = () => el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
   const apply = () => {
-    document.documentElement.lang = lang;
-    document.getElementById('title').textContent = T().siteTitle;
-    const rb = document.getElementById('refresh'); rb.title = T().refreshTip; rb.querySelector('span').textContent = T().refresh; rb.hidden = !isOwner();
-    const el = document.documentElement, dark = el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
-    const tb = document.getElementById('theme'); tb.setAttribute('aria-label', T().theme);
-    tb.querySelectorAll('button').forEach(b => { b.setAttribute('aria-pressed', (b.dataset.theme === 'dark') === dark); b.title = b.dataset.theme === 'dark' ? (lang === 'lt' ? 'Tamsi tema' : 'Dark theme') : (lang === 'lt' ? 'Šviesi tema' : 'Light theme'); b.setAttribute('aria-label', b.title); });
-    h.querySelector('[data-p="overview"]').textContent = T().navOverview;
-    h.querySelector('[data-p="performance"]').textContent = T().navPerformance;
-    h.querySelector('[data-p="pillar3"]').textContent = T().navPillar3;
-    h.querySelector('[data-p="portfolios"]').textContent = T().navPortfolios;
-    h.querySelector('[data-p="aum"]').textContent = T().navAum;
-    h.querySelector('[data-p="reports"]').textContent = T().navReports;
-    h.querySelector('[data-p="journey"]').textContent = T().navJourney;
-    h.querySelectorAll('.nav a').forEach(a => a.removeAttribute('aria-current'));
-    h.querySelector(`.nav a[data-p="${active}"]`).setAttribute('aria-current', 'page');
-    document.title = `${h.querySelector(`.nav a[data-p="${active}"]`).textContent} · ${T().siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
-    h.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
-    document.getElementById('dlBtn').textContent = '⬇ ' + T().dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
-    if (active === 'performance' || active === 'overview') document.getElementById('fresh').innerHTML = freshnessHTML();
+    el.lang = lang;
+    const t = T();
+    document.getElementById('title').textContent = t.siteTitle;
+    const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
+    const lb = document.getElementById('lang');
+    lb.textContent = lang === 'lt' ? 'EN' : 'LT'; lb.title = lang === 'lt' ? 'English' : 'Lietuviškai'; lb.setAttribute('aria-label', lb.title);
+    const tb = document.getElementById('theme'), dark = isDark();
+    tb.innerHTML = svgI(dark ? SUN : MOON); tb.title = dark ? t.themeLight : t.themeDark; tb.setAttribute('aria-label', tb.title);
+    nav.setAttribute('aria-label', t.navLbl);
+    nav.querySelectorAll('.nav a').forEach(a => {
+      a.querySelector('.nl').textContent = t[navKey(a.dataset.p)]; a.title = t[navKey(a.dataset.p)];
+      if (a.dataset.p === active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    document.title = `${t[navKey(active)]} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
+    document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
+    document.getElementById('dlBtn').textContent = '⬇ ' + t.dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
+    freshRender();
   };
-  h.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
-    lang = b.dataset.lang; try { localStorage.setItem('lang', lang); } catch (e) {}
+  document.getElementById('lang').addEventListener('click', () => {
+    lang = lang === 'lt' ? 'en' : 'lt'; try { localStorage.setItem('lang', lang); } catch (e) {}
     apply(); onLang();
-  }));
-  h.querySelectorAll('#theme button').forEach(b => b.addEventListener('click', () => {
-    document.documentElement.dataset.theme = b.dataset.theme;
-    try { localStorage.setItem('theme', b.dataset.theme); } catch (e) {}
+  });
+  document.getElementById('theme').addEventListener('click', () => {
+    el.dataset.theme = isDark() ? 'light' : 'dark';
+    try { localStorage.setItem('theme', el.dataset.theme); } catch (e) {}
     apply();
-  }));
+  });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
+  const tmb = document.getElementById('tmBtn'), tmp = document.getElementById('tmPanel');
+  const tmShow = on => { tmp.hidden = !on; tmb.setAttribute('aria-expanded', on); };
+  tmb.addEventListener('click', () => tmShow(tmp.hidden));
   const dlb = document.getElementById('dlBtn'), dlp = document.getElementById('dlPanel');
   dlb.addEventListener('click', () => { dlp.hidden = !dlp.hidden; dlb.setAttribute('aria-expanded', !dlp.hidden); if (!dlp.hidden) dlRender(); });
-  document.addEventListener('click', e => { if (e.isTrusted && !dlp.hidden && !e.target.closest('.dlwrap')) { dlp.hidden = true; dlb.setAttribute('aria-expanded', false); } });
+  document.addEventListener('click', e => { if (e.isTrusted && !tmp.hidden && !e.target.closest('.tmwrap')) tmShow(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !tmp.hidden) { tmShow(false); tmb.focus(); } });
+  const sb = document.getElementById('stBtn'), fr = document.getElementById('fresh');
+  sb.addEventListener('click', () => { fr.hidden = !fr.hidden; sb.setAttribute('aria-expanded', !fr.hidden); });
+  if (typeof FRESH === 'undefined') {     // šviežumo duomenys – mažas bendras failas, kraunamas visuose puslapiuose
+    const s = document.createElement('script');
+    s.src = 'data_fresh.js?h=' + new Date().toISOString().slice(0, 13).replace(/\D/g, '');
+    s.onload = freshRender; document.head.append(s);
+  }
   apply();
+  const act = nav.querySelector('[aria-current]');
+  const row = nav.querySelector('.nav');
+  if (act && row.scrollWidth > row.clientWidth) row.scrollLeft = act.offsetLeft - 16;   // telefone aktyvus puslapis matomas
+  row.addEventListener('scroll', () => scrollEdges(row), { passive: true }); scrollEdges(row);
   return apply;
 }
 
@@ -106,8 +147,11 @@ function renderHeader(active, onLang) {
 // Lentelių antraštės lieka matomos slenkant (auditas #20). Telpanti lentelė – antraštė prilimpa ekrano viršuje (po lipnia juosta);
 // platesnė už ekraną – lentelė gauna aukščio ribą, o antraštė prilimpa jos viduje
 function fitSticky() {
+  const nav = document.getElementById('snav'), navh = nav && getComputedStyle(nav).position === 'sticky' ? nav.offsetHeight : 0;   // lipni navigacija (auditas #41)
   const bar = [...document.querySelectorAll('.bar.sticky, .jnav')].find(b => getComputedStyle(b).position === 'sticky');
-  document.documentElement.style.setProperty('--stick', (bar ? bar.offsetHeight : 0) + 'px');
+  document.documentElement.style.setProperty('--navh', navh + 'px');
+  if (nav) nav.querySelectorAll('.nav, .pnav').forEach(scrollEdges);
+  document.documentElement.style.setProperty('--stick', navh + (bar ? bar.offsetHeight : 0) + 'px');
   document.querySelectorAll('.scroll').forEach(sc => {
     if (!sc.querySelector('thead')) return;
     sc.classList.remove('stick', 'stickbox', 'freeze');
@@ -127,23 +171,92 @@ function scrollEdges(sc) {
   sc.classList.toggle('sl', sc.scrollLeft > 1);
   sc.classList.toggle('sr', sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 1);
 }
-{ let q = 0; const later = () => { if (!q) q = requestAnimationFrame(() => { q = 0; fitSticky(); }); };
+// Ilgi paaiškinimai po lentelėmis (auditas #45): matomas pirmas sakinys, likusi dalis – po „Kaip skaityti? ▾“.
+// Puslapiui perrašius pastabą (kalba, laikotarpis), ji suskleidžiama iš naujo; atskleista lieka atskleista.
+const foldOpen = new Set();
+const NO_STOP = /(^|[\s(„“\"])([^\s(„“\"]{1,3}|angl|proc|pvz|plg|apyt)$/i;     // „2025 m.“, „mėn.“, „mln.“, „pvz.“ – ne sakinio pabaiga
+function foldNotes() {
+  document.querySelectorAll('p.note, div.note').forEach((n, i) => {
+    if (n.hidden || n.querySelector('.nt-btn') || n.closest('.tmpanel')) return;
+    const len = n.textContent.length; if (len < 170) return;
+    const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT); let seen = 0, node, at = -1;
+    while (at < 0 && (node = w.nextNode())) {
+      const re = /[.!?](?=\s)/g; let m;
+      while ((m = re.exec(node.data))) if (seen + m.index >= 40 && !NO_STOP.test(node.data.slice(0, m.index))) { at = m.index + 1; break; }
+      if (at < 0) seen += node.data.length;
+    }
+    if (at < 0 || len - seen - at < 60) return;            // vienas ilgas sakinys arba trumpa uodega – nesuskleidžiame
+    const r = document.createRange(); r.setStart(node, at); r.setEnd(n, n.childNodes.length);
+    const rest = document.createElement('span'); rest.className = 'nt-rest'; rest.append(r.extractContents());
+    const key = n.id || 'n' + i, btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'nt-btn';
+    const show = on => { rest.hidden = !on; btn.textContent = on ? T().foldLess : T().foldMore; btn.setAttribute('aria-expanded', on); };
+    btn.addEventListener('click', () => { const on = rest.hidden; if (on) foldOpen.add(key); else foldOpen.delete(key); show(on); });
+    n.append(rest, ' ', btn); show(foldOpen.has(key));
+  });
+}
+{ let q = 0; const later = () => { if (!q) q = requestAnimationFrame(() => { q = 0; foldNotes(); fitSticky(); }); };
   addEventListener('DOMContentLoaded', () => { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); later(); });
   addEventListener('resize', later); }
 function businessDaysBetween(a, b) {      // darbo dienos intervale (a, b]
   let n = 0; for (let d = a + 1; d <= b; d++) { const w = new Date(d * DAY).getUTCDay(); if (w !== 0 && w !== 6) n++; }
   return n;
 }
+// Kortelės antraštė – automatinė išvada (auditas #44): išvada stambiau, po ja mažiau – lentelės pavadinimas. Tuščias tekstas – išvados nėra
+function setConcl(hid, html) {
+  const h = document.getElementById(hid); if (!h) return;
+  let c = h.previousElementSibling && h.previousElementSibling.classList.contains('concl') ? h.previousElementSibling : null;
+  if (!html) { if (c) c.remove(); return; }
+  if (!c) { c = document.createElement('p'); c.className = 'concl'; h.before(c); }
+  c.innerHTML = html;
+}
+/* Vidinė puslapio navigacija (auditas #43): antra lipnios navigacijos eilutė su nuorodomis į skyrius; paryškinamas matomas skyrius.
+   items – [{ id: antraštės id, label }]; kviečiama iš naujo pakeitus kalbą. Nieko neslepia – tik greitas perėjimas. */
+function addSubnav(items) {
+  const nav = document.getElementById('snav'); if (!nav) return;
+  let pn = nav.querySelector('.pnav');
+  if (!pn) {
+    pn = document.createElement('div'); pn.className = 'pnav'; nav.append(pn);
+    pn.addEventListener('click', e => {
+      const a = e.target.closest('a'); if (!a) return;
+      const el = pnTarget(a.dataset.id); if (!el) return;
+      e.preventDefault();
+      const stick = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick')) || 0;
+      scrollTo({ top: el.getBoundingClientRect().top + scrollY - stick - 12, behavior: 'smooth' });
+    });
+    pn.addEventListener('scroll', () => scrollEdges(pn), { passive: true });
+    let q = 0; addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(() => { q = 0; pnSpy(); }); }, { passive: true });
+  }
+  pn.innerHTML = items.map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
+  pnSpy(); scrollEdges(pn);
+}
+const pnTarget = id => { const h = document.getElementById(id); if (!h) return null; const c = h.previousElementSibling; return c && c.classList.contains('concl') ? c : h; };
+function pnSpy() {
+  const pn = document.querySelector('#snav .pnav'); if (!pn) return;
+  const stick = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick')) || 0;
+  let cur = null;
+  pn.querySelectorAll('a').forEach(a => { const el = pnTarget(a.dataset.id); if (el && el.offsetParent && el.getBoundingClientRect().top <= stick + 60) cur = a; });
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = pn.lastElementChild;   // puslapio apačia – paskutinis skyrius
+  pn.querySelectorAll('a').forEach(a => { if (a === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+  if (cur && pn.scrollWidth > pn.clientWidth && (cur.offsetLeft < pn.scrollLeft || cur.offsetLeft + cur.offsetWidth > pn.scrollLeft + pn.clientWidth)) pn.scrollLeft = cur.offsetLeft - 16;
+}
+/* Šviežumo eilutė: „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ arba vėluojantis valdytojas geltonai.
+   Valdytojo diena – seniausia iš jo fondų paskutinių dienų; atsiliekantys nuo naujausios dienos paryškinami. */
+function freshRender() {
+  const sb = document.getElementById('stBtn');
+  if (!sb || typeof FRESH === 'undefined') return;
+  const t = T(), late = FRESH.providers.map(p => ({ ...p, lag: businessDaysBetween(p.d, FRESH.top) })).filter(p => p.lag);
+  sb.innerHTML = `${t.dataUntil} <b>${iso(FRESH.top)}</b> · ` + (late.length
+    ? `<span class="late">${t.lateLbl} ${late.map(p => `${hEsc(p.label)} (${iso(p.d).slice(5)})`).join(', ')} <span class="chev">▾</span></span>`
+    : `<span class="ok">${t.allFresh(FRESH.providers.length)} ✓ <span class="chev">▾</span></span>`);
+  sb.title = t.freshMore;
+  document.getElementById('fresh').innerHTML = freshnessHTML();
+}
 function freshnessHTML() {
-  const lasts = DATA.groups.flatMap(g => g.funds.map(f => ({ p: f.provider, d: f.d[f.d.length - 1] })));
-  const top = Math.max(...lasts.map(x => x.d));
-  return `<span class="fr-l">${T().freshLbl}</span>` + DATA.providers.map(p => {
-    const ds = lasts.filter(x => x.p === p.id && x.d >= top - 30).map(x => x.d);
-    if (!ds.length) return '';
-    const d = Math.min(...ds), lag = businessDaysBetween(d, top);
-    const tip = lag ? T().freshLate(lag) : T().freshOk;
-    return `<span class="fr${lag ? ' late' : ''}" title="${tip}"><i style="background:${colorOf(p.id)}"></i>${p.label} ${iso(d).slice(5)}${lag ? ' ⚠' : ''}</span>`;
-  }).join('');
+  return `<span class="fr-l">${T().freshLbl}</span>` + FRESH.providers.map((p, i) => {
+    const lag = businessDaysBetween(p.d, FRESH.top), tip = lag ? T().freshLate(lag) : T().freshOk;
+    return `<span class="fr${lag ? ' late' : ''}" title="${tip}"><i style="background:var(--s${i + 1})"></i>${hEsc(p.label)} ${iso(p.d).slice(5)}${lag ? ' ⚠' : ''}</span>`;
+  }).join('') + `<span class="fr-g">${T().updated} ${FRESH.generated}</span>`;
 }
 
 /* ---------- laiko eilučių pagalbinės ---------- */

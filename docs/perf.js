@@ -20,6 +20,10 @@ addStrings({
   hRisk: 'Return vs. risk', hRel: 'Return vs. age-group average', relAvg: 'average', pp: 'pp',
   capRel: t => `${t}. Each bar = the fund’s return minus the simple average of all funds in its age group, in percentage points; right of the centre line = better than average. Same scale for all groups.`, axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
   capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = provider. Choose the period, age groups and providers above the chart.`, rmGroups: 'Age groups:', rmProvs: 'Providers:', rmAll: 'All',
+  cMetrics: (a, ra, z, rz, v, rv) => `<b>${a}</b> earned the most (${ra}), <b>${z}</b> the least (${rz}); <b>${v}</b> was the least volatile (${rv}).`,
+  cCal: (y, a, ra, z, rz) => `In ${y} the best was <b>${a}</b> (${ra}), the weakest <b>${z}</b> (${rz}).`,
+  cFee: (y, lo, hi, d) => `Over ${y} years savings in the lowest-fee (${lo}) and highest-fee (${hi}) funds differ by <b>${d}</b>.`,
+  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Fees', 'Calendar'],
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
@@ -98,6 +102,10 @@ addStrings({
   hRisk: 'Grąža ir rizika', hRel: 'Grąža palyginti su amžiaus grupės vidurkiu', relAvg: 'vidurkis', pp: 'p. p.',
   capRel: t => `${t}. Kiekviena juosta – fondo grąža minus visų tos amžiaus grupės fondų paprastas vidurkis, procentiniais punktais; dešiniau vidurio linijos – geriau už vidurkį. Visoms grupėms ta pati skalė.`, axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
   capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – tiekėjas. Laikotarpį, amžiaus grupes ir tiekėjus pasirinkite virš grafiko.`, rmGroups: 'Amžiaus grupės:', rmProvs: 'Tiekėjai:', rmAll: 'Visos',
+  cMetrics: (a, ra, z, rz, v, rv) => `Daugiausia uždirbo <b>${a}</b> (${ra}), mažiausiai – <b>${z}</b> (${rz}); mažiausiai svyravo <b>${v}</b> (${rv}).`,
+  cCal: (y, a, ra, z, rz) => `${y} m. geriausias – <b>${a}</b> (${ra}), silpniausias – <b>${z}</b> (${rz}).`,
+  cFee: (y, lo, hi, d) => `Per ${y} ${y >= 10 ? 'metų' : 'metus'} mažiausio (${lo}) ir didžiausio (${hi}) mokesčio fonduose sukauptos sumos skiriasi <b>${d}</b>.`,
+  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Mokesčiai', 'Kalendorius'],
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
@@ -587,6 +595,12 @@ function renderFunds() {
         + idxOf(pt).map(f => { const s = idxStats(f, pt.rng, grpStart(pt.g)); return `<tr class="idxrow"><td class="n"></td>${idxName(f)}${cell(s.ret, v => pct(v), null)}${cell(s.vol, v => num(v, 2) + pctSfx(), null)}${cell(s.mdd, v => num(v, 2) + pctSfx(), null)}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), null)}${cell(s.volAll, v => num(v, 2) + pctSfx(), null)}${cell(s.mddAll, v => num(v, 2) + pctSfx(), null)}</tr>`; }).join('');
     }).join('') + '</tbody>';
 
+  // automatinės išvados kortelių antraštėse (auditas #44) – kai rodoma viena grupė
+  const one = !ALL && parts[0].all.filter(s => s.ret !== null);
+  if (one && one.length > 1) {
+    const vols = one.filter(s => s.vol !== null).sort((x, y) => x.vol - y.vol), A = one[0], Z = one[one.length - 1];
+    setConcl('hMetrics', vols.length ? T().cMetrics(labelOf(A.f.provider), pct(A.ret), labelOf(Z.f.provider), pct(Z.ret), labelOf(vols[0].f.provider), num(vols[0].vol, 2) + pctSfx()) : '');
+  } else setConcl('hMetrics', '');
   const endAll = Math.max(...rngs.map(r => r.end));
   const calP = parts.map(pt => ({ pt, cal: pt.all.map(s => ({ s, c: calendarReturns(s.f, pt.rng.end) })) }));
   const calRows = calP.flatMap(x => x.cal), needN = Math.min(calRows.length, Math.max(2, Math.ceil(calRows.length * 0.25)));   // metų, kuriuose beveik nėra duomenų (pvz., 2018 – kelios dienos), stulpelio nerodome
@@ -597,6 +611,8 @@ function renderFunds() {
     + calP.map(({ pt, cal }) => cal.map((x, i) => tr(i === 0, `${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1)}${c.partial ? '*' : ''}</td>`; }).join('')}`)).join('')
       + idxOf(pt).map(f => { const c = calendarReturns(idxSince(f, grpStart(pt.g)), pt.rng.end); return `<tr class="idxrow">${idxName(f)}${years.map(y => c[y] ? `<td>${pct(c[y].ret, 1)}</td>` : '<td class="na">–</td>').join('')}</tr>`; }).join('')).join('') + '</tbody>';
 
+  { const y = lastYear - 1, cs = !ALL ? calP[0].cal.filter(x => x.c[y] && !x.c[y].partial).sort((p, q) => q.c[y].ret - p.c[y].ret) : [];
+    setConcl('hCal', cs.length > 1 ? T().cCal(y, labelOf(cs[0].s.f.provider), pct(cs[0].c[y].ret), labelOf(cs[cs.length - 1].s.f.provider), pct(cs[cs.length - 1].c[y].ret)) : ''); }
   setCap('tRoll', T().capRoll(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end)));
   const keys = [[1, 'thRet1m'], [3, 'thRet3m'], [6, 'thRet6m'], [12, 'thRet1y'], [36, 'thRet3y'], [60, 'thRet5y']];
   $('tRoll').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${keys.map(k => `<th>${T()[k[1]]}</th>`).join('')}<th>${T().thR1avg}</th><th>${T().thR1min}</th><th>${T().thR1max}</th><th>${T().thR1pos}</th></tr></thead><tbody>`
@@ -763,6 +779,8 @@ function renderFees() {
   setCap('feeTbl', T().capFee(FEEP.m, FEEP.y, FEEP.r));
   if (!rows.length) { $('feeTbl').innerHTML = `<tbody><tr><td class="na">${T().noData}</td></tr></tbody>`; return; }
   const eur = v => num(v, 0) + ' €', maxLoss = Math.max(...rows.map(r => r.s.gross - r.s.net), 1);
+  const lo = rows[0], hi = rows[rows.length - 1];
+  setConcl('hFee', hi.fee > lo.fee ? T().cFee(FEEP.y, `${lo.p.label} ${num(lo.fee, 2)}${pctSfx()}`, `${hi.p.label} ${num(hi.fee, 2)}${pctSfx()}`, eur(lo.s.net - hi.s.net)) : '');
   $('feeTbl').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().feeRate}</th><th>${T().feeContrib}</th><th>${T().feeGross}</th><th>${T().feeNet}</th><th>${T().feePaid}</th><th>${T().feeLoss}</th><th>${T().feeLossPct}</th></tr></thead><tbody>`
     + rows.map(r => {
       const loss = r.s.gross - r.s.net;
@@ -988,7 +1006,7 @@ function labelControls() {
   $('idxLbl').innerHTML = T().idxLbl + ik('idx'); renderIdxChips();
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
-  $('sub').textContent = `${T().dataUntil} ${iso(Math.max(...DATA.groups.map(g => groupEnd(g).end)))} · ${T().updated} ${DATA.generated}`;
+  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hFee', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1013,7 +1031,6 @@ function syncAll() {
 }
 buildControls(); syncChips();
 renderHeader('performance', () => { labelControls(); syncAll(); });
-document.querySelector('#top .top-tools').prepend($('actions'));   // veiksmų mygtukai – antraštėje, filtrų juosta lieka vienoje eilutėje
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
