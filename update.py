@@ -15,7 +15,8 @@ Komandos:
 Papildomi nustatymai (aplinkos kintamieji):
     GOINDEX_API_SECRET_KEY   Goindex API raktas (GitHub secret)
     CATCHUP=true             ryto papildomas paleidimas (laukiama diena skaičiuojama nuo vakar)
-    MAX_BROWSER_ATTEMPTS     bandymų per dieną vienam naršyklės tiekėjui (numatyta 5)
+    MAX_BROWSER_ATTEMPTS     bandymų per dieną Luminor (mokamas proxy, numatyta 5)
+    MAX_FREE_ATTEMPTS        bandymų per dieną kitiems naršyklės tiekėjams (numatyta 20)
 """
 import json
 import os
@@ -35,6 +36,9 @@ ROOT = Path(__file__).parent
 STATE_FILE = ROOT / "data" / "update_state.json"
 TZ = ZoneInfo("Europe/Vilnius")
 MAX_BROWSER_ATTEMPTS = int(os.getenv("MAX_BROWSER_ATTEMPTS", "5"))
+# SEB, Swedbank, Goindex nemokami: griežtas limitas tik Luminor (proxy). Kitaip rankiniai
+# paleidimai ryte suvalgo bandymus ir vėliau paskelbtos SEB vertės nebeparsiunčiamos.
+MAX_FREE_ATTEMPTS = int(os.getenv("MAX_FREE_ATTEMPTS", "20"))
 MAX_DAILY_JUMP = 0.12  # didesnis vienos dienos pokytis laikomas klaida ir praleidžiamas
 LOOKBACK_DAYS = 30  # fondas laikomas „aktyviu", jei turi duomenų per paskutines 30 d.
 
@@ -197,6 +201,10 @@ def load_state() -> dict:
 def save_state(state: dict) -> None:
     STATE_FILE.parent.mkdir(exist_ok=True)
     STATE_FILE.write_text(json.dumps(state, indent=1, sort_keys=True), encoding="utf-8")
+
+
+def max_attempts(provider: str) -> int:
+    return MAX_BROWSER_ATTEMPTS if "LUMINOR" in provider else MAX_FREE_ATTEMPTS
 
 
 def attempts_today(state: dict, provider: str) -> int:
@@ -392,8 +400,8 @@ def run_group(providers: list, fetchers: dict) -> int:
             log.append(f"{provider}: jau atnaujinta iki {expected}")
             continue
         is_browser = fetchers is None
-        if is_browser and attempts_today(state, provider) >= MAX_BROWSER_ATTEMPTS:
-            log.append(f"{provider}: pasiektas dienos bandymų limitas ({MAX_BROWSER_ATTEMPTS})")
+        if is_browser and attempts_today(state, provider) >= max_attempts(provider):
+            log.append(f"{provider}: pasiektas dienos bandymų limitas ({max_attempts(provider)})")
             continue
         attempted = True
         try:
@@ -427,7 +435,7 @@ def main() -> int:
     if command == "needs-browser":
         state = load_state()
         needed = [p for p in BROWSER_SCRIPTS
-                  if missing_funds(existing, p, expected) and attempts_today(state, p) < MAX_BROWSER_ATTEMPTS]
+                  if missing_funds(existing, p, expected) and attempts_today(state, p) < max_attempts(p)]
         print("Reikia naršyklės:", ", ".join(needed) or "niekam")
         target = os.getenv("GITHUB_OUTPUT")
         if target:

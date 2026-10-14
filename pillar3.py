@@ -345,7 +345,7 @@ def run(providers: dict, browser: bool) -> None:
             log.append(f"{provider}: jau atnaujinta iki {expected}")
             continue
         state_key = "P3_" + provider
-        if browser and u.attempts_today(state, state_key) >= u.MAX_BROWSER_ATTEMPTS:
+        if browser and u.attempts_today(state, state_key) >= u.max_attempts(state_key):
             log.append(f"{provider}: pasiektas dienos bandymų limitas")
             continue
         attempted = True
@@ -390,7 +390,7 @@ def main() -> int:
     if command == "needs-browser":
         existing, expected, state = load(), u.expected_date(), u.load_state()
         need = [p for p in BROWSER if missing(existing, p, expected)
-                and u.attempts_today(state, "P3_" + p) < u.MAX_BROWSER_ATTEMPTS]
+                and u.attempts_today(state, "P3_" + p) < u.max_attempts("P3_" + p)]
         if sum(1 for k in existing if k[1] == "Luminor ateitis akcijų index") < 60:
             need.append("LUMINOR-index")
         print("III pakopai reikia naršyklės:", ", ".join(need) or "niekam")
