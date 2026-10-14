@@ -136,8 +136,9 @@ function renderHeader(active, onLang) {
   }
   apply();
   const act = nav.querySelector('[aria-current]');
-  if (act && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = act.offsetLeft - 16;   // telefone aktyvus puslapis matomas
-  nav.addEventListener('scroll', () => scrollEdges(nav), { passive: true }); scrollEdges(nav);
+  const row = nav.querySelector('.nav');
+  if (act && row.scrollWidth > row.clientWidth) row.scrollLeft = act.offsetLeft - 16;   // telefone aktyvus puslapis matomas
+  row.addEventListener('scroll', () => scrollEdges(row), { passive: true }); scrollEdges(row);
   return apply;
 }
 
@@ -149,7 +150,7 @@ function fitSticky() {
   const nav = document.getElementById('snav'), navh = nav && getComputedStyle(nav).position === 'sticky' ? nav.offsetHeight : 0;   // lipni navigacija (auditas #41)
   const bar = [...document.querySelectorAll('.bar.sticky, .jnav')].find(b => getComputedStyle(b).position === 'sticky');
   document.documentElement.style.setProperty('--navh', navh + 'px');
-  if (nav) scrollEdges(nav);
+  if (nav) nav.querySelectorAll('.nav, .pnav').forEach(scrollEdges);
   document.documentElement.style.setProperty('--stick', navh + (bar ? bar.offsetHeight : 0) + 'px');
   document.querySelectorAll('.scroll').forEach(sc => {
     if (!sc.querySelector('thead')) return;
@@ -208,6 +209,36 @@ function setConcl(hid, html) {
   if (!html) { if (c) c.remove(); return; }
   if (!c) { c = document.createElement('p'); c.className = 'concl'; h.before(c); }
   c.innerHTML = html;
+}
+/* Vidinė puslapio navigacija (auditas #43): antra lipnios navigacijos eilutė su nuorodomis į skyrius; paryškinamas matomas skyrius.
+   items – [{ id: antraštės id, label }]; kviečiama iš naujo pakeitus kalbą. Nieko neslepia – tik greitas perėjimas. */
+function addSubnav(items) {
+  const nav = document.getElementById('snav'); if (!nav) return;
+  let pn = nav.querySelector('.pnav');
+  if (!pn) {
+    pn = document.createElement('div'); pn.className = 'pnav'; nav.append(pn);
+    pn.addEventListener('click', e => {
+      const a = e.target.closest('a'); if (!a) return;
+      const el = pnTarget(a.dataset.id); if (!el) return;
+      e.preventDefault();
+      const stick = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick')) || 0;
+      scrollTo({ top: el.getBoundingClientRect().top + scrollY - stick - 12, behavior: 'smooth' });
+    });
+    pn.addEventListener('scroll', () => scrollEdges(pn), { passive: true });
+    let q = 0; addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(() => { q = 0; pnSpy(); }); }, { passive: true });
+  }
+  pn.innerHTML = items.map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
+  pnSpy(); scrollEdges(pn);
+}
+const pnTarget = id => { const h = document.getElementById(id); if (!h) return null; const c = h.previousElementSibling; return c && c.classList.contains('concl') ? c : h; };
+function pnSpy() {
+  const pn = document.querySelector('#snav .pnav'); if (!pn) return;
+  const stick = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick')) || 0;
+  let cur = null;
+  pn.querySelectorAll('a').forEach(a => { const el = pnTarget(a.dataset.id); if (el && el.offsetParent && el.getBoundingClientRect().top <= stick + 60) cur = a; });
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = pn.lastElementChild;   // puslapio apačia – paskutinis skyrius
+  pn.querySelectorAll('a').forEach(a => { if (a === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+  if (cur && pn.scrollWidth > pn.clientWidth && (cur.offsetLeft < pn.scrollLeft || cur.offsetLeft + cur.offsetWidth > pn.scrollLeft + pn.clientWidth)) pn.scrollLeft = cur.offsetLeft - 16;
 }
 /* Šviežumo eilutė: „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ arba vėluojantis valdytojas geltonai.
    Valdytojo diena – seniausia iš jo fondų paskutinių dienų; atsiliekantys nuo naujausios dienos paryškinami. */

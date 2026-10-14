@@ -45,11 +45,16 @@ header { margin-bottom: 8px; }
 .stbtn .chev { color: var(--text-3); font-size: 11px; }
 .stbtn[aria-expanded="true"] .chev { display: inline-block; transform: rotate(180deg); }
 .status .sub { margin: 0; font-size: 12px; color: var(--text-3); }
-.snav { position: sticky; top: 0; z-index: 6; background: var(--surface); margin: 0 -16px 16px; padding: 6px 16px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
-.snav::-webkit-scrollbar { display: none; }
+.snav { position: sticky; top: 0; z-index: 6; background: var(--surface); margin: 0 -16px 16px; padding: 6px 16px; border-bottom: 1px solid var(--line); }
+.snav .nav, .snav .pnav { overflow-x: auto; scrollbar-width: none; }
+.snav .nav::-webkit-scrollbar, .snav .pnav::-webkit-scrollbar { display: none; }
+.snav .pnav { display: flex; gap: 2px; margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--line); }
+.pnav a { flex: none; font-size: 13px; color: var(--text-3); text-decoration: none; padding: 3px 10px; border-radius: 7px; white-space: nowrap; }
+.pnav a:hover { background: var(--hover); color: var(--text); }
+.pnav a[aria-current] { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); font-weight: 600; }
 /* lipni juosta po navigacija: tarpas virš jos ir apvalūs kampai uždengti fono spalva, kad nesimatytų slenkantis turinys */
 @media (min-width: 701px) { .sticky::before, .jnav::before { content: ''; position: absolute; left: -1px; right: -1px; top: -16px; height: 30px; background: var(--surface); z-index: -1; } }
-.snav.sr { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
+.snav .sr { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
 .stbtn .ok, .stbtn .late { white-space: nowrap; }
 @media (max-width: 520px) { h1 { font-size: 20px; } .brand img { width: 24px; height: 24px; } .tml { display: none; } .stbtn .late { white-space: normal; } }
 .btn.ico { min-width: 34px; padding: 6px 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; }
@@ -109,7 +114,8 @@ footer { margin-top: 28px; color: var(--text-3); font-size: 12.5px; line-height:
 .warn { color: var(--text-2); font-size: 13px; margin: 0 0 14px; }
 
 /* ---- bendri papildymai ---- */
-.nav { display: flex; flex-wrap: nowrap; gap: 2px; width: max-content; }
+.nav { display: flex; flex-wrap: nowrap; gap: 2px; }
+.nav a { flex: none; }
 /* vienodas nuorodų stilius visoje svetainėje (auditas #36) */
 a { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 2px; }
 a:hover { text-decoration-color: currentColor; }

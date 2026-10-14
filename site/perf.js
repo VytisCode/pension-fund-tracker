@@ -23,6 +23,7 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `<b>${a}</b> earned the most (${ra}), <b>${z}</b> the least (${rz}); <b>${v}</b> was the least volatile (${rv}).`,
   cCal: (y, a, ra, z, rz) => `In ${y} the best was <b>${a}</b> (${ra}), the weakest <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Over ${y} years savings in the lowest-fee (${lo}) and highest-fee (${hi}) funds differ by <b>${d}</b>.`,
+  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Fees', 'Calendar'],
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
@@ -104,6 +105,7 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `Daugiausia uždirbo <b>${a}</b> (${ra}), mažiausiai – <b>${z}</b> (${rz}); mažiausiai svyravo <b>${v}</b> (${rv}).`,
   cCal: (y, a, ra, z, rz) => `${y} m. geriausias – <b>${a}</b> (${ra}), silpniausias – <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Per ${y} ${y >= 10 ? 'metų' : 'metus'} mažiausio (${lo}) ir didžiausio (${hi}) mokesčio fonduose sukauptos sumos skiriasi <b>${d}</b>.`,
+  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Mokesčiai', 'Kalendorius'],
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
@@ -1004,6 +1006,7 @@ function labelControls() {
   $('idxLbl').innerHTML = T().idxLbl + ik('idx'); renderIdxChips();
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
+  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hFee', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
