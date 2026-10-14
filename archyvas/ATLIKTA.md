@@ -14,3 +14,4 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – #53 dalis: rodiklių Excel papildytas kalendorinių metų grąža su formulėmis (lapai „Kalendoriniai metai“ ir „Metų vertės“).
 - 2026-10-14 – #53 dalis: „Turtas“ – turto pokyčio Excel su formulėmis (kiekvienas taškas: grąža ir srautas; suvestinė SUMIFS); data_aum.js papildytas vieneto vertėmis.
 - 2026-10-14 – #53 dalis: „III pakopa“ – visų fondų lentelės Excel su formulėmis (Istorija, Mėnesiai, Rodikliai su nuorodomis į langelius).
+- 2026-10-14 – 11 paketas baigtas (#53): „Portfeliai“ – grupės palyginimo Excel su formulėmis (pozicijos ir SUMIFS). Excel su formulėmis dabar yra Rezultatuose (visa rinka, rodikliai, kalendoriniai metai), Ataskaitose, Turte, III pakopoje ir Portfeliuose.

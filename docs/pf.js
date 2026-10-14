@@ -597,7 +597,46 @@ function renderPeers() {
     document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
   }));
   document.getElementById('pgNote').textContent = T().pgNote;
+  const xb = document.getElementById('pgXls'); xb.textContent = '⤓ ' + (lang === 'lt' ? 'Excel su formulėmis' : 'Excel with formulas'); xb.onclick = () => pgXls().catch(err => alert('Excel: ' + err));
 }
+
+/* ---------- grupės palyginimo Excel su formulėmis (auditas #53) ----------
+   „Pozicijos“ – kiekviena fondo pozicija ketvirčio pabaigoje su požymiais ir dalimi = vertė ÷ fondo suma (SUMIFS);
+   „Palyginimas“ – 4 lentelės stulpeliai kaip SUMIFS iš pozicijų (tos pačios taisyklės kaip lookThrough). */
+function pfLoadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.append(s); }); }
+function pgBook() {
+  const L = lang === 'lt', t = T(), qi = ST.pgq, P = '0.00%', N2 = '0.00';
+  const funds = FUNDS.filter(f => f.q[qi] && (ST.pg === 'III' ? f.pl === 'III' : f.pl === 'II' && f.g === ST.pg)).sort((a, b) => a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
+  const SH = L ? ['Palyginimas', 'Pozicijos', 'Metodika'] : ['Comparison', 'Holdings', 'Methodology'], Q = `'${SH[1]}'`;
+  const pos = [L ? ['Fondo kodas', 'Pozicija', 'ISIN', 'Rūšis', 'Grupė', 'Akcijų regionas', 'Vertė, €', 'Dalis', 'Indeksinis', 'TER, %', 'TER svoris', 'TER × dalis', 'SFDR 8/9', 'Auksas', 'EM', 'Obligacija', 'YTM, %', 'YTM svoris', 'YTM × dalis', 'Trukmė', 'Trukmės svoris', 'Trukmė × dalis']
+    : ['Fund code', 'Holding', 'ISIN', 'Type', 'Group', 'Equity region', 'Value, €', 'Share', 'Index', 'TER, %', 'TER weight', 'TER × share', 'SFDR 8/9', 'Gold', 'EM', 'Bond', 'YTM, %', 'YTM weight', 'YTM × share', 'Duration', 'Duration weight', 'Duration × share']];
+  funds.forEach(f => { const tot = f.tot[qi];
+    f.q[qi].forEach((x, si) => { const sx = S[si], b = bucket(sx), n = pos.length + 1, w = x.v / tot, a = sx.t === 'f' ? sx.a : null, m = sx.t === 'b' ? bondAt(si, qi) : null;
+      const reg = b === 'eq' ? regionOf(sx) : '', em = (b === 'eq' && reg === 'em') || (a && a.em === 'only' && b !== 'eq') ? 1 : 0;
+      pos.push([f.c, posLabel(sx), sx.isin || '', typeLabel(sx), b, reg, { t: 'n', v: x.v, z: '#,##0' }, { t: 'n', f: `G${n}/SUMIFS($G:$G,$A:$A,A${n})`, v: w, z: '0.0000%' },
+        a && a.ap === 'index' ? 1 : 0, a && a.ter != null ? a.ter : '', { t: 'n', f: `IF(J${n}="",0,H${n})`, v: a && a.ter != null ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(J${n}="",0,H${n}*J${n})`, v: a && a.ter != null ? w * a.ter : 0, z: '0.000000' },
+        a && (a.sfdr === '8' || a.sfdr === '9') ? 1 : 0, a && a.th === 'gold' ? 1 : 0, em, sx.t === 'b' ? 1 : 0,
+        m && m.y != null ? m.y : '', { t: 'n', f: `IF(Q${n}="",0,H${n})`, v: m && m.y != null ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(Q${n}="",0,H${n}*Q${n})`, v: m && m.y != null ? w * m.y : 0, z: '0.000000' },
+        m ? m.md : '', { t: 'n', f: `IF(T${n}="",0,H${n})`, v: m ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(T${n}="",0,H${n}*T${n})`, v: m ? w * m.md : 0, z: '0.000000' }]); }); });
+  const R = c => `${Q}!$${c}:$${c}`, regs = PG_REG.filter(k => funds.some(f => (peerRow(f, qi)['r_' + k] || 0) > 0.05));
+  const cmp = [[L ? 'Fondo kodas' : 'Fund code', t.thFund, t.thEq, t.thBd, t.thAlt, t.thCash, t.thIdx, t.thTer + ', %', t.thGold, t.thSfdr, t.thEm, t.thYtm + ', %', t.thDur, ...regs.map(k => t.reg[k])]];
+  funds.forEach(f => { const r = peerRow(f, qi), n = cmp.length + 1, c = `${R('A')},$A${n}`, sh = (crit, v) => ({ t: 'n', f: `SUMIFS(${R('H')},${c}${crit})`, v: v / 100, z: P });
+    cmp.push([f.c, fundName(f), sh(`,${R('E')},"eq"`, r.eq), sh(`,${R('E')},"bd"`, r.bd), sh(`,${R('E')},"alt"`, r.alt), sh(`,${R('E')},"cash"`, r.cash), sh(`,${R('I')},1`, r.idx),
+      r.ter == null ? '' : { t: 'n', f: `SUMIFS(${R('L')},${c})/SUMIFS(${R('K')},${c})`, v: r.ter, z: N2 }, sh(`,${R('N')},1`, r.gold), sh(`,${R('M')},1`, r.sfdr), sh(`,${R('O')},1`, r.em),
+      r.ytm == null ? '' : { t: 'n', f: `SUMIFS(${R('S')},${c})/SUMIFS(${R('R')},${c})`, v: r.ytm, z: N2 }, r.md == null ? '' : { t: 'n', f: `SUMIFS(${R('V')},${c})/SUMIFS(${R('U')},${c})`, v: r.md, z: N2 },
+      ...regs.map(k => sh(`,${R('E')},"eq",${R('F')},"${k}"`, r['r_' + k]))]); });
+  const meth = L ? [['Metodika ir šaltiniai'], [], ['Ketvirtis', ''], ['Grupė', ST.pg], ['Šaltinis', 'Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos; fondų ir ETF požymiai – fondų dokumentai; obligacijų YTM ir trukmė – ESMA FIRDS sąlygos ir ataskaitos kaina.'], [],
+    ['Dalis', 'Pozicijos vertė ÷ visų fondo pozicijų suma (SUMIFS).'], ['Grupės', 'eq – akcijos ir akcijų fondai; bd – obligacijos ir obligacijų fondai; cash – pinigai, indėliai, pinigų rinkos fondai; alt – privataus kapitalo, NT ir kt.; der – išvestinės; oth – kita.'],
+    ['TER, YTM, trukmė', 'Svertinis vidurkis tik tarp pozicijų, kurioms reikšmė žinoma: Σ(dalis × reikšmė) ÷ Σ dalis. YTM ir trukmė rodomi, kai obligacijų > 0,5 %.'], ['Regionai', 'Tik akcijos ir akcijų fondai; tiesioginės akcijos – pagal emitento šalį, fondai – pagal aprašytą regioną.']]
+    : [['Methodology and sources'], [], ['Quarter', ''], ['Group', ST.pg], ['Source', 'Bank of Lithuania quarterly pension fund investment reports; fund and ETF attributes – fund documents; bond YTM and duration – ESMA FIRDS terms and the reported price.'], [],
+    ['Share', 'Holding value ÷ sum of all the fund’s holdings (SUMIFS).'], ['Groups', 'eq – equities and equity funds; bd – bonds and bond funds; cash – cash, deposits, money market funds; alt – private equity, real estate etc.; der – derivatives; oth – other.'],
+    ['TER, YTM, duration', 'Weighted average only over holdings where the value is known: Σ(share × value) ÷ Σ share. YTM and duration shown when bonds > 0.5 %.'], ['Regions', 'Equities and equity funds only; direct shares by issuer country, funds by their described region.']];
+  meth[2][1] = PF.quarters[qi];
+  const wb = XLSX.utils.book_new(), add = (rows, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(rows); if (cols) ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
+  add(cmp, SH[0], [{ wch: 12 }, { wch: 30 }, ...Array(cmp[0].length - 2).fill({ wch: 13 })]); add(pos, SH[1], [{ wch: 12 }, { wch: 46 }, { wch: 14 }, { wch: 18 }]); add(meth, SH[2], [{ wch: 18 }, { wch: 110 }]);
+  return wb;
+}
+async function pgXls() { await pfLoadXlsx(); XLSX.writeFile(pgBook(), `${lang === 'lt' ? 'Portfeliu_palyginimas' : 'Portfolio_comparison'}_${ST.pg}_${PF.quarters[ST.pgq]}.xlsx`); }
 
 /* ---------- 5. valdytojų panašumas (auditas #63) ----------
    Tos pačios amžiaus grupės fondai poromis. Bendros pozicijos = Σ min(dalis A, dalis B) per tuos pačius vertybinius popierius (ISIN);
