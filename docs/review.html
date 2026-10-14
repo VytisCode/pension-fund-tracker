@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Mėnesio apžvalga</title>
+<link rel="stylesheet" href="style.css?v=7092e39b">
+<style>
+  .rv { display: grid; gap: 14px; }
+  .pick { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 14px; }
+  .pick select { font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  .rv h2 { margin-top: 0; }
+  .says p { margin: 0 0 7px; font-size: 15px; line-height: 1.5; }
+  .says p.srcl { font-size: 12px; margin-top: 8px; }
+  .rt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rt th, .rt td { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  .rt td.n, .rt th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .rt td.n small { color: var(--text-3); margin-left: 4px; }
+  .rt tfoot td { font-weight: 600; border-top: 2px solid var(--line); }
+  .rt td.wrap { white-space: normal; min-width: 160px; }
+  .rt td.pos { color: var(--dpos); } .rt td.neg { color: var(--dneg); }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+  @media print { .pick { display: none; } .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; } .rt th, .rt td { padding: 2px 4px; font-size: 10.5px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <main class="rv">
+    <div class="pick"><label for="selR" id="selRL"></label><select id="selR"></select><button class="btn" type="button" id="btnPr"></button></div>
+    <div id="body" class="rv"></div>
+  </main>
+  <footer id="foot"></footer>
+</div>
+<script src="data.js?v=bdb70be9"></script>
+<script src="common.js?v=d2cfc32a"></script>
+<script src="data_rep.js?v=ab15107c"></script>
+<script src="data_aum.js?v=891934a9"></script>
+<script src="data_pf.js?v=7a086588"></script>
+<script src="rev.js?v=9e8091e2"></script>
+</body>
+</html>

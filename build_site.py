@@ -120,14 +120,16 @@ def main() -> None:
 
 def build_manager(ver: dict) -> None:
     """Valdytojo ir fondo puslapis (auditas #61 + #64): site/manager.html, site/mgr.js; duomenys – jau sugeneruoti data*.js."""
-    shutil.copyfile(SITE / "manager.html", DOCS / "manager.html")
-    shutil.copyfile(SITE / "mgr.js", DOCS / "mgr.js")
-    names = ("style.css", "common.js", "data.js", "data_rep.js", "data_pf.js", "data_aum.js", "mgr.js")
-    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in names if n not in ver}}
-    text = (DOCS / "manager.html").read_text(encoding="utf-8")
-    for n in names:
-        text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
-    (DOCS / "manager.html").write_text(text, encoding="utf-8")
+    # taip pat „Mėnesio apžvalga“ (auditas #59): site/review.html, site/rev.js
+    for page, js in (("manager.html", "mgr.js"), ("review.html", "rev.js")):
+        shutil.copyfile(SITE / page, DOCS / page)
+        shutil.copyfile(SITE / js, DOCS / js)
+        names = ("style.css", "common.js", "data.js", "data_rep.js", "data_pf.js", "data_aum.js", js)
+        v = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in names if n not in ver}}
+        text = (DOCS / page).read_text(encoding="utf-8")
+        for n in names:
+            text = text.replace(f'src="{n}"', f'src="{n}?v={v[n]}"').replace(f'href="{n}"', f'href="{n}?v={v[n]}"')
+        (DOCS / page).write_text(text, encoding="utf-8")
 
 
 def sources() -> list:
