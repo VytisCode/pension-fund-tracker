@@ -5,6 +5,8 @@ addStrings({
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
+  hRelM: 'Relative to the peers, pp', hAnnM: 'Annualized return, %', mrefNone: 'each vs. median of the other five', mrefPick: r => `${r} minus each peer`,
+  peerMed: r => r ? `Median ex ${r}` : 'Median', peerAvg: 'Peers’ avg.',
   hOv: 'Overall ranking across all groups and periods', ovAll: 'All periods', realOff: 'Nominal', realOn: 'Real (after inflation)', realTip: m => `Real return = nominal return adjusted for Lithuanian inflation (consumer price index, State Data Agency; latest month ${m}). Applies to period returns, rankings and charts; volatility and calendar-year tables stay nominal.`, ovCommonOff: 'All comparisons', ovCommonOn: 'Only where all 6 take part', ovCommonNote: 'Younger funds (e.g. Goindex) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all 6 take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.', ovLong: '1 yr and longer', ovPick: 'Periods included:',
   gxBtn: 'Since Goindex start', gxNote: d => `“Since Goindex start” is on: in each age group every fund is measured from the start of the Goindex fund (${d}) or from the period start, whichever is later, so all six providers are compared over the same dates.`,
   nOv: (pers, ng) => `How to read: for each of the ${ng} age groups and each selected period (${pers}) the providers are ranked by return – each such ranking is one comparison. “Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than 3 providers are skipped), so the maximum is ${ng} × the number of periods. “1st places” = how many of them it won; “% 1st” and “% 1st–2nd” = share of its comparisons; “Avg. rank” = average position (1 = best). Each period ends on its group’s latest date.`,
@@ -66,6 +68,8 @@ addStrings({
     riskmap: 'Horizontally: volatility (annualised standard deviation of daily returns over the selected period). Vertically: return over the same period. Up and to the left is better: more return for less risk. Only funds with fresh data and at least 20 days of returns are shown.',
     ret: 'Change in unit value between the start and end of the period. Unit values are already net of fees and taxes, so no further deduction is needed.',
     rank: 'Position of each provider within its age group by return over the selected period; 1 = best.',
+    relm: 'Without a selected provider: each provider’s return minus the median return of the other five in the same age group. With a selected provider: that provider’s return minus each peer’s return; the last column is minus the simple average of the peers. Green = the first one is ahead, red = behind. pp = percentage points.',
+    annm: 'Return over the period converted to a yearly rate: (1 + return)^(365.25 ÷ days) − 1. For periods shorter than a year this extrapolates, so read it with care.',
     overall: 'Every age group × every period is one comparison. Counts how often a provider is first, in the top two, and its average rank. Short periods are noisy, so the “1 yr and longer” view is usually fairer.',
     vol: 'Volatility = standard deviation of daily returns × √252 – how much the unit value fluctuates; higher = more risk. Days with no price change are excluded.',
     mdd: 'Maximum drawdown = the largest fall from a peak to a later trough. Shows the worst loss an investor could have suffered.',
@@ -87,6 +91,8 @@ addStrings({
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
+  hRelM: 'Palyginimas su konkurentais, p. p.', hAnnM: 'Metinė grąža, %', mrefNone: 'kiekvienas – su kitų penkių mediana', mrefPick: r => `${r} minus kiekvienas konkurentas`,
+  peerMed: r => r ? `Mediana be ${r}` : 'Mediana', peerAvg: 'Konkurentų vid.',
   hOv: 'Bendra reitingų lentelė (visos grupės ir laikotarpiai)', ovAll: 'Visi laikotarpiai', realOff: 'Nominali', realOn: 'Reali (po infliacijos)', realTip: m => `Reali grąža = nominali grąža, atėmus Lietuvos infliaciją (vartotojų kainų indeksas, Valstybės duomenų agentūra; paskutinis mėnuo ${m}). Taikoma laikotarpio grąžai, reitingams ir grafikams; svyravimas ir kalendorinių metų lentelės lieka nominalios.`, ovCommonOff: 'Visi palyginimai', ovCommonOn: 'Tik kur dalyvauja visi 6', ovCommonNote: 'Jaunesni fondai (pvz. Goindex) dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi 6“ palieka tik tuos palyginimus, kuriuose rezultatą turi visi valdytojai – tada visi lyginami vienodai.', ovLong: '1 metai ir ilgesni', ovPick: 'Įtraukti laikotarpiai:',
   gxBtn: 'Nuo Goindex pradžios', gxNote: d => `Įjungta „Nuo Goindex pradžios“: kiekvienoje amžiaus grupėje visi fondai skaičiuojami nuo Goindex fondo pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi šeši tiekėjai lyginami per tas pačias datas.`,
   nOv: (pers, ng) => `Kaip skaityti: kiekvienoje iš ${ng} amžiaus grupių ir kiekvienu pažymėtu laikotarpiu (${pers}) tiekėjai surikiuojami pagal grąžą – kiekvienas toks rikiavimas yra vienas palyginimas. „Palyginimų“ = kiek rikiavimų tiekėjas dalyvavo (jis neįtraukiamas, jei laikotarpio pradžioje jo fondo dar nebuvo arba nėra naujų duomenų; rikiavimai, kuriuose mažiau nei 3 tiekėjai, praleidžiami), todėl daugiausia gali būti ${ng} × laikotarpių skaičius. „1 vietų“ = kiek kartų buvo pirmas; „% 1 vietų“ ir „% 1–2 vietų“ = dalis nuo jo palyginimų; „Vid. vieta“ = vidutinė vieta (1 = geriausia). Kiekvienas laikotarpis baigiasi savo grupės paskutine diena.`,
@@ -148,6 +154,8 @@ addStrings({
     riskmap: 'Horizontaliai – svyravimas (dienos grąžų standartinis nuokrypis, perskaičiuotas metams) pasirinktu laikotarpiu. Vertikaliai – grąža per tą patį laikotarpį. Aukščiau ir kairiau – geriau: daugiau grąžos už mažesnę riziką. Rodomi tik fondai su šviežiais duomenimis ir bent 20 dienų grąžų.',
     ret: 'Vieneto vertės pokytis tarp laikotarpio pradžios ir pabaigos. Vieneto vertė jau yra po mokesčių ir sąnaudų, todėl papildomai nieko atimti nereikia.',
     rank: 'Kiekvieno tiekėjo vieta savo amžiaus grupėje pagal grąžą pasirinktu laikotarpiu; 1 = geriausia.',
+    relm: 'Nepasirinkus valdytojo: kiekvieno valdytojo grąža minus kitų penkių tos pačios amžiaus grupės fondų grąžos mediana. Pasirinkus valdytoją: jo grąža minus kiekvieno konkurento grąža; paskutinis stulpelis – minus paprastas konkurentų vidurkis. Žalia – pirmasis lenkia, raudona – atsilieka. p. p. = procentiniai punktai.',
+    annm: 'Laikotarpio grąža, perskaičiuota metams: (1 + grąža)^(365,25 ÷ dienos) − 1. Trumpesniam nei metai laikotarpiui tai ekstrapoliacija – vertinti atsargiai.',
     overall: 'Kiekviena amžiaus grupė × kiekvienas laikotarpis yra vienas palyginimas. Skaičiuojama, kaip dažnai tiekėjas yra pirmas, 1–2 vietoje ir jo vidutinė vieta. Trumpi laikotarpiai triukšmingi, todėl „1 m. ir ilgesni“ dažniausiai teisingesnis.',
     vol: 'Svyravimas = dienos grąžų standartinis nuokrypis × √252 – kiek svyruoja vieneto vertė; didesnis = didesnė rizika. Dienos be kainos pokyčio neįtraukiamos.',
     mdd: 'Didžiausias kritimas = didžiausias nuosmukis nuo viršūnės iki vėlesnio dugno. Rodo blogiausią galimą investuotojo nuostolį.',
@@ -177,7 +185,7 @@ const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
+  try { localStorage.setItem('perfState', JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, mref: P.mref, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -197,6 +205,7 @@ function applyState(s) {
   if (s.ovH === 'all') P.ovP = new Set(PERIOD_IDS);                                   // senos nuorodos / išsaugota būsena
   if (Array.isArray(s.ovP)) { const v = s.ovP.filter(x => PERIOD_IDS.includes(x)); if (v.length) P.ovP = new Set(v); }
   if (typeof s.gx === 'boolean') P.gx = s.gx;
+  if (s.mref === '' || DATA.providers.some(p => p.id === s.mref)) P.mref = s.mref;
   if (Array.isArray(s.idx)) P.idx = new Set(s.idx.filter(x => IDX_META[x]));
 }
 function loadHash() {
@@ -394,42 +403,76 @@ function renderSummary() {
 }
 
 /* ---------- 1. visos rinkos lentelės ---------- */
+/* Keturios heat map lentelės kaip savininko Excel: grąža (+ konkurentų mediana), palyginimas su konkurentais, vieta, metinė grąža.
+   Lyginamasis valdytojas (P.mref) pasirenkamas; nepasirinkus – kiekvienas lyginamas su kitų penkių mediana (savininko sprendimas 2026-10-14). */
+const medianOf = xs => { const a = xs.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
+const meanOf = xs => { const a = xs.filter(x => x !== null && x !== undefined); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
+const relStyle = v => `background:${heatColor(v * 1.5)}`;
 function renderMarket() {
   $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
+  $('hRelM').innerHTML = T().hRelM + ik('relm'); $('hAnnM').innerHTML = T().hAnnM + ik('annm');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
-  const provs = marketProvs();
-  const head = `<thead><tr><th></th>${provs.map(p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`).join('')}</tr></thead>`;
+  const provs = marketProvs(), ref = provs.some(p => p.id === P.mref) ? P.mref : '', refLabel = ref ? labelOf(ref) : '';
+  const ms = $('mref');
+  ms.innerHTML = `<option value="">${T().mrefNone}</option>` + provs.map(p => `<option value="${p.id}">${T().mrefPick(p.label)}</option>`).join(''); ms.value = ref;
+  const hcell = p => `<th><span class="sw-top" style="background:${colorOf(p.id)}"></span>${p.label}</th>`;
+  const head = `<thead><tr><th></th>${provs.map(hcell).join('')}</tr></thead>`;
+  const headRet = `<thead><tr><th></th>${provs.map(hcell).join('')}<th class="pm">${T().peerMed(refLabel)}</th></tr></thead>`;
+  const peers = provs.filter(p => p.id !== ref);
+  const headRel = `<thead><tr><th></th>${(ref ? peers : provs).map(hcell).join('')}${ref ? `<th class="pm">${T().peerAvg}</th>` : ''}</tr></thead>`;
   // eilutės pagal riziką: viršuje turto išsaugojimo, toliau vyresni, jauniausi (2003–2009) apačioje
   const gxStarts = [];
   const rows = DATA.groups.map(g => {
-    const rng = rangeFor(g), vals = {};
+    const rng = rangeFor(g), vals = {}, ann = {};
     if (P.gx) {                                   // visi nuo Goindex fondo pradžios (arba nuo vėlesnės laikotarpio pradžios)
       const gf = g.funds.find(f => f.provider === 'GOINDEX');
       if (gf) { rng.anchor = Math.max(rng.anchor, gf.d[0]); gxStarts.push(gf.d[0]); }
     }
     g.rngM = rng;
-    provs.forEach(p => { vals[p.id] = retOf(g, p.id, rng); });
+    provs.forEach(p => {
+      vals[p.id] = retOf(g, p.id, rng);
+      const f = g.funds.find(x => x.provider === p.id), days = f ? rng.end - Math.max(rng.anchor, f.d[0]) : 0;
+      ann[p.id] = vals[p.id] === null || days < 1 ? null : (Math.pow(1 + vals[p.id] / 100, 365.25 / days) - 1) * 100;
+    });
+    const med = medianOf(peers.map(p => vals[p.id]));
+    const rel = {};
+    if (ref) { peers.forEach(p => { rel[p.id] = vals[ref] === null || vals[p.id] === null ? null : vals[ref] - vals[p.id]; }); const pa = meanOf(peers.map(p => vals[p.id])); rel.avg = vals[ref] === null || pa === null ? null : vals[ref] - pa; }
+    else provs.forEach(p => { const m = medianOf(provs.filter(q => q.id !== p.id).map(q => vals[q.id])); rel[p.id] = vals[p.id] === null || m === null ? null : vals[p.id] - m; });
     const { map, n } = rankOf(provs.map(p => ({ key: p.id, v: vals[p.id] })));
-    return { g, vals, ranks: map, n };
+    return { g, vals, ann, med, rel, ranks: map, n };
   });
-  const avgRet = {}, avgRank = {};
+  const avgOf = (fn) => meanOf(rows.map(fn));
+  const avgRet = {}, avgRank = {}, avgAnn = {}, avgRel = {};
   provs.forEach(p => {
-    const r = rows.map(x => x.vals[p.id]).filter(v => v !== null), k = rows.map(x => x.ranks.get(p.id)).filter(v => v);
-    avgRet[p.id] = r.length ? r.reduce((s, x) => s + x, 0) / r.length : null;
-    avgRank[p.id] = k.length ? k.reduce((s, x) => s + x, 0) / k.length : null;
+    avgRet[p.id] = avgOf(x => x.vals[p.id]); avgAnn[p.id] = avgOf(x => x.ann[p.id]);
+    avgRank[p.id] = avgOf(x => x.ranks.get(p.id) || null);
   });
-  const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] })));
-  const retBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => { const v = r.vals[p.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(p.id), r.n)}">${pct(v, 1)}</td>`; }).join('')}</tr>`).join('')
-    + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRet[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(arRank.map.get(p.id), arRank.n)}">${pct(avgRet[p.id], 1)}</td>`).join('')}</tr>`;
-  const rankBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('')
-    + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => avgRank[p.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(akRank.map.get(p.id), akRank.n)}">${num(avgRank[p.id], 1)}</td>`).join('')}</tr>`;
+  (ref ? [...peers.map(p => p.id), 'avg'] : provs.map(p => p.id)).forEach(k => { avgRel[k] = avgOf(x => x.rel[k]); });
+  const avgMed = avgOf(x => x.med);
+  const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] }))), aaRank = rankOf(provs.map(p => ({ key: p.id, v: avgAnn[p.id] })));
+  const pc2 = v => num(v, 2) + pctSfx();
+  const na = '<td class="na">–</td>', gap = c => `<tr class="gap"><td colspan="${c}"></td></tr>`;
+  const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
+  const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
+  const rkCell = (v, rank, n, f) => v === null ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
+  const retBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => rkCell(r.vals[p.id], r.ranks.get(p.id), r.n, pc2)).join('')}${pmCell(r.med)}</tr>`).join('')
+    + gap(provs.length + 2) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgRet[p.id], arRank.map.get(p.id), arRank.n, pc2)).join('')}${pmCell(avgMed)}</tr>`;
+  const relKeys = ref ? [...peers.map(p => p.id), 'avg'] : provs.map(p => p.id);
+  const relBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${relKeys.map(k => relCell(r.rel[k])).join('')}</tr>`).join('')
+    + gap(relKeys.length + 1) + `<tr class="avg"><td>${T().avg}</td>${relKeys.map(k => relCell(avgRel[k])).join('')}</tr>`;
+  const rankBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : na; }).join('')}</tr>`).join('')
+    + gap(provs.length + 1) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgRank[p.id], akRank.map.get(p.id), akRank.n, v => num(v, 1))).join('')}</tr>`;
+  const annBody = rows.map(r => { const rk = rankOf(provs.map(p => ({ key: p.id, v: r.ann[p.id] }))); return `<tr><td>${groupShort(r.g)}</td>${provs.map(p => rkCell(r.ann[p.id], rk.map.get(p.id), rk.n, pc2)).join('')}</tr>`; }).join('')
+    + gap(provs.length + 1) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgAnn[p.id], aaRank.map.get(p.id), aaRank.n, pc2)).join('')}</tr>`;
   const spanAll = spanText(periodText() + (P.gx ? ' · ' + T().gxBtn : ''), rows.map(r => r.g.rngM));
   $('btnGx').textContent = T().gxBtn; $('btnGx').setAttribute('aria-pressed', P.gx);
   const gxa = Math.min(...gxStarts), gxb = Math.max(...gxStarts);
   $('nGx').hidden = !P.gx; $('nGx').textContent = P.gx && gxStarts.length ? T().gxNote(gxa === gxb ? iso(gxa) : `${iso(gxa)}…${iso(gxb)}`) : '';
-  ['tRet', 'tRank'].forEach(id => setCap(id, spanAll));
-  $('tRet').innerHTML = head + `<tbody>${retBody}</tbody>`;
+  ['tRet', 'tRank', 'tRelM', 'tAnnM'].forEach(id => setCap(id, spanAll));
+  $('tRet').innerHTML = headRet + `<tbody>${retBody}</tbody>`;
+  $('tRelM').innerHTML = headRel + `<tbody>${relBody}</tbody>`;
   $('tRank').innerHTML = head + `<tbody>${rankBody}</tbody>`;
+  $('tAnnM').innerHTML = head + `<tbody>${annBody}</tbody>`;
   renderOverall();
 }
 
@@ -876,7 +919,7 @@ async function exportXlsx() {
     const wb = XLSX.utils.book_new();
     const info = [[T().siteTitle], [T().updated, DATA.generated], [T().dataUntil, iso(Math.max(...DATA.groups.map(x => groupEnd(x).end)))], [T().period, periodText()], [T().group, groupName(P.group)], [], [T().foot]];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(info), 'Info');
-    const sheets = [['Summary', 'tSum'], ['Return', 'tRet'], ['Rank', 'tRank'], ['Overall ranking', 'tOv'], ['Metrics', 'tMetrics'], ['Calendar years', 'tCal'], ['Rolling', 'tRoll'], ['Rank by period', 'tQP'], ['Monthly heat map', 'tHm']];
+    const sheets = [['Summary', 'tSum'], ['Return', 'tRet'], ['Relative to peers', 'tRelM'], ['Rank', 'tRank'], ['Annualized', 'tAnnM'], ['Overall ranking', 'tOv'], ['Metrics', 'tMetrics'], ['Calendar years', 'tCal'], ['Rolling', 'tRoll'], ['Rank by period', 'tQP'], ['Monthly heat map', 'tHm']];
     if (P.adv) sheets.push(['Advanced', 'tAdv']);
     sheets.forEach(([name, id]) => XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(tableToAoa(id)), name));
     XLSX.writeFile(wb, `pension-funds-${iso(Math.max(...DATA.groups.map(x => groupEnd(x).end)))}.xlsx`);
@@ -935,6 +978,7 @@ function buildControls() {
     b.addEventListener('click', () => { P.ovP = new Set(OV_PRESETS[k]); saveState(); renderOverall(); });
     $('ovPreset').appendChild(b); });
   $('btnGx').addEventListener('click', () => { P.gx = !P.gx; saveState(); renderMarket(); });
+  $('mref').addEventListener('change', e => { P.mref = e.target.value; saveState(); renderMarket(); });
   $('chips').innerHTML = '';
   DATA.providers.forEach(p => {
     const c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.dataset.id = p.id;
