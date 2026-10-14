@@ -16,3 +16,8 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – #53 dalis: „III pakopa“ – visų fondų lentelės Excel su formulėmis (Istorija, Mėnesiai, Rodikliai su nuorodomis į langelius).
 - 2026-10-14 – 11 paketas baigtas (#53): „Portfeliai“ – grupės palyginimo Excel su formulėmis (pozicijos ir SUMIFS). Excel su formulėmis dabar yra Rezultatuose (visa rinka, rodikliai, kalendoriniai metai), Ataskaitose, Turte, III pakopoje ir Portfeliuose.
 - 2026-10-14 – #65: „Kelias į pensiją“ – ateities scenarijai (pesimistinis / vidutinis / optimistinis) iki 65 m. šiandienos eurais; variantai: Sodra + LB keliai, tik kaupimas, KID (laukiama medžiagos). 15 paketas ir visa eilė 9–15 baigta.
+- 2026-10-14 – S2, S3, S7: gyvenimo ciklo fondų pradžia rodoma 2019-01-01; platesnis puslapis kompiuteryje; navigacija kompiuteryje keliomis eilutėmis (be slinkimo).
+- 2026-10-14 – S5, S6: III pakopos prilimpanti laikotarpio juosta; „Valdytojas ir fondas“ – duomenų data, papildomas laikotarpis, grynieji aktyvai mln. € / rinkos dalis / ketvirčio pokytis, II ir III pakopa ir kiekvienas fondas atskirai su lentele.
+- 2026-10-14 – S4: mokesčių poveikis perkeltas į „Kelias į pensiją“ (dalyvio santaupos, įmokos, scenarijus, laikotarpis iki 65 m.).
+- 2026-10-14 – S8: Ataskaitose pusmečio lentelės visiems valdytojo fondams vienu metu ir viename Excel.
+- 2026-10-14 – S1: „Apie“ – visų 19 duomenų šaltinių sąrašas su nuorodomis, datomis ir rankinio atnaujinimo tvarkaraščiu; pavėlavę rankiniai darbai – vakariniame laiške.

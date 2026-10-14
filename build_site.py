@@ -107,6 +107,8 @@ def main() -> None:
         text = (DOCS / page).read_text(encoding="utf-8")
         for n in assets:
             text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
+        if page == "apie.html":
+            text = text.replace('src="data_src.js"', f'src="data_src.js?v={hashlib.md5((DOCS / "data_src.js").read_bytes()).hexdigest()[:8]}"')
         (DOCS / page).write_text(text, encoding="utf-8")
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
     build_pillar3(ver)
@@ -198,6 +200,10 @@ def build_fresh(groups: list, generated: str) -> None:
             prov.append({"id": pid, "label": label, "d": min(ds)})
     payload = {"top": top, "generated": generated, "providers": prov, "src": sources()}
     (DOCS / "data_fresh.js").write_text("var FRESH=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    # visų šaltinių sąrašas puslapiui „Apie“ (sources_list.py)
+    import sources_list
+    inv = sources_list.inventory(payload["src"], top)
+    (DOCS / "data_src.js").write_text("const SRCINV=" + json.dumps(inv, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 
 def build_cpi() -> None:

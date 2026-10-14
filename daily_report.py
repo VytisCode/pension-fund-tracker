@@ -17,7 +17,7 @@ import smtplib
 import subprocess
 import sys
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from pathlib import Path
@@ -137,6 +137,16 @@ def stale_section(today: str) -> list:
         late = journey.stale(datetime.strptime(today, "%Y-%m-%d").date())
     except Exception as e:  # noqa: BLE001
         return ["", f"Duomenų šviežumo patikra nepavyko: {e!r}"]
+    try:   # kiti rankiniai šaltiniai iš sources_list.py (LB failai, fondų savybės, scenarijų prielaidos)
+        import build_site
+        import sources_list
+        d0 = (datetime.strptime(today, "%Y-%m-%d").date() - datetime(1970, 1, 1).date()).days
+        iso = lambda n: str(datetime(1970, 1, 1).date() + timedelta(days=n))
+        late += [{"lt": s["lt"], "last": iso(s["last"]) if s["last"] is not None else "–", "due": iso(s["next"]), "auto": False, "url": s["url"]}
+                 for s in sources_list.inventory(build_site.sources(), d0)
+                 if s["id"] in ("pf", "lbr", "fee2", "fee3", "attrs", "future") and s["next"] is not None and d0 > s["next"]]
+    except Exception as e:  # noqa: BLE001
+        late.append({"lt": "Šaltinių sąrašo patikra", "last": "–", "due": today, "auto": True, "url": repr(e)})
     if not late:
         return []
     return ["", "Pasenę duomenys (priminimas kartą per mėnesį, kol neatnaujinta):"] + [
