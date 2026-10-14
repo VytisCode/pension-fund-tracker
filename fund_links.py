@@ -31,3 +31,6 @@ MSCI_LEVELS_API = ("https://app2.msci.com/products/service/index/indexmaster/get
                    "?currency_symbol=EUR&index_variant=NETR&start_date={start}&end_date={end}&data_frequency=DAILY&index_codes={code}")
 YAHOO_CHART_API = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?period1={p1}&period2={p2}&interval=1d"
 ECB_EURUSD_API = "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod={start}"
+# Euro zonos AAA vyriausybės obligacijų 7 m. nulinės atkarpos (spot) pajamingumas, % (ECB pajamingumo kreivė, kasdien nuo 2004-09-06);
+# iš jo indexes.py sudaro sintetinį obligacijų grąžos indeksą KID scenarijams (pakaitinis lyginamasis indeksas)
+ECB_YC7_API = "https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_7Y?format=csvdata&startPeriod={start}"

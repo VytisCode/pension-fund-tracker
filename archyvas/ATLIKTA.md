@@ -21,3 +21,4 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – S4: mokesčių poveikis perkeltas į „Kelias į pensiją“ (dalyvio santaupos, įmokos, scenarijus, laikotarpis iki 65 m.).
 - 2026-10-14 – S8: Ataskaitose pusmečio lentelės visiems valdytojo fondams vienu metu ir viename Excel.
 - 2026-10-14 – S1: „Apie“ – visų 19 duomenų šaltinių sąrašas su nuorodomis, datomis ir rankinio atnaujinimo tvarkaraščiu; pavėlavę rankiniai darbai – vakariniame laiške.
+- 2026-10-14 – S9: Ataskaitose – KID veiklos rezultatų scenarijai visiems valdytojo fondams pagal Reg. 2017/653 IV priedą (pakaitinis indeksas MSCI ACWI + ECB obligacijos), SEB PID oficialūs skaičiai ir skirtumas, Excel su formulėmis; „Kelias į pensiją“ KID variantas veikia.

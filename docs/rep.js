@@ -422,7 +422,7 @@ function renderAllParts() {
   document.getElementById('printMeta').textContent = `${T().siteTitle} · ${T().mgr}: ${MLABEL[ST.m]} · ${T().updated} ${REP.generated}`;
   wire(bar, { m: v => { ST.m = v; save(); renderAllParts(); } });
   ['calLead', 'kpiLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderCal(); renderMonths(); renderKpi(); renderHy();
+  renderCal(); renderMonths(); renderKpi(); renderHy(); renderKid();
 }
 document.addEventListener('click', e => {
   const x = e.target.closest('.xls');
@@ -431,7 +431,7 @@ document.addEventListener('click', e => {
   if (!b) { if (!e.target.closest('#pop')) pop.style.display = 'none'; return; }
   e.stopPropagation();
   if (pop.style.display === 'block' && pop._b === b) { pop.style.display = 'none'; return; }
-  pop.textContent = T().info[b.dataset.k] || T().infoHy; pop._b = b; pop.style.display = 'block';
+  pop.textContent = T().info[b.dataset.k] || (b.dataset.k === 'kid' ? T().kidInfo : T().infoHy); pop._b = b; pop.style.display = 'block';
   const r = b.getBoundingClientRect(), w = pop.offsetWidth;
   pop.style.left = Math.max(8, Math.min(r.left + scrollX - 8, scrollX + document.documentElement.clientWidth - w - 8)) + 'px'; pop.style.top = (r.bottom + scrollY + 6) + 'px';
 });

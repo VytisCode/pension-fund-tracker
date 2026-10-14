@@ -41,7 +41,7 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 ## Eilė: savininko užduotys 2026-10-14 (vakaras)
 
-- **S9** KID veiklos rezultatų scenarijai pagal Reglamento (ES) 2017/653 IV priedą; patikrinti su SEB PID (pensija 18+, index. Klimato ateitis, pensija 58+); naudoti ir „Kelias į pensiją“ KID variante.
+- **S9 tęsinys** KID: obligacijų indeksas (ECB 7 m. AAA) pradės kauptis per kasdienį paleidimą – patikrinti, ar atsirado `EUR_GOV7Y` ir ar mišrių / obligacijų fondų scenarijai protingi (SEB 50+, 58+ su PID). Kitų valdytojų PID – surinkti (savininkas atsiųs arba automatiškai).
 
 - **S1 tęsinys – automatizavimas** (šaltinių sąrašas ir tvarkaraštis jau „Apie“, pavėlavę darbai – vakariniame laiške): LB failus (portfeliai, rezultatai, mokesčiai) parsiųsti automatiškai kasdienio paleidimo metu (lb.lt iš Claude aplinkos nepasiekiamas – reikia tikslių failų adresų ir bandomojo paleidimo); vidutinį darbo užmokestį ir MMA imti iš VDA SDMX kaip VKI.
 

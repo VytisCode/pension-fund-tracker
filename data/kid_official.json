@@ -1,0 +1,301 @@
+{
+ "_about": "Oficialūs KID (PID) veiklos rezultatų scenarijai iš viešų valdytojų pagrindinės informacijos dokumentų: investuojama 1000 EUR per metus; amount – suma atskaičius išlaidas, EUR; ret – metinė vidutinė grąža, %. eq – akcijų dalis lyginamajame indekse, %. Pildoma ranka (kasmet, išėjus naujiems PID).",
+ "funds": [
+  {
+   "p": "SEB",
+   "n": "SEB pensija 18+",
+   "doc": "2026-04-30",
+   "rhp": 15,
+   "years": [
+    1,
+    8,
+    15
+   ],
+   "ongoing": 1.16,
+   "tx": 0.02,
+   "eq": 98,
+   "from": "2006-01-01",
+   "to": "2025-12-31",
+   "s": {
+    "stress": [
+     {
+      "amount": 608.06,
+      "ret": -39.19
+     },
+     {
+      "amount": 5035.29,
+      "ret": -10.4
+     },
+     {
+      "amount": 8276.81,
+      "ret": -7.88
+     }
+    ],
+    "unfav": [
+     {
+      "amount": 608.06,
+      "ret": -39.19
+     },
+     {
+      "amount": 8310.33,
+      "ret": 0.84
+     },
+     {
+      "amount": 15551.34,
+      "ret": 0.45
+     }
+    ],
+    "mod": [
+     {
+      "amount": 1089.91,
+      "ret": 8.99
+     },
+     {
+      "amount": 12315.88,
+      "ret": 9.53
+     },
+     {
+      "amount": 28967.46,
+      "ret": 7.85
+     }
+    ],
+    "fav": [
+     {
+      "amount": 1497.83,
+      "ret": 49.78
+     },
+     {
+      "amount": 15644.69,
+      "ret": 14.79
+     },
+     {
+      "amount": 41174.01,
+      "ret": 11.84
+     }
+    ]
+   }
+  },
+  {
+   "p": "SEB",
+   "n": "SEB index. Klimato ateitis",
+   "doc": "2026-04-30",
+   "rhp": 15,
+   "years": [
+    1,
+    8,
+    15
+   ],
+   "ongoing": 0.57,
+   "tx": 0.06,
+   "eq": 100,
+   "from": "2006-01-01",
+   "to": "2025-12-31",
+   "s": {
+    "stress": [
+     {
+      "amount": 603.99,
+      "ret": -39.6
+     },
+     {
+      "amount": 5049.79,
+      "ret": -10.34
+     },
+     {
+      "amount": 8311.46,
+      "ret": -7.82
+     }
+    ],
+    "unfav": [
+     {
+      "amount": 603.99,
+      "ret": -39.6
+     },
+     {
+      "amount": 8303.98,
+      "ret": 0.83
+     },
+     {
+      "amount": 15540.05,
+      "ret": 0.44
+     }
+    ],
+    "mod": [
+     {
+      "amount": 1093.67,
+      "ret": 9.37
+     },
+     {
+      "amount": 12454.43,
+      "ret": 9.78
+     },
+     {
+      "amount": 30418.35,
+      "ret": 8.41
+     }
+    ],
+    "fav": [
+     {
+      "amount": 1516.34,
+      "ret": 51.63
+     },
+     {
+      "amount": 16414.95,
+      "ret": 15.85
+     },
+     {
+      "amount": 43250.9,
+      "ret": 12.38
+     }
+    ]
+   }
+  },
+  {
+   "p": "SEB",
+   "n": "SEB pensija 50+",
+   "doc": "2026-04-30",
+   "rhp": 11,
+   "years": [
+    1,
+    6,
+    11
+   ],
+   "ongoing": 1.02,
+   "tx": 0.01,
+   "eq": 50,
+   "from": "2010-01-01",
+   "to": "2025-12-31",
+   "s": {
+    "stress": [
+     {
+      "amount": 728.06,
+      "ret": -27.19
+     },
+     {
+      "amount": 4420.65,
+      "ret": -8.66
+     },
+     {
+      "amount": 7492.67,
+      "ret": -6.55
+     }
+    ],
+    "unfav": [
+     {
+      "amount": 850.48,
+      "ret": -14.95
+     },
+     {
+      "amount": 6150.11,
+      "ret": 0.71
+     },
+     {
+      "amount": 11257.2,
+      "ret": 0.38
+     }
+    ],
+    "mod": [
+     {
+      "amount": 1066.13,
+      "ret": 6.61
+     },
+     {
+      "amount": 7475.5,
+      "ret": 6.31
+     },
+     {
+      "amount": 15673.42,
+      "ret": 5.8
+     }
+    ],
+    "fav": [
+     {
+      "amount": 1258.66,
+      "ret": 25.87
+     },
+     {
+      "amount": 8458.55,
+      "ret": 9.89
+     },
+     {
+      "amount": 17679.19,
+      "ret": 7.73
+     }
+    ]
+   }
+  },
+  {
+   "p": "SEB",
+   "n": "SEB pensija 58+",
+   "doc": "2026-04-30",
+   "rhp": 7,
+   "years": [
+    1,
+    4,
+    7
+   ],
+   "ongoing": 0.9,
+   "tx": 0.01,
+   "eq": 0,
+   "from": "2014-01-01",
+   "to": "2025-12-31",
+   "s": {
+    "stress": [
+     {
+      "amount": 799.01,
+      "ret": -20.1
+     },
+     {
+      "amount": 3307.92,
+      "ret": -7.45
+     },
+     {
+      "amount": 5569.05,
+      "ret": -5.72
+     }
+    ],
+    "unfav": [
+     {
+      "amount": 848.46,
+      "ret": -15.15
+     },
+     {
+      "amount": 3671.94,
+      "ret": -3.39
+     },
+     {
+      "amount": 6719.35,
+      "ret": -1.02
+     }
+    ],
+    "mod": [
+     {
+      "amount": 1019.9,
+      "ret": 1.99
+     },
+     {
+      "amount": 4078.2,
+      "ret": 0.78
+     },
+     {
+      "amount": 7076.53,
+      "ret": 0.27
+     }
+    ],
+    "fav": [
+     {
+      "amount": 1169.43,
+      "ret": 16.94
+     },
+     {
+      "amount": 4548.59,
+      "ret": 5.21
+     },
+     {
+      "amount": 8253.27,
+      "ret": 4.12
+     }
+    ]
+   }
+  }
+ ]
+}

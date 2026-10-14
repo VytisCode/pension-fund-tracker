@@ -6,6 +6,7 @@ mode: auto – renkama automatiškai kasdienio paleidimo metu; manual – reikia
 Datos skaičiuojamos iš pačių duomenų failų (build_site.sources() ir šis modulis), todėl sąrašas atsinaujina savaime.
 """
 import csv
+import json
 import re
 from datetime import date, timedelta
 from pathlib import Path
@@ -29,9 +30,9 @@ SOURCES = [
     dict(id="p3", lt="III pakopos vieneto vertės, aktyvai ir lyginamieji indeksai", en="Pillar III unit values, assets and benchmarks",
          url="https://www.lb.lt/lt/iii-pakopos-pensiju-fondai", src_lt="valdytojų svetainės (22 fondai)", src_en="managers’ websites (22 funds)",
          pages=["pillar3", "manager", "aum", "reports", "journey"], mode="auto", f_lt="kasdien darbo dienomis", f_en="every working day"),
-    dict(id="idx", lt="Akcijų indeksai (MSCI World, MSCI ACWI, S&P 500)", en="Equity indices (MSCI World, MSCI ACWI, S&P 500)",
+    dict(id="idx", lt="Indeksai (MSCI World, MSCI ACWI, S&P 500, euro obligacijų pajamingumas)", en="Indices (MSCI World, MSCI ACWI, S&P 500, euro bond yield)",
          url="https://www.msci.com/indexes", src_lt="MSCI, S&P (per Yahoo), ECB valiutų kursas", src_en="MSCI, S&P (via Yahoo), ECB exchange rate",
-         pages=["performance", "journey"], mode="auto", f_lt="kasdien", f_en="daily"),
+         pages=["performance", "journey", "reports"], mode="auto", f_lt="kasdien", f_en="daily"),
     dict(id="estr", lt="Nerizikinga palūkanų norma (€STR)", en="Risk-free rate (€STR)",
          url="https://data.ecb.europa.eu/data/datasets/EST/EST.B.EU000A2X2A25.WT", src_lt="Europos centrinis bankas", src_en="European Central Bank",
          pages=["performance"], mode="auto", f_lt="kasdien", f_en="daily"),
@@ -62,6 +63,10 @@ SOURCES = [
          url="https://www.justetf.com", src_lt="fondų dokumentai, ETF duomenų bazės", src_en="fund documents, ETF databases",
          pages=["portfolios", "reports"], mode="manual", f_lt="kartą per metus (po metinių dokumentų)", f_en="yearly (after annual documents)",
          how_lt="Paprašyti Claude patikrinti naujų ir pasikeitusių fondų savybes.", how_en="Ask Claude to check attributes of new and changed funds."),
+    dict(id="kidoff", lt="Oficialūs KID (PID) veiklos rezultatų scenarijai", en="Official KID performance scenarios",
+         url="", src_lt="valdytojų pagrindinės informacijos dokumentai", src_en="managers’ key information documents",
+         pages=["reports"], mode="manual", f_lt="kartą per metus (kovą–gegužę)", f_en="yearly (March–May)",
+         how_lt="Atsiųsti Claude naujus fondų PID (PDF) arba nuorodas į juos.", how_en="Send Claude the new fund KIDs (PDF) or links to them."),
     dict(id="wages", lt="Vidutinis darbo užmokestis", en="Average wage", url="https://osp.stat.gov.lt/pagrindiniai-salies-rodikliai",
          src_lt="Valstybės duomenų agentūra", src_en="State Data Agency", pages=["journey"], mode="manual", f_lt="kartą per metus (kovą)", f_en="yearly (March)",
          how_lt="Kai paskelbiamas praėjusių metų vidutinis darbo užmokestis – pranešti Claude.", how_en="When last year’s average wage is published, tell Claude."),
@@ -131,6 +136,10 @@ def inventory(src: list, top_day: int, today: date | None = None) -> list:
             elif k == "ann":
                 import journey
                 c = journey.ANNUITY["calc"]["date"]; last = dn(_d(c)); nxt = dn(date(_d(c).year + 1, 1, 31))
+            elif k == "kidoff":
+                p = ROOT / "data" / "kid_official.json"
+                docs = [f["doc"] for f in json.loads(p.read_text(encoding="utf-8"))["funds"]]
+                last = dn(_d(max(docs))); nxt = last + 365
             elif k in CHECKED:
                 last = dn(_d(CHECKED[k])); nxt = None if k == "events" else last + 365
         except Exception:

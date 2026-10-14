@@ -5,6 +5,9 @@ Pasaulio akcijų indeksai palyginimui su pensijų fondais: data/indexes.csv (dat
 - MSCI_WORLD – MSCI World Net Return, EUR (išsivysčiusių šalių akcijos, dividendai reinvestuoti po mokesčių);
 - MSCI_ACWI  – MSCI ACWI Net Return, EUR (viso pasaulio akcijos, ir besivystančios rinkos);
 - SP500      – S&P 500 Total Return (USD, Yahoo ^SP500TR) ÷ ECB EUR/USD kursas = vertė eurais.
+- EUR_AAA_7Y – euro zonos AAA vyriausybės obligacijų 7 m. spot pajamingumas, % (ECB pajamingumo kreivė; gali būti neigiamas);
+- EUR_GOV7Y  – sintetinis obligacijų grąžos indeksas iš EUR_AAA_7Y: pastovios 7 m. trukmės nulinės atkarpos obligacija,
+               dienos log grąža = y(t−1) × dienos ÷ 365 − 7 × (y(t) − y(t−1)) (pajamingumas % ÷ 100). Naudojamas KID scenarijams.
 
 Indeksų vertės – be jokių mokesčių (fondų vieneto vertės jau po valdymo mokesčių).
 Komandos:  python indexes.py update          – parsiunčia paskutines ~40 dienų ir prideda naujas dienas
@@ -14,6 +17,7 @@ Istorija niekada netrinama ir neperrašoma; neįtikėtini šuoliai (> 25 % per d
 import csv
 import io
 import json
+import math
 import sys
 import time
 import urllib.request
@@ -115,7 +119,35 @@ def update():
         print(f"SP500: +{merge(data, 'SP500', sp500_eur(usd, fx))}")
     except Exception as e:  # noqa: BLE001
         print(f"SP500: nepavyko ({e.__class__.__name__}: {e})")
+    try:
+        print(f"EUR_GOV7Y: +{update_bond(data)}")
+    except Exception as e:  # noqa: BLE001
+        print(f"EUR_GOV7Y: nepavyko ({e.__class__.__name__}: {e})")
     save(data)
+
+
+def update_bond(data):
+    """ECB 7 m. pajamingumas -> EUR_AAA_7Y (žalios reikšmės, ir neigiamos) ir sintetinis EUR_GOV7Y (pradžia 100).
+    Pirmą kartą parsiunčiama visa istorija nuo 2004-09; vėliau – paskutinės 40 dienų. Seni įrašai neperrašomi."""
+    ys = data.setdefault("EUR_AAA_7Y", {})
+    start = (date.today() - timedelta(days=40)).isoformat() if ys else "2004-09-01"
+    for d, v in parse_ecb(_get(fund_links.ECB_YC7_API.format(start=start))).items():
+        if d not in ys and -5 < v < 20:
+            ys[d] = v
+    tr, days = data.setdefault("EUR_GOV7Y", {}), sorted(ys)
+    if not days:
+        return 0
+    if not tr:
+        tr[days[0]] = 100.0
+    last = max(tr)
+    added, lvl, prev = 0, tr[last], last
+    for d in days:
+        if d <= last:
+            continue
+        dt_ = (date.fromisoformat(d) - date.fromisoformat(prev)).days / 365
+        lvl *= math.exp(ys[prev] / 100 * dt_ - 7 * (ys[d] - ys[prev]) / 100)
+        tr[d], prev, added = lvl, d, added + 1
+    return added
 
 
 def import_dir(folder):

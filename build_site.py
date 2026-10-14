@@ -440,11 +440,17 @@ def build_aum(ver: dict) -> None:
     print(f"docs/data_aum.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}, išmokėjimų: {len(payload['payouts'])}")
 
 
+KID_RHP = {}
+
+
 def build_reports(ver: dict) -> None:
     """Ataskaitų polapis: docs/data_rep.js (žr. reports.py) + site/reports.html, site/rep.js."""
     import reports
 
     payload = reports.build()
+    global KID_RHP
+    KID_RHP = {(f"{f['p']}|{f['g']}" if f["pl"] == "II" else f"III|{f['n']}"): [f["kid"]["rhp"]] + f["kid"]["s"][f["kid"]["rhp"]][1:]
+               for f in payload["funds"] if f.get("kid") and f["kid"].get("s")}   # RHP: nepalankus, nuosaikus, palankus % – „Kelio į pensiją“ KID variantui
     daily = payload.pop("_daily")
     (DOCS / "rep_daily.js").write_text("var REPD=" + json.dumps(daily, separators=(",", ":")) + ";\n", encoding="utf-8")
     payload["generated"] = datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
@@ -453,11 +459,12 @@ def build_reports(ver: dict) -> None:
     shutil.copyfile(SITE / "reports.html", DOCS / "reports.html")
     shutil.copyfile(SITE / "rep.js", DOCS / "rep.js")
     shutil.copyfile(SITE / "hy.js", DOCS / "hy.js")
-    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js", "hy.js", "rep_daily.js")}}
+    shutil.copyfile(SITE / "kid.js", DOCS / "kid.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_rep.js", "rep.js", "hy.js", "kid.js", "rep_daily.js")}}
     text = (DOCS / "reports.html").read_text(encoding="utf-8").replace("rep_daily.js", f"rep_daily.js?v={ver['rep_daily.js']}")
     if (DOCS / "data_pf.js").exists():    # portfelių duomenys pusmečio ataskaitos lentelėms (kraunami tik prireikus)
         text = text.replace('data-pf="data_pf.js"', f'data-pf="data_pf.js?v={hashlib.md5((DOCS / "data_pf.js").read_bytes()).hexdigest()[:8]}"')
-    for n in ("style.css", "common.js", "data_rep.js", "hy.js", "rep.js"):
+    for n in ("style.css", "common.js", "data_rep.js", "hy.js", "kid.js", "rep.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "reports.html").write_text(text, encoding="utf-8")
     print(f"docs/data_rep.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")
@@ -468,6 +475,7 @@ def build_journey(ver: dict) -> None:
     import journey
 
     payload = journey.build()
+    payload["kid"] = KID_RHP
     payload["generated"] = datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
     data_js = "const JDATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_journey.js").write_text(data_js, encoding="utf-8")
