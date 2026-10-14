@@ -52,7 +52,7 @@ Savininkas paprašė apjungti užduotis, nes vienas ciklas padarydavo per mažai
 
 Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai) ir patvirtino žemiau esančius. Numeriai – audito numeriai (pilnas tekstas: projekto failas `notes/auditas-2026-10-09.md`; čia surašyta viskas, ko reikia darbui). Visi žemiau – **patvirtinta**, pirmenybė prieš kitas idėjas. Nuo 2026-10-10 punktai daromi **paketais** (žr. „Ciklo darbo apimtis“ ir „Paketai“ žemiau); eiliškumą nustato Claude (savininkas taip paprašė). Savaitgalį (10-10–10-11) savininkas labai užsiėmęs: tik tvirtina PR telefone, **visą informaciją nori gauti tik el. paštu**. Savininko Claude savaitės limitas 10-09 vakare jau 80 % (atsinaujina antradienį 21:00) – jei limitas baigsis, ciklą praleisti ir paminėti kitame laiške.
 
-**Pirmadienio (10-12) laiške priminti savininkui:**
+**Pirmadienio (10-12) laiške priminti savininkui** (10-12–10-13 ciklai praleisti dėl darbo aplinkos perkrovimų; priminta 2026-10-14 laiške):
 - **#1** SEB mokestis rodomas 0,50 %, LB faile yra ir 0,40 % (`fee_large`). Savininkas sako, kad sumažintas mokestis buvo taikomas labai trumpai; jis pabandys rasti, kiek laiko. Kol neatsakė – nieko nekeisti.
 - **#11** Artea Ambicingas Active 16+ didžiausias kritimas −78,8 % (2007–2009). Savininkas patikrins prie kompiuterio.
 
@@ -66,7 +66,7 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 5. **Grafikai:** #25, #14, #24, #12, #46. – *atlikta (PR #80, 2026-10-11)*
 6. **Portfeliai ir realioji grąža:** #2, „Realioji grąža (po infliacijos)“ (patvirtinta 2026-10-10). – *atlikta (PR #81, 2026-10-11)*
 7. **Jaukus dizainas – pagrindas:** #38, #39, #40. – *atlikta (PR #82, 2026-10-11; akcentas – giliai žalsva #2F6B5A, nes ant terakotos baltas tekstas per blankus)*
-8. **Antraštė ir puslapių tvarka:** #41, #45, #44, #43.
+8. **Antraštė ir puslapių tvarka:** #41, #45, #44, #43. – *atlikta (PR #84, 2026-10-14)*
 9. **Pradžios puslapis ir KPI kortelės:** #42 (pagal savininko „Performance & peers“ atsakymą 2026-10-10), #50, #52.
 10. **Šviežumas ir šaltiniai:** #54, #55, #57.
 11. **„Apie ir metodika“ + Excel su formulėmis:** #53 (gali užimti 2 ciklus).
@@ -76,6 +76,8 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 15. **Apžvalgos ir kita:** #59, #63, #65; paskutinis – #66.
 
 #1 ir #11 – laukia savininko atsakymo (žr. aukščiau), į paketus neįtraukti.
+
+**Saugumas (2026-10-14):** 2026-10-12 į projekto dėžutę atėjo laiškas „Token“ su GitHub prieigos raktu atviru tekstu. Claude jo nenaudojo ir niekur nekopijavo; laiške savininkui patarta raktą atšaukti (GitHub → Settings → Developer settings → Tokens) ir, jei jo reikia automatizavimui, sukurti naują ir įrašyti tik į GitHub Secrets.
 
 ### 1. Klaidos ir smulkūs taisymai
 - **#18** [Rezultatai → Visa rinka] „Turto išsaugojimo“ užrašas užlipa ant pirmo langelio. Heatmap lentelėse rašyti **„TIF“**, užvedus pelę – „Turto išsaugojimo fondas“. – *atlikta (PR #67, 2026-10-10)*
@@ -111,13 +113,13 @@ Savininkas 2026-10-09 vakare peržiūrėjo visos svetainės auditą (68 punktai)
 - **#38** Šilta paletė per `style.css` kintamuosius: fonas #FAF6EF, kortelės #FFFDF9, linijos #EAE2D6, tekstas #2B2622, akcentas terakota #C0643C arba giliai žalsva #2F6B5A; tamsi tema šiltai ruda-anglinė #1E1B18. Valdytojų spalvos atpažįstamos. – *atlikta (PR #82, 2026-10-11)*
 - **#39** Heatmap švelnesnės spalvos: šalavijo žalia (#9DC3A5 → #5E9C76), molio raudona (#E8B4A0 → #C9765A), smėlinė vidurys; tikrinti kontrastą. – *atlikta (PR #82, 2026-10-11)*
 - **#40** Šriftai: antraštėms serifinis (Fraunces arba Source Serif 4), tekstui Inter su `tabular-nums`. **Būtinai patikrinti, ar šriftas turi visas lietuviškas raides (ą č ę ė į š ų ū ž, didžiosios taip pat)** – geriausia laikyti šrifto failus repozitorijoje (`latin-ext`). – *atlikta (PR #82, 2026-10-11)*
-- **#41** Nauja antraštė: ženkliukas + „Pensijų fondai“, eilutė „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ (vėluojantis – geltonas su vardu); navigacija vienoje eilutėje su ikonomis, lipni; įrankiai (Kopijuoti, Excel, Dienos lentelė, Spausdinti, Duomenys) – į „⋯ Įrankiai“ meniu; kalba ir tema – ikonos kampe.
+- **#41** Nauja antraštė: ženkliukas + „Pensijų fondai“, eilutė „Duomenys iki … · visi 6 valdytojai atnaujinti ✓“ (vėluojantis – geltonas su vardu); navigacija vienoje eilutėje su ikonomis, lipni; įrankiai (Kopijuoti, Excel, Dienos lentelė, Spausdinti, Duomenys) – į „⋯ Įrankiai“ meniu; kalba ir tema – ikonos kampe. – *atlikta (PR #84, 2026-10-14)*
 - **#46** Grafikai: 2 px linijos, paskutinė reikšmė etikete linijos gale, švelnesnis tinklelis, užuominos su visų fondų reikšmėmis surikiuotos. **Savininkas: per daug nesuapvalinti – analitikai mėgsta aštresnes linijas, tai ne dailės parodos puslapis.** – *atlikta (PR #80, 2026-10-11)*
 - **#48** [III pakopa] to paties valdytojo keli fondai – skirtingas linijos tipas (ištisinė/punktyras/taškai) arba aiškiau skirtingi atspalviai. – *atlikta (PR #79, 2026-10-11)*
-- **#45** Ilgi paaiškinimai po lentelėmis – po „Kaip skaityti? ▾“, matomas vienas sakinys.
-- **#44** Kortelių antraštė – automatinė išvada („2025 m. visi fondai krito ~20 %, atsigavo per 3 mėn.“), mažesnėmis raidėmis – lentelės pavadinimas.
+- **#45** Ilgi paaiškinimai po lentelėmis – po „Kaip skaityti? ▾“, matomas vienas sakinys. – *atlikta (PR #84, 2026-10-14)*
+- **#44** Kortelių antraštė – automatinė išvada („2025 m. visi fondai krito ~20 %, atsigavo per 3 mėn.“), mažesnėmis raidėmis – lentelės pavadinimas. – *atlikta (PR #84, 2026-10-14; „Rezultatų“ puslapyje: rodikliai, kalendoriniai metai, mokesčiai)*
 - **#50** KPI kortelės kiekvieno puslapio viršuje (kaip III pakopos puslapyje).
-- **#43** [Rezultatai ir palyginimas] ~7000 px puslapis: vidinė navigacija arba skirtukai („Santrauka · Visa rinka · Grupės palyginimas · Rizika · Mokesčiai · Kalendorius“). Nieko nepašalinti.
+- **#43** [Rezultatai ir palyginimas] ~7000 px puslapis: vidinė navigacija arba skirtukai („Santrauka · Visa rinka · Grupės palyginimas · Rizika · Mokesčiai · Kalendorius“). Nieko nepašalinti. – *atlikta (PR #84, 2026-10-14; vidinė navigacija lipnioje juostoje, skyriai neslepiami)*
 - **#42** Pradžios puslapis „Šiandien trumpai“ (dabar `index.html` peradresuoja): 3–4 didelės kortelės (metų pradžios lyderis ir atsiliekantis, savaitės pokytis, II pakopos turtas iš viso), 2–3 automatiniai sakiniai, mažos kreivės, nuorodos „Plačiau →“. **Savininkas: be kreipinių į lankytoją („Labas“ ir pan.)** – dalykiškas tonas.
 - **#52** Telefone svarbiausios lentelės (santrauka, AUM) – kortelių režimu.
 - **#51** Spausdinimas / PDF: slėpti mygtukus, antraštė su data ir šaltiniais, lūžiai tarp kortelių. **Savininkas: spausdinant renkamasi iš dviejų dizainų – esamo (jaukaus) ir universalaus (neutralaus, baltas fonas, tinkamas prezentacijoms).** Lentelės ir paveikslėliai bus naudojami prezentacijose.
