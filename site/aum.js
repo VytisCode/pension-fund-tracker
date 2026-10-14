@@ -10,7 +10,7 @@ addStrings({
   qtNote: 'Net assets (€ m) of each fund on the last day of each quarter (the latest value on or before that day); the small figure is the change from the previous quarter. Pillar and age group follow the choice above the chart. Older quarters use Bank of Lithuania quarter-end data where daily figures are not available; “–” = no data for that fund.',
   poTitle: 'Payouts under the pension reform',
   poLead: 'Since 2026 participants who chose to leave the II pillar are paid out at the start of each quarter (by the 15th). A payout shows up as a sudden fall in net assets that the unit value does not explain. The table shows when each manager paid out and how much the funds lost.',
-  pillar: 'Pillar', view: 'Show', vMgr: 'Managers (all funds)', vGrp: 'Group', show: 'Values', sEur: '€ m', sPct: 'Change, %',
+  pillar: 'Pillar', view: 'Show', vMgr: 'Managers (all funds)', vFundsOf: m => `All ${m} funds`, vSel: 'Selected funds…', selPick: n => `Funds: ${n} selected`, selNone: 'Tick funds in the list', from: 'From', to: 'To', custom: 'Custom', vGrp: 'Group', show: 'Values', sEur: '€ m', sPct: 'Change, %',
   cpf: 'Capital preservation funds', cats: { bond: 'Bond funds', mixed: 'Mixed funds', equity: 'Equity funds' }, allGroups: 'All funds',
   lgTip: 'Click to hide or show this line; double-click to show only it', lgAll: 'Show all',
   chMeta: u => u === 'pct' ? 'Change in net assets since the start of the period, %' : 'Net assets, € m',
@@ -37,7 +37,7 @@ addStrings({
   qtNote: 'Kiekvieno fondo turtas (mln. €) paskutinę ketvirčio dieną (paskutinė žinoma reikšmė iki tos dienos); mažas skaičius – pokytis nuo ankstesnio ketvirčio. Pakopa ir amžiaus grupė – kaip pasirinkta virš grafiko. Senesniems ketvirčiams, kur kasdienių duomenų nėra, naudojami Lietuvos banko ketvirčio pabaigos duomenys; „–“ = to fondo duomenų nėra.',
   poTitle: 'Išmokėjimai pagal pensijų reformą',
   poLead: 'Nuo 2026 m. iš II pakopos pasitraukti nusprendusiems dalyviams lėšos išmokamos kiekvieno ketvirčio pradžioje (iki 15 d.). Išmokėjimas matyti kaip staigus turto sumažėjimas, kurio nepaaiškina vieneto vertės pokytis. Lentelėje – kada kiekvienas valdytojas išmokėjo ir kiek fondai neteko turto.',
-  pillar: 'Pakopa', view: 'Rodyti', vMgr: 'Valdytojus (visi fondai)', vGrp: 'Grupę', show: 'Reikšmės', sEur: 'mln. €', sPct: 'Pokytis, %',
+  pillar: 'Pakopa', view: 'Rodyti', vMgr: 'Valdytojus (visi fondai)', vFundsOf: m => `Visi ${m} fondai`, vSel: 'Pasirinktus fondus…', selPick: n => `Fondai: pasirinkta ${n}`, selNone: 'Pažymėkite fondus sąraše', from: 'Nuo', to: 'Iki', custom: 'Pasirinktas', vGrp: 'Grupę', show: 'Reikšmės', sEur: 'mln. €', sPct: 'Pokytis, %',
   cpf: 'Turto išsaugojimo fondai', cats: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fondai', equity: 'Akcijų fondai' }, allGroups: 'Visi fondai',
   lgTip: 'Paspausk, kad paslėptum ar parodytum šią liniją; paspausk dukart, kad liktų tik ji', lgAll: 'Rodyti visas',
   chMeta: u => u === 'pct' ? 'Turto pokytis nuo laikotarpio pradžios, %' : 'Grynieji aktyvai, mln. €',
@@ -69,7 +69,7 @@ const cls = v => v > 0 ? 'up' : v < 0 ? 'down' : '';
 const grpLabel = (pl, g) => pl === 'III' ? T().cats[g] : g === 'turto' ? T().cpf : `${T().born} ${g.replace('-', '–')}`;
 
 const PO_MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // tvarka kaip savininko lentelėse
-const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', off: [] },
+const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', off: [], mode: 'grp', mgr: 'SEB', sel: [], from: '', to: '' },
   (() => { try { return JSON.parse(localStorage.getItem('aumstate')) || {}; } catch (e) { return {}; } })());
 const save = () => { try { localStorage.setItem('aumstate', JSON.stringify(ST)); } catch (e) {} };
 
@@ -103,31 +103,65 @@ function periodStart(per, end, first) {
 }
 
 /* ---------- 1. grafikas ---------- */
+/* Rodyti: valdytojų sumos (visi fondai arba viena grupė), visi vieno valdytojo fondai, arba pasirinkti fondai (savininko užduotis 2026-10-14).
+   Laikotarpis: mygtukai arba bet kokios datos „Nuo“ / „Iki“. */
+const FUND_COLORS = ['#2f6f4f', '#d9822b', '#3b5bdb', '#c2255c', '#0c8599', '#7048e8', '#8d6e2f', '#e8590c', '#5c940d', '#495057', '#1098ad', '#a61e4d'];
+const fundKey = f => `${f.pl}|${f.p}|${f.n}`;
+const fundShort = f => f.n.replace(' tikslinės grupės pensijų fondas', '').replace(' gimusiems', '').replace(/ m\.$/, '').replace('–', '-');
 let hc = null;
 function renderChart() {
   const bar = document.getElementById('chBar');
   const groups = ST.pl === 'II' ? GROUPS2 : ['bond', 'mixed', 'equity'];
   if (ST.g !== 'all' && !groups.includes(ST.g)) ST.g = 'all';
+  if (!['grp', 'mgr', 'sel'].includes(ST.mode)) ST.mode = 'grp';
+  if (!Array.isArray(ST.sel)) ST.sel = [];
+  const viewVal = ST.mode === 'mgr' ? 'mgr:' + ST.mgr : ST.mode === 'sel' ? 'sel' : ST.g;
+  const plFunds = AUM.funds.filter(f => f.pl === ST.pl && f.d.length > 1);
+  const selSet = new Set(ST.sel.filter(k => plFunds.some(f => fundKey(f) === k)));
+  const pick = ST.mode !== 'sel' ? '' : `<details class="fpick"><summary>${selSet.size ? T().selPick(selSet.size) : T().selNone}</summary><div class="fplist">`
+    + MGRS.map(m => { const fs = plFunds.filter(f => f.p === m); return fs.length ? `<div class="fpm">${sw(m)}<b>${MLABEL[m]}</b></div>` + fs.map(f => `<label><input type="checkbox" value="${fundKey(f)}"${selSet.has(fundKey(f)) ? ' checked' : ''}> ${fundShort(f)}</label>`).join('') : ''; }).join('') + '</div></details>';
   bar.innerHTML = field(T().pillar, seg('pl', [['II', 'II'], ['III', 'III']], ST.pl))
-    + field(T().view, `<select id="chG"><option value="all">${T().vMgr}</option>${groups.map(g => `<option value="${g}"${g === ST.g ? ' selected' : ''}>${grpLabel(ST.pl, g)}</option>`).join('')}</select>`)
+    + field(T().view, `<select id="chG"><option value="all">${T().vMgr}</option>${groups.map(g => `<option value="${g}">${grpLabel(ST.pl, g)}</option>`).join('')}`
+      + MGRS.map(m => `<option value="mgr:${m}">${T().vFundsOf(MLABEL[m])}</option>`).join('') + `<option value="sel">${T().vSel}</option></select>`) + pick
     + field(T().period, seg('per', PERIODS.map(p => [p, T().periods[p] || p]), ST.per))
+    + `<label class="field">${T().from} <input type="date" id="chFrom" value="${ST.per === 'custom' ? ST.from : ''}"></label><label class="field">${T().to} <input type="date" id="chTo" value="${ST.per === 'custom' ? ST.to : ''}"></label>`
     + field(T().show, seg('unit', [['eur', T().sEur], ['pct', T().sPct]], ST.unit));
+  bar.querySelector('#chG').value = viewVal;
   wire(bar, { pl: v => { ST.pl = v; save(); renderAllParts(); }, per: v => { ST.per = v; save(); renderChart(); }, unit: v => { ST.unit = v; save(); renderChart(); } });
-  bar.querySelector('#chG').addEventListener('change', e => { ST.g = e.target.value; save(); renderAllParts(); });
+  bar.querySelector('#chG').addEventListener('change', e => {
+    const v = e.target.value;
+    if (v.startsWith('mgr:')) { ST.mode = 'mgr'; ST.mgr = v.slice(4); ST.g = 'all'; }
+    else if (v === 'sel') { ST.mode = 'sel'; ST.g = 'all'; }
+    else { ST.mode = 'grp'; ST.g = v; }
+    ST.off = []; save(); renderAllParts();
+    if (ST.mode === 'sel') { const d = document.querySelector('.fpick'); if (d) d.open = true; }
+  });
+  const dch = () => { ST.from = bar.querySelector('#chFrom').value; ST.to = bar.querySelector('#chTo').value; ST.per = ST.from || ST.to ? 'custom' : '1y'; save(); renderChart(); };
+  bar.querySelector('#chFrom').addEventListener('change', dch); bar.querySelector('#chTo').addEventListener('change', dch);
+  const fp = bar.querySelector('.fpick');
+  if (fp) fp.addEventListener('change', () => { ST.sel = [...fp.querySelectorAll('input:checked')].map(i => i.value); save(); renderChart(); const d = document.querySelector('.fpick'); if (d) d.open = true; });
 
-  const raw = MGRS.map(m => { const fs = fundsOf(ST.pl, ST.g, m); return fs.length ? { m, fs, s: sumSeries(fs) } : null; }).filter(x => x && x.s.d.length > 1);
-  const end = Math.max(...raw.map(r => r.s.d[r.s.d.length - 1])), first = Math.min(...raw.map(r => r.s.d[0]));
-  const x0 = Math.max(first, periodStart(ST.per, end, first));
+  let raw;
+  if (ST.mode === 'grp') raw = MGRS.map(m => { const fs = fundsOf(ST.pl, ST.g, m); return fs.length ? { m, fs, s: sumSeries(fs) } : null; }).filter(x => x && x.s.d.length > 1);
+  else {
+    const fs = ST.mode === 'mgr' ? plFunds.filter(f => f.p === ST.mgr) : plFunds.filter(f => selSet.has(fundKey(f)));
+    raw = fs.map((f, i) => ({ m: 'F' + i, fs: [f], s: { d: f.d, a: f.a }, color: ST.mode === 'mgr' ? FUND_COLORS[i % FUND_COLORS.length] : colorOf(f.p), dash: ST.mode === 'sel' && fs.filter(x => x.p === f.p).indexOf(f) % 2 ? '6 3' : null, label: (ST.mode === 'sel' ? MLABEL[f.p] + ' ' : '') + fundShort(f).replace(/^(Allianz|Artea|Goindex|Luminor|SEB|Swedbank)\s+/, '') }));
+  }
+  if (!raw.length) { document.getElementById('chart').innerHTML = `<p class="na">${T().selNone}</p>`; document.getElementById('chLegend').innerHTML = ''; return; }
+  const dataEnd = Math.max(...raw.map(r => r.s.d[r.s.d.length - 1])), first = Math.min(...raw.map(r => r.s.d[0]));
+  const end = ST.per === 'custom' && ST.to ? Math.max(first + 1, Math.min(dataEnd, dayOf(ST.to))) : dataEnd;
+  const x0 = Math.max(first, ST.per === 'custom' ? (ST.from ? dayOf(ST.from) : first) : periodStart(ST.per, end, first));
   const series = raw.map(r => {
-    const i0 = Math.max(0, lastOnOrBefore(r.s, x0));
+    const i0 = Math.max(0, lastOnOrBefore(r.s, x0)), i1 = lastOnOrBefore(r.s, end);
+    if (i1 < i0) return null;
     const base = r.s.a[i0], pts = [];
-    for (let i = i0; i < r.s.d.length; i++) {
+    for (let i = i0; i <= i1; i++) {
       const day = Math.max(r.s.d[i], x0);
       pts.push([day, ST.unit === 'pct' ? (r.s.a[i] / base - 1) * 100 : r.s.a[i]]);
     }
     if (ST.unit === 'pct' && r.s.d[0] > x0) return null;     // pradėjo vėliau – procentinis pokytis neteisingas
     const qEnd = Math.max(-Infinity, ...r.fs.filter(f => f.q > 0).map(f => f.d[f.q - 1]));   // iki šios dienos – tik ketvirčio sumos (auditas #14)
-    return { provider: r.m, points: pts, dashUntil: qEnd > x0 ? qEnd : null };
+    return { provider: r.m, points: pts, dashUntil: qEnd > x0 ? qEnd : null, color: r.color, label: r.label, dash: r.dash };
   }).filter(Boolean);
   if (!Array.isArray(ST.off)) ST.off = [];
   const shown = series.filter(r => !ST.off.includes(r.provider));
@@ -139,7 +173,7 @@ function renderChart() {
   document.getElementById('chMeta').textContent = T().chMeta(ST.unit);
   // legenda = mygtukai: paspaudus linija paslepiama / parodoma, dukart paspaudus – rodoma tik ji
   const lg = document.getElementById('chLegend');
-  lg.innerHTML = series.map(r => `<button type="button" class="chip" data-m="${r.provider}" aria-pressed="${!ST.off.includes(r.provider)}" title="${T().lgTip}"><i style="background:${colorOf(r.provider)}"></i>${MLABEL[r.provider]} <b>${fmt(r.points[r.points.length - 1][1])}</b></button>`).join('')
+  lg.innerHTML = series.map(r => `<button type="button" class="chip" data-m="${r.provider}" aria-pressed="${!ST.off.includes(r.provider)}" title="${T().lgTip}"><i style="background:${r.color || colorOf(r.provider)}"></i>${r.label || MLABEL[r.provider]} <b>${fmt(r.points[r.points.length - 1][1])}</b></button>`).join('')
     + (ST.off.length ? `<button type="button" class="chip" data-m="*">${T().lgAll}</button>` : '');
   let clickT = null;
   lg.onclick = e => {
@@ -156,7 +190,7 @@ function renderChart() {
   lg.ondblclick = e => {
     const b = e.target.closest('.chip'); if (!b || b.dataset.m === '*') return;
     clearTimeout(clickT);
-    ST.off = MGRS.filter(x => x !== b.dataset.m); save(); renderChart();
+    ST.off = series.map(r => r.provider).filter(x => x !== b.dataset.m); save(); renderChart();
   };
   const qOnly = [...new Set(fundsOf(ST.pl, ST.g).filter(f => f.q > 0 && f.d[f.q - 1] >= x0).map(f => `${MLABEL[f.p]} ${lang === 'lt' ? 'iki' : 'until'} ${iso(f.d[f.q - 1])}`))];
   document.getElementById('chNote').textContent = T().chNote(qOnly.join(', '));

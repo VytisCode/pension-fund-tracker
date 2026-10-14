@@ -31,6 +31,12 @@
   table.at td.tt { font-weight: 600; }
   #chLegend .chip { font-size: 13px; }
   #chLegend .chip b { color: var(--text); }
+  .fpick { position: relative; font-size: 13px; }
+  .fpick summary { cursor: pointer; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); list-style: none; }
+  .fpick summary::after { content: ' ▾'; color: var(--text-3); }
+  .fpick .fplist { position: absolute; z-index: 20; margin-top: 4px; max-height: 420px; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.12); min-width: 280px; }
+  .fpick .fplist label { display: block; padding: 2px 0; white-space: nowrap; }
+  .fpick .fpm { margin: 8px 0 2px; } .fpick .fpm:first-child { margin-top: 0; }
 </style>
 </head>
 <body>
@@ -57,6 +63,6 @@
 </div>
 <script src="common.js?v=b154c07c"></script>
 <script src="data_aum.js?v=37ad6ddb"></script>
-<script src="aum.js?v=019a20eb"></script>
+<script src="aum.js?v=812c5cab"></script>
 </body>
 </html>
