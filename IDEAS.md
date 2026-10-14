@@ -38,15 +38,7 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
 ### 11. Excel su formulėmis (puslapis „Apie“ jau padarytas 2026-10-14)
-- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. „Visa rinka“ 4 lentelės padarytos 2026-10-14 (mygtukas „Excel su formulėmis“); toliau – rodiklių, kalendorinių metų lentelės ir kiti puslapiai.
-
-### 12. Grafikų eksportas ir naujos diagramos
-- **#67** „Kopijuoti vaizdą“ ir „Atsisiųsti PNG“ prie kiekvieno grafiko (savininkui labai patinka).
-- **#60** [Rezultatai] horizontali stulpelinė diagrama – laikotarpio grąža kiekvienam fondui, surikiuota, su reikšmėmis.
-- **#68** [Turtas] turto pokytį išskaidyti į grąžą, įmokas ir išmokas (reforma) – stulpeliai.
-
-### 13. Spausdinimas
-- **#51** Spausdinimas / PDF: slėpti mygtukus, antraštė su data ir šaltiniais, lūžiai tarp kortelių. Renkamasi iš dviejų dizainų – esamo (jaukaus) ir universalaus (baltas fonas, prezentacijoms).
+- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. Padaryta 2026-10-14: „Visa rinka“ 4 lentelės ir rodiklių lentelė (mygtukai „Excel su formulėmis“); toliau – kalendorinių metų lentelės ir kiti puslapiai.
 
 ### 14. Fondo / valdytojo puslapis (2–3 ciklai)
 - **#61 + #64** Vieno fondo arba vieno valdytojo puslapis: grąžos visais laikotarpiais, vieta grupėje, mokestis, turtas, portfelio sudėtis, 10 didžiausių pozicijų, rizika. Pasirinkus valdytoją, puslapis įgauna jo spalvas (Swedbank – oranžinė, SEB – žalia ir t. t.). Spausdinama vieno A4 lapo valdytojo suvestinė.
