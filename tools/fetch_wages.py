@@ -7,20 +7,6 @@ Vidutinis mėnesinis darbo užmokestis (bruto, neto, metinis) iš Valstybės duo
 Minimalios mėnesinės algos VDA SDMX rinkiniuose nėra – ji lieka rankinė (kartą per metus).
 Pridedami tik nauji metai (seni neperrašomi, skirtumai tik parašomi žurnale); neįtikėtinas pokytis atmetamas.
 """
-Vidutinis mėnesinis darbo užmokestis (bruto, neto) ir minimali mėnesinė alga iš Valstybės duomenų agentūros
--> imports/journey/wages.csv, imports/journey/min_wage.csv (savininko prašymas 2026-10-14 – kuo mažiau rankinio darbo).
-
-Šaltinis: osp-rs.stat.gov.lt SDMX. Rinkinių kodai – DATASETS; jei jų nėra ar jie nebeveikia, paleidus su --probe
-išspausdinami rinkiniai, kurių pavadinime yra „darbo užmokest“ arba „minimali“ (rinkinių sąrašas – /rest_xml/dataflow).
-Pridedami tik nauji metai (seni neperrašomi); neįtikėtinas pokytis (> 20 % per metus) atmetamas.
-"""
-Vidutinis mėnesinis darbo užmokestis (bruto, neto, metinis) iš Valstybės duomenų agentūros -> imports/journey/wages.csv
-(savininko prašymas 2026-10-14 – kuo mažiau rankinio darbo).
-
-Šaltinis: osp-rs.stat.gov.lt SDMX rinkinys S3R0050_M3060847 (rasta su --probe, 2024 m. 2223,0 / 1368,0 – sutampa su failu).
-Minimalios mėnesinės algos VDA SDMX rinkiniuose nėra – ji lieka rankinė (kartą per metus).
-Pridedami tik nauji metai (seni neperrašomi, skirtumai tik parašomi žurnale); neįtikėtinas pokytis atmetamas.
-"""
 import re
 import sys
 import urllib.request
