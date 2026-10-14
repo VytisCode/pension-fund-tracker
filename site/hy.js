@@ -13,7 +13,10 @@ addStrings({
   fee: 'Fee', feeMax: 'Maximum set in the rules', feeAct: 'Actually applied', feeMgmt: 'Asset management fee', feeCo: 'Change of company', feeFund: 'Change of fund',
   feeAvg: '% of average annual net assets', feeTr: '% of the amount transferred', feeNa: 'no data', feeLaw: 'by law',
   feeWin: (a, b, r) => `* ${a}–${b} a reduced ${num(r, 2)} % fee was applied (the manager’s half-year report).`,
-  feeNote: y => `Fees: Bank of Lithuania fee files ${y}; the maximum for the II pillar is the statutory cap. The maximum fees in the III pillar fund rules are not collected.`,
+  feeNote: (y, pl) => pl === 'II' ? `Fees: Bank of Lithuania II pillar fee file (2026-05-15); the maximum is the statutory cap; switching fees are the company’s set fees.` : `Fees: Bank of Lithuania III pillar fee file (2026-01-21).`,
+  feeStart: 'Entry fee', feeContrib: 'Contribution fee', feeDepo: 'Depositary fee', feeOther: 'Other expenses', feeWdKeep: 'Withdrawal without ending the contract', feeWdEnd: 'Withdrawal ending the contract',
+  feeSwSame: 'Switch once in 12 months, same company', feeSwCo: 'Switch once in 12 months, other company', feeSwSame2: 'Switch more often, same company', feeSwCo2: 'Switch more often, other company',
+  feeContr: '% of contributions', feeWd: '% of the amount withdrawn', feeStartNote: '** Entry fee: only from contributions in the first 12 months, capped in euros (fund rules).',
   rsStrat: 'By the investment strategy', rsAct: 'At the end of the period', rsRisky: 'Risky assets', rsLess: 'Less risky assets',
   rsNote: d => `Strategy: Bank of Lithuania results report (${d}); shown only for that date. Actual: equities (direct, equity funds, global private equity) + other investments (real estate, private equity, infrastructure) as a share of net assets.`,
   sf8: 'Article 8', sf9: 'Article 9', sf6: 'Article 6', sfDirect: 'Direct shares and bonds (SFDR does not apply)', sfCash: 'Cash, deposits and other', sfUnk: 'Funds with no SFDR data',
@@ -45,7 +48,10 @@ addStrings({
   fee: 'Mokestis', feeMax: 'Taisyklėse numatyti maksimalūs dydžiai', feeAct: 'Faktiškai taikyti dydžiai', feeMgmt: 'Turto valdymo mokestis', feeCo: 'Įmonės keitimas', feeFund: 'Fondo keitimas',
   feeAvg: 'proc. (nuo vidutinės metinės vertės)', feeTr: 'proc. (nuo pervedamų piniginių lėšų)', feeNa: 'duomenų nėra', feeLaw: 'pagal įstatymą',
   feeWin: (a, b, r) => `* ${a}–${b} taikytas sumažintas ${num(r, 2)} proc. mokestis (valdytojo pusmečio ataskaita).`,
-  feeNote: y => `Mokesčiai: Lietuvos banko mokesčių failai (${y}); II pakopos maksimalus dydis – įstatymo riba. III pakopos fondų taisyklių maksimalūs dydžiai nerenkami.`,
+  feeNote: (y, pl) => pl === 'II' ? `Mokesčiai: Lietuvos banko II pakopos mokesčių failas (2026-05-15); maksimalus dydis – įstatymo riba; perėjimo mokesčiai – bendrovės nustatyti.` : `Mokesčiai: Lietuvos banko III pakopos mokesčių failas (2026-01-21).`,
+  feeStart: 'Startinis mokestis', feeContrib: 'Įmokų mokestis', feeDepo: 'Depozitoriumo mokestis', feeOther: 'Kitos išlaidos', feeWdKeep: 'Lėšų atsiėmimas nenutraukiant sutarties', feeWdEnd: 'Lėšų atsiėmimas nutraukiant sutartį',
+  feeSwSame: 'Perėjimas kartą per 12 mėn. į tos pačios įmonės fondą', feeSwCo: 'Perėjimas kartą per 12 mėn. į kitos įmonės fondą', feeSwSame2: 'Perėjimas dažniau į tos pačios įmonės fondą', feeSwCo2: 'Perėjimas dažniau į kitos įmonės fondą',
+  feeContr: 'proc. (nuo įmokų)', feeWd: 'proc. (nuo atsiimamų lėšų)', feeStartNote: '** Startinis mokestis – tik nuo pirmųjų 12 mėn. įmokų, su riba eurais (fondo taisyklės).',
   rsStrat: 'Pagal investavimo strategiją', rsAct: 'Ataskaitinio laikotarpio pabaigoje', rsRisky: 'Rizikingi aktyvai', rsLess: 'Mažiau rizikingi aktyvai',
   rsNote: d => `Strategija – Lietuvos banko rezultatų ataskaita (${d}); rodoma tik tai datai. Faktinė dalis = akcijos (tiesioginės, akcijų fondai, pasaulio privataus kapitalo fondai) + kitos investicijos (nekilnojamasis turtas, privatus kapitalas, infrastruktūra) nuo grynųjų aktyvų.`,
   sf8: 'Straipsnis 8', sf9: 'Straipsnis 9', sf6: 'Straipsnis 6', sfDirect: 'Tiesioginės akcijos ir obligacijos (SFDR netaikomas)', sfCash: 'Pinigai, indėliai ir kita', sfUnk: 'Fondai be SFDR duomenų',
@@ -154,13 +160,24 @@ function renderHy() {
   /* 1. mokesčiai */
   const yr = yearOf(M[bi]), wins = FEE_WINDOWS.filter(w => w.p === f.p && w.pl === f.pl && !w.not.includes(f.g) && yearOf(w.from) === yr);
   const feeTxt = f.fee == null ? T().feeNa : wins.length ? `${num(Math.min(f.fee, ...wins.map(w => w.rate)), 2)} – ${num(f.fee, 2)} ${T().feeAvg}*` : `${num(f.fee, 2)} ${T().feeAvg}`;
-  const maxMg = f.pl === 'II' && f.g !== 'turto' ? `0,50 ${T().feeAvg} (${T().feeLaw})` : '–';
-  const maxSw = f.pl === 'II' ? `0,05 ${T().feeTr} (${T().feeLaw})` : '–';
+  const fx = f.fx || {}, fv = (v, u) => v == null || v === '' ? T().feeNa : /^[\d.]+$/.test(v) ? `${num(+v, 2)} ${u}` : v;
+  const fr = f.pl === 'II'
+    ? [[T().feeMgmt, f.g !== 'turto' ? `0,50 ${T().feeAvg} (${T().feeLaw})` : '–', feeTxt],
+       [T().feeCo, `0,05 ${T().feeTr} (${T().feeLaw})`, fv(fx.sw_co, T().feeTr)],
+       [T().feeFund, `0,05 ${T().feeTr} (${T().feeLaw})`, fv(fx.sw_fund, T().feeTr)]]
+    : [[T().feeStart, '–', fx.start && fx.start !== '0' ? `${fv(fx.start, T().feeContr)}**` : fv(fx.start, T().feeContr)],
+       [T().feeContrib, fv(fx.contrib_max, T().feeContr), fv(fx.contrib, T().feeContr)],
+       [T().feeMgmt, fv(fx.fee_max, T().feeAvg), feeTxt],
+       [T().feeDepo, fv(fx.depo_max, T().feeAvg), '–'],
+       [T().feeOther, fv(fx.other_max, T().feeAvg), '–'],
+       [T().feeWdKeep, '–', fv(fx.wd_keep, T().feeWd)], [T().feeWdEnd, '–', fv(fx.wd_end, T().feeWd)],
+       [T().feeSwSame, '–', fv(fx.sw_same, T().feeTr)], [T().feeSwCo, '–', fv(fx.sw_co, T().feeTr)],
+       [T().feeSwSame2, '–', fv(fx.sw_same2, T().feeTr)], [T().feeSwCo2, '–', fv(fx.sw_co2, T().feeTr)]];
   out += card(T().t1, `<table class="rt"><thead><tr><th class="l">${T().fee}</th><th class="l">${T().feeMax}</th><th class="l">${T().feeAct}</th></tr></thead><tbody>`
-    + `<tr><td class="l">${T().feeMgmt}</td><td class="l">${maxMg}</td><td class="l">${feeTxt}</td></tr>`
-    + (f.pl === 'II' ? `<tr><td class="l">${T().feeCo}</td><td class="l">${maxSw}</td><td class="l na">${T().feeNa}</td></tr><tr><td class="l">${T().feeFund}</td><td class="l">${maxSw}</td><td class="l na">${T().feeNa}</td></tr>` : '')
-    + '</tbody></table>', (wins.length ? wins.map(w => T().feeWin(short(w.from), short(w.to), w.rate)).join(' ') + ' ' : '') + T().feeNote(REP.feeYear));
-  xb.hy = { f, bi, qd, nav, uv, pf, H, fee: { maxMg, maxSw, feeTxt } };
+    + fr.map(r => `<tr>${r.map((c, i) => `<td class="l${i && c === T().feeNa ? ' na' : ''}">${c}</td>`).join('')}</tr>`).join('')
+    + '</tbody></table>', (wins.length ? wins.map(w => T().feeWin(short(w.from), short(w.to), w.rate)).join(' ') + ' ' : '')
+    + (f.pl === 'III' && fx.start && fx.start !== '0' ? T().feeStartNote + ' ' : '') + T().feeNote(REP.feeYear, f.pl));
+  xb.hy = { f, bi, qd, nav, uv, pf, H, fee: fr };
 
   /* 2.–3., 6.–8. iš pozicijų */
   if (!H) out += `<p class="na">${T().hyNoPf}</p>`;
@@ -241,8 +258,7 @@ function renderHy() {
   Object.assign(xb.hy, { r: [r1, r2, r3, r4], a: [a1, a2], cols5 });
   const t = xb.table, PS = `'${T().sheetPos}'`, h = xb.hy;
   t.push([f.n], [T().asof, qd], [T().hyNav + ', €', h.H ? { f: `${PS}!J${h.H.length + 3}`, v: nav, z: '#,##0' } : nav], [T().hyUv + ', €', uv], []);
-  t.push([T().t1], [T().fee, T().feeMax, T().feeAct], [T().feeMgmt, h.fee.maxMg, h.fee.feeTxt]);
-  if (f.pl === 'II') t.push([T().feeCo, h.fee.maxSw, T().feeNa], [T().feeFund, h.fee.maxSw, T().feeNa]);
+  t.push([T().t1], [T().fee, T().feeMax, T().feeAct], ...h.fee);
   t.push([]);
   if (h.rows) {
     const N = `${PS}!$J$${h.rows.length + 3}`, J = `${PS}!$J$2:$J$${h.rows.length + 1}`, col = c => `${PS}!$${c}$2:$${c}$${h.rows.length + 1}`;

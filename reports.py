@@ -94,7 +94,8 @@ def read_fees():
         with path.open(encoding="utf-8", newline="") as f:
             for r in csv.DictReader(f):
                 key = r["group"] if r["pillar"] == "II" else r["fund"]
-                out[(r["pillar"], r["provider"], key)] = (float(r["fee"]), float(r["fee_large"]))
+                extra = {k: v for k, v in r.items() if k not in ("pillar", "provider", "fund", "group", "fee", "fee_large", "source") and v}
+                out[(r["pillar"], r["provider"], key)] = (float(r["fee"]), float(r["fee_large"]), extra)
     return out
 
 
@@ -140,6 +141,7 @@ def build():
                 "bld": day_number(bm_last[0]) if bm_last else None, "blv": bm_last[3] if bm_last else None,
                 "risky": risky, "bar": bar,
                 "fee": (lambda x: x[0] if x else None)(fees.get((pillar, prov, g if pillar == "II" else name))),
+                "fx": (lambda x: x[2] if x else None)(fees.get((pillar, prov, g if pillar == "II" else name))),
                 "aum": round(aum[1]) if aum[1] else None, "aumd": day_number(aum[0]) if aum[0] else None,
                 "s0": [day_number(rows[0][0]), rows[0][1]],
                 "i0": [day_number(first[0]), first[1]],
