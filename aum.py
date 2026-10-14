@@ -113,10 +113,34 @@ def build():
                 "pl": pillar, "p": prov, "g": group, "n": fund, "code": code or "",
                 "d": [day_number(d) for d, _ in series], "a": [round(a / 1e6, 3) for _, a in series],
                 "q": len(q),          # kiek pirmųjų taškų – LB ketvirčio duomenys
+                "_rows": rows, "_series": series,
             })
 
     events = payouts(daily2, lb_tot, code_of)
+    pay = {(e["p"], d) for e in events if not e["est"] for d in e["dates"]}
+    pay_q = {(e["p"], e["q"]) for e in events if e["est"]}
+    for f in funds:
+        f["dm"] = decompose(f.pop("_rows"), f.pop("_series"), f["p"], f["pl"], pay, pay_q)
     return {"funds": funds, "payouts": events}
+
+
+def decompose(rows, series, prov, pillar, pay, pay_q):
+    """Turto pokyčio išskaidymas pagal mėnesius (auditas #68): [[metai*12+mėn−1, grąža, kiti srautai, išmokos], …] mln. €.
+    Tarp dviejų turto taškų: grąža = turtas_0 × (vieneto vertė_1 ÷ vieneto vertė_0 − 1), srautas = turtas_1 − turtas_0 × vv_1 ÷ vv_0.
+    Srautas reformos išmokų dieną (arba LB ketvirčio įvertis) – išmokos; kiti srautai – įmokos, perėjimai tarp fondų ir kt."""
+    uv = {d: u for d, u, _ in rows}
+    out = defaultdict(lambda: [0.0, 0.0, 0.0])
+    for (d0, a0), (d1, a1) in zip(series, series[1:]):
+        u0, u1 = uv.get(d0) or uv_on(rows, d0), uv.get(d1) or uv_on(rows, d1)
+        if not u0 or not u1:
+            continue
+        y, m = int(d1[:4]), int(d1[5:7])
+        k = y * 12 + m - 1
+        fl = a1 - a0 * u1 / u0
+        out[k][0] += a0 * (u1 / u0 - 1)
+        is_pay = pillar == "II" and ((prov, d1) in pay or (d1[5:] in ("03-31", "06-30", "09-30", "12-31") and (prov, f"{y}-{(m - 1) // 3 + 1}") in pay_q and d1 not in uv))
+        out[k][2 if is_pay else 1] += fl
+    return [[k, round(v[0] / 1e6, 3), round(v[1] / 1e6, 3), round(v[2] / 1e6, 3)] for k, v in sorted(out.items())]
 
 
 def payouts(daily2, lb_tot, code_of):

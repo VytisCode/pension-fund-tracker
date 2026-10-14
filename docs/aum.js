@@ -3,6 +3,8 @@
 const appQ = q => { let [y, n] = q.split('-').map(Number); n -= 1; if (!n) { y -= 1; n = 4; } return `${y} Q${n}`; };
 const PAY_QS = ['2026-2', '2026-3', '2026-4', '2027-1', '2027-2', '2027-3', '2027-4', '2028-1'];   // 8 reformos išmokėjimai
 addStrings({
+  dcTitle: 'What changed the assets: return, contributions and payouts', dcLead: 'The change in net assets over the chosen period (same funds and dates as the chart above) split into the investment return, contributions and other flows (switches between funds and managers), and pension reform payouts. Calendar months.', dcShort: 'The period is shorter than one calendar month.',
+  dc_ret: 'Return', dc_fl: 'Contributions and other flows', dc_pay: 'Reform payouts', dcNet: 'Total change', dcA0: 'Assets at start', dcA1: 'Assets at end', dcNote: 'Return = assets × change in unit value; flow = the rest of the daily change in assets. Flows on reform payout days are payouts (for quarters without daily data – estimated from the Bank of Lithuania quarter-end totals). Start + return + flows + payouts = end, within rounding and gaps in data.',
   chTitle: 'Net assets (AUM)',
   chLead: 'How much money the funds manage. Daily net assets from the providers; where daily figures are not yet collected, quarter-end values from the Bank of Lithuania portfolio reports are used.',
   gtTitle: 'Change in net assets',
@@ -30,6 +32,8 @@ addStrings({
   quarter: q => appQ(q),
   foot: 'Sources: providers’ daily net asset values (collected automatically), Bank of Lithuania quarterly portfolio reports. For information only, not investment advice.',
 }, {
+  dcTitle: 'Kas keitė turtą: grąža, įmokos ir išmokos', dcLead: 'Grynųjų aktyvų pokytis pasirinktu laikotarpiu (tie patys fondai ir datos kaip grafike viršuje), išskaidytas į investicijų grąžą, įmokas ir kitus srautus (perėjimus tarp fondų ir valdytojų) bei reformos išmokas. Kalendoriniai mėnesiai.', dcShort: 'Laikotarpis trumpesnis nei vienas kalendorinis mėnuo.',
+  dc_ret: 'Grąža', dc_fl: 'Įmokos ir kiti srautai', dc_pay: 'Reformos išmokos', dcNet: 'Pokytis iš viso', dcA0: 'Turtas pradžioje', dcA1: 'Turtas pabaigoje', dcNote: 'Grąža = turtas × vieneto vertės pokytis; srautas = likusi kasdienio turto pokyčio dalis. Srautai reformos išmokų dienomis – išmokos (ketvirčiams be kasdienių duomenų – įvertis iš LB ketvirčio pabaigos sumų). Pradžia + grąža + srautai + išmokos = pabaiga, paklaida – dėl apvalinimo ir duomenų spragų.',
   chTitle: 'Fondų turtas (AUM)',
   chLead: 'Kiek pinigų valdo fondai. Kasdieniai grynieji aktyvai – iš bendrovių; kur kasdienių duomenų dar nerenkame, naudojamos ketvirčio pabaigos sumos iš Lietuvos banko portfelių ataskaitų.',
   gtTitle: 'Turto pokytis',
@@ -151,6 +155,7 @@ function renderChart() {
   const dataEnd = Math.max(...raw.map(r => r.s.d[r.s.d.length - 1])), first = Math.min(...raw.map(r => r.s.d[0]));
   const end = ST.per === 'custom' && ST.to ? Math.max(first + 1, Math.min(dataEnd, dayOf(ST.to))) : dataEnd;
   const x0 = Math.max(first, ST.per === 'custom' ? (ST.from ? dayOf(ST.from) : first) : periodStart(ST.per, end, first));
+  renderDecomp(raw, x0, end);
   const series = raw.map(r => {
     const i0 = Math.max(0, lastOnOrBefore(r.s, x0)), i1 = lastOnOrBefore(r.s, end);
     if (i1 < i0) return null;
@@ -197,6 +202,44 @@ function renderChart() {
 }
 
 /* ---------- 2. turto pokyčio lentelė ---------- */
+/* Turto pokyčio išskaidymas (auditas #68): grąža, įmokos ir kiti srautai, reformos išmokos – pagal kalendorinius mėnesius (aum.py decompose) */
+function renderDecomp(raw, x0, end) {
+  const t = T(), mk = d => { const x = new Date(d * DAY); return x.getUTCFullYear() * 12 + x.getUTCMonth(); };
+  const k0 = mk(x0) + 1, k1 = mk(end), mName = k => `${Math.floor(k / 12)}-${String(k % 12 + 1).padStart(2, '0')}`;
+  document.getElementById('dcTitle').textContent = t.dcTitle; document.getElementById('dcLead').textContent = t.dcLead;
+  const box = document.getElementById('dcChart'), tbl = document.getElementById('dcTable');
+  if (k1 < k0) { box.innerHTML = `<p class="na">${t.dcShort}</p>`; tbl.innerHTML = ''; document.getElementById('dcMeta').textContent = ''; return; }
+  const monthEnd = k => Math.round(Date.UTC(Math.floor(k / 12), k % 12 + 1, 0) / DAY);
+  const rows = raw.map(r => {
+    const s = [0, 0, 0]; r.fs.forEach(f => (f.dm || []).forEach(v => { if (v[0] >= k0 && v[0] <= k1) { s[0] += v[1]; s[1] += v[2]; s[2] += v[3]; } }));
+    const i0 = lastOnOrBefore(r.s, monthEnd(k0 - 1)), i1 = lastOnOrBefore(r.s, end);
+    return { l: r.label || MLABEL[r.m] || r.m, c: r.color || colorOf(r.m), ret: s[0], fl: s[1], pay: s[2], a0: i0 >= 0 ? r.s.a[i0] : null, a1: i1 >= 0 ? r.s.a[i1] : null };
+  });
+  document.getElementById('dcMeta').textContent = `${mName(k0)} – ${mName(k1)} · ${lang === 'lt' ? 'mln. €' : '€ m'}`;
+  const COL = { ret: 'var(--accent)', fl: 'var(--text-3)', pay: 'var(--dneg)' };
+  const W = box.clientWidth || 800, lw = Math.min(240, Math.max(90, W * 0.22)), rh = 30, H = rows.length * rh + 30;
+  const neg = r => Math.min(0, r.ret) + Math.min(0, r.fl) + Math.min(0, r.pay), pos = r => Math.max(0, r.ret) + Math.max(0, r.fl) + Math.max(0, r.pay);
+  const lo = Math.min(0, ...rows.map(neg)), hi = Math.max(0, ...rows.map(pos)), sp = (hi - lo) || 1, X = v => lw + (v - lo) / sp * (W - lw - 10);
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(t.dcTitle)}">`;
+  rows.forEach((r, i) => {
+    const y = 4 + i * rh; let p = 0, n = 0;
+    svg += `<text x="${lw - 8}" y="${y + rh / 2 + 4}" text-anchor="end" font-size="13" fill="var(--text)">${esc(r.l)}</text>`;
+    ['ret', 'fl', 'pay'].forEach(k => { const v = r[k]; if (!v) return; const a = v > 0 ? p : n, b = a + v; if (v > 0) p = b; else n = b;
+      svg += `<rect x="${X(Math.min(a, b))}" y="${y + 6}" width="${Math.max(1, Math.abs(X(b) - X(a)))}" height="${rh - 12}" fill="${COL[k]}"><title>${esc(r.l)} · ${t['dc_' + k]}: ${mEur(v)}</title></rect>`; });
+    const net = r.ret + r.fl + r.pay;
+    svg += `<line x1="${X(net)}" x2="${X(net)}" y1="${y + 2}" y2="${y + rh - 2}" stroke="var(--text)" stroke-width="2.5"><title>${t.dcNet}: ${mEur(net)}</title></line>`;
+  });
+  svg += `<line x1="${X(0)}" x2="${X(0)}" y1="0" y2="${H - 24}" stroke="var(--axis)"/>`;
+  [[t.dc_ret, COL.ret], [t.dc_fl, COL.fl], [t.dc_pay, COL.pay]].forEach(([l, c], i) => { const x = lw + i * 190; svg += `<rect x="${x}" y="${H - 16}" width="12" height="10" fill="${c}"/><text x="${x + 17}" y="${H - 7}" font-size="12" fill="var(--text-2)">${esc(l)}</text>`; });
+  svg += `<line x1="${lw + 570}" x2="${lw + 570}" y1="${H - 18}" y2="${H - 4}" stroke="var(--text)" stroke-width="2.5"/><text x="${lw + 577}" y="${H - 7}" font-size="12" fill="var(--text-2)">${esc(t.dcNet)}</text></svg>`;
+  box.querySelectorAll('svg, p.na').forEach(n => n.remove()); box._legend = []; box.insertAdjacentHTML('afterbegin', svg);
+  const f = v => v == null ? '–' : mEur(v), sg = v => (v > 0 ? '+' : v < 0 ? '−' : '') + mEur(Math.abs(v));
+  tbl.innerHTML = `<thead><tr><th class="l">${ST.mode === 'grp' ? t.thMgr : t.thFund}</th><th>${t.dcA0}</th><th>${t.dc_ret}</th><th>${t.dc_fl}</th><th>${t.dc_pay}</th><th>${t.dcNet}</th><th>${t.dcA1}</th></tr></thead><tbody>`
+    + rows.map(r => `<tr><td class="l">${esc(r.l)}</td><td>${f(r.a0)}</td><td>${sg(r.ret)}</td><td>${sg(r.fl)}</td><td>${sg(r.pay)}</td><td><b>${sg(r.ret + r.fl + r.pay)}</b></td><td>${f(r.a1)}</td></tr>`).join('') + '</tbody>';
+  cardify(tbl);
+  document.getElementById('dcNote').textContent = t.dcNote;
+}
 function renderGrowth() {
   const pers = ['3m', 'ytd', '1y', '3y'];
   const rows = MGRS.map(m => { const fs = fundsOf(ST.pl, ST.g, m); return fs.length ? { m, s: sumSeries(fs) } : null; }).filter(x => x && x.s.d.length);
