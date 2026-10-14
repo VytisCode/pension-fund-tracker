@@ -124,18 +124,22 @@ B = "https://www.lb.lt/uploads/documents/files/musu-veikla/finansu-rinkos-dalyvi
 
 
 def guess():
-    """Kai LB puslapiai nepasiekiami – bandomi tiesioginiai naujų ketvirčių failų adresai (įprasti LB failų vardai)."""
+    """Kai LB puslapiai nepasiekiami – bandomi tiesioginiai naujų ketvirčių failų adresai (įprasti LB failų vardai).
+    Kiekvienai rūšiai – iki 4 ketvirčių po jos naujausio turimo failo (portfeliai LB paskelbiami iki mėnesio vėliau nei rezultatai)."""
     found, other = {}, {}
-    today = datetime.now(timezone.utc).date()
-    have = local_latest("lbr") or "20260630"
-    y, q = int(have[:4]), (int(have[4:6]) - 1) // 3 + 1
-    for _ in range(4):
-        y, q = (y + 1, 1) if q == 4 else (y, q + 1)
-        d = f"{y}{3 * q:02d}{31 if q in (1, 4) else 30}"
-        if d > today.strftime("%Y%m%d"):
-            break
-        for kind, name in (("lbr", f"2_pakopa_rezultatai_{d}.xlsx"), ("pf", f"pf-portfeliai-{d}.xlsx"), (None, f"3_pakopa_rezultatai_{d}.xlsx"),
-                           (None, f"IRR_{d[:4]}-{d[4:6]}-{d[6:]}.xlsx")):
+    today = datetime.now(timezone.utc).strftime("%Y%m%d")
+    arch = lambda pre: max((re.sub(r"\D", "", p.name[len(pre):])[:8] for p in ARCH.glob(pre + "*.xlsx")), default="")
+    specs = [("lbr", local_latest("lbr"), "2_pakopa_rezultatai_{d}.xlsx"), ("pf", local_latest("pf"), "pf-portfeliai-{d}.xlsx"),
+             (None, arch("3_pakopa_rezultatai_") or local_latest("lbr"), "3_pakopa_rezultatai_{d}.xlsx"),
+             (None, arch("IRR_") or "20260630", "IRR_{y}-{m}-{dd}.xlsx")]
+    for kind, have, pat in specs:
+        y, q = int(have[:4]), (int(have[4:6]) - 1) // 3 + 1
+        for _ in range(4):
+            y, q = (y + 1, 1) if q == 4 else (y, q + 1)
+            d = f"{y}{3 * q:02d}{31 if q in (1, 4) else 30}"
+            if d > today:
+                break
+            name = pat.format(d=d, y=d[:4], m=d[4:6], dd=d[6:])
             for url in (B + name, "https://www.lb.lt/uploads/documents/files/" + name):
                 try:
                     body = get(url)
