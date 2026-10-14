@@ -86,6 +86,8 @@ var DATA = { providers: MGRS.map(m => ({ id: m, label: MLABEL[m] })) };
 const ORDER2 = ['turto', '1961-1967', '1968-1974', '1975-1981', '1982-1988', '1989-1995', '1996-2002', '2003-2009'];
 const ORDER3 = ['bond', 'mixed', 'equity'];
 const FEE_FROM_2026 = { life: 0.40, turto: 0.20 };        // atsarginė reikšmė, jei fondo nėra data/fees.csv
+/* SEB: mokestiniu laikotarpiu 2026-02-03–2026-05-17 visiems II pakopos fondams (išskyrus turto išsaugojimo) taikytas 0,40 % (SEB pusmečio ataskaitos; savininko sprendimas 2026-10-14) */
+const FEE_WINDOWS = [{ p: 'SEB', pl: 'II', not: ['turto'], from: Math.round(Date.UTC(2026, 1, 3) / 86400000), to: Math.round(Date.UTC(2026, 4, 17) / 86400000), rate: 0.40 }];
 const M = REP.months, NM = M.length;
 const field = (label, html) => `<label class="field">${label} ${html}</label>`;
 function seg(id, opts, cur) {
@@ -125,7 +127,14 @@ function feeParts(f, d0, d1) {              // [[tarifas %, dienos, metų dienos
     const days = Math.max(0, Math.min(d1, ye) - Math.max(d0, ys));
     // II pakopa: iki 2025 m. – fondo 2025 m. BAR, nuo 2026 m. – LB skelbiamas mokestis; III pakopa – LB skelbiamas mokestis
     const rate = f.pl === 'III' ? f.fee : y >= 2026 ? (f.fee ?? FEE_FROM_2026[f.g === 'turto' ? 'turto' : 'life']) : (f.bar ?? f.fee);
-    if (days) out.push([rate, days, ye - ys]);
+    if (!days) continue;
+    // laikini sumažinti tarifai (FEE_WINDOWS) – tos dienos skaičiuojamos atskirai
+    let rest = days;
+    FEE_WINDOWS.filter(w => w.p === f.p && w.pl === f.pl && !w.not.includes(f.g)).forEach(w => {
+      const wd = Math.max(0, Math.min(d1, ye, w.to + 1) - Math.max(d0, ys, w.from));
+      if (wd) { out.push([w.rate, wd, ye - ys]); rest -= wd; }
+    });
+    if (rest) out.push([rate, rest, ye - ys]);
   }
   return out;
 }

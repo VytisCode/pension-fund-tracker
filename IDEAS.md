@@ -15,17 +15,31 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 - SEB – atskaitos fondas savininko „Performance & peers“ vaizde (grąža, skirtumas nuo konkurentų, vieta 1–6, metinė).
 - 2026-10-10: visos tuo metu „naujos“ Claude idėjos atmestos – jų nesiūlyti iš naujo (sąrašas archyve).
 - **2026-10-14: dirbti tik `main` šakoje, be naujų šakų ir PR** (savininkas kodo netikrina). Ciklai sustabdyti, kol savininkas paprašys atnaujinti.
+- **2026-10-14: SEB valdymo mokestis** – mokestiniu laikotarpiu 2026-02-03–2026-05-17 visiems SEB II pakopos fondams, **išskyrus turto išsaugojimo**, taikytas 0,40 %, kitu metu – 0,50 % (SEB pusmečio ataskaitos). Skaičiavimuose taikoma (`rep.js` `FEE_WINDOWS`).
+- **2026-10-14: lyginamasis valdytojas visada pasirenkamas, pagrindinio valdytojo nėra** (galioja ir pradžios puslapiui #42). Kol nepasirinkta – lyginti su kitų valdytojų mediana.
+- 2026-10-14: ciklų nebepaleidinėti – darbai atliekami iš karto pokalbyje.
 
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
 
-- **#1** SEB mokestis: rodomas 0,50 %, LB faile yra ir 0,40 %. Savininkas ieško, kiek laiko galiojo sumažintas.
-- **#11** Artea Ambicingas Active 16+ didžiausias kritimas −78,8 % (2007–2009) – savininkas patikrins.
-- Klausimas (2026-10-11): ar atskaitos valdytojas svetainėje visada SEB, ar leisti pasirinkti (numatytas SEB)? Kol neatsakė – daryti pasirinkimą su numatytuoju SEB.
+- **#11** Artea Ambicingas Active 16+ didžiausias kritimas −78,8 %: viršūnė 2007-10-11 (0,6092), dugnas 2009-03-09 (0,1292), daugiausia 2008 m. rugsėjo–lapkričio mėn. Savininkas patikrins šias datas.
 - Saugumas: 2026-10-12 į projekto dėžutę atėjo GitHub raktas atviru tekstu. Patarta jį atšaukti. Raktas nenaudotas.
 
 ## Nedaryti (savininkas atmetė)
 
 Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #47, #56, #58, #62.
+
+## Daroma (2026-10-14 savininko užduotis)
+
+- [Rezultatai] 4 heat map lentelės kaip savininko Excel: grąža, palyginimas su konkurentais, vieta grupėje, metinė; eilutė „Vidurkis“ su tarpeliu.
+- [Rezultatai] infliacijos linija grafike „Fondų palyginimas“.
+- [Rezultatai ir visur, kur indeksai] indekso mokestis: įrašomas ranka; numatytasis – tipinio to indekso ETF mokestis; be mokesčio; pensijų fondų vidutinis mokestis.
+- [Turtas] lentelė „Grynieji aktyvai“: bet koks datų intervalas; fondų pasirinkimas (valdytojų sumos, visi valdytojo fondai, pasirinkti fondai).
+- [Ataskaitos] vietoj „Fondo rodikliai (LB išdėstymas)“ – pusmečio ataskaitos lentelės bet kuriam fondui (ir III pakopos): mokesčiai, rizikingi aktyvai, SFDR, vidutinė metinė grąža, grąža pagal metus, didžiausios pozicijos, pasiskirstymas pagal rūšį ir regionus; patikrinta su SEB 2024–2026 ataskaitomis; Excel su formulėmis puslapio viršuje.
+
+## Ateityje (savininkas pateiks medžiagą, kai bus baigti dabartiniai darbai)
+
+- „KID Performance Scenario Calculations“ lentelė – savininkas pasidalins metodika.
+- Fondų dalyvių skaičiai iš LB ataskaitų.
 
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
