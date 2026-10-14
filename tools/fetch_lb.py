@@ -120,6 +120,38 @@ def is_excel(url: str) -> bool:
     return "force_download" not in url and re.search(r"\.xlsx?$", urllib.parse.urlparse(url).path, re.I) is not None
 
 
+B = "https://www.lb.lt/uploads/documents/files/musu-veikla/finansu-rinkos-dalyviu-prieziura/finansu-sektoriai/pensiju-fondai/"
+
+
+def guess():
+    """Kai LB puslapiai nepasiekiami – bandomi tiesioginiai naujų ketvirčių failų adresai (įprasti LB failų vardai)."""
+    found, other = {}, {}
+    today = datetime.now(timezone.utc).date()
+    have = local_latest("lbr") or "20260630"
+    y, q = int(have[:4]), (int(have[4:6]) - 1) // 3 + 1
+    for _ in range(4):
+        y, q = (y + 1, 1) if q == 4 else (y, q + 1)
+        d = f"{y}{3 * q:02d}{31 if q in (1, 4) else 30}"
+        if d > today.strftime("%Y%m%d"):
+            break
+        for kind, name in (("lbr", f"2_pakopa_rezultatai_{d}.xlsx"), ("pf", f"pf-portfeliai-{d}.xlsx"), (None, f"3_pakopa_rezultatai_{d}.xlsx"),
+                           (None, f"IRR_{d[:4]}-{d[4:6]}-{d[6:]}.xlsx")):
+            for url in (B + name, "https://www.lb.lt/uploads/documents/files/" + name):
+                try:
+                    body = get(url)
+                except Exception as e:
+                    print(f"  {name}: {e}")
+                    continue
+                if body.startswith(MAGIC[".xlsx"]):
+                    print(f"  rasta tiesiogiai: {url}")
+                    if kind:
+                        found[kind] = (d, url)
+                    else:
+                        other[arch_name(url)] = url
+                    break
+    return found, other
+
+
 def scan():
     found, seen, extra, other = {}, set(), [], {}
     queue = list(PAGES)
@@ -131,7 +163,8 @@ def scan():
         try:
             text = get(page).decode("utf-8", "replace")
         except Exception as e:
-            print(f"  {page}: nepavyko ({e})")
+            body = getattr(e, "read", lambda: b"")()[:300].decode("utf-8", "replace").replace("\n", " ")
+            print(f"  {page}: nepavyko ({e}) {body}")
             continue
         n = 0
         for u in links(page, text):
@@ -246,6 +279,9 @@ def main():
         return
     print("Lietuvos banko failų paieška:")
     found, other = scan()
+    if not found and not other:
+        print("LB puslapiai nepasiekiami – bandomi tiesioginiai failų adresai:")
+        found, other = guess()
     if not found and not other:
         print("LB puslapiai nepasiekiami arba be failų nuorodų – bus bandoma kito paleidimo metu.")
         state["fail"] = {"date": today, "n": (fail.get("n", 0) if fail.get("date") == today else 0) + 1}
