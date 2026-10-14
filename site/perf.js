@@ -1124,8 +1124,29 @@ function metricsBook() {
     ['Max drawdown', 'Lowest value in “Drawdown from peak” = value ÷ highest value so far − 1.'],
     ['Annual return since start', '(last ÷ first value) ^ (365.25 ÷ days) − 1; shown when the history is ≥ 365 days.'],
     ['Days', 'Days when only one manager published a value are excluded (as on the site). Index rows are not included in this file.']];
+  // Kalendorinių metų grąža (auditas #53): lapas su metų pradžios ir pabaigos vertėmis + matrica su nuorodomis į jį
+  const YS = L ? 'Metų vertės' : 'Year values', YC = L ? 'Kalendoriniai metai' : 'Calendar years', YQ = `'${YS}'`;
+  const yv = [L ? ['Grupė', 'Valdytojas', 'Metai', 'Pradžios data', 'Pradžios vertė', 'Pabaigos data', 'Pabaigos vertė', 'Grąža', 'Dalis metų'] : ['Group', 'Manager', 'Year', 'Start date', 'Start value', 'End date', 'End value', 'Return', 'Part of year']];
+  const yRows = [];
+  parts.forEach(pt => pt.all.forEach(s => {
+    const f = s.f, last = new Date(pt.rng.end * DAY).getUTCFullYear(), refs = {};
+    for (let y = new Date(f.d[0] * DAY).getUTCFullYear(); y <= last; y++) {
+      const ie = lastOnOrBefore(f, y === last ? pt.rng.end : Math.round(Date.UTC(y, 11, 31) / DAY));
+      let ia = lastOnOrBefore(f, Math.round(Date.UTC(y - 1, 11, 31) / DAY)), part = false;
+      if (ia < 0) { ia = 0; part = f.d[0] > Math.round(Date.UTC(y, 0, 7) / DAY); }
+      if (ie <= ia) continue;
+      const r = yv.length + 1;
+      yv.push([groupLabel(pt.g), labelOf(f.provider), y, xlDate(f.d[ia]), f.v[ia], xlDate(f.d[ie]), f.v[ie], xlF(`G${r}/E${r}-1`, f.v[ie] / f.v[ia] - 1, '0.00%'), part || y === last ? (L ? 'taip' : 'yes') : '']);
+      refs[y] = r;
+    }
+    yRows.push({ g: groupLabel(pt.g), p: labelOf(f.provider), refs });
+  }));
+  const yrs = [...new Set(yRows.flatMap(x => Object.keys(x.refs).map(Number)))].sort((a, b) => a - b);
+  const ycal = [[L ? 'Grupė' : 'Group', L ? 'Valdytojas' : 'Manager', ...yrs]].concat(yRows.map(x => [x.g, x.p, ...yrs.map(y => x.refs[y] ? xlF(`${YQ}!H${x.refs[y]}`, yv[x.refs[y] - 1][7].v, '0.00%') : null)]));
+  meth.push([], [L ? 'Kalendoriniai metai' : 'Calendar years', L ? 'Grąža = metų paskutinė vertė ÷ praėjusių metų paskutinė vertė − 1 (lapas „Metų vertės“). Jei fondas įsteigtas per metus – nuo pirmos vertės (dalis metų); paskutiniai metai – iki naujausios dienos.' : 'Return = last value of the year ÷ last value of the previous year − 1 (sheet “Year values”). If the fund started during the year – from its first value (part of year); the last year – to the latest day.']);
   const add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); if (w) ws['!cols'] = w; XLSX.utils.book_append_sheet(wb, ws, name); };
   add(meth, S.meth, [{ wch: 26 }, { wch: 110 }]);
+  add(ycal, YC, [{ wch: 22 }, { wch: 10 }, ...yrs.map(() => ({ wch: 10 }))]); add(yv, YS, [{ wch: 22 }, { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 10 }]);
   add(met, S.met, [{ wch: 22 }, { wch: 10 }, { wch: 40 }, ...Array(hdr.length - 3).fill({ wch: 14 })]);
   add(sheets.per, S.per); add(sheets.all, S.all);
   return wb;

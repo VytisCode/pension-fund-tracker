@@ -38,7 +38,7 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
 ### 11. Excel su formulėmis (puslapis „Apie“ jau padarytas 2026-10-14)
-- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. Padaryta 2026-10-14: „Visa rinka“ 4 lentelės ir rodiklių lentelė (mygtukai „Excel su formulėmis“); toliau – kalendorinių metų lentelės ir kiti puslapiai.
+- **#53** **Labai svarbu:** prie kiekvienos lentelės ir diagramos – to vaizdo Excel failas su (1) pradiniais duomenimis (vieneto vertės su datomis, šaltinis), (2) skaičiavimu žingsnis po žingsnio su **tikromis Excel formulėmis**, (3) lapu „Metodika ir šaltiniai“. Tikslas – kad savininkas galėtų įrodyti savo skaičius kitam analitikui. Dabartiniai Excel failai per sudėtingi. Padaryta 2026-10-14: „Visa rinka“ 4 lentelės, rodiklių ir kalendorinių metų lentelės (mygtukai „Excel su formulėmis“), Ataskaitos; toliau – „Turtas“, „III pakopa“, „Portfeliai“.
 
 ### 15. Apžvalgos ir kita
 - **#65** [Kelias į pensiją] ateities scenarijai (pesimistinis/vidutinis/optimistinis). Sodros pensijai pirma ieškoti oficialių prognozių (Sodros skaičiuoklė, ministerijų projekcijos, EK „Ageing Report“, „Pension Adequacy Report“); jei nėra – rodyti tik kaupimo dalį ir pažymėti prielaidas.
