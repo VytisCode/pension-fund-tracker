@@ -33,10 +33,22 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 - Ataskaitos: SFDR dar nežinomas ~40 mažesnių fondų (daugiausia Baltijos privataus kapitalo / NT) – papildyti `data/fund_attributes.csv`, kai bus šaltinis.
 
-- „KID Performance Scenario Calculations“ lentelė – savininkas pasidalins metodika.
+- „KID Performance Scenario Calculations“ – metodika gauta 2026-10-14 (žr. S9).
 - Fondų dalyvių skaičiai iš LB ataskaitų.
 
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
+
+## Eilė: savininko užduotys 2026-10-14 (vakaras)
+
+- **S1** Visi duomenų šaltiniai: peržiūrėti visus puslapius, surašyti kiekvieną šaltinį į esamą sąrašą („Apie“) su nuorodomis ir atnaujinimo datomis; automatizuoti kiek įmanoma; rankiniu būdu įkeliamiems – atnaujinimo tvarkaraštis.
+- **S2** KPI „Istorija nuo 2018-12-21“ klaidina – gyvenimo ciklo fondai veikia nuo 2019 m.; nerodyti tokios datos.
+- **S3** Kompiuteryje išnaudoti daugiau ekrano pločio (mažesni tarpai kairėje ir dešinėje).
+- **S4** „Mokesčių poveikis laike“ – į „Kelias į pensiją“ apačią, susieti su dalyvio duomenimis (laukia atsakymo, ar palikti ir Rezultatuose); laikotarpis pagal pasirinkimą viršuje.
+- **S5** III pakopa: laikotarpio juosta prilimpanti.
+- **S6** „Valdytojas ir fondas“: datos / laikotarpio pasirinkimas; „Grynieji aktyvai ketvirčių pabaigoje“ – € ir %, II ir III pakopa atskirai, kiekvienas valdytojo fondas atskirai.
+- **S7** Navigacijos juostos nepaslinkti – kompiuteryje nepasiekiami „Kelias į pensiją“, „Apie“.
+- **S8** Ataskaitos: matyti visus valdytojo fondus vienu metu (lentelės ir vienas Excel).
+- **S9** KID veiklos rezultatų scenarijai pagal Reglamento (ES) 2017/653 IV priedą; patikrinti su SEB PID (pensija 18+, index. Klimato ateitis, pensija 58+); naudoti ir „Kelias į pensiją“ KID variante.
 
 ## Senesnės patvirtintos idėjos (prieš imant – patikrinti, ar dar aktualu)
 
