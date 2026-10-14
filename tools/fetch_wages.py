@@ -36,6 +36,34 @@ def probe():
             print("  ", m.group(1), "|", name)
 
 
+def probe2():
+    """Kuriame rinkinyje yra žinomos 2024–2025 m. reikšmės (bruto 2223,0 / 2337,7, neto 1368,0 / 1436,4)."""
+    targets = {"2024": (2223.0, 1368.0), "2025": (2337.7, 1436.4)}
+    ids = ["S3R0050_M3060315_1", "S3R0050_M3060320_1", "S3R0050_M3060322", "S3R0050_M3060836_1", "S3R0050_M3060837_1", "S3R0050_M3060838_1",
+           "S3R0050_M3060847", "S3R0050_M3060862_1", "S3R0050_M3060862_3", "S3R0050_M3060320_3", "S3R0050_M3060315_12", "S3R0048_M3060844_1"]
+    for i in ids:
+        try:
+            text = get(BASE + "data/" + i)
+        except Exception as e:
+            print(i, "klaida", e)
+            continue
+        hits = 0
+        for o in re.findall(r"<g:Obs>(.*?)</g:Obs>", text, re.S):
+            per = re.search(r'LAIKOTARPIS" value="([^"]+)"', o)
+            v = re.search(r'ObsValue value="([^"]+)"', o)
+            if not per or not v:
+                continue
+            y = per.group(1)[:4]
+            if y in targets and any(abs(float(v.group(1)) - t) < 0.06 for t in targets[y]) and hits < 6:
+                hits += 1
+                print(i, len(text), per.group(1), v.group(1), re.sub(r"\s+", " ", o)[:400])
+        if not hits:
+            print(i, len(text), "– nėra", re.sub(r"\s+", " ", (re.findall(r"<g:Obs>(.*?)</g:Obs>", text, re.S) or [""])[0])[:300])
+
+
 if __name__ == "__main__":
+    if "--probe2" in sys.argv or not DATASETS:
+        probe2()
+        sys.exit()
     if "--probe" in sys.argv or not DATASETS:
         probe()
