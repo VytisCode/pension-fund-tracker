@@ -472,9 +472,10 @@ def build_journey(ver: dict) -> None:
     shutil.copyfile(SITE / "journey.html", DOCS / "journey.html")
     shutil.copyfile(SITE / "journey.js", DOCS / "journey.js")
     shutil.copyfile(SITE / "insights.js", DOCS / "insights.js")
-    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_journey.js", "journey.js", "data_journey3.js", "insights.js")}}
+    shutil.copyfile(SITE / "future.js", DOCS / "future.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_journey.js", "journey.js", "data_journey3.js", "insights.js", "future.js")}}
     text = (DOCS / "journey.html").read_text(encoding="utf-8")
-    for n in ("style.css", "common.js", "data.js", "data_idx.js", "data_journey.js", "data_journey3.js", "journey.js", "insights.js"):
+    for n in ("style.css", "common.js", "data.js", "data_idx.js", "data_journey.js", "data_journey3.js", "journey.js", "insights.js", "future.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "journey.html").write_text(text, encoding="utf-8")
     print(f"docs/data_journey.js: {len(data_js) / 1024:.0f} KB, Sodros datų: {len(payload['dates'])}")

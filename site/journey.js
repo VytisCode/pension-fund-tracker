@@ -22,7 +22,7 @@ addStrings({
   schTitle: 'What the pension is made of', schLead: 'Who pays the contributions, where they grow and what the participant would get every month if retiring today. Line thickness = amount in euros.',
   schCols: ['Who pays', 'Where it grows', 'Monthly income in retirement', 'Total per month'], schStatePen: 'State pension (Sodra)', schStateSub: 'average, not from savings', schAnn: 'II pillar: Sodra annuity', schAnnSub: 'for life',
   schP3: 'III pillar payout', pay3s: { draw: 'monthly to 85, stays invested', split: 'monthly to 85, not invested', lump: 'whole sum at once' }, schPerMo: '/ month', schAtOnce: 'at once', schRr: x => `${x} of net salary`, schRr0: x => `without savings ${x}`,
-  schAssets: (c, r) => `contributions ${c} + return ${r}`, annTitle: 'Sodra annuity (II pillar)', nav: ['Settings', 'Pension', 'Savings', 'Annuity', 'Comparisons', 'World equities', 'Over time', 'Calculation', 'Market', 'Sources'], thE: { rv: 'Employer €/mo', cv: 'Employer €', sv: 'Employer Σ' }, inPay3: 'III pillar payout', pay3: { draw: 'Stay invested, monthly to 85', split: 'Withdraw, split monthly to 85', lump: 'Take it all at once' },
+  schAssets: (c, r) => `contributions ${c} + return ${r}`, annTitle: 'Sodra annuity (II pillar)', nav: ['Settings', 'Pension', 'Savings', 'Annuity', 'Future', 'Comparisons', 'World equities', 'Over time', 'Calculation', 'Market', 'Sources'], thE: { rv: 'Employer €/mo', cv: 'Employer €', sv: 'Employer Σ' }, inPay3: 'III pillar payout', pay3: { draw: 'Stay invested, monthly to 85', split: 'Withdraw, split monthly to 85', lump: 'Take it all at once' },
   kPay: 'Pension from savings, € / month', k3Lump: x => `III pillar taken at once: ${x}`, k3Mon: 'III pillar: to age 85', k3Ann: (a, b) => `II annuity ${a} + III ${b}`,
   pay: { avg: 'Average', mma: 'Minimum (MMA)', 50: '50 % of average', 150: '150 % of average', 200: '200 % of average', 300: '300 % of average' },
   payLong: { avg: 'the national average salary', mma: 'the minimum monthly wage (MMA)' }, payPct: p => `${p} % of the national average salary`,
@@ -84,7 +84,7 @@ addStrings({
   schTitle: 'Pensijos sudėtis', schLead: 'Kas moka įmokas, kur jos kaupiamos ir ką dalyvis gautų kas mėnesį, jei į pensiją išeitų šiandien. Linijos storis – suma eurais.',
   schCols: ['Kas moka', 'Kur kaupiama', 'Mėnesio pajamos pensijoje', 'Iš viso per mėn.'], schStatePen: 'Valstybinė pensija (Sodra)', schStateSub: 'vidutinė, ne iš kaupimo', schAnn: 'II pakopa: Sodros anuitetas', schAnnSub: 'iki gyvos galvos',
   schP3: 'III pakopos išmoka', pay3s: { draw: 'kas mėn. iki 85 m., lieka fonde', split: 'kas mėn. iki 85 m., neinvestuojant', lump: 'visa suma iš karto' }, schPerMo: '/ mėn.', schAtOnce: 'iš karto', schRr: x => `${x} neto atlyginimo`, schRr0: x => `be kaupimo ${x}`,
-  schAssets: (c, r) => `įmokos ${c} + grąža ${r}`, annTitle: 'Sodros anuitetas (II pakopa)', nav: ['Nustatymai', 'Sudėtis', 'Kaupimas', 'Anuitetas', 'Palyginimai', 'Akcijų indeksai', 'Laike', 'Skaičiavimas', 'Rinka', 'Šaltiniai'], thE: { rv: 'Darbdavys €/mėn.', cv: 'Darbdavys €', sv: 'Darbdavys Σ' }, inPay3: 'III pakopos išmokėjimas', pay3: { draw: 'Investuoti ir išmokėti kas mėn. iki 85 m.', split: 'Atsiimti ir dalinti kas mėn. iki 85 m.', lump: 'Visą sumą atsiimti iš karto' },
+  schAssets: (c, r) => `įmokos ${c} + grąža ${r}`, annTitle: 'Sodros anuitetas (II pakopa)', nav: ['Nustatymai', 'Sudėtis', 'Kaupimas', 'Anuitetas', 'Ateitis', 'Palyginimai', 'Akcijų indeksai', 'Laike', 'Skaičiavimas', 'Rinka', 'Šaltiniai'], thE: { rv: 'Darbdavys €/mėn.', cv: 'Darbdavys €', sv: 'Darbdavys Σ' }, inPay3: 'III pakopos išmokėjimas', pay3: { draw: 'Investuoti ir išmokėti kas mėn. iki 85 m.', split: 'Atsiimti ir dalinti kas mėn. iki 85 m.', lump: 'Visą sumą atsiimti iš karto' },
   kPay: 'Išmoka iš kaupimo, € / mėn.', k3Lump: x => `III pakopa atsiimama iš karto: ${x}`, k3Mon: 'III pakopa: iki 85 m.', k3Ann: (a, b) => `II anuitetas ${a} + III ${b}`,
   pay: { avg: 'Vidutinis', mma: 'Minimalus (MMA)', 50: '50 % vidutinio', 150: '150 % vidutinio', 200: '200 % vidutinio', 300: '300 % vidutinio' },
   payLong: { avg: 'vidutinį šalies atlyginimą', mma: 'minimalią mėnesinę algą (MMA)' }, payPct: p => `${p} % vidutinio šalies atlyginimo`,
@@ -454,7 +454,7 @@ function renderSchema() {
   el.innerHTML = ''; el.appendChild(svg);
 }
 function renderNav() {
-  const ids = ['top', 'schTitle', 'sumTitle', 'annTitle', 'cmpTitle', 'ixTitle', 'gridTitle', 'tbTitle', 'insTitle', 'srcTitle'];
+  const ids = ['top', 'schTitle', 'sumTitle', 'annTitle', 'futTitle', 'cmpTitle', 'ixTitle', 'gridTitle', 'tbTitle', 'insTitle', 'srcTitle'];
   document.getElementById('jnav').innerHTML = T().nav.map((l, i) => (i === 3 && P.pl === 'III') ? '' : `<a href="#${ids[i]}">${i ? l : '⚙ ' + l}</a>`).join('');
 }
 function renderAnnuity() {
@@ -841,6 +841,7 @@ function renderAll() {
   renderSources();
   document.getElementById('foot').textContent = T().foot;
   if (typeof renderInsights === 'function') renderInsights();
+  if (typeof renderFuture === 'function') renderFuture();
 }
 document.addEventListener('click', e => {
   if (e.target.closest('.xls')) { download().catch(err => alert('Excel: ' + err)); return; }

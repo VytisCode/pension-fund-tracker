@@ -18,6 +18,7 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 - **2026-10-14: SEB valdymo mokestis** – mokestiniu laikotarpiu 2026-02-03–2026-05-17 visiems SEB II pakopos fondams, **išskyrus turto išsaugojimo**, taikytas 0,40 %, kitu metu – 0,50 % (SEB pusmečio ataskaitos). Skaičiavimuose taikoma (`rep.js` `FEE_WINDOWS`).
 - **2026-10-14: lyginamasis valdytojas visada pasirenkamas, pagrindinio valdytojo nėra** (galioja ir pradžios puslapiui #42). Kol nepasirinkta – lyginti su kitų valdytojų mediana.
 - 2026-10-14: ciklų nebepaleidinėti – darbai atliekami iš karto pokalbyje.
+- 2026-10-14: #65 ateities scenarijai – savininkas nori visų 3 variantų (Sodra + LB keliai, tik kaupimas, pagal KID); KID variantas laukia savininko medžiagos (žr. „Ateityje“).
 - 2026-10-14 (atsakymai): eilė 9–15 daroma iš karto, paketas po paketo; „Relative to the peers“ – kol valdytojas nepasirinktas, lyginama su kitų mediana (tinka); Ataskaitose renkamas bet kuris ketvirčio galas, iš pradžių paskutinis; SFDR – tiesioginės akcijos, obligacijos, indėliai, išvestinės – eilutė „Neklasifikuojama“; mokesčių lentelė pildoma iš LB mokesčių failų (`data/fees.csv`, `import_lb_fees.py`). Artea Ambicingas Active 16+ −78,8 % savininkas patikrino – duomenys teisingi.
 
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
@@ -36,9 +37,6 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 - Fondų dalyvių skaičiai iš LB ataskaitų.
 
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
-
-### 15. Apžvalgos ir kita
-- **#65** [Kelias į pensiją] ateities scenarijai (pesimistinis/vidutinis/optimistinis). Sodros pensijai pirma ieškoti oficialių prognozių (Sodros skaičiuoklė, ministerijų projekcijos, EK „Ageing Report“, „Pension Adequacy Report“); jei nėra – rodyti tik kaupimo dalį ir pažymėti prielaidas.
 
 ## Senesnės patvirtintos idėjos (prieš imant – patikrinti, ar dar aktualu)
 
