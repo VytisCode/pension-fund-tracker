@@ -845,11 +845,11 @@ async function dlPortfolios() {
 /* ---------- KPI kortelės puslapio viršuje (auditas #50) ----------
    kpiRow([[pavadinimas, reikšmė, paaiškinimas?], …]) – kortelių eilutė iškart po navigacija (arba į esamą #kpis). */
 addStrings({
-  kpFunds: 'Funds', kpMgrs: 'Managers', kpAssets: 'Net assets', kpFrom: 'History from', kpUntil: 'Data until', kpBn: 'bn €', kpMn: 'm €',
+  kpFunds: 'Funds', kpMgrs: 'Managers', kpAssets: 'Net assets', kpFrom: 'History from', kpLc: 'Life-cycle funds since', kpUntil: 'Data until', kpBn: 'bn €', kpMn: 'm €',
   kpII: 'II pillar', kpIII: 'III pillar', kpYtd: 'II pillar change this year', kpPay: y => `Reform payouts ${y}`, kpQ: 'Latest portfolio report', kpPos: 'Holdings in it', kpSecs: 'Different securities',
   kpLb: 'Bank of Lithuania results', kpMonth: 'Latest month end', kpYtdS: (v, p) => `${v} (${p})`,
 }, {
-  kpFunds: 'Fondų', kpMgrs: 'Valdytojų', kpAssets: 'Grynieji aktyvai', kpFrom: 'Istorija nuo', kpUntil: 'Duomenys iki', kpBn: 'mlrd. €', kpMn: 'mln. €',
+  kpFunds: 'Fondų', kpMgrs: 'Valdytojų', kpAssets: 'Grynieji aktyvai', kpFrom: 'Istorija nuo', kpLc: 'Gyvenimo ciklo fondai nuo', kpUntil: 'Duomenys iki', kpBn: 'mlrd. €', kpMn: 'mln. €',
   kpII: 'II pakopa', kpIII: 'III pakopa', kpYtd: 'II pakopos pokytis šiais metais', kpPay: y => `Reformos išmokos ${y} m.`, kpQ: 'Naujausia portfelių ataskaita', kpPos: 'Pozicijų joje', kpSecs: 'Skirtingų vertybinių popierių',
   kpLb: 'LB rezultatų ataskaita', kpMonth: 'Paskutinė mėnesio pabaiga', kpYtdS: (v, p) => `${v} (${p})`,
 });
@@ -863,7 +863,7 @@ function kpiII() {                       // II pakopa iš data.js („Rezultatai
   const fs = DATA.groups.flatMap(g => g.funds), last = Math.max(...fs.map(f => f.d[f.d.length - 1]));
   const live = fs.filter(f => f.assets && f.assetsDate >= last - 10);
   return [[T().kpFunds, fs.length], [T().kpMgrs, DATA.providers.length], [T().kpAssets, kpMoney(live.reduce((s, f) => s + f.assets, 0)), iso(Math.max(...live.map(f => f.assetsDate)))],
-    [T().kpFrom, iso(Math.min(...fs.map(f => f.d[0])))], [T().kpUntil, iso(last)]];
+    [T().kpLc, lang === 'lt' ? '2019 m. sausio 1 d.' : '1 January 2019'], [T().kpUntil, iso(last)]];   // ankstesnės pavienės vertės – pertvarkymo dienos, ne fondų pradžia (savininkas 2026-10-14)
 }
 
 /* ---------- Telefone lentelė – kortelėmis (auditas #52) ----------

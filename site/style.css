@@ -370,3 +370,11 @@ td.soft { background-image: linear-gradient(rgba(255,255,255,.55), rgba(255,255,
 .glt { text-decoration: underline dotted var(--text-3); text-underline-offset: 3px; cursor: help; }
 .glpop { position: absolute; z-index: 50; max-width: 300px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 14px rgba(0,0,0,.15); }
 @media print { .glt { text-decoration: none; } .glpop { display: none; } }
+
+/* Kompiuteryje – platesnis puslapis ir visa navigacija matoma (savininkas 2026-10-14, S3, S7):
+   pele horizontaliai paslinkti juostos negalima, todėl plačiame ekrane mygtukai perkeliami į kitą eilutę */
+@media (min-width: 1300px) { .wrap { max-width: 1560px; padding-left: 24px; padding-right: 24px; } .snav { margin-left: -24px; margin-right: -24px; padding-left: 24px; padding-right: 24px; } }
+@media (hover: hover) and (min-width: 701px) {
+  .snav .nav, .snav .pnav { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; }
+  .snav .sr { -webkit-mask-image: none; mask-image: none; }
+}
