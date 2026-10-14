@@ -338,6 +338,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
+  el._legend = series.map(r => { let l = ''; try { l = sLab(r); } catch (e) {} return { c: sCol(r), l, d: r.dash || '' }; }).filter(x => x.l);   // PNG legendai (chartPng)
   let lo = opts.zero === false ? Infinity : 0, hi = opts.zero === false ? -Infinity : 0;    // zero: false – ašis neprivalo apimti nulio
   series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
   const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
@@ -872,3 +873,64 @@ function cardify(tbl) {
   [...tbl.tBodies].forEach(tb => [...tb.rows].forEach(tr => { let c = 0; [...tr.cells].forEach(td => { if (td.colSpan === 1 && lab[c]) td.dataset.l = lab[c]; c += td.colSpan; }); }));
   tbl.classList.add('cardable');
 }
+
+/* ---------- Grafiko kopijavimas ir PNG (auditas #67) ----------
+   Prie kiekvieno grafiko (.chart, .riskmap su SVG) – du mygtukai: „Kopijuoti vaizdą“ ir „PNG“. Vaizde – pavadinimas, grafikas ir data. */
+addStrings({ cpImg: 'Copy image', cpDone: 'Copied', cpFail: 'Copying is not allowed by this browser – the PNG was downloaded instead', pngImg: 'Download PNG' },
+  { cpImg: 'Kopijuoti vaizdą', cpDone: 'Nukopijuota', cpFail: 'Ši naršyklė neleidžia kopijuoti – PNG atsisiųstas', pngImg: 'Atsisiųsti PNG' });
+const SVG_PROPS = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin', 'opacity', 'font-size', 'font-family', 'font-weight', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
+function chartTitle(box) {
+  const sec = box.closest('section, .card, .p3card') || box.parentElement;
+  let h = sec && sec.querySelector('h2, h3, .group-h');
+  if (!h) { let p = sec; while (p && !h) { p = p.previousElementSibling; if (p && /^H[23]$/.test(p.tagName)) h = p; } }
+  if (h) { h = h.cloneNode(true); h.querySelectorAll('button, select, .info, .ik').forEach(n => n.remove()); }
+  return (h ? h.textContent : document.title).replace(/[ⓘ▾▴]/g, '').trim();
+}
+function chartPng(box) {
+  return new Promise((ok, no) => {
+    const svg = box.querySelector('svg'); if (!svg) return no();
+    const r = svg.getBoundingClientRect(), W = Math.ceil(r.width), H = Math.ceil(r.height), bottom = 24;
+    const lg = box._legend || [], cs0 = getComputedStyle(document.documentElement);
+    let lx = 16, ly = 50, leg = '';                       // legenda po pavadinimu, eilutėmis per plotį
+    lg.forEach(x => { const w = 34 + x.l.length * 7.4; if (lx + w > W + 16 && lx > 16) { lx = 16; ly += 18; }
+      const col = x.c.startsWith('var(') ? cs0.getPropertyValue(x.c.slice(4, -1)).trim() : x.c;
+      leg += `<line x1="${lx}" x2="${lx + 18}" y1="${ly - 4}" y2="${ly - 4}" stroke="${col}" stroke-width="2.5"${x.d ? ` stroke-dasharray="${x.d}"` : ''}/><text x="${lx + 23}" y="${ly}" font-size="12" fill="${cs0.getPropertyValue('--text-2').trim()}">${x.l.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text>`;
+      lx += w; });
+    const top = lg.length ? ly + 12 : 40;
+    const clone = svg.cloneNode(true), src = [svg, ...svg.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
+    src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', SVG_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';')); });
+    clone.setAttribute('x', 16); clone.setAttribute('y', top); clone.setAttribute('width', W); clone.setAttribute('height', H);
+    const cs = getComputedStyle(document.documentElement), v = k => cs.getPropertyValue(k).trim(), esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const font = getComputedStyle(document.body).fontFamily.replace(/"/g, "'");
+    const stamp = `${T().siteTitle} · ${typeof FRESH !== 'undefined' ? T().dataUntil + ' ' + iso(FRESH.top) : ''}`;
+    const out = `<svg xmlns="http://www.w3.org/2000/svg" width="${W + 32}" height="${H + top + bottom}" font-family="${font}"><rect width="100%" height="100%" fill="${v('--card') || '#fff'}"/>`
+      + `<text x="16" y="26" font-size="16" font-weight="600" fill="${v('--text')}">${esc(chartTitle(box))}</text>`
+      + leg
+      + new XMLSerializer().serializeToString(clone)
+      + `<text x="16" y="${H + top + 16}" font-size="11" fill="${v('--text-3')}">${esc(stamp)}</text></svg>`;
+    const img = new Image();
+    img.onload = () => { const c = document.createElement('canvas'); c.width = (W + 32) * 2; c.height = (H + top + bottom) * 2; const x = c.getContext('2d'); x.scale(2, 2); x.drawImage(img, 0, 0); c.toBlob(b => b ? ok(b) : no(), 'image/png'); };
+    img.onerror = no;
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(out);
+  });
+}
+function savePng(blob, box) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (chartTitle(box).replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 60) || 'grafikas') + '.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+function chartTools() {
+  document.querySelectorAll('.chart, .riskmap').forEach(box => {
+    if (!box.querySelector('svg') || box.querySelector(':scope > .ctools')) return;
+    if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
+    const t = document.createElement('div'); t.className = 'ctools';
+    t.innerHTML = `<button type="button" class="btn ico" data-a="cp" title="${T().cpImg}" aria-label="${T().cpImg}">⧉</button><button type="button" class="btn ico" data-a="png" title="${T().pngImg}" aria-label="${T().pngImg}">⤓</button>`;
+    t.addEventListener('click', async e => {
+      const b = e.target.closest('button'); if (!b) return; e.stopPropagation();
+      try {
+        const blob = await chartPng(box);
+        if (b.dataset.a === 'png') return savePng(blob, box);
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); b.textContent = '✓'; b.title = T().cpDone; setTimeout(() => { b.textContent = '⧉'; b.title = T().cpImg; }, 1500); }
+        catch (err) { savePng(blob, box); alert(T().cpFail); }
+      } catch (err) { /* grafiko nėra */ }
+    });
+    box.append(t);
+  });
+}
+if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(chartTools, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
