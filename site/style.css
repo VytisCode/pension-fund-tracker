@@ -378,3 +378,11 @@ td.soft { background-image: linear-gradient(rgba(255,255,255,.55), rgba(255,255,
   .snav .nav, .snav .pnav { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; }
   .snav .sr { -webkit-mask-image: none; mask-image: none; }
 }
+/* KID scenarijai (kid.js) – PID formato lentelė */
+.kidc { flex-wrap: wrap; gap: 10px 14px; margin-bottom: 10px; }
+.kidi { font-size: 13px; color: var(--text-2); margin: 8px 0; max-width: 980px; }
+.kidh { font-size: 15px; margin: 18px 0 6px; }
+table.kidp { width: auto; min-width: 720px; }
+table.kidp th, table.kidp td { white-space: nowrap; padding: 5px 12px; }
+table.kidp tbody th { text-align: left; font-weight: 600; vertical-align: middle; }
+table.kidp tr.kt > * { border-top: 1px solid var(--line); }

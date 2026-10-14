@@ -22,3 +22,4 @@ Senesnė istorija (iki 2026-10-14, PR #1–#84): `IDEAS-iki-2026-10-14.md`.
 - 2026-10-14 – S8: Ataskaitose pusmečio lentelės visiems valdytojo fondams vienu metu ir viename Excel.
 - 2026-10-14 – S1: „Apie“ – visų 19 duomenų šaltinių sąrašas su nuorodomis, datomis ir rankinio atnaujinimo tvarkaraščiu; pavėlavę rankiniai darbai – vakariniame laiške.
 - 2026-10-14 – S9: Ataskaitose – KID veiklos rezultatų scenarijai visiems valdytojo fondams pagal Reg. 2017/653 IV priedą (pakaitinis indeksas MSCI ACWI + ECB obligacijos), SEB PID oficialūs skaičiai ir skirtumas, Excel su formulėmis; „Kelias į pensiją“ KID variantas veikia.
+- 2026-10-14 – KID scenarijai Ataskaitose – PID formato lentelė (kaip SEB III pakopos PID) su fondo, laikymo ir stebėjimo laikotarpio, akcijų dalies ir išlaidų įvedimu; Excel – visas skaičiavimas formulėmis (mėnesiai, langai, mediana, stresinis).

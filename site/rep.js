@@ -406,7 +406,7 @@ function buildBook(k) {
 }
 async function download(k) {
   await Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'), k === 'hy' ? Promise.all([loadDaily(), loadPf()]).then(renderHy) : null]);
-  const b = k === 'hy' ? hyBook() : buildBook(k);
+  const b = k === 'hy' ? hyBook() : k === 'kid' ? kidBook() : buildBook(k);
   if (b) XLSX.writeFile(b.wb, b.file);
 }
 

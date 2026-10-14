@@ -154,9 +154,11 @@ def build():
     try:
         import kid_scenarios
         kid_scenarios.for_funds(funds)
+        kidm = kid_scenarios.monthly()
     except Exception as e:  # noqa: BLE001 – KID scenarijai nestabdo puslapio generavimo
         print(f"KID scenarijai nepavyko: {e!r}")
-    return {"months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date, "feeYear": fee_year, "_daily": daily}
+        kidm = None
+    return {"kidm": kidm, "months": [day_number(e) for e in ends], "funds": funds, "lbDate": lb_date, "feeYear": fee_year, "_daily": daily}
 
 
 if __name__ == "__main__":

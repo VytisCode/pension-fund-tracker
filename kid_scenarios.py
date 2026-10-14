@@ -104,7 +104,7 @@ def scenarios(series, rhp, cost_pct, end_year):
             unf = min([unf] + [g(s, last) ** (1 / n) - 1 for s in obs if _addm(last, -12 * n) <= s <= _addm(last, -12)])
         w = 6 if n == 1 else 12
         vols = sorted(st.stdev(r_all[i:i + w]) for i in range(len(r_all) - w + 1))
-        sig = vols[min(len(vols) - 1, math.ceil((0.99 if n == 1 else 0.95) * len(vols)) - 1)]
+        sig = vols[min(len(vols) - 1, math.ceil(round((0.99 if n == 1 else 0.95) * len(vols), 9)) - 1)]
         N, z = 12 * n, (-2.326347874 if n == 1 else -1.644853627)
         cf = z + (z * z - 1) / 6 * mu1 / math.sqrt(N) + (z ** 3 - 3 * z) / 24 * mu2 / N - (2 * z ** 3 - 5 * z) / 36 * mu1 ** 2 / N
         stress = math.exp(sig * math.sqrt(N) * cf - 0.5 * sig ** 2 * N) ** (1 / n) - 1
@@ -116,6 +116,24 @@ def amount(r_pct, n):
     """Suma po n metų, kai 1000 EUR investuojama kiekvienų metų pradžioje ir metinė grąža r."""
     r = r_pct / 100
     return sum(1000 * (1 + r) ** k for k in range(1, n + 1))
+
+
+def monthly() -> dict:
+    """Mėnesių pabaigų indeksų eilutės puslapio skaičiuoklei (kid.js): {"e0": "YYYY-MM", "e": [...], "b0": ..., "b": [...]}"""
+    out = {}
+    for k, name in (("e", "MSCI_ACWI"), ("b", "EUR_GOV7Y")):
+        me = sorted(_month_ends(_load()[name]).items())
+        if not me:
+            continue
+        y, m = me[0][0]
+        vals, cur = [], me[0][0]
+        for ym, v in me:
+            if ym != cur:                     # spraga – eilutė nutraukiama
+                break
+            vals.append(float(f"{v:.8g}"))
+            cur = _addm(cur, 1)
+        out[k + "0"], out[k] = f"{y}-{m:02d}", vals
+    return out
 
 
 def official():
@@ -145,7 +163,7 @@ def for_funds(funds: list, today: date | None = None) -> None:
         capped = rhp > MAX_RHP
         rhp = min(rhp, MAX_RHP)
         cost = o["ongoing"] + o["tx"] if o else (f.get("bar") or f.get("fee") or 0.5)
-        k = (round(eq), rhp)
+        k = eq
         end_year = today.year - 1
         if eq < 95 and not have_b:
             f["kid"] = {"rhp": rhp, "eq": eq, "wait": 1}
