@@ -1,7 +1,4 @@
- netinkama data 2026-09-25 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-28 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-29 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-09-30 – praleista
+nkama data 2026-09-30 – praleista
   ! Artea pensija 1989-1995: netinkama data 2026-10-01 – praleista
   ! Artea pensija 1989-1995: netinkama data 2026-10-02 – praleista
   ! Artea pensija 1996-2002: netinkama data 2026-09-25 – praleista
@@ -255,4 +252,9 @@ III pakopa – Vilnius: 2026-10-15 14:47, laukiama diena: 2026-10-14
 SEB: gauta 4 eil., nauja/pakeista 4; viskas iki 2026-10-14
 SWEDBANK: jau atnaujinta iki 2026-10-14
 LUMINOR: jau atnaujinta iki 2026-10-14
+
+Vilnius: 2026-10-15 15:16, laukiama diena: 2026-10-14
+ARTEA: jau atnaujinta iki 2026-10-14
+ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-10-14
+GOINDEX: jau atnaujinta iki 2026-10-14
 
