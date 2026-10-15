@@ -216,7 +216,76 @@
       "ret": 12.38
      }
     ]
-   }
+   },
+   "bench": "SEB index. Klimato ateitis",
+   "cost": 0.6320722992000001,
+   "older": [
+    {
+     "doc": "2023",
+     "from": "2003-01-01",
+     "to": "2022-12-31",
+     "bench": "SEB index. Klimato ateitis (PID 2023)",
+     "cost": 0.58,
+     "s": {
+      "stress": [
+       {
+        "amount": 572,
+        "ret": -42.84
+       },
+       {
+        "amount": 4464,
+        "ret": -13.16
+       },
+       {
+        "amount": 7107,
+        "ret": -10.08
+       }
+      ],
+      "unfav": [
+       {
+        "amount": 604,
+        "ret": -39.57
+       },
+       {
+        "amount": 7155,
+        "ret": -2.49
+       },
+       {
+        "amount": 13495,
+        "ret": -1.33
+       }
+      ],
+      "mod": [
+       {
+        "amount": 1100,
+        "ret": 9.96
+       },
+       {
+        "amount": 11688,
+        "ret": 8.38
+       },
+       {
+        "amount": 26616,
+        "ret": 6.88
+       }
+      ],
+      "fav": [
+       {
+        "amount": 1517,
+        "ret": 51.71
+       },
+       {
+        "amount": 16302,
+        "ret": 15.7
+       },
+       {
+        "amount": 29101,
+        "ret": 7.91
+       }
+      ]
+     }
+    }
+   ]
   },
   {
    "p": "SEB",
@@ -290,7 +359,85 @@
       "ret": 7.73
      }
     ]
-   }
+   },
+   "bench": "SEB pensija 50+",
+   "cost": 1.026520651,
+   "older": [
+    {
+     "doc": "2023",
+     "from": "2007-01-01",
+     "to": "2022-12-31",
+     "bench": "SEB pensija 50+ (PID 2023)",
+     "cost": 1.09,
+     "s": {
+      "stress": [
+       {
+        "amount": 681,
+        "ret": -31.89
+       },
+       {
+        "amount": 4213,
+        "ret": -10.02
+       },
+       {
+        "amount": 7061,
+        "ret": -7.6
+       }
+      ],
+      "unfav": [
+       {
+        "amount": 754,
+        "ret": -24.64
+       },
+       {
+        "amount": 5490,
+        "ret": -2.53
+       },
+       {
+        "amount": 10125,
+        "ret": -1.39
+       }
+      ],
+      "mod": [
+       {
+        "amount": 1054,
+        "ret": 5.43
+       },
+       {
+        "amount": 7422,
+        "ret": 6.11
+       },
+       {
+        "amount": 15941,
+        "ret": 6.07
+       }
+      ],
+      "fav": [
+       {
+        "amount": 1356,
+        "ret": 35.58
+       },
+       {
+        "amount": 9352,
+        "ret": 12.83
+       },
+       {
+        "amount": 18345,
+        "ret": 8.32
+       }
+      ]
+     }
+    }
+   ],
+   "alt": [
+    {
+     "bench": "SEB pensija 50+ (pataisytas SOLEBLS)",
+     "lt": "Pataisytas (SOLEBLS – Bloomberg EUR)",
+     "en": "Corrected (SOLEBLS – Bloomberg EUR)",
+     "note_lt": "Pataisytoje eilutėje SEB SOLEBLS dalies (7 %; iki 2013-06 – JGENVUEG, nekeista) mėnesio grąža pakeista Bloomberg SOLEBLS EUR mėnesio pabaigų grąža (SEB faile iki 2015 m. naudota kita eilutė, todėl 2015-01 šuolis +89,6 %); kiti komponentai ir svoriai – kaip SEB.",
+     "note_en": "In the corrected series the monthly return of SEB’s SOLEBLS component (7 %; JGENVUEG before 2013-06, unchanged) is replaced by the Bloomberg SOLEBLS EUR month-end return (SEB’s file used another series before 2015, hence the +89.6 % jump in 2015-01); other components and weights as SEB."
+    }
+   ]
   },
   {
    "p": "SEB",
