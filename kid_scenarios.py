@@ -196,6 +196,9 @@ def for_funds(funds: list, today: date | None = None) -> None:
         if o:
             kid["off"] = {"doc": o["doc"], "years": o["years"], "s": [[o["s"][sc][i]["ret"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)],
                           "a": [[o["s"][sc][i]["amount"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)], "from": o["from"], "to": o["to"]}
+            pk = lambda x: {"doc": x["doc"], "years": o["years"], "s": [[x["s"][sc][i]["ret"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)],
+                            "a": [[x["s"][sc][i]["amount"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)], "from": x["from"], "to": x["to"]}
+            kid["old"] = [{**pk(x), "bench": x["bench"], "cost": x["cost"]} for x in o.get("older", []) if x["bench"] in bx]   # ankstesni PID – patikrai
         f["kid"] = kid
 
 

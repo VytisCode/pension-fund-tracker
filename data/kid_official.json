@@ -1,5 +1,5 @@
 {
- "_about": "Oficialūs KID (PID) veiklos rezultatų scenarijai iš viešų valdytojų pagrindinės informacijos dokumentų: investuojama 1000 EUR per metus; amount – suma atskaičius išlaidas, EUR; ret – metinė vidutinė grąža, %. eq – akcijų dalis lyginamajame indekse, %. Pildoma ranka (kasmet, išėjus naujiems PID). bench – valdytojo KID skaičiavimo lyginamojo indekso (prieš išlaidas) mėnesių pabaigų eilutė data/kid_bench.csv; cost – tikslios išlaidos, % (einamosios + sandorių), kurias valdytojas naudojo skaičiuodamas.",
+ "_about": "Oficialūs KID (PID) veiklos rezultatų scenarijai iš viešų valdytojų pagrindinės informacijos dokumentų: investuojama 1000 EUR per metus; amount – suma atskaičius išlaidas, EUR; ret – metinė vidutinė grąža, %. eq – akcijų dalis lyginamajame indekse, %. Pildoma ranka (kasmet, išėjus naujiems PID). bench – valdytojo KID skaičiavimo lyginamojo indekso (prieš išlaidas) mėnesių pabaigų eilutė data/kid_bench.csv; cost – tikslios išlaidos, % (einamosios + sandorių), kurias valdytojas naudojo skaičiuodamas. older – ankstesni valdytojo PID (patikrai): savo stebėjimo laikotarpis, indekso eilutė ir išlaidos.",
  "funds": [
   {
    "p": "SEB",
@@ -75,7 +75,74 @@
     ]
    },
    "bench": "SEB pensija 18+",
-   "cost": 1.176988092323284
+   "cost": 1.176988092323284,
+   "older": [
+    {
+     "doc": "2023",
+     "from": "2003-01-01",
+     "to": "2022-12-31",
+     "bench": "SEB pensija 18+ (PID 2023)",
+     "cost": 1.2,
+     "s": {
+      "stress": [
+       {
+        "amount": 579,
+        "ret": -42.05
+       },
+       {
+        "amount": 4536,
+        "ret": -12.79
+       },
+       {
+        "amount": 7256,
+        "ret": -9.77
+       }
+      ],
+      "unfav": [
+       {
+        "amount": 608,
+        "ret": -39.21
+       },
+       {
+        "amount": 7285,
+        "ret": -2.08
+       },
+       {
+        "amount": 13728,
+        "ret": -1.12
+       }
+      ],
+      "mod": [
+       {
+        "amount": 1091,
+        "ret": 9.06
+       },
+       {
+        "amount": 11307,
+        "ret": 7.65
+       },
+       {
+        "amount": 25060,
+        "ret": 6.18
+       }
+      ],
+      "fav": [
+       {
+        "amount": 1497,
+        "ret": 49.72
+       },
+       {
+        "amount": 15597,
+        "ret": 14.73
+       },
+       {
+        "amount": 27256,
+        "ret": 7.15
+       }
+      ]
+     }
+    }
+   ]
   },
   {
    "p": "SEB",

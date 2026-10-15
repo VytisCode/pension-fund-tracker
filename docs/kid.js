@@ -12,6 +12,7 @@ addStrings({
   kidWait: 'Waiting for the bond index data (collected automatically).', kidShort: 'The observation period must be longer than the holding period and fit in the index history: ',
   kidRule: 'Holding period and equity share are our assumption (no KID of the manager): life-cycle funds – years to 65 for the middle of the birth-year group (at least 5, at most 20), asset preservation – 5; pillar III by type.',
   kidPidSrc: 'Defaults are taken from the manager’s KID.',
+  kidOld: (d, a, b, c) => `Check against the earlier KID (${d}): set the observation period ${a} – ${b} – its benchmark series and costs ${c} % are used.`,
   kidBenchNote: 'Benchmark: the series the manager used in its own KID calculation (value before costs, month-ends; received from the manager). If you change the equity share, the proxy below is used instead. Average return each year for 1 year is the scenario return, for longer periods – XIRR of the payments (as in the KID).',
   kidNote: 'Proxy benchmark: equity share × MSCI ACWI EUR Net Return + the rest × synthetic euro area AAA government 7-year bond index (ECB yield curve), rebalanced monthly; month-end values. Not a forecast.',
   kidInfo: 'Method (Regulation (EU) 2017/653 Annex IV as amended by 2021/2268, category 2 product):\n\n• Observation period = RHP + 5 years (at least 10), by default ending on 31 December of the last full year; month-end values. You can enter another period.\n• Costs (ongoing + transaction, % a year): 1/12 is subtracted from every monthly return (as in SEB’s KID calculation).\n• For each period n (1 year, half the RHP rounded, RHP) every overlapping n-year window is taken: moderate = median, favourable = maximum, unfavourable = minimum, also counting windows of 1…n years that end at the period end (their growth is treated as growth over n years).\n• Stress (as SEB): last 60 monthly log returns; σs = 95th (1 year – 99th) percentile (Excel PERCENTILE) of the 12-month rolling population standard deviations; Cornish-Fisher with the skewness and excess kurtosis of those 60 months; the subtracted term 0.5 × σ0² × N uses the overall 60-month σ0; never better than unfavourable.\n• 1,000 € at the start of each year; amount = Σ 1000 × (1 + r)^k; average return each year for longer periods – XIRR of these payments (dates from 2000-01-01, as in the KID).\n\nCheck against SEB KIDs (2026-04-30): with SEB’s own benchmark series (SEB pensija 18+) unfavourable, moderate and favourable match the KID to the cent; the stress scenario matches too. With our proxy, equity funds differ by 0.1–0.3 pp a year. Mixed and bond funds differ more because our bond proxy (7-year AAA government) is not the fund’s bond benchmark.\n\nExcel: sheets “Months” (index, value after costs, log returns, rolling deviations), “Windows” (all windows) and “Calculation” (median, max, min, stress) – all formulas.',
@@ -26,6 +27,7 @@ addStrings({
   kidWait: 'Laukiama obligacijų indekso duomenų (renkami automatiškai).', kidShort: 'Stebėjimo laikotarpis turi būti ilgesnis už laikymo laikotarpį ir tilpti į indekso istoriją: ',
   kidRule: 'Laikymo laikotarpis ir akcijų dalis – mūsų prielaida (valdytojo PID neturime): gyvenimo ciklo fondams – metai iki 65 m. gimimo metų grupės viduriui (ne mažiau 5, ne daugiau 20), turto išsaugojimo – 5; III pakopos – pagal fondo rūšį.',
   kidPidSrc: 'Numatytosios reikšmės paimtos iš valdytojo PID.',
+  kidOld: (d, a, b, c) => `Patikrai su ankstesniu PID (${d}): nustatykite stebėjimą ${a} – ${b} – bus naudojama to PID indekso eilutė ir išlaidos ${String(c).replace('.', ',')} %.`,
   kidBenchNote: 'Lyginamasis indeksas – eilutė, kurią valdytojas naudojo savo PID skaičiavime (vertė prieš išlaidas, mėnesių pabaigos; gauta iš valdytojo). Pakeitus akcijų dalį naudojamas toliau aprašytas pakaitinis indeksas. Metinė vidutinė grąža: 1 metams – scenarijaus grąža, ilgesniems laikotarpiams – įmokų XIRR (kaip PID).',
   kidNote: 'Pakaitinis lyginamasis indeksas: akcijų dalis × MSCI ACWI EUR Net Return + likusi dalis × sintetinis euro zonos AAA vyriausybės 7 m. obligacijų indeksas (ECB pajamingumo kreivė), perbalansuojama kas mėnesį; mėnesių pabaigų vertės. Tai ne prognozė.',
   kidInfo: 'Metodika (Reglamento (ES) 2017/653 IV priedas su 2021/2268 pakeitimais, 2 kategorijos produktas):\n\n• Stebėjimo laikotarpis = RHP + 5 metai (ne mažiau 10), numatytasis – baigiasi paskutinių pilnų metų gruodžio 31 d.; mėnesių pabaigų vertės. Galite įvesti kitą laikotarpį.\n• Išlaidos (einamosios + sandorių, % per metus): iš kiekvieno mėnesio grąžos atimama 1/12 (kaip SEB PID skaičiavime).\n• Kiekvienam laikotarpiui n (1 metai, pusė RHP suapvalinus, RHP) imami visi persidengiantys n metų langai: nuosaikus = mediana, palankus = didžiausias, nepalankus = mažiausias, įskaitant ir 1…n metų langus, kurie baigiasi laikotarpio pabaigoje (jų augimas laikomas n metų augimu).\n• Nepalankiausias (stresinis, kaip SEB): paskutinių 60 mėn. log grąžos; σs = 12 mėn. slenkančių (populiacijos) nuokrypių 95-asis (1 metams – 99-asis) procentilis (Excel PERCENTILE); Cornish-Fisher su tų 60 mėn. asimetrija ir ekscesu; atimamas narys 0,5 × σ0² × N su bendru 60 mėn. σ0; ne geresnis už nepalankų.\n• 1000 € kiekvienų metų pradžioje; suma = Σ 1000 × (1 + r)^k; ilgesnių laikotarpių metinė vidutinė grąža – šių įmokų XIRR (datos nuo 2000-01-01, kaip PID).\n\nPatikra su SEB PID (2026-04-30): su paties SEB lyginamojo indekso eilute (SEB pensija 18+) nepalankus, nuosaikus ir palankus sutampa su PID iki cento; sutampa ir nepalankiausias. Su mūsų pakaitiniu indeksu akcijų fondų skirtumai 0,1–0,3 p. p. per metus. Mišrių ir obligacijų fondų skirtumai didesni, nes mūsų obligacijų indeksas (7 m. AAA vyriausybės) nėra fondo obligacijų lyginamasis indeksas.\n\nExcel: lapai „Mėnesiai“ (indeksas, vertė atskaičius išlaidas, log grąžos, slenkantys nuokrypiai), „Langai“ (visi langai) ir „Skaičiavimai“ (mediana, didžiausias, mažiausias, stresinis) – viskas formulėmis.',
@@ -117,12 +119,14 @@ function renderKid() {
   MODELS.kid = null;
   if (!fs.length || !REP.kidm) { box.innerHTML = ''; return; }
   const f = fs.find(x => kidKey(x) === KS.f) || fs.find(x => x.kid.off) || fs[0], fk = kidKey(f), d = kidDefaults(f), o = KS.o[fk] || {}, p = { ...d, ...o };
+  const old = (f.kid.old || []).find(x => kidYm(x.from.slice(0, 7)) === p.from && kidYm(x.to.slice(0, 7)) === p.to && REP.kidm.x && REP.kidm.x[x.bench]);
+  if (old && p.eq === d.eq) { p.bench = old.bench; if (p.cost === d.cost) p.cost = old.cost; }   // ankstesnio PID laikotarpis – jo indekso eilutė ir išlaidos
+  else p.bench = f.kid.bench && p.eq === d.eq && REP.kidm.x && REP.kidm.x[f.kid.bench] ? f.kid.bench : null;
   const opts = fs.map(x => `<option value="${kidKey(x)}"${x === f ? ' selected' : ''}>${x.pl} · ${shortName(x)}</option>`).join('');
   const inp = (k, v, a) => `<input type="number" data-k="${k}" value="${v}" ${a}>`, mon = (k, v) => `<input type="month" data-k="${k}" value="${kidYs(v)}">`;
   let html = `<div class="controls kidc">${field(S.kidFund, `<select id="kidF">${opts}</select>`)}${field(S.kidRhpY, inp('rhp', p.rhp, 'min="1" max="25" step="1" style="width:5em"'))}`
     + `${field(S.kidEq, inp('eq', p.eq, 'min="0" max="100" step="1" style="width:5em"'))}${field(S.kidCost, inp('cost', p.cost, 'min="0" max="5" step="0.01" style="width:6em"'))}`
     + `${field(S.kidFrom, mon('from', p.from))}${field(S.kidTo, mon('to', p.to))}<button class="btn" type="button" id="kidReset"${Object.keys(o).length ? '' : ' disabled'}>${S.kidReset}</button></div>`;
-  p.bench = f.kid.bench && p.eq === d.eq && REP.kidm.x && REP.kidm.x[f.kid.bench] ? f.kid.bench : null;
   const R = p.eq < 99.9 && !REP.kidm.b && !p.bench ? { wait: 1 } : kidCalc(p);
   if (R.wait) html += `<p class="note">${S.kidWait}</p>`;
   else if (R.err) html += `<p class="note late">${S.kidShort}${R.err}.</p>`;
@@ -130,17 +134,17 @@ function renderKid() {
     const ys = R.ns, rr = ys.map(n => R.per[n].ret), amt = ys.map((n, i) => rr[i].map(v => kidAmt(v, n))), ret = ys.map((n, i) => rr[i].map(v => kidXirr(v, n)));
     html += `<p class="kidi">${S.kidIntro(kidYs(p.from) + '-01', isoEnd(p.to))}</p><h3 class="kidh">${S.kidOurs}: ${f.n}</h3>`
       + `<div class="scroll"><table class="rt kidp">${kidTableHtml(ys, ret, amt, kidPct, kidEur)}</table></div>`;
-    const k = f.kid;
-    if (k.off) {
-      const ov = k.off.s, oa = k.off.a;
-      html += `<h3 class="kidh">${S.kidPid(k.off.doc)}</h3><p class="kidi">${S.kidIntro(k.off.from, k.off.to)}</p>`
-        + `<div class="scroll"><table class="rt kidp">${kidTableHtml(k.off.years, ov, oa, kidPct, kidEur)}</table></div>`;
-      if (k.off.years.every((n, i) => n === ys[i]))
+    const k = f.kid, off = old && p.bench === old.bench ? old : k.off;
+    if (off) {
+      const ov = off.s, oa = off.a;
+      html += `<h3 class="kidh">${S.kidPid(off.doc)}</h3><p class="kidi">${S.kidIntro(off.from, off.to)}</p>`
+        + `<div class="scroll"><table class="rt kidp">${kidTableHtml(off.years, ov, oa, kidPct, kidEur)}</table></div>`;
+      if (off.years.every((n, i) => n === ys[i]))
         html += `<h3 class="kidh">${S.kidDiff}</h3><div class="scroll"><table class="rt kidp">${kidTableHtml(ys, ret.map((r, i) => r.map((v, j) => v - ov[i][j])), amt.map((r, i) => r.map((v, j) => v - oa[i][j])), v => pp(v), v => `${pp(v)} EUR`)}</table></div><p class="note">${S.kidDiffNote}</p>`;
     }
     MODELS.kid = { f, p, R, ret, rr, amt };
   }
-  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${S.kidNote}</p>`;
+  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
   box.innerHTML = html;
   document.getElementById('kidF').onchange = e => { KS.f = e.target.value; kidSave(); renderKid(); };
   document.getElementById('kidReset').onclick = () => { delete KS.o[fk]; kidSave(); renderKid(); };
