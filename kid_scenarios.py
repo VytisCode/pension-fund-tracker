@@ -5,15 +5,17 @@ Metodika (patikrinta su 4 SEB III pakopos PID, 2026-04-30):
 - stebėjimo laikotarpis – RHP + 5 metai (bet ne mažiau 10), baigiasi paskutinių pilnų metų gruodžio 31 d. (6 p.);
 - kainos – pakaitinis lyginamasis indeksas: akcijų dalis × MSCI ACWI EUR Net Return + likusi dalis × sintetinis euro zonos AAA
   vyriausybės obligacijų 7 m. indeksas (indexes.py EUR_GOV7Y), perbalansuojama kas mėnesį; stebėjimai – mėnesių pabaigos;
-- išlaidos (einamosios + sandorių) atimamos kaip metinis tarifas nuo vertės (7 c ii, 39 p.);
+- jei valdytojas pateikė savo KID skaičiavimo lyginamojo indekso eilutę (data/kid_bench.csv, kid_official.json "bench") – naudojama ji;
+- išlaidos (einamosios + sandorių) kaip SEB: iš kiekvieno mėnesio grąžos atimama metinių išlaidų 1/12 (7 c ii, 39 p.);
 - kiekvienam laikotarpiui n (1 m., tarpinis = round(RHP ÷ 2), RHP) – visi persidengiantys n metų langai (7 a);
   vidutinis = mediana, palankus = maksimumas (9–10 p.); nepalankus = minimumas, įtraukiant ir langus, kurie baigiasi laikotarpio
   pabaigoje (1…n metų; trumpesnio lango augimas laikomas n metų augimu – 7 b, 7 c iv, 8 p.);
-- stresinis (18–19 p.): mėnesio log grąžų slenkantis nuokrypis (6 mėn. – 1 m., 12 mėn. – ilgiau), 99 / 95 procentilis,
+- stresinis (18–19 p.): mėnesio log grąžų slenkantis nuokrypis (populiacijos; 6 mėn. – 1 m., 12 mėn. – ilgiau), 99 / 90 procentilis,
   Cornish-Fisher su asimetrija ir eksceso koeficientu; ne geresnis už nepalankų (20 p.);
 - 1000 EUR kiekvienų metų pradžioje; scenarijaus metinė grąža r taikoma visoms įmokoms: suma = Σ 1000 × (1 + r)^k (k = 1…n).
-Patikra: su MSCI ACWI vietoj SEB lyginamojo indekso nepalankus / vidutinis / palankus scenarijai skiriasi 0,1–0,3 p. p. per metus;
-stresinis SEB PID ~3 p. p. švelnesnis (valdytojo nuokrypio skaičiavimas nežinomas).
+Patikra (2026-10-15): su SEB pensija 18+ KID indekso eilute nepalankus / vidutinis / palankus sutampa su PID iki cento;
+stresinis dar nesutampa (8 m. −11,97 % vs PID −10,41 %, 15 m. −9,30 % vs −7,88 %) – laukiama SEB skaičiavimo detalių.
+Su MSCI ACWI vietoj valdytojo indekso skiriasi 0,1–0,3 p. p. per metus.
 """
 import bisect
 import csv
@@ -36,6 +38,17 @@ def _load():
             if r["index"] in s:
                 s[r["index"]][r["date"]] = float(r["value"])
     return {k: sorted(v.items()) for k, v in s.items()}
+
+
+def benches() -> dict:
+    """Valdytojų KID skaičiavimo lyginamųjų indeksų eilutės (prieš išlaidas): {pavadinimas: [(metai, mėnuo), vertė]}"""
+    p = ROOT / "data" / "kid_bench.csv"
+    out = {}
+    if p.exists():
+        with p.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                out.setdefault(r["bench"], {})[(int(r["date"][:4]), int(r["date"][5:7]))] = float(r["value"])
+    return {k: sorted(v.items()) for k, v in out.items()}
 
 
 def _month_ends(pts):
@@ -85,7 +98,9 @@ def scenarios(series, rhp, cost_pct, end_year):
     if len(obs) != obs_years * 12 + 1:
         return None
     c = cost_pct / 100
-    px = {k: vals[k] * math.exp(-c * (i / 12)) for i, k in enumerate(obs)}   # išlaidos – nuo stebėjimo pradžios
+    px = {obs[0]: 1.0}                                # išlaidos – iš kiekvieno mėnesio grąžos atimama c / 12 (kaip SEB)
+    for a, b in zip(obs, obs[1:]):
+        px[b] = px[a] * (vals[b] / vals[a] - c / 12)
     g = lambda a, b: px[b] / px[a]
     mid = int(rhp / 2 + 0.5)
     out = {}
@@ -103,8 +118,8 @@ def scenarios(series, rhp, cost_pct, end_year):
         if n > 1:
             unf = min([unf] + [g(s, last) ** (1 / n) - 1 for s in obs if _addm(last, -12 * n) <= s <= _addm(last, -12)])
         w = 6 if n == 1 else 12
-        vols = sorted(st.stdev(r_all[i:i + w]) for i in range(len(r_all) - w + 1))
-        sig = vols[min(len(vols) - 1, math.ceil(round((0.99 if n == 1 else 0.95) * len(vols), 9)) - 1)]
+        vols = sorted(st.pstdev(r_all[i:i + w]) for i in range(len(r_all) - w + 1))
+        sig = vols[min(len(vols) - 1, math.ceil(round((0.99 if n == 1 else 0.90) * len(vols), 9)) - 1)]
         N, z = 12 * n, (-2.326347874 if n == 1 else -1.644853627)
         cf = z + (z * z - 1) / 6 * mu1 / math.sqrt(N) + (z ** 3 - 3 * z) / 24 * mu2 / N - (2 * z ** 3 - 5 * z) / 36 * mu1 ** 2 / N
         stress = math.exp(sig * math.sqrt(N) * cf - 0.5 * sig ** 2 * N) ** (1 / n) - 1
@@ -133,6 +148,7 @@ def monthly() -> dict:
             vals.append(float(f"{v:.8g}"))
             cur = _addm(cur, 1)
         out[k + "0"], out[k] = f"{y}-{m:02d}", vals
+    out["x"] = {k: {"s0": f"{v[0][0][0]}-{v[0][0][1]:02d}", "v": [float(f"{x:.10g}") for _, x in v]} for k, v in benches().items()}
     return out
 
 
@@ -147,6 +163,7 @@ def for_funds(funds: list, today: date | None = None) -> None:
     data = _load()
     off = {(o["p"], o["n"]): o for o in official()}
     have_b = bool(data["EUR_GOV7Y"])
+    bx = benches()
     cache = {}
     for f in funds:
         o = off.get((f["p"], f["n"]))
@@ -162,18 +179,19 @@ def for_funds(funds: list, today: date | None = None) -> None:
         rhp = o["rhp"] if o else rhp
         capped = rhp > MAX_RHP
         rhp = min(rhp, MAX_RHP)
-        cost = o["ongoing"] + o["tx"] if o else (f.get("bar") or f.get("fee") or 0.5)
-        k = eq
+        cost = o.get("cost", o["ongoing"] + o["tx"]) if o else (f.get("bar") or f.get("fee") or 0.5)
+        bench = o.get("bench") if o and o.get("bench") in bx else None
+        k = bench or eq
         end_year = today.year - 1
-        if eq < 95 and not have_b:
+        if eq < 95 and not have_b and not bench:
             f["kid"] = {"rhp": rhp, "eq": eq, "wait": 1}
             continue
         if k not in cache:
-            cache[k] = blend(eq if have_b else 100, data)   # be obligacijų duomenų – ≥ 95 % akcijų fondai skaičiuojami kaip 100 % akcijų
+            cache[k] = bx[bench] if bench else blend(eq if have_b else 100, data)   # be obligacijų duomenų – ≥ 95 % akcijų fondai skaičiuojami kaip 100 % akcijų
         s = scenarios(cache[k], rhp, cost, end_year)
         if s is None and today.month <= 1:
             s, end_year = scenarios(cache[k], rhp, cost, end_year - 1), end_year - 1
-        kid = {"rhp": rhp, "mid": int(rhp / 2 + 0.5), "eq": eq, "cost": round(cost, 3), "capped": int(capped),
+        kid = {"rhp": rhp, "mid": int(rhp / 2 + 0.5), "eq": eq, "cost": round(cost, 6), "bench": bench, "capped": int(capped),
                "from": f"{end_year - max(rhp + 5, 10) + 1}-01-01", "to": f"{end_year}-12-31", "s": s, "src": "pid" if o else "rule"}
         if o:
             kid["off"] = {"doc": o["doc"], "years": o["years"], "s": [[o["s"][sc][i]["ret"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)],
@@ -182,7 +200,6 @@ def for_funds(funds: list, today: date | None = None) -> None:
 
 
 if __name__ == "__main__":
-    d = _load()
-    s = scenarios(blend(100, d), 15, 1.18, 2025)
-    print("ACWI 100 %, RHP 15, išlaidos 1,18 %:", s)
+    s = scenarios(benches()["SEB pensija 18+"], 15, 1.176988092323284, 2025)
+    print("SEB KID indeksas, RHP 15, išlaidos 1,177 %:", s)
     print("PID SEB pensija 18+: 1 m. [-39.19, -39.19, 8.99, 49.78], 8 m. [-10.40, 0.84, 9.53, 14.79], 15 m. [-7.88, 0.45, 7.85, 11.84]")

@@ -1,5 +1,5 @@
 {
- "_about": "Oficialūs KID (PID) veiklos rezultatų scenarijai iš viešų valdytojų pagrindinės informacijos dokumentų: investuojama 1000 EUR per metus; amount – suma atskaičius išlaidas, EUR; ret – metinė vidutinė grąža, %. eq – akcijų dalis lyginamajame indekse, %. Pildoma ranka (kasmet, išėjus naujiems PID).",
+ "_about": "Oficialūs KID (PID) veiklos rezultatų scenarijai iš viešų valdytojų pagrindinės informacijos dokumentų: investuojama 1000 EUR per metus; amount – suma atskaičius išlaidas, EUR; ret – metinė vidutinė grąža, %. eq – akcijų dalis lyginamajame indekse, %. Pildoma ranka (kasmet, išėjus naujiems PID). bench – valdytojo KID skaičiavimo lyginamojo indekso (prieš išlaidas) mėnesių pabaigų eilutė data/kid_bench.csv; cost – tikslios išlaidos, % (einamosios + sandorių), kurias valdytojas naudojo skaičiuodamas.",
  "funds": [
   {
    "p": "SEB",
@@ -73,7 +73,9 @@
       "ret": 11.84
      }
     ]
-   }
+   },
+   "bench": "SEB pensija 18+",
+   "cost": 1.176988092323284
   },
   {
    "p": "SEB",
