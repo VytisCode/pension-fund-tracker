@@ -45,6 +45,8 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 - **S1 tęsinys – automatizavimas**: LB failai – tools/fetch_lb.py kasdien (lb.lt puslapiai GitHub serveriams grąžina 403, imami tiesioginiai adresai): II ir III pakopos rezultatai ir portfeliai (pf-portfeliai-YYYYMMDD[_].xlsx) randami patys; mokesčių ir lyginamųjų indeksų failų vardai turi nenuspėjamą datą (laukiama savininko nuorodų). Liko rankiniai: MMA (VDA SDMX nėra), valstybės skatinamoji įmoka, Sodros anuitetai, PID skaičiai, fondų atributai.
 
+- **KID scenarijai skaičiuojami patiems (savininkas patvirtino 2026-10-15)**: SEB III pakopos fondų (18+, 50+, 58+, Klimato ateitis) lyginamųjų indeksų eilutes atnaujinti automatiškai, kad lenteles skaičiuotų dashboard. Komponentai ir svoriai – `data/kid_official.json` / atminties kid-scenarios; Solactive ISIN: SOLEUSOV DE000SLA44D6, SOLEUSRC DE000SLA7S63, SOLEUHYC DE000SLA2W47, SOLEBLS DE000SLA8QH7 (originaliai CAD – reikia EUR), SESGGMN DE000SLA7XH5, SCTBGMN DE000SL0E3B1. solactive.com iš Claude aplinkos blokuojamas (403) – pirma patikrinti iš GitHub Actions; jei nepavyks – savininkas atsiųs vertes. Laukia: Copilot atsakymas dėl 50+ 2026 nuosaikaus 11 m. ir nepalankiausio scenarijaus.
+
 ## Senesnės patvirtintos idėjos (prieš imant – patikrinti, ar dar aktualu)
 
 - Ataskaitos: lentelė su vid. vieneto vertės ir indekso pokyčiu bei standartiniais nuokrypiais (6 mėn., 1, 3, 5 m., nuo pradžios) (Meet B13); valdymo mokestis proporcingai laikotarpiui (Meet B16).
