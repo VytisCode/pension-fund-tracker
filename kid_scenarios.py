@@ -115,8 +115,8 @@ def scenarios(series, rhp, cost_pct, end_year):
         if not wins:
             return None
         unf = wins[0]
-        if n > 1:
-            unf = min([unf] + [g(s, last) ** (1 / n) - 1 for s in obs if _addm(last, -12 * n) <= s <= _addm(last, -12)])
+        # kaip SEB: ir „uodegos“ langai, besibaigiantys paskutine data (12 … 12n+1 mėn.)
+        unf = min([unf] + [g(s, last) ** (1 / n) - 1 for s in obs if _addm(last, -12 * n - 1) <= s <= _addm(last, -12)])
         vols = sorted(st.pstdev(rr[i:i + 12]) for i in range(len(rr) - 11))     # kaip SEB: 12 mėn. langai tik paskutinių 60 mėn.
         h = (0.99 if n == 1 else 0.95) * (len(vols) - 1)                          # Excel PERCENTILE (INC)
         sig = vols[int(h)] + (vols[min(int(h) + 1, len(vols) - 1)] - vols[int(h)]) * (h - int(h))
