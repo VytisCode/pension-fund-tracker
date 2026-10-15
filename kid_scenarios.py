@@ -199,6 +199,7 @@ def for_funds(funds: list, today: date | None = None) -> None:
             pk = lambda x: {"doc": x["doc"], "years": o["years"], "s": [[x["s"][sc][i]["ret"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)],
                             "a": [[x["s"][sc][i]["amount"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)], "from": x["from"], "to": x["to"]}
             kid["old"] = [{**pk(x), "bench": x["bench"], "cost": x["cost"]} for x in o.get("older", []) if x["bench"] in bx]   # ankstesni PID – patikrai
+            kid["alt"] = [x for x in o.get("alt", []) if x["bench"] in bx]   # alternatyvios (pataisytos) indekso eilutės
         f["kid"] = kid
 
 

@@ -4,7 +4,7 @@
    numatytosios reikšmės – f.kid (PID, jei turime, arba mūsų taisyklė). Excel – visas skaičiavimas formulėmis. */
 addStrings({
   kidTitle: 'KID performance scenarios', kidLead: 'By the EU key information document method (Regulation 2017/653, Annex IV), in the same layout as the managers’ KIDs: what 1,000 € invested at the start of each year could become after 1 year, about half the recommended holding period and the full period. Choose the fund and, if you wish, change the holding and observation periods, the equity share and costs; the Excel file has the whole calculation as formulas.',
-  kidFund: 'Fund', kidRhpY: 'Holding period, years', kidEq: 'Equities, %', kidCost: 'Costs, % a year', kidFrom: 'Observation from', kidTo: 'to', kidReset: 'Defaults',
+  kidFund: 'Fund', kidSer: 'Benchmark series', kidSerPid: 'As in the manager’s KID', kidRhpY: 'Holding period, years', kidEq: 'Equities, %', kidCost: 'Costs, % a year', kidFrom: 'Observation from', kidTo: 'to', kidReset: 'Defaults',
   kidInv: 'Investment 1,000 EUR a year', kidScH: 'Scenarios', kidRec: '(Recommended holding period)', kidYr: n => `${n} ${n === 1 ? 'year' : 'years'}`,
   kidSc: ['Stress scenario', 'Unfavourable scenario', 'Moderate scenario', 'Favourable scenario'], kidGet: 'What you might get back after costs', kidRet: 'Average return each year', kidPaid: 'Amount invested over time',
   kidIntro: (a, b) => `The scenarios shown are illustrations based on the available historical data of the fund’s benchmark from ${a} to ${b} showing the possible worst, average and best results of the pension fund over the stated periods.`,
@@ -19,7 +19,7 @@ addStrings({
   kidShM: 'Months', kidShW: 'Windows', kidShC: 'Calculation', kidShT: 'Scenarios',
 }, {
   kidTitle: 'KID veiklos rezultatų scenarijai', kidLead: 'Pagal ES pagrindinės informacijos dokumento (KID / PID) metodiką (Reglamentas 2017/653, IV priedas), tokio pat formato lentele kaip valdytojų PID: kiek galėtų tapti 1000 €, investuojamų kiekvienų metų pradžioje, po 1 metų, maždaug pusės rekomenduojamo laikymo laikotarpio ir viso laikotarpio. Pasirinkite fondą ir, jei norite, pakeiskite laikymo ir stebėjimo laikotarpį, akcijų dalį ir išlaidas; Excel faile – visas skaičiavimas formulėmis.',
-  kidFund: 'Fondas', kidRhpY: 'Laikymo laikotarpis, metai', kidEq: 'Akcijos, %', kidCost: 'Išlaidos, % per metus', kidFrom: 'Stebėjimas nuo', kidTo: 'iki', kidReset: 'Numatytieji',
+  kidFund: 'Fondas', kidSer: 'Indekso eilutė', kidSerPid: 'Kaip valdytojo PID', kidRhpY: 'Laikymo laikotarpis, metai', kidEq: 'Akcijos, %', kidCost: 'Išlaidos, % per metus', kidFrom: 'Stebėjimas nuo', kidTo: 'iki', kidReset: 'Numatytieji',
   kidInv: 'Investicija 1 000 EUR per metus', kidScH: 'Scenarijai', kidRec: '(Rekomenduojamas laikymo laikotarpis)', kidYr: n => `${n} ${n % 10 === 0 || (n % 100 > 9 && n % 100 < 21) ? 'metų' : 'metai'}`,
   kidSc: ['Nepalankiausias scenarijus', 'Nepalankus scenarijus', 'Nuosaikus scenarijus', 'Palankus scenarijus'], kidGet: 'Ką galite atgauti atskaičius išlaidas', kidRet: 'Metinė vidutinė grąža', kidPaid: 'Sukaupta investuota suma',
   kidIntro: (a, b) => `Pateikiami scenarijai yra pavyzdžiai, kurie naudojant turimus pensijų fondo lyginamojo indekso istorinius duomenis nuo ${a} iki ${b} d. parodo galimus blogiausius, vidutinius ir geriausius pensijų fondo rezultatus nurodytais laikotarpiais.`,
@@ -122,11 +122,13 @@ function renderKid() {
   const old = (f.kid.old || []).find(x => kidYm(x.from.slice(0, 7)) === p.from && kidYm(x.to.slice(0, 7)) === p.to && REP.kidm.x && REP.kidm.x[x.bench]);
   if (old && p.eq === d.eq) { p.bench = old.bench; if (p.cost === d.cost) p.cost = old.cost; }   // ankstesnio PID laikotarpis – jo indekso eilutė ir išlaidos
   else p.bench = f.kid.bench && p.eq === d.eq && REP.kidm.x && REP.kidm.x[f.kid.bench] ? f.kid.bench : null;
+  const alts = !old && p.bench ? (f.kid.alt || []).filter(x => REP.kidm.x[x.bench]) : [], alt = alts.find(x => x.bench === o.alt);
+  if (alt) p.bench = alt.bench;   // pataisyta indekso eilutė vietoj valdytojo
   const opts = fs.map(x => `<option value="${kidKey(x)}"${x === f ? ' selected' : ''}>${x.pl} · ${shortName(x)}</option>`).join('');
   const inp = (k, v, a) => `<input type="number" data-k="${k}" value="${v}" ${a}>`, mon = (k, v) => `<input type="month" data-k="${k}" value="${kidYs(v)}">`;
   let html = `<div class="controls kidc">${field(S.kidFund, `<select id="kidF">${opts}</select>`)}${field(S.kidRhpY, inp('rhp', p.rhp, 'min="1" max="25" step="1" style="width:5em"'))}`
     + `${field(S.kidEq, inp('eq', p.eq, 'min="0" max="100" step="1" style="width:5em"'))}${field(S.kidCost, inp('cost', p.cost, 'min="0" max="5" step="0.01" style="width:6em"'))}`
-    + `${field(S.kidFrom, mon('from', p.from))}${field(S.kidTo, mon('to', p.to))}<button class="btn" type="button" id="kidReset"${Object.keys(o).length ? '' : ' disabled'}>${S.kidReset}</button></div>`;
+    + `${field(S.kidFrom, mon('from', p.from))}${field(S.kidTo, mon('to', p.to))}${alts.length ? field(S.kidSer, `<select id="kidAlt"><option value="">${S.kidSerPid}</option>${alts.map(x => `<option value="${x.bench}"${x === alt ? ' selected' : ''}>${x[lang] || x.lt}</option>`).join('')}</select>`) : ''}<button class="btn" type="button" id="kidReset"${Object.keys(o).length ? '' : ' disabled'}>${S.kidReset}</button></div>`;
   const R = p.eq < 99.9 && !REP.kidm.b && !p.bench ? { wait: 1 } : kidCalc(p);
   if (R.wait) html += `<p class="note">${S.kidWait}</p>`;
   else if (R.err) html += `<p class="note late">${S.kidShort}${R.err}.</p>`;
@@ -144,9 +146,11 @@ function renderKid() {
     }
     MODELS.kid = { f, p, R, ret, rr, amt };
   }
-  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
+  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${alts.map(x => (lang === 'lt' ? x.note_lt : x.note_en) + ' ').join('')}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
   box.innerHTML = html;
   document.getElementById('kidF').onchange = e => { KS.f = e.target.value; kidSave(); renderKid(); };
+  const ka = document.getElementById('kidAlt');
+  if (ka) ka.onchange = () => { const cur = { ...(KS.o[fk] || {}) }; if (ka.value) cur.alt = ka.value; else delete cur.alt; KS.o[fk] = cur; kidSave(); renderKid(); };
   document.getElementById('kidReset').onclick = () => { delete KS.o[fk]; kidSave(); renderKid(); };
   box.querySelectorAll('input[data-k]').forEach(el => el.addEventListener('change', () => {
     const k = el.dataset.k, cur = { ...(KS.o[fk] || {}) };

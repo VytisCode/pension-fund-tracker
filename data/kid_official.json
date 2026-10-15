@@ -433,6 +433,15 @@
       ]
      }
     }
+   ],
+   "alt": [
+    {
+     "bench": "SEB pensija 58+ (pataisytas SOLEBLS)",
+     "lt": "Pataisytas (SOLEBLS – Bloomberg EUR)",
+     "en": "Corrected (SOLEBLS – Bloomberg EUR)",
+     "note_lt": "Pataisytoje eilutėje SEB SOLEBLS dalies (9 %) mėnesio grąža pakeista Bloomberg SOLEBLS EUR mėnesio pabaigų grąža (SEB faile iki 2015 m. naudota kita eilutė, todėl 2015-01 šuolis +89,6 %); kiti komponentai ir svoriai – kaip SEB.",
+     "note_en": "In the corrected series the monthly return of SEB’s SOLEBLS component (9 %) is replaced by the Bloomberg SOLEBLS EUR month-end return (SEB’s file used another series before 2015, hence the +89.6 % jump in 2015-01); other components and weights as SEB."
+    }
    ]
   }
  ]
