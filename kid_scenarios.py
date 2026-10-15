@@ -10,11 +10,11 @@ Metodika (patikrinta su 4 SEB III pakopos PID, 2026-04-30):
 - kiekvienam laikotarpiui n (1 m., tarpinis = round(RHP ÷ 2), RHP) – visi persidengiantys n metų langai (7 a);
   vidutinis = mediana, palankus = maksimumas (9–10 p.); nepalankus = minimumas, įtraukiant ir langus, kurie baigiasi laikotarpio
   pabaigoje (1…n metų; trumpesnio lango augimas laikomas n metų augimu – 7 b, 7 c iv, 8 p.);
-- stresinis (18–19 p.): mėnesio log grąžų slenkantis nuokrypis (populiacijos; 6 mėn. – 1 m., 12 mėn. – ilgiau), 99 / 90 procentilis,
-  Cornish-Fisher su asimetrija ir eksceso koeficientu; ne geresnis už nepalankų (20 p.);
+- stresinis (18–19 p.), kaip SEB: paskutinių 60 mėn. log grąžos; 12 mėn. slenkančių langų populiacijos nuokrypių
+  99 (1 m.) / 95 (ilgiau) procentilis (Excel PERCENTILE) = σs; Cornish-Fisher su tų 60 mėn. asimetrija ir ekscesu;
+  atimamas narys 0,5 × σ0² × N su bendru 60 mėn. σ0; ne geresnis už nepalankų (20 p.);
 - 1000 EUR kiekvienų metų pradžioje; scenarijaus metinė grąža r taikoma visoms įmokoms: suma = Σ 1000 × (1 + r)^k (k = 1…n).
-Patikra (2026-10-15): su SEB pensija 18+ KID indekso eilute nepalankus / vidutinis / palankus sutampa su PID iki cento;
-stresinis dar nesutampa (8 m. −11,97 % vs PID −10,41 %, 15 m. −9,30 % vs −7,88 %) – laukiama SEB skaičiavimo detalių.
+Patikra (2026-10-15): su SEB pensija 18+ KID indekso eilute visi 4 scenarijai sutampa su PID iki cento.
 Su MSCI ACWI vietoj valdytojo indekso skiriasi 0,1–0,3 p. p. per metus.
 """
 import bisect
@@ -117,12 +117,12 @@ def scenarios(series, rhp, cost_pct, end_year):
         unf = wins[0]
         if n > 1:
             unf = min([unf] + [g(s, last) ** (1 / n) - 1 for s in obs if _addm(last, -12 * n) <= s <= _addm(last, -12)])
-        w = 6 if n == 1 else 12
-        vols = sorted(st.pstdev(r_all[i:i + w]) for i in range(len(r_all) - w + 1))
-        sig = vols[min(len(vols) - 1, math.ceil(round((0.99 if n == 1 else 0.90) * len(vols), 9)) - 1)]
+        vols = sorted(st.pstdev(rr[i:i + 12]) for i in range(len(rr) - 11))     # kaip SEB: 12 mėn. langai tik paskutinių 60 mėn.
+        h = (0.99 if n == 1 else 0.95) * (len(vols) - 1)                          # Excel PERCENTILE (INC)
+        sig = vols[int(h)] + (vols[min(int(h) + 1, len(vols) - 1)] - vols[int(h)]) * (h - int(h))
         N, z = 12 * n, (-2.326347874 if n == 1 else -1.644853627)
         cf = z + (z * z - 1) / 6 * mu1 / math.sqrt(N) + (z ** 3 - 3 * z) / 24 * mu2 / N - (2 * z ** 3 - 5 * z) / 36 * mu1 ** 2 / N
-        stress = math.exp(sig * math.sqrt(N) * cf - 0.5 * sig ** 2 * N) ** (1 / n) - 1
+        stress = math.exp(sig * math.sqrt(N) * cf - 0.5 * M2 * N) ** (1 / n) - 1   # atimamame naryje – bendras 60 mėn. σ (kaip SEB)
         out[n] = [round(100 * min(stress, unf), 2), round(100 * unf, 2), round(100 * st.median(wins), 2), round(100 * wins[-1], 2)]
     return out
 
