@@ -87,6 +87,7 @@ def main() -> None:
         "providers": [{"id": pid, "label": label} for pid, label in PROVIDERS],
         "groups": groups,
         "rf": riskfree.current(),   # €STR Sharpe koeficientui (None, jei ECB nepasiekiamas ir nėra išsaugotos reikšmės)
+        "rfm": riskfree.monthly(),  # €STR mėnesių vidurkiai – Sharpe naudoja laikotarpio vidutinę normą (None – tada paskutinė)
     }
     DOCS.mkdir(exist_ok=True)
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"

@@ -176,6 +176,7 @@ jobs:
           git add data/nav_history.csv data/pillar3_history.csv data/update_state.json data/report_state.json data/last_update_log.txt docs
           # paskutinė gauta €STR norma: jei kitą kartą ECB nepasieks, svetainė naudos ją, o ne 2 %
           if [ -f data/risk_free.json ]; then git add data/risk_free.json; fi
+          if [ -f data/estr_monthly.json ]; then git add data/estr_monthly.json; fi
           if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
           if [ -f data/security_terms.csv ]; then git add data/security_terms.csv; fi
           if [ -f data/indexes.csv ]; then git add data/indexes.csv; fi

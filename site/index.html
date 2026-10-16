@@ -49,7 +49,8 @@
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
-   Valdytojo metų grąža = jo 7 gyvenimo ciklo fondų grąžų vidurkis (kaip „Rezultatų“ lentelės eilutė „Vidurkis“). */
+   Valdytojo metų grąža = jo 7 gyvenimo ciklo fondų grąžų vidurkis (kaip „Rezultatų“ lentelės eilutė „Vidurkis“);
+   papildomai – svertinis pagal fondų paskutinius grynuosius aktyvus (eilutė „Svertinis pagal aktyvus“). */
 if (location.hash.length > 1) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“
 addStrings({
   refL: 'Reference manager:', refNone: 'not chosen', refNote: 'Without a choice, each manager is compared with the median of the others.',
@@ -59,11 +60,12 @@ addStrings({
   sayH: 'In brief', gH: 'Life-cycle groups this year', gM: d => `Return from 31 December to ${d}; the leader and the last fund in each group.`,
   thG: 'Group', thLead: 'Leader', thLast: 'Last', thGap: 'Gap, pp', thRef: r => r,
   s1: (l, lv, w, wv) => `Since the start of the year ${l} has done best: on average ${lv} across the 7 life-cycle groups; ${w} has done worst (${wv}).`,
+  s1w: (l, lv, w, wv) => `Weighted by fund assets (larger funds count more), ${l} leads with ${lv}; ${w} is last (${wv}).`,
   s2: (v, up) => `Over the past week the average life-cycle fund ${up ? 'rose' : 'fell'} ${v}.`,
   s3r: (r, d, k, n) => `${r} is ${d >= 0 ? 'ahead of' : 'behind'} the median of the other managers by ${num(Math.abs(d), 2)} pp this year and ranks ${k} of ${n}.`,
   s3: (p, v) => `Among asset-preservation funds ${p} leads this year (${v}).`,
   bn: 'bn €', mn: 'm €',
-  foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the average of its life-cycle funds. For information only, not investment advice.',
+  foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the simple average of its life-cycle funds (the asset-weighted version is in the summary). For information only, not investment advice.',
 }, {
   refL: 'Lyginamasis valdytojas:', refNone: 'nepasirinktas', refNote: 'Nepasirinkus kiekvienas valdytojas lyginamas su kitų mediana.',
   kLead: 'Metų pradžios lyderis', kLeadS: (w, v) => `paskutinis: ${w} ${v}`, kWeek: 'Savaitė, vidutinis fondas', kWeekS: (b, w) => `geriausiai ${b}, silpniausiai ${w}`,
@@ -72,11 +74,12 @@ addStrings({
   sayH: 'Trumpai', gH: 'Gyvenimo ciklo grupės šiais metais', gM: d => `Grąža nuo gruodžio 31 d. iki ${d}; kiekvienos grupės lyderis ir paskutinis fondas.`,
   thG: 'Grupė', thLead: 'Lyderis', thLast: 'Paskutinis', thGap: 'Skirtumas, p. p.', thRef: r => r,
   s1: (l, lv, w, wv) => `Nuo metų pradžios geriausiai sekasi ${l}: vidutiniškai ${lv} per 7 gyvenimo ciklo grupes; silpniausiai – ${w} (${wv}).`,
+  s1w: (l, lv, w, wv) => `Pasvėrus pagal fondų turtą (didesni fondai sveria daugiau), pirmauja ${l} (${lv}), paskutinis – ${w} (${wv}).`,
   s2: (v, up) => `Per savaitę vidutinis gyvenimo ciklo fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`,
   s3r: (r, d, k, n) => `${r} šiais metais ${d >= 0 ? 'lenkia' : 'atsilieka nuo'} kitų valdytojų medianos ${num(Math.abs(d), 2)} p. p. ir yra ${k} vietoje iš ${n}.`,
   s3: (p, v) => `Tarp turto išsaugojimo fondų šiais metais pirmauja ${p} (${v}).`,
   bn: 'mlrd. €', mn: 'mln. €',
-  foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – jo gyvenimo ciklo fondų vidurkis. Informacinė medžiaga, ne investavimo rekomendacija.',
+  foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo gyvenimo ciklo fondų vidurkis (svertinis pagal turtą – santraukoje). Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 const meanOf = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
 const medianOf = xs => { const a = xs.filter(x => x != null).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
@@ -95,14 +98,16 @@ function groupRets(g, per) {            // {provider: grąža %} grupėje; neatn
 }
 function compute() {
   const ytd = LC.map(g => ({ g, ...groupRets(g, 'ytd') })), wk = LC.map(g => groupRets(g, 'w'));
-  const mgr = PROVS.map(p => ({ id: p, ytd: meanOf(ytd.map(r => r.out[p])), wk: meanOf(wk.map(r => r.out[p])) })).filter(m => m.ytd != null);
+  const wMean = p => { let s = 0, w = 0; ytd.forEach(r => { const v = r.out[p], f = r.g.funds.find(x => x.provider === p); if (v != null && f && f.assets > 0) { s += v * f.assets; w += f.assets; } }); return w > 0 ? s / w : null; };
+  const mgr = PROVS.map(p => ({ id: p, ytd: meanOf(ytd.map(r => r.out[p])), ytdW: wMean(p), wk: meanOf(wk.map(r => r.out[p])) })).filter(m => m.ytd != null);
+  const byYW = mgr.filter(m => m.ytdW != null).sort((a, b) => b.ytdW - a.ytdW);
   const byY = [...mgr].sort((a, b) => b.ytd - a.ytd), byW = [...mgr].filter(m => m.wk != null).sort((a, b) => b.wk - a.wk);
   const end = Math.max(...ytd.map(r => r.end));
   const groups = ytd.map(r => { const xs = Object.entries(r.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); return { g: r.g, xs, gap: xs.length > 1 ? xs[0][1] - xs[xs.length - 1][1] : null, out: r.out }; });
   const allW = wk.flatMap(r => Object.values(r.out)).filter(v => v != null);
   const live = DATA.groups.flatMap(g => g.funds).filter(f => f.assets && f.assetsDate >= end - 10);
   const tu = TURTO ? Object.entries(groupRets(TURTO, 'ytd').out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]) : [];
-  return { mgr, byY, byW, end, groups, wAvg: meanOf(allW), aum: live.reduce((s, f) => s + f.assets, 0), nAum: live.length, aumD: Math.max(...live.map(f => f.assetsDate)), tu };
+  return { mgr, byY, byYW, byW, end, groups, wAvg: meanOf(allW), aum: live.reduce((s, f) => s + f.assets, 0), nAum: live.length, aumD: Math.max(...live.map(f => f.assetsDate)), tu };
 }
 function bars(list, key) {              // mažos horizontalios juostos: nulis per vidurį
   const m = Math.max(...list.map(x => Math.abs(x[key])), 0.01);
@@ -130,6 +135,7 @@ function render() {
   $('big').innerHTML = h;
   $('sayH').textContent = t.sayH;
   const s = [t.s1(labelOf(L.id), pct(L.ytd), labelOf(W.id), pct(W.ytd))];
+  if (c.byYW.length > 1) { const a = c.byYW[0], b = c.byYW[c.byYW.length - 1]; s.push(t.s1w(labelOf(a.id), pct(a.ytdW), labelOf(b.id), pct(b.ytdW))); }
   if (c.wAvg != null) s.push(t.s2(pctPlain(Math.abs(c.wAvg)), c.wAvg >= 0));
   if (R) { const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd)); s.push(t.s3r(labelOf(R.id), d, k, c.byY.length)); }
   else if (c.tu.length) s.push(t.s3(labelOf(c.tu[0][0]), pct(c.tu[0][1])));
