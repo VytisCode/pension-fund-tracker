@@ -537,23 +537,30 @@ function renderAlt() {
   const chg = (a, b) => a && b ? `<td class="${b > a ? 'up' : b < a ? 'down' : ''}">${b > a ? '+' : '−'}${num(Math.abs(b / a - 1) * 100, 2)}${pctSfx()}<br><small class="pfsub" style="font-weight:400">${eur(a)} →<br>${eur(b)}</small></td>` : '<td>–</td>';
   let lastG = null;
   const tb = document.getElementById('altTable');
-  tb.innerHTML = `<thead><tr><th class="l">${T().thFund}</th>${cols.map(i => `<th>${qLabel(i)}</th>`).join('')}<th>${T().thDw}</th>
-    <th>${T().thAltV}</th><th class="l">${T().thAltMix}</th><th>${T().thChgAlt}</th><th>${T().thChgTot}</th></tr>
-    <tr><th></th>${cols.map(() => '<th></th>').join('')}<th></th><th></th><th></th><th colspan="2" style="text-align:center">${T().thChg(qLabel(q0), qLabel(q1))}</th></tr></thead><tbody>`
+  /* antraštės sugrupuotos (savininkas 2026-10-16: „nesuprantu, ką rodo Pokytis, p. p.“): aiškiai – kokio laikotarpio pokytis ir ko */
+  const L = lang === 'lt', mark = i => i === q0 || i === q1 ? ' class="altq"' : '';
+  tb.innerHTML = `<thead><tr><th class="l" rowspan="2">${T().thFund}</th><th colspan="${cols.length}" class="altgh">${L ? 'Alternatyvų dalis portfelyje ketvirčio pabaigoje, %' : 'Alternatives share of the portfolio at quarter end, %'}</th>
+    <th colspan="2" class="altgh">${L ? `Dabar (${qLabel(q1)})` : `Now (${qLabel(q1)})`}</th><th colspan="3" class="altgh altgc">${L ? `Pokytis per laikotarpį ${qLabel(q0)} → ${qLabel(q1)}` : `Change ${qLabel(q0)} → ${qLabel(q1)}`}</th></tr>
+    <tr>${cols.map(i => `<th${mark(i)}>${qLabel(i)}</th>`).join('')}<th>${T().thAltV}</th><th class="l">${T().thAltMix}</th>
+    <th class="altgc">${L ? 'Alternatyvų dalis, p. p.' : 'Alternatives share, pp'}</th><th class="altgc">${L ? 'Alternatyvų vertė' : 'Alternatives value'}</th><th class="altgc">${L ? 'Viso fondo turtas' : 'Whole fund (net assets)'}</th></tr></thead><tbody>`
     + funds.map(f => {
       const sep = pl === 'II' && f.g !== lastG ? `<tr class="sep"><td colspan="${cols.length + 6}">${f.g === 'turto' ? T().turto : T().born + ' ' + f.g.replace('-', '–')}</td></tr>` : '';
       lastG = f.g;
       const a1 = altShare(f, q1), a0 = altShare(f, q0), mix = altMix(f, q1), mt = Object.values(mix).reduce((x, y) => x + y, 0);
       return sep + `<tr data-c="${f.c}"><td class="l">${sw(f.p)}${esc(fundName(f))}</td>${cols.map(i => cell(altShare(f, i))).join('')}
-        <td class="${a1 > a0 ? 'up' : a1 < a0 ? 'down' : ''}">${f.q[q0] ? pp(a1 - a0) : '–'}</td><td>${mt ? eur(mt) : '–'}</td>
+        <td>${mt ? eur(mt) : '–'}</td>
         <td class="l pfsub">${Object.entries(mix).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${T().alts[k]} ${num(v / mt * 100, 2)}${pctSfx()}`).join(' · ')}</td>
-        ${chg(altValue(f, q0), altValue(f, q1))}${chg(f.tot[q0], f.tot[q1])}</tr>`;
+        <td class="altgc ${a1 > a0 ? 'up' : a1 < a0 ? 'down' : ''}">${f.q[q0] ? `${pp(a1 - a0)}<br><small class="pfsub" style="font-weight:400">${num(a0, 1)} → ${num(a1, 1)} %</small>` : '–'}</td>
+        ${chg(altValue(f, q0), altValue(f, q1)).replace('<td class="', '<td class="altgc ').replace('<td>', '<td class="altgc">')}${chg(f.tot[q0], f.tot[q1]).replace('<td class="', '<td class="altgc ').replace('<td>', '<td class="altgc">')}</tr>`;
     }).join('') + '</tbody>';
   tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
     ST.fund = tr.dataset.c; ST.fq = q1; ST.ft = 'alt'; ST.pos = null; fcLimit = 40; save(); renderFund();
     openPane('fcTitle');
   }));
-  document.getElementById('altNote').textContent = (none.length ? T().altNone(none.join(', ')) + ' ' : '') + T().altNote;
+  const why = lang === 'lt'
+    ? `Pokytis – nuo ${qLabel(q0)} iki ${qLabel(q1)} pabaigos (laikotarpį keiskite „Nuo“ ir „Iki“ viršuje; abu ketvirčiai lentelėje pažymėti). „Alternatyvų dalis, p. p.“ – kiek procentinių punktų pasikeitė jų dalis portfelyje; „Alternatyvų vertė“ ir „Viso fondo turtas“ – kiek procentų pasikeitė eurais. Jei fondo turtas sumažėjo (pvz. reformos išmokos), o alternatyvų vertė beveik nesikeitė, jų dalis auga savaime – nes jų negalima greitai parduoti. `
+    : `Change – from the end of ${qLabel(q0)} to the end of ${qLabel(q1)} (change the period with “From” and “To” above; both quarters are marked). “Alternatives share, pp” – how many percentage points their share changed; “Alternatives value” and “Whole fund” – change in euros, %. If the fund’s assets fell (e.g. reform payouts) while the alternatives’ value barely moved, their share rises by itself – they cannot be sold quickly. `;
+  document.getElementById('altNote').textContent = why + (none.length ? T().altNone(none.join(', ')) + ' ' : '') + T().altNote;
 }
 
 /* ---------- 4. palyginimas grupėje ---------- */
@@ -686,15 +693,15 @@ addStrings({
 // pasaulio akcijų fondai išskaidomi į regionus apytiksliais MSCI ACWI / MSCI World svoriais, kad būtų palyginami su tiesiogiai turimomis akcijomis
 const SIM_SPLIT = { glob: { na: 0.67, eu: 0.15, jp: 0.05, ap: 0.025, em: 0.105 }, gdm: { na: 0.75, eu: 0.165, jp: 0.055, ap: 0.03 } };
 function simVectors(f, qi) {
-  const m = f.q[qi], t = f.tot[qi], pos = new Map(), prof = {};
+  const m = f.q[qi], t = f.tot[qi], pos = new Map(), prof = {}, names = new Map();
   m.forEach((x, si) => {
     const w = x.v / t * 100, s = S[si], b = bucket(s);
-    pos.set(s.isin || 'i' + si, (pos.get(s.isin || 'i' + si) || 0) + w);
+    pos.set(s.isin || 'i' + si, (pos.get(s.isin || 'i' + si) || 0) + w); names.set(s.isin || 'i' + si, s);
     if (b !== 'eq') { prof['b:' + b] = (prof['b:' + b] || 0) + w; return; }
     const r = regionOf(s), split = SIM_SPLIT[r];
     if (split) Object.entries(split).forEach(([k, x]) => { prof['r:' + k] = (prof['r:' + k] || 0) + w * x; }); else prof['r:' + r] = (prof['r:' + r] || 0) + w;
   });
-  return { pos, prof };
+  return { pos, prof, names };
 }
 const overlap = (a, b) => { let s = 0; a.forEach((v, k) => { if (b.has(k)) s += Math.min(v, b.get(k)); }); return s; };
 const overlapO = (a, b) => Object.keys(a).reduce((s, k) => s + Math.min(a[k], b[k] || 0), 0);
@@ -712,17 +719,43 @@ function renderSim() {
   const A = fs.map((_, i) => fs.map((_, j) => i === j ? 100 : overlap(V[i].pos, V[j].pos)));
   const B = fs.map((_, i) => fs.map((_, j) => i === j ? 100 : overlapO(V[i].prof, V[j].prof)));
   const avg = M => M.map((r, i) => r.filter((_, j) => j !== i).reduce((s, x) => s + x, 0) / Math.max(1, r.length - 1));
-  const mat = (M, col) => { const av = avg(M);
+  const SM = renderSim.sel || (renderSim.sel = {});
+  const mat = (M, col, mode) => { const av = avg(M);
     return `<table class="pft smt"><thead><tr><th class="l"></th>${fs.map(f => `<th>${sw(f.p)}${f.p}</th>`).join('')}<th>${T().smAvg}</th></tr></thead><tbody>`
-      + M.map((r, i) => `<tr><td class="l">${sw(fs[i].p)}${fs[i].p}</td>${r.map((v, j) => i === j ? '<td class="dg">–</td>' : `<td style="background:color-mix(in srgb, ${col} ${Math.round(v * 0.6)}%, transparent)">${num(v, 1)}</td>`).join('')}<td><b>${num(av[i], 1)}</b></td></tr>`).join('') + '</tbody></table>'; };
+      + M.map((r, i) => `<tr><td class="l">${sw(fs[i].p)}${fs[i].p}</td>${r.map((v, j) => i === j ? '<td class="dg">–</td>' : `<td class="smc${SM.mode === mode && ((SM.i === i && SM.j === j) || (SM.i === j && SM.j === i)) ? ' on' : ''}" data-m="${mode}" data-i="${i}" data-j="${j}" title="${lang === 'lt' ? 'Paspauskite – parodys, kur sutampa' : 'Click to see where they overlap'}" style="background:color-mix(in srgb, ${col} ${Math.round(v * 0.6)}%, transparent)">${num(v, 1)}</td>`).join('')}<td><b>${num(av[i], 1)}</b></td></tr>`).join('') + '</tbody></table>'; };
   let txt = '';
   if (fs.length > 2) {
     const aA = avg(A), u = aA.indexOf(Math.min(...aA)); txt += `<p>${T().smUniq(fs[u].p, num(aA[u], 1))}</p>`;
     const best = M => { let b = [0, 1]; M.forEach((r, i) => r.forEach((v, j) => { if (i < j && v > M[b[0]][b[1]]) b = [i, j]; })); return b; };
     const [i, j] = best(A), [k, l] = best(B);
+    if (SM.g !== ST.sg + qi || SM.i == null || SM.i >= fs.length || SM.j >= fs.length) Object.assign(SM, { g: ST.sg + qi, mode: 'pos', i, j });
     txt += `<p>${T().smPair(fs[i].p, fs[j].p, num(A[i][j], 1))} ${T().smPairP(fs[k].p, fs[l].p, num(B[k][l], 1))}</p>`;
   }
-  document.getElementById('smOut').innerHTML = `<div class="smtxt">${txt}</div><div class="smgrid"><div><h3>${T().smA}</h3><div class="scroll">${mat(A, 'var(--s1)')}</div></div><div><h3>${T().smB}</h3><div class="scroll">${mat(B, 'var(--s3)')}</div></div></div>`;
+  /* kur sutampa (savininkas 2026-10-16): pasirinktos poros bendros pozicijos arba profilio dalys */
+  const L = lang === 'lt';
+  let det = '';
+  if (fs.length > 1 && SM.i != null) {
+    const a = SM.i, b = SM.j, fa = fs[a], fb = fs[b];
+    if (SM.mode === 'pos') {
+      const rows = [...V[a].pos.keys()].filter(k => V[b].pos.has(k)).map(k => ({ s: V[a].names.get(k) || V[b].names.get(k), wa: V[a].pos.get(k), wb: V[b].pos.get(k) }))
+        .map(x => ({ ...x, c: Math.min(x.wa, x.wb) })).sort((x, y) => y.c - x.c);
+      const tot = rows.reduce((t, x) => t + x.c, 0);
+      det = `<h3>${L ? `Kur sutampa ${fa.p} ir ${fb.p}: ${rows.length} bendros pozicijos, bendra dalis ${num(tot, 1)} %` : `Where ${fa.p} and ${fb.p} overlap: ${rows.length} common holdings, overlap ${num(tot, 1)} %`}</h3>`
+        + (rows.length ? `<div class="scroll"><table class="pft smd"><thead><tr><th class="l">${L ? 'Pozicija' : 'Holding'}</th><th>${sw(fa.p)}${fa.p}, %</th><th>${sw(fb.p)}${fb.p}, %</th><th>${L ? 'Bendra dalis (mažesnė), %' : 'Overlap (smaller), %'}</th></tr></thead><tbody>`
+          + rows.slice(0, 30).map(x => `<tr><td class="l">${esc(posLabel(x.s))}</td><td>${num(x.wa, 2)}</td><td>${num(x.wb, 2)}</td><td><b>${num(x.c, 2)}</b></td></tr>`).join('')
+          + (rows.length > 30 ? `<tr><td class="l pfsub" colspan="4">${L ? `ir dar ${rows.length - 30} pozicijos` : `and ${rows.length - 30} more`}</td></tr>` : '') + '</tbody></table></div>'
+          : `<p class="note">${L ? 'Bendrų pozicijų nėra – fondai investuoja per skirtingus fondus ar ETF, net jei regionai panašūs (žr. „Panašus profilis“).' : 'No common holdings – the funds use different funds or ETFs even if regions are similar (see “Similar profile”).'}</p>`);
+    } else {
+      const lab = k => k.startsWith('b:') ? ({ bd: L ? 'Obligacijos' : 'Bonds', alt: L ? 'Alternatyvios' : 'Alternatives', cash: L ? 'Pinigai' : 'Cash', der: L ? 'Išvestinės' : 'Derivatives', oth: L ? 'Kita' : 'Other' })[k.slice(2)] || k.slice(2) : (L ? 'Akcijos: ' : 'Equities: ') + (T().reg[k.slice(2)] || k.slice(2));
+      const keys = [...new Set([...Object.keys(V[a].prof), ...Object.keys(V[b].prof)])].map(k => ({ k, wa: V[a].prof[k] || 0, wb: V[b].prof[k] || 0 })).map(x => ({ ...x, c: Math.min(x.wa, x.wb) })).filter(x => x.wa > 0.05 || x.wb > 0.05).sort((x, y) => Math.max(y.wa, y.wb) - Math.max(x.wa, x.wb));
+      const tot = keys.reduce((t, x) => t + x.c, 0);
+      det = `<h3>${L ? `Profilis: ${fa.p} ir ${fb.p} – sutampa ${num(tot, 1)} %` : `Profile: ${fa.p} and ${fb.p} – ${num(tot, 1)} % alike`}</h3><div class="scroll"><table class="pft smd"><thead><tr><th class="l">${L ? 'Dalis' : 'Component'}</th><th>${sw(fa.p)}${fa.p}, %</th><th>${sw(fb.p)}${fb.p}, %</th><th>${L ? 'Sutampa, %' : 'Overlap, %'}</th><th>${L ? 'Skirtumas, p. p.' : 'Gap, pp'}</th></tr></thead><tbody>`
+        + keys.map(x => `<tr><td class="l">${esc(lab(x.k))}</td><td>${num(x.wa, 1)}</td><td>${num(x.wb, 1)}</td><td><b>${num(x.c, 1)}</b></td><td class="${Math.abs(x.wa - x.wb) >= 5 ? 'down' : ''}">${pp(x.wa - x.wb)}</td></tr>`).join('') + '</tbody></table></div>';
+    }
+  }
+  const hint = `<p class="note">${L ? 'Paspauskite bet kurį lentelės langelį – žemiau atsiras tos poros bendros pozicijos (kairė lentelė) arba profilio palyginimas (dešinė).' : 'Click any cell – the pair’s common holdings (left table) or profile comparison (right) appear below.'}</p>`;
+  document.getElementById('smOut').innerHTML = `<div class="smtxt">${txt}</div><div class="smgrid"><div><h3>${T().smA}</h3><div class="scroll">${mat(A, 'var(--s1)', 'pos')}</div></div><div><h3>${T().smB}</h3><div class="scroll">${mat(B, 'var(--s3)', 'prof')}</div></div></div>${hint}<div class="smdet" id="smDet">${det}</div>`;
+  document.getElementById('smOut').querySelectorAll('td.smc').forEach(td => td.onclick = () => { Object.assign(SM, { mode: td.dataset.m, i: +td.dataset.i, j: +td.dataset.j }); renderSim(); document.getElementById('smDet').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
   document.getElementById('smNote').textContent = T().smNote;
 }
 
