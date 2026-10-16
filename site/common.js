@@ -90,6 +90,7 @@ function renderHeader(active, onLang) {
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
+        <a class="btn" id="opsLink" href="ops.html"></a>
         <a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a>
         <div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div></div></div>
       <button class="btn ico" type="button" id="lang"></button><button class="btn ico" type="button" id="theme"></button></div></div>
@@ -100,7 +101,7 @@ function renderHeader(active, onLang) {
   const sec = SECTIONS.find(s => s.pages.includes(active));
   nav.innerHTML = `<div class="nav">${SECTIONS.map(s => `<a href="${s.pages[0]}.html" data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`).join('')}`
     + `<a href="apie.html" data-s="about" class="nav-about">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`
-    + (sec && sec.pages.length > 1 ? `<div class="subnav">${sec.pages.map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '');
+    + (sec && sec.pages.length > 1 ? `<div class="subnav">${sec.pages.filter(p => p !== 'ops' || active === 'ops').map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '');   // Duomenų kalendorius – įrankių meniu (kolegoms nereikalingas)
   h.after(nav);
   const acts = document.getElementById('actions');
   if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
@@ -120,6 +121,7 @@ function renderHeader(active, onLang) {
     el.lang = lang;
     const t = T();
     document.getElementById('title').textContent = t.siteTitle;
+    document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
     const lb = document.getElementById('lang');
     lb.textContent = lang === 'lt' ? 'EN' : 'LT'; lb.title = lang === 'lt' ? 'English' : 'Lietuviškai'; lb.setAttribute('aria-label', lb.title);

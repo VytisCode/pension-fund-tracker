@@ -54,7 +54,7 @@ function paintCard(c, mr) {
   c.fin.innerHTML = narrow ? c.data.series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
 }
 function render() {
-  kpiRow(kpiII());
+  // KPI eilutė nerodoma – kolegoms triukšmas
   const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
   let latest = 0;
   DATA.groups.forEach(g => {

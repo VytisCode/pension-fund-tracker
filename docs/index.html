@@ -30,6 +30,11 @@
   .glist { width: 100%; border-collapse: collapse; font-size: 13px; }
   .glist td, .glist th { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; }
   .glist td.n, .glist th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .guide h2 { margin: 6px 0 10px; }
+  .gtiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 900px) { .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } } @media (max-width: 560px) { .gtiles { grid-template-columns: 1fr; } }
+  .gtile { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; color: var(--text); text-decoration: none; }
+  .gtile:hover { border-color: var(--accent); } .gtile b { display: block; font-size: 15px; margin-bottom: 4px; } .gtile span { color: var(--text-2); font-size: 13px; line-height: 1.45; }
   .glist i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
 </style>
 </head>
@@ -41,11 +46,12 @@
     <div class="big" id="big"></div>
     <section class="card says" data-src="nav"><h2 id="sayH"></h2><div id="say"></div></section>
     <section class="card" data-src="nav"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
+    <section class="guide"><h2 id="guH"></h2><div class="gtiles" id="guT"></div><p class="note" id="guN"></p></section>
   </main>
   <footer id="foot"></footer>
 </div>
 <script src="data.js?v=f8169c17"></script>
-<script src="common.js?v=1a392780"></script>
+<script src="common.js?v=ca27eb0d"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
@@ -67,6 +73,13 @@ addStrings({
   s3r: (r, d, k, n) => `${r} is ${d >= 0 ? 'ahead of' : 'behind'} the median of the other managers by ${num(Math.abs(d), 2)} pp in this period and ranks ${k} of ${n}.`,
   s3: (p, v) => `Among asset-preservation funds ${p} leads (${v}).`,
   bn: 'bn €', mn: 'm €',
+  guH: 'What you will find', guN: 'Tips: the search box (key /) finds a fund, holding or table; every table and chart has buttons to copy an image (e.g. to Teams or a slide) and download Excel with the calculations; pages are split into tabs under the menu.',
+  gu: [['performance.html', 'Results', 'Whole-market returns and ranks by age group, fund comparison chart, risk, calendar years. Pillars II and III.'],
+    ['manager.html', 'Managers & funds', 'One manager’s summary or one fund’s card: return vs group, fees, assets, portfolio, benchmark.'],
+    ['portfolios.html', 'Portfolios & assets', 'What changed in portfolios this quarter, what makes managers stand out, buys and sells, fund assets and reform payouts.'],
+    ['reports.html', 'Reports', 'Manager report tables: returns since 2019, monthly returns, KPIs, half-year tables, KID scenarios.'],
+    ['journey.html', 'Retirement path', 'A model participant from the first contribution, future scenarios, fee impact and “Which fund to choose?”.'],
+    ['apie.html', 'Methodology & sources', 'Where the data come from, how it is calculated, known limitations.']],
   foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the simple average of its life-cycle funds (the asset-weighted version is in the summary). For information only, not investment advice.',
 }, {
   refL: 'Lyginamasis valdytojas:', refNone: 'nepasirinktas', refNote: 'Nepasirinkus kiekvienas valdytojas lyginamas su kitų mediana.',
@@ -83,6 +96,13 @@ addStrings({
   s3r: (r, d, k, n) => `${r} per šį laikotarpį ${d >= 0 ? 'lenkia' : 'atsilieka nuo'} kitų valdytojų medianos ${num(Math.abs(d), 2)} p. p. ir yra ${k} vietoje iš ${n}.`,
   s3: (p, v) => `Tarp turto išsaugojimo fondų pirmauja ${p} (${v}).`,
   bn: 'mlrd. €', mn: 'mln. €',
+  guH: 'Ką rasite svetainėje', guN: 'Patarimai: paieškos laukelyje (klavišas /) rasite fondą, investiciją ar lentelę; prie kiekvienos lentelės ir grafiko – mygtukai nukopijuoti paveikslėlį (pvz. į Teams ar skaidrę) ir atsisiųsti Excel su skaičiavimais; puslapiai suskirstyti į skirtukus po meniu.',
+  gu: [['performance.html', 'Rezultatai', 'Visos rinkos grąža ir vietos pagal amžiaus grupes, fondų palyginimas grafike, rizika, kalendoriniai metai. II ir III pakopa.'],
+    ['manager.html', 'Valdytojai ir fondai', 'Vieno valdytojo suvestinė arba vieno fondo kortelė: grąža prieš grupę, mokesčiai, turtas, portfelis, lyginamasis indeksas.'],
+    ['portfolios.html', 'Portfeliai ir turtas', 'Kas pasikeitė portfeliuose per ketvirtį, kuo išsiskiria valdytojai, pirkimai ir pardavimai, fondų turtas ir reformos išmokos.'],
+    ['reports.html', 'Ataskaitos', 'Valdytojo ataskaitų lentelės: grąža nuo 2019 m., mėnesių grąža, rezultatų rodikliai, pusmečio lentelės, KID scenarijai.'],
+    ['journey.html', 'Kelias į pensiją', 'Modelinio dalyvio kaupimas nuo pirmos įmokos, ateities scenarijai, mokesčių poveikis ir „Kurį fondą rinktis?“.'],
+    ['apie.html', 'Metodika ir šaltiniai', 'Iš kur duomenys, kaip skaičiuojama, žinomi apribojimai.']],
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo gyvenimo ciklo fondų vidurkis (svertinis pagal turtą – santraukoje). Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 const meanOf = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
@@ -162,6 +182,8 @@ function render() {
   $('gT').innerHTML = `<thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th>${R ? `<th class="n">${labelOf(REF)}</th>` : ''}</tr></thead><tbody>`
     + [...c.groups].reverse().map(g => { const a = g.xs[0], b = g.xs[g.xs.length - 1]; return `<tr><td>${groupLabel(g.g)}</td><td>${sw(a[0])}${labelOf(a[0])}</td><td class="n">${pct(a[1])}</td><td>${sw(b[0])}${labelOf(b[0])}</td><td class="n">${pct(b[1])}</td><td class="n">${num(g.gap, 2)}</td>${R ? `<td class="n">${g.out[REF] == null ? '–' : pct(g.out[REF])}</td>` : ''}</tr>`; }).join('') + '</tbody>';
   cardify($('gT'));
+  $('guH').textContent = t.guH; $('guN').textContent = t.guN;
+  $('guT').innerHTML = t.gu.map(([h, n, d]) => `<a class="gtile" href="${h}"><b>${n} →</b><span>${d}</span></a>`).join('');
   $('foot').textContent = t.foot;
 }
 document.getElementById('per').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; PER = b.dataset.k; try { localStorage.setItem('homePer', PER); } catch (x) {} render(); });

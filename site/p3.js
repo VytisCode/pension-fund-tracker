@@ -332,9 +332,11 @@ function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('ari
 function renderAllParts() {
   document.getElementById('sub').textContent = `${T().navPillar3} · ${T().dataUntil} ${iso(LATEST)} · ${T().updated} ${DATA.generated}`;
   document.getElementById('foot').textContent = T().foot;
-  renderKpis(); renderCards(); renderAll();
+  renderCards(); renderAll();   // KPI eilutė nerodoma – kolegoms triukšmas
   document.getElementById('rddTitle').textContent = T().rddTitle;
   RDD = runupDrawdown(document.getElementById('rdd'), DATA.groups.filter(g => g.funds.length).map(g => ({ id: g.id, label: T().cat[g.id], funds: g.funds })), 'p3', 'equity');
+  const L = lang === 'lt';
+  addSubnav([['groups', L ? 'Kategorijos' : 'Categories'], ['allTitle', L ? 'Visi fondai – rodikliai' : 'All funds – key figures'], ['rddTitle', L ? 'Kilimas ir kritimas' : 'Run-up and drawdown']].map(([id, label]) => ({ id, label })));
 }
 let RDD = null;
 renderHeader('pillar3', () => { sync(); renderAllParts(); });

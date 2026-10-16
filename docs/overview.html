@@ -21,7 +21,7 @@
   <footer id="foot"></footer>
 </div>
 <script src="data.js?v=f8169c17"></script>
-<script src="common.js?v=1a392780"></script>
+<script src="common.js?v=ca27eb0d"></script>
 <script>
 addStrings({
   foot: 'Return = change in unit value over the period (from the value on the starting date to the latest common date within each group); it is not annualised. Different providers\' unit values differ, so funds are compared by percentage return. Net assets show the latest known value. Data is collected automatically from the providers\' websites and APIs; for information only, not investment advice.',
@@ -54,7 +54,7 @@ function paintCard(c, mr) {
   c.fin.innerHTML = narrow ? c.data.series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
 }
 function render() {
-  kpiRow(kpiII());
+  // KPI eilutė nerodoma – kolegoms triukšmas
   const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
   let latest = 0;
   DATA.groups.forEach(g => {
