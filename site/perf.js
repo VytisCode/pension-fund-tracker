@@ -413,7 +413,20 @@ function renderSummary() {
 const medianOf = xs => { const a = xs.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
 const meanOf = xs => { const a = xs.filter(x => x !== null && x !== undefined); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
 const relStyle = v => `background:${heatColor(v * 1.5)}`;
+/* „Visa rinka“: viena lentelė su rodiklio jungikliu (savininko patvirtinta struktūra 2026-10-16); „Visos keturios“ – kaip anksčiau */
+const MV_KEYS = ['ret', 'rank', 'rel', 'ann', 'all'];
+let MV = 'ret'; try { const v = localStorage.getItem('marketView'); if (MV_KEYS.includes(v)) MV = v; } catch (e) {}
+function renderMarketView() {
+  const L = lang === 'lt', lab = L ? { ret: 'Grąža', rank: 'Vieta grupėje', rel: 'Skirtumas nuo konkurentų', ann: 'Metinė grąža', all: 'Visos keturios' } : { ret: 'Return', rank: 'Rank in group', rel: 'Relative to peers', ann: 'Annualised', all: 'All four' };
+  const seg = $('mView'); if (!seg) return;
+  seg.setAttribute('aria-label', L ? 'Rodiklis' : 'Metric');
+  seg.innerHTML = MV_KEYS.map(k => `<button type="button" data-k="${k}" aria-pressed="${k === MV}">${lab[k]}</button>`).join('');
+  seg.onclick = e => { const b = e.target.closest('button'); if (!b) return; MV = b.dataset.k; try { localStorage.setItem('marketView', MV); } catch (er) {} renderMarketView(); };
+  const g = $('mGrid'); g.classList.toggle('one', MV !== 'all');
+  g.querySelectorAll(':scope > [data-m]').forEach(d => { d.hidden = MV !== 'all' && d.dataset.m !== MV; });
+}
 function renderMarket() {
+  renderMarketView();
   $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
   $('hRelM').innerHTML = T().hRelM + ik('relm'); $('hAnnM').innerHTML = T().hAnnM + ik('annm');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;

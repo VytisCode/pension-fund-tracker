@@ -454,3 +454,7 @@ section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
 .nav .nav-about { margin-left: auto; }
 .goflash { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent) !important; transition: box-shadow .3s; }
 @media print { .srch, .subnav { display: none !important; } }
+
+/* „Visa rinka“ – viena lentelė per visą plotį */
+.two.one { grid-template-columns: 1fr !important; }
+.two.one .mx { font-size: 14px; }
