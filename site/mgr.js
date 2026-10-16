@@ -18,7 +18,7 @@ addStrings({
   types: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' },
   hPeers: 'Compared with the group', mPeers: 'Each period ends on the group’s common latest day.', hChart: '3-year return compared with the group', hRisk: 'Risk',
   rVol1: 'Volatility, 1 year', rVol3: 'Volatility, 3 years', rDd3: 'Maximum fall, 3 years', rRisky: 'Risky assets (LB)', rNote: 'Volatility – annualised standard deviation of daily changes; maximum fall – the largest drop from a peak.',
-  dEnd: 'Data to:', selX: 'Extra period:', xNone: 'none', dFrom: 'From', reset: 'Latest',
+  dEnd: 'Data as of:', selX: 'Add period:', xNone: 'none', dFrom: 'From', reset: 'Latest', yeL: 'Year end', qeL: 'Quarter end', shownL: p => `Shown: ${p}`,
   aV: 'Show:', vEur: '€ m', vShare: 'Market share, %', vChg: 'Change over quarter, %', sBoth: 'Pillar II and III', sFII: 'Each pillar II fund', sFIII: 'Each pillar III fund', thDate: 'Date', thSum: 'Total',
   mShare: 'Market share – of the assets of all managers’ funds of the same pillar on that day.', mChg: 'The change includes contributions, payouts and returns.',
   noPf: 'No portfolio data for this fund.', foot: 'Returns are changes in unit value (fees already deducted), not annualised. Funds are compared only within their group. For information only, not investment advice.',
@@ -37,7 +37,7 @@ addStrings({
   types: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' },
   hPeers: 'Palyginimas su grupe', mPeers: 'Kiekvienas laikotarpis baigiasi bendra naujausia grupės diena.', hChart: '3 metų grąža, palyginti su grupe', hRisk: 'Rizika',
   rVol1: 'Svyravimas, 1 metai', rVol3: 'Svyravimas, 3 metai', rDd3: 'Didžiausias kritimas, 3 metai', rRisky: 'Rizikingas turtas (LB)', rNote: 'Svyravimas – metinis dienos pokyčių standartinis nuokrypis; didžiausias kritimas – didžiausias sumažėjimas nuo piko.',
-  dEnd: 'Duomenys iki:', selX: 'Papildomas laikotarpis:', xNone: 'nerodyti', dFrom: 'Nuo', reset: 'Naujausi',
+  dEnd: 'Duomenys iki:', selX: 'Pridėti laikotarpį:', xNone: 'nepridėti', dFrom: 'Nuo', reset: 'Naujausi', yeL: 'Metų pabaiga', qeL: 'Ketvirčio pabaiga', shownL: p => `Rodoma: ${p}`,
   aV: 'Rodyti:', vEur: 'mln. €', vShare: 'Rinkos dalis, %', vChg: 'Pokytis per ketvirtį, %', sBoth: 'II ir III pakopa', sFII: 'Kiekvienas II pakopos fondas', sFIII: 'Kiekvienas III pakopos fondas', thDate: 'Data', thSum: 'Iš viso',
   mShare: 'Rinkos dalis – nuo visų valdytojų tos pačios pakopos fondų turto tą dieną.', mChg: 'Pokytis apima įmokas, išmokas ir grąžą.',
   noPf: 'Šio fondo portfelio duomenų nėra.', foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Fondai lyginami tik savo grupėje. Informacinė medžiaga, ne investavimo rekomendacija.',
@@ -124,7 +124,8 @@ function aumData() {
   const L = aumLines().filter(x => x.fs.length); if (!L.length) return null;
   const last = Math.min(asOf() || Infinity, Math.max(...L.flatMap(x => x.fs.map(f => f.d[f.d.length - 1]))));
   const s0 = L.find(x => x.start), first = Math.min(...(s0 ? [s0] : L).flatMap(x => x.fs.map(f => f.d[0])));
-  const ends = qEnds(first, last), tot = {}, NF = {}, fullN = pl => NF[pl] ??= sumAtN(aumFs(null, pl), last).n;
+  const yrs = { all: 0, '5y': 5, '3y': 3, '1y': 1 }[ST.ar || 'all'], from = ST.ar === 'ytd' ? Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY) : yrs ? shiftMonths(last, 12 * yrs) : first;
+  const ends = qEnds(first, last).filter(d => d >= from - 1), tot = {}, NF = {}, fullN = pl => NF[pl] ??= sumAtN(aumFs(null, pl), last).n;
   const val = (x, d) => { const v = sumAt(x.fs, d); if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
   L.forEach(x => { const raw = ends.map(d => val(x, d)); x.raw = raw; x.vals = ST.av === 'chg' ? raw.map((v, i) => i && v != null && raw[i - 1] ? (v / raw[i - 1] - 1) * 100 : null) : raw; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
   return { L, ends };
@@ -148,8 +149,11 @@ function moneyChart(el, series, unit) {  // paprasta linijinė diagrama (mln. �
 function aumHTML() {
   const t = T(), opt = (id, xs, v) => `<select id="${id}">${xs.map(([k, l]) => `<option value="${k}"${k === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
   const sc = ST.f ? '' : opt('aS', [['both', t.sBoth], ['II', t.optII], ['III', t.optIII], ['fII', t.sFII], ['fIII', t.sFIII]], ST.as);
-  return `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta" id="aumM"></div><div class="pick apick">${sc}${opt('aV', [['eur', t.vEur], ['share', t.vShare], ['chg', t.vChg]], ST.av)}</div>
-    <div class="mchart" id="aumC"></div><div class="lgd" id="aumL"></div><div class="scroll aumt"><table class="mt" id="aumT"></table></div></section>`;
+  const L = lang === 'lt', ar = ST.ar || 'all', rb = [['ytd', T().periods.ytd], ['1y', L ? '1 m.' : '1y'], ['3y', L ? '3 m.' : '3y'], ['5y', L ? '5 m.' : '5y'], ['all', L ? 'Visa istorija' : 'All']];
+  const seg = `<div class="seg aseg" id="aR" role="group" aria-label="${L ? 'Laikotarpis' : 'Period'}">${rb.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${k === ar}">${l}</button>`).join('')}</div>`;
+  /* lentelė paslėpta (savininkas 2026-10-16) – jos skaičiai patenka į diagramos Excel failą */
+  return `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta" id="aumM"></div><div class="pick apick">${sc}${opt('aV', [['eur', t.vEur], ['share', t.vShare], ['chg', t.vChg]], ST.av)}${seg}</div>
+    <div class="mchart" id="aumC"></div><div class="lgd" id="aumL"></div><table class="mt" id="aumT" hidden></table></section>`;
 }
 function drawAum() {
   const t = T(), el = $('aumC'); if (!el) return;
@@ -166,6 +170,7 @@ function drawAum() {
     + `<tbody>${rows.map(r => `<tr><td>${iso(r.d)}</td>${D.L.map(x => `<td class="n">${f(x.vals[r.i])}</td>`).join('')}${tot ? `<td class="n"><b>${f(sum(r.i))}</b></td>` : ''}</tr>`).join('')}</tbody>`;
   $('aS')?.addEventListener('change', e => { ST.as = e.target.value; save(); drawAum(); });
   $('aV').onchange = e => { ST.av = e.target.value; save(); drawAum(); };
+  $('aR').onclick = e => { const b = e.target.closest('button'); if (!b) return; ST.ar = b.dataset.k; save(); $('aR').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); drawAum(); };
 }
 
 /* ---------- portfelis (data_pf.js): naujausias ketvirtis ---------- */
@@ -271,11 +276,19 @@ function render() {
   document.documentElement.style.setProperty('--mc', colorOf(p));
   $('selPL').textContent = t.selP; $('selFL').textContent = t.selF; $('btnA4').textContent = t.a4;
   $('dEndL').textContent = t.dEnd; $('selXL').textContent = t.selX; $('dFromL').textContent = t.dFrom; $('btnLast').textContent = t.reset;
-  const de = $('dEnd'); de.min = iso(EARLIEST); de.max = iso(LATEST); de.value = iso(asOf() || LATEST); $('btnLast').hidden = !asOf();
+  const de = $('dEnd'); de.min = iso(EARLIEST); de.max = iso(LATEST); de.value = iso(asOf() || LATEST);
+  /* „Duomenys iki“: aiškūs pasirinkimai – Naujausi / metų pabaiga / ketvirčio pabaiga / bet kuri data (savininkas 2026-10-16) */
+  $('btnLast').setAttribute('aria-pressed', !asOf());
+  const ye = [], qe = []; for (let y = new Date(LATEST * DAY).getUTCFullYear(); y >= new Date(EARLIEST * DAY).getUTCFullYear(); y--) { [12, 9, 6, 3].forEach(m => { const d = Math.round(Date.UTC(y, m, 0) / DAY); if (d < LATEST && d >= EARLIEST) { qe.push(d); if (m === 12) ye.push(d); } }); }
+  const opt0 = l => `<option value="">${l} ▾</option>`;
+  $('selYE').innerHTML = opt0(t.yeL) + ye.map(d => `<option value="${d}">${iso(d)}</option>`).join(''); $('selYE').value = ye.includes(asOf()) ? String(asOf()) : '';
+  $('selQE').innerHTML = opt0(t.qeL) + qe.map(d => `<option value="${d}">${iso(d)}</option>`).join(''); $('selQE').value = qe.includes(asOf()) && !ye.includes(asOf()) ? String(asOf()) : '';
+  $('selYE').classList.toggle('on', $('selYE').value !== ''); $('selQE').classList.toggle('on', $('selQE').value !== ''); de.classList.toggle('on', !!asOf() && !$('selYE').value && !$('selQE').value);
   const co = calOptions(asOf() || LATEST, EARLIEST), o = (k, l) => `<option value="${k}">${l}</option>`;
   $('selX').innerHTML = o('', t.xNone) + ['1m', '3m', '6m'].map(k => o(k, T().periods[k])).join('') + `<optgroup label="${lang === 'lt' ? 'Ketvirtis' : 'Quarter'}">${co.q.map(k => o(k, periodLabel(k))).join('')}</optgroup><optgroup label="${lang === 'lt' ? 'Metai' : 'Year'}">${co.y.map(k => o(k, periodLabel(k))).join('')}</optgroup>` + o('custom', T().periods.custom);
   if (![...$('selX').options].some(x => x.value === ST.x)) ST.x = '';
   $('selX').value = ST.x; $('fromW').hidden = ST.x !== 'custom';
+  $('shownP').textContent = t.shownL(pers().map(perLabel).join(', '));
   if (ST.x === 'custom') { if (!ST.a || ST.a >= (asOf() || LATEST)) ST.a = shiftMonths(asOf() || LATEST, 12); $('dFrom').min = iso(EARLIEST); $('dFrom').max = iso((asOf() || LATEST) - 1); $('dFrom').value = iso(ST.a); }
   $('selP').innerHTML = PROVS.map(q => `<option value="${q}">${labelOf(q)}</option>`).join(''); $('selP').value = p;
   const ii = fundsII(p), iii = fundsIII(p);
@@ -295,6 +308,7 @@ $('selF').addEventListener('change', e => { ST.f = e.target.value; save(); rende
 const dayIn = v => v ? Math.round(Date.parse(v) / DAY) : 0;
 $('dEnd').addEventListener('change', e => { const d = dayIn(e.target.value); ST.e = d && d < LATEST ? Math.max(d, EARLIEST) : 0; render(); });
 $('btnLast').addEventListener('click', () => { ST.e = 0; render(); });
+['selYE', 'selQE'].forEach(id => $(id).addEventListener('change', e => { const d = +e.target.value; ST.e = d || 0; render(); }));
 $('selX').addEventListener('change', e => { ST.x = e.target.value; save(); render(); });
 $('dFrom').addEventListener('change', e => { const d = dayIn(e.target.value); if (d) { ST.a = d; save(); render(); } });
 $('btnA4').addEventListener('click', () => { const r = document.documentElement; r.dataset.print = 'plain'; r.dataset.printA4 = '1'; setTimeout(() => window.print(), 50); });

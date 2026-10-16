@@ -1114,11 +1114,11 @@ function chartPng(box) {
 }
 function savePng(blob, box) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (chartTitle(box).replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 60) || 'grafikas') + '.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
 function chartTools() {
-  document.querySelectorAll('.chart, .riskmap').forEach(box => {
+  document.querySelectorAll('.chart, .riskmap, .mchart').forEach(box => {
     if (!box.querySelector('svg') || box.querySelector(':scope > .ctools')) return;
     if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
     const t = document.createElement('div'); t.className = 'ctools';
-    const card = box.closest('section, .card'), ctbl = box._xl ? null : card && [...card.querySelectorAll('table')].find(x => x.rows.length > 1);
+    const card = box.closest('section, .card'), ctbl = box._xl ? null : card && [...card.querySelectorAll('table')].find(x => x.rows.length > 1 || x.hidden);
     t.innerHTML = `<button type="button" class="btn ico" data-a="cp" title="${T().cpImg}" aria-label="${T().cpImg}">⧉</button><button type="button" class="btn ico" data-a="png" title="${T().pngImg}" aria-label="${T().pngImg}">⤓</button>`
       + (box._xl || ctbl ? `<button type="button" class="btn ico xl" data-a="xl" title="${T().tXl}" aria-label="${T().tXl}">Excel</button>` : '');
     t.addEventListener('click', async e => {
@@ -1310,7 +1310,7 @@ function tablePng(tbl) {                    // lentelė → PNG: kopija su įter
 let TBL_N = 0;
 function tableTools() {
   document.querySelectorAll('main table, .wrap table').forEach(tbl => {
-    if (tbl._tt || tbl.closest('.ntc, .ttools, header, .fresh') || tbl.rows.length < 2) return;
+    if (tbl._tt || tbl.hidden || tbl.closest('.ntc, .ttools, header, .fresh') || tbl.rows.length < 2) return;
     tbl._tt = true; if (!tbl.id) tbl.id = 'tbl' + (++TBL_N);
     const host = tbl.closest('.scroll') || tbl;
     const t = document.createElement('div'); t.className = 'ttools';

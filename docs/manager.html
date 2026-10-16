@@ -30,6 +30,8 @@
   .mchart { min-height: 220px; }
   .pick .pg { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .pick input[type="date"] { padding: 4px 8px; }
+  .pick select.on, .pick input.on, .pick .btn[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); font-weight: 600; }
+  .aseg { margin-left: 4px; }
   .apick { margin: 6px 0 8px; }
   .lgd { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--text-2); margin-top: 6px; }
   .lgd i { display: inline-block; width: 18px; vertical-align: middle; margin-right: 5px; }
@@ -53,8 +55,8 @@
   <header id="top"></header>
   <main class="mgr">
     <div class="pick bar sticky" id="pickBar"><label for="selP" id="selPL"></label><select id="selP"></select><label for="selF" id="selFL"></label><select id="selF"></select>
-      <span class="pg"><label for="dEnd" id="dEndL"></label><input type="date" id="dEnd"><button class="btn" type="button" id="btnLast" hidden></button></span>
-      <span class="pg"><label for="selX" id="selXL"></label><select id="selX"></select><span id="fromW" hidden><label for="dFrom" id="dFromL"></label> <input type="date" id="dFrom"></span></span>
+      <span class="pg"><span id="dEndL"></span><button class="btn" type="button" id="btnLast"></button><select id="selYE" aria-label="Metų pabaiga"></select><select id="selQE" aria-label="Ketvirčio pabaiga"></select><input type="date" id="dEnd" aria-label="Data"></span>
+      <span class="pg"><label for="selX" id="selXL"></label><select id="selX"></select><span id="fromW" hidden><label for="dFrom" id="dFromL"></label> <input type="date" id="dFrom"></span></span><span class="note" id="shownP"></span>
       <button class="btn" type="button" id="btnA4"></button></div>
     <div class="mband" id="band"></div>
     <div id="body" class="mgr"></div>
@@ -62,10 +64,10 @@
   <footer id="foot"></footer>
 </div>
 <script src="data.js?v=9421480e"></script>
-<script src="common.js?v=9c4c0eb3"></script>
+<script src="common.js?v=1d908ba0"></script>
 <script src="data_rep.js?v=93c0df33"></script>
 <script src="data_pf.js?v=7a086588"></script>
 <script src="data_aum.js?v=3562f2ef"></script>
-<script src="mgr.js?v=32b45f23"></script>
+<script src="mgr.js?v=67b96576"></script>
 </body>
 </html>
