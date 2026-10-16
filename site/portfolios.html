@@ -87,6 +87,7 @@
 <div class="wrap">
   <header id="top"></header>
 
+  <div data-tab="ov">
   <h2 class="sec" id="ovTitle"></h2>
   <p class="lead" id="ovLead"></p>
   <div class="bar pfbar" id="ovBar"></div>
@@ -95,9 +96,11 @@
     <section class="card" data-src="pf"><h3 id="ovOutH"></h3><ul class="ovout" id="ovOut"></ul><p class="note" id="ovOutN"></p></section>
   </div>
   <section class="card" data-src="pf" style="margin-top:12px"><h3 id="ovCmpH"></h3><div class="ovpick" id="ovPick"></div><div class="scroll"><table class="pft ovt" id="ovCmp"></table></div></section>
-  <h2 class="sec" id="detTitle" style="margin-top:28px"></h2>
-  <p class="lead" id="detLead"></p>
+  <h2 class="sec" id="detTitle" hidden></h2>
+  <p class="lead" id="detLead" hidden></p>
+  </div>
 
+  <div data-tab="tc">
   <h2 class="sec" id="tcTitle"></h2>
   <p class="lead" id="tcLead"></p>
   <div class="bar pfbar" id="tcBar"></div>
@@ -105,22 +108,30 @@
     <button type="button" class="btn more" id="tcMore"></button>
     <p class="note" id="tcNote"></p></section>
 
+  </div>
+  <div data-tab="alt">
   <h2 class="sec" id="altTitle"></h2>
   <p class="lead" id="altLead"></p>
   <div class="bar pfbar" id="altBar"></div>
   <section class="card"><div class="meta" id="altChartMeta"></div><div class="chart" id="altChart"></div><div class="legend" id="altLegend" style="margin-top:6px"></div></section>
   <section class="card" data-src="pf" style="margin-top:12px"><div class="scroll"><table class="pft altt" id="altTable"></table></div><p class="note" id="altNote"></p></section>
 
+  </div>
+  <div data-tab="pg">
   <h2 class="sec" id="pgTitle"></h2>
   <p class="lead" id="pgLead"></p>
   <div class="bar pfbar" id="pgBar"></div>
   <section class="card" data-src="pf"><div class="scroll"><table class="pft altt pgt" id="pgTable"></table></div><p class="note" id="pgNote"></p><div class="tools"><button class="btn xls" type="button" id="pgXls"></button></div></section>
 
+  </div>
+  <div data-tab="sm">
   <h2 class="sec" id="smTitle"></h2>
   <p class="lead" id="smLead"></p>
   <div class="bar pfbar" id="smBar"></div>
   <section class="card" data-src="pf"><div id="smOut"></div><p class="note" id="smNote"></p></section>
 
+  </div>
+  <div data-tab="fc">
   <h2 class="sec" id="fcTitle"></h2>
   <p class="lead" id="fcLead"></p>
   <div class="bar pfbar" id="fcBar"></div>
@@ -140,6 +151,7 @@
       <p class="note" id="phNote"></p>
       <div class="scroll"><table class="hist" id="phTable"></table></div>
     </aside>
+  </div>
   </div>
   <footer id="foot"></footer>
 </div>

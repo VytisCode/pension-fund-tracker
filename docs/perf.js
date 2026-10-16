@@ -30,10 +30,10 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `<b>${a}</b> earned the most (${ra}), <b>${z}</b> the least (${rz}); <b>${v}</b> was the least volatile (${rv}).`,
   cCal: (y, a, ra, z, rz) => `In ${y} the best was <b>${a}</b> (${ra}), the weakest <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Over ${y} years savings in the lowest-fee (${lo}) and highest-fee (${hi}) funds differ by <b>${d}</b>.`,
-  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Years & months', 'Market insights'],
+  pnav: ['Whole market', 'Leaders & moves', 'Fund comparison', 'Risk', 'Years & months', 'Market insights'],
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
-  thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
+  thRank: '#', thFund: 'Manager', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
   thInception: 'Inception', thCagr: 'Return p.a. since inception', thVolAll: 'Volatility p.a. since inception', thMddAll: 'Max drawdown since inception',
   thRet1m: '1 mo', thRet3m: '3 mo', thRet6m: '6 mo', thRet1y: '1 yr', thRet3y: '3 yr p.a.', thRet5y: '5 yr p.a.',
   thR1avg: 'Rolling 1-yr: average', thR1min: 'min', thR1max: 'max', thR1pos: '% positive', thYear: 'Year',
@@ -117,10 +117,10 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `Daugiausia uždirbo <b>${a}</b> (${ra}), mažiausiai – <b>${z}</b> (${rz}); mažiausiai svyravo <b>${v}</b> (${rv}).`,
   cCal: (y, a, ra, z, rz) => `${y} m. geriausias – <b>${a}</b> (${ra}), silpniausias – <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Per ${y} ${y >= 10 ? 'metų' : 'metus'} mažiausio (${lo}) ir didžiausio (${hi}) mokesčio fonduose sukauptos sumos skiriasi <b>${d}</b>.`,
-  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Metai ir mėnesiai', 'Rinkos įžvalgos'],
+  pnav: ['Visa rinka', 'Lyderiai ir judesiai', 'Fondų palyginimas', 'Rizika', 'Metai ir mėnesiai', 'Rinkos įžvalgos'],
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
-  thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
+  thRank: '#', thFund: 'Valdytojas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
   thInception: 'Pradžia', thCagr: 'Metinė grąža nuo įsteigimo', thVolAll: 'Svyravimas per metus nuo įsteigimo', thMddAll: 'Didžiausias kritimas nuo įsteigimo',
   thRet1m: '1 mėn.', thRet3m: '3 mėn.', thRet6m: '6 mėn.', thRet1y: '1 metai', thRet3y: '3 metai, metinė', thRet5y: '5 metai, metinė',
   thR1avg: 'Slenkantys 1 metai: vidurkis', thR1min: 'min.', thR1max: 'maks.', thR1pos: '% teigiamų', thYear: 'Metai',
@@ -685,7 +685,7 @@ function renderCoverage(gs, ALL) {
 }
 let lastParts = [];
 // heatmap lentelėse – trumpas pavadinimas, kad neužliptų ant langelių (auditas #18)
-const groupShort = g => g.id === 'turto' && lang === 'lt' ? '<abbr class="tif" title="Turto išsaugojimo fondas">TIF</abbr>' : groupLabel(g);
+const groupShort = g => g.id === 'turto' ? (lang === 'lt' ? 'Turto išsaug.' : 'Preservation') : groupLabel(g);   // be neaiškios santrumpos „TIF“
 const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
@@ -757,8 +757,8 @@ function renderFunds() {
 const RM = { per: null, groups: null, provs: null };
 function renderRiskMap() {
   $('hRisk').innerHTML = T().hRisk + ik('riskmap');
-  if (!RM.per) { RM.per = PERIOD_IDS.includes(P.period) ? P.period : 'ytd'; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id)); }
-  const tools = $('rmTools'), groupsByRisk = DATA.groups;      // turto, 1961 … 2003
+  RM.per = P.period; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id));   // laikotarpis – bendras viršuje (vienas laikotarpio pasirinkimas puslapyje)
+  const tools = $('rmTools'), groupsByRisk = DATA.groups; tools.hidden = true;      // turto, 1961 … 2003
   const chip = (id, on, label, color) => `<button type="button" class="chip" data-id="${id}" aria-pressed="${on}">${color ? `<i style="background:${color}"></i>` : ''}${label}</button>`;
   tools.innerHTML = `<div class="seg" data-k="per" role="group" aria-label="${T().period}">${PERIOD_IDS.map(id => `<button type="button" data-id="${id}" aria-pressed="${id === RM.per}">${T().periods[id]}</button>`).join('')}</div>`
     + `<div class="chips" data-k="groups"><span class="rmlbl">${T().rmGroups}</span>${chip('all', RM.groups.size === DATA.groups.length, T().rmAll)}${groupsByRisk.map(g => chip(g.id, RM.groups.has(g.id), groupLabel(g))).join('')}</div>`
@@ -775,8 +775,8 @@ function renderRiskMap() {
     renderRiskMap();
   };
   const el = $('riskMap'), oneGroup = RM.groups.size === 1;
-  const pts = DATA.groups.filter(g => RM.groups.has(g.id)).flatMap(g => { const rng = rangeAt(g, RM.per); return g.funds.filter(f => RM.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
-  setCap('riskMap', T().capRisk(T().periods[RM.per], pts.length));
+  const pts = DATA.groups.filter(g => RM.groups.has(g.id)).flatMap(g => { const rng = rangeFor(g, false); return g.funds.filter(f => RM.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
+  setCap('riskMap', T().capRisk(periodText(), pts.length));
   renderRiskTable(pts);
   el.innerHTML = ''; el.hidden = true; $('c_riskMap').hidden = true;   // taškinė diagrama pašalinta (savininkas 2026-10-16) – lieka Sharpe lentelė
   return;
@@ -1375,7 +1375,7 @@ function syncView() {
 function winLabel(w) { const v = T()['win' + w]; return typeof v === 'function' ? v(periodText()) : v; }
 function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = winLabel(b.dataset.w); b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
 function labelControls() {
-  kpiRow(IS3 ? kpiIII() : kpiII());
+  // KPI eilutė (fondų / valdytojų skaičius) pašalinta – kolegoms tik triukšmas (savininkas 2026-10-16: „per daug painus“)
   $('periods').setAttribute('aria-label', T().period);
   $('periods').querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
   syncCalSelects();
@@ -1388,7 +1388,7 @@ function labelControls() {
   $('btnCpi').textContent = T().cpiBtn; $('btnCpi').hidden = typeof CPI === 'undefined'; $('btnCpi').setAttribute('aria-pressed', !!P.cpi);
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
-  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || (x.id !== 'hMarket' && x.id !== 'insTitle')));   // vidinė navigacija (auditas #43)
+  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || (x.id !== 'hMarket' && x.id !== 'insTitle')));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1413,7 +1413,7 @@ function syncAll() {
 }
 buildControls(); syncChips();
 if (IS3) {   // III pakopa: valdytojų lentelių ir Sharpe matricos (grupės × valdytojai) nėra – Sharpe yra „Papildomuose rodikliuose“
-  const sm = $('hMarket').closest('section'); if (sm) sm.hidden = true;
+  const sm = $('hMarket').closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; }
   [$('hRisk'), $('c_riskMap'), $('riskMap') && $('riskMap').closest('.card')].forEach(e => { if (e) e.hidden = true; });
   addStrings({ thFund: 'Fund' }, { thFund: 'Fondas' });
 }

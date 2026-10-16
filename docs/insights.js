@@ -217,7 +217,7 @@ async function insXlsx() {
 ['en', 'lt'].forEach(l => Object.assign(I18N[l].info, I18N[l].in.info));
 document.addEventListener('click', e => { if (e.target.closest('.ins-xls')) { e.stopImmediatePropagation(); insXlsx().catch(err => alert('Excel: ' + err)); } }, true);
 /* piešiama tik priartėjus prie skilties – turto duomenys (data_aum.js) nekraunami, kol jų nereikia */
-(() => { const box = document.getElementById('insBody'); if (!box || box.closest('[hidden]')) return;
+(() => { const box = document.getElementById('insBody'); if (!box) return;
   if (!('IntersectionObserver' in window) || location.hash.includes('ins')) return renderInsights();
   document.getElementById('insTitle').textContent = T().in.title;
   const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); renderInsights(); } }, { rootMargin: '600px' }); io.observe(box); })();

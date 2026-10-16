@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
 <meta name="description" content="Lithuanian pension fund portfolios: holdings and quarterly changes">
-<link rel="stylesheet" href="style.css?v=0674dbc3">
+<link rel="stylesheet" href="style.css?v=84b94eff">
 <style>
   .pfbar { margin: 4px 0 12px; }
   table.pft { font-size: 13px; }
@@ -87,6 +87,7 @@
 <div class="wrap">
   <header id="top"></header>
 
+  <div data-tab="ov">
   <h2 class="sec" id="ovTitle"></h2>
   <p class="lead" id="ovLead"></p>
   <div class="bar pfbar" id="ovBar"></div>
@@ -95,9 +96,11 @@
     <section class="card" data-src="pf"><h3 id="ovOutH"></h3><ul class="ovout" id="ovOut"></ul><p class="note" id="ovOutN"></p></section>
   </div>
   <section class="card" data-src="pf" style="margin-top:12px"><h3 id="ovCmpH"></h3><div class="ovpick" id="ovPick"></div><div class="scroll"><table class="pft ovt" id="ovCmp"></table></div></section>
-  <h2 class="sec" id="detTitle" style="margin-top:28px"></h2>
-  <p class="lead" id="detLead"></p>
+  <h2 class="sec" id="detTitle" hidden></h2>
+  <p class="lead" id="detLead" hidden></p>
+  </div>
 
+  <div data-tab="tc">
   <h2 class="sec" id="tcTitle"></h2>
   <p class="lead" id="tcLead"></p>
   <div class="bar pfbar" id="tcBar"></div>
@@ -105,22 +108,30 @@
     <button type="button" class="btn more" id="tcMore"></button>
     <p class="note" id="tcNote"></p></section>
 
+  </div>
+  <div data-tab="alt">
   <h2 class="sec" id="altTitle"></h2>
   <p class="lead" id="altLead"></p>
   <div class="bar pfbar" id="altBar"></div>
   <section class="card"><div class="meta" id="altChartMeta"></div><div class="chart" id="altChart"></div><div class="legend" id="altLegend" style="margin-top:6px"></div></section>
   <section class="card" data-src="pf" style="margin-top:12px"><div class="scroll"><table class="pft altt" id="altTable"></table></div><p class="note" id="altNote"></p></section>
 
+  </div>
+  <div data-tab="pg">
   <h2 class="sec" id="pgTitle"></h2>
   <p class="lead" id="pgLead"></p>
   <div class="bar pfbar" id="pgBar"></div>
   <section class="card" data-src="pf"><div class="scroll"><table class="pft altt pgt" id="pgTable"></table></div><p class="note" id="pgNote"></p><div class="tools"><button class="btn xls" type="button" id="pgXls"></button></div></section>
 
+  </div>
+  <div data-tab="sm">
   <h2 class="sec" id="smTitle"></h2>
   <p class="lead" id="smLead"></p>
   <div class="bar pfbar" id="smBar"></div>
   <section class="card" data-src="pf"><div id="smOut"></div><p class="note" id="smNote"></p></section>
 
+  </div>
+  <div data-tab="fc">
   <h2 class="sec" id="fcTitle"></h2>
   <p class="lead" id="fcLead"></p>
   <div class="bar pfbar" id="fcBar"></div>
@@ -141,11 +152,12 @@
       <div class="scroll"><table class="hist" id="phTable"></table></div>
     </aside>
   </div>
+  </div>
   <footer id="foot"></footer>
 </div>
-<script src="common.js?v=b362548d"></script>
+<script src="common.js?v=1a392780"></script>
 <script src="data_pf.js?v=9f86a25f"></script>
 <script>var PFEE = {"AVI-03/09": 0.5, "AVI-61/67": 0.5, "AVI-68/74": 0.5, "AVI-75/81": 0.5, "AVI-82/88": 0.5, "AVI-89/95": 0.5, "AVI-96/02": 0.5, "AVI-TIPF": 0.2, "INV-03/09": 0.5, "INV-61/67": 0.5, "INV-68/74": 0.5, "INV-75/81": 0.5, "INV-82/88": 0.5, "INV-89/95": 0.5, "INV-96/02": 0.5, "INV-TIPF": 0.2, "GOX-03/09": 0.45, "GOX-61/67": 0.45, "GOX-68/74": 0.45, "GOX-75/81": 0.45, "GOX-82/88": 0.45, "GOX-89/95": 0.45, "GOX-96/02": 0.45, "GOX-TIPF": 0.18, "LMN-03/09": 0.49, "LMN-61/67": 0.49, "LMN-68/74": 0.49, "LMN-75/81": 0.49, "LMN-82/88": 0.49, "LMN-89/95": 0.49, "LMN-96/02": 0.49, "LMN-TIPF": 0.19, "SBN-03/09": 0.5, "SBN-61/67": 0.5, "SBN-68/74": 0.5, "SBN-75/81": 0.5, "SBN-82/88": 0.5, "SBN-89/95": 0.5, "SBN-96/02": 0.5, "SBN-TIPF": 0.2, "SWD-03/09": 0.4, "SWD-61/67": 0.4, "SWD-68/74": 0.4, "SWD-75/81": 0.4, "SWD-82/88": 0.4, "SWD-89/95": 0.4, "SWD-96/02": 0.4, "SWD-TIPF": 0.2, "S021": 1.5, "S022": 1.0, "S032": 0.8, "S033": 0.8, "S058": 0.59, "S056": 0.55, "S057": 0.55, "S019": 0.8, "S028": 1.0, "S040": 0.65, "S050": 0.4, "S059": 0.49, "S017": 0.65, "S018": 0.85, "S049": 0.75, "S051": 0.39, "S046": 0.7, "S047": 0.7, "S048": 0.7, "S052": 0.7, "S053": 0.7, "S054": 0.7};</script>
-<script src="pf.js?v=0b1fa3f1"></script>
+<script src="pf.js?v=ce9b5190"></script>
 </body>
 </html>

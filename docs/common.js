@@ -9,7 +9,7 @@ const I18N = {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
     siteTitle: 'Pension funds', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
     navIndex: 'Today', printCozy: 'Print / PDF (as on screen)', printPlain: 'Print / PDF (white, for presentations)', printed: 'printed', printSrc: 'sources and methodology – page “About”', navApie: 'About', navManager: 'Manager & fund', navReview: 'Monthly review', srcPfx: 'Source:', srcMeth: 'Methodology →', srcT: { nav: 'managers’ unit values', aum: 'managers’ net assets', p3: 'managers’ III pillar values', pf: 'Bank of Lithuania portfolio reports', rep: 'unit values, benchmarks, Bank of Lithuania results report', idx: 'MSCI, S&P, ECB', journey: 'Sodra, State Data Agency, laws', kid: 'SEB KIDs and KID calculation files, SEB unit values, Bloomberg (SOLEBLS EUR), Regulation 2017/653' }, navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
-    thProvider: 'Provider', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
+    thProvider: 'Manager', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
     foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
@@ -23,7 +23,7 @@ const I18N = {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
     siteTitle: 'Pensijų fondai', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
     navIndex: 'Šiandien', printCozy: 'Spausdinti / PDF (kaip ekrane)', printPlain: 'Spausdinti / PDF (baltas, prezentacijoms)', printed: 'atspausdinta', printSrc: 'šaltiniai ir metodika – puslapis „Apie“', navApie: 'Apie', navManager: 'Valdytojas ir fondas', navReview: 'Mėnesio apžvalga', srcPfx: 'Šaltinis:', srcMeth: 'Metodika →', srcT: { nav: 'valdytojų vieneto vertės', aum: 'valdytojų grynieji aktyvai', p3: 'valdytojų III pakopos vertės', pf: 'Lietuvos banko portfelių ataskaitos', rep: 'vieneto vertės, lyginamieji indeksai, LB rezultatų ataskaita', idx: 'MSCI, S&P, ECB', journey: 'Sodra, Valstybės duomenų agentūra, įstatymai', kid: 'SEB PID ir PID skaičiavimo failai, SEB vieneto vertės, Bloomberg (SOLEBLS EUR), Reglamentas 2017/653' }, navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
-    thProvider: 'Tiekėjas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
+    thProvider: 'Valdytojas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
     foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
@@ -251,14 +251,50 @@ function addSubnav(items) {
       const a = e.target.closest('a'); if (!a) return;
       const el = pnTarget(a.dataset.id); if (!el) return;
       e.preventDefault();
+      if (hasTabs()) { showTab(paneOf(el), true); return; }
       const stick = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick')) || 0;
       scrollTo({ top: el.getBoundingClientRect().top + scrollY - stick - 12, behavior: 'smooth' });
     });
     pn.addEventListener('scroll', () => scrollEdges(pn), { passive: true });
     let q = 0; addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(() => { q = 0; pnSpy(); }); }, { passive: true });
   }
-  pn.innerHTML = items.map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
-  pnSpy(); scrollEdges(pn);
+  pn.innerHTML = items.filter(x => !hasTabs() || paneOf(document.getElementById(x.id))).map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
+  pn.classList.toggle('tabs', hasTabs());
+  if (hasTabs()) { if (!TAB_CUR) showTab(tabStart(), false); else markTab(); } else pnSpy();
+  scrollEdges(pn);
+}
+/* ---------- Puslapio skirtukai (savininkas 2026-10-16: „per daug painus“): ilgas puslapis padalijamas į dalis [data-tab],
+   rodoma viena; vidinė navigacija (pnav) tampa skirtukais. Pasirinkimas įsimenamas; paieška (#go=) atidaro reikiamą skirtuką. ---------- */
+let TAB_CUR = null;
+const hasTabs = () => !!document.querySelector('main [data-tab], .wrap > [data-tab]');
+const paneOf = el => { const p = el && el.closest('[data-tab]'); return p ? p.dataset.tab : null; };
+const tabKey = () => 'tab:' + (document.body.dataset.page || location.pathname.split('/').pop());
+function tabStart() {
+  const panes = [...document.querySelectorAll('[data-tab]')].map(p => p.dataset.tab);
+  let k = null; try { k = localStorage.getItem(tabKey()); } catch (e) {}
+  return panes.includes(k) ? k : panes[0];
+}
+function markTab() {
+  const pn = document.querySelector('#snav .pnav'); if (!pn) return;
+  pn.querySelectorAll('a').forEach(a => { const on = paneOf(pnTarget(a.dataset.id)) === TAB_CUR; if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+}
+function openPane(id) {                   // atidaro skirtuką su elementu ir nuslenka prie jo
+  const el = document.getElementById(id); if (!el) return;
+  if (hasTabs() && paneOf(el)) showTab(paneOf(el), true);
+  setTimeout(() => el.scrollIntoView({ block: 'start', behavior: 'smooth' }), 30);
+}
+function showTab(k, user) {
+  if (!k) return;
+  const prev = TAB_CUR; TAB_CUR = k;
+  document.querySelectorAll('[data-tab]').forEach(p => { p.hidden = p.dataset.tab !== k; });
+  document.body.dataset.ptab = k;
+  markTab();
+  if (user) { try { localStorage.setItem(tabKey(), k); } catch (e) {} }
+  if (prev !== k) {
+    window.dispatchEvent(new Event('resize'));           // grafikai perpiešiami pagal matomą plotį
+    if (typeof chartTools === 'function') setTimeout(() => { try { chartTools(); tableTools(); } catch (e) {} }, 60);
+    if (user) { const top = (document.getElementById('snav') || document.body).getBoundingClientRect().bottom + scrollY; if (scrollY > top) scrollTo({ top: Math.max(0, top - 80) }); }
+  }
 }
 const pnTarget = id => { const h = document.getElementById(id); if (!h) return null; const c = h.previousElementSibling; return c && c.classList.contains('concl') ? c : h; };
 function pnSpy() {
@@ -1508,7 +1544,10 @@ function goTo() {
   const find = () => { const byId = document.getElementById(g); if (byId) return byId;
     const n = qNorm(g); return [...document.querySelectorAll('h2, h3, .group-h')].find(h => h.offsetParent !== null && qNorm(h.textContent).startsWith(n)); };
   let tries = 0;
-  const go = () => { const el = find(); if (!el) { if (++tries < 20) setTimeout(go, 250); return; }
+  const find0 = find;
+  const go = () => { const el = document.getElementById(g) || [...document.querySelectorAll('h2, h3, .group-h')].find(h => qNorm(h.textContent).startsWith(qNorm(g))) || find0();
+    if (el && hasTabs() && paneOf(el)) showTab(paneOf(el), true);
+    if (!el || !el.offsetParent) { if (++tries < 20) setTimeout(go, 250); return; }
     el.scrollIntoView({ block: 'start', behavior: 'smooth' }); const box = el.closest('section, .card') || el; box.classList.add('goflash'); setTimeout(() => box.classList.remove('goflash'), 2200); };
   setTimeout(go, 400);
 }

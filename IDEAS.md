@@ -96,3 +96,15 @@ Eiga (žymėti [x]):
 - [x] papildomai: portfelių palyginime – valdymo mokestis ir bendros metinės išlaidos (mokestis + fondų TER), kaip Estijos „ongoing charges“
 - [x] 13 Galutinė patikra (13 puslapių be JS klaidų, be dubliuotų id, telefono plotis), laiškas išsiųstas; priminimai ištrinti
 Laukia: EONIA (būsena „eonia“ šaltinių būsenoje parodys priežastį), Swedbank III kasdienis turtas, SEB III aktyvai iš istorijos CSV (patikrinti po kito paleidimo)
+
+## Ilgas darbas 2: aiškumas kolegoms (savininkas 2026-10-16 19:18)
+Užduotis: grafikų formos; atvaizdavimo, turinio tvarkos, kodo optimizavimo, savarankiškumo problemos; kad galima būtų rodyti kolegoms.
+Priminimai: trig_0153VxEgvSJzky18DwzKZt8W, trig_01AWkujoiQHNckoAQ56D2GgD (ištrinti pabaigoje).
+- [x] Iškreipti grafikai (lentelės įrankių juosta tinklelyje) – pataisyta
+- [x] Puslapių skirtukai (common.js showTab/addSubnav): Rezultatai (II, III), Portfeliai
+- [x] Terminai: Tiekėjas → Valdytojas, TIF → Turto išsaug.; Rezultatuose be KPI eilutės; Sharpe matrica – bendras laikotarpis
+- [ ] Skirtukai: Turtas, Ataskaitos, Kelias į pensiją, III kategorijos, Apie
+- [ ] Navigacija: Duomenų kalendorius – į Įrankius; aiškesni pavadinimai; Pradžioje „Ką rasite“
+- [ ] Kodo valymas (nenaudojamas kodas), greitis
+- [ ] Savarankiškumas: automatinė puslapių patikra kasdieniame paleidime + pranešimas laiške
+- [ ] Galutinė patikra, laiškas

@@ -477,3 +477,10 @@ section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
 #insBody .story { font-size: 14px; line-height: 1.6; max-width: 920px; margin: 0; } #insBody .story p { margin: 0 0 8px; }
 #insBody h3.sub3 { font-size: 15px; margin: 20px 0 8px; } #insBody .down { color: #d0453f; }
 #insBody table.jt { font-size: 13px; } #insBody table.jt th { white-space: normal; vertical-align: bottom; } #insBody table.jt td.l, #insBody table.jt th.l { text-align: left; } #insBody table.jt tr.cur td { font-weight: 650; }
+
+/* Puslapio skirtukai (vidinė navigacija kaip skirtukai) */
+#snav .pnav.tabs a { border-radius: 999px; padding: 5px 13px; font-weight: 500; }
+#snav .pnav.tabs a[aria-current="true"] { background: var(--accent); color: #fff; font-weight: 600; }
+@media print { [data-tab][hidden] { display: block !important; } }
+body[data-ptab="market"] #groupField, body[data-ptab="sum"] #groupField { display: none; }
+body[data-ptab="ins"] #periodbar { display: none; }

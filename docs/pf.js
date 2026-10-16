@@ -356,7 +356,7 @@ function renderTopChanges() {
     const r = shown[+tr.dataset.i];
     const f = r.U.fund || [...r.P.funds].map(c => fundBy[c]).sort((a, b) => ((b.q[ST.q] || new Map()).get(r.P.si)?.v || 0) - ((a.q[ST.q] || new Map()).get(r.P.si)?.v || 0))[0];
     ST.fund = f.c; ST.fq = f.q[ST.q] ? ST.q : ST.q - 1; ST.pos = r.P.si; ST.ft = 'all'; save(); renderFund();
-    document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
+    openPane('fcTitle');
   }));
   const more = document.getElementById('tcMore');
   more.style.display = rows.length > tcLimit ? '' : 'none';
@@ -551,7 +551,7 @@ function renderAlt() {
     }).join('') + '</tbody>';
   tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
     ST.fund = tr.dataset.c; ST.fq = q1; ST.ft = 'alt'; ST.pos = null; fcLimit = 40; save(); renderFund();
-    document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
+    openPane('fcTitle');
   }));
   document.getElementById('altNote').textContent = (none.length ? T().altNone(none.join(', ')) + ' ' : '') + T().altNote;
 }
@@ -595,7 +595,7 @@ function renderPeers() {
     + rows.map(r => `<tr data-c="${r.f.c}"><td class="l">${sw(r.f.p)}${esc(ST.pg === 'III' ? fundName(r.f) : r.f.p)}</td>${cols.map(([k]) => cell(r, k)).join('')}</tr>`).join('') + '</tbody>';
   tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
     ST.fund = tr.dataset.c; ST.fq = qi; ST.ft = 'all'; ST.pos = null; fcLimit = 40; save(); renderFund();
-    document.getElementById('fcTitle').scrollIntoView({ behavior: 'smooth' });
+    openPane('fcTitle');
   }));
   document.getElementById('pgNote').textContent = T().pgNote;
   const xb = document.getElementById('pgXls'); xb.textContent = '⤓ ' + (lang === 'lt' ? 'Excel su formulėmis' : 'Excel with formulas'); xb.onclick = () => pgXls().catch(err => alert('Excel: ' + err));
@@ -829,8 +829,8 @@ function renderOverview() {
   const outs = ovOutliers(q1);
   document.getElementById('ovOut').innerHTML = outs.length ? outs.map((x, i) => `<li><button type="button" class="ovo" data-i="${i}" title="${o.toFund}">${x.html}</button><button type="button" class="ovg" data-i="${i}">${o.cmpG}</button></li>`).join('') : `<li>${o.outNone}</li>`;
   document.getElementById('ovOutN').textContent = o.outNote;
-  document.getElementById('ovOut').querySelectorAll('.ovg').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; OV.sel = FUNDS.filter(f => f.pl === OV.pl && ogOf(f) === x.g && f.q[q1]).map(f => f.c); ovSave(); renderCompare(); document.getElementById('ovCmpH').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
-  document.getElementById('ovOut').querySelectorAll('.ovo').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; ST.fund = x.f.c; ST.fq = x.f.q[q1] ? q1 : x.f.last; ST.pos = null; ST.ft = 'all'; save(); renderFund(); document.getElementById('fcTitle').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+  document.getElementById('ovOut').querySelectorAll('.ovg').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; OV.sel = FUNDS.filter(f => f.pl === OV.pl && ogOf(f) === x.g && f.q[q1]).map(f => f.c); ovSave(); renderCompare(); openPane('ovCmpH'); });
+  document.getElementById('ovOut').querySelectorAll('.ovo').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; ST.fund = x.f.c; ST.fq = x.f.q[q1] ? q1 : x.f.last; ST.pos = null; ST.ft = 'all'; save(); renderFund(); openPane('fcTitle'); });
   renderCompare();
 }
 function renderCompare() {
@@ -861,6 +861,9 @@ function renderAll() {
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
   ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'smTitle', 'smLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
   renderOverview(); renderTopChanges(); renderAlt(); renderPeers(); renderSim(); renderFund();
+  const L = lang === 'lt';   // skirtukai (savininkas 2026-10-16: „per daug painus“) – viena dalis vienu metu
+  addSubnav([['ovTitle', L ? 'Ketvirčio apžvalga' : 'Quarter overview'], ['tcTitle', L ? 'Pirkimai ir pardavimai' : 'Buys and sells'], ['altTitle', L ? 'Alternatyvios' : 'Alternatives'],
+    ['pgTitle', L ? 'Palyginimas grupėje' : 'Peer comparison'], ['smTitle', L ? 'Panašumas' : 'Similarity'], ['fcTitle', L ? 'Fondo portfelis' : 'Fund portfolio']].map(([id, label]) => ({ id, label })));
 }
 renderHeader('portfolios', renderAll);
 renderAll();
@@ -869,13 +872,13 @@ function openPos() {
   let si = null, fc = null; try { const q = new URLSearchParams(location.hash.slice(1)); si = q.get('pos'); fc = q.get('fund'); } catch (e) {}
   if (fc && fundBy[fc]) {               // „portfolios.html#fund=KODAS“ – iš fondo kortelės (Valdytojai ir fondai)
     ST.fund = fc; ST.fq = fundBy[fc].last; ST.pos = null; ST.ft = 'all'; save(); renderFund();
-    setTimeout(() => { const el = document.getElementById('fcTitle'); if (el) el.scrollIntoView({ block: 'start' }); }, 150); return;
+    setTimeout(() => { openPane('fcTitle'); }, 150); return;
   }
   if (si == null || !S[+si]) return; si = +si;
   let best = null; FUNDS.forEach(f => { const qi = f.last, x = f.q[qi] && f.q[qi].get(si); if (x && f.tot[qi] && (!best || x.v / f.tot[qi] > best.w)) best = { f, w: x.v / f.tot[qi] }; });
   if (!best) return;
   ST.fund = best.f.c; ST.fq = best.f.last; ST.pos = si; ST.ft = 'all'; save(); renderFund();
-  setTimeout(() => { const el = document.getElementById('fcTitle'); if (el) el.scrollIntoView({ block: 'start' }); }, 150);
+  setTimeout(() => { openPane('fcTitle'); }, 150);
 }
 openPos(); addEventListener('hashchange', openPos);
 let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { renderPosition.paint && renderPosition.paint(); renderAlt.paint && renderAlt.paint(); }, 120); });

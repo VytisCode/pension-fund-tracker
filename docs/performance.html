@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=0674dbc3">
+<link rel="stylesheet" href="style.css?v=84b94eff">
 </head>
 <body>
 <div class="wrap">
@@ -24,17 +24,10 @@
     <div class="seg" id="periods" role="group"></div>
     <div class="dates"><label class="field"><span id="lblFrom"></span><input type="date" id="from"></label>
     <label class="field"><span id="lblTo"></span><input type="date" id="to"></label></div>
+    <label class="field" id="groupField"><span id="lblGroup"></span><select id="group"></select></label>
   </div>
 
-  <section class="sec" data-src="nav">
-    <h2 id="hSum"></h2>
-    <div class="tools" style="margin:0 0 10px"><div class="seg" id="sumWin" role="group"></div></div>
-    <div id="sumText"></div>
-    <div class="cap" id="c_tSum"></div><div class="card scroll"><table class="metrics" id="tSum"></table></div>
-    <p class="note" id="nSum"></p>
-  </section>
-
-  <section class="sec" data-src="nav">
+  <section class="sec" data-src="nav" data-tab="market">
     <h2 id="hMarket"></h2>
     <div class="meta" id="mMarket"></div>
     <div class="tools" style="margin:6px 0 4px"><button class="btn" type="button" id="btnGx" aria-pressed="false"></button> <button class="btn xls" type="button" id="btnMxl"></button></div>
@@ -54,10 +47,17 @@
     <p class="note" id="nMarket"></p>
   </section>
 
-  <section class="sec" data-src="nav">
+  <section class="sec" data-src="nav" data-tab="sum">
+    <h2 id="hSum"></h2>
+    <div class="tools" style="margin:0 0 10px"><div class="seg" id="sumWin" role="group"></div></div>
+    <div id="sumText"></div>
+    <div class="cap" id="c_tSum"></div><div class="card scroll"><table class="metrics" id="tSum"></table></div>
+    <p class="note" id="nSum"></p>
+  </section>
+
+  <section class="sec" data-src="nav" data-tab="fund">
     <h2 id="hFund"></h2>
     <div class="bar" style="margin-bottom:12px">
-      <label class="field" id="groupField"><span id="lblGroup"></span><select id="group"></select></label>
       <div class="chips" id="chips"></div>
     </div>
     <p class="note" id="allNote" hidden></p>
@@ -84,12 +84,25 @@
     <div class="group-h" id="hMetrics"></div>
     <div class="cap" id="c_tMetrics"></div><div class="card scroll"><table class="metrics" id="tMetrics"></table></div>
     <div class="tools" style="margin:6px 0 14px"><button class="btn xls" type="button" id="btnMetXl"></button></div>
+    <div class="tools" id="optional-toggle"><button class="btn" type="button" id="btnAdv" aria-pressed="false"></button></div>
+    <div class="adv" id="adv">
+      <div class="card scroll">
+        <div class="tools" style="margin:0 0 10px"><label class="field"><span id="lblRf"></span><input class="small-in" type="number" id="rf" step="0.01" min="-2" max="20"> %</label><span id="rfInfo"></span><button class="btn" type="button" id="rfAuto" hidden></button></div>
+        <div class="cap" id="c_tAdv"></div><table class="metrics" id="tAdv"></table>
+      </div>
+      <p class="note" id="nAdv"></p>
+    </div>
+    <p class="note" id="nFund"></p>
+  </section>
+  <section class="sec" data-src="nav" data-tab="risk">
     <div class="group-h" id="hRisk"></div>
     <div class="cap" id="c_riskMap"></div><div class="card"><div class="rmtools" id="rmTools"></div><div class="riskmap" id="riskMap"></div><div class="scroll" style="margin-top:14px"><table class="mx" id="rmTable"></table></div><p class="note" id="rmNote"></p></div>
     <div class="group-h" id="hRel" hidden></div>
     <div class="cap" id="c_relGrid" hidden></div><div class="relgrid" id="relGrid" hidden></div>
     <div class="group-h" id="hDd"></div>
     <div class="card" id="rddCard"></div>
+  </section>
+  <section class="sec" data-src="nav" data-tab="ym">
     <!-- „Metai ir mėnesiai“ (savininko patvirtinta struktūra 2026-10-16): kalendoriniai metai, mėnesiai, slenkanti grąža ir vieno fondo mėnesiai – viena kortelė su jungikliu -->
     <div class="group-h ymh"><span id="hYM"></span><div class="seg" id="ymTabs" role="group"></div></div>
     <div data-ym="cal">
@@ -110,19 +123,10 @@
     </div>
     <div class="group-h" id="hQP"></div>
     <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
-
-    <div class="tools" id="optional-toggle"><button class="btn" type="button" id="btnAdv" aria-pressed="false"></button></div>
-    <div class="adv" id="adv">
-      <div class="card scroll">
-        <div class="tools" style="margin:0 0 10px"><label class="field"><span id="lblRf"></span><input class="small-in" type="number" id="rf" step="0.01" min="-2" max="20"> %</label><span id="rfInfo"></span><button class="btn" type="button" id="rfAuto" hidden></button></div>
-        <div class="cap" id="c_tAdv"></div><table class="metrics" id="tAdv"></table>
-      </div>
-      <p class="note" id="nAdv"></p>
-    </div>
-    <p class="note" id="nFund"></p>
   </section>
+
   <!-- Rinkos įžvalgos (perkelta iš „Kelio į pensiją“, savininko patvirtinta struktūra 2026-10-16); duomenys kraunami tik priartėjus prie skilties -->
-  <section class="sec" id="insSec" data-src="aum"><h2 class="sec" id="insTitle"></h2><p class="lead" id="insLead"></p><div id="insBody"></div></section>
+  <section class="sec" id="insSec" data-src="aum" data-tab="ins"><h2 class="sec" id="insTitle"></h2><p class="lead" id="insLead"></p><div id="insBody"></div></section>
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
@@ -131,8 +135,8 @@
 <script src="data_fee.js?v=0e639ac4"></script>
 <script src="data_cpi.js?v=870ec578"></script>
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=b362548d"></script>
-<script src="perf.js?v=54d17bfe"></script>
+<script src="common.js?v=1a392780"></script>
+<script src="perf.js?v=e1928215"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');
@@ -140,7 +144,7 @@ var shortFund = f => f.replace(/ tikslinės grupės pensijų fondas/, '').replac
 var pc = (x, p = 2) => (x < 0 ? '−' : '') + num(Math.abs(x) * 100, 2) + pctSfx(), field = (label, html) => `<label class="field">${label} ${html}</label>`;
 var seg = (id, opts, cur) => `<div class="seg" role="group" data-seg="${id}">` + opts.map(([v, t]) => `<button type="button" data-v="${v}" aria-pressed="${v === cur}">${t}</button>`).join('') + '</div>';
 var kpi = (l, v, s, cls = '') => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`, loadXlsx = () => Promise.resolve();
-if (typeof window.PL3 !== 'undefined') document.getElementById('insSec').hidden = true;</script>
-<script src="insights.js?v=5508c3ae"></script>
+if (typeof window.PL3 !== 'undefined') document.getElementById('insSec').remove();   // III pakopai rinkos įžvalgų nėra</script>
+<script src="insights.js?v=bcffaaa7"></script>
 </body>
 </html>
