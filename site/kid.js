@@ -40,6 +40,8 @@ addStrings({
   kidPidLead: d => `What 1,000 € a year could become after costs, from the same data period: published by SEB, recalculated by us the SEB way, and calculated correctly. The small number under an amount is the average return each year.`,
   kidCmpH: ['Scenario', 'Period', 'Published by SEB (KID)', 'SEB’s method – our check', 'Correct, by the regulation ✓', 'Difference: correct − published'],
   kidCmpLeg: d => [`<b>Published by SEB (KID)</b> – the figures SEB published in its KID (${d}), calculated in the past.`, '<b>SEB’s method – our check</b> – we calculated the same ourselves the way SEB does. A match to the cent proves we understand SEB’s calculation and can repeat it.', '<b>Correct, by the regulation</b> – how it should be calculated by the regulation. Use these figures.', '<b>Difference</b> – how much the correct result differs from the published one, EUR.'],
+  kidSrcH: 'Where the data comes from and how it is updated',
+  kidSrcL: ['<b>By the regulation</b> uses the funds’ own unit values. They are collected automatically every day, so new years need nothing extra.', '<b>The index</b> is needed only for the months before the fund existed (18+ and 58+ – before 2004-10, 50+ – before 2020-04, Klimato ateitis – before 2022-01). That is past data: it is already stored, with the corrected SOLEBLS bond index, and does not change.', '<b>As in SEB’s KID</b> is extended for new years with the fund benchmark SEB publishes every day (collected automatically from SEB’s fund pages). Check: extending one year this way differs from SEB’s exact calculation by 0–7 EUR.', '<b>No manual data is needed.</b> If SEB ever stops publishing its benchmark, the component indices can be taken from Solactive (codes are kept in the project notes).'],
   kidTech: 'Technical details (regulation points)',
   kidNoPid: l => `SEB has no KID for this year, so there is nothing to compare.${l ? ' KIDs exist for the data years: ' + l + '.' : ''}`,
   kidWhyLead: n => `How SEB’s result becomes the correct one: each row fixes one thing, and the small number shows how much that fix changes the ${n}-year amount. Explanation of each fix below.`,
@@ -86,6 +88,8 @@ addStrings({
   kidPidLead: d => `Kiek galėtų tapti 1000 € per metus po išlaidų, iš to paties laikotarpio duomenų: kaip paskelbė SEB, kaip SEB būdu perskaičiavome mes ir kaip teisinga. Mažas skaičius po suma – metinė vidutinė grąža.`,
   kidCmpH: ['Scenarijus', 'Laikotarpis', 'SEB paskelbta (PID)', 'SEB metodu – mūsų patikra', 'Teisingai pagal reglamentą ✓', 'Skirtumas: teisinga − paskelbta'],
   kidCmpLeg: d => [`<b>SEB paskelbta (PID)</b> – skaičiai, kuriuos SEB paskelbė PID dokumente (${d}); apskaičiuoti praeityje.`, '<b>SEB metodu – mūsų patikra</b> – tą patį apskaičiavome patys SEB būdu. Sutapimas iki cento įrodo, kad SEB skaičiavimą suprantame ir galime atkartoti.', '<b>Teisingai pagal reglamentą</b> – taip turėtų būti skaičiuojama pagal reglamentą. Šiuos skaičius ir reikia naudoti.', '<b>Skirtumas</b> – kiek eurų teisingas rezultatas skiriasi nuo paskelbto.'],
+  kidSrcH: 'Iš kur imami duomenys ir kaip jie atnaujinami',
+  kidSrcL: ['<b>„Pagal reglamentą“</b> remiasi pačių fondų vieneto vertėmis. Jos renkamos automatiškai kasdien, todėl naujiems metams nieko papildomai nereikia.', '<b>Indeksas</b> reikalingas tik mėnesiams iki fondo įsteigimo (18+ ir 58+ – iki 2004-10, 50+ – iki 2020-04, Klimato ateitis – iki 2022-01). Tai praeities duomenys: jie jau išsaugoti kartu su pataisytu SOLEBLS obligacijų indeksu ir nesikeis.', '<b>„Kaip SEB PID“</b> naujiems metams pratęsiamas SEB kasdien skelbiamu fondo lyginamuoju indeksu (renkamas automatiškai iš SEB fondų puslapių). Patikra: taip pratęsus vienus metus, skirtumas nuo tikslaus SEB skaičiavimo – 0–7 EUR.', '<b>Rankinių duomenų nereikia.</b> Jei SEB kada nustotų skelbti lyginamąjį indeksą, sudedamuosius indeksus galima imti iš Solactive (kodai saugomi projekto užrašuose).'],
   kidTech: 'Techninės detalės (reglamento punktai)',
   kidNoPid: l => `Šiems metams SEB PID nėra, todėl palyginti nėra su kuo.${l ? ' PID yra duomenų metams: ' + l + '.' : ''}`,
   kidWhyLead: n => `Kaip SEB rezultatas virsta teisingu: kiekviena eilutė ištaiso vieną dalyką, o mažas skaičius rodo, kiek tas pataisymas pakeičia ${n} m. sumą. Kiekvieno pataisymo paaiškinimas – žemiau.`,
@@ -289,6 +293,7 @@ function renderKid() {
         .filter((x, i) => sid[i] === null || x.k > 0 || st.length < 2).sort((a, b) => (a.k < 1 ? 99 : a.k) - (b.k < 1 ? 99 : b.k))
         .map(x => ({ ...x, t: (x.k > 0 ? x.k + '. ' : '') + x.t.replace(/^\d+\.\s*/, '') }));
       html += `<div class="kidx">${ord.map(x => `<h4>${x.t}</h4><p class="kide">${x.e}</p><details><summary>${S.kidTech}</summary>${x.seb ? `<p><b>SEB PID:</b> ${x.seb}</p>` : ''}<p><b>${S.kidModeReg}:</b> ${x.reg}</p>${x.why ? `<p class="note">${x.why}</p>` : ''}</details>`).join('')}</div>`;
+      html += `<h4 class="kidsh">${S.kidSrcH}</h4><ul class="kidleg">${S.kidSrcL.map(x => `<li>${x}</li>`).join('')}</ul>`;
     }
   }
   const ex = p.bench && REP.kidm.x[p.bench] && REP.kidm.x[p.bench].ext;
@@ -521,6 +526,7 @@ function kidBook() {
       ['7. “Comparison” – published KID, SEB’s method and the regulation side by side, with differences.']]),
     [], [L ? 'KUO SKIRIASI „KAIP SEB PID“ IR „PAGAL REGLAMENTĄ“' : 'HOW “AS IN SEB’S KID” AND “BY THE REGULATION” DIFFER']];
   S.kidDiffs.forEach(x => { I.push([x.t]); I.push([(L ? '   Paprastai: ' : '   In short: ') + x.e]); if (x.seb) I.push(['   SEB PID: ' + x.seb]); I.push([`   ${S.kidModeReg}: ${x.reg}`]); if (x.why) I.push(['   ' + x.why]); });
+  I.push([], [S.kidSrcH.toUpperCase()], ...S.kidSrcL.map(x => ['• ' + x.replace(/<\/?b>/g, '')]));
   const st = MODELS.kidSteps;
   if (st && st.length > 1) {
     I.push([], [S.kidStepT(p.rhp).toUpperCase()], [S.kidStepH, ...S.kidSc]);
