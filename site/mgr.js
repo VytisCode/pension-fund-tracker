@@ -19,7 +19,7 @@ addStrings({
   hPeers: 'Compared with the group', mPeers: 'Each period ends on the group’s common latest day.', hChart: '3-year return compared with the group', hRisk: 'Risk',
   rVol1: 'Volatility, 1 year', rVol3: 'Volatility, 3 years', rDd3: 'Maximum fall, 3 years', rRisky: 'Risky assets (LB)', rNote: 'Volatility – annualised standard deviation of daily changes; maximum fall – the largest drop from a peak.',
   dEnd: 'Data as of:', selX: 'Add period:', xNone: 'none', dFrom: 'From', reset: 'Latest', yeL: 'Year end', qeL: 'Quarter end', shownL: p => `Shown: ${p}`,
-  aV: 'Show:', vEur: '€ m', vShare: 'Market share, %', vChg: 'Change over quarter, %', vCum: 'Change since period start, %', sMII: 'Whole market – pillar II', sMIII: 'Whole market – pillar III', sumH: 'Over the period:', sBoth: 'Pillar II and III', sFII: 'Each pillar II fund', sFIII: 'Each pillar III fund', thDate: 'Date', thSum: 'Total',
+  aV: 'Show:', vEur: '€ m', vShare: 'Market share, %', vChg: 'Change over quarter, %', vCum: 'Change since period start, %', lgTip: 'Click to hide or show this line; double-click to show only it', lgAll: 'Show all', sMII: 'Whole market – pillar II', sMIII: 'Whole market – pillar III', sumH: 'Over the period:', sBoth: 'Pillar II and III', sFII: 'Each pillar II fund', sFIII: 'Each pillar III fund', thDate: 'Date', thSum: 'Total',
   mShare: 'Market share – of the assets of all managers’ funds of the same pillar on that day.', mChg: 'The change includes contributions, payouts and returns.', mCum: 'Change of net assets from the first day of the selected period (e.g. YTD – from 31 December); includes contributions, payouts and returns.',
   noPf: 'No portfolio data for this fund.', foot: 'Returns are changes in unit value (fees already deducted), not annualised. Funds are compared only within their group. For information only, not investment advice.',
 }, {
@@ -38,7 +38,7 @@ addStrings({
   hPeers: 'Palyginimas su grupe', mPeers: 'Kiekvienas laikotarpis baigiasi bendra naujausia grupės diena.', hChart: '3 metų grąža, palyginti su grupe', hRisk: 'Rizika',
   rVol1: 'Svyravimas, 1 metai', rVol3: 'Svyravimas, 3 metai', rDd3: 'Didžiausias kritimas, 3 metai', rRisky: 'Rizikingas turtas (LB)', rNote: 'Svyravimas – metinis dienos pokyčių standartinis nuokrypis; didžiausias kritimas – didžiausias sumažėjimas nuo piko.',
   dEnd: 'Duomenys iki:', selX: 'Pridėti laikotarpį:', xNone: 'nepridėti', dFrom: 'Nuo', reset: 'Naujausi', yeL: 'Metų pabaiga', qeL: 'Ketvirčio pabaiga', shownL: p => `Rodoma: ${p}`,
-  aV: 'Rodyti:', vEur: 'mln. €', vShare: 'Rinkos dalis, %', vChg: 'Pokytis per ketvirtį, %', vCum: 'Pokytis nuo laikotarpio pradžios, %', sMII: 'Visa rinka – II pakopa', sMIII: 'Visa rinka – III pakopa', sumH: 'Per laikotarpį:', sBoth: 'II ir III pakopa', sFII: 'Kiekvienas II pakopos fondas', sFIII: 'Kiekvienas III pakopos fondas', thDate: 'Data', thSum: 'Iš viso',
+  aV: 'Rodyti:', vEur: 'mln. €', vShare: 'Rinkos dalis, %', vChg: 'Pokytis per ketvirtį, %', vCum: 'Pokytis nuo laikotarpio pradžios, %', lgTip: 'Paspausk, kad paslėptum ar parodytum šią liniją; paspausk dukart, kad liktų tik ji', lgAll: 'Rodyti visas', sMII: 'Visa rinka – II pakopa', sMIII: 'Visa rinka – III pakopa', sumH: 'Per laikotarpį:', sBoth: 'II ir III pakopa', sFII: 'Kiekvienas II pakopos fondas', sFIII: 'Kiekvienas III pakopos fondas', thDate: 'Data', thSum: 'Iš viso',
   mShare: 'Rinkos dalis – nuo visų valdytojų tos pačios pakopos fondų turto tą dieną.', mChg: 'Pokytis apima įmokas, išmokas ir grąžą.', mCum: 'Grynųjų aktyvų pokytis nuo pasirinkto laikotarpio pirmos dienos (pvz. „Šie metai“ – nuo gruodžio 31 d.); apima įmokas, išmokas ir grąžą.',
   noPf: 'Šio fondo portfelio duomenų nėra.', foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Fondai lyginami tik savo grupėje. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
@@ -144,10 +144,10 @@ function aumData() {
   /* suma tik tada, kai žinomas kiekvieno tuo metu veikusio fondo turtas (savininkas 2026-10-16: III pakopos YTD %) – kitaip
      dalis fondų (pvz. kurių turtas skelbiamas tik ketvirčio pabaigoje) iškristų ir suma klaidingai „kristų“ */
   const LMAX = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), lastD = f => f.d[f.d.length - 1];
-  const full = (fs, d) => { const r = sumAtN(fs, d), alive = fs.filter(f => f.d[0] <= d && (lastD(f) >= d || lastD(f) >= LMAX - 120)).length; return r.n >= alive ? r.s : null; };
-  const val = (x, d) => { const v = full(x.fs, d); if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
+  const full = (fs, d) => { const r = sumAtN(fs, d), alive = fs.filter(f => f.d[0] <= d + 92 && (lastD(f) >= d || lastD(f) >= LMAX - 120)).length; return r.n >= alive ? r.s : null; };
+  const val = (x, d) => { const v0 = full(x.fs, d), v = v0 > 0.05 ? v0 : null; if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
   L.forEach(x => { const raw = ends.map(d => val(x, d)); x.raw = raw; const b0 = raw.find(v => v != null); x.vals = ST.av === 'chg' ? raw.map((v, i) => i && v != null && raw[i - 1] ? (v / raw[i - 1] - 1) * 100 : null) : ST.av === 'cum' ? raw.map(v => v != null && b0 ? (v / b0 - 1) * 100 : null) : raw;
-    const ie = ends.map((d, i) => i).filter(i => full(x.fs, ends[i]) != null); x.e0 = ie.length ? [ends[ie[0]], full(x.fs, ends[ie[0]])] : null; x.e1 = ie.length ? [ends[ie[ie.length - 1]], full(x.fs, ends[ie[ie.length - 1]])] : null; x.miss = x.e1 && x.e1[0] < last - 10 ? [...new Set(x.fs.filter(f => lastD(f) < last - 10 && lastD(f) >= LMAX - 120).map(f => (DATA.providers.find(q => q.id === f.p) || { label: f.p }).label))] : []; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
+    const ie = ends.map((d, i) => i).filter(i => full(x.fs, ends[i]) > 0.05); x.e0 = ie.length ? [ends[ie[0]], full(x.fs, ends[ie[0]])] : null; if (x.e0 && !(x.e0[1] > 0.05)) x.e0 = null; x.e1 = ie.length ? [ends[ie[ie.length - 1]], full(x.fs, ends[ie[ie.length - 1]])] : null; x.miss = x.e1 && x.e1[0] < last - 10 ? [...new Set(x.fs.filter(f => lastD(f) < last - 10 && lastD(f) >= LMAX - 120).map(f => (DATA.providers.find(q => q.id === f.p) || { label: f.p }).label))] : []; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
   return { L, ends };
 }
 function moneyChart(el, series, unit) {  // paprasta linijinė diagrama (mln. € arba %)
@@ -195,10 +195,28 @@ function drawAum() {
   $('aumM').textContent = t.mAum + (ST.av === 'share' ? ' ' + t.mShare : ST.av === 'chg' ? ' ' + t.mChg : ST.av === 'cum' ? ' ' + t.mCum : '');
   const D = aumData();
   if (!D) { el.innerHTML = `<p class="na">${t.noData}</p>`; $('aumT').innerHTML = $('aumL').innerHTML = ''; return; }
-  moneyChart(el, D.L, ST.av);
+  /* diagrama kaip „Fondų palyginimas“ (savininkas 2026-10-16): reikšmės užvedus pelę, žymos dešinėje, linijas galima paslėpti;
+     mln. € ir rinkos dalies ašis neprivalo apimti nulio – kitaip linijos atrodo plokščios */
+  D.L.forEach((x, i) => { x.key = 'a' + i; });
+  const off = (ST.aoff || []).filter(l => D.L.some(x => x.l === l)), shown = D.L.filter(x => !off.includes(x.l) && x.pts.length > 1), U0 = lang === 'lt' ? 'mln. €' : '€ m';
+  const fmtV = ST.av === 'eur' ? v => fmt(v, 1) + ' ' + U0 : ST.av === 'share' ? v => fmt(v, 2) + ' %' : v => pct(v);
+  const ser = (shown.length ? shown : D.L.filter(x => x.pts.length > 1)).map(x => ({ provider: x.key, label: x.l, color: x.c, dash: x.dash ? '5 4' : null, points: x.pts }));
+  el.innerHTML = '';
+  if (!ser.length) el.innerHTML = `<p class="na">${t.noData}</p>`;
+  else { const x0 = Math.min(...ser.map(r => r.points[0][0])), x1 = Math.max(...ser.map(r => r.points[r.points.length - 1][0]));
+    const paint = mr => drawLineChart(el, ser, x0, x1, { fmt: fmtV, axisUnit: ST.av === 'eur' ? '' : '%', zero: ST.av === 'eur' || ST.av === 'share' ? false : true, mr, height: 300 });
+    drawAum.hc = drawAum.hc && drawAum.hc.el === el ? drawAum.hc : Object.assign(hoverCompress(el, mr => drawAum.paint(mr)), { el });
+    drawAum.paint = paint; paint(drawAum.hc.mr); }
   const U = lang === 'lt' ? 'mln. €' : '€ m';
-  $('aumS').innerHTML = `<b>${t.sumH}</b> ` + D.L.filter(x => x.e0 && x.e1 && x.e0[1]).map(x => { const ch = x.e1[1] - x.e0[1], pc = (x.e1[1] / x.e0[1] - 1) * 100; return `<span>${D.L.length > 1 ? hEsc(x.l) + ': ' : ''}${fmt(x.e0[1], 1)} → ${fmt(x.e1[1], 1)} ${U} <b class="${pc >= 0 ? 'pos' : 'neg'}">${pct(pc)}</b> (${ch >= 0 ? '+' : '−'}${fmt(Math.abs(ch), 1)} ${U}) <small>${iso(x.e0[0])} – ${iso(x.e1[0])}${x.miss.length ? (lang === 'lt' ? ` (vėlesnių duomenų dar nėra: ${x.miss.join(', ')})` : ` (no later data yet: ${x.miss.join(', ')})`) : ''}</small></span>`; }).join(' · ');
-  $('aumL').innerHTML = D.L.length > 1 ? D.L.map(x => `<span><i style="border-top:3px ${x.dash ? 'dashed' : 'solid'} ${x.c}"></i>${hEsc(x.l)}</span>`).join('') : '';
+  $('aumS').innerHTML = `<b>${t.sumH}</b> ` + D.L.filter(x => x.e0 && x.e1 && x.e0[1]).map(x => { const ch = x.e1[1] - x.e0[1], pc = (x.e1[1] / x.e0[1] - 1) * 100, y19 = x.e0[0] < Math.round(Date.UTC(2019, 6, 1) / DAY);   // 2019 m. I pusm. gyvenimo ciklo fondai tik kaupė turtą iš senų fondų – % nuo tada neinformatyvus
+    return `<span>${D.L.length > 1 ? hEsc(x.l) + ': ' : ''}${fmt(x.e0[1], 1)} → ${fmt(x.e1[1], 1)} ${U} ${y19 ? `<small>(${lang === 'lt' ? '% nuo 2019 m. pradžios neskaičiuojamas – tada fondai tik pradėjo veikti ir perėmė senų fondų turtą' : '% from early 2019 not shown – funds were just starting and taking over old funds’ assets'})</small>` : `<b class="${pc >= 0 ? 'pos' : 'neg'}">${pct(pc)}</b>`} (${ch >= 0 ? '+' : '−'}${fmt(Math.abs(ch), 1)} ${U}) <small>${iso(x.e0[0])} – ${iso(x.e1[0])}${x.miss.length ? (lang === 'lt' ? ` (vėlesnių duomenų dar nėra: ${x.miss.join(', ')})` : ` (no later data yet: ${x.miss.join(', ')})`) : ''}</small></span>`; }).join(' · ');
+  const lv = x => x.pts.length ? fmtV(x.pts[x.pts.length - 1][1]) : '–';
+  $('aumL').innerHTML = D.L.length > 1 ? D.L.map(x => `<button type="button" class="chip" data-l="${hEsc(x.l)}" aria-pressed="${!off.includes(x.l)}" title="${t.lgTip}"><i style="border-top:3px ${x.dash ? 'dashed' : 'solid'} ${x.c}"></i>${hEsc(x.l)} <b>${lv(x)}</b></button>`).join('')
+    + (off.length ? `<button type="button" class="chip" data-l="*">${t.lgAll}</button>` : '') : '';
+  let clickT = null;
+  $('aumL').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; const l = b.dataset.l; clearTimeout(clickT);
+    clickT = setTimeout(() => { const o = ST.aoff || []; ST.aoff = l === '*' ? [] : o.includes(l) ? o.filter(x => x !== l) : D.L.filter(x => !o.includes(x.l)).length > 1 ? [...o, l] : o; save(); drawAum(); }, 220); };
+  $('aumL').ondblclick = e => { const b = e.target.closest('.chip'); if (!b || b.dataset.l === '*') return; clearTimeout(clickT); ST.aoff = D.L.map(x => x.l).filter(l => l !== b.dataset.l); save(); drawAum(); };
   const f = v => v == null ? '–' : ST.av === 'eur' ? fmt(v, 1) : ST.av === 'share' ? fmt(v, 2) : pct(v);   // cum, chg – %
   const tot = D.L.length > 1 && (ST.av === 'eur' || (ST.av === 'share' && D.L.every(x => x.pl === D.L[0].pl)));
   const sum = i => { const xs = D.L.map(x => x.vals[i]).filter(v => v != null); return xs.length ? xs.reduce((a, b) => a + b, 0) : null; };
