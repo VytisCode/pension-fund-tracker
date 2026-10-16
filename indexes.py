@@ -175,7 +175,7 @@ def sp500_price(start):
             out = parse(raw)
             if len(out) >= 3:
                 return out, name
-            errs.append(f"{name}: {len(out)} reikšmės ({raw[:60].decode('utf-8', 'ignore').strip()!r})")
+            errs.append(f"{name}: {len(out)} reikšmės ({raw[:200].decode('utf-8', 'ignore').strip()!r})")
         except Exception as e:  # noqa: BLE001
             errs.append(f"{name}: {e.__class__.__name__} {str(e)[:50]}")
     raise RuntimeError("; ".join(errs))
