@@ -425,18 +425,6 @@ function markGroup() {
     if (!b) { b = document.createElement('a'); b.className = 'gbadge'; b.href = '#'; b.onclick = e => { e.preventDefault(); $('group').scrollIntoView({ block: 'center' }); $('group').focus(); }; h.append(b); }
     b.textContent = g; b.title = lang === 'lt' ? 'Grupė – keisti „Fondų palyginimo“ viršuje' : 'Group – change at the top of “Fund comparison”'; });
 }
-/* „Visa rinka“: viena lentelė su rodiklio jungikliu (savininko patvirtinta struktūra 2026-10-16); „Visos keturios“ – kaip anksčiau */
-const MV_KEYS = ['ret', 'rank', 'rel', 'ann', 'all'];
-let MV = 'ret'; try { const v = localStorage.getItem('marketView'); if (MV_KEYS.includes(v)) MV = v; } catch (e) {}
-function renderMarketView() {
-  const L = lang === 'lt', lab = L ? { ret: 'Grąža', rank: 'Vieta grupėje', rel: 'Skirtumas nuo konkurentų', ann: 'Metinė grąža', all: 'Visos keturios' } : { ret: 'Return', rank: 'Rank in group', rel: 'Relative to peers', ann: 'Annualised', all: 'All four' };
-  const seg = $('mView'); if (!seg) return;
-  seg.setAttribute('aria-label', L ? 'Rodiklis' : 'Metric');
-  seg.innerHTML = MV_KEYS.map(k => `<button type="button" data-k="${k}" aria-pressed="${k === MV}">${lab[k]}</button>`).join('');
-  seg.onclick = e => { const b = e.target.closest('button'); if (!b) return; MV = b.dataset.k; try { localStorage.setItem('marketView', MV); } catch (er) {} renderMarketView(); };
-  const g = $('mGrid'); g.classList.toggle('one', MV !== 'all');
-  g.querySelectorAll(':scope > [data-m]').forEach(d => { d.hidden = MV !== 'all' && d.dataset.m !== MV; });
-}
 function renderMarket() {
   $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
   $('hRelM').innerHTML = T().hRelM + ik('relm'); $('hAnnM').innerHTML = T().hAnnM + ik('annm');
@@ -758,78 +746,23 @@ const RM = { per: null, groups: null, provs: null };
 function renderRiskMap() {
   $('hRisk').innerHTML = T().hRisk + ik('riskmap');
   RM.per = P.period; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id));   // laikotarpis – bendras viršuje (vienas laikotarpio pasirinkimas puslapyje)
-  const tools = $('rmTools'), groupsByRisk = DATA.groups; tools.hidden = true;      // turto, 1961 … 2003
-  const chip = (id, on, label, color) => `<button type="button" class="chip" data-id="${id}" aria-pressed="${on}">${color ? `<i style="background:${color}"></i>` : ''}${label}</button>`;
-  tools.innerHTML = `<div class="seg" data-k="per" role="group" aria-label="${T().period}">${PERIOD_IDS.map(id => `<button type="button" data-id="${id}" aria-pressed="${id === RM.per}">${T().periods[id]}</button>`).join('')}</div>`
-    + `<div class="chips" data-k="groups"><span class="rmlbl">${T().rmGroups}</span>${chip('all', RM.groups.size === DATA.groups.length, T().rmAll)}${groupsByRisk.map(g => chip(g.id, RM.groups.has(g.id), groupLabel(g))).join('')}</div>`
-    + `<div class="chips" data-k="provs"><span class="rmlbl">${T().rmProvs}</span>${marketProvs().map(p => chip(p.id, RM.provs.has(p.id), p.label, colorOf(p.id))).join('')}</div>`;
-  tools.onclick = e => {
-    const b = e.target.closest('button'); if (!b) return;
-    const k = b.parentElement.dataset.k, id = b.dataset.id;
-    if (k === 'per') RM.per = id;
-    else if (k === 'groups') {
-      if (id === 'all') RM.groups = new Set(DATA.groups.map(g => g.id));
-      else if (RM.groups.size === DATA.groups.length) RM.groups = new Set([id]);   // iš „visų“ – pirmas paspaudimas palieka vieną grupę
-      else if (RM.groups.has(id)) { if (RM.groups.size > 1) RM.groups.delete(id); } else RM.groups.add(id);
-    } else if (k === 'provs') { if (RM.provs.has(id)) { if (RM.provs.size > 1) RM.provs.delete(id); } else RM.provs.add(id); }
-    renderRiskMap();
-  };
+  $('rmTools').hidden = true;   // atskiri filtrai pašalinti – naudojamas bendras laikotarpis
   const el = $('riskMap'), oneGroup = RM.groups.size === 1;
   const pts = DATA.groups.filter(g => RM.groups.has(g.id)).flatMap(g => { const rng = rangeFor(g, false); return g.funds.filter(f => RM.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
   setCap('riskMap', T().capRisk(periodText(), pts.length));
   renderRiskTable(pts);
   el.innerHTML = ''; el.hidden = true; $('c_riskMap').hidden = true;   // taškinė diagrama pašalinta (savininkas 2026-10-16) – lieka Sharpe lentelė
-  return;
-  if (!pts.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
-  const W = el.clientWidth, H = el.clientHeight, m = { l: 48, r: 14, t: 10, b: 38 };
-  const xs = niceTicks(0, Math.max(...pts.map(p => p.x)) * 1.05), y0 = Math.min(0, ...pts.map(p => p.y)), y1 = Math.max(0, ...pts.map(p => p.y));
-  const ys = niceTicks(y0 - (y1 - y0) * 0.04, y1 + (y1 - y0) * 0.06);
-  const extend = (t, top) => { const st = t[1] - t[0]; while (t[t.length - 1] < top) t.push(+(t[t.length - 1] + st).toFixed(10)); };   // ašis baigiasi žyma už didžiausio taško
-  extend(xs, Math.max(...pts.map(p => p.x)) * 1.03); extend(ys, y1);
-  const xMax = xs[xs.length - 1], yMin = Math.min(ys[0], y0), yMax = ys[ys.length - 1];
-  const X = v => m.l + v / xMax * (W - m.l - m.r), Y = v => m.t + (yMax - v) / (yMax - yMin || 1) * (H - m.t - m.b);
-  const dec = t => (t[1] - t[0]) % 1 ? 1 : 0;                         // žingsnis 2,5 → viena dešimtainė
-  const labelsFor = list => {                                      // pavadinimai šalia taškų; persidengiantys perstumiami žemyn
-    const placed = [];
-    return list.slice().sort((a, b) => Y(a.y) - Y(b.y)).map(p => {
-      const right = X(p.x) > W - m.r - 70, x = X(p.x) + (right ? -9 : 9), x0 = right ? x - 66 : x;
-      let y = Y(p.y) + 4;
-      while (placed.some(q => Math.abs(q.y - y) < 12 && Math.abs(q.x0 - x0) < 66)) y += 12;
-      placed.push({ y, x0 });
-      return `<text class="lbl" x="${x}" y="${y}"${right ? ' text-anchor="end"' : ''}>${oneGroup ? labelOf(p.f.provider) : groupLabel(p.g)}</text>`;
-    }).join('');
-  };
-  el.innerHTML = `<svg width="${W}" height="${H}" role="img" aria-label="${T().hRisk}">`
-    + ys.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(v, dec(ys))}</text>`).join('')
-    + xs.map(v => `<text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle" font-size="11" fill="var(--text-3)">${num(v, dec(xs))}</text>`).join('')
-    + `<text x="${(m.l + W - m.r) / 2}" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--text-2)">${T().axVol}</text>`
-    + `<text transform="translate(12 ${(m.t + H - m.b) / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--text-2)">${T().axRet}</text>`
-    + pts.map(p => `<circle class="pt" cx="${X(p.x)}" cy="${Y(p.y)}" r="6" fill="${colorOf(p.f.provider)}"><title>${labelOf(p.f.provider)} ${groupLabel(p.g)}: ${pct(p.y, 1)}, ${num(p.x, 1)} %</title></circle>`).join('')
-    + (oneGroup || RM.provs.size === 1 ? labelsFor(pts) : '')
-    + '</svg>';
-  const tip = document.createElement('div'); tip.className = 'tip'; tip.style.display = 'none'; el.appendChild(tip);
-  el.onmousemove = e => {
-    const r = el.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
-    let best = null, bd = 196;                                       // 14 px spindulys
-    pts.forEach(p => { const d = (X(p.x) - mx) ** 2 + (Y(p.y) - my) ** 2; if (d < bd) { bd = d; best = p; } });
-    if (!best) { tip.style.display = 'none'; return; }
-    tip.innerHTML = `<b><span class="sw" style="background:${colorOf(best.f.provider)}"></span>${labelOf(best.f.provider)} · ${groupLabel(best.g)}</b><div><span>${T().thPeriodRet}</span><span>${pct(best.y, 2)}</span></div><div><span>${T().thVol}</span><span>${num(best.x, 1)} %</span></div>`;
-    tip.style.display = 'block';
-    const w = tip.offsetWidth, tx = X(best.x) + 12;
-    tip.style.left = (tx + w > W ? X(best.x) - w - 12 : tx) + 'px'; tip.style.top = Math.max(0, Y(best.y) - tip.offsetHeight / 2) + 'px';
-  };
-  el.onmouseleave = () => { tip.style.display = 'none'; };
 }
-/* grąžos ir rizikos santykis (Sharpe) po žemėlapiu: eilutės – amžiaus grupės, stulpeliai – tiekėjai; spalva – vieta grupėje */
+
 function renderRiskTable(pts) {
   const tb = $('rmTable');
   const groups = DATA.groups.filter(g => RM.groups.has(g.id) && pts.some(p => p.g === g));
   const provs = marketProvs().filter(p => RM.provs.has(p.id) && pts.some(x => x.f.provider === p.id));
-  const g0 = groups[0] || DATA.groups[0], r0 = rangeAt(g0, RM.per);
+  const g0 = groups[0] || DATA.groups[0], r0 = rangeFor(g0, false);
   $('rmNote').textContent = T().nRmT(num(rfNow(r0.anchor, r0.end), 2), P.rf === null && rfAvg(r0.anchor, r0.end) !== null);
   if (!groups.length) { tb.innerHTML = ''; return; }
   const sharpe = p => {
-    const s = seriesOf(p.f, rangeAt(p.g, RM.per).anchor, rangeAt(p.g, RM.per).end); if (!s || !p.x) return null;
+    const rr = rangeFor(p.g, false), s = seriesOf(p.f, rr.anchor, rr.end); if (!s || !p.x) return null;
     const days = p.f.d[s.ie] - p.f.d[s.ia]; if (days < 30) return null;
     return ((Math.pow(1 + p.y / 100, 365.25 / days) - 1) * 100 - rfNow(p.f.d[s.ia], p.f.d[s.ie])) / p.x;
   };
@@ -849,29 +782,6 @@ function renderRiskTable(pts) {
     + '</tbody>';
 }
 /* santykinė grąža: fondo grąža minus visų grupės fondų paprastas vidurkis (procentiniai punktai) */
-function renderRelative(gs) {
-  $('hRel').innerHTML = T().hRel + ik('rel');
-  const order = DATA.groups;                     // turto, 1961 … 2003 – kaip rinkos lentelėse
-  const cards = order.filter(g => gs.includes(g)).map(g => {
-    const rng = rangeFor(g, false);
-    const all = g.funds.map(f => fundStats(f, rng)).filter(s => s && s.ret !== null);
-    if (all.length < 2) return null;
-    const avg = all.reduce((a, s) => a + s.ret, 0) / all.length;
-    return { g, rng, avg, rows: all.filter(s => P.provs.has(s.f.provider)).map(s => ({ s, d: s.ret - avg })).sort((a, b) => b.d - a.d) };
-  }).filter(Boolean);
-  setCap('relGrid', T().capRel(spanText(periodText(), cards.map(c => c.rng))));
-  if (!cards.length) { $('relGrid').innerHTML = `<p class="na">${T().noData}</p>`; return; }
-  const max = Math.max(...cards.flatMap(c => c.rows.map(r => Math.abs(r.d))), 0.01);   // bendra skalė visoms grupėms
-  $('relGrid').classList.toggle('one', cards.length === 1);
-  $('relGrid').innerHTML = cards.map(c => `<div class="card relcard"><div class="relh"><b>${groupLabel(c.g)}</b><span class="na">${T().relAvg} ${pct(c.avg, 1)}</span></div>`
-    + c.rows.map(r => {
-      const w = Math.abs(r.d) / max * 50, pos = r.d >= 0;
-      return `<div class="relrow" title="${labelOf(r.s.f.provider)}: ${pct(r.s.ret, 2)} · ${T().relAvg} ${pct(c.avg, 2)}"><span class="relname"><span class="sw" style="background:${colorOf(r.s.f.provider)}"></span>${labelOf(r.s.f.provider)}</span>`
-        + `<span class="reltrack"><i class="${pos ? 'up' : 'dn'}" style="${pos ? 'left:50%' : `left:${50 - w}%`};width:${w}%"></i></span><span class="relval">${(pos ? '+' : '−') + num(Math.abs(r.d), 1)} ${T().pp}</span></div>`;
-    }).join('') + '</div>').join('');
-}
-/* kilimas ir kritimas kiekvieno laikotarpio viduje (bendras komponentas – common.js) */
-let RDD = null;
 function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
   RDD = runupDrawdown($('rddCard'), DATA.groups.map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[DATA.groups.length - 1].id);

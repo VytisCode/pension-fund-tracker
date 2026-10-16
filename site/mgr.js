@@ -150,27 +150,6 @@ function aumData() {
     const ie = ends.map((d, i) => i).filter(i => full(x.fs, ends[i]) > 0.05); x.e0 = ie.length ? [ends[ie[0]], full(x.fs, ends[ie[0]])] : null; if (x.e0 && !(x.e0[1] > 0.05)) x.e0 = null; x.e1 = ie.length ? [ends[ie[ie.length - 1]], full(x.fs, ends[ie[ie.length - 1]])] : null; x.miss = x.e1 && x.e1[0] < last - 10 ? [...new Set(x.fs.filter(f => lastD(f) < last - 10 && lastD(f) >= LMAX - 120).map(f => (DATA.providers.find(q => q.id === f.p) || { label: f.p }).label))] : []; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
   return { L, ends };
 }
-function moneyChart(el, series, unit) {  // paprasta linijinė diagrama (mln. € arba %)
-  el.innerHTML = '';
-  series = series.filter(s => s.pts.length > 1);
-  if (!series.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
-  const W = el.clientWidth || 600, H = 220, m = { l: 52, r: 12, t: 10, b: 24 };
-  const x0 = Math.min(...series.map(s => s.pts[0][0])), x1 = Math.max(...series.map(s => s.pts[s.pts.length - 1][0]));
-  const ys = series.flatMap(s => s.pts.map(p => p[1])), hi = Math.max(0, ...ys) * 1.06 || 1, lo = Math.min(0, ...ys) * 1.06, ticks = niceTicks(lo, hi, 4);
-  const X = d => m.l + (d - x0) / (x1 - x0 || 1) * (W - m.l - m.r), Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
-  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${hEsc(T().hAum)}">`;
-  ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t === 0 && lo < 0 ? 'var(--text-3)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, unit === 'eur' || Math.abs(hi - lo) > 20 ? 0 : 1)}</text>`; });
-  const y0 = new Date(x0 * DAY).getUTCFullYear(), y1 = new Date(x1 * DAY).getUTCFullYear(), step = Math.ceil((y1 - y0 + 1) / 8);
-  if (x1 - x0 <= 800) {                     // trumpas laikotarpis – mėnesių žymos (savininkas 2026-10-16: „laiko nustatymas neaiškus“)
-    const d0 = new Date(x0 * DAY), months = Math.round((x1 - x0) / 30.4), k = Math.max(1, Math.ceil(months / 8));
-    for (let i = 1; ; i++) { const dt = new Date(Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + i, 1)), d = Math.round(dt / DAY); if (d > x1) break; if ((dt.getUTCMonth()) % k) continue;
-      const lab = dt.toLocaleDateString(T().locale, { month: 'short', timeZone: 'UTC' }) + (dt.getUTCMonth() === 0 || i === 1 ? ' ' + dt.getUTCFullYear() : '');
-      s += `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${lab}</text>`; }
-  } else for (let y = y0 + 1; y <= y1; y += step) { const d = Math.round(Date.UTC(y, 0, 1) / DAY); s += `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${y}</text>`; }
-  series.forEach(r => { s += `<polyline fill="none" stroke="${r.c}" stroke-width="2" ${r.dash ? 'stroke-dasharray="5 4"' : ''} points="${r.pts.map(p => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}"/>`; const l = r.pts[r.pts.length - 1]; s += `<circle cx="${X(l[0])}" cy="${Y(l[1])}" r="3" fill="${r.c}"/>`; });
-  el.innerHTML = s + '</svg>';
-  el._legend = series.map(r => ({ c: r.c, l: r.l, d: r.dash ? '5 4' : '' }));
-}
 function aumQuarters() {                  // [pradžia (ankstesnio ketvirčio pabaiga), pabaiga, pavadinimas] – naujausi pirmi
   const out = [], last = Math.min(asOf() || LATEST, LATEST);
   for (let y = new Date(last * DAY).getUTCFullYear(); y >= 2019; y--) for (const q of [4, 3, 2, 1]) {

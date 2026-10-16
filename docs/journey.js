@@ -459,9 +459,6 @@ function renderNav() {                   // skirtukai (savininkas 2026-10-16: �
   const L = lang === 'lt';
   addSubnav([['schTitle', L ? 'Mano pensija' : 'My pension'], ['futTitle', L ? 'Ateities scenarijai' : 'Future'], ['cmpTitle', L ? 'Palyginimai' : 'Comparisons'],
     ['tbTitle', L ? 'Skaičiavimas' : 'Calculation'], ['feeTitle', L ? 'Mokesčių poveikis' : 'Fee impact'], ['pickTitle', L ? 'Kurį fondą rinktis?' : 'Which fund?'], ['srcTitle', L ? 'Šaltiniai' : 'Sources']].map(([id, label]) => ({ id, label })));
-  return;
-  const ids = ['top', 'schTitle', 'sumTitle', 'annTitle', 'futTitle', 'cmpTitle', 'ixTitle', 'gridTitle', 'tbTitle', 'feeTitle', 'insTitle', 'srcTitle'];
-  document.getElementById('jnav').innerHTML = T().nav.map((l, i) => (i === 3 && P.pl === 'III') || !document.getElementById(ids[i]) ? '' : `<a href="#${ids[i]}">${i ? l : '⚙ ' + l}</a>`).join('');
 }
 function renderAnnuity() {
   const sec = document.getElementById('annTable').closest('section'), ti = document.getElementById('annTitle');
