@@ -98,9 +98,11 @@ def main() -> None:
     build_indexes()
     build_fees()
     build_cpi()
-    assets = ("perf.js", "events.js", "style.css", "common.js", "data.js", "data_idx.js", "data_fee.js", "data_cpi.js")
+    assets = ("perf.js", "events.js", "style.css", "common.js", "methodology.js", "data.js", "data_idx.js", "data_fee.js", "data_cpi.js")
     for name in ("index.html", "overview.html", "performance.html", "apie.html") + assets[:-4] + ("favicon.svg",):
         shutil.copyfile(SITE / name, DOCS / name)
+    # Excel rašytuvas (site/xl.js) – pridedamas prie common.js, kad veiktų visuose puslapiuose be papildomo failo
+    (DOCS / "common.js").write_text((SITE / "common.js").read_text(encoding="utf-8") + "\n" + (SITE / "xl.js").read_text(encoding="utf-8"), encoding="utf-8")
     shutil.copytree(SITE / "fonts", DOCS / "fonts", dirs_exist_ok=True)   # šriftai su lietuviškomis raidėmis (Inter, Source Serif 4; OFL licencija)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
     ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}

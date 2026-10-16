@@ -951,14 +951,17 @@ function marketBook() {
   const hdr = L ? ['Grupė', 'Valdytojas', 'Fondas', 'Laikotarpio pradžia', 'Laikotarpio pabaiga', 'Pradžios vertės data', 'Pradžios vieneto vertė, €', 'Pabaigos vertės data', 'Pabaigos vieneto vertė, €', 'Grąža', 'Dienos', 'Metinė grąža']
     : ['Group', 'Manager', 'Fund', 'Period start', 'Period end', 'Start value date', 'Start unit value, €', 'End value date', 'End unit value, €', 'Return', 'Days', 'Annualized return'];
   if (REAL) hdr.push(L ? 'VKI pradžioje' : 'CPI at start', L ? 'VKI pabaigoje' : 'CPI at end');
-  const calc = [hdr], at = {}, used = [];
+  const step = L ? ['', '', '', 'Pasirinkto laikotarpio pradžia', 'Bendra paskutinė grupės diena', 'Paskutinė fondo vertė pradžios dieną ar prieš ją', '= vertė iš lapo „Vertės“ tą dieną', 'Paskutinė fondo vertė iki pabaigos', '= vertė iš lapo „Vertės“ tą dieną', '= pabaigos vertė ÷ pradžios vertė − 1', '= pabaiga − pradžia', '= (1 + grąža) ^ (365,25 ÷ dienos) − 1']
+    : ['', '', '', 'Selected period start', 'Latest common day in the group', 'Fund’s last value on or before the start', '= value from sheet “Values” on that day', 'Fund’s last value up to the end', '= value from sheet “Values” on that day', '= end value ÷ start value − 1', '= end − start', '= (1 + return) ^ (365.25 ÷ days) − 1'];
+  const calc = [hdr, step.map(x => x ? { v: x, s: 'step' } : null)], at = {}, used = [];
   groups.forEach(g => {
     const rng = g.rngM || rangeFor(g);
     provs.forEach(p => {
       const f = g.funds.find(x => x.provider === p.id), v = retOf(g, p.id, rng);
       if (!f || v === null) return;
       const s = seriesOf(f, rng.anchor, rng.end), r = calc.length + 1, d0 = Math.max(rng.anchor, f.d[0]), days = rng.end - d0;
-      const row = [groupLabel(g), p.label, f.name, xlDate(d0), xlDate(rng.end), xlDate(f.d[s.ia]), f.v[s.ia], xlDate(f.d[s.ie]), f.v[s.ie]];
+      const vc = xlCol(used.length + 1), V = q(S.vals), look = (dc, val) => ({ t: 'n', f: `INDEX(${V}!${vc}:${vc},MATCH(${dc}${r},${V}!$A:$A,0))`, v: val, z: '0.0000' });
+      const row = [groupLabel(g), p.label, f.name, xlDate(d0), xlDate(rng.end), xlDate(f.d[s.ia]), look('F', f.v[s.ia]), xlDate(f.d[s.ie]), look('H', f.v[s.ie])];
       const nom = f.v[s.ie] / f.v[s.ia] - 1;
       row.push(REAL ? xlF(`(I${r}/G${r})/(N${r}/M${r})-1`, v / 100, '0.00%') : xlF(`I${r}/G${r}-1`, nom, '0.00%'));
       row.push(xlF(`E${r}-D${r}`, days, '0'));
@@ -1024,6 +1027,7 @@ function marketBook() {
     ['Note', 'A fund without new data (> 5 days behind) or without a value at the period start is left empty. 2003–2009 funds that started ≤ 7 days after the period start at €1.00 run from the first value.']];
   const wb = XLSX.utils.book_new(), add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX.utils.book_append_sheet(wb, ws, name); };
   const wg = [{ wch: 22 }, ...provs.map(() => ({ wch: 11 })), { wch: 18 }];
+  meth.splice(1, 0, [L ? 'Kaip patikrinti' : 'How to check', L ? 'Lapas „Vertės“ – valdytojų paskelbtos vieneto vertės (mėlynos). Lapas „Skaičiavimai“ – kiekvienam fondui pradžios ir pabaigos vertė paimama iš „Vertės“ (INDEX/MATCH pagal datą), iš jų – grąža ir metinė grąža. Lentelių lapai – nuorodos į „Skaičiavimai“ ir MEDIAN, RANK, AVERAGE.' : 'Sheet “Values” – unit values published by the managers (blue). Sheet “Calculations” – each fund’s start and end value is taken from “Values” (INDEX/MATCH by date), then return and annualized return. Table sheets – links to “Calculations” plus MEDIAN, RANK, AVERAGE.']);
   add(meth, S.meth, [{ wch: 16 }, { wch: 110 }]);
   add(ret, S.ret, wg); add(rel, S.rel, [{ wch: 30 }, ...Array(rl).fill({ wch: 11 })]); add(rank, S.rank, wg); add(ann, S.ann, wg);
   add(calc, S.calc, [{ wch: 22 }, { wch: 10 }, { wch: 40 }, ...Array(hdr.length - 3).fill({ wch: 13 })]);
@@ -1142,6 +1146,7 @@ async function exportMetricsXlsx() {
   catch (e) { alert(T().xlsxFail); }
   btn.disabled = false;
 }
+['tRet', 'tRelM', 'tRank', 'tAnnM'].forEach(id => XLB.set(id, async () => ({ sheets: XLSX_SHIM.toXL(marketBook()) })));
 async function exportMarketXlsx() {
   const btn = $('btnMxl'); btn.disabled = true;
   try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'); XLSX.writeFile(marketBook(), `${lang === 'lt' ? 'Visa_rinka' : 'Market'}_${iso(LATEST)}.xlsx`); }

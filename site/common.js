@@ -1094,10 +1094,13 @@ function chartTools() {
     if (!box.querySelector('svg') || box.querySelector(':scope > .ctools')) return;
     if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
     const t = document.createElement('div'); t.className = 'ctools';
-    t.innerHTML = `<button type="button" class="btn ico" data-a="cp" title="${T().cpImg}" aria-label="${T().cpImg}">⧉</button><button type="button" class="btn ico" data-a="png" title="${T().pngImg}" aria-label="${T().pngImg}">⤓</button>`;
+    const card = box.closest('section, .card'), ctbl = box._xl ? null : card && [...card.querySelectorAll('table')].find(x => x.rows.length > 1);
+    t.innerHTML = `<button type="button" class="btn ico" data-a="cp" title="${T().cpImg}" aria-label="${T().cpImg}">⧉</button><button type="button" class="btn ico" data-a="png" title="${T().pngImg}" aria-label="${T().pngImg}">⤓</button>`
+      + (box._xl || ctbl ? `<button type="button" class="btn ico xl" data-a="xl" title="${T().tXl}" aria-label="${T().tXl}">Excel</button>` : '');
     t.addEventListener('click', async e => {
       const b = e.target.closest('button'); if (!b) return; e.stopPropagation();
       try {
+        if (b.dataset.a === 'xl') { b.disabled = true; try { if (box._xl) await box._xl(); else await tableBook(ctbl); } finally { b.disabled = false; } return; }
         const blob = await chartPng(box);
         if (b.dataset.a === 'png') return savePng(blob, box);
         try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); b.textContent = '✓'; b.title = T().cpDone; setTimeout(() => { b.textContent = '⧉'; b.title = T().cpImg; }, 1500); }
@@ -1163,3 +1166,145 @@ function glossScan() {
     const r = el.getBoundingClientRect(); p.style.top = `${scrollY + r.bottom + 6}px`; p.style.left = `${Math.max(8, Math.min(r.left, innerWidth - p.offsetWidth - 8))}px`;
   });
 })();
+
+/* ---------- Lentelių įrankiai (savininko užduotis 2026-10-16) ----------
+   Prie kiekvienos lentelės: „Kopijuoti kaip paveikslėlį“ (Teams, el. laiškas), „Kopijuoti kaip lentelę“ (Excel, Teams – skaičiai)
+   ir „Excel“ – failas su lapais Rezultatas (kaip ekrane), [Skaičiavimas, Duomenys – jei puslapis užregistravo XLB builderį]
+   ir Metodika (iš kur duomenys, kaip skaičiuojama, žinomi apribojimai – tie patys tekstai kaip puslapyje „Apie“). */
+addStrings({ tCpImg: 'Copy as image (Teams, e-mail)', tCpTbl: 'Copy as table (paste into Excel or Teams)', tXl: 'Excel with calculations and sources', tDone: 'Copied ✓', tFail: 'This browser does not allow copying – the file was downloaded instead' },
+  { tCpImg: 'Kopijuoti kaip paveikslėlį (Teams, el. laiškas)', tCpTbl: 'Kopijuoti kaip lentelę (įklijuoti į Excel ar Teams)', tXl: 'Excel su skaičiavimais ir šaltiniais', tDone: 'Nukopijuota ✓', tFail: 'Ši naršyklė neleidžia kopijuoti – failas atsisiųstas' });
+const XLB = new Map();                    // lentelės id → async () => ({ sheets: [{ name, rows, o }], meth: [[…]] }) – išsamūs skaičiavimai
+function xlCellOf(text) {                 // ekrano tekstas → Excel reikšmė: „12,58 %“ → 0,1258 (formatas %), „2026-10-14“ → data
+  const raw = String(text).replace(/[  ]/g, ' ').replace(/[ⓘ▾▴⚠✓]/g, '').trim();
+  if (!raw || raw === '–' || raw === '-') return null;
+  if (/^\d{4}-\d\d-\d\d$/.test(raw)) return { v: Math.round(Date.parse(raw) / 864e5) + 25569, z: 'yyyy-mm-dd' };
+  const m = /^([−+-]?)([\d ,.]+?)\s?(%|p\. ?p\.|pp|€|mln\. €|mlrd\. €)?\*?$/.exec(raw);
+  if (!m) return raw;
+  let s = m[2].trim(); s = lang === 'en' ? s.replace(/,/g, '') : s.replace(/ /g, '').replace(',', '.');
+  if (!/^\d+(\.\d+)?$/.test(s)) return raw;
+  const neg = m[1] === '−' || m[1] === '-', n = Number(s) * (neg ? -1 : 1), dec = (s.split('.')[1] || '').length;
+  if (m[3] === '%') return { v: n / 100, z: dec ? '0.' + '0'.repeat(dec) + '%' : '0%' };
+  return { v: n, z: dec ? '0.' + '0'.repeat(dec) : '0' };
+}
+function tblCtx(tbl) {
+  const card = tbl.closest('section, .card') || tbl.parentElement;
+  const txt = sel => [...card.querySelectorAll(sel)].filter(n => !n.closest('table')).map(n => n.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const srcEl = tbl.closest('[data-src]') || card.querySelector('[data-src]');
+  return { card, title: chartTitle(tbl), notes: [...txt('.concl'), ...txt('.meta, .sub, caption'), ...txt('p.note')].filter((x, i, a) => a.indexOf(x) === i),
+    src: srcEl ? srcEl.dataset.src : '', srcLine: (txt('p.srcl')[0] || '').replace(/ · .*$/, '') };
+}
+function loadMeth() { return typeof DOC !== 'undefined' ? Promise.resolve() : new Promise(ok => { const s = document.createElement('script'); s.src = 'methodology.js?h=' + new Date().toISOString().slice(0, 13).replace(/\D/g, ''); s.onload = ok; s.onerror = ok; document.head.append(s); }); }
+function tblRows(tbl) {                     // lentelė → eilutės (antraštės su colspan išskleidžiamos), be mygtukų ir ženkliukų
+  const c = tbl.cloneNode(true); c.querySelectorAll('button, .info, .ik, .ttools, svg').forEach(n => n.remove());
+  const out = [];
+  [...c.rows].forEach(tr => {
+    const head = tr.parentElement.tagName === 'THEAD' || [...tr.cells].every(x => x.tagName === 'TH') && tr.parentElement.tagName !== 'TBODY';
+    const row = []; [...tr.cells].forEach(td => { const t = td.textContent.replace(/\s+/g, ' ').trim(); row.push({ t, th: td.tagName === 'TH' }); for (let i = 1; i < (td.colSpan || 1); i++) row.push({ t: '', th: true }); });
+    out.push({ head, avg: tr.classList.contains('avg'), gap: tr.classList.contains('gap'), row });
+  });
+  return out.filter(r => !r.gap && r.row.some(x => x.t));
+}
+async function tableBook(tbl) {
+  await loadMeth();
+  const L = lang === 'lt', ctx = tblCtx(tbl), wb = XL.book(), rows = tblRows(tbl), nC = Math.max(...rows.map(r => r.row.length));
+  const until = typeof FRESH !== 'undefined' ? iso(FRESH.top) : '';
+  const res = [[{ v: ctx.title, s: 'title' }], ...ctx.notes.map(n => [{ v: n, s: 'sub' }]),
+    [{ v: (L ? 'Duomenys iki ' : 'Data until ') + until + (ctx.srcLine ? ' · ' + ctx.srcLine : ''), s: 'sub' }], []];
+  const top = res.length;
+  rows.forEach(r => res.push(r.row.map((x, i) => {
+    if (r.head) return { v: x.t, s: 'hdr' };
+    const c = i === 0 && !/^[−+-]?\d/.test(x.t) ? x.t : xlCellOf(x.t);
+    if (c === null) return r.avg ? { v: '', s: 'sum' } : null;
+    const o = typeof c === 'object' ? c : { v: c };
+    return { ...o, s: r.avg ? 'sum' : i === 0 ? 'b' : 'res' };
+  })));
+  const widths = Array.from({ length: nC }, (_, i) => Math.min(48, Math.max(10, ...rows.map(r => (r.row[i] ? r.row[i].t.length : 0) + 2))));
+  const nHead = rows.filter(r => r.head).length;
+  XL.sheet(wb, L ? 'Rezultatas' : 'Result', res, { cols: widths, freeze: { r: top + nHead, c: 1 } });
+  let rich = null;
+  if (tbl.id && XLB.has(tbl.id)) { try { rich = await XLB.get(tbl.id)(); } catch (e) { rich = null; } }
+  if (rich) {                               // builderio metodikos lapas sujungiamas su bendru „Metodika“ lapu
+    const mi = rich.sheets.findIndex(s => /^(Metodika|Methodology)/i.test(s.name));
+    if (mi >= 0) { rich.meth = (rich.meth || []).concat(rich.sheets[mi].rows.slice(1).map(r => (r || []).map((c, i) => c === null || c === undefined ? null : { v: typeof c === 'object' ? c.v : c, s: i ? 'note' : 'b' }))); rich.sheets.splice(mi, 1); }
+    rich.sheets.forEach(s => XL.sheet(wb, s.name, s.rows, s.o || {}));
+  }
+  const D = typeof DOC !== 'undefined' ? (DOC[lang] || DOC.lt) : null, sec = D && ctx.src ? D.secs.find(s => s.id === ({ rep: 'rep' }[ctx.src] || ctx.src)) : null;
+  const page = location.href.split('#')[0], apie = page.replace(/[^/]*$/, '') + 'apie.html' + (sec ? '#' + sec.id : '');
+  const m = [[{ v: L ? 'Metodika ir šaltiniai' : 'Methodology and sources', s: 'title' }], [],
+    [{ v: L ? 'Lentelė' : 'Table', s: 'b' }, ctx.title], [{ v: L ? 'Puslapis' : 'Page', s: 'b' }, { v: page, l: page, s: 'link' }],
+    [{ v: L ? 'Duomenys iki' : 'Data until', s: 'b' }, until], [{ v: L ? 'Failas sukurtas' : 'File created', s: 'b' }, new Date().toLocaleString(T().locale)], [],
+    [{ v: L ? 'Kaip skaityti šį failą' : 'How to read this file', s: 'b' }],
+    [{ v: L ? 'Mėlyni skaičiai' : 'Blue numbers', s: 'in' }, { v: L ? 'Pradiniai duomenys iš šaltinio (pvz. valdytojo paskelbta vieneto vertė) – juos galima patikrinti šaltinyje.' : 'Source data (e.g. the unit value published by the manager) – can be checked at the source.', s: 'note' }],
+    [{ v: L ? 'Juodi skaičiai' : 'Black numbers', s: 'calc' }, { v: L ? 'Excel formulės – spustelėkite langelį ir viršuje pamatysite, iš kurių langelių jis skaičiuojamas.' : 'Excel formulas – click a cell to see which cells it is computed from.', s: 'note' }],
+    [{ v: L ? 'Geltonas fonas' : 'Yellow background', s: 'res' }, { v: L ? 'Rezultatas – tas pats skaičius, kuris rodomas svetainėje.' : 'Result – the same figure shown on the site.', s: 'note' }],
+    [{ v: L ? 'Žalias fonas' : 'Green background', s: 'sum' }, { v: L ? 'Vidurkio ar suvestinės eilutė.' : 'Average or summary row.', s: 'note' }], []];
+  if (ctx.notes.length) m.push([{ v: L ? 'Apie lentelę' : 'About the table', s: 'b' }, { v: ctx.notes.join(' '), s: 'note' }]);
+  if (sec) {
+    m.push([{ v: L ? 'Šaltinis' : 'Source', s: 'b' }, { v: sec.src, s: 'note' }], [{ v: L ? 'Atnaujinama' : 'Updated', s: 'b' }, { v: sec.upd, s: 'note' }],
+      [{ v: L ? 'Skaičiavimas' : 'Calculation', s: 'b' }, { v: sec.calc, s: 'note' }]);
+    (sec.lim || []).forEach((x, i) => m.push([i ? '' : { v: L ? 'Žinomi apribojimai' : 'Known limitations', s: 'b' }, { v: '• ' + x, s: 'note' }]));
+  }
+  if (rich && rich.meth) m.push([], ...rich.meth);
+  m.push([], [{ v: L ? 'Visa metodika' : 'Full methodology', s: 'b' }, { v: apie, l: apie, s: 'link' }],
+    [{ v: L ? 'Pastaba' : 'Note', s: 'b' }, { v: L ? 'Informacinė medžiaga, ne investavimo rekomendacija. Duomenys renkami automatiškai iš viešų šaltinių.' : 'For information only, not investment advice. Data are collected automatically from public sources.', s: 'note' }]);
+  XL.sheet(wb, L ? 'Metodika' : 'Methodology', m, { cols: [24, 110], grid: false });
+  XL.save(wb, `${ctx.title.replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 50)}_${until}.xlsx`);
+}
+async function tableCopy(tbl) {
+  const rows = tblRows(tbl), tsv = rows.map(r => r.row.map(x => x.t).join('\t')).join('\n');
+  const c = tbl.cloneNode(true); c.querySelectorAll('button, .info, .ik, svg').forEach(n => n.remove());
+  const html = `<table border="1" style="border-collapse:collapse;font-family:Calibri,Arial,sans-serif;font-size:11pt">` + c.innerHTML + '</table>';
+  try { await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([tsv], { type: 'text/plain' }) })]); return true; }
+  catch (e) { try { await navigator.clipboard.writeText(tsv); return true; } catch (e2) { return false; } }
+}
+const TBL_PROPS = ['color', 'background-color', 'font-family', 'font-size', 'font-weight', 'font-style', 'font-variant-numeric', 'text-align', 'vertical-align', 'white-space', 'line-height',
+  'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse', 'border-spacing', 'width', 'min-width'];
+function tablePng(tbl) {                    // lentelė → PNG: kopija su įterptais stiliais SVG foreignObject viduje → drobė
+  return new Promise((ok, no) => {
+    const cs0 = getComputedStyle(document.documentElement), v = k => cs0.getPropertyValue(k).trim();
+    const clone = tbl.cloneNode(true);
+    const src = [tbl, ...tbl.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
+    src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', TBL_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';') + ';position:static'); });
+    clone.querySelectorAll('button, .info, .ik').forEach(n => n.remove());
+    const W = Math.ceil(Math.max(tbl.scrollWidth, tbl.getBoundingClientRect().width)), H = Math.ceil(tbl.scrollHeight), pad = 16, head = 34, foot = 24;
+    const stamp = `${T().siteTitle} · ${typeof FRESH !== 'undefined' ? T().dataUntil + ' ' + iso(FRESH.top) : ''}`, font = getComputedStyle(document.body).fontFamily;
+    const wrap = document.createElement('div');
+    wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    wrap.setAttribute('style', `width:${W}px;padding:${pad}px;background:${v('--card') || '#fff'};font-family:${font};color:${v('--text')}`);
+    const h = document.createElement('div'); h.textContent = chartTitle(tbl); h.setAttribute('style', 'font-size:16px;font-weight:600;margin-bottom:10px');
+    const f = document.createElement('div'); f.textContent = stamp; f.setAttribute('style', `font-size:11px;color:${v('--text-3')};margin-top:8px`);
+    wrap.append(h, clone, f);
+    const TW = W + pad * 2, TH = H + head + foot + pad * 2;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${TH}"><foreignObject width="100%" height="100%">${new XMLSerializer().serializeToString(wrap)}</foreignObject></svg>`;
+    const img = new Image();
+    img.onload = () => { const c = document.createElement('canvas'); c.width = TW * 2; c.height = TH * 2; const x = c.getContext('2d'); x.scale(2, 2); x.drawImage(img, 0, 0);
+      try { c.toBlob(b => b ? ok(b) : no(), 'image/png'); } catch (e) { no(e); } };
+    img.onerror = no;
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+}
+let TBL_N = 0;
+function tableTools() {
+  document.querySelectorAll('main table, .wrap table').forEach(tbl => {
+    if (tbl._tt || tbl.closest('.ntc, .ttools, header, .fresh') || tbl.rows.length < 2) return;
+    tbl._tt = true; if (!tbl.id) tbl.id = 'tbl' + (++TBL_N);
+    const host = tbl.closest('.scroll') || tbl;
+    const t = document.createElement('div'); t.className = 'ttools';
+    t.innerHTML = `<button type="button" class="btn ico" data-a="img" title="${T().tCpImg}" aria-label="${T().tCpImg}">⧉</button>`
+      + `<button type="button" class="btn ico" data-a="tbl" title="${T().tCpTbl}" aria-label="${T().tCpTbl}">⊞</button>`
+      + `<button type="button" class="btn ico xl" data-a="xl" title="${T().tXl}" aria-label="${T().tXl}">Excel</button>`;
+    t.addEventListener('click', async e => {
+      const b = e.target.closest('button'); if (!b) return; e.stopPropagation();
+      const flash = ok => { const o = b.textContent; b.textContent = ok ? '✓' : '!'; b.title = ok ? T().tDone : T().tFail; setTimeout(() => { b.textContent = o; b.title = T()[{ img: 'tCpImg', tbl: 'tCpTbl', xl: 'tXl' }[b.dataset.a]]; }, 1500); };
+      try {
+        if (b.dataset.a === 'xl') { b.disabled = true; await tableBook(tbl); b.disabled = false; return; }
+        if (b.dataset.a === 'tbl') return flash(await tableCopy(tbl));
+        const blob = await tablePng(tbl);
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); flash(true); }
+        catch (err) { savePng(blob, tbl); alert(T().tFail); }
+      } catch (err) { b.disabled = false; flash(false); console.error(err); }
+    });
+    host.before(t);
+  });
+}
+if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() => { clearTimeout(ttT); ttT = setTimeout(tableTools, 250); }).observe(document.documentElement, { childList: true, subtree: true }); }

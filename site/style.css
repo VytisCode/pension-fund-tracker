@@ -414,3 +414,10 @@ table.kidp { width: auto; min-width: 720px; }
 table.kidp th, table.kidp td { white-space: nowrap; padding: 5px 12px; }
 table.kidp tbody th { text-align: left; font-weight: 600; vertical-align: middle; }
 table.kidp tr.kt > * { border-top: 1px solid var(--line); }
+/* lentelių įrankiai (common.js tableTools) */
+.ttools { display: flex; justify-content: flex-end; gap: 4px; margin: 2px 0 4px; opacity: .55; transition: opacity .15s; }
+.ttools .btn { padding: 1px 7px; font-size: 12px; line-height: 1.4; }
+.ttools .btn.xl, .ctools .btn.xl { font-weight: 600; color: #1d6f42; }
+section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
+@media (hover: none) { .ttools { opacity: .85; } }
+@media print { .ttools { display: none !important; } }
