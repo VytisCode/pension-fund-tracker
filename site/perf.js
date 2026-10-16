@@ -1298,6 +1298,8 @@ function labelControls() {
   $('btnCpi').textContent = T().cpiBtn; $('btnCpi').hidden = typeof CPI === 'undefined'; $('btnCpi').setAttribute('aria-pressed', !!P.cpi);
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
+  { const bm = $('btnMore'), card = $('chartCard'); bm.textContent = lang === 'lt' ? '⚙ Daugiau nustatymų' : '⚙ More settings';   // retai naudojami nustatymai suskleisti (savininkas 2026-10-16: „per daug painus“)
+    bm.onclick = () => { const on = !card.classList.contains('more'); card.classList.toggle('more', on); bm.setAttribute('aria-pressed', on); }; }
   addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || (x.id !== 'hMarket' && x.id !== 'insTitle')));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }

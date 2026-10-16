@@ -738,7 +738,7 @@ function idxFunds() {
   IDX_CACHE.forEach(f => {
     const fee = idxFeeOf(f.id);
     if (f.feeKey !== fee) { const k = 1 - fee / 100; f.v = fee ? f.raw.map((v, i) => v * Math.pow(k, (f.d[i] - f.d[0]) / 365.25)) : f.raw; f.feeKey = fee; }
-    f.fee = fee; f.label = IDX_META[f.id][lang] + (fee ? ` −${num(fee, 2)} %` : '');
+    f.fee = fee; f.label = IDX_META[f.id][lang] + (fee ? (lang === 'lt' ? ` (po ${num(fee, 2)} % mokesčio)` : ` (after ${num(fee, 2)}% fee)`) : '');
   });
   return IDX_CACHE;
 }
