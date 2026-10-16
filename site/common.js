@@ -1618,7 +1618,8 @@ function pairBook(o) {
     [L ? 'Mokesčiai' : 'Fees', L ? 'Vieneto vertės jau po valdymo mokesčio – mokesčiai antrą kartą neatimami.' : 'Unit values are net of the management fee – fees are not deducted again.'],
     ...(o.meth || [])];
   const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
-  add(res, L ? 'Rezultatas' : 'Result', [{ wch: 30 }, ...Array(o.cols.length + (o.extraCols || []).length).fill({ wch: 11 })]);
+  (o.pre || []).forEach(x => add(x.rows, x.name, x.w));          // pre – papildomi lapai prieš lentelę (pvz. suvestinė iš jos)
+  add(res, o.resName || (L ? 'Rezultatas' : 'Result'), [{ wch: 30 }, ...Array(o.cols.length + (o.extraCols || []).length).fill({ wch: 11 })]);
   add(calc, SC, [{ wch: 26 }, { wch: 12 }, { wch: 32 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 11 }, { wch: 7 }, { wch: 12 }, { wch: 30 }]);
   add(vals, SV, [{ wch: 11 }, ...names.map(() => ({ wch: 16 }))]);
   add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);

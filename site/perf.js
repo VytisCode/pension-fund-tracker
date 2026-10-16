@@ -1168,6 +1168,49 @@ async function exportMetricsXlsx() {
 const rowName = (s, g, ALL) => `${labelOf(s.f.provider)}${ALL ? ' · ' + groupLabel(g) : ''}`;
 const fundName = (f, g) => `${groupLabel(g)} · ${labelOf(f.provider)}`;
 const idxRows = (pt, ALL, cellsOf) => idxOf(pt).map(f => { const fs = idxSince(f, grpStart(pt.g)); return { label: f.label + (ALL ? ' · ' + groupLabel(pt.g) : ''), cells: cellsOf(fs, `${f.label} (${groupLabel(pt.g)})`) }; });
+/* „Lyderiai ir judesiai“ (tSum): visų fondų grąža grupėse, lyderis / paskutinis / skirtumas – formulės */
+XLB.set('tSum', async () => {
+  const L = lang === 'lt', provs = marketProvs(), rows = [];
+  DATA.groups.forEach(g => {
+    const { end: gEnd, overallLast } = groupEnd(g); let anchor, end = gEnd;
+    if (P.sumWin === 'sel') { const r = rangeFor(g, false); anchor = r.anchor; end = r.end; } else anchor = P.sumWin === '1w' ? gEnd - 7 : shiftMonths(gEnd, 1);
+    const cells = provs.map(p => { const f = g.funds.find(x => x.provider === p.id); if (!f || isStale(f, overallLast)) return null; const s = seriesOf(f, anchor, end); return s ? { f, name: fundName(f, g), ia: s.ia, ie: s.ie, col: p.label } : null; });
+    const vs = cells.map(c => c ? c.f.v[c.ie] / c.f.v[c.ia] - 1 : null), ok = vs.filter(v => v != null); if (ok.length < 2) return;
+    const mx = Math.max(...ok), mn = Math.min(...ok), nm = v => provs[vs.indexOf(v)].label, rg = (r, a, b) => `${a}${r}:${b}${r}`, hd = (a, b) => `$${a}$3:$${b}$3`;
+    rows.push({ label: groupLabel(g), cells, extra: [(r, a, b) => ({ f: `INDEX(${hd(a, b)},MATCH(MAX(${rg(r, a, b)}),${rg(r, a, b)},0))`, v: nm(mx) }), (r, a, b) => xlF(`MAX(${rg(r, a, b)})`, mx, '0.00%'),
+      (r, a, b) => ({ f: `INDEX(${hd(a, b)},MATCH(MIN(${rg(r, a, b)}),${rg(r, a, b)},0))`, v: nm(mn) }), (r, a, b) => xlF(`MIN(${rg(r, a, b)})`, mn, '0.00%'), (r, a, b) => xlF(`(MAX(${rg(r, a, b)})-MIN(${rg(r, a, b)}))*100`, (mx - mn) * 100, '0.00')] });
+  });
+  return pairBook({ title: T().hSum.replace(/<[^>]+>/g, ''), cap: $('c_tSum') ? $('c_tSum').textContent : '', rowHdr: T().thGroup, cols: provs.map(p => p.label), rows,
+    extraCols: [T().thLeader, L ? 'Lyderio grąža' : 'Leader return', T().thLagger, L ? 'Paskutinio grąža' : 'Last return', T().thSpread],
+    meth: [[L ? 'Lyderis ir paskutinis' : 'Leader and last', L ? 'MAX ir MIN eilutėje, pavadinimas – INDEX(MATCH) iš antraštės; skirtumas – (MAX − MIN) × 100, procentiniais punktais. Fondai, > 5 d. neatnaujinę duomenų, neįtraukiami.' : 'MAX and MIN of the row, name – INDEX(MATCH) from the header; spread – (MAX − MIN) × 100, percentage points. Funds more than 5 days behind are excluded.'],
+      [L ? 'Didžiausi dienos judesiai' : 'Largest daily moves', L ? 'Svetainės stulpeliai „didžiausias kilimas / kritimas per dieną“ – lape „Vertės“ galima patikrinti kiekvienos dienos pokytį (vertė ÷ ankstesnė vertė − 1).' : 'The site’s “largest daily rise / fall” columns can be checked in “Values” (value ÷ previous value − 1).']] });
+});
+/* „Bendras reitingas“ (tOv): grąžos (grupė × laikotarpis) → vietos (RANK) → suvestinė (COUNTIF / AVERAGE) */
+XLB.set('tOv', async () => {
+  if ($('ovG') && $('ovG').value !== 'all') return null;
+  const L = lang === 'lt', provs = DATA.providers, pers = PERIOD_IDS.filter(p => P.ovP.has(p)), rows = [], np = provs.length, last = xlCol(np);
+  DATA.groups.forEach(g => pers.forEach(per => { const rng = rangeAt(g, per);
+    rows.push({ label: `${groupLabel(g)} · ${T().periods[per]}`, cells: provs.map(p => { if (retOf(g, p.id, rng) == null) return null; const f = g.funds.find(x => x.provider === p.id), s = seriesOf(f, rng.anchor, rng.end); return { f, name: fundName(f, g), ia: s.ia, ie: s.ie, col: p.label }; }),
+      extra: [r => xlF(`COUNT(B${r}:${last}${r})`, provs.filter(p => retOf(g, p.id, rng) != null).length, '0'),
+        r => { const n = provs.filter(p => retOf(g, p.id, rng) != null).length; return xlF(`IF(AND(${xlCol(np + 1)}${r}>=3${P.ovCommon ? `,${xlCol(np + 1)}${r}=${np}` : ''}),1,0)`, n >= 3 && (!P.ovCommon || n === np) ? 1 : 0, '0'); }] }); }));
+  const SR = L ? 'Grąža' : 'Returns', SV = L ? 'Vietos' : 'Ranks', q = s => `'${s}'`, inc = xlCol(np + 2), first = 4, lastR = rows.length + 3;
+  const ranks = [[L ? 'Vieta grupėje kiekvienu laikotarpiu' : 'Rank in the group for each period'], [L ? `RANK tarp tos eilutės fondų lape „${SR}“; tuščia, jei eilutė neįtraukta (< 3 fondai${P.ovCommon ? ' arba dalyvauja ne visi valdytojai' : ''}).` : `RANK among the row’s funds in “${SR}”; empty if the row is excluded (< 3 funds${P.ovCommon ? ' or not all managers present' : ''}).`],
+    [L ? 'Grupė · laikotarpis' : 'Group · period', ...provs.map(p => p.label)]];
+  const st = provs.map(() => ({ cmp: 0, first: 0, top2: 0, rs: 0 }));
+  rows.forEach((r, i) => { const R = first + i, vals = r.cells.map((c, k) => ({ key: k, v: c ? c.f.v[c.ie] / c.f.v[c.ia] - 1 : null })), { map, n } = rankOf(vals), use = n >= 3 && (!P.ovCommon || n === np);
+    ranks.push([r.label, ...provs.map((p, k) => { const c = xlCol(k + 1), v = use && map.has(k) ? map.get(k) : null; if (v != null) { const s = st[k]; s.cmp++; s.rs += v; if (v === 1) s.first++; if (v <= 2) s.top2++; }
+      return { t: 'n', f: `IF(OR(${q(SR)}!${c}${R}="",${q(SR)}!${inc}${R}<>1),"",RANK(${q(SR)}!${c}${R},${q(SR)}!$B${R}:$${last}${R},0))`, v: v == null ? '' : v, z: '0' }; })]); });
+  const list = provs.map((p, k) => ({ p, k, ...st[k], avg: st[k].cmp ? st[k].rs / st[k].cmp : null })).filter(x => x.cmp).sort((a, b) => a.avg - b.avg);
+  const col = k => `${q(SV)}!$${xlCol(k + 1)}$${first}:$${xlCol(k + 1)}$${lastR}`;
+  const sum = [[T().hOv.replace(/<[^>]+>/g, '')], [$('c_tOv') ? $('c_tOv').textContent : ''], [T().thRank, T().thFund, T().thCmp, T().thFirst, T().thFirstPct, T().thTop2, T().thAvgRank]];
+  list.forEach((x, i) => { const r = i + 4; sum.push([xlF(`RANK(G${r},$G$4:$G$${list.length + 3},1)`, i + 1, '0'), x.p.label, xlF(`COUNT(${col(x.k)})`, x.cmp, '0'), xlF(`COUNTIF(${col(x.k)},1)`, x.first, '0'),
+    xlF(`D${r}/C${r}`, x.first / x.cmp, '0.00%'), xlF(`COUNTIF(${col(x.k)},"<=2")/C${r}`, x.top2 / x.cmp, '0.00%'), xlF(`AVERAGE(${col(x.k)})`, x.avg, '0.00')]); });
+  return pairBook({ title: L ? 'Grąža pagal grupę ir laikotarpį' : 'Return by group and period', cap: '', rowHdr: L ? 'Grupė · laikotarpis' : 'Group · period', cols: provs.map(p => p.label), rows, resName: SR,
+    extraCols: [L ? 'Fondų sk.' : 'Funds', L ? 'Įtraukta (1 – taip)' : 'Included (1 – yes)'],
+    pre: [{ name: L ? 'Rezultatas' : 'Result', rows: sum, w: [{ wch: 8 }, { wch: 16 }, ...Array(5).fill({ wch: 14 })] }, { name: SV, rows: ranks, w: [{ wch: 30 }, ...provs.map(() => ({ wch: 11 }))] }],
+    meth: [[L ? 'Eiga' : 'Steps', L ? `1) „${SR}“ – kiekvieno valdytojo fondo grąža kiekvienoje grupėje ir laikotarpyje (formulės į „Skaičiavimai“). 2) „${SV}“ – RANK toje eilutėje (1 – didžiausia grąža). 3) „Rezultatas“ – palyginimų skaičius (COUNT), pirmų vietų (COUNTIF = 1), dalis 1–2 vietose (COUNTIF ≤ 2), vidutinė vieta (AVERAGE); bendra vieta – pagal vidutinę vietą.` : `1) “${SR}” – each manager’s fund return in each group and period (formulas to “Calculations”). 2) “${SV}” – RANK within the row (1 – highest return). 3) “Result” – comparisons (COUNT), firsts (COUNTIF = 1), share in places 1–2 (COUNTIF ≤ 2), average rank (AVERAGE); overall rank – by average rank.`],
+      [L ? 'Lygios reikšmės' : 'Ties', L ? 'Svetainė vienodai grąžai suteikia skirtingas vietas pagal rūšiavimą, Excel RANK – vienodą; lygios grąžos (iki 0,01 %) pasitaiko itin retai.' : 'The site gives tied returns consecutive ranks by sort order, Excel RANK gives equal ranks; exact ties are very rare.']] });
+});
 XLB.set('tCal', async () => {
   const X = XS.cal, L = lang === 'lt'; if (!X) return null;
   const pc = (f, name, end) => { const c = calendarReturns(f, end); return X.years.map(y => c[y] ? { f, name, ia: c[y].ia, ie: c[y].ie, col: String(y), note: c[y].partial ? (L ? 'Nepilni metai – nuo fondo pradžios' : 'Partial year – since fund start') : (y === X.lastYear ? (L ? 'Metai iki šiol' : 'Year to date') : '') } : null); };
