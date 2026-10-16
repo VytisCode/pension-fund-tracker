@@ -1,7 +1,6 @@
 /* „Duomenų kalendorius“ (savininko užduotis 2026-10-16): kada kokie duomenys atkeliavo, kas nepavyko ir kada vėl veikė,
    kada valdytojai paskelbia vertes, kokie atnaujinimai laukia ateityje ir ką reikia įkelti ranka (su nuorodomis).
    Duomenys – data_ops.js (build_site.build_ops iš data/ops_log.csv ir sources_list.py). */
-addStrings({ navOps: 'Data calendar' }, { navOps: 'Duomenų kalendorius' });
 const OS = {
   lt: {
     kToday: 'Šiandien atkeliavo', kTodayS: n => `${n} įvykių`, kFail: 'Nesėkmės per 7 d.', kFailS: n => n ? `${n} šaltinių` : 'nėra', kNext: 'Artimiausias laukiamas', kMan: 'Rankiniai darbai per 30 d.',

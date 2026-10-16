@@ -20,7 +20,7 @@ addStrings({
   hFee: 'Fee impact over time', feeLife: 'Life-cycle funds', feeM: 'Monthly contribution', feeR: 'Assumed return before fees, % p.a.', feeYrs: y => `${y} yr`,
   feeRate: 'Fee, % p.a.', feeContrib: 'Paid in', feeGross: 'Final sum without fees', feeNet: 'Final sum with fees', feePaid: 'Fees paid', feeLoss: 'Lower final sum, €', feeLossPct: 'Lower final sum, %',
   capFee: (m, y, r) => `${num(m, 0)} € every month for ${y} years at ${num(r, 1)} % a year before fees. The only difference between providers is the asset-based management fee (Bank of Lithuania list); contribution fees and the real future return are not included.`,
-  hRisk: 'Return vs. risk', hRel: 'Return vs. age-group average', relAvg: 'average', pp: 'pp',
+  hRisk: 'Return-to-risk ratio (Sharpe) by group', hRel: 'Return vs. age-group average', relAvg: 'average', pp: 'pp',
   capRel: t => `${t}. Each bar = the fund’s return minus the simple average of all funds in its age group, in percentage points; right of the centre line = better than average. Same scale for all groups.`, axVol: 'Volatility, % p.a.', axRet: 'Return over the period, %',
   capRisk: (t, n) => `${t}. Each dot is one fund (${n}); colour = provider. Choose the period, age groups and providers above the chart.`, rmGroups: 'Age groups:', rmProvs: 'Providers:', rmAll: 'All',
   cMetrics: (a, ra, z, rz, v, rv) => `<b>${a}</b> earned the most (${ra}), <b>${z}</b> the least (${rz}); <b>${v}</b> was the least volatile (${rv}).`,
@@ -107,7 +107,7 @@ addStrings({
   hFee: 'Mokesčių poveikis laike', feeLife: 'Gyvenimo ciklo fondai', feeM: 'Įmoka per mėnesį', feeR: 'Prielaidinė grąža prieš mokesčius, % per metus', feeYrs: y => `${y} ${y >= 10 ? 'metų' : 'metai'}`,
   feeRate: 'Mokestis, % per metus', feeContrib: 'Įmokėta', feeGross: 'Sukaupta be mokesčių', feeNet: 'Sukaupta su mokesčiais', feePaid: 'Sumokėta mokesčių', feeLoss: 'Mažesnė suma, €', feeLossPct: 'Mažesnė suma, %',
   capFee: (m, y, r) => `${num(m, 0)} € kas mėnesį per ${y} ${y >= 10 ? 'metų' : 'metus'}, kai grąža prieš mokesčius – ${num(r, 1)} % per metus. Valdytojai skiriasi tik valdymo mokesčiu nuo turto (Lietuvos banko sąrašas); atskaitymai nuo įmokų ir tikroji ateities grąža neįskaičiuoti.`,
-  hRisk: 'Grąža ir rizika', hRel: 'Grąža palyginti su amžiaus grupės vidurkiu', relAvg: 'vidurkis', pp: 'p. p.',
+  hRisk: 'Grąžos ir rizikos santykis (Sharpe) pagal grupes', hRel: 'Grąža palyginti su amžiaus grupės vidurkiu', relAvg: 'vidurkis', pp: 'p. p.',
   capRel: t => `${t}. Kiekviena juosta – fondo grąža minus visų tos amžiaus grupės fondų paprastas vidurkis, procentiniais punktais; dešiniau vidurio linijos – geriau už vidurkį. Visoms grupėms ta pati skalė.`, axVol: 'Svyravimas, % per metus', axRet: 'Grąža per laikotarpį, %',
   capRisk: (t, n) => `${t}. Kiekvienas taškas – vienas fondas (${n}); spalva – tiekėjas. Laikotarpį, amžiaus grupes ir tiekėjus pasirinkite virš grafiko.`, rmGroups: 'Amžiaus grupės:', rmProvs: 'Tiekėjai:', rmAll: 'Visos',
   cMetrics: (a, ra, z, rz, v, rv) => `Daugiausia uždirbo <b>${a}</b> (${ra}), mažiausiai – <b>${z}</b> (${rz}); mažiausiai svyravo <b>${v}</b> (${rv}).`,
@@ -699,7 +699,7 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1)}</td><td>${pct(x.r.r1.min, 1)}</td><td>${pct(x.r.r1.max, 1)}</td><td>${num(x.r.r1.pos, 2)}${pctSfx()}</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
-  renderRiskMap(); renderRelative(gs); renderDrawdown();
+  renderRiskMap(); renderDrawdown();          // „Grąža palyginti su grupės vidurkiu“ pašalinta (savininkas 2026-10-16: dubliuoja palyginimą su konkurentais)
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   fitSticky();
 }
@@ -728,7 +728,8 @@ function renderRiskMap() {
   const pts = DATA.groups.filter(g => RM.groups.has(g.id)).flatMap(g => { const rng = rangeAt(g, RM.per); return g.funds.filter(f => RM.provs.has(f.provider)).map(f => fundStats(f, rng)).filter(s => s && s.ret !== null && s.vol !== null).map(s => ({ g, f: s.f, x: s.vol, y: s.ret })); });
   setCap('riskMap', T().capRisk(T().periods[RM.per], pts.length));
   renderRiskTable(pts);
-  el.innerHTML = '';
+  el.innerHTML = ''; el.hidden = true; $('c_riskMap').hidden = true;   // taškinė diagrama pašalinta (savininkas 2026-10-16) – lieka Sharpe lentelė
+  return;
   if (!pts.length) { el.innerHTML = `<p class="na">${T().noData}</p>`; return; }
   const W = el.clientWidth, H = el.clientHeight, m = { l: 48, r: 14, t: 10, b: 38 };
   const xs = niceTicks(0, Math.max(...pts.map(p => p.x)) * 1.05), y0 = Math.min(0, ...pts.map(p => p.y)), y1 = Math.max(0, ...pts.map(p => p.y));

@@ -74,7 +74,7 @@ const NAV_ICONS = {
   reports: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   journey: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
 };
-const NAV_PAGES = ['index', 'review', 'performance', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'apie'];
+const NAV_PAGES = ['index', 'review', 'ops', 'performance', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'apie'];
 const navKey = p => 'nav' + p[0].toUpperCase() + p.slice(1);
 const svgI = (body, s = 16) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
@@ -84,7 +84,9 @@ const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
    įrankiai – „⋯ Įrankiai“ meniu, kalba ir tema – ikonos kampe. onLang – iš naujo nupiešia puslapį. */
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
+  document.body.dataset.page = active;
   h.innerHTML = `<div class="hrow"><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1></a>
+    <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
         <a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a>
@@ -94,7 +96,10 @@ function renderHeader(active, onLang) {
     <div class="fresh" id="fresh" hidden></div>`;
   const nav = document.createElement('nav');
   nav.className = 'snav'; nav.id = 'snav';
-  nav.innerHTML = `<div class="nav">${NAV_PAGES.map(p => `<a href="${p}.html" data-p="${p}">${svgI(NAV_ICONS[p])}<span class="nl"></span></a>`).join('')}</div>`;
+  const sec = SECTIONS.find(s => s.pages.includes(active));
+  nav.innerHTML = `<div class="nav">${SECTIONS.map(s => `<a href="${s.pages[0]}.html" data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`).join('')}`
+    + `<a href="apie.html" data-s="about" class="nav-about">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`
+    + (sec && sec.pages.length > 1 ? `<div class="subnav">${sec.pages.map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '');
   h.after(nav);
   const acts = document.getElementById('actions');
   if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
@@ -121,9 +126,14 @@ function renderHeader(active, onLang) {
     tb.innerHTML = svgI(dark ? SUN : MOON); tb.title = dark ? t.themeLight : t.themeDark; tb.setAttribute('aria-label', tb.title);
     nav.setAttribute('aria-label', t.navLbl);
     nav.querySelectorAll('.nav a').forEach(a => {
-      a.querySelector('.nl').textContent = t[navKey(a.dataset.p)]; a.title = t[navKey(a.dataset.p)];
+      a.querySelector('.nl').textContent = t.secNav[a.dataset.s]; a.title = t.secNav[a.dataset.s];
+      if ((sec && a.dataset.s === sec.id) || (active === 'apie' && a.dataset.s === 'about')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    nav.querySelectorAll('.subnav a').forEach(a => {
+      a.textContent = t.subNav[a.dataset.p];
       if (a.dataset.p === active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
+    const qb = document.getElementById('q'); qb.placeholder = t.qPh; qb.setAttribute('aria-label', t.qPh);
     document.title = `${t[navKey(active)]} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
     pr.querySelector('[data-p=cozy]').textContent = '🖶 ' + t.printCozy; pr.querySelector('[data-p=plain]').textContent = '🖶 ' + t.printPlain;
@@ -157,6 +167,7 @@ function renderHeader(active, onLang) {
   const row = nav.querySelector('.nav');
   if (act && row.scrollWidth > row.clientWidth) row.scrollLeft = act.offsetLeft - 16;   // telefone aktyvus puslapis matomas
   row.addEventListener('scroll', () => scrollEdges(row), { passive: true }); scrollEdges(row);
+  searchUI(); goTo();
   return apply;
 }
 
@@ -1321,3 +1332,135 @@ function tableTools() {
   });
 }
 if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() => { clearTimeout(ttT); ttT = setTimeout(tableTools, 250); }).observe(document.documentElement, { childList: true, subtree: true }); }
+
+/* ---------- Skyriai, paieška ir katalogas (savininko patvirtinta struktūra 2026-10-16) ----------
+   Meniu – 6 skyriai; po skyriumi – jo puslapių juosta. Paieška viršuje: tuščia – katalogas (kas yra kiekviename skyriuje
+   ir ką gausi paspaudęs), su tekstu – rezultatai. Nuoroda „puslapis#go=…“ nuveda tiesiai prie lentelės ar grafiko. */
+const SECTIONS = [
+  { id: 'home', icon: 'index', pages: ['index', 'review', 'ops'] },
+  { id: 'results', icon: 'performance', pages: ['performance', 'pillar3', 'overview'] },
+  { id: 'mgr', icon: 'manager', pages: ['manager'] },
+  { id: 'pf', icon: 'portfolios', pages: ['portfolios', 'aum'] },
+  { id: 'rep', icon: 'reports', pages: ['reports'] },
+  { id: 'jr', icon: 'journey', pages: ['journey'] },
+];
+addStrings({
+  secNav: { home: 'Home', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', about: 'About', help: 'Help' },
+  subNav: { index: 'Today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', pillar3: 'Pillar III', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path' },
+  navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
+  qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology' }, qHint: 'Tip: press / to search',
+}, {
+  secNav: { home: 'Pradžia', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', about: 'Apie', help: 'Pagalba' },
+  subNav: { index: 'Šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', pillar3: 'III pakopa', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją' },
+  navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',
+  qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika' }, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
+});
+// [skyrius, puslapis, go (id arba antraštės pradžia), rūšis, Excel, LT pavadinimas, LT – ką pamatysi, EN pavadinimas, EN aprašymas, papildomi žodžiai]
+const CATALOG = [
+  ['home', 'index', '', 'x', 0, 'Šiandien trumpai', 'Metų lyderis ir paskutinis, savaitės pokytis, II pakopos turtas, didžiausias skirtumas grupėje.', 'Today in brief', 'Year-to-date leader and laggard, weekly change, pillar II assets, widest gap in a group.', 'santrauka kpi lyderis'],
+  ['home', 'index', 'Gyvenimo ciklo grupės', 't', 1, 'Lyderis ir paskutinis kiekvienoje grupėje', 'Kiekvienos gimimo metų grupės geriausias ir silpniausias fondas šiais metais ir skirtumas tarp jų.', 'Leader and laggard in each group', 'Best and weakest fund in each birth-year group this year and the gap.', 'grupės lyderis'],
+  ['home', 'review', '', 'x', 1, 'Mėnesio apžvalga', 'Praėjusio mėnesio rezultatai: valdytojai, grupių lyderiai, kas keitė turtą, III pakopos lyderiai.', 'Monthly review', 'Last month: managers, group leaders, what changed assets, pillar III leaders.', 'mėnuo ketvirtis apžvalga'],
+  ['home', 'ops', '', 'g', 0, 'Duomenų kalendorius', 'Kada kokie duomenys atkeliavo, kas nepavyko, kas laukia ateityje ir ką reikia įkelti ranka.', 'Data calendar', 'When data arrived, what failed, what is coming and what has to be uploaded by hand.', 'būsena atnaujinimas klaidos kalendorius'],
+  ['home', 'ops', 'hArr', 't', 1, 'Kada valdytojai paskelbia vertes', 'Kiekvieno valdytojo vertės paskelbimo laikas per paskutines dienas ir įprastas laikas.', 'When managers publish values', 'Publication time of each manager’s values over recent days and the usual time.', 'laikas skelbimas'],
+  ['results', 'performance', 'hSum', 't', 1, 'Automatinė santrauka', 'Pasirinktam laikotarpiui: kiekvienos grupės lyderis, atsiliekantis, didžiausias dienos kilimas ir kritimas.', 'Automatic summary', 'For the chosen period: leader, laggard, biggest daily rise and fall in each group.', 'santrauka'],
+  ['results', 'performance', 'hMarket', 't', 1, 'Visa rinka: grąža ir vieta', 'Visi fondai viename vaizde: eilutės – amžiaus grupės, stulpeliai – valdytojai; grąža, vieta, skirtumas nuo konkurentų, metinė grąža. Savos datos.', 'Whole market: return and rank', 'All funds in one view: rows – age groups, columns – managers; return, rank, relative, annualised. Custom dates.', 'grąža vieta reitingas heatmap mediana svertinis'],
+  ['results', 'performance', 'hOv', 't', 1, 'Bendras reitingas', 'Kiek kartų kiekvienas valdytojas buvo 1-as ar 2-as per visas grupes ir laikotarpius.', 'Overall ranking', 'How often each manager ranked 1st or 2nd across all groups and periods.', 'reitingas vieta'],
+  ['results', 'performance', 'hFund', 'g', 1, 'Fondų palyginimas grafike', 'Pasirinktos grupės fondų vertės kreivės, galima pridėti MSCI ir S&P 500 indeksus.', 'Fund comparison chart', 'Value lines of the chosen group’s funds, with MSCI and S&P 500 indices.', 'grafikas linija indeksas msci sp500'],
+  ['results', 'performance', 'hBar', 'g', 0, 'Laikotarpio grąža (juostos)', 'Vienos grupės fondų ir indeksų grąža, surikiuota nuo didžiausios.', 'Period return (bars)', 'One group’s funds and indices, sorted by return.', 'juostos'],
+  ['results', 'performance', 'hDd', 'g', 1, 'Kilimas ir kritimas', 'Didžiausias kritimas nuo piko ir kilimas nuo dugno kiekvienam fondui.', 'Rise and fall', 'Largest drawdown and run-up for each fund.', 'drawdown kritimas rizika'],
+  ['results', 'performance', 'hMetrics', 't', 1, 'Rezultatų rodikliai', 'Grąža, metinė grąža, svyravimas, didžiausias kritimas pasirinktai grupei.', 'Performance metrics', 'Return, annualised return, volatility, max drawdown for the chosen group.', 'svyravimas volatility rodikliai'],
+  ['results', 'performance', 'hRisk', 't', 1, 'Sharpe pagal grupes', 'Grąžos ir rizikos santykis kiekvienam valdytojui kiekvienoje grupėje, su vidutine laikotarpio €STR.', 'Sharpe by group', 'Return-to-risk ratio for each manager in each group, using the period-average €STR.', 'sharpe rizika estr'],
+  ['results', 'performance', 'Papildomi rodikliai', 't', 1, 'Papildomi rodikliai', 'Sharpe, geriausia ir blogiausia diena, mėnuo, metai, teigiamų mėnesių dalis.', 'Advanced metrics', 'Sharpe, best and worst day, month, year, share of positive months.', 'sharpe geriausia blogiausia'],
+  ['results', 'performance', 'hCal', 't', 1, 'Kalendorinių metų grąža', 'Kiekvienų metų grąža kiekvienam fondui.', 'Calendar-year returns', 'Each year’s return for each fund.', 'metai kalendoriniai'],
+  ['results', 'performance', 'hRoll', 't', 1, 'Slenkanti grąža', 'Grąža per paskutinius 1, 3, 6, 12, 36, 60 mėn. ir slenkančių 1 metų statistika.', 'Rolling returns', 'Return over the last 1–60 months and rolling 1-year statistics.', 'slenkanti rolling'],
+  ['results', 'performance', 'hQP', 't', 1, 'Vieta pagal laikotarpį', 'Vienos grupės valdytojų vietos skirtingais laikotarpiais.', 'Rank by period', 'One group’s manager ranks over different periods.', 'vieta laikotarpis'],
+  ['results', 'performance', 'hHm', 't', 1, 'Mėnesių grąžos šilumos žemėlapis', 'Kiekvieno mėnesio grąža spalvomis – matyti geri ir blogi mėnesiai.', 'Monthly heat map', 'Every month’s return in colour – good and bad months at a glance.', 'mėnesiai heatmap'],
+  ['results', 'pillar3', '', 't', 1, 'III pakopa: visi fondai', 'Obligacijų, mišraus investavimo ir akcijų fondai: grąža, vieta kategorijoje, svyravimas.', 'Pillar III: all funds', 'Bond, mixed and equity funds: return, rank in category, volatility.', 'iii trečia pakopa obligacijų akcijų mišrūs'],
+  ['results', 'overview', '', 'g', 0, 'Grupių grafikai', 'Kiekvienos gimimo metų grupės fondų vertės kreivės vienoje vietoje.', 'Group charts', 'Value lines of every birth-year group in one place.', 'grafikai grupės apžvalga'],
+  ['mgr', 'manager', '', 'p', 1, 'Valdytojo ir fondo kortelė', 'Vieno valdytojo II ir III pakopos fondai, vieta grupėje, turtas, portfelis, didžiausios pozicijos.', 'Manager and fund profile', 'One manager’s pillar II and III funds, rank, assets, portfolio, top holdings.', 'valdytojas fondas kortelė'],
+  ['pf', 'portfolios', '', 't', 1, 'Fondo portfelis', 'Ką fondas turi: pozicijos, turto rūšys, regionai, ką dengia portfelis.', 'Fund portfolio', 'What a fund holds: positions, asset classes, regions, coverage.', 'portfelis pozicijos akcijos obligacijos isin'],
+  ['pf', 'portfolios', 'Palyginimas grupėje', 't', 1, 'Portfelių palyginimas grupėje', 'Kas lemia skirtumus tarp tos pačios grupės fondų: akcijų dalis, regionai, alternatyvos.', 'Portfolio comparison in a group', 'What drives differences between funds of a group: equity share, regions, alternatives.', 'palyginimas skirtumai'],
+  ['pf', 'portfolios', 'Kiek panašūs', 't', 0, 'Kiek panašūs valdytojų portfeliai', 'Bendros pozicijos ir panašus profilis tarp valdytojų, %.', 'How similar portfolios are', 'Common holdings and similar profile between managers, %.', 'panašumas bendros pozicijos'],
+  ['pf', 'portfolios', 'Didžiausi ketvirčio', 't', 1, 'Didžiausi ketvirčio pokyčiai', 'Ką valdytojai pirko ir pardavė per ketvirtį.', 'Biggest quarterly changes', 'What managers bought and sold in the quarter.', 'pirkimai pardavimai pokyčiai'],
+  ['pf', 'portfolios', 'Alternatyvios', 't', 1, 'Alternatyvios investicijos', 'Privatus kapitalas, nekilnojamasis turtas ir kitos alternatyvos pagal fondą.', 'Alternative investments', 'Private equity, real estate and other alternatives by fund.', 'privatus kapitalas nt alternatyvos'],
+  ['pf', 'aum', '', 'g', 1, 'Fondų turtas (AUM)', 'Kiek turto valdo kiekvienas valdytojas ir fondas, rinkos dalys ir pokyčiai.', 'Fund assets (AUM)', 'Assets per manager and fund, market shares and changes.', 'turtas aum rinkos dalis'],
+  ['pf', 'aum', 'Kas keitė turtą', 'g', 1, 'Kas keitė turtą', 'Turto pokytis išskaidytas: grąža, įmokos, išmokos.', 'What changed assets', 'Asset change split into return, contributions and payouts.', 'srautai įmokos'],
+  ['pf', 'aum', 'Išmokėjimai', 't', 1, 'Pensijų reformos išmokėjimai', 'Kiek ir kada išmokėta pagal reformą kiekvienam fondui.', 'Pension reform payouts', 'How much was paid out under the reform and when, per fund.', 'reforma išmokos'],
+  ['rep', 'reports', 'Grąža nuo 2019', 't', 1, 'Grąža nuo 2019 m.', 'Kiekvienų metų ir laikotarpio grąža ataskaitų formatu.', 'Returns since 2019', 'Each year’s and period return in report format.', 'metai ataskaita'],
+  ['rep', 'reports', 'Mėnesių grąža', 't', 1, 'Mėnesių grąža', 'Šių metų kiekvieno mėnesio grąža visiems fondams.', 'Monthly returns', 'This year’s monthly returns for all funds.', 'mėnesiai'],
+  ['rep', 'reports', 'Rezultatų rodikliai', 't', 1, 'Rezultatų rodikliai (KPI)', 'Grąža, lyginamasis indeksas, standartinis nuokrypis – kaip Lietuvos banko lentelėse.', 'Performance KPI', 'Return, benchmark, standard deviation – as in Bank of Lithuania tables.', 'kpi lb lentelės'],
+  ['rep', 'reports', 'Pusmečio ataskaitos', 't', 1, 'Pusmečio ataskaitų lentelės', 'Mokesčiai, rizikingas turtas, tvarios investicijos, portfelio sudėtis, regionai.', 'Semi-annual report tables', 'Fees, risky assets, sustainable investments, portfolio, regions.', 'pusmetis sfdr mokesčiai'],
+  ['rep', 'reports', 'KID', 't', 1, 'KID veiklos rezultatų scenarijai', 'SEB fondų scenarijai: kaip PID ir pagal reglamentą.', 'KID performance scenarios', 'SEB fund scenarios: as in the KID and per the regulation.', 'kid pid scenarijai'],
+  ['jr', 'journey', '', 'c', 1, 'Pensijos sudėtis ir istorija', 'Kiek sukaupta nuo pirmos įmokos, kaip augo turtas, Sodros anuitetas.', 'Pension composition and history', 'Savings since the first contribution, asset growth, Sodra annuity.', 'kaupimas įmokos anuitetas'],
+  ['jr', 'journey', 'Ateities scenarijai', 'c', 1, 'Ateities scenarijai', 'Kokios pensijos galima tikėtis: Sodra, LB, tik kaupimas.', 'Future scenarios', 'What pension to expect: Sodra, BoL, savings only.', 'ateitis pakeitimo norma'],
+  ['jr', 'journey', 'Mokesčių poveikis', 'c', 0, 'Mokesčių poveikis santaupoms', 'Kiek valdymo mokestis sumažina santaupas per laiką.', 'Effect of fees on savings', 'How much the management fee reduces savings over time.', 'mokesčiai'],
+  ['jr', 'journey', 'Rinkos įžvalgos', 'x', 1, 'Rinkos įžvalgos', 'Automatinės išvados: kas pasikeitė, kas išsiskiria per laikotarpį.', 'Market insights', 'Automatic findings: what changed, what stands out.', 'įžvalgos'],
+  ['help', 'apie', '', 'm', 0, 'Metodika ir šaltiniai', 'Iš kur kiekvienas duomuo, kaip skaičiuojama, žinomi apribojimai.', 'Methodology and sources', 'Where each figure comes from, how it is computed, known limitations.', 'metodika formulės'],
+  ['help', 'apie', 'sources', 't', 0, 'Duomenų šaltiniai ir atnaujinimas', 'Visi šaltiniai, kada atnaujinami, rankinio atnaujinimo tvarkaraštis.', 'Data sources and updates', 'All sources, update schedule, manual update calendar.', 'šaltiniai'],
+  ['help', 'apie', 'reliability', 't', 0, 'Kas nutinka, jei šaltinis neveikia', 'Atsarginis planas kiekvienam duomeniui.', 'If a source fails', 'Backup plan for each data source.', 'atsarginis patikimumas'],
+  ['help', 'apie', 'glossary', 'd', 0, 'Žodynėlis', 'Visi terminai paprastais žodžiais.', 'Glossary', 'All terms in plain words.', 'terminai'],
+];
+const qNorm = s => String(s).toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^\p{L}\p{N}&]+/gu, ' ').trim();
+function catalogItems() {
+  const L = lang === 'lt', out = CATALOG.map(([s, p, go, k, xl, lt, ld, et, ed, kw]) => ({ s, url: `${p}.html${go ? '#go=' + encodeURIComponent(go) : ''}`, k, xl: !!xl, t: L ? lt : et, d: L ? ld : ed, kw: kw || '' }));
+  ['ALLIANZ', 'ARTEA', 'GOINDEX', 'LUMINOR', 'SEB', 'SWEDBANK'].forEach(id => {
+    const nm = id === 'SEB' ? 'SEB' : id.charAt(0) + id.slice(1).toLowerCase();
+    out.push({ s: 'mgr', url: `manager.html#${id}`, k: 'p', xl: true, t: nm, d: L ? `${nm}: II ir III pakopos fondai, grąža ir vieta grupėje, turtas, portfelis.` : `${nm}: pillar II and III funds, return and rank, assets, portfolio.`, kw: 'valdytojas manager' });
+  });
+  (typeof GLOSS !== 'undefined' ? GLOSS : []).forEach(g => { const [t, d] = L ? g.lt : g.en; out.push({ s: 'help', url: 'apie.html#go=glossary', k: 'd', xl: false, t, d, kw: '', term: true }); });
+  return out;
+}
+function qSearch(q) {
+  const toks = qNorm(q).split(' ').filter(Boolean); if (!toks.length) return [];
+  const T_ = T();
+  return catalogItems().map(it => {
+    const tt = qNorm(it.t), hay = qNorm(`${it.t} ${it.d} ${it.kw} ${T_.secNav[it.s] || ''}`);
+    if (!toks.every(x => hay.includes(x))) return null;
+    let sc = toks.reduce((a, x) => a + (tt.startsWith(x) ? 6 : tt.includes(x) ? 3 : 1), 0) - (it.term ? 1.5 : 0);
+    return { it, sc };
+  }).filter(Boolean).sort((a, b) => b.sc - a.sc).slice(0, 12).map(x => x.it);
+}
+function searchUI() {
+  const box = document.getElementById('q'), pn = document.getElementById('qPanel'); if (!box) return;
+  let cat = (SECTIONS.find(s => s.pages.includes(document.body.dataset.page)) || SECTIONS[1]).id, sel = 0, list = [];
+  const kind = it => `<span class="qk">${T().qKind[it.k] || ''}</span>${it.xl ? '<span class="qx">Excel</span>' : ''}`;
+  const row = (it, i) => `<a class="qi${i === sel ? ' on' : ''}" href="${it.url}" data-i="${i}"><span class="qt">${hEsc(it.t)} ${kind(it)}</span><span class="qd">${hEsc(it.d)}</span><span class="qs">${hEsc(T().secNav[it.s] || '')}</span></a>`;
+  const draw = () => {
+    const t = T(), q = box.value.trim();
+    if (q) {
+      list = qSearch(q);
+      pn.innerHTML = `<div class="qres"><div class="qh">${hEsc(t.qFound(q))}</div>${list.length ? list.map(row).join('') : `<p class="qnone">${t.qNone}</p>`}</div>`;
+    } else {
+      const all = catalogItems().filter(x => !x.term), secs = [...SECTIONS.map(s => s.id), 'help'];
+      list = all.filter(x => x.s === cat);
+      pn.innerHTML = `<div class="qcats"><div class="qh">${t.qCat}</div>${secs.map(s => `<button type="button" class="qc${s === cat ? ' on' : ''}" data-c="${s}"><span>${t.secNav[s]}</span><small>${all.filter(x => x.s === s).length}</small></button>`).join('')}<p class="qhint">${t.qHint}</p></div>`
+        + `<div class="qres">${list.map(row).join('')}</div>`;
+      pn.querySelectorAll('.qc').forEach(b => b.onmouseenter = b.onclick = () => { cat = b.dataset.c; sel = 0; draw(); });
+    }
+    pn.querySelectorAll('.qi').forEach(a => a.onmouseenter = () => { sel = +a.dataset.i; pn.querySelectorAll('.qi').forEach(x => x.classList.toggle('on', x === a)); });
+  };
+  const show = on => { pn.hidden = !on; box.setAttribute('aria-expanded', on); if (on) draw(); };
+  box.placeholder = T().qPh; box.setAttribute('aria-label', T().qPh);
+  box.addEventListener('focus', () => show(true));
+  box.addEventListener('input', () => { sel = 0; show(true); });
+  box.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { box.blur(); show(false); }
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, Math.min(list.length - 1, sel + (e.key === 'ArrowDown' ? 1 : -1))); draw(); }
+    else if (e.key === 'Enter' && list[sel]) { location.href = list[sel].url; show(false); }
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.srch')) show(false); });
+  document.addEventListener('keydown', e => { if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); box.focus(); } });
+  pn.addEventListener('click', e => { const a = e.target.closest('a.qi'); if (a && a.getAttribute('href').split('#')[0] === location.pathname.split('/').pop()) setTimeout(goTo, 50); });
+}
+/* „#go=…“ – nuveda prie elemento pagal id arba antraštės pradžią ir trumpai jį paryškina */
+function goTo() {
+  let g = null; try { g = new URLSearchParams(location.hash.slice(1)).get('go'); } catch (e) {}
+  if (!g) return;
+  const find = () => { const byId = document.getElementById(g); if (byId) return byId;
+    const n = qNorm(g); return [...document.querySelectorAll('h2, h3, .group-h')].find(h => h.offsetParent !== null && qNorm(h.textContent).startsWith(n)); };
+  let tries = 0;
+  const go = () => { const el = find(); if (!el) { if (++tries < 20) setTimeout(go, 250); return; }
+    el.scrollIntoView({ block: 'start', behavior: 'smooth' }); const box = el.closest('section, .card') || el; box.classList.add('goflash'); setTimeout(() => box.classList.remove('goflash'), 2200); };
+  setTimeout(go, 400);
+}
+addEventListener('hashchange', goTo);
