@@ -272,6 +272,8 @@ def fetch_seb() -> list:
             if n and PROVIDER_OF[n] == "SEB" and n not in links:
                 links[n] = a.get_attribute("href")
         DIAG.append(f"SEB: fondų puslapių nuorodos rastos {len(links)}: {', '.join(links) or '–'}")
+        for n, href in fund_links.SEB_III_DETAILS.items():   # trūkstamos – iš žinomų nuorodų
+            links.setdefault(n, href)
         hist = fetch_seb_history(page, links)
         have = {(r["date"], r["fund"]) for r in rows}
         return rows + [r for r in hist if (r["date"], r["fund"]) not in have]

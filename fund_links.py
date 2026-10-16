@@ -5,6 +5,14 @@ Pasikeitus fondo svetainės adresui, taisyti reikia tik čia.
 
 SEB_II = "https://e.seb.lt/web/ipank.p?sesskey=&act=VPFOND&filterCode=P&lang=lit&frnam=X&unetmenuhigh="
 SEB_BASE = "https://e.seb.lt/web/ipank.p"
+# SEB III pakopos fondų puslapiai (CSV „Istorinės fondo vieneto vertės“ – lyginamasis indeksas KID scenarijams).
+# Atsarginis variantas, jei fondų sąraše nuorodų nepavyksta rasti (savininkas, 2026-10-16).
+SEB_III_DETAILS = {
+    "SEB index. Klimato ateitis": "https://e.seb.lt/web/ipank.p?sesskey=&lang=LIT&act=FUND_DETAILS&isin=FOVIS51XXXXX&frnam=X&unetmenuhigh=",
+    "SEB pensija 18+": "https://e.seb.lt/web/ipank.p?sesskey=&lang=LIT&act=FUND_DETAILS&isin=FOVIS17XXXXX&frnam=X&unetmenuhigh=",
+    "SEB pensija 50+": "https://e.seb.lt/web/ipank.p?sesskey=&lang=LIT&act=FUND_DETAILS&isin=FOVIS49XXXXX&frnam=X&unetmenuhigh=",
+    "SEB pensija 58+": "https://e.seb.lt/web/ipank.p?sesskey=&lang=LIT&act=FUND_DETAILS&isin=FOVIS16XXXXX&frnam=X&unetmenuhigh=",
+}
 SWEDBANK_II = "https://www.swedbank.lt/private/pensions/pillar2/allFunds?language=LIT"
 SWEDBANK_III = "https://www.swedbank.lt/private/pensions/pillar3/allFunds?language=LIT"
 ARTEA_PAGE = "https://www.artea.lt/lt/privatiems/pensija/ii-pakopos-pensija/artea-pensija-1996-2002-index-plus"
