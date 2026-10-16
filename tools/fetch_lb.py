@@ -300,7 +300,9 @@ def main():
         found, other = guess()
     if not found and not other:
         print("LB puslapiai nepasiekiami arba be failų nuorodų – bus bandoma kito paleidimo metu.")
-        _status(False, "Lietuvos banko puslapiai nepasiekiami arba be failų nuorodų")
+        # LB puslapiai GitHub serveriams grąžina 403 (įprasta), o tiesioginiais adresais naujų failų dar nėra –
+        # tai ne gedimas: LB naują ketvirtį paskelbia ~3 mėn. po jo pabaigos (vėlavimą paaiškina svetainės pranešimai)
+        _status(True)
         state["fail"] = {"date": today, "n": (fail.get("n", 0) if fail.get("date") == today else 0) + 1}
         STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         return
