@@ -41,10 +41,10 @@ addStrings({
   share: 'Copy link', copied: 'Link copied', xlsx: 'Excel', xlsxBusy: 'Preparing…', allFunds: 'All funds', allNote: 'The chart is drawn for one age group at a time – pick a group above to see it. The tables below show all funds; ranks and highlighted best values are within each age group.', capMetrics2: '“Since inception” columns: each fund’s first date → end date.', xlsxDay: 'Daily table (.xlsx)', xlsxDayTip: 'Same layout as the old daily file (fund, date, unit value, net assets): one row per fund for the chosen date; default = latest. If a fund has no value on that day, its last earlier value is used.', xlsxFail: 'Could not load the Excel library (no internet?).', print: 'Print / PDF',
   viewret: 'Return', viewdiff: 'Difference', diffFrom: 'from', diffAvg: 'Group average', mDiff: r => `Lines show each fund’s cumulative return minus ${r ? r + '’s' : 'the group average'}, in % (0 = ${r || 'group average'}).`,
   eventsBtn: 'Market events', resetZoom: 'Reset zoom', png: 'Download PNG', zoomHint: 'Tip: drag across the chart to zoom; hover a provider to highlight it; click a name at the chart’s right edge (or double-click a chip) to pin it.',
-  advBtn: 'Advanced metrics (Sharpe ratio, best / worst periods)', rf: 'Risk-free rate, % p.a.', rfAvg: 'average €STR over the period', rfAutoBtn: 'Use €STR',
+  advBtn: 'Advanced metrics: Sharpe, best and worst month', rf: 'Risk-free rate, % p.a.', rfAvg: 'average €STR over the period', rfAutoBtn: 'Use €STR',
   hAdv: 'Advanced metrics', thAnn: 'Return p.a., period', thSharpe: 'Sharpe ratio', thBestD: 'Best day', thWorstD: 'Worst day', thBestM: 'Best month', thWorstM: 'Worst month',
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
-  nAdv: 'Computed for the selected period (best / worst calendar year: whole history, full years only). Sharpe = (annualised return − risk-free rate; default: average €STR over the fund’s period) ÷ annualised volatility; on periods shorter than a year the annualised figures are unreliable. Months = full calendar months inside the period.',
+  nAdv: 'For the selected period. Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; default rate – average €STR over the same period. Higher Sharpe – more return for the same risk. Bold – best value in the group (volatility – lowest). Month date – on hover. Annualised figures are unreliable for periods shorter than a year.',
   notShown: l => `Not shown on the chart (started later than the period start): ${l}. Pick a shorter period to see them.`,
   capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'start differs by group', endByGroup: 'end differs by group',
   capOv: (h, d) => `${h}; every period ends on its group’s latest date (up to ${d})`,
@@ -128,10 +128,10 @@ addStrings({
   share: 'Kopijuoti nuorodą', copied: 'Nuoroda nukopijuota', xlsx: 'Excel', xlsxBusy: 'Ruošiama…', allFunds: 'Visi fondai', allNote: 'Grafikas braižomas vienai amžiaus grupei – pasirinkite grupę aukščiau, kad jį pamatytumėte. Lentelėse žemiau rodomi visi fondai; vietos ir paryškintos geriausios reikšmės skaičiuojamos kiekvienoje amžiaus grupėje.', capMetrics2: 'Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → pabaigos data.', xlsxDay: 'Dienos lentelė (.xlsx)', xlsxDayTip: 'Toks pat išdėstymas kaip senajame dienos faile (fondas, data, vieneto vertė, grynieji aktyvai): po eilutę kiekvienam fondui pasirinktai dienai; pagal nutylėjimą – naujausia. Jei fondas tą dieną vertės neturi, imama paskutinė ankstesnė.', xlsxFail: 'Nepavyko įkelti Excel bibliotekos (nėra interneto?).', print: 'Spausdinti / PDF',
   viewret: 'Grąža', viewdiff: 'Skirtumas', diffFrom: 'nuo', diffAvg: 'Grupės vidurkio', mDiff: r => `Linijos rodo kiekvieno fondo sukauptą grąžą minus ${r ? r + ' grąža' : 'grupės vidurkis'}, procentais (0 = ${r || 'grupės vidurkis'}).`,
   eventsBtn: 'Rinkų įvykiai', resetZoom: 'Atstatyti mastelį', png: 'Atsisiųsti PNG', zoomHint: 'Patarimas: pele pažymėkite sritį grafike, kad priartintumėte; užveskite pelę ant tiekėjo, kad jį paryškintumėte; paspauskite pavadinimą grafiko dešinėje (arba dukart paspauskite mygtuką), kad jį prisegtumėte.',
-  advBtn: 'Papildomi rodikliai (Sharpe koeficientas, geriausi / blogiausi laikotarpiai)', rf: 'Be rizikos palūkanų norma, % per metus', rfAvg: 'vidutinė laikotarpio €STR', rfAutoBtn: 'Grąžinti €STR',
+  advBtn: 'Papildomi rodikliai: Sharpe, geriausias ir blogiausias mėnuo', rf: 'Be rizikos palūkanų norma, % per metus', rfAvg: 'vidutinė laikotarpio €STR', rfAutoBtn: 'Grąžinti €STR',
   hAdv: 'Papildomi rodikliai', thAnn: 'Metinė grąža, laikotarpyje', thSharpe: 'Sharpe koeficientas', thBestD: 'Geriausia diena', thWorstD: 'Blogiausia diena', thBestM: 'Geriausias mėnuo', thWorstM: 'Blogiausias mėnuo',
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
-  nAdv: 'Skaičiuojama pasirinktam laikotarpiui (geriausi / blogiausi kalendoriniai metai – visa istorija, tik pilni metai). Sharpe = (metinė grąža − be rizikos palūkanų norma; numatyta – vidutinė €STR per fondo laikotarpį) ÷ metinis svyravimas; trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi. Mėnesiai = pilni kalendoriniai mėnesiai laikotarpio viduje.',
+  nAdv: 'Pasirinktam laikotarpiui. Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; numatyta norma – vidutinė €STR per tą patį laikotarpį. Didesnis Sharpe – daugiau grąžos už tą pačią riziką. Paryškinta – geriausia reikšmė grupėje (svyravimo – mažiausia). Mėnesio data – užvedus pelę. Trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi.',
   notShown: l => `Grafike nerodoma (pradėjo vėliau nei laikotarpio pradžia): ${l}. Pasirinkite trumpesnį laikotarpį, kad juos matytumėte.`,
   capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'pradžia skiriasi pagal grupę', endByGroup: 'pabaiga skiriasi pagal grupę',
   capOv: (h, d) => `${h}; kiekvienas laikotarpis baigiasi savo grupės paskutine diena (iki ${d})`,
@@ -192,7 +192,7 @@ function saveState() {
 function applyState(s) {
   if (!s) return;
   if (PRESET_IDS.includes(s.period) || s.period === 'custom' || isCalPeriod(s.period)) P.period = s.period;
-  P.real = s.real === true && typeof CPI !== 'undefined'; REAL = P.real;
+  P.real = s.real === true && typeof CPI !== 'undefined';   // reali grąža – tik „Fondų palyginimo“ grafikui (savininkas 2026-10-16)
   if (typeof s.from === 'string') P.from = s.from; if (typeof s.to === 'string') P.to = s.to;
   if (s.group === 'all' || byId(s.group)) P.group = s.group;
   if (byId(s.hmGroup)) P.hmGroup = s.hmGroup;
@@ -413,6 +413,14 @@ function renderSummary() {
 const medianOf = xs => { const a = xs.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
 const meanOf = xs => { const a = xs.filter(x => x !== null && x !== undefined); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
 const relStyle = v => `background:${heatColor(v * 1.5)}`;
+/* Žemiau „Fondų palyginimo“ – lentelės, kurios priklauso nuo pasirinktos grupės: prie antraštės – grupės ženkliukas,
+   kad nebūtų painiojama su viršutinėmis visos rinkos lentelėmis (savininkas 2026-10-16) */
+function markGroup() {
+  const g = P.group === 'all' ? T().allFunds : groupName(P.group);
+  ['hMetrics', 'hDd', 'hCal', 'hRoll', 'hQP', 'hAdv'].forEach(id => { const h = $(id); if (!h) return; let b = h.querySelector(':scope > .gbadge');
+    if (!b) { b = document.createElement('a'); b.className = 'gbadge'; b.href = '#'; b.onclick = e => { e.preventDefault(); $('group').scrollIntoView({ block: 'center' }); $('group').focus(); }; h.append(b); }
+    b.textContent = g; b.title = lang === 'lt' ? 'Grupė – keisti „Fondų palyginimo“ viršuje' : 'Group – change at the top of “Fund comparison”'; });
+}
 /* „Visa rinka“: viena lentelė su rodiklio jungikliu (savininko patvirtinta struktūra 2026-10-16); „Visos keturios“ – kaip anksčiau */
 const MV_KEYS = ['ret', 'rank', 'rel', 'ann', 'all'];
 let MV = 'ret'; try { const v = localStorage.getItem('marketView'); if (MV_KEYS.includes(v)) MV = v; } catch (e) {}
@@ -426,7 +434,6 @@ function renderMarketView() {
   g.querySelectorAll(':scope > [data-m]').forEach(d => { d.hidden = MV !== 'all' && d.dataset.m !== MV; });
 }
 function renderMarket() {
-  renderMarketView();
   $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
   $('hRelM').innerHTML = T().hRelM + ik('relm'); $('hAnnM').innerHTML = T().hAnnM + ik('annm');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
@@ -564,7 +571,8 @@ function setIdxAvgFee() {                 // rodomų pensijų fondų vidutinis v
   IDX_AVG_FEE = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
   idxFeeCtl($('idxFee'), () => { renderIdxChips(); renderFunds(); });
 }
-function drawChart() {
+function drawChart() { REAL = !!P.real; try { drawChart0(); } finally { REAL = false; } }
+function drawChart0() {
   if (P.group === 'all') return;
   const g = byId(P.group), rng = rangeFor(g, true);
   const fs = g.funds.filter(f => P.provs.has(f.provider) && !isStale(f, rng.overallLast));
@@ -714,6 +722,7 @@ function renderFunds() {
 
   renderRiskMap(); renderDrawdown();          // „Grąža palyginti su grupės vidurkiu“ pašalinta (savininkas 2026-10-16: dubliuoja palyginimą su konkurentais)
   renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
+  markGroup();
   fitSticky();
 }
 /* grąžos ir rizikos žemėlapis: savi laikotarpio, amžiaus grupių ir tiekėjų pasirinkimai; spalva – tiekėjas */
@@ -891,10 +900,27 @@ function renderAdvanced(parts, ALL) {
   setCap('tAdv', T().capAdv(a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)}`, iso(Math.max(...rngs.map(r => r.end)))));
   $('lblRf').textContent = T().rf; $('nAdv').textContent = T().nAdv;
   const rows = parts.flatMap(pt => pt.all.map((s, i) => ({ s, first: i === 0, a: advStats(s.f, pt.rng, P.rf) }))).filter(x => x.a);
-  const d = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d)}</span>` : '–', y = x => x ? `${fmtP(x.v, 1)} <span class="na">${x.y}</span>` : '–';
-  const m = x => x ? `${fmtP(x.v, 2)} <span class="na">${iso(x.d).slice(0, 7)}</span>` : '–';
-  $('tAdv').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th><th>${T().thAnn}</th>${th(T().thVol, 'vol')}${th(T().thSharpe, 'sharpe')}${th(T().thBestD, 'bestworst')}<th>${T().thWorstD}</th><th>${T().thBestM}</th><th>${T().thWorstM}</th><th>${T().thBestY}</th><th>${T().thWorstY}</th>${th(T().thPosM, 'posm')}</tr></thead><tbody>`
-    + rows.map(({ s, a, first }) => `<tr${ALL && first ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}${ALL ? ` <span class="na">${groupLabel(s.g)}</span>` : ''}</td><td>${a.ann === null ? '–' : fmtP(a.ann, 1)}</td><td>${a.vol === null ? '–' : num(a.vol, 2) + pctSfx()}</td><td>${a.sharpe === null ? '–' : num(a.sharpe, 2)}</td><td>${d(a.bestD)}</td><td>${d(a.worstD)}</td><td>${m(a.bestM)}</td><td>${m(a.worstM)}</td><td>${y(a.bestY)}</td><td>${y(a.worstY)}</td><td>${a.posM === null ? '–' : num(a.posM, 2) + pctSfx()}</td></tr>`).join('') + '</tbody>';
+  /* supaprastinta (savininkas 2026-10-16): 6 rodikliai, datos – užvedus pelę; geriausia reikšmė grupėje paryškinta */
+  const L = lang === 'lt', mo = x => x ? iso(x.d).slice(0, 7) : '';
+  const cols = [
+    { h: T().thAnn, v: a => a.ann, f: v => fmtP(v, 1), hi: true },
+    { h: T().thVol, v: a => a.vol, f: v => num(v, 1) + pctSfx(), hi: false, ik: 'vol' },
+    { h: T().thSharpe, v: a => a.sharpe, f: v => num(v, 2), hi: true, ik: 'sharpe' },
+    { h: T().thWorstM, v: a => a.worstM && a.worstM.v, f: v => fmtP(v, 1), hi: true, t: a => mo(a.worstM) },
+    { h: T().thBestM, v: a => a.bestM && a.bestM.v, f: v => fmtP(v, 1), hi: true, t: a => mo(a.bestM) },
+    { h: T().thPosM, v: a => a.posM, f: v => num(v, 0) + pctSfx(), hi: true, ik: 'posm' },
+  ];
+  const best = new Map();                       // grupė → stulpelis → geriausia reikšmė
+  parts.forEach(pt => { const rs = rows.filter(r => pt.all.includes(r.s)); best.set(pt, cols.map(c => { const vs = rs.map(r => c.v(r.a)).filter(v => v != null && isFinite(v)); return vs.length ? (c.hi ? Math.max(...vs) : Math.min(...vs)) : null; })); });
+  const partOf = s => parts.find(pt => pt.all.includes(s));
+  $('tAdv').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${cols.map(c => c.ik ? th(c.h, c.ik) : `<th>${c.h}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map(({ s, a, first }) => { const bv = best.get(partOf(s));
+      return `<tr${ALL && first ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(s.f.provider)}"></span>${labelOf(s.f.provider)}${ALL ? ` <span class="na">${groupLabel(s.g)}</span>` : ''}</td>`
+        + cols.map((c, i) => { const v = c.v(a); if (v == null || !isFinite(v)) return '<td class="na">–</td>'; const tt = c.t ? c.t(a) : '';
+          return `<td${bv && bv[i] === v && rows.length > 1 ? ' class="best"' : ''}${tt ? ` title="${tt}"` : ''}>${c.f(v)}</td>`; }).join('') + '</tr>'; }).join('') + '</tbody>';
+  const src = DATA.rf && DATA.rf.source;
+  if (src && !$('rfSrc')) $('rfInfo').insertAdjacentHTML('afterend', ` <a id="rfSrc" href="${src}" target="_blank" rel="noopener" style="font-size:13px"></a>`);
+  if ($('rfSrc')) $('rfSrc').textContent = L ? '€STR šaltinis – Europos centrinis bankas ↗' : '€STR source – European Central Bank ↗';
 }
 
 /* ---------- eksportas ---------- */
@@ -1303,13 +1329,13 @@ function syncAll() {
   if (!rs && typeof CPI !== 'undefined') {
     rs = document.createElement('div'); rs.className = 'seg'; rs.id = 'realSeg'; rs.setAttribute('role', 'group');
     rs.innerHTML = '<button type="button" data-v="0"></button><button type="button" data-v="1"></button>';
-    $('groupField').after(rs);
-    rs.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; P.real = b.dataset.v === '1'; REAL = P.real; saveState(); syncAll(); });
+    $('viewSeg').before(rs);
+    rs.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; P.real = b.dataset.v === '1'; saveState(); syncAll(); });
   }
   if (rs) {
     rs.querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === '1' ? T().realOn : T().realOff; b.setAttribute('aria-pressed', String(!!P.real === (b.dataset.v === '1'))); });
     const ks = Object.keys(CPI); rs.title = T().realTip(ks[ks.length - 1]);
-    let rn = $('realNote'); if (!rn) { rn = document.createElement('p'); rn.className = 'note'; rn.id = 'realNote'; rn.style.margin = '6px 0 0'; $('periodbar').after(rn); }
+    let rn = $('realNote'); if (!rn) { rn = document.createElement('p'); rn.className = 'note'; rn.id = 'realNote'; rn.style.margin = '6px 0 0'; $('chartCard').append(rn); }
     rn.hidden = !P.real; rn.textContent = P.real ? T().realTip(ks[ks.length - 1]) : '';
   }
   $('periods').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === P.period));

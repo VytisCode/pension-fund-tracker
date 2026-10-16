@@ -458,3 +458,6 @@ section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
 /* „Visa rinka“ – viena lentelė per visą plotį */
 .two.one { grid-template-columns: 1fr !important; }
 .two.one .mx { font-size: 14px; }
+
+.gbadge { display: inline-block; margin-left: 8px; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); text-decoration: none; vertical-align: 2px; }
+.gbadge:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
