@@ -586,7 +586,24 @@ def build_aum(ver: dict) -> None:
 
     payload = aum.build()
     payload["generated"] = datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
-    data_js = "const AUM=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    # greitis (savininkas 2026-10-16: „dashboard sulėtėjo“): dienos – skirtumais nuo ankstesnės, turtas – 100 € tikslumu;
+    # naršyklėje atkuriama iškart įkėlus failą, todėl puslapių kodas nesikeičia
+    for f in payload["funds"]:
+        if isinstance(f.get("d"), list) and f["d"] and isinstance(f.get("a"), list):
+            f["dd"] = [f["d"][0]] + [b - a for a, b in zip(f["d"], f["d"][1:])]
+            del f["d"]
+            # turtas – šimtais €, vieneto vertė – kaip šaltinyje (6 sk. po kablelio); abu – skirtumais (null → 0 pokytis + žymė)
+            for k, sc in (("a", 10000), ("u", 1000000)):
+                if not isinstance(f.get(k), list):
+                    continue
+                ints = [round(v * sc) if isinstance(v, (int, float)) else None for v in f[k]]
+                if any(v is None for v in ints):
+                    f[k + "i"] = ints          # retas atvejis – be skirtumų
+                else:
+                    f[k + "x"] = [ints[0]] + [b - a for a, b in zip(ints, ints[1:])]
+                del f[k]
+    data_js = ("const AUM=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+               "AUM.funds.forEach(f=>{if(f.dd){let s=0;f.d=f.dd.map(x=>s+=x);delete f.dd;}for(const k of['a','u']){if(f[k+'x']){let s=0;f[k]=f[k+'x'].map(x=>(s+=x)/(k==='a'?1e4:1e6));delete f[k+'x'];}if(f[k+'i']){f[k]=f[k+'i'].map(x=>x==null?x:x/(k==='a'?1e4:1e6));delete f[k+'i'];}}});\n")
     (DOCS / "data_aum.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "aum.html", DOCS / "aum.html")
     shutil.copyfile(SITE / "aum.js", DOCS / "aum.js")
