@@ -94,4 +94,5 @@ Eiga (žymėti [x]):
 - [x] 11 LV/EE: iš Estijos – svertinis pensijų indeksas (EPI analogas): grupės vidurkis grafike/lentelėse (GAVG), visos rinkos indeksas Pradžioje. LV – skirta dalyviams (testas, skaičiuoklė) – mūsų analogas „Kurį fondą rinktis?“. Idėja vėliau: bendros išlaidos = mokestis + investicinių fondų TER
 - [x] 12 Duomenys: S&P 500 – CNBC atsarginis (.SPXTR, .SPX; veikia iš GitHub, 2026-10-09–15 spraga užpildyta); EONIA – pataisytas ECB raktas (EON/D.EONIA_TO.RATE, patikrins kitas paleidimas); III pakopos kasdienis SEB/Swedbank turtas – laukia
 - [x] papildomai: portfelių palyginime – valdymo mokestis ir bendros metinės išlaidos (mokestis + fondų TER), kaip Estijos „ongoing charges“
-- [ ] 13 Galutinė patikra, laiškas
+- [x] 13 Galutinė patikra (13 puslapių be JS klaidų, be dubliuotų id, telefono plotis), laiškas išsiųstas; priminimai ištrinti
+Laukia: EONIA (būsena „eonia“ šaltinių būsenoje parodys priežastį), Swedbank III kasdienis turtas, SEB III aktyvai iš istorijos CSV (patikrinti po kito paleidimo)
