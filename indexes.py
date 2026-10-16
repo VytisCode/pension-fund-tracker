@@ -25,7 +25,7 @@ import re
 import sys
 import time
 import urllib.request
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import fund_links
@@ -126,7 +126,49 @@ def sp500_usd(start):
             except Exception as e:  # noqa: BLE001
                 last = e
             time.sleep(5 * (attempt + 1))
+    try:                                   # atsarginis: CNBC .SPXTR (tas pats Total Return indeksas)
+        out = cnbc(".SPXTR", start)
+        if len(out) >= 3:
+            print("SP500: naudotas atsarginis CNBC .SPXTR")
+            return out
+        last = ValueError(f"Yahoo: {last}; CNBC .SPXTR: {len(out)} reikšmės")
+    except Exception as e:  # noqa: BLE001
+        last = RuntimeError(f"Yahoo: {last}; CNBC: {e.__class__.__name__} {str(e)[:80]}")
     raise last
+
+
+def parse_cnbc(raw):
+    """CNBC: {"barData": {"priceBars": [{"close": "6712.3", "tradeTime": "20261015000000", …}]}} – skaitoma lanksčiai."""
+    out = {}
+    def walk(x):
+        if isinstance(x, dict):
+            c, t = x.get("close"), x.get("tradeTime") or x.get("tradeTimeinMills")
+            if c is not None and t is not None:
+                ts, d = str(t), None
+                if ts.isdigit() and len(ts) in (8, 14) and ts[:2] in ("19", "20"):
+                    d = f"{ts[:4]}-{ts[4:6]}-{ts[6:8]}"
+                elif ts.isdigit() and len(ts) >= 12:
+                    d = datetime.utcfromtimestamp(int(ts) / 1000).strftime("%Y-%m-%d")
+                try:
+                    v = float(str(c).replace(",", ""))
+                    if d and v > 0:
+                        out[d] = v
+                except ValueError:
+                    pass
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    walk(json.loads(raw))
+    return out
+
+
+def cnbc(symbol, start):
+    url = fund_links.CNBC_BARS_API.format(symbol=symbol, start=start.strftime("%Y%m%d"), end=(date.today() + timedelta(days=1)).strftime("%Y%m%d"))
+    req = urllib.request.Request(url, headers={**UA, "Accept": "application/json", "Referer": "https://www.cnbc.com/"})
+    with urllib.request.urlopen(req, timeout=40) as r:
+        return parse_cnbc(r.read())
 
 
 def parse_fred(raw):
@@ -164,6 +206,13 @@ def sp500_price(start):
     """S&P 500 kainų indeksas (USD): FRED, Nasdaq, Stooq – pirmas veikiantis. Grąžina ({data: vertė}, šaltinis);
     nepavykus – klaida su kiekvieno šaltinio priežastimi (matoma data/source_status.json)."""
     errs = []
+    try:
+        out = cnbc(".SPX", start)
+        if len(out) >= 3:
+            return out, "CNBC"
+        errs.append(f"CNBC: {len(out)} reikšmės")
+    except Exception as e:  # noqa: BLE001
+        errs.append(f"CNBC: {e.__class__.__name__} {str(e)[:50]}")
     srcs = (("FRED", fund_links.FRED_SP500_CSV.format(start=start.isoformat()), parse_fred, {}),
             ("Nasdaq", fund_links.NASDAQ_SPX_API.format(start=start.isoformat(), end=date.today().isoformat()), parse_nasdaq, {"Accept": "application/json", "Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}),
             ("Stooq", fund_links.STOOQ_SPX_CSV.format(start=start.strftime("%Y%m%d")), parse_stooq, {}))
@@ -201,7 +250,9 @@ def update():
         print(f"EURUSD: nepavyko ({e.__class__.__name__}: {e})")
         source_status.fail("idx.EURUSD", e)
     try:
-        usd = sp500_usd(start)
+        have = sorted(data.get("SP500", {}))      # po pertraukos – nuo paskutinės turimos dienos, kad spraga užsipildytų
+        s0 = min(start, date.fromisoformat(have[-1]) - timedelta(days=5)) if have else start
+        usd = sp500_usd(s0)
         if not fx:
             raise RuntimeError("nėra ECB EUR/USD kurso")
         print(f"SP500: +{merge(data, 'SP500', sp500_eur(usd, fx))}")

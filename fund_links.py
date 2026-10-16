@@ -45,6 +45,8 @@ YAHOO_CHART_API = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?pe
 # Atsarginis S&P 500 šaltinis, kai Yahoo (S&P 500 TR) neveikia: oficialus S&P 500 kainų indeksas (be dividendų)
 FRED_SP500_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500&cosd={start}"
 NASDAQ_SPX_API = "https://api.nasdaq.com/api/quote/SPX/historical?assetclass=index&fromdate={start}&todate={end}&limit=9999"
+# CNBC grafikų duomenys (be rakto): .SPXTR – S&P 500 Total Return, .SPX – kainų indeksas; laikas YYYYMMDDHHMMSS
+CNBC_BARS_API = "https://ts-api.cnbc.com/harmony/app/bars/{symbol}/1D/{start}000000/{end}000000/adjusted/EST5EDT.json"
 STOOQ_SPX_CSV = "https://stooq.com/q/d/l/?s=%5Espx&i=d&d1={start}"
 ECB_EURUSD_API = "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod={start}"
 # Euro zonos AAA vyriausybės obligacijų 7 m. nulinės atkarpos (spot) pajamingumas, % (ECB pajamingumo kreivė, kasdien nuo 2004-09-06);
