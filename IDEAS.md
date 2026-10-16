@@ -103,8 +103,8 @@ Priminimai: trig_0153VxEgvSJzky18DwzKZt8W, trig_01AWkujoiQHNckoAQ56D2GgD (ištri
 - [x] Iškreipti grafikai (lentelės įrankių juosta tinklelyje) – pataisyta
 - [x] Puslapių skirtukai (common.js showTab/addSubnav): Rezultatai (II, III), Portfeliai
 - [x] Terminai: Tiekėjas → Valdytojas, TIF → Turto išsaug.; Rezultatuose be KPI eilutės; Sharpe matrica – bendras laikotarpis
-- [ ] Skirtukai: Turtas, Ataskaitos, Kelias į pensiją, III kategorijos, Apie
-- [ ] Navigacija: Duomenų kalendorius – į Įrankius; aiškesni pavadinimai; Pradžioje „Ką rasite“
-- [ ] Kodo valymas (nenaudojamas kodas), greitis
-- [ ] Savarankiškumas: automatinė puslapių patikra kasdieniame paleidime + pranešimas laiške
-- [ ] Galutinė patikra, laiškas
+- [x] Skirtukai: Turtas, Ataskaitos, Kelias į pensiją, III kategorijos; Apie – priežiūros lentelės suskleistos savininkui
+- [x] Navigacija: Duomenų kalendorius – į Įrankius; Pradžioje „Ką rasite svetainėje“; grafiko retieji nustatymai suskleisti; valdytojo portfelis „pro fondus“
+- [x] Kodo valymas: renderMarketView, renderRelative, taškinės diagramos likučiai, moneyChart, seni journey nav – pašalinti (~7 KB)
+- [x] Savarankiškumas: tools/smoke_test.py (update.yml žingsnis „Website check“) → source_status „site“ → vakarinis laiškas; CLAUDE.md failų žemėlapis atnaujintas
+- [x] Galutinė patikra (13 puslapių, skirtukai, telefonas), laiškas; priminimai ištrinti
