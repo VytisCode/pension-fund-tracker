@@ -75,3 +75,22 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 - Turto grafikas: naujas rodinys „Pokytis nuo laikotarpio pradžios, %“, eilutė „Per laikotarpį: X → Y mln. € (±%)“, pasirinkimai „Visa rinka – II / III pakopa“. Sumos rodomos tik kai žinomas visų veikiančių fondų turtas.
 - Reformos išmokos (2026–2027): II pakopos ketvirčio pabaigos pinigų / trumpų obligacijų rezervas – ne strategija. Portfeliuose „Akcijos be rezervo“, „Išmokų rezervas“; teiginiai skaičiuojami pagal akcijas be rezervo (REFORM pf.js, iki 2028-03).
 - Laukia: kasdienis Swedbank (ir SEB) III pakopos turtas – dabar III rinkos suma naujausia tik iki jų paskutinės datos.
+
+## Ilgas darbas 2026-10-16 (savininkas patvirtino 17:42 – dirbti be sustojimo, pabaigoje laiškas į Gmail)
+Susitarimai: dublikatus šalinti pagal 6 skyrių planą; nauji rodikliai – tik kaip papildomi vaizdai; vaizdai suprantami prezentacijoms;
+Excel – aiškūs auditoriams (šaltinis+data, žingsniai, patikros eilutės, Metodika). Nieko mokamo, palyginimo logikos nekeisti.
+Priminimai tęsti: trig_01EZJuxDucAX4fTyA2cUYDVL, trig_01J6gQ1kJaQHwysV4WKTDCDv, trig_01TmvjqdNrHrT1dNxeno8y3i (ištrinti pabaigoje).
+Eiga (žymėti [x]):
+- [ ] 1 Pradžia: Šiandien/Savaitė/Mėnuo/YTD jungiklis, viena lyderių lentelė
+- [ ] 2 III pakopa Rezultatuose (jungiklis)
+- [ ] 3 Metai ir mėnesiai (kalendoriniai + mėnesiai + slenkanti), savos datos
+- [ ] 4 Vienas bendras reitingas
+- [ ] 5 Fondo kortelė
+- [ ] 6 SEB indekso sekimas
+- [ ] 7 Rinkos įžvalgos → Rezultatai; senų nuorodų nukreipimas
+- [ ] 8 Kelias į pensiją: „Kurį fondą rinktis“ kortelė (II pagal gimimo metus, III pagal kategoriją)
+- [ ] 9 Nauji rodikliai (grąža po mokesčių, rizika pakoreguota vieta)
+- [ ] 10 Vaizdai prezentacijoms (pavadinimas, šaltinis, data PNG); Excel auditoriams
+- [ ] 11 LV/EE svetainių idėjos
+- [ ] 12 Duomenys: S&P atsarginis, EONIA, III pakopos kasdienis turtas
+- [ ] 13 Galutinė patikra, laiškas
