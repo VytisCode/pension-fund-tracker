@@ -13,9 +13,9 @@ addStrings({
   thFund: 'Fund', thG: 'Group', thFee: 'Fee, %', thAum: 'Assets, € m', thVol: 'Volatility, %', thDd: 'Max fall, %', thCat: 'Category', thMed: 'Group median', thDiff: 'Difference, pp', thPer: 'Period', thPlace: 'Place',
   cat: { bond: 'Bonds', mixed: 'Mixed', equity: 'Equity' },
   hAum: 'Net assets', mAum: 'Sum of the manager’s funds, € m. Points – only days with data: daily since daily assets are collected, before that – Bank of Lithuania quarter-end portfolio totals; periods longer than ~13 months – last day of each month.',
-  hAl: q => `Portfolio by asset type, ${q}`, hTop: q => `10 largest holdings, ${q}`, mPf: n => `Bank of Lithuania portfolio reports; ${n}.`, pfAll: 'all pillar II funds of the manager', pfOne: 'this fund',
+  hAl: q => `Portfolio by asset class (look-through), ${q}`, hTop: q => `10 largest holdings, ${q}`, mPf: n => `Bank of Lithuania portfolio reports; ${n}.`, pfAll: 'all pillar II funds of the manager', pfOne: 'this fund',
   thPos: 'Holding', thType: 'Type', thW: 'Share, %',
-  types: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' },
+  types: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' }, cls: { eq: 'Equities (incl. equity funds)', bd: 'Bonds (incl. bond funds)', cash: 'Cash and money market', alt: 'Alternatives', der: 'Derivatives', oth: 'Other' },
   hPeers: 'Compared with the group', mPeers: 'Each period ends on the group’s common latest day.', hChart: '3-year return compared with the group', hRisk: 'Risk',
   rVol1: 'Volatility, 1 year', rVol3: 'Volatility, 3 years', rDd3: 'Maximum fall, 3 years', rRisky: 'Risky assets (LB)', rNote: 'Volatility – annualised standard deviation of daily changes; maximum fall – the largest drop from a peak.',
   dEnd: 'Data as of:', selX: 'Add period:', xNone: 'none', dFrom: 'From', reset: 'Latest', yeL: 'Year end', qeL: 'Quarter end', shownL: p => `Shown: ${p}`,
@@ -32,9 +32,9 @@ addStrings({
   thFund: 'Fondas', thG: 'Grupė', thFee: 'Mokestis, %', thAum: 'Turtas, mln. €', thVol: 'Svyravimas, %', thDd: 'Didž. kritimas, %', thCat: 'Kategorija', thMed: 'Grupės mediana', thDiff: 'Skirtumas, p. p.', thPer: 'Laikotarpis', thPlace: 'Vieta',
   cat: { bond: 'Obligacijų', mixed: 'Mišrūs', equity: 'Akcijų' },
   hAum: 'Grynieji aktyvai', mAum: 'Valdytojo fondų suma, mln. €. Taškai – tik dienos, kurioms yra duomenų: nuo tada, kai renkami kasdieniai aktyvai, – kasdien, anksčiau – Lietuvos banko ketvirčio pabaigos portfelių sumos; ilgesniems nei ~13 mėn. laikotarpiams – kiekvieno mėnesio paskutinė diena.',
-  hAl: q => `Portfelis pagal turto rūšį, ${q}`, hTop: q => `10 didžiausių pozicijų, ${q}`, mPf: n => `Lietuvos banko portfelių ataskaitos; ${n}.`, pfAll: 'visi valdytojo II pakopos fondai', pfOne: 'šis fondas',
+  hAl: q => `Portfelis pagal turto klasę (pro fondus), ${q}`, hTop: q => `10 didžiausių pozicijų, ${q}`, mPf: n => `Lietuvos banko portfelių ataskaitos; ${n}.`, pfAll: 'visi valdytojo II pakopos fondai', pfOne: 'šis fondas',
   thPos: 'Pozicija', thType: 'Rūšis', thW: 'Dalis, %',
-  types: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' },
+  types: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' }, cls: { eq: 'Akcijos (su akcijų fondais)', bd: 'Obligacijos (su obligacijų fondais)', cash: 'Pinigai ir pinigų rinka', alt: 'Alternatyvios', der: 'Išvestinės', oth: 'Kita' },
   hPeers: 'Palyginimas su grupe', mPeers: 'Kiekvienas laikotarpis baigiasi bendra naujausia grupės diena.', hChart: '3 metų grąža, palyginti su grupe', hRisk: 'Rizika',
   rVol1: 'Svyravimas, 1 metai', rVol3: 'Svyravimas, 3 metai', rDd3: 'Didžiausias kritimas, 3 metai', rRisky: 'Rizikingas turtas (LB)', rNote: 'Svyravimas – metinis dienos pokyčių standartinis nuokrypis; didžiausias kritimas – didžiausias sumažėjimas nuo piko.',
   dEnd: 'Duomenys iki:', selX: 'Pridėti laikotarpį:', xNone: 'nepridėti', dFrom: 'Nuo', reset: 'Naujausi', yeL: 'Metų pabaiga', qeL: 'Ketvirčio pabaiga', shownL: p => `Rodoma: ${p}`,
@@ -218,14 +218,19 @@ function portfolio(p, g) {               // g – grupė (vienas fondas) arba nu
   if (q < 0) return null;
   const by = new Map(); let tot = 0;
   fs.forEach(f => { for (let i = 0; i < f.r.length; i += 4) if (f.r[i] === q) { by.set(f.r[i + 1], (by.get(f.r[i + 1]) || 0) + f.r[i + 3]); tot += f.r[i + 3]; } });
-  const types = {}; by.forEach((v, si) => { const t = PF.secs[si][1]; types[t] = (types[t] || 0) + v; });
+  /* turto klasė „pro fondus“ (kaip Portfelių puslapyje): ETF ir fondai – pagal jų turinį (akcijų, obligacijų, pinigų rinkos, alternatyvūs),
+     ne „Fondai ir ETF 91 %“ (savininkas 2026-10-16: kad būtų aišku, į ką investuota) */
+  const cls = x => { if (x[1] !== 'f') return { e: 'eq', b: 'bd', c: 'cash', d: 'der' }[x[1]] || 'oth'; if (x[7]) return 'alt';
+    const ac = x[9] ? x[9][0] : { 1: 'bond', 3: 'equity', 4: 'money_market', 5: 'real_estate', 7: 'private_equity' }[x[4]] || '';
+    return ac === 'equity' ? 'eq' : ac === 'bond' ? 'bd' : ac === 'money_market' ? 'cash' : ['private_equity', 'real_estate', 'other'].includes(ac) ? 'alt' : 'oth'; };
+  const types = {}; by.forEach((v, si) => { const t = cls(PF.secs[si]); types[t] = (types[t] || 0) + v; });
   const top = [...by.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([si, v]) => ({ s: PF.secs[si], w: v / tot * 100 }));
   return { q: PF.quarters[q], tot, types: Object.entries(types).map(([t, v]) => ({ t, w: v / tot * 100 })).sort((a, b) => b.w - a.w), top };
 }
 function pfHTML(pf, sub) {
   const t = T();
   if (!pf) return `<section class="card"><p class="na">${t.noPf}</p></section>`;
-  const al = pf.types.map(x => `<span>${t.types[x.t] || x.t}</span><span class="t"><i style="width:${Math.min(100, Math.max(0, x.w))}%"></i></span><span class="n">${fmt(x.w, 1)}</span>`).join('');
+  const al = pf.types.map(x => `<span>${t.cls[x.t] || x.t}</span><span class="t"><i style="width:${Math.min(100, Math.max(0, x.w))}%"></i></span><span class="n">${fmt(x.w, 1)}</span>`).join('');
   const top = pf.top.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="wrap">${hEsc(x.s[8] || x.s[0])}</td><td>${t.types[x.s[1]] || ''}</td><td class="n">${fmt(x.w, 2)}</td></tr>`).join('');
   return `<div class="two"><section class="card" data-src="pf"><h2>${t.hAl(pf.q)}</h2><div class="meta">${t.mPf(sub)}</div><div class="alloc">${al}</div></section>
     <section class="card" data-src="pf"><h2>${t.hTop(pf.q)}</h2><div class="scroll"><table class="mt"><thead><tr><th class="n">#</th><th>${t.thPos}</th><th>${t.thType}</th><th class="n">${t.thW}</th></tr></thead><tbody>${top}</tbody></table></div></section></div>`;
