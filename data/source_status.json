@@ -21,10 +21,7 @@
   "since": "2026-10-16"
  },
  "lb": {
-  "err": "2026-10-16",
-  "kind": "network",
-  "msg": "Lietuvos banko puslapiai nepasiekiami arba be failų nuorodų",
-  "since": "2026-10-16"
+  "ok": "2026-10-16"
  },
  "nav.ALLIANZ": {
   "ok": "2026-10-16"
