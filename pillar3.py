@@ -181,6 +181,66 @@ def table_rows(page) -> list:
     return out
 
 
+DIAG = []   # papildomi pranešimai žurnalui (pvz. SEB lyginamojo indekso atsisiuntimas)
+
+
+def parse_seb_csv(text: str, fund: str) -> list:
+    """SEB „Istorinės fondo vieneto vertės“ CSV: Data;Vieneto vertė;Grynųjų aktyvų vertė;Lyginamasis indeksas."""
+    out = []
+    for rec in csv.reader(text.splitlines(), delimiter=";" if text.count(";") >= text.count(",") else ","):
+        if not rec:
+            continue
+        m = re.match(r"(\d{4})[-.](\d{2})[-.](\d{2})", rec[0].strip())
+        if not m:
+            continue
+        unit = u.number(rec[1]) if len(rec) > 1 else None
+        assets = u.number(rec[2]) if len(rec) > 2 else None
+        bm = u.number(rec[3]) if len(rec) > 3 and rec[3].strip() else None
+        if unit:
+            out.append(row("-".join(m.groups()), fund, unit, assets if assets and assets > 1000 else None, bm))
+    return out
+
+
+def fetch_seb_history(page, links: dict) -> list:
+    """Kiekvieno SEB III pakopos fondo puslapyje (FUND_DETAILS) atsisiunčia CSV „Istorinės fondo vieneto vertės“
+    ir grąžina eilutes tik tuščiam lyginamajam indeksui užpildyti (esamos vieneto vertės neperrašomos)
+    ir trūkstamoms dienoms. Lyginamasis indeksas reikalingas KID scenarijams (kid_scenarios.py)."""
+    existing = load()
+    out = []
+    for fund, href in links.items():
+        try:
+            page.goto(urllib.parse.urljoin(fund_links.SEB_BASE, href), wait_until="domcontentloaded", timeout=90000)
+            page.wait_for_timeout(2000)
+            link = page.query_selector("a:has-text('Istorinės fondo vieneto vertės')") or page.query_selector("a:has-text('Istorinės')")
+            if not link:
+                DIAG.append(f"SEB {fund}: nerasta nuoroda „Istorinės fondo vieneto vertės“")
+                continue
+            target = link.get_attribute("href") or ""
+            text = ""
+            if target and not target.startswith(("#", "javascript")):
+                resp = page.request.get(urllib.parse.urljoin(page.url, target), timeout=90000)
+                raw = resp.body()
+                text = raw.decode("utf-8-sig", errors="replace") if b"\xc4" in raw or raw[:3] == b"\xef\xbb\xbf" else raw.decode("cp1257", errors="replace")
+            if not re.search(r"\d{4}[-.]\d{2}[-.]\d{2}", text):
+                with page.expect_download(timeout=60000) as dl:
+                    link.click()
+                raw = Path(dl.value.path()).read_bytes()
+                text = raw.decode("utf-8-sig", errors="replace") if raw[:3] == b"\xef\xbb\xbf" else raw.decode("cp1257", errors="replace")
+            recs = parse_seb_csv(text, fund)
+            filled = 0
+            for r in recs:
+                old = existing.get((r["date"], fund))
+                if old and not old.get("benchmark_index") and r["benchmark_index"]:
+                    out.append({**r, "unit_value": float(old["unit_value"]), "net_assets": old.get("net_assets") or r["net_assets"]})
+                    filled += 1
+                elif not old:
+                    out.append(r)
+            DIAG.append(f"SEB {fund}: istorijos CSV {len(recs)} eil., lyginamasis indeksas papildytas {filled} d.")
+        except Exception as exc:  # noqa: BLE001
+            DIAG.append(f"SEB {fund}: istorijos CSV klaida – {str(exc)[:200]}")
+    return out
+
+
 def fetch_seb() -> list:
     pw, browser, page = browser_page()
     try:
@@ -202,7 +262,19 @@ def fetch_seb() -> list:
             if d > today:  # pvz. sausio pradžioje rodoma gruodžio data
                 d = date(year - 1, int(month), int(day))
             rows.append(row(d.isoformat(), fund, u.number(cells[6])))
-        return rows
+        links = {}
+        for tr in page.query_selector_all("tr"):
+            a = tr.query_selector("a[href*='FUND_DETAILS'], a[href*='fund_details'], a[href*='isin=']")
+            if not a:
+                continue
+            cells = [" ".join(c.inner_text().split()) for c in tr.query_selector_all("td")]
+            n = next((fund_for(x) for x in [a.inner_text()] + cells if fund_for(x)), None)
+            if n and PROVIDER_OF[n] == "SEB" and n not in links:
+                links[n] = a.get_attribute("href")
+        DIAG.append(f"SEB: fondų puslapių nuorodos rastos {len(links)}: {', '.join(links) or '–'}")
+        hist = fetch_seb_history(page, links)
+        have = {(r["date"], r["fund"]) for r in rows}
+        return rows + [r for r in hist if (r["date"], r["fund"]) not in have]
     finally:
         browser.close()
         pw.stop()
@@ -371,6 +443,7 @@ def run(providers: dict, browser: bool) -> None:
             log.append(f"LUMINOR akcijų index istorija: gauta {len(rows)} eil., nauja/pakeista {changed}")
         except Exception as exc:  # noqa: BLE001
             log.append(f"LUMINOR akcijų index istorija: klaida – {str(exc)[:200]}")
+    log += DIAG
     u.save_state(state)
     u.summary(log, attempted)
 

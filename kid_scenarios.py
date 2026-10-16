@@ -40,14 +40,55 @@ def _load():
     return {k: sorted(v.items()) for k, v in s.items()}
 
 
+EXT = {}   # {eilutė: pirmas pratęstas mėnuo "YYYY-MM"} – užpildo benches()
+
+
+def published_benchmark(provider="SEB") -> dict:
+    """Valdytojo skelbiamas fondo lyginamasis indeksas (pillar3_history.csv stulpelis benchmark_index, kasdien renkamas iš
+    SEB fondo puslapio CSV) mėnesių pabaigose: {fondas: {(metai, mėnuo): vertė}}. Tik pilni mėnesiai, kurių paskutinė
+    reikšmė ne anksčiau nei 25 d. (kad nebūtų paimta pasenusi reikšmė)."""
+    p = ROOT / "data" / "pillar3_history.csv"
+    pts = {}
+    if p.exists():
+        with p.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                if r["provider"] == provider and r.get("benchmark_index"):
+                    pts.setdefault(r["fund"], []).append((r["date"], float(r["benchmark_index"])))
+    cur = (date.today().year, date.today().month)
+    out = {}
+    for k, v in pts.items():
+        last = {}
+        for d, x in sorted(v):
+            last[(int(d[:4]), int(d[5:7]))] = (int(d[8:10]), x)
+        out[k] = {ym: x for ym, (day, x) in last.items() if ym < cur and day >= 25}
+    return out
+
+
 def benches() -> dict:
-    """Valdytojų KID skaičiavimo lyginamųjų indeksų eilutės (prieš išlaidas): {pavadinimas: [(metai, mėnuo), vertė]}"""
+    """Valdytojų KID skaičiavimo lyginamųjų indeksų eilutės (prieš išlaidas): {pavadinimas: [(metai, mėnuo), vertė]}.
+    Valdytojo PID eilutės pratęsiamos naujais mėnesiais pagal valdytojo skelbiamo fondo lyginamojo indekso grąžas
+    (SEB Excel failų ateityje nebus – savininko sprendimas 2026-10-16)."""
     p = ROOT / "data" / "kid_bench.csv"
     out = {}
     if p.exists():
         with p.open(encoding="utf-8", newline="") as f:
             for r in csv.DictReader(f):
                 out.setdefault(r["bench"], {})[(int(r["date"][:4]), int(r["date"][5:7]))] = float(r["value"])
+    src = {}
+    for o in official():
+        for b in [o.get("bench")] + [x["bench"] for x in o.get("alt", [])]:
+            if b in out:
+                src[b] = o["n"]
+    pub = published_benchmark() if src else {}
+    EXT.clear()
+    for b, fund in src.items():
+        P, ser = pub.get(fund, {}), out[b]
+        ym = max(ser)
+        while _addm(ym, 1) in P and ym in P:
+            nx = _addm(ym, 1)
+            ser[nx] = ser[ym] * P[nx] / P[ym]
+            EXT.setdefault(b, f"{nx[0]}-{nx[1]:02d}")
+            ym = nx
     return {k: sorted(v.items()) for k, v in out.items()}
 
 
@@ -175,7 +216,8 @@ def monthly() -> dict:
     own_from = {o["n"]: o.get("own_from") for o in official() if o["p"] == "SEB"}   # dabartinės strategijos pradžia (YYYY-MM), jei žinoma
     fm = {k: [(ym, x) for ym, x in v if not own_from[k] or f"{ym[0]}-{ym[1]:02d}" >= own_from[k]] for k, v in fund_month_ends().items() if k in own_from}
     out["f"] = {k: {"s0": f"{v[0][0][0]}-{v[0][0][1]:02d}", "v": [float(f"{x:.10g}") for _, x in v]} for k, v in fm.items() if v}
-    out["x"] = {k: {"s0": f"{v[0][0][0]}-{v[0][0][1]:02d}", "v": [float(f"{x:.10g}") for _, x in v]} for k, v in benches().items()}
+    out["x"] = {k: {"s0": f"{v[0][0][0]}-{v[0][0][1]:02d}", "v": [float(f"{x:.10g}") for _, x in v], **({"ext": EXT[k]} if k in EXT else {})}
+                for k, v in benches().items()}
     return out
 
 
