@@ -421,6 +421,7 @@ function renderFund() {
   const all = byW.concat(exits.sort((a, b) => a.dw - b.dw)).filter(r => ST.ft === 'all' || (ST.ft === 'alt' ? !!r.s.alt : r.s.t === ST.ft)).filter(r => !ST.fr || ST.fr === 'all' || regionOf(r.s) === ST.fr);
   const selAt = all.findIndex(r => r.si === ST.pos);
   if (selAt >= fcLimit) fcLimit = selAt + 1;                 // pasirinkta pozicija visada matoma
+  renderFund.last = { f, all, qi: ST.fq };
   const list = all.slice(0, fcLimit);
   const tb = document.getElementById('fcTable');
   tb.innerHTML = `<thead><tr><th class="l">#</th><th class="l">${T().thPos}</th>
@@ -642,9 +643,9 @@ function renderPeers() {
    „Pozicijos“ – kiekviena fondo pozicija ketvirčio pabaigoje su požymiais ir dalimi = vertė ÷ fondo suma (SUMIFS);
    „Palyginimas“ – 4 lentelės stulpeliai kaip SUMIFS iš pozicijų (tos pačios taisyklės kaip lookThrough). */
 function pfLoadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.append(s); }); }
-function pgBook() {
-  const L = lang === 'lt', t = T(), qi = ST.pgq, P = '0.00%', N2 = '0.00';
-  const funds = FUNDS.filter(f => f.q[qi] && (ST.pg === 'III' ? f.pl === 'III' : f.pl === 'II' && f.g === ST.pg)).sort((a, b) => a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
+function pgBook(only, qOnly) {
+  const L = lang === 'lt', t = T(), qi = qOnly ?? ST.pgq, P = '0.00%', N2 = '0.00';
+  const funds = only || FUNDS.filter(f => f.q[qi] && (ST.pg === 'III' ? f.pl === 'III' : f.pl === 'II' && f.g === ST.pg)).sort((a, b) => a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
   const SH = L ? ['Palyginimas', 'Pozicijos', 'Metodika'] : ['Comparison', 'Holdings', 'Methodology'], Q = `'${SH[1]}'`;
   const pos = [L ? ['Fondo kodas', 'Pozicija', 'ISIN', 'Rūšis', 'Grupė', 'Akcijų regionas', 'Vertė, €', 'Dalis', 'Indeksinis', 'TER, %', 'TER svoris', 'TER × dalis', 'SFDR 8/9', 'Auksas', 'EM', 'Obligacija', 'YTM, %', 'YTM svoris', 'YTM × dalis', 'Trukmė', 'Trukmės svoris', 'Trukmė × dalis']
     : ['Fund code', 'Holding', 'ISIN', 'Type', 'Group', 'Equity region', 'Value, €', 'Share', 'Index', 'TER, %', 'TER weight', 'TER × share', 'SFDR 8/9', 'Gold', 'EM', 'Bond', 'YTM, %', 'YTM weight', 'YTM × share', 'Duration', 'Duration weight', 'Duration × share']];
@@ -663,10 +664,10 @@ function pgBook() {
       r.ter == null ? '' : { t: 'n', f: `SUMIFS(${R('L')},${c})/SUMIFS(${R('K')},${c})`, v: r.ter, z: N2 }, sh(`,${R('N')},1`, r.gold), sh(`,${R('M')},1`, r.sfdr), sh(`,${R('O')},1`, r.em),
       r.ytm == null ? '' : { t: 'n', f: `SUMIFS(${R('S')},${c})/SUMIFS(${R('R')},${c})`, v: r.ytm, z: N2 }, r.md == null ? '' : { t: 'n', f: `SUMIFS(${R('V')},${c})/SUMIFS(${R('U')},${c})`, v: r.md, z: N2 },
       ...regs.map(k => sh(`,${R('E')},"eq",${R('F')},"${k}"`, r['r_' + k]))]); });
-  const meth = L ? [['Metodika ir šaltiniai'], [], ['Ketvirtis', ''], ['Grupė', ST.pg], ['Šaltinis', 'Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos; fondų ir ETF požymiai – fondų dokumentai; obligacijų YTM ir trukmė – ESMA FIRDS sąlygos ir ataskaitos kaina.'], [],
+  const meth = L ? [['Metodika ir šaltiniai'], [], ['Ketvirtis', ''], ['Grupė', only ? 'pasirinkti fondai' : ST.pg], ['Šaltinis', 'Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos; fondų ir ETF požymiai – fondų dokumentai; obligacijų YTM ir trukmė – ESMA FIRDS sąlygos ir ataskaitos kaina.'], [],
     ['Dalis', 'Pozicijos vertė ÷ visų fondo pozicijų suma (SUMIFS).'], ['Grupės', 'eq – akcijos ir akcijų fondai; bd – obligacijos ir obligacijų fondai; cash – pinigai, indėliai, pinigų rinkos fondai; alt – privataus kapitalo, NT ir kt.; der – išvestinės; oth – kita.'],
     ['TER, YTM, trukmė', 'Svertinis vidurkis tik tarp pozicijų, kurioms reikšmė žinoma: Σ(dalis × reikšmė) ÷ Σ dalis. YTM ir trukmė rodomi, kai obligacijų > 0,5 %.'], ['Regionai', 'Tik akcijos ir akcijų fondai; tiesioginės akcijos – pagal emitento šalį, fondai – pagal aprašytą regioną.']]
-    : [['Methodology and sources'], [], ['Quarter', ''], ['Group', ST.pg], ['Source', 'Bank of Lithuania quarterly pension fund investment reports; fund and ETF attributes – fund documents; bond YTM and duration – ESMA FIRDS terms and the reported price.'], [],
+    : [['Methodology and sources'], [], ['Quarter', ''], ['Group', only ? 'selected funds' : ST.pg], ['Source', 'Bank of Lithuania quarterly pension fund investment reports; fund and ETF attributes – fund documents; bond YTM and duration – ESMA FIRDS terms and the reported price.'], [],
     ['Share', 'Holding value ÷ sum of all the fund’s holdings (SUMIFS).'], ['Groups', 'eq – equities and equity funds; bd – bonds and bond funds; cash – cash, deposits, money market funds; alt – private equity, real estate etc.; der – derivatives; oth – other.'],
     ['TER, YTM, duration', 'Weighted average only over holdings where the value is known: Σ(share × value) ÷ Σ share. YTM and duration shown when bonds > 0.5 %.'], ['Regions', 'Equities and equity funds only; direct shares by issuer country, funds by their described region.']];
   meth[2][1] = PF.quarters[qi];
@@ -676,7 +677,124 @@ function pgBook() {
 }
 async function pgXls() { await pfLoadXlsx(); XLSX.writeFile(pgBook(), `${lang === 'lt' ? 'Portfeliu_palyginimas' : 'Portfolio_comparison'}_${ST.pg}_${PF.quarters[ST.pgq]}.xlsx`); }
 
+/* ---------- Excel su skaičiavimais (auditui) visoms portfelių lentelėms ----------
+   Bendras principas: lapas „Pozicijos“ – Lietuvos banko ataskaitų pozicijos (mėlyni duomenys: vienetai, vertė €) su požymiais;
+   „Fondų sumos“ – visų fondo pozicijų suma ketvirtyje (kai pozicijų lape ne visos pozicijos); „Rezultatas“ – SUMIFS formulės. */
+const PXL = () => { const L = lang === 'lt'; return { L, SP: L ? 'Pozicijos' : 'Holdings', ST: L ? 'Fondų sumos' : 'Fund totals', SR: L ? 'Rezultatas' : 'Result', SM: L ? 'Metodika' : 'Methodology' }; };
+/* pozicijų lapas: A ketvirtis, B valdytojas, C pakopa, D fondo kodas, E fondas, F pozicijos ID, G pozicija, H ISIN, I rūšis, J grupė, K obligacija ≤ 1 m., L alternatyvi, M vienetai, N vertė € */
+function posSheet(funds, qis, keep) {          // + O akcijų regionas
+  const L = lang === 'lt', rows = [L ? ['Ketvirtis', 'Valdytojas', 'Pakopa', 'Fondo kodas', 'Fondas', 'Pozicijos ID', 'Pozicija', 'ISIN', 'Rūšis', 'Grupė (eq/bd/cash/alt/der/oth)', 'Obligacija iki 1 m. (1 – taip)', 'Alternatyvi (1 – taip)', 'Vienetai', 'Vertė, €', 'Akcijų regionas']
+    : ['Quarter', 'Manager', 'Pillar', 'Fund code', 'Fund', 'Holding ID', 'Holding', 'ISIN', 'Type', 'Group (eq/bd/cash/alt/der/oth)', 'Bond up to 1 y (1 – yes)', 'Alternative (1 – yes)', 'Units', 'Value, €', 'Equity region']];
+  funds.forEach(f => qis.forEach(qi => { if (!f.q[qi]) return; f.q[qi].forEach((x, si) => { const sx = S[si]; if (keep && !keep(sx, si, x, f, qi)) return; const m = sx.t === 'b' ? bondAt(si, qi) : null;
+    rows.push([Q[qi], f.p, f.pl, f.c, fundName(f), si, posLabel(sx), sx.isin || '', typeLabel(sx), bucket(sx), m && m.yrs <= 1 ? 1 : 0, sx.alt ? 1 : 0, x.u == null ? null : { t: 'n', v: x.u, z: '#,##0.##' }, { t: 'n', v: x.v, z: '#,##0' }, bucket(sx) === 'eq' ? regionOf(sx) : '']); }); }));
+  return rows;
+}
+function totSheet(funds, qis) {
+  const L = lang === 'lt', rows = [L ? ['Ketvirtis', 'Valdytojas', 'Pakopa', 'Fondo kodas', 'Fondas', 'Visų pozicijų suma, €'] : ['Quarter', 'Manager', 'Pillar', 'Fund code', 'Fund', 'Sum of all holdings, €']];
+  funds.forEach(f => qis.forEach(qi => { if (f.q[qi]) rows.push([Q[qi], f.p, f.pl, f.c, fundName(f), { t: 'n', v: f.tot[qi], z: '#,##0' }]); }));
+  return rows;
+}
+function pxBook(o) {          // o: { res, resW, sheets: [[pavadinimas, eilutės, plotis]], meth: [[k, v]] }
+  const X = PXL(), wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); if (w) ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(o.res, X.SR, o.resW); (o.sheets || []).forEach(([n, r, w]) => add(r, n, w));
+  add([[X.L ? 'Metodika ir šaltiniai' : 'Methodology and sources'], [X.L ? 'Šaltinis' : 'Source', X.L ? 'Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos (kiekviena pozicija: vienetai ir vertė ketvirčio pabaigoje); pozicijų požymiai – fondų dokumentai, obligacijų išpirkimo datos – ESMA FIRDS.' : 'Bank of Lithuania quarterly pension fund investment reports (each holding: units and value at quarter end); attributes – fund documents, bond maturities – ESMA FIRDS.'],
+    [X.L ? 'Kaip patikrinti' : 'How to check', X.L ? `Kiekvienas „${X.SR}“ skaičius – formulė (SUMIFS) iš lapo „${X.SP}“ ar „${X.ST}“; pozicijas galima palyginti su LB ataskaita pagal fondo kodą ir ketvirtį.` : `Every “${X.SR}” figure is a formula (SUMIFS) over “${X.SP}” or “${X.ST}”; holdings can be compared with the BoL report by fund code and quarter.`], ...(o.meth || [])], X.SM, [{ wch: 18 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
+}
+const PW = [{ wch: 10 }, { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 34 }, { wch: 8 }, { wch: 44 }, { wch: 14 }, { wch: 18 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 14 }, { wch: 14 }];
+const xs = v => `"${String(v).replace(/"/g, '""')}"`;
+/* „Kas pasikeitė“ (ovChg): valdytojo turto struktūra = klasės vertė ÷ visų pozicijų vertė (visi pakopos fondai, svertinė pagal turtą) */
+XLB.set('ovChg', async () => {
+  const X = PXL(), o = OT(), q1 = OV.q, q0 = q1 - 1, RF = inReform(q1) || inReform(q0), KS = RF ? ['eq', 'eqX', 'liq', 'bd', 'alt', 'cash'] : ['eq', 'bd', 'alt', 'cash'];
+  const funds = FUNDS.filter(f => f.pl === OV.pl), P = `'${X.SP}'`, R = c => `${P}!$${c}:$${c}`;
+  const tot = (m, q) => `SUMIFS(${R('N')},${R('B')},${xs(m)},${R('A')},${xs(Q[q])},${R('C')},${xs(OV.pl)})`;
+  const cls = (m, q, crit) => `SUMIFS(${R('N')},${R('B')},${xs(m)},${R('A')},${xs(Q[q])},${R('C')},${xs(OV.pl)},${crit})`;
+  const fx = (k, m, q) => k === 'liq' ? `(${cls(m, q, `${R('J')},"cash"`)}+${cls(m, q, `${R('K')},1`)})/${tot(m, q)}` : k === 'eqX' ? `${fx('eq', m, q)}/(1-${fx('liq', m, q)})` : `${cls(m, q, `${R('J')},"${k}"`)}/${tot(m, q)}`;
+  const lab = { eq: o.thEq, eqX: o.thEqX, liq: o.thLiq, bd: o.thBd, alt: o.thAlt, cash: o.thCash };
+  const hdr = [o.thM]; KS.forEach(k => hdr.push(`${lab[k]}, ${qLabel(q0)}`, `${lab[k]}, ${qLabel(q1)}`, `${lab[k]}: Δ, p. p.`)); hdr.push(o.thBuy, o.thSell, o.thNew);
+  const res = [[o.chgH(qLabel(q0), qLabel(q1))], [X.L ? `${OV.pl} pakopa; dalys – % visų valdytojo pakopos fondų pozicijų vertės (svertinė pagal fondų turtą).` : `Pillar ${OV.pl}; shares – % of the value of all the manager’s pillar funds’ holdings (asset-weighted).`], hdr];
+  MGRS.forEach(m => { const a = mgrMix(m, q0), b = mgrMix(m, q1); if (!b) return; const r = res.length + 1, row = [m], tr = mgrTrades(m, q1);
+    KS.forEach((k, j) => { const c0 = xlCol(1 + j * 3), c1 = xlCol(2 + j * 3), va = a && a[k] != null ? a[k] / 100 : null, vb = b[k] != null ? b[k] / 100 : null;
+      row.push(a ? xlF(fx(k, m, q0), va, '0.0%') : null, xlF(fx(k, m, q1), vb, '0.0%'), a ? xlF(`(${c1}${r}-${c0}${r})*100`, va != null && vb != null ? (vb - va) * 100 : null, '0.0') : null); });
+    row.push(tr.buy.map(x => `${posLabel(x.s)} (${eur(x.trade)})`).join('; '), tr.sell.map(x => `${posLabel(x.s)} (${eur(x.trade)})`).join('; '), `${tr.nNew} / ${tr.nExit}`); res.push(row); });
+  return pxBook({ res, resW: [{ wch: 12 }, ...Array(KS.length * 3).fill({ wch: 11 }), { wch: 50 }, { wch: 50 }, { wch: 10 }], sheets: [[X.SP, posSheet(funds, [q0, q1]), PW]],
+    meth: [[X.L ? 'Dalys' : 'Shares', X.L ? 'SUMIFS(vertė; valdytojas, ketvirtis, pakopa, grupė) ÷ SUMIFS(vertė; valdytojas, ketvirtis, pakopa). Grupės: eq – akcijos ir akcijų fondai, bd – obligacijos ir jų fondai, cash – pinigai, indėliai, pinigų rinkos fondai, alt – alternatyvios.' : 'SUMIFS(value; manager, quarter, pillar, group) ÷ SUMIFS(value; manager, quarter, pillar). Groups: eq – equities and equity funds, bd – bonds and bond funds, cash – cash, deposits, money market funds, alt – alternatives.'],
+      ...(RF ? [[X.L ? 'Išmokų rezervas' : 'Payout reserve', X.L ? 'Pinigai (cash) + obligacijos, išperkamos per ≤ 1 m. (K = 1); akcijos be rezervo = akcijų dalis ÷ (1 − rezervas).' : 'Cash + bonds maturing within ≤ 1 y (K = 1); equity ex reserve = equity share ÷ (1 − reserve).']] : []),
+      [X.L ? 'Pirkimai / pardavimai' : 'Buys / sells', X.L ? 'Įvertis: vienetų pokytis × ketvirčio pabaigos kaina (reikšmės; kiekvieną sandorį galima patikrinti lapo „Pozicijos“ vienetais).' : 'Estimate: change in units × quarter-end price (values; each trade can be checked with the units in “Holdings”).']] });
+});
+/* „Pirkimai ir pardavimai“ (tcTable): vienetai ir vertės abiem ketvirčiais → sandoris = vienetų pokytis × kaina; dalis = vertė ÷ turtas */
+XLB.set('tcTable', async () => {
+  const X = PXL(), t = T(), q1 = ST.q, q0 = q1 - 1, rows = changes().slice(0, 1000), byFund = ST.lv === 'fund';
+  const funds = FUNDS.filter(f => (ST.pl === 'all' || f.pl === ST.pl) && (ST.mgr === 'all' || f.p === ST.mgr) && (f.q[q0] || f.q[q1])), need = new Set(rows.map(r => r.P.si));
+  const P = `'${X.SP}'`, TT = `'${X.ST}'`, kc = byFund ? 'D' : 'B', R = (sh, c) => `${sh}!$${c}:$${c}`;
+  const flt = `${R(P, 'C')},${ST.pl === 'all' ? '"<>"' : xs(ST.pl)}`, fltT = `${R(TT, 'C')},${ST.pl === 'all' ? '"<>"' : xs(ST.pl)}`;
+  const hdr = [t.thMgr, byFund ? t.thFund : '', X.L ? 'Raktas (valdytojas / fondo kodas)' : 'Key (manager / fund code)', X.L ? 'Pozicijos ID' : 'Holding ID', t.thPos, 'ISIN', t.thAct,
+    `${X.L ? 'Vienetai' : 'Units'}, ${qLabel(q0)}`, `${X.L ? 'Vienetai' : 'Units'}, ${qLabel(q1)}`, `${X.L ? 'Vertė' : 'Value'}, ${qLabel(q0)}`, `${X.L ? 'Vertė' : 'Value'}, ${qLabel(q1)}`, X.L ? 'Kaina (vertė ÷ vienetai)' : 'Price (value ÷ units)', t.thTrade,
+    `${X.L ? 'Turtas' : 'Assets'}, ${qLabel(q0)}`, `${X.L ? 'Turtas' : 'Assets'}, ${qLabel(q1)}`, t.thW0, t.thW1, t.thDw];
+  const res = [[document.getElementById('tcTitle').textContent], [`${qLabel(q0)} → ${qLabel(q1)}`], hdr];
+  rows.forEach(x => { const r = res.length + 1, key = byFund ? x.U.fund.c : x.U.mgr, su = (c, q) => `SUMIFS(${R(P, c)},${R(P, kc)},$C${r},${R(P, 'F')},$D${r},${R(P, 'A')},${xs(Q[q])},${flt})`;
+    const tt = q => `SUMIFS(${R(TT, 'F')},${R(TT, kc)},$C${r},${R(TT, 'A')},${xs(Q[q])},${fltT})`, [u0, u1] = x.P.u, [v0, v1] = x.P.v, price = u1 ? v1 / u1 : v0 / u0;
+    res.push([x.U.mgr, byFund ? fundName(x.U.fund) : '', key, x.P.si, posLabel(x.s), x.s.isin || '', t.acts[x.act] || x.act, xlF(su('M', q0), u0, '#,##0.##'), xlF(su('M', q1), u1, '#,##0.##'), xlF(su('N', q0), v0, '#,##0'), xlF(su('N', q1), v1, '#,##0'),
+      xlF(`IF(I${r}<>0,K${r}/I${r},J${r}/H${r})`, price, '#,##0.0000'), xlF(`(I${r}-H${r})*L${r}`, x.trade, '#,##0'), xlF(tt(q0), x.U.tot0, '#,##0'), xlF(tt(q1), x.U.tot1, '#,##0'),
+      xlF(`IF(N${r}=0,0,J${r}/N${r})`, x.w0 / 100, '0.00%'), xlF(`IF(O${r}=0,0,K${r}/O${r})`, x.w1 / 100, '0.00%'), xlF(`(Q${r}-P${r})*100`, x.dw, '0.00')]); });
+  return pxBook({ res, resW: [{ wch: 10 }, { wch: 28 }, { wch: 12 }, { wch: 8 }, { wch: 44 }, { wch: 14 }, { wch: 12 }, ...Array(11).fill({ wch: 13 })],
+    sheets: [[X.SP, posSheet(funds, [q0, q1], (sx, si, x) => need.has(si) && x.u != null), PW], [X.ST, totSheet(funds, [q0, q1]), [{ wch: 10 }, { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 34 }, { wch: 16 }]]],
+    meth: [[X.L ? 'Sandoris' : 'Trade', X.L ? 'Vienetų pokytis × kaina; kaina – pabaigos vertė ÷ vienetai (jei pozicija parduota – pradžios). Tai įvertis: tikros sandorių kainos ataskaitose neskelbiamos.' : 'Change in units × price; price – end value ÷ units (start if sold out). An estimate: actual trade prices are not reported.'],
+      [X.L ? 'Dalis' : 'Weight', X.L ? `Pozicijos vertė ÷ valdytojo (ar fondo) visų pozicijų suma („${X.ST}“). Lentelėje – pirmos 1000 eilučių pagal pasirinktą rūšiavimą; < 0,5 % vienetų pokytis laikomas nepasikeitusiu.` : `Holding value ÷ the manager’s (or fund’s) sum of all holdings (“${X.ST}”). First 1000 rows by the chosen sort; a change of < 0.5 % in units is treated as unchanged.`]] });
+});
+/* „Alternatyvios“ (altTable): alternatyvų dalis = alternatyvių pozicijų vertė ÷ visų pozicijų suma */
+XLB.set('altTable', async () => {
+  const X = PXL(), t = T(), pl = ST.apl || 'II', q1 = Math.min(NQ - 1, Math.max(1, ST.aq1 ?? NQ - 1)), q0 = Math.min(ST.aq0 ?? NQ - 3, q1 - 1);
+  const cols = []; for (let i = Math.max(0, q1 - 7); i <= q1; i++) cols.push(i); if (!cols.includes(q0)) cols.unshift(q0);
+  const live = FUNDS.filter(f => f.pl === pl && f.q[q1]), funds = live.filter(f => cols.some(i => altShare(f, i) > 0));
+  const order = g => g === 'turto' ? '0' : g; funds.sort((a, b) => order(a.g).localeCompare(order(b.g)) || a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
+  const P = `'${X.SP}'`, TT = `'${X.ST}'`, R = (sh, c) => `${sh}!$${c}:$${c}`, av = q => `SUMIFS(${R(P, 'N')},${R(P, 'D')},$B{r},${R(P, 'A')},${xs(Q[q])})`, tv = q => `SUMIFS(${R(TT, 'F')},${R(TT, 'D')},$B{r},${R(TT, 'A')},${xs(Q[q])})`;
+  const nc = cols.length, cA = xlCol(2 + nc), cB = xlCol(3 + nc), cC = xlCol(4 + nc), cD = xlCol(5 + nc);
+  const hdr = [t.thFund, X.L ? 'Fondo kodas' : 'Fund code', ...cols.map(i => `${X.L ? 'Alt. dalis' : 'Alt. share'}, ${qLabel(i)}`), `${X.L ? 'Alt. vertė' : 'Alt. value'}, ${qLabel(q0)}`, `${X.L ? 'Alt. vertė' : 'Alt. value'}, ${qLabel(q1)}`,
+    `${X.L ? 'Turtas' : 'Assets'}, ${qLabel(q0)}`, `${X.L ? 'Turtas' : 'Assets'}, ${qLabel(q1)}`, X.L ? 'Alt. dalies pokytis, p. p.' : 'Alt. share change, pp', X.L ? 'Alt. vertės pokytis' : 'Alt. value change', X.L ? 'Turto pokytis' : 'Assets change', t.thAltMix];
+  const res = [[document.getElementById('altTitle').textContent], [`${pl} · ${qLabel(q0)} → ${qLabel(q1)}`], hdr];
+  funds.forEach(f => { const r = res.length + 1, F = s => s.replace(/\{r\}/g, r), a0 = altValue(f, q0), a1 = altValue(f, q1), mix = altMix(f, q1), mt = Object.values(mix).reduce((x, y) => x + y, 0);
+    res.push([fundName(f), f.c, ...cols.map(i => f.q[i] ? xlF(F(`IF(${tv(i)}=0,0,${av(i)}/${tv(i)})`), altShare(f, i) / 100, '0.00%') : null),
+      xlF(F(av(q0)), a0, '#,##0'), xlF(F(av(q1)), a1, '#,##0'), xlF(F(tv(q0)), f.tot[q0], '#,##0'), xlF(F(tv(q1)), f.tot[q1], '#,##0'),
+      f.q[q0] ? xlF(`IF(${cD}${r}=0,0,${cB}${r}/${cD}${r})*100-IF(${cC}${r}=0,0,${cA}${r}/${cC}${r})*100`, altShare(f, q1) - altShare(f, q0), '0.00') : null,
+      a0 && a1 ? xlF(`${cB}${r}/${cA}${r}-1`, a1 / a0 - 1, '0.00%') : null, f.tot[q0] && f.tot[q1] ? xlF(`${cD}${r}/${cC}${r}-1`, f.tot[q1] / f.tot[q0] - 1, '0.00%') : null,
+      Object.entries(mix).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${t.alts[k]} ${num(v / mt * 100, 2)} %`).join(' · ')]); });
+  return pxBook({ res, resW: [{ wch: 34 }, { wch: 12 }, ...Array(nc + 7).fill({ wch: 12 }), { wch: 50 }],
+    sheets: [[X.SP, posSheet(funds, cols, sx => !!sx.alt), PW], [X.ST, totSheet(funds, cols), [{ wch: 10 }, { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 34 }, { wch: 16 }]]],
+    meth: [[X.L ? 'Alternatyvų dalis' : 'Alternatives share', X.L ? `SUMIFS(alternatyvių pozicijų vertė; fondas, ketvirtis) ÷ fondo visų pozicijų suma („${X.ST}“). Lape „${X.SP}“ – tik alternatyvios pozicijos (privataus kapitalo, NT, infrastruktūros ir kt. fondai).` : `SUMIFS(value of alternative holdings; fund, quarter) ÷ the fund’s sum of all holdings (“${X.ST}”). “${X.SP}” lists alternative holdings only.`]] });
+});
+/* „Fondo portfelis“ (fcTable): visos fondo pozicijos šiame ir ankstesniame ketvirtyje → dalis, pokytis */
+XLB.set('fcTable', async () => {
+  const X = PXL(), t = T(), Lr = renderFund.last; if (!Lr) return null;
+  const { f, all, qi } = Lr, q0 = qi - 1, P = `'${X.SP}'`, R = c => `${P}!$${c}:$${c}`;
+  const su = (c, q, r) => `SUMIFS(${R(c)},${R('D')},${xs(f.c)},${R('F')},$A${r},${R('A')},${xs(Q[q])})`, tt = q => `SUMIFS(${R('N')},${R('D')},${xs(f.c)},${R('A')},${xs(Q[q])})`;
+  const hdr = [X.L ? 'Pozicijos ID' : 'Holding ID', t.thPos, 'ISIN', X.L ? 'Rūšis' : 'Type', `${X.L ? 'Vertė' : 'Value'}, ${qLabel(qi)}`, `${t.thW}, ${qLabel(qi)}`, ...(q0 >= 0 && f.q[q0] ? [`${X.L ? 'Vertė' : 'Value'}, ${qLabel(q0)}`, `${t.thW}, ${qLabel(q0)}`, t.thDw, `${X.L ? 'Vienetai' : 'Units'}, ${qLabel(q0)}`] : []), `${X.L ? 'Vienetai' : 'Units'}, ${qLabel(qi)}`, t.thDq, t.thAct];
+  const prev = q0 >= 0 && !!f.q[q0], res = [[`${fundName(f)} · ${qLabel(qi)}`], [`${X.L ? 'Visų pozicijų suma' : 'Sum of all holdings'}: ${eur(f.tot[qi])}`], hdr];
+  all.forEach(x => { const r = res.length + 1, c1 = f.q[qi].get(x.si), c0 = prev ? f.q[q0].get(x.si) : null, row = [x.si, posLabel(x.s), x.s.isin || '', typeLabel(x.s), xlF(su('N', qi, r), c1 ? c1.v : 0, '#,##0'), xlF(`E${r}/${tt(qi)}`, x.w / 100, '0.00%')];
+    if (prev) row.push(xlF(su('N', q0, r), c0 ? c0.v : 0, '#,##0'), xlF(`G${r}/${tt(q0)}`, c0 ? c0.v / f.tot[q0] : 0, '0.00%'), xlF(`(F${r}-H${r})*100`, x.dw, '0.00'), xlF(su('M', q0, r), c0 && c0.u != null ? c0.u : 0, '#,##0.##'));
+    const uc = prev ? 'K' : 'G', u0c = 'J'; row.push(xlF(su('M', qi, r), c1 && c1.u != null ? c1.u : 0, '#,##0.##'), prev ? xlF(`IF(${u0c}${r}=0,"",${uc}${r}/${u0c}${r}-1)`, x.dq == null ? '' : x.dq / 100, '0.00%') : null, x.act ? t.acts[x.act] || x.act : ''); res.push(row); });
+  return pxBook({ res, resW: [{ wch: 8 }, { wch: 46 }, { wch: 14 }, { wch: 18 }, ...Array(8).fill({ wch: 13 }), { wch: 12 }], sheets: [[X.SP, posSheet([f], prev ? [q0, qi] : [qi]), PW]],
+    meth: [[X.L ? 'Dalis' : 'Weight', X.L ? 'Pozicijos vertė ÷ visų fondo pozicijų suma tą ketvirtį (SUMIFS). Pokytis, p. p. – dalies skirtumas; vienetų pokytis – vienetai ÷ ankstesni vienetai − 1.' : 'Holding value ÷ sum of all the fund’s holdings that quarter (SUMIFS). Change, pp – difference in weight; units change – units ÷ previous units − 1.'],
+      [X.L ? 'Filtrai' : 'Filters', X.L ? 'Eksportuojamos visos pozicijos pagal svetainėje pasirinktą rūšį ir regioną (ne tik pirmos rodomos).' : 'All holdings matching the chosen type and region are exported (not only the ones shown).']] });
+});
+/* pozicijos istorija (phTable): vienetai, vertė ir dalis kiekvieno ketvirčio pabaigoje */
+XLB.set('phTable', async () => {
+  const X = PXL(), t = T(), f = fundBy[ST.fund], si = ST.pos; if (!f || si == null) return null;
+  const qs = []; for (let i = f.last; i >= 0; i--) if (f.q[i] && f.q[i].has(si)) qs.push(i);
+  const P = `'${X.SP}'`, R = c => `${P}!$${c}:$${c}`, su = (c, q) => `SUMIFS(${R(c)},${R('D')},${xs(f.c)},${R('F')},${si},${R('A')},${xs(Q[q])})`;
+  const res = [[`${fundName(f)} · ${posLabel(S[si])}`], [S[si].isin || ''], [t.thQ, t.thUnits, t.thValue, X.L ? 'Visų pozicijų suma, €' : 'Sum of all holdings, €', t.thW]];
+  qs.forEach(i => { const r = res.length + 1, x = f.q[i].get(si);
+    res.push([qLabel(i), xlF(su('M', i), x.u ?? 0, '#,##0.##'), xlF(su('N', i), x.v, '#,##0'), xlF(`SUMIFS(${R('N')},${R('D')},${xs(f.c)},${R('A')},${xs(Q[i])})`, f.tot[i], '#,##0'), xlF(`C${r}/D${r}`, x.v / f.tot[i], '0.00%')]); });
+  return pxBook({ res, resW: [{ wch: 16 }, { wch: 14 }, { wch: 14 }, { wch: 16 }, { wch: 10 }], sheets: [[X.SP, posSheet([f], qs), PW]],
+    meth: [[X.L ? 'Dalis' : 'Weight', X.L ? 'Pozicijos vertė ÷ visų fondo pozicijų suma tą ketvirtį.' : 'Holding value ÷ sum of all the fund’s holdings that quarter.']] });
+});
+/* „Palyginti fondus“ (ovCmp): tas pats skaičiavimas kaip grupės palyginimo Excel, tik pasirinktiems fondams */
+XLB.set('ovCmp', async () => {
+  const sel = (OV.sel || []).map(c => fundBy[c]).filter(f => f && f.q[OV.q]); if (sel.length < 2) return null;
+  const wb = pgBook(sel, OV.q); return { sheets: XLSX_SHIM.toXL(wb), own: true };
+});
 /* ---------- 5. valdytojų panašumas (auditas #63) ----------
+
    Tos pačios amžiaus grupės fondai poromis. Bendros pozicijos = Σ min(dalis A, dalis B) per tuos pačius vertybinius popierius (ISIN);
    panašus profilis = Σ min per turto rūšis ir akcijų regionus (kaip 4 lentelėje) – pagauna ir skirtingus ETF tam pačiam indeksui. */
 addStrings({
@@ -705,6 +823,43 @@ function simVectors(f, qi) {
 }
 const overlap = (a, b) => { let s = 0; a.forEach((v, k) => { if (b.has(k)) s += Math.min(v, b.get(k)); }); return s; };
 const overlapO = (a, b) => Object.keys(a).reduce((s, k) => s + Math.min(a[k], b[k] || 0), 0);
+/* „Panašumas“ (smA / smB / smD): dalys iš pozicijų (SUMIFS) → bendros pozicijos ir profilis = Σ min(A, B) (SUMPRODUCT) */
+function smBook() {
+  const X = PXL(), Ls = renderSim.last; if (!Ls || Ls.fs.length < 2) return null;
+  const { fs, V, qi } = Ls, L = X.L, P = `'${X.SP}'`, R = c => `${P}!$${c}:$${c}`, q = xs(Q[qi]), n = fs.length, SW = L ? 'Pozicijų dalys' : 'Holding weights', SPf = L ? 'Profilio dalys' : 'Profile weights';
+  const tot = f => `SUMIFS(${R('N')},${R('D')},${xs(f.c)},${R('A')},${q})`;
+  const keys = [...new Set(V.flatMap(v => [...v.pos.keys()]))].sort((a, b) => Math.max(...V.map(v => v.pos.get(b) || 0)) - Math.max(...V.map(v => v.pos.get(a) || 0)));
+  const wRows = [[L ? 'Raktas (ISIN arba pozicijos ID)' : 'Key (ISIN or holding ID)', L ? 'Pozicija' : 'Holding', ...fs.map(f => f.p)]];
+  keys.forEach(k => { const isI = !/^i\d+$/.test(k), crit = isI ? `${R('H')},${xs(k)}` : `${R('F')},${k.slice(1)}`, sx = V.map(v => v.names.get(k)).find(Boolean);
+    wRows.push([k, posLabel(sx), ...fs.map((f, i) => xlF(`SUMIFS(${R('N')},${R('D')},${xs(f.c)},${R('A')},${q},${crit})/${tot(f)}`, (V[i].pos.get(k) || 0) / 100, '0.000%'))]); });
+  const comps = [...new Set(V.flatMap(v => Object.keys(v.prof)))].sort();
+  const pRows = [[L ? 'Dalis' : 'Component', ...fs.map(f => f.p)]];
+  comps.forEach(k => pRows.push([k, ...fs.map((f, i) => { const base = `${R('N')},${R('D')},${xs(f.c)},${R('A')},${q}`, kk = k.slice(2);
+    const fx = k.startsWith('b:') ? `SUMIFS(${base},${R('J')},${xs(kk)})` : [`SUMIFS(${base},${R('J')},"eq",${R('O')},${xs(kk)})`, ...Object.entries(SIM_SPLIT).filter(([, sp]) => sp[kk]).map(([r, sp]) => `${sp[kk]}*SUMIFS(${base},${R('J')},"eq",${R('O')},${xs(r)})`)].join('+');
+    return xlF(`(${fx})/${tot(f)}`, (V[i].prof[k] || 0) / 100, '0.000%'); })]));
+  const mat = (sheet, nRows, title) => { const out = [[title], [L ? 'Σ min(A dalis, B dalis) per visas eilutes – SUMPRODUCT.' : 'Σ min(A weight, B weight) over all rows – SUMPRODUCT.'], ['', ...fs.map(f => f.p), L ? 'Vidutiniškai su kitais' : 'Average with the others']];
+    fs.forEach((f, i) => { const r = out.length + 1, ci = xlCol(i + 2 + (sheet === SW ? 0 : -1)), row = [f.p];
+      fs.forEach((g, j) => { const cj = xlCol(j + 2 + (sheet === SW ? 0 : -1)), A = `'${sheet}'!$${ci}$2:$${ci}$${nRows}`, B = `'${sheet}'!$${cj}$2:$${cj}$${nRows}`;
+        const v = i === j ? 1 : (sheet === SW ? overlap(V[i].pos, V[j].pos) : overlapO(V[i].prof, V[j].prof)) / 100;
+        row.push(i === j ? { t: 'n', v: 1, z: '0.0%' } : xlF(`SUMPRODUCT((${A}<${B})*${A}+(${A}>=${B})*${B})`, v, '0.0%')); });
+      const oth = fs.map((_, j) => j).filter(j => j !== i).map(j => `${xlCol(j + 1)}${r}`);
+      row.push(xlF(`AVERAGE(${oth.join(',')})`, row.slice(1).filter((_, j) => j !== i).reduce((s, x) => s + x.v, 0) / (n - 1), '0.0%')); out.push(row); });
+    return out; };
+  const res = mat(SW, keys.length + 1, `${L ? 'Bendros pozicijos' : 'Same holdings'} · ${qLabel(qi)}`), resB = mat(SPf, comps.length + 1, `${L ? 'Panašus profilis' : 'Similar profile'} · ${qLabel(qi)}`);
+  const sheets = [[L ? 'Panašus profilis' : 'Similar profile', resB, [{ wch: 12 }, ...Array(n + 1).fill({ wch: 12 })]], [SW, wRows, [{ wch: 16 }, { wch: 44 }, ...fs.map(() => ({ wch: 11 }))]], [SPf, pRows, [{ wch: 12 }, ...fs.map(() => ({ wch: 11 }))]], [X.SP, posSheet(fs, [qi]), [...PW, { wch: 8 }]]];
+  const SMs = renderSim.sel;
+  if (SMs && SMs.i != null && SMs.i < n && SMs.j < n) { const a = SMs.i, b = SMs.j, src = SMs.mode === 'pos' ? wRows : pRows, off = SMs.mode === 'pos' ? 2 : 1, sh = SMs.mode === 'pos' ? SW : SPf;
+    const pr = [[`${L ? 'Kur sutampa' : 'Where they overlap'}: ${fs[a].p} – ${fs[b].p}`], [L ? 'Nuorodos į dalių lapą; bendra dalis = MIN.' : 'References to the weights sheet; overlap = MIN.'], [L ? 'Eilutė' : 'Row', fs[a].p, fs[b].p, L ? 'Bendra dalis' : 'Overlap']];
+    src.slice(1).forEach((row, k) => { const wa = row[off + a].v, wb = row[off + b].v; if (!(wa > 0 && wb > 0)) return; const r = pr.length + 1, rr = k + 2;
+      pr.push([row[off - 1], xlF(`'${sh}'!${xlCol(off + a)}${rr}`, wa, '0.00%'), xlF(`'${sh}'!${xlCol(off + b)}${rr}`, wb, '0.00%'), xlF(`MIN(B${r}:C${r})`, Math.min(wa, wb), '0.00%')]); });
+    const last = pr.length; pr.push([L ? 'Iš viso' : 'Total', null, null, xlF(`SUM(D4:D${last})`, pr.slice(3).reduce((s, x) => s + x[3].v, 0), '0.00%')]);
+    sheets.unshift([L ? 'Pasirinkta pora' : 'Selected pair', pr, [{ wch: 44 }, { wch: 12 }, { wch: 12 }, { wch: 12 }]]); }
+  return pxBook({ res, resW: [{ wch: 12 }, ...Array(n + 1).fill({ wch: 12 })], sheets,
+    meth: [[L ? 'Bendros pozicijos' : 'Same holdings', L ? 'Kiekvieno vertybinio popieriaus (pagal ISIN) dalis fonde = SUMIFS(vertė) ÷ visų fondo pozicijų suma; poros panašumas = Σ min(dalis A, dalis B).' : 'Each security’s (by ISIN) weight = SUMIFS(value) ÷ the fund’s sum of all holdings; pair similarity = Σ min(weight A, weight B).'],
+      [L ? 'Profilis' : 'Profile', (L ? 'Komponentai: b:… – turto grupės (obligacijos, pinigai, alternatyvos…), r:… – akcijos pagal regioną. Pasaulio akcijų fondai (glob, gdm) išskaidomi koeficientais: ' : 'Components: b:… – asset groups (bonds, cash, alternatives…), r:… – equities by region. World equity funds (glob, gdm) are split with coefficients: ') + Object.entries(SIM_SPLIT).map(([k, sp]) => `${k}: ${Object.entries(sp).map(([r, x]) => `${r} ${x}`).join(', ')}`).join('; ')]] });
+}
+['smA', 'smB', 'smD'].forEach(id => XLB.set(id, async () => smBook()));
+
 function renderSim() {
   const groups = [...new Set(FUNDS.filter(f => f.pl === 'II').map(f => f.g))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b));
   if (!groups.includes(ST.sg)) ST.sg = groups.includes(ST.pg) ? ST.pg : groups[groups.length - 1];
@@ -715,13 +870,13 @@ function renderSim() {
   bar.querySelector('#smG').addEventListener('change', e => { ST.sg = e.target.value; save(); renderSim(); });
   bar.querySelector('#smQ').addEventListener('change', e => { ST.sq = +e.target.value; save(); renderSim(); });
   const qi = ST.sq, fs = FUNDS.filter(f => f.pl === 'II' && f.g === ST.sg && f.q[qi] && f.tot[qi]).sort((a, b) => MGRS.indexOf(a.p) - MGRS.indexOf(b.p));
-  const V = fs.map(f => simVectors(f, qi));
+  const V = fs.map(f => simVectors(f, qi)); renderSim.last = { fs, V, qi };
   const A = fs.map((_, i) => fs.map((_, j) => i === j ? 100 : overlap(V[i].pos, V[j].pos)));
   const B = fs.map((_, i) => fs.map((_, j) => i === j ? 100 : overlapO(V[i].prof, V[j].prof)));
   const avg = M => M.map((r, i) => r.filter((_, j) => j !== i).reduce((s, x) => s + x, 0) / Math.max(1, r.length - 1));
   const SM = renderSim.sel || (renderSim.sel = {});
   const mat = (M, col, mode) => { const av = avg(M);
-    return `<table class="pft smt"><thead><tr><th class="l"></th>${fs.map(f => `<th>${sw(f.p)}${f.p}</th>`).join('')}<th>${T().smAvg}</th></tr></thead><tbody>`
+    return `<table class="pft smt" id="${mode === 'pos' ? 'smA' : 'smB'}"><thead><tr><th class="l"></th>${fs.map(f => `<th>${sw(f.p)}${f.p}</th>`).join('')}<th>${T().smAvg}</th></tr></thead><tbody>`
       + M.map((r, i) => `<tr><td class="l">${sw(fs[i].p)}${fs[i].p}</td>${r.map((v, j) => i === j ? '<td class="dg">–</td>' : `<td class="smc${SM.mode === mode && ((SM.i === i && SM.j === j) || (SM.i === j && SM.j === i)) ? ' on' : ''}" data-m="${mode}" data-i="${i}" data-j="${j}" title="${lang === 'lt' ? 'Paspauskite – parodys, kur sutampa' : 'Click to see where they overlap'}" style="background:color-mix(in srgb, ${col} ${Math.round(v * 0.6)}%, transparent)">${num(v, 1)}</td>`).join('')}<td><b>${num(av[i], 1)}</b></td></tr>`).join('') + '</tbody></table>'; };
   let txt = '';
   if (fs.length > 2) {
@@ -741,7 +896,7 @@ function renderSim() {
         .map(x => ({ ...x, c: Math.min(x.wa, x.wb) })).sort((x, y) => y.c - x.c);
       const tot = rows.reduce((t, x) => t + x.c, 0);
       det = `<h3>${L ? `Kur sutampa ${fa.p} ir ${fb.p}: ${rows.length} bendros pozicijos, bendra dalis ${num(tot, 1)} %` : `Where ${fa.p} and ${fb.p} overlap: ${rows.length} common holdings, overlap ${num(tot, 1)} %`}</h3>`
-        + (rows.length ? `<div class="scroll"><table class="pft smd"><thead><tr><th class="l">${L ? 'Pozicija' : 'Holding'}</th><th>${sw(fa.p)}${fa.p}, %</th><th>${sw(fb.p)}${fb.p}, %</th><th>${L ? 'Bendra dalis (mažesnė), %' : 'Overlap (smaller), %'}</th></tr></thead><tbody>`
+        + (rows.length ? `<div class="scroll"><table class="pft smd" id="smD"><thead><tr><th class="l">${L ? 'Pozicija' : 'Holding'}</th><th>${sw(fa.p)}${fa.p}, %</th><th>${sw(fb.p)}${fb.p}, %</th><th>${L ? 'Bendra dalis (mažesnė), %' : 'Overlap (smaller), %'}</th></tr></thead><tbody>`
           + rows.slice(0, 30).map(x => `<tr><td class="l">${esc(posLabel(x.s))}</td><td>${num(x.wa, 2)}</td><td>${num(x.wb, 2)}</td><td><b>${num(x.c, 2)}</b></td></tr>`).join('')
           + (rows.length > 30 ? `<tr><td class="l pfsub" colspan="4">${L ? `ir dar ${rows.length - 30} pozicijos` : `and ${rows.length - 30} more`}</td></tr>` : '') + '</tbody></table></div>'
           : `<p class="note">${L ? 'Bendrų pozicijų nėra – fondai investuoja per skirtingus fondus ar ETF, net jei regionai panašūs (žr. „Panašus profilis“).' : 'No common holdings – the funds use different funds or ETFs even if regions are similar (see “Similar profile”).'}</p>`);
@@ -749,7 +904,7 @@ function renderSim() {
       const lab = k => k.startsWith('b:') ? ({ bd: L ? 'Obligacijos' : 'Bonds', alt: L ? 'Alternatyvios' : 'Alternatives', cash: L ? 'Pinigai' : 'Cash', der: L ? 'Išvestinės' : 'Derivatives', oth: L ? 'Kita' : 'Other' })[k.slice(2)] || k.slice(2) : (L ? 'Akcijos: ' : 'Equities: ') + (T().reg[k.slice(2)] || k.slice(2));
       const keys = [...new Set([...Object.keys(V[a].prof), ...Object.keys(V[b].prof)])].map(k => ({ k, wa: V[a].prof[k] || 0, wb: V[b].prof[k] || 0 })).map(x => ({ ...x, c: Math.min(x.wa, x.wb) })).filter(x => x.wa > 0.05 || x.wb > 0.05).sort((x, y) => Math.max(y.wa, y.wb) - Math.max(x.wa, x.wb));
       const tot = keys.reduce((t, x) => t + x.c, 0);
-      det = `<h3>${L ? `Profilis: ${fa.p} ir ${fb.p} – sutampa ${num(tot, 1)} %` : `Profile: ${fa.p} and ${fb.p} – ${num(tot, 1)} % alike`}</h3><div class="scroll"><table class="pft smd"><thead><tr><th class="l">${L ? 'Dalis' : 'Component'}</th><th>${sw(fa.p)}${fa.p}, %</th><th>${sw(fb.p)}${fb.p}, %</th><th>${L ? 'Sutampa, %' : 'Overlap, %'}</th><th>${L ? 'Skirtumas, p. p.' : 'Gap, pp'}</th></tr></thead><tbody>`
+      det = `<h3>${L ? `Profilis: ${fa.p} ir ${fb.p} – sutampa ${num(tot, 1)} %` : `Profile: ${fa.p} and ${fb.p} – ${num(tot, 1)} % alike`}</h3><div class="scroll"><table class="pft smd" id="smD"><thead><tr><th class="l">${L ? 'Dalis' : 'Component'}</th><th>${sw(fa.p)}${fa.p}, %</th><th>${sw(fb.p)}${fb.p}, %</th><th>${L ? 'Sutampa, %' : 'Overlap, %'}</th><th>${L ? 'Skirtumas, p. p.' : 'Gap, pp'}</th></tr></thead><tbody>`
         + keys.map(x => `<tr><td class="l">${esc(lab(x.k))}</td><td>${num(x.wa, 1)}</td><td>${num(x.wb, 1)}</td><td><b>${num(x.c, 1)}</b></td><td class="${Math.abs(x.wa - x.wb) >= 5 ? 'down' : ''}">${pp(x.wa - x.wb)}</td></tr>`).join('') + '</tbody></table></div>';
     }
   }
