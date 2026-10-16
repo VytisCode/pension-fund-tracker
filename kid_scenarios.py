@@ -51,6 +51,27 @@ def benches() -> dict:
     return {k: sorted(v.items()) for k, v in out.items()}
 
 
+def fund_month_ends(provider="SEB", pillar_file="pillar3_history.csv") -> dict:
+    """Fondų vieneto vertės mėnesių pabaigose (jau atskaičius visas fondo išlaidas): {fondas: [(metai, mėnuo), vertė]};
+    tik pilni mėnesiai be spragų (reglamento 2017/653 IV priedo 5 ir 12 p.: pirmiausia – paties produkto istorija)."""
+    p = ROOT / "data" / pillar_file
+    out = {}
+    if p.exists():
+        with p.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                if r["provider"] == provider and r["unit_value"]:
+                    out.setdefault(r["fund"], []).append((r["date"], float(r["unit_value"])))
+    cur = (date.today().year, date.today().month)
+    res = {}
+    for k, pts in out.items():
+        me = sorted((ym, v) for ym, v in _month_ends(sorted(pts)).items() if ym < cur)
+        i = len(me) - 1
+        while i > 0 and _addm(me[i - 1][0], 1) == me[i][0]:
+            i -= 1
+        res[k] = me[i:]                                  # paskutinė ištisinė dalis
+    return res
+
+
 def _month_ends(pts):
     """Paskutinė kiekvieno mėnesio reikšmė: {(metai, mėnuo): vertė}"""
     out = {}
@@ -151,6 +172,9 @@ def monthly() -> dict:
             vals.append(float(f"{v:.8g}"))
             cur = _addm(cur, 1)
         out[k + "0"], out[k] = f"{y}-{m:02d}", vals
+    own_from = {o["n"]: o.get("own_from") for o in official() if o["p"] == "SEB"}   # dabartinės strategijos pradžia (YYYY-MM), jei žinoma
+    fm = {k: [(ym, x) for ym, x in v if not own_from[k] or f"{ym[0]}-{ym[1]:02d}" >= own_from[k]] for k, v in fund_month_ends().items() if k in own_from}
+    out["f"] = {k: {"s0": f"{v[0][0][0]}-{v[0][0][1]:02d}", "v": [float(f"{x:.10g}") for _, x in v]} for k, v in fm.items() if v}
     out["x"] = {k: {"s0": f"{v[0][0][0]}-{v[0][0][1]:02d}", "v": [float(f"{x:.10g}") for _, x in v]} for k, v in benches().items()}
     return out
 
@@ -186,6 +210,8 @@ def for_funds(funds: list, today: date | None = None) -> None:
         bench = o.get("bench") if o and o.get("bench") in bx else None
         k = bench or eq
         end_year = today.year - 1
+        if bench:                                        # naujų metų indekso duomenų dar negavus – paskutiniai pilni metai, kuriuos indeksas apima
+            end_year = min(end_year, max(y for (y, m), _ in bx[bench] if m == 12))
         if eq < 95 and not have_b and not bench:
             f["kid"] = {"rhp": rhp, "eq": eq, "wait": 1}
             continue
@@ -195,7 +221,7 @@ def for_funds(funds: list, today: date | None = None) -> None:
         s = scenarios(cache[k], rhp, cost, end_year, md, w12)
         if s is None and today.month <= 1:
             s, end_year = scenarios(cache[k], rhp, cost, end_year - 1, md, w12), end_year - 1
-        kid = {"rhp": rhp, "mid": int(rhp / 2 + 0.5), "eq": eq, "cost": round(cost, 6), "bench": bench, "momDrop": md, "w12": w12, "capped": int(capped),
+        kid = {"rhp": rhp, "mid": int(rhp / 2 + 0.5), "eq": eq, "cost": round(cost, 6), "bench": bench, "momDrop": md, "w12": w12, "ownDef": int(bool(o and o.get("own_from"))), "capped": int(capped),
                "from": f"{end_year - max(rhp + 5, 10) + 1}-01-01", "to": f"{end_year}-12-31", "s": s, "src": "pid" if o else "rule"}
         if o:
             kid["off"] = {"doc": o["doc"], "years": o["years"], "s": [[o["s"][sc][i]["ret"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)],

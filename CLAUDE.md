@@ -12,10 +12,13 @@ Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `
 6. **Istorinių duomenų** (`data/*.csv`) niekada netrinti ir neperrašyti; papildyti tik tuščius laukus.
 7. Kai reikia savininko veiksmų – žingsnis po žingsnio, paprastai, kad galėtų padaryti telefonu.
 
-## Ką Claude daro pats / tik siūlo
+## Ką Claude daro pats / tik siūlo (savininko sprendimas 2026-10-16)
 
-- Pats: klaidų taisymai, smulkūs patobulinimai, patvirtinti punktai iš `IDEAS.md`, sugedusio duomenų rinkimo taisymas.
-- Tik siūlo (diegia po patvirtinimo): naujos didelės funkcijos, funkcijų šalinimas, fondų palyginimo logikos keitimas, kas kainuoja.
+Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – ilgalaikis, kuo savarankiškiau veikiantis įrankis pensijų fondų rinkos analizei ir ataskaitoms, kurio duomenimis galima pasitikėti (istoriniai duomenys ir senos ataskaitos duodami kalibravimui).
+- Pats ieško problemų ir jas taiso, siūlo ir diegia geriausius (world class) sprendimus, net jei savininkas apie juos dar negalvojo; galvoja ilgalaikiai (kodas turi veikti ir be Claude).
+- Pats: klaidų taisymai, patobulinimai, naujos funkcijos, atitinkančios tikslą, duomenų rinkimo automatizavimas. Apie didesnius pakeitimus – trumpai po fakto (ką ir kodėl).
+- Klausia tik: kas kainuoja, esamų funkcijų šalinimas, fondų palyginimo logikos keitimas, kai trūksta informacijos iš savininko. Kai reikia savininko veiksmų – visada aiškiai praneša, žingsnis po žingsnio.
+- Skaičiavimai, atkartojantys valdytojų ataskaitas (pvz. KID/PID scenarijai), turi dvi versijas: „kaip valdytojo ataskaitoje“ (su jų klaidomis) ir „teisingai pagal reglamentą“; skirtumai detaliai paaiškinami svetainėje ir Excel faile.
 - Fondai lyginami tik peer grupėse: gyvenimo ciklo – pagal gimimo metų grupę; turto išsaugojimo – tarpusavyje.
 
 ## Failų žemėlapis
