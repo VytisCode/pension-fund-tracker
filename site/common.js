@@ -1359,7 +1359,11 @@ function tableTools() {
         catch (err) { savePng(blob, tbl); alert(T().tFail); }
       } catch (err) { b.disabled = false; flash(false); console.error(err); }
     });
-    host.before(t);
+    /* jei lentelė yra tinklelio / eilutės (grid, flex) narys, įrankių juosta su lentele apgaubiama vienu elementu –
+       kitaip juosta tampa atskiru tinklelio langeliu ir išstumia gretimą grafiką (savininkas 2026-10-16: „grafikai keistos formos“) */
+    const pd = host.parentElement ? getComputedStyle(host.parentElement).display : 'block';
+    if (/grid|flex/.test(pd)) { const w = document.createElement('div'); w.className = 'ttwrap'; w.style.minWidth = '0'; host.before(w); w.append(t, host); }
+    else host.before(t);
   });
 }
 if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() => { clearTimeout(ttT); ttT = setTimeout(tableTools, 250); }).observe(document.documentElement, { childList: true, subtree: true }); }
