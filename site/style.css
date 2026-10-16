@@ -484,3 +484,4 @@ section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
 @media print { [data-tab][hidden] { display: block !important; } }
 body[data-ptab="market"] #groupField, body[data-ptab="sum"] #groupField { display: none; }
 body[data-ptab="ins"] #periodbar { display: none; }
+details.owner { margin-top: 14px; } details.owner > summary { cursor: pointer; color: var(--text-2); font-weight: 600; padding: 6px 0; }

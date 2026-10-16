@@ -74,13 +74,14 @@ function renderInv() {
   el.innerHTML = `<section class="card" id="sources"><h2>${lt ? 'Duomenų šaltiniai ir atnaujinimas' : 'Data sources and updates'}</h2>`
     + `<p class="note">${lt ? `Visi svetainės duomenų šaltiniai: ${nA} iš ${SRCINV.length} atnaujinami automatiškai, kiti – rankiniu būdu pagal tvarkaraštį žemiau. Datos skaičiuojamos iš pačių duomenų kiekvieną kartą atnaujinant svetainę.` : `All data sources of the site: ${nA} of ${SRCINV.length} are updated automatically, the rest manually on the schedule below. Dates are computed from the data itself at every site update.`}</p>`
     + `<div class="scroll"><table class="inv"><thead><tr><th class="l">${lt ? 'Duomenys' : 'Data'}</th><th class="l">${lt ? 'Šaltinis' : 'Source'}</th><th class="l">${lt ? 'Puslapiai' : 'Pages'}</th><th class="l">${lt ? 'Kaip atnaujinama' : 'How updated'}</th><th>${lt ? 'Paskutiniai duomenys' : 'Latest data'}</th><th>${lt ? 'Laukiama naujų' : 'Next expected'}</th></tr></thead><tbody>${rows}</tbody></table></div>`
+    + `<details class="owner"><summary>${lt ? 'Duomenų patikimumas ir priežiūra (svetainės savininkui)' : 'Reliability and maintenance (for the site owner)'}</summary>`
     + `<h3 id="reliability">${lt ? 'Kas nutinka, jei šaltinis neveikia' : 'What happens if a source fails'}</h3>`
     + `<p class="note">${lt ? 'Svetainė niekada tyliai nerodo klaidingų skaičių: jei duomenų negaunama, rodoma paskutinė gauta data ir pranešimas viršuje paaiškina priežastį, įtaką ir ką daryti.' : 'The site never silently shows wrong numbers: if data stop arriving, the last date received is shown and a notice at the top explains the cause, the impact and what to do.'}</p>`
     + `<div class="scroll"><table class="inv"><thead><tr><th class="l">${lt ? 'Duomenys' : 'Data'}</th><th class="l">${lt ? 'Atsarginis planas' : 'Backup'}</th><th class="l">${lt ? 'Jei neveikia nė vienas' : 'If nothing works'}</th></tr></thead><tbody>`
     + SRCINV.filter(s => s.bk_lt).map(s => `<tr><td class="l">${lt ? s.lt : s.en}</td><td class="l">${lt ? s.bk_lt : s.bk_en}</td><td class="l">${lt ? s.fl_lt : s.fl_en}</td></tr>`).join('') + '</tbody></table></div>'
     + `<h3 id="schedule">${lt ? 'Rankinio atnaujinimo tvarkaraštis' : 'Manual update schedule'}</h3>`
     + `<div class="scroll"><table class="inv"><thead><tr><th>${lt ? 'Iki' : 'By'}</th><th class="l">${lt ? 'Ką atnaujinti' : 'What'}</th><th class="l">${lt ? 'Kaip' : 'How'}</th></tr></thead><tbody>${mrows}</tbody></table></div>`
-    + `<p class="note">${lt ? '⚠ – laikas atnaujinti. Pavėlavę darbai taip pat nurodomi vakariniame laiške.' : '⚠ – due. Overdue items are also listed in the evening e-mail.'}</p></section>`;
+    + `<p class="note">${lt ? '⚠ – laikas atnaujinti. Pavėlavę darbai taip pat nurodomi vakariniame laiške.' : '⚠ – due. Overdue items are also listed in the evening e-mail.'}</p></details></section>`;
 }
 renderHeader('apie', render);
 render();
