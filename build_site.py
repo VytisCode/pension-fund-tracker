@@ -115,6 +115,7 @@ def main() -> None:
         (DOCS / page).write_text(text, encoding="utf-8")
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
     build_pillar3(ver)
+    build_perf3(ver)
     build_portfolios(ver)
     build_aum(ver)
     build_reports(ver)
@@ -129,6 +130,18 @@ def main() -> None:
     (DOCS / "ops.html").write_text(text, encoding="utf-8")
 
 
+
+
+def build_perf3(ver: dict) -> None:
+    """III pakopa Rezultatuose (savininkas 2026-10-16): performance.html su data3.js – žr. perf.js PL3."""
+    text = (DOCS / "performance.html").read_text(encoding="utf-8")
+    v3 = hashlib.md5((DOCS / "data3.js").read_bytes()).hexdigest()[:8]
+    shim = ('<script src="data3.js?v=' + v3 + '"></script><script>var PL3 = 1; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; '
+            'f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>')
+    t3 = text.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', shim).replace("<title>", "<title>III pakopa · ")
+    t3 = t3.replace(f'<script src="perf.js?v={ver["perf.js"]}"></script>', f'<script>p3Colors();</script><script src="perf.js?v={ver["perf.js"]}"></script>')
+    assert "data3.js" in t3 and "p3Colors" in t3
+    (DOCS / "performance3.html").write_text(t3, encoding="utf-8")
 
 def build_manager(ver: dict) -> None:
     """Valdytojo ir fondo puslapis (auditas #61 + #64): site/manager.html, site/mgr.js; duomenys – jau sugeneruoti data*.js."""

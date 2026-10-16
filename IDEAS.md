@@ -81,8 +81,8 @@ Susitarimai: dublikatus šalinti pagal 6 skyrių planą; nauji rodikliai – tik
 Excel – aiškūs auditoriams (šaltinis+data, žingsniai, patikros eilutės, Metodika). Nieko mokamo, palyginimo logikos nekeisti.
 Priminimai tęsti: trig_01EZJuxDucAX4fTyA2cUYDVL, trig_01J6gQ1kJaQHwysV4WKTDCDv, trig_01TmvjqdNrHrT1dNxeno8y3i (ištrinti pabaigoje).
 Eiga (žymėti [x]):
-- [ ] 1 Pradžia: Šiandien/Savaitė/Mėnuo/YTD jungiklis, viena lyderių lentelė
-- [ ] 2 III pakopa Rezultatuose (jungiklis)
+- [x] 1 Pradžia: Diena/Savaitė/Mėnuo/Ketvirtis/Metai jungiklis (index.html)
+- [x] 2 III pakopa Rezultatuose: performance3.html (perf.js IS3, build_perf3)
 - [ ] 3 Metai ir mėnesiai (kalendoriniai + mėnesiai + slenkanti), savos datos
 - [ ] 4 Vienas bendras reitingas
 - [ ] 5 Fondo kortelė

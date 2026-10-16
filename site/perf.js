@@ -1,3 +1,7 @@
+/* III pakopa (savininkas 2026-10-16: „tie patys įrankiai abiem pakopoms su jungikliu“): performance3.html – tas pats puslapis su data3.js
+   (kiekvienas fondas – atskiras „tiekėjas“, grupės – LB kategorijos). Valdytojų lentelės (visa rinka, bendras reitingas) slepiamos:
+   III pakopoje lyginami fondai tik savo kategorijoje, ne valdytojai. II ir III pakopos tarpusavyje nelyginamos. */
+const IS3 = typeof window.PL3 !== 'undefined', STKEY = IS3 ? 'perfState3' : 'perfState';
 /* Rezultatų ir palyginimo puslapis. Priklauso nuo: data.js (DATA), events.js (EVENTS), common.js. */
 addStrings({
   idxLbl: 'Compare with',
@@ -187,7 +191,7 @@ const byId = id => DATA.groups.find(g => g.id === id);
 
 /* ---------- būsenos išsaugojimas (naršyklėje) ir dalijimosi nuoroda ---------- */
 function saveState() {
-  try { localStorage.setItem('perfState', JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, mref: P.mref, cpi: !!P.cpi, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
+  try { localStorage.setItem(STKEY, JSON.stringify({ real: !!P.real, period: P.period, from: P.from, to: P.to, group: P.group, provs: [...P.provs], adv: P.adv, rfUser: P.rf, view: P.view, diffRef: P.diffRef, hmProv: P.hmProv, hmGroup: P.hmGroup, mref: P.mref, cpi: !!P.cpi, sumWin: P.sumWin, ovP: [...P.ovP], gx: P.gx, idx: [...P.idx] })); } catch (e) {}
 }
 function applyState(s) {
   if (!s) return;
@@ -239,7 +243,7 @@ function normalizeDates(changed) {
   P.from = fix(P.from); P.to = fix(P.to);
   if (P.from && P.to && P.from > P.to) { if (changed === 'to') P.from = P.to; else P.to = P.from; }
 }
-try { applyState(JSON.parse(localStorage.getItem('perfState'))); } catch (e) {}
+try { applyState(JSON.parse(localStorage.getItem(STKEY))); } catch (e) {}
 loadHash(); normalizeDates();
 
 /* ---------- laikotarpis ---------- */
@@ -363,7 +367,7 @@ function rankOf(values) {                   // values: [{key, v}] -> Map key -> 
 }
 const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1);
 const MARKET_ORDER = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // lentelių stulpelių tvarka
-const marketProvs = () => MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
+const marketProvs = () => IS3 ? DATA.providers : MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
 const retOf = (g, pid, rng) => { const f = g.funds.find(x => x.provider === pid); if (!f || isStale(f, rng.overallLast)) return null; const s = seriesOf(f, rng.anchor, rng.end); return s ? s.ret : null; };
 const fmtP = (v, p = 1) => pct(v, p);
 
@@ -392,8 +396,8 @@ function renderSummary() {
   });
   const top = o => Object.entries(o).sort((x, y) => y[1] - x[1])[0];
   const parts = [T().sumLatest(iso(latest))];
-  if (top(lead)) { const [p, k] = top(lead); parts.push(T().sumLead(labelOf(p), k, ng)); }
-  if (top(lag)) { const [p, k] = top(lag); parts.push(T().sumLag(labelOf(p), k, ng)); }
+  if (!IS3 && top(lead)) { const [p, k] = top(lead); parts.push(T().sumLead(labelOf(p), k, ng)); }
+  if (!IS3 && top(lag)) { const [p, k] = top(lag); parts.push(T().sumLag(labelOf(p), k, ng)); }
   if (move) parts.push(T().sumMove(labelOf(move.p), groupLabel(move.g), fmtP(move.v, 2), iso(move.d)));
   $('sumText').innerHTML = ng ? `<p class="sumline">${parts.join(' ')}</p>` : `<p class="na">${T().sumNoData}</p>`;
   const cellMove = (g, anchor, end, dir) => {   // dir > 0 – didžiausias kilimas, dir < 0 – didžiausias kritimas (auditas #6)
@@ -1235,7 +1239,7 @@ function buildControls() {
   });
   $('from').addEventListener('change', e => { P.from = e.target.value; normalizeDates('from'); $('from').value = P.from; $('to').value = P.to; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
   $('to').addEventListener('change', e => { P.to = e.target.value; normalizeDates('to'); $('from').value = P.from; $('to').value = P.to; P.period = 'custom'; resetZoom(); saveState(); syncAll(); });
-  $('group').addEventListener('change', e => { P.group = e.target.value; resetZoom(); saveState(); renderFunds(); });
+  $('group').addEventListener('change', e => { P.group = e.target.value; resetZoom(); saveState(); syncChips(); renderFunds(); });
   $('hmProv').addEventListener('change', e => { P.hmProv = e.target.value; saveState(); renderHeatmap(byId(P.group === 'all' ? P.hmGroup : P.group), P.group === 'all'); });
   $('hmGroup').addEventListener('change', e => { P.hmGroup = e.target.value; saveState(); renderHeatmap(byId(P.hmGroup), true); });
   PERIOD_IDS.forEach(per => { const b = document.createElement('button'); b.type = 'button'; b.dataset.p = per;
@@ -1300,7 +1304,7 @@ function syncCalSelects() {
     sel.value = active ? P.period : ''; sel.classList.toggle('active', active);
   });
 }
-function syncChips() { document.querySelectorAll('#chips .chip').forEach(c => c.setAttribute('aria-pressed', P.provs.has(c.dataset.id))); }
+function syncChips() { const g = IS3 && P.group !== 'all' ? byId(P.group) : null; document.querySelectorAll('#chips .chip').forEach(c => { c.setAttribute('aria-pressed', P.provs.has(c.dataset.id)); c.hidden = !!g && !g.funds.some(f => f.provider === c.dataset.id); }); }   // III pakopa – tik pasirinktos kategorijos fondai
 function syncView() {
   const sel = $('diffRef'), cur = P.diffRef;
   sel.innerHTML = `<option value="avg">${T().diffAvg}</option>` + marketProvs().map(p => `<option value="${p.id}">${p.label}</option>`).join(''); sel.value = cur; sel.hidden = P.view !== 'diff';
@@ -1308,7 +1312,7 @@ function syncView() {
 function winLabel(w) { const v = T()['win' + w]; return typeof v === 'function' ? v(periodText()) : v; }
 function syncSumWin() { $('sumWin').querySelectorAll('button').forEach(b => { b.textContent = winLabel(b.dataset.w); b.setAttribute('aria-pressed', b.dataset.w === P.sumWin); }); }
 function labelControls() {
-  kpiRow(kpiII());
+  kpiRow(IS3 ? kpiIII() : kpiII());
   $('periods').setAttribute('aria-label', T().period);
   $('periods').querySelectorAll('button').forEach(b => b.textContent = T().periods[b.dataset.id]);
   syncCalSelects();
@@ -1321,7 +1325,7 @@ function labelControls() {
   $('btnCpi').textContent = T().cpiBtn; $('btnCpi').hidden = typeof CPI === 'undefined'; $('btnCpi').setAttribute('aria-pressed', !!P.cpi);
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
-  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })));   // vidinė navigacija (auditas #43)
+  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || x.id !== 'hMarket'));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1342,10 +1346,15 @@ function syncAll() {
   syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);
   $('printMeta').textContent = `${T().siteTitle} · ${groupName(P.group)} · ${periodText()} · ${T().updated} ${DATA.generated}`;
-  renderSummary(); renderMarket(); renderFunds(); fitSticky();
+  renderSummary(); if (!IS3) renderMarket(); renderFunds(); fitSticky();
 }
 buildControls(); syncChips();
-renderHeader('performance', () => { labelControls(); syncAll(); });
+if (IS3) {   // III pakopa: valdytojų lentelių ir Sharpe matricos (grupės × valdytojai) nėra – Sharpe yra „Papildomuose rodikliuose“
+  const sm = $('hMarket').closest('section'); if (sm) sm.hidden = true;
+  [$('hRisk'), $('c_riskMap'), $('riskMap') && $('riskMap').closest('.card')].forEach(e => { if (e) e.hidden = true; });
+  addStrings({ thFund: 'Fund' }, { thFund: 'Fondas' });
+}
+renderHeader(IS3 ? 'performance3' : 'performance', () => { labelControls(); syncAll(); });
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();

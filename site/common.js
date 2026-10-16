@@ -46,7 +46,8 @@ const pct = (x, p = 2) => (x >= 0 ? '+' : '−') + num(Math.abs(x), 2) + pctSfx(
 const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), 2) + pctSfx();
 const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
 const labelOf = id => DATA.providers.find(p => p.id === id).label;
-const groupLabel = g => g.id === 'turto' ? T().turto : g.id.replace('-', '–');
+const CAT3 = { lt: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fondai', equity: 'Akcijų fondai' }, en: { bond: 'Bond funds', mixed: 'Mixed funds', equity: 'Equity funds' } };
+const groupLabel = g => g.id === 'turto' ? T().turto : (CAT3[lang] || CAT3.lt)[g.id] || g.id.replace('-', '–');
 
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 
@@ -74,7 +75,7 @@ const NAV_ICONS = {
   reports: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   journey: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
 };
-const NAV_PAGES = ['index', 'review', 'ops', 'performance', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'apie'];
+const NAV_PAGES = ['index', 'review', 'ops', 'performance', 'performance3', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'apie'];
 const navKey = p => 'nav' + p[0].toUpperCase() + p.slice(1);
 const svgI = (body, s = 16) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
@@ -1045,6 +1046,16 @@ function kpiRow(items) {
   if (!el) { el = document.createElement('div'); el.className = 'kpis'; el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
   el.innerHTML = items.filter(Boolean).map(([k, v, s]) => `<div class="kpi"><span>${k}</span><b>${v}</b>${s ? `<small>${s}</small>` : ''}</div>`).join('');
 }
+function kpiIII() {                      // III pakopa iš data3.js (Rezultatai › III pakopa)
+  const fs = DATA.groups.flatMap(g => g.funds), last = Math.max(...fs.map(f => f.d[f.d.length - 1]));
+  return [[T().kpFunds, fs.length], [lang === 'lt' ? 'Bendrovių' : 'Providers', new Set(DATA.providers.map(p => p.brand)).size], [T().kpFrom, iso(Math.min(...fs.map(f => f.d[0])))], [T().kpUntil, iso(last)]];
+}
+/* III pakopos spalvos: bendrovės prekės ženklo atspalviai, kiekvienam fondui savas (kaip p3.js) */
+function p3Colors() {
+  const BR = { ARTEA: [230, 55, 40], GOINDEX: [178, 80, 38], LUMINOR: [276, 52, 52], SEB: [104, 70, 34], SWEDBANK: [22, 100, 54], ALLIANZ: [205, 75, 50] }, SH = [0, 14, -10, 24, -18, 7], seen = {};
+  DATA.providers.forEach((p, i) => { const [h, s, l] = BR[p.brand] || [0, 0, 45]; const k = seen[p.brand] = (seen[p.brand] ?? -1) + 1;
+    document.documentElement.style.setProperty(`--s${i + 1}`, `hsl(${h} ${s}% ${Math.max(22, Math.min(74, l + SH[k % SH.length]))}%)`); });
+}
 function kpiII() {                       // II pakopa iš data.js („Rezultatai“, „Apžvalga“)
   const fs = DATA.groups.flatMap(g => g.funds), last = Math.max(...fs.map(f => f.d[f.d.length - 1]));
   const live = fs.filter(f => f.assets && f.assetsDate >= last - 10);
@@ -1338,7 +1349,7 @@ if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() 
    ir ką gausi paspaudęs), su tekstu – rezultatai. Nuoroda „puslapis#go=…“ nuveda tiesiai prie lentelės ar grafiko. */
 const SECTIONS = [
   { id: 'home', icon: 'index', pages: ['index', 'review', 'ops'] },
-  { id: 'results', icon: 'performance', pages: ['performance', 'pillar3', 'overview'] },
+  { id: 'results', icon: 'performance', pages: ['performance', 'performance3', 'pillar3', 'overview'] },
   { id: 'mgr', icon: 'manager', pages: ['manager'] },
   { id: 'pf', icon: 'portfolios', pages: ['portfolios', 'aum'] },
   { id: 'rep', icon: 'reports', pages: ['reports'] },
@@ -1346,12 +1357,12 @@ const SECTIONS = [
 ];
 addStrings({
   secNav: { home: 'Home', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', about: 'About', help: 'Help' },
-  subNav: { index: 'Today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', pillar3: 'Pillar III', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path' },
+  subNav: { index: 'Today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III categories', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path' },
   navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
   qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding' }, qHint: 'Tip: press / to search',
 }, {
   secNav: { home: 'Pradžia', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', about: 'Apie', help: 'Pagalba' },
-  subNav: { index: 'Šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', pillar3: 'III pakopa', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją' },
+  subNav: { index: 'Šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopos kategorijos', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją' },
   navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',
   qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija' }, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
 });
@@ -1375,6 +1386,7 @@ const CATALOG = [
   ['results', 'performance', 'hRoll', 't', 1, 'Slenkanti grąža', 'Grąža per paskutinius 1, 3, 6, 12, 36, 60 mėn. ir slenkančių 1 metų statistika.', 'Rolling returns', 'Return over the last 1–60 months and rolling 1-year statistics.', 'slenkanti rolling'],
   ['results', 'performance', 'hQP', 't', 1, 'Vieta pagal laikotarpį', 'Vienos grupės valdytojų vietos skirtingais laikotarpiais.', 'Rank by period', 'One group’s manager ranks over different periods.', 'vieta laikotarpis'],
   ['results', 'performance', 'hHm', 't', 1, 'Mėnesių grąžos šilumos žemėlapis', 'Kiekvieno mėnesio grąža spalvomis – matyti geri ir blogi mėnesiai.', 'Monthly heat map', 'Every month’s return in colour – good and bad months at a glance.', 'mėnesiai heatmap'],
+  ['results', 'performance3', '', 'g', 1, 'III pakopa: grafikai, rizika, kalendoriniai metai', 'Tie patys įrankiai kaip II pakopai: fondų palyginimo grafikas, rodikliai, Sharpe, kritimai, kalendoriniai metai, mėnesių grąža – fondai lyginami savo kategorijoje.', 'Pillar III: charts, risk, calendar years', 'The same tools as for pillar II: comparison chart, metrics, Sharpe, drawdowns, calendar years, monthly returns – funds compared within their category.', 'iii trečia pakopa savanoriška voluntary sharpe kalendoriniai'],
   ['results', 'pillar3', '', 't', 1, 'III pakopa: visi fondai', 'Obligacijų, mišraus investavimo ir akcijų fondai: grąža, vieta kategorijoje, svyravimas.', 'Pillar III: all funds', 'Bond, mixed and equity funds: return, rank in category, volatility.', 'iii trečia pakopa obligacijų akcijų mišrūs'],
   ['results', 'overview', '', 'g', 0, 'Grupių grafikai', 'Kiekvienos gimimo metų grupės fondų vertės kreivės vienoje vietoje.', 'Group charts', 'Value lines of every birth-year group in one place.', 'grafikai grupės apžvalga'],
   ['mgr', 'manager', '10 didžiausių', 't', 1, '10 didžiausių pozicijų', 'Kiekvieno valdytojo ar fondo didžiausios investicijos ir jų dalis portfelyje.', 'Top 10 holdings', 'Each manager’s or fund’s largest investments and their share of the portfolio.', 'top 10 top10 didžiausios pozicijos holdings largest'],
