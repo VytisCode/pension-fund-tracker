@@ -35,7 +35,8 @@ addStrings({
     { t: '5. Stress scenario', seb: '12-month rolling volatility windows also for 1 year; the subtracted term 0.5·σ²·N uses the ordinary 60-month σ.', reg: 'Annex IV point 18(a): for monthly prices w = 6 months for 1 year and 12 months for longer periods; point 19 (original 2017/653 Annex IV point 11): the subtracted term is 0.5·σS²·N with the stressed volatility σS.', why: 'Effect: the regulation’s stress result is lower (more conservative), especially for longer periods.' },
     { t: '6. The same in both', seb: '', reg: 'observation period RHP + 5 years (at least 10); month-end values; moderate = median and favourable = best of all full windows; percentiles 99 % (1 year) / 95 %; z for 1 % / 5 %; Cornish-Fisher; stress never better than unfavourable; 1,000 € at the start of each year; costs = ongoing + transaction costs, 1/12 subtracted from each monthly benchmark return; average return each year for longer periods = XIRR of the payments (the regulation gives no separate formula for regular payments).', why: 'Presentation: the regulation (Annex IV point 42) asks to round amounts to the nearest 10 €; here cents are shown so that the check is exact.' },
   ],
-  kidShI: 'Instructions',
+  kidShI: 'Instructions', kidShE: 'Evidence', kidShP: 'Comparison',
+  kidRegL: 'Regulation (EU) 2017/653 on EUR-Lex (Lithuanian; amendments of 2021/2268 are in the consolidated version)',
   kidExt: a => `From ${a} SEB’s KID benchmark series is extended automatically with the monthly returns of the fund benchmark SEB publishes daily (SEB’s KID Excel files will no longer be used). Check: extending one year this way differs from SEB’s exact calculation by 0–7 €.`,
   kidShM: 'Months', kidShW: 'Windows', kidShC: 'Calculation', kidShT: 'Scenarios',
 }, {
@@ -71,7 +72,8 @@ addStrings({
     { t: '5. Nepalankiausias (stresinis) scenarijus', seb: '12 mėn. slenkantys nuokrypio langai ir 1 metams; atimamame naryje 0,5·σ²·N naudojamas įprastas 60 mėn. σ.', reg: 'IV priedo 18(a) p.: mėnesiniams duomenims w = 6 mėn. 1 metams ir 12 mėn. ilgesniems laikotarpiams; 19 p. (pradinio 2017/653 IV priedo 11 p. tekstas): atimamas narys 0,5·σS²·N su stresiniu nuokrypiu σS.', why: 'Įtaka: pagal reglamentą stresinis rezultatas mažesnis (atsargesnis), ypač ilgesniems laikotarpiams.' },
     { t: '6. Kas abiem atvejais vienoda', seb: '', reg: 'stebėjimo laikotarpis RHP + 5 m. (ne mažiau 10); mėnesių pabaigų vertės; nuosaikus = mediana, palankus = geriausias iš visų pilnų langų; procentiliai 99 % (1 m.) / 95 %; z 1 % / 5 %; Cornish-Fisher; stresinis ne geresnis už nepalankų; 1000 € kiekvienų metų pradžioje; išlaidos = einamosios + sandorių, iš kiekvieno indekso mėnesio grąžos atimama 1/12; ilgesnių laikotarpių metinė vidutinė grąža = įmokų XIRR (reglamentas reguliarioms įmokoms atskiros formulės nenurodo).', why: 'Pateikimas: reglamentas (IV priedo 42 p.) liepia sumas apvalinti iki 10 €; čia rodomi centai, kad patikra būtų tiksli.' },
   ],
-  kidShI: 'Instrukcija',
+  kidShI: 'Instrukcija', kidShE: 'Įrodymai', kidShP: 'Palyginimas',
+  kidRegL: 'Reglamentas (ES) 2017/653 EUR-Lex svetainėje (lietuviškai; 2021/2268 pakeitimai – konsoliduotoje redakcijoje)',
   kidExt: a => `Nuo ${a} SEB PID indekso eilutė automatiškai pratęsiama SEB kasdien skelbiamo fondo lyginamojo indekso mėnesio grąžomis (SEB PID Excel failų nebebus). Patikra: taip pratęsus vienus metus, skirtumas nuo tikslaus SEB skaičiavimo 0–7 €.`,
   kidShM: 'Mėnesiai', kidShW: 'Langai', kidShC: 'Skaičiavimai', kidShT: 'Scenarijai',
 });
@@ -218,7 +220,7 @@ function renderKid() {
     + `${p.mode === 'reg' ? field(S.kidData, sel('kidD', p.data, [['own', S.kidDataOwn], ['idx', S.kidDataIdx]])) : ''}`
     + `${field(S.kidRhpY, inp('rhp', p.rhp, 'min="1" max="25" step="1" style="width:5em"'))}${field(S.kidCost, inp('cost', p.cost, 'min="0" max="5" step="0.01" style="width:6em"'))}`
     + `${field(S.kidFrom, mon('from', p.from))}${field(S.kidTo, mon('to', p.to))}<button class="btn" type="button" id="kidReset"${Object.keys(o).length ? '' : ' disabled'}>${S.kidReset}</button></div>`;
-  html += `<p class="note">${p.mode === 'seb' ? S.kidModeSebNote : S.kidModeRegNote}</p>`;
+  html += `<p class="note">${p.mode === 'seb' ? S.kidModeSebNote : S.kidModeRegNote}</p><p class="kidi"><a href="${KID_REG}" target="_blank" rel="noopener">${S.kidRegL}</a> · <a href="${KID_REGC}" target="_blank" rel="noopener">${lang === 'lt' ? 'konsoliduota redakcija' : 'consolidated version'}</a></p>`;
   const R = kidCalc(p);
   if (R.err) html += `<p class="note late">${S.kidShort}${R.err}.</p>`;
   else {
@@ -266,6 +268,90 @@ function renderKid() {
 }
 const isoEnd = i => { const y = Math.floor(i / 12), m = i % 12 + 1, last = new Date(Date.UTC(y, m, 0)).getUTCDate(); return `${y}-${String(m).padStart(2, '0')}-${last}`; };
 
+const KID_REG = 'https://eur-lex.europa.eu/eli/reg_del/2017/653/oj/lit', KID_REGC = 'https://eur-lex.europa.eu/legal-content/LT/TXT/?uri=CELEX:02017R0653-20230101',
+  KID_QA = 'https://www.esma.europa.eu/sites/default/files/2023-05/JC_2023_22_-_Consolidated_JC_PRIIPs_Q_As.pdf';
+/* Įrodymų lentelė Excel'iui: kiekvienas skaičiavimo žingsnis – reglamento reikalavimas (oficiali EN citata, OL puslapis),
+   ką daro SEB skaičiavimo failas (langelis, formulė), ar atitinka, kur tai šiame faile ir kiek keičia rezultatą.
+   OL puslapiai nustatyti iš oficialių PDF teksto sluoksnio (EUR-Lex), Q&A – spausdinti puslapiai. */
+function kidEvidence(f, L) {
+  const k = f.kid, t = (a, b) => L ? a : b, Y = t('Taip', 'Yes'), No = t('Ne', 'No');
+  const D = '2021/2268, ' + t('IV priedas', 'Annex IV') + ', ', O = t('OL L 455 I, ', 'OJ L 455 I, '), Q = 'ESAs Q&A JC 2023 22, ';
+  const ev = [
+    { t: t('Stebėjimo laikotarpis', 'Observation period'), q: '"…shall be calculated over a time period which is equal to the recommended holding period plus five years" (6); "it is greater than 10" (5(a))',
+      s: D + t('5 ir 6 p.; ', 'points 5 and 6; ') + O + '17–18',
+      m: t('RHP iki 5 m. – paskutiniai 10 m.; ilgesniam RHP – RHP + 5 m.; laikotarpis baigiasi skaičiavimo dieną (PID – gruodžio 31 d.).', 'RHP up to 5 years – the last 10 years; longer RHP – RHP + 5 years, ending at the calculation date (KID – 31 December).'),
+      e: t('Stebėjimo laikotarpis RHP + 5 m., baigiasi gruodžio 31 d.', 'Observation period RHP + 5 years ending 31 December.'), ok: Y,
+      w: t('Instrukcija: stebėjimo laikotarpis; Mėnesiai: A stulpelis', 'Instructions: observation period; Months: column A') },
+    { t: t('Mėnesiniai duomenys', 'Monthly data'), q: '"The scenarios shall be calculated at least on a monthly basis." (11)',
+      s: D + t('7(a) ir 11 p.; ', 'points 7(a) and 11; ') + O + '18; ' + Q + 'VI Q21, p. 43',
+      m: t('Naudojamos mėnesių pabaigų vertės.', 'Month-end values are used.'), e: t('Mėnesių pabaigų vertės.', 'Month-end values.'), ok: Y,
+      w: t('Mėnesiai: A–F stulpeliai', 'Months: columns A–F') },
+    { t: t('Fondo istorija ar lyginamasis indeksas', 'Fund history or benchmark'), step: 'own',
+      q: '"(i) based on the performance of the PRIIP during the exact duration of each sub interval;" (7(c)(i)); "…using data of a benchmark to supplement the values for the PRIIP less all applicable costs" (12); "In the case described only the historical data of the PRIIP should be used." (Q&A VI Q12)',
+      s: D + '7(c)(i) ' + t('ir 12 p.; ', 'and point 12; ') + O + '18–19; ' + Q + 'VI Q11 p. 40, VI Q12 p. 41',
+      m: t('Rezultatas skaičiuojamas iš paties fondo (PRIIP) vertės. Lyginamasis indeksas (minus išlaidos) tik papildo laikotarpį, kai fondo dar nebuvo.', 'Performance is the PRIIP’s own. A benchmark (less costs) only supplements the period before the fund existed.'),
+      e: t('Lapas „Grąžos“: visam 10–16 m. laikotarpiui – SEB sudėtinis lyginamasis indeksas minus išlaidos/12, nors fondas tuo metu jau veikė (vieneto vertės skelbiamos).', 'Sheet “Grąžos”: the whole 10–16-year period uses SEB’s composite benchmark less costs/12, although the fund already existed (unit values are published).'),
+      ok: No, w: t('Mėnesiai: J (fondo vieneto vertė), K (grąžos šaltinis), F (formulė: fondo grąža, kai yra, kitaip indeksas − išlaidos/12)', 'Months: J (fund unit value), K (source), F (formula: fund return where available, else index − costs/12)') },
+    ...(k.alt && k.alt.length ? [{ t: t('SEB indekso duomenų klaida (SOLEBLS)', 'SEB index data error (SOLEBLS)'), step: 'ser',
+      q: '"(i) based on the performance of the PRIIP during the exact duration of each sub interval;" (7(c)(i))', s: D + '7(c)(i) p.; ' + O + '18',
+      m: t('Duomenys turi atspindėti tikrą rezultatą. Dirbtinis indekso šuolis jo neatspindi.', 'Data must reflect real performance; an artificial jump does not.'),
+      e: t('„Grąžos“!K70 =VLOOKUP(A70,[1]Sheet1!$A:$K,11,0) = 335,28, K71 (2015-01) = 635,64; L71 = +89,58 % per mėnesį; portfelio mėnesio grąža P71 = 9,60 %. Vertės iki 2015 m. ~0,58 karto mažesnės už SOLEBLS EUR (Bloomberg) – kitokia valiuta ar indekso versija.', '“Grąžos”!K70 =VLOOKUP(A70,[1]Sheet1!$A:$K,11,0) = 335.28, K71 (2015-01) = 635.64; L71 = +89.58 % in a month; portfolio monthly return P71 = 9.60 %. Values before 2015 are ~0.58× SOLEBLS EUR (Bloomberg) – a different currency or index version.'),
+      ok: No, w: t('Mėnesiai: B stulpelis (pataisyta eilutė, režimas „Pagal reglamentą“, duomenys – indeksas)', 'Months: column B (corrected series, mode “By the regulation”, data – index)') }] : []),
+    { t: t('Išlaidos', 'Costs'), q: '"(ii) net of all applicable costs;" (7(c)(ii)); "…shall be calculated as net of all applicable costs in accordance with Annex VI" (39)',
+      s: D + t('7(c)(ii) ir 39 p.; ', '7(c)(ii) and point 39; ') + O + '18, 24',
+      m: t('Rezultatai – atskaičius visas išlaidas.', 'Results are net of all costs.'), e: t('Kas mėnesį atimama išlaidos/12: vertė × (indeksas_t / indeksas_t−1 − išlaidos/12).', 'Costs/12 subtracted each month: value × (index_t / index_t−1 − costs/12).'), ok: Y,
+      w: t('Skaičiavimai: B5; Mėnesiai: F. Fondo vieneto vertės jau po išlaidų – papildomai neatimama.', 'Calculation: B5; Months: F. Fund unit values are already net – nothing more is subtracted.') },
+    { t: t('Nuosaikus ir palankus scenarijai', 'Moderate and favourable'), q: '"rank the sub intervals identified in accordance with point (a) … to identify from within those sub intervals the median and best sub intervals" (7(d))',
+      s: D + t('7(a), 7(d), 9, 10 p.; ', 'points 7(a), 7(d), 9, 10; ') + O + '18',
+      m: t('Iš visų pilnų n metų langų: nuosaikus – mediana, palankus – geriausias.', 'Of all full n-year windows: moderate – median, favourable – best.'), e: t('Mediana ir didžiausia pilnų langų reikšmė.', 'Median and maximum of full windows.'), ok: Y,
+      w: t('Langai; Skaičiavimai: 15–16 eil.', 'Windows; Calculation: rows 15–16') },
+    { t: t('Nepalankus: trumpesni langai iki laikotarpio pabaigos', 'Unfavourable: shorter windows to the end'), step: 'tl',
+      q: '"for PRIIPs with a recommended holding period of more than one year, identification of all overlapping sub intervals … individually equal or shorter in length to the duration of the recommended holding period, but equal to or longer than one year, … and which end at the end of the time period" (7(b)); "This means running from 4 years and 11 months to 1 year" (Q&A VI Q8)',
+      s: D + '7(b), 7(e), 8 p.; ' + O + '18; ' + Q + 'VI Q8, p. 39',
+      m: t('Tik kai RHP > 1 m.: pridedami langai nuo 12 mėn. iki RHP − 1 mėn., kurie baigiasi laikotarpio pabaigoje. 1 metų laikotarpiui – jokių.', 'Only when RHP > 1 year: windows of 12 months to RHP − 1 month ending at the period end. None for 1 year.'),
+      e: t('„Scenarijų grąžos“ H3 =WORKDAY(EOMONTH(I3,-G3-1)+1,-1), G3 = Q3*12 → langai 12 … 12n+1 mėn. (ilgesni už RHP); 1 metų lape O3 =MIN(E:E,L3:L4) įtraukia ir 13 mėn. langą.', '“Scenarijų grąžos” H3 =WORKDAY(EOMONTH(I3,-G3-1)+1,-1), G3 = Q3*12 → windows of 12 … 12n+1 months (longer than RHP); the 1-year sheet O3 =MIN(E:E,L3:L4) also includes a 13-month window.'),
+      ok: No, w: t('Langai: „langai iki pabaigos“; Skaičiavimai: 18–19 eil.', 'Windows: “windows to the end”; Calculation: rows 18–19') },
+    { t: t('Linijinė transformacija', 'Linear transformation'), q: '"The linear transformation means that the performance over that shorter period … is taken to be also the performance over the recommended holding period" (Q&A VI Q9)',
+      s: D + '7(c)(iv) p.; ' + O + '18; ' + Q + 'VI Q9, p. 40',
+      m: t('Trumpesnio lango rezultatas laikomas viso laikotarpio rezultatu: (pabaiga / pradžia)^(1/n) − 1.', 'The shorter window’s outcome is taken as the full period’s outcome: (end / start)^(1/n) − 1.'), e: t('Taip pat.', 'The same.'), ok: Y,
+      w: t('Langai: metinė grąža', 'Windows: annual return') },
+    { t: t('Stresinis: nuokrypio langas w', 'Stress: deviation window w'), step: 'sm',
+      q: '"identify a sub interval of length w which corresponds to the following intervals:" – table: Monthly prices: 1 year 6, > 1 year 12 (18(a))',
+      s: D + '18(a) p. ' + t('ir lentelė; ', 'and table; ') + O + '20–21',
+      m: t('Mėnesio duomenims: 1 metams w = 6 mėn., ilgesniems – 12 mėn.', 'Monthly data: w = 6 months for 1 year, 12 for longer.'),
+      e: t('„Nepalankiausio grąžos (1,6,11)“ M3 =STDEV.P(C3:C14) – 12 mėn. langai visiems laikotarpiams, ir 1 metams.', '“Nepalankiausio grąžos (1,6,11)” M3 =STDEV.P(C3:C14) – 12-month windows for every period, also 1 year.'),
+      ok: No, w: t('Mėnesiai: H (6 mėn.), I (12 mėn.); Skaičiavimai: 20 eil.', 'Months: H (6 m), I (12 m); Calculation: row 20'), note: t('įtaka – kartu su kita eilute', 'impact together with the next row') },
+    { t: t('Stresinis: procentilis', 'Stress: percentile'), q: '"infer the value that corresponds to the 99th percentile for one year and the 95th percentile for the other holding periods; … that value shall be the stressed volatility" (18(d))',
+      s: D + '18(c), 18(d) p.; ' + O + '21', m: t('σS = 99-asis (1 m.) arba 95-asis procentilis.', 'σS = 99th (1 year) or 95th percentile.'),
+      e: 'P14/P15 =PERCENTILE($M$3:$M$51;0,95 / 0,99)', ok: Y, w: t('Skaičiavimai: 21 ir 23 eil.', 'Calculation: rows 21 and 23') },
+    { t: t('Stresinis: atimamas narys 0,5·σS²·N', 'Stress: subtracted term 0.5·σS²·N'), step: 'sm',
+      q: '2017: "… − 0,5 wσS² N" (IV pr. 11 p.); 2021: "N is the number of trading periods in the recommended holding period, and where the other terms are defined in point 12 of Annex II" (19(a))',
+      s: D + '19 p.; ' + O + '21; ' + t('2017/653 pradinė redakcija, IV pr. 10(d), 11 p.; OL L 100, 28 psl.', '2017/653 original, Annex IV points 10(d), 11; OJ L 100/28'),
+      m: t('Formulėje atimamas narys naudoja stresinį nuokrypį σS (ne įprastą σ). 2021 m. tekste formulė – paveikslėlis: patikrinkite akimi L 455 I/21.', 'The subtracted term uses the stressed σS (not the ordinary σ). In the 2021 text the formula is an image: check visually on L 455 I/21.'),
+      e: t('Y21 =0.5*$P$8^2*P21, P8 =SQRT(P4) – įprastas 60 mėn. σ.', 'Y21 =0.5*$P$8^2*P21, P8 =SQRT(P4) – the ordinary 60-month σ.'), ok: No,
+      w: t('Skaičiavimai: 27 eil. formulė', 'Calculation: row 27 formula'), note: t('įtaka – kartu su ankstesne eilute', 'impact together with the previous row') },
+    { t: t('Momentai iš 5 metų', 'Moments over 5 years'), step: k.momDrop ? 'err' : null,
+      q: '"The VaR shall be calculated from the moments of the observed distribution of returns of the PRIIP\'s or its benchmark or proxy\'s price during the past 5 years." (II pr. 1 d. 9 p.)',
+      s: t('2017/653, II priedo 1 dalis, 9, 11, 12 p.; OL L 100, 16 psl.', '2017/653, Annex II Part 1 points 9, 11, 12; OJ L 100/16'),
+      m: t('Vidurkis, dispersija, asimetrija, ekscesas – iš visų 60 paskutinių mėnesių log grąžų.', 'Mean, variance, skewness, kurtosis from all 60 last monthly log returns.'),
+      e: k.momDrop ? t('50+ 2026 m. PID: „Nepalankiausio grąžos (1,6,11)“ P2 =COUNT(C3:C50) = 48; P3 =SUM(C3:C50)/P2; P4–P6 ir P27 =STDEV.P(C3:C50) – tik 48 iš 60 mėn., nors nuokrypiai M3:M51 skaičiuojami iš C3:C62.', '50+ 2026 KID: “Nepalankiausio grąžos (1,6,11)” P2 =COUNT(C3:C50) = 48; P3 =SUM(C3:C50)/P2; P4–P6 and P27 =STDEV.P(C3:C50) – only 48 of 60 months, while deviations M3:M51 use C3:C62.') : t('60 mėnesių.', '60 months.'),
+      ok: k.momDrop ? t('Ne (50+ 2026)', 'No (50+ 2026)') : Y, w: t('Skaičiavimai: B8:B11', 'Calculation: B8:B11') },
+    ...(k.w12 ? [{ t: t('50+: 11 metų langų grąža', '50+: 11-year window returns'), step: 'err', q: '"(i) based on the performance of the PRIIP during the exact duration of each sub interval;" (7(c)(i))', s: D + '7(c)(i) p.; ' + O + '18',
+      m: t('Kiekvieno lango grąža – per visą jo trukmę.', 'Each window’s return over its whole length.'),
+      e: t('„Scenarijų grąžos 11M“ E40:E63: 24 langams (pradžia 2013-01 … 2014-12) grąža skaičiuota tik iš paskutinių 12 mėn. (pvz. E60 = 0,005423; nustatyta iš reikšmių).', '“Scenarijų grąžos 11M” E40:E63: for 24 windows (start 2013-01 … 2014-12) the return uses only the last 12 months (e.g. E60 = 0.005423; inferred from values).'),
+      ok: t('Ne (50+ 2026)', 'No (50+ 2026)'), w: t('Langai: visų langų formulės vienodos', 'Windows: all window formulas are the same'), note: t('įtaka – kartu su ankstesne eilute', 'impact together with the previous row') }] : []),
+    { t: t('Stresinis ne geresnis už nepalankų', 'Stress not better than unfavourable'), q: '"The stress scenario value shown shall not be better than the value of the unfavourable scenario." (20)', s: D + '20 p.; ' + O + '21',
+      m: t('Stresinis = min(stresinis, nepalankus).', 'Stress = min(stress, unfavourable).'), e: t('Taikoma.', 'Applied.'), ok: Y, w: t('Skaičiavimai: 28 eil.', 'Calculation: row 28') },
+    { t: t('Tarpiniai laikotarpiai', 'Intermediate periods'), q: '"…at the end of the first year, after half of the recommended holding period rounded up to the end of the nearest year, and at the end of the recommended holding period." (33)',
+      s: D + '33, 35, 36 p.; ' + O + '23–24', m: t('1 m., pusė RHP (suapvalinus aukštyn), RHP; stresiniam N = tarpinio laikotarpio mėnesiai.', '1 year, half RHP (rounded up), RHP; stress N = months of the intermediate period.'),
+      e: t('Taip pat.', 'The same.'), ok: Y, w: t('Skaičiavimai: B–D stulpeliai, 24 eil. (N)', 'Calculation: columns B–D, row 24 (N)') },
+    { t: t('Pateikimas: sumos ir grąža', 'Presentation: amounts and return'), q: '"Figures shall by default be rounded to the nearest 10 EUR" (42); "Performance scenarios shall also be presented in percentage terms, as the average annual return of the investment." (44)',
+      s: D + '42, 44 p.; ' + O + '24–25', m: t('Sumos pagal nutylėjimą apvalinamos iki 10 EUR; grąža – vidutinė metinė.', 'Amounts rounded to 10 EUR by default; return – average annual.'),
+      e: t('Sumos – iki cento; III pakopai (1000 € kasmet) grąža – įmokų XIRR.', 'Amounts to the cent; for the III pillar (1,000 € a year) the return is the XIRR of the payments.'), ok: t('Iš dalies', 'Partly'),
+      w: t('Scenarijai. Šiame faile sumos paliktos iki cento, kad būtų galima palyginti su PID; viešinant – apvalinti iki 10 EUR.', 'Scenarios. Kept to the cent here to compare with the KID; round to 10 EUR when publishing.') },
+  ];
+  return ev;
+}
 /* Excel: visas skaičiavimas formulėmis */
 function kidBook() {
   const X = MODELS.kid; if (!X) return null;
@@ -376,12 +462,16 @@ function kidBook() {
       ['2. „Skaičiavimai“ – B8:B11 momentai (vidurkis, dispersija, asimetrija, ekscesas) iš paskutinių 60 mėn. log grąžų; toliau kiekvienam laikotarpiui (stulpeliai B–D): langų skaičius, mediana (nuosaikus), didžiausias (palankus), mažiausias (nepalankus, su langais iki pabaigos), stresinio σS (PERCENTILE), Cornish-Fisher ir stresinis rezultatas.'],
       ['3. „Langai“ – visi n metų langai (pradžia, pabaiga, metinė grąža = (pabaigos vertė / pradžios vertė)^(1/n) − 1) ir langai, kurie baigiasi laikotarpio pabaigoje (nepalankiam scenarijui).'],
       ['4. „Mėnesiai“ – kiekvieno mėnesio indekso (ir fondo) vertė, vertė atskaičius išlaidas (F), mėnesio log grąža (G), slenkantys 6 ir 12 mėn. nuokrypiai (H, I). Pakeiskite išlaidas lape „Skaičiavimai“ B5 – viskas persiskaičiuos.'],
-      ['5. Palyginkite su PID: žemiau – paskelbto PID reikšmės ir šio failo rezultatai.']] : [
+      ['5. Palyginkite su PID: žemiau – paskelbto PID reikšmės ir šio failo rezultatai.'],
+      ['6. „Įrodymai“ – kiekvienas skaičiavimo žingsnis su reglamento punktu, OL puslapiu ir citata, ką daro SEB failas (langelis, formulė), ar tai atitinka reglamentą ir kiek keičia rezultatą.'],
+      ['7. „Palyginimas“ – paskelbtas PID, SEB metodas ir skaičiavimas pagal reglamentą šalia, su skirtumais.']] : [
       ['1. “Scenarios” – the KID-format table. Amounts are formulas: 1,000 € at the start of each year, amount = Σ 1000 × (1 + r)^k, r – the scenario annual return from “Calculation”. Average return each year for longer periods – XIRR of the payments (value, as in the KID).'],
       ['2. “Calculation” – B8:B11 moments (mean, variance, skewness, excess kurtosis) of the last 60 monthly log returns; then for each period (columns B–D): number of windows, median (moderate), maximum (favourable), minimum (unfavourable, incl. windows to the end), stress σS (PERCENTILE), Cornish-Fisher and the stress result.'],
       ['3. “Windows” – all n-year windows (start, end, annual return = (end value / start value)^(1/n) − 1) and windows ending at the period end (for the unfavourable scenario).'],
       ['4. “Months” – index (and fund) value of each month, value after costs (F), monthly log return (G), rolling 6- and 12-month deviations (H, I). Change the costs in “Calculation” B5 and everything recalculates.'],
-      ['5. Compare with the KID: below – the published KID values and this file’s results.']]),
+      ['5. Compare with the KID: below – the published KID values and this file’s results.'],
+      ['6. “Evidence” – each step with the regulation point, OJ page and quote, what SEB’s file does (cell, formula), whether it complies and the impact.'],
+      ['7. “Comparison” – published KID, SEB’s method and the regulation side by side, with differences.']]),
     [], [L ? 'KUO SKIRIASI „KAIP SEB PID“ IR „PAGAL REGLAMENTĄ“' : 'HOW “AS IN SEB’S KID” AND “BY THE REGULATION” DIFFER']];
   S.kidDiffs.forEach(x => { I.push([x.t]); if (x.seb) I.push(['   SEB PID: ' + x.seb]); I.push([`   ${S.kidModeReg}: ${x.reg}`]); if (x.why) I.push(['   ' + x.why]); });
   const st = MODELS.kidSteps;
@@ -396,11 +486,50 @@ function kidBook() {
     S.kidSc.forEach((sc, j) => off.years.forEach((n, i) => I.push([`${sc}, ${S.kidYr(n)}`, P(off.a[i][j], '#,##0.00'), P(X.amt[i][j], '#,##0.00'), P(X.amt[i][j] - off.a[i][j], '+#,##0.00;-#,##0.00;0.00')])));
   }
   I.push([], [L ? 'ŠALTINIAI' : 'SOURCES'],
-    ['Reglamentas (ES) 2017/653 su 2021/2268 pakeitimais, IV priedas (konsoliduota redakcija): https://eur-lex.europa.eu/legal-content/LT/TXT/?uri=CELEX:02017R0653-20230101'],
+    ['Reglamentas (ES) 2017/653: ' + KID_REG], ['Konsoliduota redakcija su 2021/2268 pakeitimais (IV priedas): ' + KID_REGC],
     ['ESAs Q&A (JC 2023 22), skyrius „Performance scenarios“: https://www.esma.europa.eu/sites/default/files/2023-05/JC_2023_22_-_Consolidated_JC_PRIIPs_Q_As.pdf'],
     [L ? 'SEB PID ir SEB Excel skaičiavimo failai (gauti iš savininko); indekso duomenys – SEB; SOLEBLS EUR – Bloomberg.' : 'SEB KIDs and SEB Excel calculation files (from the owner); index data – SEB; SOLEBLS EUR – Bloomberg.']);
+  // Įrodymai: reikalavimas → SEB failas → atitinka? → kur šiame faile → įtaka eurais (žingsnių lentelė)
+  const ev = kidEvidence(f, L), stp = {}, scN = S.kidSc;
+  const sg = v => Math.abs(v) < 0.005 ? '0' : (v > 0 ? '+' : '−') + num(Math.abs(v), 2);
+  if (st && st.length > 1) st.forEach((x, i) => { if (i) stp[x.id] = scN.map((_, j) => x.R.ns.filter((n, q) => q < 2 || n !== x.R.ns[1]).map(n => `${S.kidYr(n)}: ${sg(kidAmt(x.R.per[n].ret[j], n) - kidAmt(st[i - 1].R.per[n].ret[j], n))}`).join('; ')); });
+  const E = [[L ? `${f.n}: kaip skaičiavimas atitinka reglamentą ir kur SEB PID skaičiavimas jo neatitinka` : `${f.n}: how the calculation follows the regulation and where SEB’s KID calculation does not`],
+    [L ? 'Citatos – oficialus angliškas reglamento tekstas (EUR-Lex PDF, žodis žodin). OL puslapių numeriai visose kalbose tie patys – lietuvišką tekstą rasite tuose pačiuose puslapiuose: ' + KID_REG : 'Quotes – the official English text of the regulation (EUR-Lex PDF, verbatim). OJ page numbers are the same in every language: ' + KID_REG],
+    [L ? 'OL puslapiai nustatyti iš oficialaus PDF teksto; prieš teikiant institucijoms verta atsiversti PDF ir patikrinti akimi. SEB langeliai ir formulės – iš SEB PID skaičiavimo Excel failų (2026 m. PID).' : 'OJ pages were read from the official PDF text layer; check them visually before submitting. SEB cells and formulas – from SEB’s KID calculation Excel files (2026 KID).'],
+    [],
+    [L ? 'Nr.' : 'No.', L ? 'Tema' : 'Topic', L ? 'Reglamento reikalavimas (oficiali citata, EN)' : 'Requirement (official quote)', L ? 'Dokumentas, punktas, OL puslapis' : 'Document, point, OJ page',
+      L ? 'Ką tai reiškia' : 'What it means', L ? 'Ką daro SEB PID skaičiavimo failas (lapas, langelis, formulė)' : 'What SEB’s KID calculation file does (sheet, cell, formula)', L ? 'SEB atitinka?' : 'SEB compliant?',
+      L ? 'Kur patikrinti šiame faile' : 'Where to check in this file', ...scN.map(x => (L ? 'Įtaka, EUR: ' : 'Impact, EUR: ') + x)]];
+  const used = {};
+  ev.forEach((x, i) => {
+    const im = x.step && stp[x.step] && !used[x.step] ? stp[x.step] : null;
+    if (im) used[x.step] = 1;
+    E.push([i + 1, x.t, x.q, x.s, x.m, x.e, x.ok, x.w, ...scN.map((_, j) => im ? im[j] : (x.step && stp[x.step] && x.note ? x.note : null))]);
+  });
+  E.push([], [L ? `Įtaka – kiek eurų pasikeičia kiekvieno laikotarpio suma, ištaisius tą neatitikimą (žingsniai iš eilės, kaip lape „${S.kidShP}“). Tuščia – neatitikimo nėra arba pasirinktas ne PID laikotarpis.` : `Impact – change in EUR of each period’s amount after fixing that item (steps in order, as on “${S.kidShP}”). Empty – compliant or the period is not the KID period.`],
+    [], [L ? 'Šaltiniai' : 'Sources'], [KID_REG], [KID_REGC], ['2021/2268 (OL L 455 I, 2021-12-20): https://eur-lex.europa.eu/legal-content/LT/TXT/?uri=CELEX:32021R2268'], [KID_QA]);
+  // Palyginimas: paskelbtas PID, SEB metodas ir reglamentas tam pačiam laikotarpiui
+  const Rs = kidCalc(kidParams(f, KS.o[kidKey(f)] || {}, { mode: 'seb' })), Rg = kidCalc(kidParams(f, KS.o[kidKey(f)] || {}, { mode: 'reg' }));
+  const pidOk = off && off.years.every((n, i) => n === R.ns[i]) && kidYm(off.from.slice(0, 7)) === p.from && kidYm(off.to.slice(0, 7)) === p.to;
+  const PA = [[L ? `${f.n}: paskelbtas PID, SEB metodas ir skaičiavimas pagal reglamentą (${kidYs(p.from)} – ${kidYs(p.to)}, RHP ${p.rhp} m.)` : `${f.n}: published KID, SEB’s method and the calculation by the regulation (${kidYs(p.from)} – ${kidYs(p.to)}, RHP ${p.rhp} y)`], [],
+    [L ? 'Scenarijus' : 'Scenario', L ? 'Laikotarpis' : 'Period', L ? 'Paskelbtas PID, EUR' : 'Published KID, EUR', L ? 'Kaip SEB PID (atkartota), EUR' : 'As SEB’s KID (reproduced), EUR', L ? 'Skirtumas nuo PID' : 'Difference from KID',
+      L ? 'Pagal reglamentą, EUR' : 'By the regulation, EUR', L ? 'Reglamentas − PID' : 'Regulation − KID', L ? 'Pagal reglamentą, metinė grąža' : 'By the regulation, annual return']];
+  const am = (RR, i, j) => RR && !RR.err ? kidAmt(RR.per[RR.ns[i]].ret[j], RR.ns[i]) : null;
+  scN.forEach((sc, j) => R.ns.forEach((n, i) => {
+    const r0 = 4 + PA.length - 3, a = pidOk ? off.a[i][j] : null, s1 = am(Rs, i, j), g1 = am(Rg, i, j);
+    PA.push([sc, S.kidYr(n), a == null ? null : P(a, '#,##0.00'), s1 == null ? null : P(s1, '#,##0.00'), a != null && s1 != null ? F(`D${r0}-C${r0}`, s1 - a, '+#,##0.00;-#,##0.00;0.00') : null,
+      g1 == null ? null : P(g1, '#,##0.00'), a != null && g1 != null ? F(`F${r0}-C${r0}`, g1 - a, '+#,##0.00;-#,##0.00;0.00') : null, Rg && !Rg.err ? P(kidXirr(Rg.per[Rg.ns[i]].ret[j], n) / 100, '0.00%') : null]);
+  }));
+  PA.push([], [L ? 'Šiame lape – reikšmės. Visos formulės – kituose lapuose (režimas, kurį pasirinkote svetainėje). Kito režimo formules gausite perjungę režimą ir atsisiuntę dar kartą.' : 'Values here. All formulas are on the other sheets (the mode chosen on the site). Switch the mode and download again for the other mode’s formulas.']);
+  if (st && st.length > 1) {
+    PA.push([], [S.kidStepT(p.rhp).toUpperCase()], [S.kidStepH, '', ...scN]);
+    st.forEach((x, i) => PA.push([`${i}. ${x.t}`, '', ...scN.map((_, j) => P(kidAmt(x.R.per[p.rhp].ret[j], p.rhp), '#,##0.00 "EUR"'))]));
+    PA.push([S.kidStepNote], [L ? `Kiekvieno žingsnio priežastis ir reglamento punktas – lape „${S.kidShE}“.` : `The reason and regulation point for each step – sheet “${S.kidShE}”.`]);
+  }
   const wb = XLSX.utils.book_new(), add = (aoa, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
   add(I, S.kidShI, [{ wch: 70 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }]);
+  add(E, S.kidShE, [{ wch: 5 }, { wch: 26 }, { wch: 60 }, { wch: 30 }, { wch: 45 }, { wch: 60 }, { wch: 12 }, { wch: 38 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]);
+  add(PA, S.kidShP, [{ wch: 40 }, { wch: 10 }, { wch: 16 }, { wch: 18 }, { wch: 14 }, { wch: 16 }, { wch: 14 }, { wch: 14 }]);
   add(Tt, S.kidShT, [{ wch: 28 }, { wch: 38 }, { wch: 16 }, { wch: 16 }, { wch: 22 }]);
   add(C, S.kidShC, [{ wch: 44 }, { wch: 16 }, { wch: 16 }, { wch: 16 }]);
   add(Wrows, S.kidShW, Array(c).fill({ wch: 12 }));
