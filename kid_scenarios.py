@@ -85,7 +85,7 @@ def blend(eq_pct, data):
     return out
 
 
-def scenarios(series, rhp, cost_pct, end_year):
+def scenarios(series, rhp, cost_pct, end_year, mom_drop=0):
     """series – [(metai, mėnuo), vertė]; grąžina {n: [stresinis, nepalankus, vidutinis, palankus]} (metinė grąža, %) arba None."""
     obs_years = max(rhp + 5, 10)
     y0 = end_year - obs_years                       # bazė: (y0, 12) – diena prieš stebėjimo pradžią
@@ -106,10 +106,11 @@ def scenarios(series, rhp, cost_pct, end_year):
     out = {}
     r_all = [math.log(px[obs[i]] / px[obs[i - 1]]) for i in range(1, len(obs))]
     rr = r_all[-60:]                                  # momentai – paskutiniai 5 metai
-    m = sum(rr) / len(rr)
-    M2 = sum((x - m) ** 2 for x in rr) / len(rr)
-    mu1 = sum((x - m) ** 3 for x in rr) / len(rr) / M2 ** 1.5
-    mu2 = sum((x - m) ** 4 for x in rr) / len(rr) / M2 ** 2 - 3
+    mr = rr[:len(rr) - mom_drop]                      # SEB 50+ 2026 faile momentai tik iš pirmų 48 mėn. (jų klaida, kartojama PID versijoje)
+    m = sum(mr) / len(mr)
+    M2 = sum((x - m) ** 2 for x in mr) / len(mr)
+    mu1 = sum((x - m) ** 3 for x in mr) / len(mr) / M2 ** 1.5
+    mu2 = sum((x - m) ** 4 for x in mr) / len(mr) / M2 ** 2 - 3
     for n in sorted({1, mid, rhp}):
         wins = sorted(g(s, _addm(s, 12 * n)) ** (1 / n) - 1 for s in obs if _addm(s, 12 * n) <= last)
         if not wins:
@@ -188,10 +189,11 @@ def for_funds(funds: list, today: date | None = None) -> None:
             continue
         if k not in cache:
             cache[k] = bx[bench] if bench else blend(eq if have_b else 100, data)   # be obligacijų duomenų – ≥ 95 % akcijų fondai skaičiuojami kaip 100 % akcijų
-        s = scenarios(cache[k], rhp, cost, end_year)
+        md = o.get("mom_drop", 0) if bench else 0
+        s = scenarios(cache[k], rhp, cost, end_year, md)
         if s is None and today.month <= 1:
-            s, end_year = scenarios(cache[k], rhp, cost, end_year - 1), end_year - 1
-        kid = {"rhp": rhp, "mid": int(rhp / 2 + 0.5), "eq": eq, "cost": round(cost, 6), "bench": bench, "capped": int(capped),
+            s, end_year = scenarios(cache[k], rhp, cost, end_year - 1, md), end_year - 1
+        kid = {"rhp": rhp, "mid": int(rhp / 2 + 0.5), "eq": eq, "cost": round(cost, 6), "bench": bench, "momDrop": md, "capped": int(capped),
                "from": f"{end_year - max(rhp + 5, 10) + 1}-01-01", "to": f"{end_year}-12-31", "s": s, "src": "pid" if o else "rule"}
         if o:
             kid["off"] = {"doc": o["doc"], "years": o["years"], "s": [[o["s"][sc][i]["ret"] for sc in ("stress", "unfav", "mod", "fav")] for i in range(3)],

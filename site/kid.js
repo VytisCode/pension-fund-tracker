@@ -4,7 +4,7 @@
    numatytosios reikšmės – f.kid (PID, jei turime, arba mūsų taisyklė). Excel – visas skaičiavimas formulėmis. */
 addStrings({
   kidTitle: 'KID performance scenarios', kidLead: 'By the EU key information document method (Regulation 2017/653, Annex IV), in the same layout as the managers’ KIDs: what 1,000 € invested at the start of each year could become after 1 year, about half the recommended holding period and the full period. Choose the fund and, if you wish, change the holding and observation periods, the equity share and costs; the Excel file has the whole calculation as formulas.',
-  kidFund: 'Fund', kidSer: 'Benchmark series', kidSerPid: 'As in the manager’s KID', kidRhpY: 'Holding period, years', kidEq: 'Equities, %', kidCost: 'Costs, % a year', kidFrom: 'Observation from', kidTo: 'to', kidReset: 'Defaults',
+  kidMomDrop: k => `As in the manager’s file, the stress scenario moments (mean, σ, skewness, kurtosis) use only the first ${k} of the last 60 months (the manager’s formula range error; the corrected series uses all 60).`, kidFund: 'Fund', kidSer: 'Benchmark series', kidSerPid: 'As in the manager’s KID', kidRhpY: 'Holding period, years', kidEq: 'Equities, %', kidCost: 'Costs, % a year', kidFrom: 'Observation from', kidTo: 'to', kidReset: 'Defaults',
   kidInv: 'Investment 1,000 EUR a year', kidScH: 'Scenarios', kidRec: '(Recommended holding period)', kidYr: n => `${n} ${n === 1 ? 'year' : 'years'}`,
   kidSc: ['Stress scenario', 'Unfavourable scenario', 'Moderate scenario', 'Favourable scenario'], kidGet: 'What you might get back after costs', kidRet: 'Average return each year', kidPaid: 'Amount invested over time',
   kidIntro: (a, b) => `The scenarios shown are illustrations based on the available historical data of the fund’s benchmark from ${a} to ${b} showing the possible worst, average and best results of the pension fund over the stated periods.`,
@@ -19,7 +19,7 @@ addStrings({
   kidShM: 'Months', kidShW: 'Windows', kidShC: 'Calculation', kidShT: 'Scenarios',
 }, {
   kidTitle: 'KID veiklos rezultatų scenarijai', kidLead: 'Pagal ES pagrindinės informacijos dokumento (KID / PID) metodiką (Reglamentas 2017/653, IV priedas), tokio pat formato lentele kaip valdytojų PID: kiek galėtų tapti 1000 €, investuojamų kiekvienų metų pradžioje, po 1 metų, maždaug pusės rekomenduojamo laikymo laikotarpio ir viso laikotarpio. Pasirinkite fondą ir, jei norite, pakeiskite laikymo ir stebėjimo laikotarpį, akcijų dalį ir išlaidas; Excel faile – visas skaičiavimas formulėmis.',
-  kidFund: 'Fondas', kidSer: 'Indekso eilutė', kidSerPid: 'Kaip valdytojo PID', kidRhpY: 'Laikymo laikotarpis, metai', kidEq: 'Akcijos, %', kidCost: 'Išlaidos, % per metus', kidFrom: 'Stebėjimas nuo', kidTo: 'iki', kidReset: 'Numatytieji',
+  kidMomDrop: k => `Kaip valdytojo faile, nepalankiausio scenarijaus momentai (vidurkis, σ, asimetrija, ekscesas) skaičiuojami tik iš pirmų ${k} iš paskutinių 60 mėn. (valdytojo formulės diapazono klaida; pataisytoje eilutėje – visi 60).`, kidFund: 'Fondas', kidSer: 'Indekso eilutė', kidSerPid: 'Kaip valdytojo PID', kidRhpY: 'Laikymo laikotarpis, metai', kidEq: 'Akcijos, %', kidCost: 'Išlaidos, % per metus', kidFrom: 'Stebėjimas nuo', kidTo: 'iki', kidReset: 'Numatytieji',
   kidInv: 'Investicija 1 000 EUR per metus', kidScH: 'Scenarijai', kidRec: '(Rekomenduojamas laikymo laikotarpis)', kidYr: n => `${n} ${n % 10 === 0 || (n % 100 > 9 && n % 100 < 21) ? 'metų' : 'metai'}`,
   kidSc: ['Nepalankiausias scenarijus', 'Nepalankus scenarijus', 'Nuosaikus scenarijus', 'Palankus scenarijus'], kidGet: 'Ką galite atgauti atskaičius išlaidas', kidRet: 'Metinė vidutinė grąža', kidPaid: 'Sukaupta investuota suma',
   kidIntro: (a, b) => `Pateikiami scenarijai yra pavyzdžiai, kurie naudojant turimus pensijų fondo lyginamojo indekso istorinius duomenis nuo ${a} iki ${b} d. parodo galimus blogiausius, vidutinius ir geriausius pensijų fondo rezultatus nurodytais laikotarpiais.`,
@@ -68,9 +68,9 @@ function kidCalc(p) {
   if (base < s || p.to > end || N < 12 * p.rhp + 12) return { err: `${kidYs(s + 1)} – ${kidYs(end)}`, s, end };
   const c = p.cost / 100, L0 = L[base - s], Ln = L.slice(base - s, base - s + N + 1).map(v => v / L0 * 100), px = [100];
   for (let i = 1; i < Ln.length; i++) px.push(px[i - 1] * (Ln[i] / Ln[i - 1] - c / 12));   // kaip SEB: iš mėnesio grąžos atimama c / 12
-  const r = px.slice(1).map((v, i) => Math.log(v / px[i])), rr = r.slice(-60), m = rr.reduce((x, y) => x + y, 0) / rr.length;
-  const M2 = rr.reduce((x, y) => x + (y - m) ** 2, 0) / rr.length, mu1 = rr.reduce((x, y) => x + (y - m) ** 3, 0) / rr.length / M2 ** 1.5,
-    mu2 = rr.reduce((x, y) => x + (y - m) ** 4, 0) / rr.length / M2 ** 2 - 3;
+  const r = px.slice(1).map((v, i) => Math.log(v / px[i])), rr = r.slice(-60), mr = rr.slice(0, rr.length - (p.momDrop || 0)), m = mr.reduce((x, y) => x + y, 0) / mr.length;   // momDrop – SEB 50+ 2026 faile momentai iš 48 mėn.
+  const M2 = mr.reduce((x, y) => x + (y - m) ** 2, 0) / mr.length, mu1 = mr.reduce((x, y) => x + (y - m) ** 3, 0) / mr.length / M2 ** 1.5,
+    mu2 = mr.reduce((x, y) => x + (y - m) ** 4, 0) / mr.length / M2 ** 2 - 3;
   const mid = Math.floor(p.rhp / 2 + 0.5), ns = [...new Set([1, mid, p.rhp])], per = {};
   for (const n of ns) {
     const g = (a, b) => Math.pow(px[b] / px[a], 1 / n) - 1, wins = [], tail = [];
@@ -124,6 +124,7 @@ function renderKid() {
   else p.bench = f.kid.bench && p.eq === d.eq && REP.kidm.x && REP.kidm.x[f.kid.bench] ? f.kid.bench : null;
   const alts = !old && p.bench ? (f.kid.alt || []).filter(x => REP.kidm.x[x.bench]) : [], alt = alts.find(x => x.bench === o.alt);
   if (alt) p.bench = alt.bench;   // pataisyta indekso eilutė vietoj valdytojo
+  p.momDrop = p.bench && p.bench === f.kid.bench ? f.kid.momDrop || 0 : 0;
   const opts = fs.map(x => `<option value="${kidKey(x)}"${x === f ? ' selected' : ''}>${x.pl} · ${shortName(x)}</option>`).join('');
   const inp = (k, v, a) => `<input type="number" data-k="${k}" value="${v}" ${a}>`, mon = (k, v) => `<input type="month" data-k="${k}" value="${kidYs(v)}">`;
   let html = `<div class="controls kidc">${field(S.kidFund, `<select id="kidF">${opts}</select>`)}${field(S.kidRhpY, inp('rhp', p.rhp, 'min="1" max="25" step="1" style="width:5em"'))}`
@@ -146,7 +147,7 @@ function renderKid() {
     }
     MODELS.kid = { f, p, R, ret, rr, amt };
   }
-  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${alts.map(x => (lang === 'lt' ? x.note_lt : x.note_en) + ' ').join('')}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
+  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${alts.map(x => (lang === 'lt' ? x.note_lt : x.note_en) + ' ').join('')}${p.momDrop ? S.kidMomDrop(60 - p.momDrop) + ' ' : ''}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
   box.innerHTML = html;
   document.getElementById('kidF').onchange = e => { KS.f = e.target.value; kidSave(); renderKid(); };
   const ka = document.getElementById('kidAlt');
@@ -211,12 +212,12 @@ function kidBook() {
   });
   const Wrows = [WH[0], ...W.slice(1)].map(r => Array.from({ length: c }, (_, i) => r[i] ?? null));
   // Skaičiavimai
-  const g0 = Math.max(3, last - 59), G = `${MN}!G${g0}:G${last}`, L = lang === 'lt';
+  const g0 = Math.max(3, last - 59), G = `${MN}!G${g0}:G${last - (p.momDrop || 0)}`, L = lang === 'lt';
   const C = [[`${f.n} · ${S.kidTitle}`], [S.kidFund, f.n],
     [L ? 'Akcijų dalis' : 'Equity share', null], [L ? 'Akcijų dalis (koeficientas)' : 'Equity share (fraction)', P(p.eq / 100, '0.00%')],
     [L ? 'Išlaidos per metus' : 'Costs a year', P(p.cost / 100, '0.00%')], [L ? 'Laikymo laikotarpis (RHP), metai' : 'Holding period (RHP), years', p.rhp],
     [L ? 'Stebėjimo laikotarpis' : 'Observation period', `${kidYs(p.from)} – ${kidYs(p.to)}`],
-    [L ? 'Paskutinių 60 mėn. log grąžų vidurkis' : 'Mean of the last 60 monthly log returns', F(`AVERAGE(${G})`, R.m, '0.000000')],
+    [L ? `Log grąžų vidurkis (${60 - (p.momDrop || 0)} mėn.)` : `Mean of monthly log returns (${60 - (p.momDrop || 0)} months)`, F(`AVERAGE(${G})`, R.m, '0.000000')],
     [L ? 'Dispersija (populiacijos)' : 'Variance (population)', F(`VARP(${G})`, R.M2, '0.00000000')],
     [L ? 'Asimetrija' : 'Skewness', F(`SUMPRODUCT((${G}-B8)^3)/COUNT(${G})/B9^1.5`, R.mu1, '0.0000')],
     [L ? 'Ekscesas' : 'Excess kurtosis', F(`SUMPRODUCT((${G}-B8)^4)/COUNT(${G})/B9^2-3`, R.mu2, '0.0000')], []];
