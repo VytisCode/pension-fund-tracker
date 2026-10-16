@@ -779,6 +779,7 @@ function renderRiskTable(pts) {
   provs.forEach(pr => { const k = rows.map(r => r.ranks.get(pr.id)).filter(Boolean); avgRank[pr.id] = k.length ? k.reduce((a, b) => a + b, 0) / k.length : null; });
   const ak = rankOf(provs.map(pr => ({ key: pr.id, v: avgRank[pr.id] === null ? null : -avgRank[pr.id] })));
   const best = rows.map(r => { const id = [...r.ranks].find(([, k]) => k === 1); return id ? id[0] : null; });
+  renderRiskTable.last = { groups, provs, pts };
   tb.innerHTML = `<thead><tr><th style="text-align:left">${T().group}</th>${provs.map(pr => `<th><span class="sw" style="background:${colorOf(pr.id)}"></span>${pr.label}</th>`).join('')}<th style="text-align:left">${T().rmBest}</th></tr></thead><tbody>`
     + rows.map((r, i) => `<tr><td>${groupShort(r.g)}</td>${provs.map(pr => { const v = r.vals[pr.id], p = r.info[pr.id]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.ranks.get(pr.id), r.n)}" title="${T().rmTip(fmtP(p.y, 2), num(p.x, 1), r.ranks.get(pr.id), r.n)}">${num(v, 2)}</td>`; }).join('')}<td style="text-align:left">${best[i] ? labelOf(best[i]) : '–'}</td></tr>`).join('')
     + (rows.length > 1 ? `<tr class="avg"><td>${T().rmAvgRank}</td>${provs.map(pr => avgRank[pr.id] === null ? '<td class="na">–</td>' : `<td class="${rkClass(ak.map.get(pr.id), ak.n)}">${num(avgRank[pr.id], 1)}</td>`).join('')}<td style="text-align:left">${(() => { const id = [...ak.map].find(([, k]) => k === 1); return id ? labelOf(id[0]) : '–'; })()}</td></tr>` : '')
@@ -790,6 +791,7 @@ function renderDrawdown() {
   RDD = runupDrawdown($('rddCard'), DATA.groups.map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[DATA.groups.length - 1].id);
 }
 function renderRanksByPeriod(gs, ALL, tid = 'tQP') {
+  (renderRanksByPeriod.last = renderRanksByPeriod.last || {})[tid] = { gs, ALL };
   setCap(tid, T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
   $(tid).innerHTML = `<thead><tr><th></th>${PERIOD_IDS.map(per => `<th>${T().periods[per]}</th>`).join('')}</tr></thead><tbody>`
     + gs.map(g => {
@@ -1187,7 +1189,7 @@ XLB.set('tSum', async () => {
 });
 /* „Bendras reitingas“ (tOv): grąžos (grupė × laikotarpis) → vietos (RANK) → suvestinė (COUNTIF / AVERAGE) */
 XLB.set('tOv', async () => {
-  if ($('ovG') && $('ovG').value !== 'all') return null;
+  if ($('ovG') && $('ovG').value !== 'all') return rbpBook('tOv');
   const L = lang === 'lt', provs = DATA.providers, pers = PERIOD_IDS.filter(p => P.ovP.has(p)), rows = [], np = provs.length, last = xlCol(np);
   DATA.groups.forEach(g => pers.forEach(per => { const rng = rangeAt(g, per);
     rows.push({ label: `${groupLabel(g)} · ${T().periods[per]}`, cells: provs.map(p => { if (retOf(g, p.id, rng) == null) return null; const f = g.funds.find(x => x.provider === p.id), s = seriesOf(f, rng.anchor, rng.end); return { f, name: fundName(f, g), ia: s.ia, ie: s.ie, col: p.label }; }),
@@ -1211,6 +1213,48 @@ XLB.set('tOv', async () => {
     meth: [[L ? 'Eiga' : 'Steps', L ? `1) „${SR}“ – kiekvieno valdytojo fondo grąža kiekvienoje grupėje ir laikotarpyje (formulės į „Skaičiavimai“). 2) „${SV}“ – RANK toje eilutėje (1 – didžiausia grąža). 3) „Rezultatas“ – palyginimų skaičius (COUNT), pirmų vietų (COUNTIF = 1), dalis 1–2 vietose (COUNTIF ≤ 2), vidutinė vieta (AVERAGE); bendra vieta – pagal vidutinę vietą.` : `1) “${SR}” – each manager’s fund return in each group and period (formulas to “Calculations”). 2) “${SV}” – RANK within the row (1 – highest return). 3) “Result” – comparisons (COUNT), firsts (COUNTIF = 1), share in places 1–2 (COUNTIF ≤ 2), average rank (AVERAGE); overall rank – by average rank.`],
       [L ? 'Lygios reikšmės' : 'Ties', L ? 'Svetainė vienodai grąžai suteikia skirtingas vietas pagal rūšiavimą, Excel RANK – vienodą; lygios grąžos (iki 0,01 %) pasitaiko itin retai.' : 'The site gives tied returns consecutive ranks by sort order, Excel RANK gives equal ranks; exact ties are very rare.']] });
 });
+/* Sharpe matrica (rmTable): metinė grąža iš vieneto verčių, svyravimas iš dienos grąžų (STDEV × √252), Sharpe = (grąža − €STR) ÷ svyravimas */
+XLB.set('rmTable', async () => {
+  const X = renderRiskTable.last; if (!X || !X.groups.length) return null;
+  const L = lang === 'lt', { groups, provs, pts } = X, SA = L ? 'Metinė grąža' : 'Annualized return', SK = L ? 'Rizika' : 'Risk', SD = L ? 'Dienos grąžos' : 'Daily returns', q = s_ => `'${s_}'`;
+  const items = [], rows = groups.map(g => ({ label: groupLabel(g), cells: provs.map(pr => { const p = pts.find(x => x.g === g && x.f.provider === pr.id); if (!p || !p.x) return null; const rr = rangeFor(g, false), s_ = seriesOf(p.f, rr.anchor, rr.end); if (!s_) return null;
+    const days = p.f.d[s_.ie] - p.f.d[s_.ia]; if (days < 30) return null; items.push({ g, pr, p, s: s_, days, rf: rfNow(p.f.d[s_.ia], p.f.d[s_.ie]) }); return { f: p.f, name: fundName(p.f, g), ia: s_.ia, ie: s_.ie, col: pr.label, years: days / 365.25 }; }) }));
+  /* dienos grąžos: tik dienos, kai skelbė ne vienas valdytojas (kaip svetainėje), ir nenulinės */
+  const ixs = items.map(it => statIdx(it.p.f, it.s.ia, it.s.ie)), tot = ixs.reduce((a, b) => a + b.length, 0), daily = tot * 2 <= 120000;
+  const dsh = daily ? [items.flatMap(it => [`${fundName(it.p.f, it.g)}: ${L ? 'data' : 'date'}`, L ? 'vertė' : 'value', L ? 'grąža' : 'return'])] : null;
+  if (daily) { const H = Math.max(...ixs.map(x => x.length)); for (let k = 0; k < H; k++) { const r = k + 2; dsh.push(items.flatMap((it, i) => { const ix = ixs[i]; if (k >= ix.length) return [null, null, null]; const f = it.p.f, c = j => xlCol(i * 3 + j), x = k ? f.v[ix[k]] / f.v[ix[k - 1]] - 1 : null;
+    return [xlDate(f.d[ix[k]]), { t: 'n', v: f.v[ix[k]], z: '0.0000' }, k ? (x !== 0 ? xlF(`IF(${c(1)}${r}=${c(1)}${r - 1},"",${c(1)}${r}/${c(1)}${r - 1}-1)`, x, '0.0000%') : { f: `IF(${c(1)}${r}=${c(1)}${r - 1},"",${c(1)}${r}/${c(1)}${r - 1}-1)`, v: '' }) : null]; })); } }
+  const risk = [[L ? 'Grupė' : 'Group', L ? 'Valdytojas' : 'Manager', L ? 'Metinė grąža' : 'Annualized return', L ? 'Nerizikinga norma (€STR), %' : 'Risk-free rate (€STR), %', L ? 'Svyravimas, metinis' : 'Volatility p.a.', 'Sharpe']];
+  const at = {};
+  items.forEach((it, i) => { const r = i + 2, gi = groups.indexOf(it.g), pi = provs.indexOf(it.pr), ann = Math.pow(1 + it.p.y / 100, 365.25 / it.days) - 1, rc = `${xlCol(i * 3 + 2)}`, n = ixs[i].length + 1;
+    at[gi + '|' + pi] = r;
+    risk.push([groupLabel(it.g), it.pr.label, xlF(`${q(SA)}!${xlCol(pi + 1)}${4 + gi}`, ann, '0.00%'), { t: 'n', v: it.rf, z: '0.00' },
+      daily ? xlF(`STDEV(${q(SD)}!$${rc}$3:$${rc}$${n})*SQRT(252)`, it.p.x / 100, '0.00%') : { t: 'n', v: it.p.x / 100, z: '0.00%' }, xlF(`(C${r}-D${r}/100)/E${r}`, (ann * 100 - it.rf) / it.p.x, '0.00')]); });
+  const res = [[document.getElementById('hRisk') ? document.getElementById('hRisk').textContent : 'Sharpe'], [$('rmNote') ? $('rmNote').textContent : ''], [T().group, ...provs.map(p => p.label), T().rmBest]];
+  groups.forEach((g, gi) => { const r = res.length + 1, cells = provs.map((p, pi) => { const k = at[gi + '|' + pi]; return k ? xlF(`${q(SK)}!F${k}`, risk[k - 1][5].v, '0.00') : null; }), vs = cells.map(c => c ? c.v : null), ok = vs.filter(v => v != null);
+    res.push([groupLabel(g), ...cells, ok.length ? { f: `INDEX($B$3:$${xlCol(provs.length)}$3,MATCH(MAX(B${r}:${xlCol(provs.length)}${r}),B${r}:${xlCol(provs.length)}${r},0))`, v: provs[vs.indexOf(Math.max(...ok))].label } : null]); });
+  return pairBook({ title: L ? 'Metinė grąža (Sharpe skaičiavimui)' : 'Annualized return (for Sharpe)', cap: periodText(), rowHdr: T().group, cols: provs.map(p => p.label), rows, resName: SA,
+    pre: [{ name: L ? 'Rezultatas' : 'Result', rows: res, w: [{ wch: 16 }, ...provs.map(() => ({ wch: 11 })), { wch: 14 }] }, { name: SK, rows: risk, w: [{ wch: 16 }, { wch: 12 }, { wch: 13 }, { wch: 16 }, { wch: 13 }, { wch: 9 }] }],
+    post: daily ? [{ name: SD, rows: dsh, w: items.flatMap(() => [{ wch: 11 }, { wch: 10 }, { wch: 10 }]) }] : [],
+    meth: [['Sharpe', L ? `(metinė grąža − nerizikinga norma) ÷ metinis svyravimas (lapas „${SK}“). Metinė grąža = (1 + grąža) ^ (365,25 ÷ dienos) − 1.` : `(annualized return − risk-free rate) ÷ annualized volatility (sheet “${SK}”). Annualized return = (1 + return) ^ (365.25 ÷ days) − 1.`],
+      [L ? 'Svyravimas' : 'Volatility', L ? `STDEV(dienos grąžų) × √252; ${daily ? `dienos grąžos – lape „${SD}“: praleidžiamos dienos, kai vertę paskelbė tik vienas valdytojas, ir dienos be pokyčio.` : 'dėl failo dydžio – reikšmės (dienos grąžos neįtrauktos; pasirinkite trumpesnį laikotarpį).'}` : `STDEV(daily returns) × √252; ${daily ? `daily returns – in “${SD}”: days when only one manager published and days without change are skipped.` : 'values due to file size (daily returns not included; choose a shorter period).'}`],
+      [L ? 'Nerizikinga norma' : 'Risk-free rate', L ? 'Vidutinė €STR fondo laikotarpiu (ECB mėnesių vidurkiai, svertiniai pagal dienas); jei įvesta ranka – ji.' : 'Average €STR over the fund’s period (ECB monthly averages, day-weighted); or the manually entered rate.']] });
+});
+/* Vieta pagal laikotarpį (tQP; tOv, kai pasirinkta viena grupė): grąžos lentelė → RANK grupėje */
+function rbpBook(tid) {
+  const X = (renderRanksByPeriod.last || {})[tid]; if (!X) return null;
+  const L = lang === 'lt', SR = L ? 'Grąža' : 'Returns', rows = [], blocks = [];
+  X.gs.forEach(g => { const ps = marketProvs().filter(p => g.funds.some(f => f.provider === p.id)), r0 = rows.length;
+    ps.forEach(p => rows.push({ label: `${p.label}${X.ALL ? ' · ' + groupLabel(g) : ''}`, cells: PERIOD_IDS.map(per => { const rng = rangeAt(g, per); if (retOf(g, p.id, rng) == null) return null; const f = g.funds.find(x => x.provider === p.id), s_ = seriesOf(f, rng.anchor, rng.end); return { f, name: fundName(f, g), ia: s_.ia, ie: s_.ie, col: T().periods[per] }; }) }));
+    blocks.push({ g, ps, a: r0 + 4, b: rows.length + 3 }); });
+  const rank = [[$('hQP') ? $('hQP').textContent : (L ? 'Vieta pagal laikotarpį' : 'Rank by period')], [$('c_' + tid) ? $('c_' + tid).textContent : ''], [L ? 'Valdytojas' : 'Manager', ...PERIOD_IDS.map(per => T().periods[per])]];
+  blocks.forEach(B => B.ps.forEach((p, i) => { const R = B.a + i; rank.push([rows[R - 4].label, ...PERIOD_IDS.map((per, j) => { const c = xlCol(j + 1), rng = rangeAt(B.g, per), rk = rankOf(B.g.funds.map(f => ({ key: f.provider, v: retOf(B.g, f.provider, rng) }))), k = rk.map.get(p.id);
+    return k && rk.n >= 2 ? xlF(`RANK('${SR}'!${c}${R},'${SR}'!$${c}$${B.a}:$${c}$${B.b},0)`, k, '0') : null; })]); }));
+  return pairBook({ title: L ? 'Grąža pagal laikotarpį' : 'Return by period', cap: '', rowHdr: L ? 'Valdytojas' : 'Manager', cols: PERIOD_IDS.map(per => T().periods[per]), rows, resName: SR,
+    pre: [{ name: L ? 'Rezultatas' : 'Result', rows: rank, w: [{ wch: 30 }, ...PERIOD_IDS.map(() => ({ wch: 11 }))] }],
+    meth: [[L ? 'Vieta' : 'Rank', L ? `RANK tarp tos pačios grupės fondų tame laikotarpyje (lapas „${SR}“); kiekvienas laikotarpis baigiasi grupės paskutine diena.` : `RANK among the same group’s funds in that period (sheet “${SR}”); each period ends on the group’s latest day.`]] });
+}
+XLB.set('tQP', async () => rbpBook('tQP'));
 XLB.set('tCal', async () => {
   const X = XS.cal, L = lang === 'lt'; if (!X) return null;
   const pc = (f, name, end) => { const c = calendarReturns(f, end); return X.years.map(y => c[y] ? { f, name, ia: c[y].ia, ie: c[y].ie, col: String(y), note: c[y].partial ? (L ? 'Nepilni metai – nuo fondo pradžios' : 'Partial year – since fund start') : (y === X.lastYear ? (L ? 'Metai iki šiol' : 'Year to date') : '') } : null); };

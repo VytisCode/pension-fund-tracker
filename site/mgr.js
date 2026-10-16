@@ -224,16 +224,16 @@ function portfolio(p, g) {               // g – grupė (vienas fondas) arba nu
     const ac = x[9] ? x[9][0] : { 1: 'bond', 3: 'equity', 4: 'money_market', 5: 'real_estate', 7: 'private_equity' }[x[4]] || '';
     return ac === 'equity' ? 'eq' : ac === 'bond' ? 'bd' : ac === 'money_market' ? 'cash' : ['private_equity', 'real_estate', 'other'].includes(ac) ? 'alt' : 'oth'; };
   const types = {}; by.forEach((v, si) => { const t = cls(PF.secs[si]); types[t] = (types[t] || 0) + v; });
-  const top = [...by.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([si, v]) => ({ s: PF.secs[si], w: v / tot * 100 }));
-  return { q: PF.quarters[q], tot, types: Object.entries(types).map(([t, v]) => ({ t, w: v / tot * 100 })).sort((a, b) => b.w - a.w), top };
+  const top = [...by.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([si, v]) => ({ si, s: PF.secs[si], w: v / tot * 100 }));
+  return { p, g, qi: q, fs, q: PF.quarters[q], tot, types: Object.entries(types).map(([t, v]) => ({ t, w: v / tot * 100 })).sort((a, b) => b.w - a.w), top };
 }
 function pfHTML(pf, sub) {
-  const t = T();
+  const t = T(); pfHTML.last = pf;
   if (!pf) return `<section class="card"><p class="na">${t.noPf}</p></section>`;
   const al = pf.types.map(x => `<span>${t.cls[x.t] || x.t}</span><span class="t"><i style="width:${Math.min(100, Math.max(0, x.w))}%"></i></span><span class="n">${fmt(x.w, 1)}</span>`).join('');
   const top = pf.top.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="wrap">${hEsc(x.s[8] || x.s[0])}</td><td>${t.types[x.s[1]] || ''}</td><td class="n">${fmt(x.w, 2)}</td></tr>`).join('');
   return `<div class="two"><section class="card" data-src="pf"><h2>${t.hAl(pf.q)}</h2><div class="meta">${t.mPf(sub)}</div><div class="alloc">${al}</div></section>
-    <section class="card" data-src="pf"><h2>${t.hTop(pf.q)}</h2><div class="scroll"><table class="mt"><thead><tr><th class="n">#</th><th>${t.thPos}</th><th>${t.thType}</th><th class="n">${t.thW}</th></tr></thead><tbody>${top}</tbody></table></div></section></div>`;
+    <section class="card" data-src="pf"><h2>${t.hTop(pf.q)}</h2><div class="scroll"><table class="mt" id="mgrTop"><thead><tr><th class="n">#</th><th>${t.thPos}</th><th>${t.thType}</th><th class="n">${t.thW}</th></tr></thead><tbody>${top}</tbody></table></div></section></div>`;
 }
 
 /* ---------- valdytojo suvestinė ---------- */
@@ -446,6 +446,20 @@ XLB.set('t3', async () => {
     cols: P.map(perLabel), extraCols: [...P.map(per => `${L ? 'Vieta' : 'Rank'}: ${perLabel(per)}`), ...P.map(per => `${L ? 'Fondų sk.' : 'Funds'}: ${perLabel(per)}`), t.thFee, t.thAum], rows,
     meth: [[L ? 'III pakopa' : 'Pillar III', L ? 'Mėnesio pabaigos vieneto vertės (valdytojų ataskaitos, Lietuvos bankas); lape „Vertės“ – tik mėnesių pabaigos.' : 'Month-end unit values (manager reports, Bank of Lithuania); the “Values” sheet holds month ends only.'],
       [L ? 'Vieta' : 'Rank', L ? 'Tarp tos pačios kategorijos (obligacijų, mišrių, akcijų) III pakopos fondų; visų konkurentų skaičiavimai – lape „Skaičiavimai“.' : 'Among pillar III funds of the same category (bond, mixed, equity); all peers’ calculations – in the “Calculations” sheet.']] });
+});
+/* 10 didžiausių pozicijų – Excel su skaičiavimais: visos valdytojo (fondo) pozicijos ketvirčio pabaigoje (LB) → SUMIFS → dalis */
+XLB.set('mgrTop', async () => {
+  const pf = pfHTML.last; if (!pf) return null;
+  const t = T(), L = lang === 'lt', SP = L ? 'Pozicijos' : 'Holdings', q = `'${SP}'`, pos = [[L ? 'Fondas' : 'Fund', L ? 'Pozicijos ID' : 'Holding ID', L ? 'Pozicija' : 'Holding', 'ISIN', L ? 'Vienetai' : 'Units', L ? 'Vertė, €' : 'Value, €']];
+  pf.fs.forEach(f => { for (let i = 0; i < f.r.length; i += 4) if (f.r[i] === pf.qi) { const x = PF.secs[f.r[i + 1]]; pos.push([f.n, f.r[i + 1], x[8] || x[0], x[5] || '', f.r[i + 2] == null ? null : { t: 'n', v: f.r[i + 2], z: '#,##0.##' }, { t: 'n', v: f.r[i + 3], z: '#,##0' }]); } });
+  const N = pos.length, res = [[`${labelOf(pf.p)} · ${t.hTop(pf.q)}`], [pf.g ? groupLabel(DATA.groups.find(g => g.id === pf.g) || { id: pf.g }) : t.pfAll], ['#', t.thPos, 'ISIN', t.thType, L ? 'Vertė, €' : 'Value, €', t.thW]];
+  pf.top.forEach((x, i) => { const r = res.length + 1, v = x.w / 100 * pf.tot;
+    res.push([i + 1, x.s[8] || x.s[0], x.s[5] || '', t.types[x.s[1]] || '', xlF(`SUMIFS(${q}!$F$2:$F$${N},${q}!$B$2:$B$${N},${x.si})`, v, '#,##0'), xlF(`E${r}/SUM(${q}!$F$2:$F$${N})`, x.w / 100, '0.00%')]); });
+  const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(res, L ? 'Rezultatas' : 'Result', [{ wch: 4 }, { wch: 46 }, { wch: 14 }, { wch: 16 }, { wch: 14 }, { wch: 9 }]); add(pos, SP, [{ wch: 34 }, { wch: 8 }, { wch: 46 }, { wch: 14 }, { wch: 14 }, { wch: 14 }]);
+  add([[L ? 'Metodika' : 'Methodology'], [L ? 'Šaltinis' : 'Source', L ? `Lietuvos banko ketvirtinės ataskaitos, ${pf.q}: visos valdytojo II pakopos fondų (ar pasirinkto fondo) pozicijos (lapas „${SP}“).` : `Bank of Lithuania quarterly reports, ${pf.q}: all holdings of the manager’s pillar II funds (or the chosen fund) (sheet “${SP}”).`],
+    [L ? 'Dalis' : 'Weight', L ? 'Pozicijos vertė visuose fonduose (SUMIFS pagal pozicijos ID) ÷ visų pozicijų suma.' : 'Holding value across the funds (SUMIFS by holding ID) ÷ sum of all holdings.']], L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
 });
 renderHeader('manager', render);
 render();

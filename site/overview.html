@@ -53,6 +53,16 @@ function paintCard(c, mr) {
   const narrow = (c.chart.clientWidth || 0) <= 560;
   c.fin.innerHTML = narrow ? c.data.series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${colorOf(o.r.provider)}"></i>${labelOf(o.r.provider)} <b>${pct(o.v, 1).replace(' %', '%')}</b></span>`).join('') : '';
 }
+/* Excel su skaičiavimais (auditui): grąža iš vieneto verčių (lapai „Skaičiavimai“ ir „Vertės“), vieta – RANK */
+const OVX = {};
+function ovBook(id) {
+  const X = OVX[id]; if (!X) return null; const { g, data } = X, L = lang === 'lt', ok = data.rows.filter(r => r.ret != null), n = data.rows.length;
+  const rows = data.rows.map(r => { const s = r.ret == null ? null : seriesOf(r.f, data.anchor, data.end);
+    return { label: labelOf(r.f.provider), cells: [s ? { f: r.f, name: `${groupLabel(g)} · ${labelOf(r.f.provider)}`, ia: s.ia, ie: s.ie, col: T().thReturn } : null],
+      extra: [rr => r.ret == null ? null : xlF(`RANK(B${rr},$B$4:$B$${3 + n},0)`, ok.indexOf(r) + 1, '0'), r.unit == null ? null : { t: 'n', v: r.unit, z: '0.0000' }, r.f.assets ? { t: 'n', v: r.f.assets / 1e6, z: '#,##0.0' } : null] }; });
+  return pairBook({ title: groupLabel(g), cap: `${periodLabel(period)}: ${iso(data.anchor)} → ${iso(data.end)}`, rowHdr: T().thProvider, cols: [T().thReturn], rows, extraCols: [L ? 'Vieta' : 'Rank', T().thUnit, T().thAssets],
+    meth: [[L ? 'Vieta' : 'Rank', L ? 'RANK tarp grupės fondų (1 – didžiausia grąža). Vieneto vertė – paskutinė iki laikotarpio pabaigos; aktyvai – paskutiniai paskelbti, mln. €. Fondai, > 5 d. neatnaujinę duomenų, neskaičiuojami.' : 'RANK among the group’s funds (1 – highest return). Unit value – the last up to the period end; assets – latest published, € m. Funds more than 5 days behind are not calculated.']] });
+}
 function render() {
   // KPI eilutė nerodoma – kolegoms triukšmas
   const root = document.getElementById('groups'); root.innerHTML = ''; cards.length = 0;
@@ -63,6 +73,7 @@ function render() {
     const late = data.series.hidden.map(h => `${labelOf(h.provider)} (${iso(h.start)})`);
     card.innerHTML = `<h2>${groupLabel(g)}</h2><div class="meta">${periodLabel(period)}: ${iso(data.anchor)} → ${iso(data.end)}${late.length ? ' ' + T().notShown(late.join(', ')) : ''}</div>
       <div class="body"><table><thead><tr><th>${T().thProvider}</th><th>${T().thReturn}</th><th class="hide-s">${T().thUnit}</th><th>${T().thAssets}</th></tr></thead><tbody></tbody></table><div><div class="chart"></div><div class="finals"></div></div></div>`;
+    card.querySelector('table').id = 'ovt_' + g.id; OVX[g.id] = { g, data }; XLB.set('ovt_' + g.id, async () => ovBook(g.id));
     const tb = card.querySelector('tbody');
     data.rows.forEach((r, i) => {
       const tr = document.createElement('tr');

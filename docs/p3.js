@@ -136,6 +136,25 @@ function compute(g) {
 }
 const rankOf = vals => { const ok = vals.filter(o => o.v !== null).sort((a, b) => b.v - a.v), map = new Map(); ok.forEach((o, i) => map.set(o.key, i + 1)); return { map, n: ok.length }; };
 const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1) + (n <= 3 ? ' soft' : '');   // ≤3 fondai – švelnesnės spalvos (auditas #9)
+/* Excel su skaičiavimais (auditui): kortelės lentelė ir laikotarpių matricos – grąža iš vieneto verčių, vieta – RANK */
+const P3X = {};
+function p3Main(id) {
+  const X = P3X[id]; if (!X) return null; const { g, data } = X, L = lang === 'lt', rng = data.rng, ok = data.rows.filter(r => r.ret != null), n = data.rows.length;
+  const rows = data.rows.map(r => { const s = r.ret == null ? null : seriesOf(r.f, rng.anchor, rng.end);
+    return { label: r.f.name, cells: [s ? { f: r.f, name: r.f.name, ia: s.ia, ie: s.ie, col: T().thReturn } : null],
+      extra: [rr => r.ret == null ? null : xlF(`RANK(B${rr},$B$4:$B$${3 + n},0)`, ok.indexOf(r) + 1, '0'), r.unit == null ? null : { t: 'n', v: r.unit, z: '0.0000' }, r.f.assets ? { t: 'n', v: r.f.assets / 1e6, z: '#,##0.0' } : null] }; });
+  return pairBook({ title: T().cat[g.id], cap: `${rng.label}: ${iso(rng.anchor)} → ${iso(rng.end)}`, rowHdr: T().thFund, cols: [T().thReturn], rows, extraCols: [L ? 'Vieta' : 'Rank', T().thUnit, T().thAssets],
+    meth: [[L ? 'Vieta' : 'Rank', L ? 'RANK tarp kortelės fondų (1 – didžiausia grąža). Vieneto vertė – paskutinė iki laikotarpio pabaigos; aktyvai – paskutiniai paskelbti, mln. €.' : 'RANK among the card’s funds (1 – highest return). Unit value – the last up to the period end; assets – latest published, € m.']] });
+}
+function p3Heat(id, rankFirst) {
+  const X = P3X[id]; if (!X) return null; const { g, data, ht } = X, L = lang === 'lt', fs = ht.fs, SR = rankFirst ? (L ? 'Grąža' : 'Returns') : (L ? 'Rezultatas' : 'Result'), SK = rankFirst ? (L ? 'Rezultatas' : 'Result') : (L ? 'Vietos' : 'Ranks');
+  const rows = ht.rows.map(r => ({ label: r.label, cells: fs.map(f => { const s = f.d[f.d.length - 1] < data.rng.overallLast - 5 ? null : seriesOf(f, r.anchor, r.end); return s ? { f, name: f.name, ia: s.ia, ie: s.ie, col: shortName(f.name) } : null; }) }));
+  const last = xlCol(fs.length), rank = [[T().hmRank], [T().hmCap(iso(ht.end))], ['', ...fs.map(f => shortName(f.name))]];
+  ht.rows.forEach((r, i) => { const R = 4 + i; rank.push([r.label, ...fs.map((f, j) => { const c = xlCol(j + 1), k = r.map.get(f.provider); return k ? xlF(`RANK('${SR}'!${c}${R},'${SR}'!$B${R}:$${last}${R},0)`, k, '0') : null; })]); });
+  return pairBook({ title: `${T().cat[g.id]} · ${T().hmRet}`, cap: T().hmCap(iso(ht.end)), rowHdr: L ? 'Laikotarpis' : 'Period', cols: fs.map(f => shortName(f.name)), rows, resName: SR,
+    [rankFirst ? 'pre' : 'post']: [{ name: SK, rows: rank, w: [{ wch: 26 }, ...fs.map(() => ({ wch: 12 }))] }],
+    meth: [[L ? 'Matricos' : 'Matrices', L ? `„${SR}“ – kiekvieno fondo grąža kiekvienu laikotarpiu (formulės į „Skaičiavimai“); „${SK}“ – vieta toje eilutėje (RANK, 1 – geriausia).` : `“${SR}” – each fund’s return for each period (formulas to “Calculations”); “${SK}” – rank within the row (RANK, 1 – best).`]] });
+}
 function heatTables(g, data) {
   const { sel, rng } = data, fs = sel.slice().sort((a, b) => g.funds.indexOf(a) - g.funds.indexOf(b));
   const end = rng.end, rows = [];
@@ -152,7 +171,7 @@ function heatTables(g, data) {
   const body = fn => rows.map(r => `<tr${r.cur ? ' class="avg"' : ''}><td>${r.label}</td>${fs.map(f => fn(r, f)).join('')}</tr>`).join('');
   const ret = head + '<tbody>' + body((r, f) => { const v = r.vals[f.provider]; return v === null ? '<td class="na">–</td>' : `<td class="${rkClass(r.map.get(f.provider), r.n)}"${tip(r, f)}>${pctPlain(v, 1)}</td>`; }) + '</tbody>';
   const rank = head + '<tbody>' + body((r, f) => { const k = r.map.get(f.provider); return k ? `<td class="${rkClass(k, r.n)}" title="${k}/${r.n}">${k}</td>` : '<td class="na">–</td>'; }) + '</tbody>';
-  return { ret, rank, end };
+  return { ret, rank, end, rows, fs };
 }
 function paintCard(c, mr) {
   const evs = c.data.st.events ? ALL_EVENTS().filter(e => e.day >= c.data.rng.anchor && e.day <= c.data.rng.end) : [];
@@ -201,6 +220,9 @@ function renderCard(g, card) {
     tb.appendChild(tr);
   });
   const ht = heatTables(g, data);
+  card.querySelector('.body table').id = 'p3m_' + g.id; card.querySelector('.hret').id = 'p3r_' + g.id; card.querySelector('.hrank').id = 'p3k_' + g.id;
+  P3X[g.id] = { g, data, ht };
+  XLB.set('p3m_' + g.id, async () => p3Main(g.id)); XLB.set('p3r_' + g.id, async () => p3Heat(g.id)); XLB.set('p3k_' + g.id, async () => p3Heat(g.id, true));
   card.querySelector('.hret').innerHTML = ht.ret; card.querySelector('.hrank').innerHTML = ht.rank;
   card.querySelectorAll('.hmcap').forEach(e => { e.textContent = T().hmCap(iso(ht.end)); });
   const i = cards.findIndex(x => x.g === g); c.g = g; c.card = card;

@@ -1598,7 +1598,7 @@ function pairBook(o) {
     const look = (dc, val) => ({ t: 'n', f: `INDEX(${V}!${vc}:${vc},MATCH(${dc}${r_},${V}!$A:$A,0))`, v: val, z: '0.0000' });
     const ret = c.f.v[c.ie] / c.f.v[c.ia] - 1;
     calc.push([r.label, c.col, c.name, xlDate(c.f.d[c.ia]), look('D', c.f.v[c.ia]), xlDate(c.f.d[c.ie]), look('F', c.f.v[c.ie]), xlF(`G${r_}/E${r_}-1`, ret, '0.00%'),
-      c.years ? { t: 'n', v: c.years, z: '0' } : null, c.years ? xlF(`(1+H${r_})^(1/I${r_})-1`, Math.pow(1 + ret, 1 / c.years) - 1, '0.00%') : null, c.note || null]);
+      c.years ? { t: 'n', v: c.years, z: Number.isInteger(c.years) ? '0' : '0.00' } : null, c.years ? xlF(`(1+H${r_})^(1/I${r_})-1`, Math.pow(1 + ret, 1 / c.years) - 1, '0.00%') : null, c.note || null]);
     return { ref: `${q(SC)}!${c.years ? 'J' : 'H'}${r_}`, v: c.years ? Math.pow(1 + ret, 1 / c.years) - 1 : ret };
   }));
   /* Vertės: visos dienos tarp naudojamų datų; jei per daug (> 150 tūkst. langelių) – tik skaičiavimuose naudotos datos */
@@ -1620,6 +1620,7 @@ function pairBook(o) {
   const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
   (o.pre || []).forEach(x => add(x.rows, x.name, x.w));          // pre – papildomi lapai prieš lentelę (pvz. suvestinė iš jos)
   add(res, o.resName || (L ? 'Rezultatas' : 'Result'), [{ wch: 30 }, ...Array(o.cols.length + (o.extraCols || []).length).fill({ wch: 11 })]);
+  (o.post || []).forEach(x => add(x.rows, x.name, x.w));
   add(calc, SC, [{ wch: 26 }, { wch: 12 }, { wch: 32 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 11 }, { wch: 7 }, { wch: 12 }, { wch: 30 }]);
   add(vals, SV, [{ wch: 11 }, ...names.map(() => ({ wch: 16 }))]);
   add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);

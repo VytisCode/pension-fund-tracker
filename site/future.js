@@ -83,7 +83,7 @@ function renderFuture() {
   else {
     const R = FUT.sc.map((sc, i) => futProject(sc, S2, S3, P, kid ? { r2: k2 && k2[i + 1], r3: k3 && k3[i + 1] } : null)), lb = futVar === 'lb', e0 = x => eur(x, 0), e2 = x => eur(x, 2);
     const row = (l, f, show = true) => show ? `<tr><td class="l">${l}</td>${R.map(r => `<td>${f(r)}</td>`).join('')}</tr>` : '';
-    h += `<p class="lead" style="margin:0 0 8px">${t.futLead(yR, yR - y0)}</p><div class="scroll"><table class="jt"><thead><tr><th class="l"></th>${t.futSc.map(s => `<th>${s}</th>`).join('')}</tr></thead><tbody>`
+    h += `<p class="lead" style="margin:0 0 8px">${t.futLead(yR, yR - y0)}</p><div class="scroll"><table class="jt" id="futTable"><thead><tr><th class="l"></th>${t.futSc.map(s => `<th>${s}</th>`).join('')}</tr></thead><tbody>`
       + row(t.futRow.r, r => r.avgR == null ? '–' : pc(r.avgR), !!S2)
       + row(t.futRow.v2, r => e0(r.v2), !!S2) + row(t.futRow.v3, r => e0(r.v3), !!S3)
       + row(t.futRow.a2, r => e2(r.a2), !!S2) + row(t.futRow.a3, r => e2(r.a3), !!S3)
@@ -91,10 +91,69 @@ function renderFuture() {
       + row(`<b>${t.futRow.tot}</b>`, r => `<b>${e2((lb ? r.pen || 0 : 0) + r.a2 + r.a3)}</b>`)
       + row(t.futRow.net, r => e2(r.net)) + row(t.futRow.rr, r => r.net ? pc(((lb ? r.pen || 0 : 0) + r.a2 + r.a3) / r.net) : '–')
       + '</tbody></table></div>';
-    const r1 = R[1];
+    const r1 = R[1]; renderFuture.last = { R, S2, S3, kid, k2, k3, lb };
     h += `<h3 style="margin:14px 0 6px;font-size:15px">${t.futAss}</h3><ul class="note" style="margin:0;padding-left:18px">${((L, kf) => kid ? [t.futKidSrc(kf(k2), kf(k3)), ...L.slice(2)] : L)(t.futAssL(r1.c2 != null ? pc(r1.c2, 2) : '–', r1.c3 != null ? pc(r1.c3, 2) : '', r1.rr0 != null ? pc(r1.rr0) : '–').filter((_, i) => lb || i !== 4), k => k ? `${k.slice(1).map(v => num(v, 2)).join(' / ')}${pctSfx()} (RHP ${k[0]})` : '').map(x => `<li>${x}</li>`).join('')}</ul><p class="note">${t.futSrc}</p>`;
   }
   box.innerHTML = h;
   document.getElementById('futSel').addEventListener('change', e => { futVar = e.target.value; try { localStorage.setItem('futVar', futVar); } catch (x) {} renderFuture(); });
 }
+/* Excel su skaičiavimais (auditui): kiekvienų metų turtas pagal scenarijų (lapas „Metai“), prielaidos – atskirame lape */
+XLB.set('futTable', async () => {
+  const X = renderFuture.last; if (!X) return null;
+  const t = T(), L = lang === 'lt', { R, S2, S3, kid, k2, k3, lb } = X, y0 = yearOf(P.asof), yR = P.birth + 65, n = yR - y0, w0 = wageAt(P.asof, P.pay, null), cat3 = S3 ? p3Fund(P.fund3).cat : null;
+  const SA = L ? 'Prielaidos' : 'Assumptions', SY = L ? 'Metai' : 'Years', A = c => `'${SA}'!$${c}`, pen0 = byYear(J.pensions, y0, null);
+  /* Prielaidos: A pavadinimas, B–D scenarijai (pesim., vid., optim.) arba B – bendra reikšmė */
+  const pa = [[L ? 'Prielaida' : 'Assumption', ...t.futSc]];
+  const one = (lab, v, z = '0.00') => pa.push([lab, { t: 'n', v, z }]);
+  pa.push([L ? 'Akcijų grąža, % per metus' : 'Equity return, % a year', ...FUT.sc.map(x => ({ t: 'n', v: x.eq, z: '0.00' }))]);   // 2
+  pa.push([L ? 'Obligacijų grąža, % per metus' : 'Bond return, % a year', ...FUT.sc.map(x => ({ t: 'n', v: x.bd, z: '0.00' }))]);   // 3
+  pa.push([L ? 'LB Sodros pakeitimo norma 2050 m., %' : 'BoL Sodra replacement rate 2050, %', ...FUT.sc.map(x => ({ t: 'n', v: x.lb, z: '0' }))]);   // 4
+  pa.push([L ? 'KID II pakopos grąža po išlaidų, %' : 'KID pillar II return after costs, %', ...[0, 1, 2].map(i => kid && k2 && k2[i + 1] != null ? { t: 'n', v: k2[i + 1], z: '0.00' } : null)]);   // 5
+  pa.push([L ? 'KID III pakopos grąža po išlaidų, %' : 'KID pillar III return after costs, %', ...[0, 1, 2].map(i => kid && k3 && k3[i + 1] != null ? { t: 'n', v: k3[i + 1], z: '0.00' } : null)]);   // 6
+  one(L ? 'Mokestis, % per metus' : 'Fee, % a year', FUT.fee); one(L ? 'Infliacija, % per metus' : 'Inflation, % a year', FUT.infl); one(L ? 'Atlyginimo augimas virš infliacijos, %' : 'Real wage growth, %', FUT.wage);   // 7, 8, 9
+  one(L ? 'Bruto atlyginimas dabar, € / mėn.' : 'Gross wage now, € / month', w0.g || 0); one(L ? 'Neto atlyginimas dabar, € / mėn.' : 'Net wage now, € / month', w0.n || 0);   // 10, 11
+  one(L ? 'II pakopos turtas dabar, €' : 'Pillar II assets now, €', S2 ? S2.last.val : 0); one(L ? 'III pakopos turtas dabar, €' : 'Pillar III assets now, €', S3 ? S3.last.val : 0);   // 12, 13
+  one(L ? 'II pakopos įmokos (dalis bruto)' : 'Pillar II contributions (share of gross)', R[0].c2 || 0, '0.00%'); one(L ? 'III pakopos įmokos (dalis bruto)' : 'Pillar III contributions (share of gross)', R[0].c3 || 0, '0.00%');   // 14, 15
+  one(L ? 'III pakopos akcijų dalis' : 'Pillar III equity share', FUT.eq3[cat3] ?? 0.5, '0%'); one(L ? 'Sodros anuitetas, € / mėn. už 1000 €' : 'Sodra annuity, € / month per €1000', J.annuity); one(L ? 'III pakopos išmokų mėnesiai (0 – atsiimama iš karto)' : 'Pillar III payout months (0 – lump sum)', P.pay3 === 'lump' ? 0 : PAY3_N, '0');   // 16, 17, 18
+  one(L ? 'Vidutinė senatvės pensija dabar, €' : 'Average old-age pension now, €', pen0 || 0); one(L ? 'Pradžios metai' : 'Start year', y0, '0'); one(L ? 'Gimimo metai' : 'Birth year', P.birth, '0');   // 19, 20, 21
+  /* Metai: kiekvienam scenarijui 7 stulpeliai */
+  const H = [L ? 'Metai (t)' : 'Year (t)', L ? 'Amžius' : 'Age', L ? 'Metinis atlyginimas (bruto)' : 'Annual gross wage'];
+  t.futSc.forEach(sn => H.push(`${sn}: ${L ? 'akcijų dalis II' : 'equity share II'}`, `${sn}: ${L ? 'reali grąža II' : 'real return II'}`, `${sn}: ${L ? 'II turtas' : 'II assets'}`, `${sn}: ${L ? 'reali grąža III' : 'real return III'}`, `${sn}: ${L ? 'III turtas' : 'III assets'}`));
+  const ys = [H], col = (i, k) => xlCol(3 + i * 5 + k);
+  const real = (eq, sc) => ((1 + (eq * sc.eq + (1 - eq) * sc.bd - FUT.fee) / 100) / (1 + FUT.infl / 100)) - 1, kR = r => (1 + r / 100) / (1 + FUT.infl / 100) - 1;
+  const v2 = FUT.sc.map(() => S2 ? S2.last.val : 0), v3 = FUT.sc.map(() => S3 ? S3.last.val : 0);
+  for (let tt = 1; tt <= n; tt++) { const r = tt + 1, age = y0 + tt - P.birth, wy = (w0.g || 0) * Math.pow(1 + FUT.wage / 100, tt) * 12;
+    const row = [tt, xlF(`${A('B')}$20+A${r}-${A('B')}$21`, age, '0'), xlF(`${A('B')}$10*(1+${A('B')}$9/100)^A${r}*12`, wy, '#,##0.00')];
+    FUT.sc.forEach((sc, i) => { const sl = xlCol(1 + i), eq = FUT.eq2(age), useK2 = kid && k2 && k2[i + 1] != null, useK3 = kid && k3 && k3[i + 1] != null;
+      const r2 = useK2 ? kR(k2[i + 1]) : real(eq, sc), r3 = useK3 ? kR(k3[i + 1]) : real(FUT.eq3[cat3] ?? 0.5, sc);
+      v2[i] = v2[i] * (1 + r2) + (R[i].c2 || 0) * wy * (1 + r2 / 2); v3[i] = v3[i] * (1 + r3) + (R[i].c3 || 0) * wy * (1 + r3 / 2);
+      const E = col(i, 0), R2 = col(i, 1), V2 = col(i, 2), R3 = col(i, 3), V3 = col(i, 4), pv = (c, start) => tt === 1 ? A('B') + '$' + start : `${c}${r - 1}`;
+      const rf = (eqc, k) => k ? `(1+${A(sl)}$${k === 2 ? 5 : 6}/100)/(1+${A('B')}$8/100)-1` : `(1+(${eqc}*${A(sl)}$2+(1-${eqc})*${A(sl)}$3-${A('B')}$7)/100)/(1+${A('B')}$8/100)-1`;
+      row.push(xlF(`IF(B${r}<=45,0.95,IF(B${r}>=65,0.25,0.95-(B${r}-45)/20*0.7))`, eq, '0.0%'), xlF(rf(`${E}${r}`, useK2 ? 2 : 0), r2, '0.00%'),
+        xlF(`${pv(V2, 12)}*(1+${R2}${r})+${A('B')}$14*C${r}*(1+${R2}${r}/2)`, v2[i], '#,##0'), xlF(rf(`${A('B')}$16`, useK3 ? 3 : 0), r3, '0.00%'),
+        xlF(`${pv(V3, 13)}*(1+${R3}${r})+${A('B')}$15*C${r}*(1+${R3}${r}/2)`, v3[i], '#,##0')); });
+    ys.push(row); }
+  const N = n + 1, last = c => `'${SY}'!${c}${N}`;
+  const res = [[t.futTitle], [t.futLead(yR, n)], ['', ...t.futSc]];
+  const line = (lab, fn, show = true) => { if (!show) return; res.push([lab, ...R.map((r, i) => fn(r, i))]); };
+  const rowNo = {}; const mark = k => { rowNo[k] = res.length + 1; };
+  mark('r'); line(t.futRow.r, (r, i) => r.avgR == null ? null : xlF(`EXP(SUMPRODUCT(LN(1+'${SY}'!${col(i, 1)}2:${col(i, 1)}${N}))/${n})-1`, r.avgR, '0.00%'), !!S2);
+  mark('v2'); line(t.futRow.v2, (r, i) => xlF(last(col(i, 2)), r.v2, '#,##0'), !!S2); mark('v3'); line(t.futRow.v3, (r, i) => xlF(last(col(i, 4)), r.v3, '#,##0'), !!S3);
+  mark('a2'); line(t.futRow.a2, (r, i) => xlF(`${xlCol(i + 1)}${rowNo.v2}/1000*${A('B')}$17`, r.a2, '#,##0.00'), !!S2);
+  mark('a3'); line(t.futRow.a3, (r, i) => xlF(`IF(${A('B')}$18=0,0,${xlCol(i + 1)}${rowNo.v3}/${A('B')}$18)`, r.a3, '#,##0.00'), !!S3);
+  mark('net'); const netF = `${A('B')}$11*(1+${A('B')}$9/100)^${n}`;
+  const lbF = i => `IF(${yR}>=${FUT.lb1},${A(xlCol(i + 1))}$4,${FUT.lb0[1]}+(${A(xlCol(i + 1))}$4-${FUT.lb0[1]})*MAX(0,${yR}-${FUT.lb0[0]})/(${FUT.lb1}-${FUT.lb0[0]}))`;
+  if (lb) { mark('rrS'); line(t.futRow.rrS, (r, i) => r.rrS == null ? null : xlF(`${A('B')}$19/${A('B')}$11*${lbF(i)}/${FUT.lb0[1]}`, r.rrS, '0.00%'));
+    mark('pen'); line(t.futRow.pen, (r, i) => r.pen == null ? null : xlF(`${xlCol(i + 1)}${rowNo.rrS}*${netF}`, r.pen, '#,##0.00')); }
+  mark('tot'); line(t.futRow.tot, (r, i) => { const c = xlCol(i + 1), parts = [lb && rowNo.pen ? `N(${c}${rowNo.pen})` : null, S2 ? `${c}${rowNo.a2}` : null, S3 ? `${c}${rowNo.a3}` : null].filter(Boolean);
+    return xlF(parts.join('+') || '0', (lb ? r.pen || 0 : 0) + r.a2 + r.a3, '#,##0.00'); });
+  mark('netr'); line(t.futRow.net, r => xlF(netF, r.net, '#,##0.00'));
+  line(t.futRow.rr, (r, i) => r.net ? xlF(`${xlCol(i + 1)}${rowNo.tot}/${xlCol(i + 1)}${rowNo.netr}`, ((lb ? r.pen || 0 : 0) + r.a2 + r.a3) / r.net, '0.00%') : null);
+  const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(res, L ? 'Rezultatas' : 'Result', [{ wch: 46 }, { wch: 15 }, { wch: 15 }, { wch: 15 }]); add(pa, SA, [{ wch: 46 }, { wch: 14 }, { wch: 14 }, { wch: 14 }]); add(ys, SY, [{ wch: 8 }, { wch: 7 }, { wch: 14 }, ...Array(15).fill({ wch: 12 })]);
+  add([[L ? 'Metodika' : 'Methodology'], ...t.futAssL(R[1].c2 != null ? pc(R[1].c2, 2) : '–', R[1].c3 != null ? pc(R[1].c3, 2) : '', R[1].rr0 != null ? pc(R[1].rr0) : '–').map((x, i) => [i ? '' : (L ? 'Prielaidos' : 'Assumptions'), x.replace(/<[^>]+>/g, '')]),
+    [L ? 'Kiekvienais metais' : 'Every year', L ? 'turtas = ankstesnis × (1 + reali grąža) + įmokos × (1 + reali grąža ÷ 2) (įmokos vidutiniškai dirba pusę metų); reali grąža = (1 + (akcijų dalis × akcijų grąža + (1 − akcijų dalis) × obligacijų grąža − mokestis) ÷ 100) ÷ (1 + infliacija ÷ 100) − 1.' : 'assets = previous × (1 + real return) + contributions × (1 + real return ÷ 2) (contributions work half a year on average); real return = (1 + (equity share × equity return + (1 − equity share) × bond return − fee) ÷ 100) ÷ (1 + inflation ÷ 100) − 1.'],
+    [L ? 'Vidutinė grąža' : 'Average return', L ? 'Geometrinis vidurkis: EXP(Σ ln(1 + r) ÷ metų sk.) − 1.' : 'Geometric mean: EXP(Σ ln(1 + r) ÷ years) − 1.']], L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
+});
 if (typeof SIM !== 'undefined' && SIM) renderFuture();
