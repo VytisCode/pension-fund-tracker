@@ -1299,9 +1299,9 @@ async function tableBook(tbl) {
   })));
   const widths = Array.from({ length: nC }, (_, i) => Math.min(48, Math.max(10, ...rows.map(r => (r.row[i] ? r.row[i].t.length : 0) + 2))));
   const nHead = rows.filter(r => r.head).length;
-  XL.sheet(wb, L ? 'Rezultatas' : 'Result', res, { cols: widths, freeze: { r: top + nHead, c: 1 } });
   let rich = null;
-  if (tbl.id && XLB.has(tbl.id)) { try { rich = await XLB.get(tbl.id)(); } catch (e) { rich = null; } }
+  if (tbl.id && XLB.has(tbl.id)) { try { rich = await XLB.get(tbl.id)(); } catch (e) { console.warn(e); rich = null; } }
+  if (!(rich && rich.own)) XL.sheet(wb, L ? 'Rezultatas' : 'Result', res, { cols: widths, freeze: { r: top + nHead, c: 1 } });   // own – builderis pateikia savo „Rezultatas“ lapą su formulėmis
   if (rich) {                               // builderio metodikos lapas sujungiamas su bendru „Metodika“ lapu
     const mi = rich.sheets.findIndex(s => /^(Metodika|Methodology)/i.test(s.name));
     if (mi >= 0) { rich.meth = (rich.meth || []).concat(rich.sheets[mi].rows.slice(1).map(r => (r || []).map((c, i) => c === null || c === undefined ? null : { v: typeof c === 'object' ? c.v : c, s: i ? 'note' : 'b' }))); rich.sheets.splice(mi, 1); }
@@ -1377,6 +1377,22 @@ function tablePng(tbl) {                    // lentelė → PNG: kopija su įter
   });
 }
 let TBL_N = 0;
+function richXls(tbl) {                   // artimiausias puslapio „⤓ Excel“ mygtukas (button.xls), priklausantis tai pačiai daliai
+  for (let n = tbl; n && n !== document.body; n = n.parentElement) {
+    if (n !== tbl && n.querySelectorAll && n.querySelectorAll('table').length > 1 && !n.matches('[data-tab]')) { const own = [...n.querySelectorAll('button.xls')].filter(x => !x.closest('table')); if (own.length === 1 && n.querySelectorAll('table').length <= 2) return own[0]; }
+    for (let p = n.previousElementSibling; p; p = p.previousElementSibling) {
+      if (p.matches('table') || (p.querySelector && p.querySelector('table'))) break;
+      const b = p.matches('button.xls') ? p : p.querySelector && p.querySelector('button.xls'); if (b) return b;
+      if (/^H[12]$/.test(p.tagName)) break;
+    }
+    for (let p = n.nextElementSibling; p; p = p.nextElementSibling) {   // mygtukas iškart po lentele (pvz. „⤓ Excel su formulėmis“)
+      if (p.matches('table') || (p.querySelector && p.querySelector('table')) || /^H[123]$/.test(p.tagName)) break;
+      const b = p.matches('button.xls') ? p : p.querySelector && p.querySelector('button.xls'); if (b) return b;
+    }
+    if (n.matches && n.matches('[data-tab], section.sec')) break;
+  }
+  return null;
+}
 function tableTools() {
   document.querySelectorAll('main table, .wrap table').forEach(tbl => {
     if (tbl._tt || tbl.hidden || tbl.closest('.ntc, .ttools, header, .fresh') || tbl.rows.length < 2) return;
@@ -1390,7 +1406,12 @@ function tableTools() {
       const b = e.target.closest('button'); if (!b) return; e.stopPropagation();
       const flash = ok => { const o = b.textContent; b.textContent = ok ? '✓' : '!'; b.title = ok ? T().tDone : T().tFail; setTimeout(() => { b.textContent = o; b.title = T()[{ img: 'tCpImg', tbl: 'tCpTbl', xl: 'tXl' }[b.dataset.a]]; }, 1500); };
       try {
-        if (b.dataset.a === 'xl') { b.disabled = true; await tableBook(tbl); b.disabled = false; return; }
+        if (b.dataset.a === 'xl') {
+          /* jei lentelė turi savo išsamų Excel (su formulėmis, žingsniais ir šaltiniais) – naudojamas jis (savininkas 2026-10-16:
+             „Excel failai nerodo jokių skaičiavimų“ – bendras mygtukas eksportuodavo tik rodomas reikšmes) */
+          const rich = !(tbl.id && XLB.has(tbl.id)) && richXls(tbl);
+          if (rich) { rich.click(); return; }
+          b.disabled = true; await tableBook(tbl); b.disabled = false; return; }
         if (b.dataset.a === 'tbl') return flash(await tableCopy(tbl));
         const blob = await tablePng(tbl);
         try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); flash(true); }
@@ -1554,6 +1575,54 @@ function goTo() {
   setTimeout(go, 400);
 }
 addEventListener('hashchange', goTo);
+
+/* Excel pagalbininkai: stulpelio raidė (0 → A), data (dienos nuo 1970 → Excel), formulė su apskaičiuota reikšme */
+const xlCol = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
+const xlDate = d => ({ t: 'n', v: d + 25569, z: 'yyyy-mm-dd' });
+const xlF = (f, v, z) => ({ t: 'n', f, v: v == null || !isFinite(v) ? 0 : v, z });
+/* ---------- Excel skaičiavimai auditui: kiekvienas lentelės langelis = pabaigos vieneto vertė ÷ pradžios vieneto vertė − 1 ----------
+   o.rows: [{ label, cells: [{ f, name, ia, ie, years?, note? } | null], extra?: [reikšmės] }]; o.cols – stulpelių pavadinimai.
+   Lapai: „Rezultatas“ (formulės į „Skaičiavimai“), „Skaičiavimai“ (vienas langelis – viena eilutė), „Vertės“ (valdytojų vieneto vertės), „Metodika“. */
+function pairBook(o) {
+  const L = lang === 'lt', SC = L ? 'Skaičiavimai' : 'Calculations', SV = L ? 'Vertės' : 'Values', q = s => `'${s}'`;
+  const fl = [], names = [], fi = (f, n) => { let i = fl.indexOf(f); if (i < 0) { fl.push(f); names.push(n); i = fl.length - 1; } return i; };
+  const hdr = L ? ['Eilutė', 'Stulpelis', 'Fondas / indeksas', 'Pradžios vertės data', 'Pradžios vieneto vertė', 'Pabaigos vertės data', 'Pabaigos vieneto vertė', 'Grąža', 'Metai', 'Metinė grąža', 'Pastaba']
+    : ['Row', 'Column', 'Fund / index', 'Start value date', 'Start unit value', 'End value date', 'End unit value', 'Return', 'Years', 'Annualized return', 'Note'];
+  const step = L ? ['', '', '', 'Paskutinė vertė laikotarpio pradžios dieną ar prieš ją', '= vertė iš lapo „Vertės“ tą dieną', 'Paskutinė vertė iki laikotarpio pabaigos', '= vertė iš lapo „Vertės“ tą dieną', '= G ÷ E − 1', 'Tik metinei grąžai', '= (1 + H) ^ (1 ÷ I) − 1', '']
+    : ['', '', '', 'Last value on or before the period start', '= value from sheet “Values” on that day', 'Last value up to the period end', '= value from sheet “Values” on that day', '= G ÷ E − 1', 'Annualized only', '= (1 + H) ^ (1 ÷ I) − 1', ''];
+  const calc = [hdr, step.map(x => x ? { v: x, s: 'step' } : null)];
+  const cellRef = o.rows.map(r => r.cells.map(c => {
+    if (!c || c.ia < 0 || c.ie <= c.ia) return null;
+    const k = fi(c.f, c.name), r_ = calc.length + 1, vc = xlCol(k + 1), V = q(SV);
+    const look = (dc, val) => ({ t: 'n', f: `INDEX(${V}!${vc}:${vc},MATCH(${dc}${r_},${V}!$A:$A,0))`, v: val, z: '0.0000' });
+    const ret = c.f.v[c.ie] / c.f.v[c.ia] - 1;
+    calc.push([r.label, c.col, c.name, xlDate(c.f.d[c.ia]), look('D', c.f.v[c.ia]), xlDate(c.f.d[c.ie]), look('F', c.f.v[c.ie]), xlF(`G${r_}/E${r_}-1`, ret, '0.00%'),
+      c.years ? { t: 'n', v: c.years, z: '0' } : null, c.years ? xlF(`(1+H${r_})^(1/I${r_})-1`, Math.pow(1 + ret, 1 / c.years) - 1, '0.00%') : null, c.note || null]);
+    return { ref: `${q(SC)}!${c.years ? 'J' : 'H'}${r_}`, v: c.years ? Math.pow(1 + ret, 1 / c.years) - 1 : ret };
+  }));
+  /* Vertės: visos dienos tarp naudojamų datų; jei per daug (> 150 tūkst. langelių) – tik skaičiavimuose naudotos datos */
+  const lo = fl.map(() => Infinity), hi = fl.map(() => -Infinity);
+  calc.slice(2).forEach(r => { const k = names.indexOf(r[2]); lo[k] = Math.min(lo[k], r[3].v - 25569); hi[k] = Math.max(hi[k], r[5].v - 25569); });
+  let days = [...new Set(fl.flatMap((f, k) => f.d.filter(d => d >= lo[k] && d <= hi[k])))].sort((a, b) => a - b), full = true;
+  if (days.length * fl.length > 150000) { full = false; days = [...new Set(calc.slice(2).flatMap(r => [r[3].v - 25569, r[5].v - 25569]))].sort((a, b) => a - b); }
+  const maps = fl.map(f => new Map(f.d.map((d, i) => [d, f.v[i]])));
+  const vals = [[L ? 'Data' : 'Date', ...names], ...days.map(d => [xlDate(d), ...maps.map(m => m.has(d) ? m.get(d) : null)])];
+  /* Rezultatas – ta pati lentelė kaip svetainėje, langeliai – formulės */
+  const res = [[o.title], [o.cap || ''], [o.rowHdr || (L ? 'Fondas' : 'Fund'), ...o.cols, ...(o.extraCols || [])]];
+  o.rows.forEach((r, i) => res.push([r.label, ...cellRef[i].map(x => x ? xlF(x.ref, x.v, '0.00%') : null), ...(r.extra || []).map(v => v == null ? null : typeof v === 'function' ? v(res.length + 1, xlCol(1), xlCol(o.cols.length)) : typeof v === 'object' ? v : { t: 'n', v: v / 100, z: '0.00%' })]));
+  const meth = [[L ? 'Metodika ir šaltiniai' : 'Methodology and sources'],
+    [L ? 'Kaip patikrinti' : 'How to check', L ? `Kiekvienas lentelės langelis „Rezultatas“ lape – formulė, nurodanti eilutę lape „${SC}“. Ten pradžios ir pabaigos vieneto vertės paimamos iš lapo „${SV}“ (INDEX/MATCH pagal datą), grąža = pabaigos vertė ÷ pradžios vertė − 1. Vieneto vertes galima palyginti su valdytojų svetainėse skelbiamomis.`
+      : `Every cell of the “Result” sheet is a formula pointing to a row in “${SC}”. There, start and end unit values are taken from “${SV}” (INDEX/MATCH by date); return = end value ÷ start value − 1. Unit values can be compared with those published by the managers.`],
+    [L ? 'Vertės' : 'Values', full ? (L ? 'Visos dienos vieneto vertės skaičiuojamu laikotarpiu.' : 'All daily unit values in the calculated period.') : (L ? 'Dėl failo dydžio – tik skaičiavimuose naudotų datų vertės (visos dienos – svetainėje, „Fondų palyginimas“).' : 'Due to file size – only the values on the dates used (daily values – on the site).')],
+    [L ? 'Mokesčiai' : 'Fees', L ? 'Vieneto vertės jau po valdymo mokesčio – mokesčiai antrą kartą neatimami.' : 'Unit values are net of the management fee – fees are not deducted again.'],
+    ...(o.meth || [])];
+  const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(res, L ? 'Rezultatas' : 'Result', [{ wch: 30 }, ...Array(o.cols.length + (o.extraCols || []).length).fill({ wch: 11 })]);
+  add(calc, SC, [{ wch: 26 }, { wch: 12 }, { wch: 32 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 11 }, { wch: 7 }, { wch: 12 }, { wch: 30 }]);
+  add(vals, SV, [{ wch: 11 }, ...names.map(() => ({ wch: 16 }))]);
+  add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
+}
 
 /* ---------- Excel failų kūrimas be išorinių bibliotekų (savininko užduotis 2026-10-16) ----------
    Mažas .xlsx rašytuvas: keli lapai, formulės (Excel jas perskaičiuoja atidarius), skaičių formatai, spalvos, stulpelių

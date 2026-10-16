@@ -304,7 +304,7 @@ function calendarReturns(f, endDay) {
     const ie = lastOnOrBefore(f, yEnd);
     let ia = lastOnOrBefore(f, Math.round(Date.UTC(y - 1, 11, 31) / DAY)), partial = false;
     if (ia < 0) { ia = 0; partial = f.d[0] > Math.round(Date.UTC(y, 0, 7) / DAY); }
-    if (ie > ia) out[y] = { ret: (f.v[ie] / f.v[ia] - 1) * 100, partial };
+    if (ie > ia) out[y] = { ret: (f.v[ie] / f.v[ia] - 1) * 100, partial, ia, ie };
   }
   return out;
 }
@@ -326,13 +326,13 @@ function rolling(f, endDay) {
   return out;
 }
 const monthEnd = (y, m) => Math.round(Date.UTC(y, m + 1, 0) / DAY);
-function monthlyReturns(f, endDay) {          // {metai: {mėn. 0-11: grąža %}}
+function monthlyReturns(f, endDay, idx) {          // {metai: {mėn. 0-11: grąža %}}; idx – [pradžios, pabaigos indeksai] Excel skaičiavimams
   const out = {}, d0 = new Date(f.d[0] * DAY), dE = new Date(endDay * DAY);
   let y = d0.getUTCFullYear(), m = d0.getUTCMonth(), prev = -1;
   while (y < dE.getUTCFullYear() || (y === dE.getUTCFullYear() && m <= dE.getUTCMonth())) {
     const me = Math.min(monthEnd(y, m), endDay), ie = lastOnOrBefore(f, me);
     const base = prev >= 0 ? prev : 0;
-    if (ie > base) { (out[y] = out[y] || {})[m] = (f.v[ie] / f.v[base] - 1) * 100; }
+    if (ie > base) { (out[y] = out[y] || {})[m] = idx ? [base, ie] : (f.v[ie] / f.v[base] - 1) * 100; }
     if (ie >= 0) prev = ie;
     m++; if (m > 11) { m = 0; y++; }
   }
@@ -672,6 +672,7 @@ function renderCoverage(gs, ALL) {
   c.innerHTML = lines.length ? `<b>${T().covTitle}</b>${ik('coverage')}` + lines.map(l => `<div>${l}</div>`).join('') : '';
 }
 let lastParts = [];
+const XS = {};          // paskutinės atvaizduotų lentelių būsenos – Excel skaičiavimų failams
 // heatmap lentelėse – trumpas pavadinimas, kad neužliptų ant langelių (auditas #18)
 const groupShort = g => g.id === 'turto' ? (lang === 'lt' ? 'Turto išsaug.' : 'Preservation') : groupLabel(g);   // be neaiškios santrumpos „TIF“
 const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
@@ -723,6 +724,7 @@ function renderFunds() {
     + calP.map(({ pt, cal }) => cal.map((x, i) => tr(i === 0, `${nm(x.s)}${years.map(y => { const c = x.c[y]; if (!c) return '<td class="na">–</td>'; const best = Math.max(...cal.map(z => z.c[y] ? z.c[y].ret : -1e9)); return `<td class="${c.ret === best ? 'best' : ''}">${pct(c.ret, 1)}${c.partial ? '*' : ''}</td>`; }).join('')}`)).join('')
       + idxOf(pt).map(f => { const c = calendarReturns(idxSince(f, grpStart(pt.g)), pt.rng.end); return `<tr class="idxrow">${idxName(f)}${years.map(y => c[y] ? `<td>${pct(c[y].ret, 1)}</td>` : '<td class="na">–</td>').join('')}</tr>`; }).join('')).join('') + '</tbody>';
 
+  XS.cal = { years, lastYear, calP, ALL };
   { const y = lastYear - 1, cs = !ALL ? calP[0].cal.filter(x => x.c[y] && !x.c[y].partial).sort((p, q) => q.c[y].ret - p.c[y].ret) : [];
     setConcl('hCal', cs.length > 1 ? T().cCal(y, labelOf(cs[0].s.f.provider), pct(cs[0].c[y].ret), labelOf(cs[cs.length - 1].s.f.provider), pct(cs[cs.length - 1].c[y].ret)) : ''); }
   setCap('tRoll', T().capRoll(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end)));
@@ -734,6 +736,7 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1)}</td><td>${pct(x.r.r1.min, 1)}</td><td>${pct(x.r.r1.max, 1)}</td><td>${num(x.r.r1.pos, 2)}${pctSfx()}</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
+  XS.roll = { parts, ALL };
   renderMonthsTable(parts, ALL, nm, tr); renderYM();
   renderRiskMap(); renderDrawdown();          // „Grąža palyginti su grupės vidurkiu“ pašalinta (savininkas 2026-10-16: dubliuoja palyginimą su konkurentais)
   if (IS3) renderRanksByPeriod(gs, ALL); else [$('hQP'), $('c_tQP'), $('tQP') && $('tQP').closest('.card')].forEach(e => { if (e) e.hidden = true; });   // II pakopa – „Bendrame reitinge“
@@ -818,6 +821,7 @@ function renderMonthsTable(parts, ALL, nm, tr) {
   sel.onchange = () => { MON_Y = +sel.value; renderMonthsTable(parts, ALL, nm, tr); };
   $('hMon').textContent = T().monH;
   const Y = MON_Y, lastM = Y === lastY ? new Date(endAll * DAY).getUTCMonth() : 11, ms = Array.from({ length: 12 }, (_, m) => m);
+  XS.mon = { Y, lastM, lastY, parts, ALL };
   setCap('tMon', T().capMon(Y, Y === lastY ? iso(endAll) : ''));
   const heat = v => v == null ? '' : ` style="background:${heatColor(v * 1.2)}"`;
   $('tMon').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${ms.map(m => `<th>${T().monShort[m]}</th>`).join('')}<th>${Y === lastY ? T().ytd : T().thYear}</th></tr></thead><tbody>`
@@ -839,6 +843,7 @@ function renderHeatmap(g, ALL) {
   if (!provs.some(p => p.id === P.hmProv)) P.hmProv = (provs.find(p => P.provs.has(p.id)) || provs[0]).id;
   sel.innerHTML = provs.map(p => `<option value="${p.id}">${p.label}</option>`).join(''); sel.value = P.hmProv;
   const f = g.funds.find(x => x.provider === P.hmProv), end = groupEnd(g).end;
+  XS.hm = { f, g, end: Math.min(end, f.d[f.d.length - 1]) };
   setCap('tHm', T().capHm(labelOf(P.hmProv), iso(f.d[0]), iso(Math.min(end, f.d[f.d.length - 1]))));
   const mr = monthlyReturns(f, Math.min(end, f.d[f.d.length - 1])), cal = calendarReturns(f, Math.min(end, f.d[f.d.length - 1]));
   const years = Object.keys(mr).map(Number).sort((a, b) => b - a), lastY = new Date(end * DAY).getUTCFullYear();
@@ -955,9 +960,6 @@ async function exportXlsx() {
 }
 /* „Visa rinka“ Excel su tikromis formulėmis (auditas #53): pradiniai duomenys → skaičiavimai → 4 lentelės → metodika.
    Kiekvieną skaičių galima patikrinti: vertės ir datos – iš valdytojų, visa kita – Excel formulės. */
-const xlCol = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
-const xlDate = d => ({ t: 'n', v: d + 25569, z: 'yyyy-mm-dd' });
-const xlF = (f, v, z) => ({ t: 'n', f, v: v == null || !isFinite(v) ? 0 : v, z });
 function marketBook() {
   const L = lang === 'lt', provs = marketProvs(), ref = provs.some(p => p.id === P.mref) ? P.mref : '';
   const peers = provs.filter(p => p.id !== ref), groups = DATA.groups;
@@ -1163,6 +1165,40 @@ async function exportMetricsXlsx() {
   catch (e) { alert(T().xlsxFail); }
   btn.disabled = false;
 }
+const rowName = (s, g, ALL) => `${labelOf(s.f.provider)}${ALL ? ' · ' + groupLabel(g) : ''}`;
+const fundName = (f, g) => `${groupLabel(g)} · ${labelOf(f.provider)}`;
+const idxRows = (pt, ALL, cellsOf) => idxOf(pt).map(f => { const fs = idxSince(f, grpStart(pt.g)); return { label: f.label + (ALL ? ' · ' + groupLabel(pt.g) : ''), cells: cellsOf(fs, `${f.label} (${groupLabel(pt.g)})`) }; });
+XLB.set('tCal', async () => {
+  const X = XS.cal, L = lang === 'lt'; if (!X) return null;
+  const pc = (f, name, end) => { const c = calendarReturns(f, end); return X.years.map(y => c[y] ? { f, name, ia: c[y].ia, ie: c[y].ie, col: String(y), note: c[y].partial ? (L ? 'Nepilni metai – nuo fondo pradžios' : 'Partial year – since fund start') : (y === X.lastYear ? (L ? 'Metai iki šiol' : 'Year to date') : '') } : null); };
+  const rows = X.calP.flatMap(({ pt, cal }) => [...cal.map(x => ({ label: rowName(x.s, pt.g, X.ALL), cells: pc(x.s.f, fundName(x.s.f, pt.g), pt.rng.end) })), ...idxRows(pt, X.ALL, (fs, n) => pc(fs, n, pt.rng.end))]);
+  return pairBook({ title: L ? 'Kalendorinių metų grąža' : 'Calendar-year returns', cap: $('c_tCal') ? $('c_tCal').textContent : '', cols: X.years.map(y => y === X.lastYear ? (L ? `${y} (iki šiol)` : `${y} (YTD)`) : String(y)), rows,
+    meth: [[L ? 'Metų grąža' : 'Year return', L ? 'Pradžia – paskutinė praėjusių metų gruodžio 31 d. ar ankstesnė vertė; pabaiga – paskutinė metų (einamiesiems – grupės paskutinės dienos) vertė.' : 'Start – last value on or before 31 Dec of the previous year; end – last value of the year (current year – the group’s latest day).']] });
+});
+XLB.set('tMon', async () => {
+  const X = XS.mon, L = lang === 'lt'; if (!X) return null;
+  const mn = T().monShort, row = (f, name, end) => { const mi = (monthlyReturns(f, end, true)[X.Y]) || {}, c = calendarReturns(f, end)[X.Y];
+    return [...Array.from({ length: 12 }, (_, m) => m > X.lastM || !mi[m] ? null : { f, name, ia: mi[m][0], ie: mi[m][1], col: mn[m] }), c && !c.partial ? { f, name, ia: c.ia, ie: c.ie, col: String(X.Y) } : null]; };
+  const rows = X.parts.flatMap(pt => pt.all.map(s => ({ label: rowName(s, pt.g, X.ALL), cells: row(s.f, fundName(s.f, pt.g), groupEnd(pt.g).end) })));
+  return pairBook({ title: (L ? 'Mėnesių grąža, ' : 'Monthly returns, ') + X.Y, cap: $('c_tMon') ? $('c_tMon').textContent : '', cols: [...mn, X.Y === X.lastY ? (L ? 'Iki šiol' : 'YTD') : (L ? 'Metai' : 'Year')], rows,
+    meth: [[L ? 'Mėnesio grąža' : 'Month return', L ? 'Pradžia – paskutinė ankstesnio mėnesio vertė; pabaiga – paskutinė mėnesio vertė.' : 'Start – last value of the previous month; end – last value of the month.']] });
+});
+XLB.set('tHm', async () => {
+  const X = XS.hm, L = lang === 'lt'; if (!X) return null;
+  const mi = monthlyReturns(X.f, X.end, true), cal = calendarReturns(X.f, X.end), name = fundName(X.f, X.g), mn = T().monShort;
+  const rows = Object.keys(mi).map(Number).sort((a, b) => b - a).map(y => ({ label: String(y), cells: [...Array.from({ length: 12 }, (_, m) => mi[y][m] ? { f: X.f, name, ia: mi[y][m][0], ie: mi[y][m][1], col: mn[m] } : null), cal[y] ? { f: X.f, name, ia: cal[y].ia, ie: cal[y].ie, col: L ? 'Metai' : 'Year', note: cal[y].partial ? (L ? 'Nepilni metai' : 'Partial year') : '' } : null] }));
+  return pairBook({ title: (L ? 'Mėnesių grąža: ' : 'Monthly returns: ') + name, cap: $('c_tHm') ? $('c_tHm').textContent : '', rowHdr: L ? 'Metai' : 'Year', cols: [...mn, L ? 'Metai' : 'Year'], rows });
+});
+XLB.set('tRoll', async () => {
+  const X = XS.roll, L = lang === 'lt'; if (!X) return null;
+  const H = [1, 3, 6, 12, 36, 60], lab = [T().thRet1m, T().thRet3m, T().thRet6m, T().thRet1y, T().thRet3y, T().thRet5y];
+  const rows = X.parts.flatMap(pt => pt.all.map(s => { const end = groupEnd(pt.g).end, f = s.f, ie = lastOnOrBefore(f, end), r = rolling(f, end), name = fundName(f, pt.g);
+    return { label: rowName(s, pt.g, X.ALL), cells: H.map((h, k) => { const st = shiftMonths(end, h), ia = lastOnOrBefore(f, st); return ia < 0 || f.d[0] > st || ie <= ia ? null : { f, name, ia, ie, col: lab[k], years: h > 12 ? h / 12 : null }; }),
+      extra: r.r1 ? [r.r1.avg, r.r1.min, r.r1.max, r.r1.pos] : [] }; }));
+  return pairBook({ title: L ? 'Grąža per paskutinius laikotarpius' : 'Trailing returns', cap: $('c_tRoll') ? $('c_tRoll').textContent : '', cols: lab, extraCols: [T().thR1avg, T().thR1min, T().thR1max, T().thR1pos], rows,
+    meth: [[L ? 'Laikotarpiai' : 'Periods', L ? 'Pradžia – paskutinė vertė prieš N mėnesių nuo grupės paskutinės dienos; 3 ir 5 metų – metinė grąža.' : 'Start – last value N months before the group’s latest day; 3 and 5 years – annualized.'],
+      [L ? '12 mėn. langai' : '12-month windows', L ? 'Paskutiniai 4 stulpeliai: visų slenkančių 12 mėn. laikotarpių (kiekvieną dieną) grąžos vidurkis, mažiausia, didžiausia ir teigiamų dalis – reikšmės, ne formulės (tūkstančiai langų).' : 'Last 4 columns: average, min, max and share positive of all rolling 12-month windows (daily) – values, not formulas (thousands of windows).']] });
+});
 ['tRet', 'tRelM', 'tRank', 'tAnnM'].forEach(id => XLB.set(id, async () => ({ sheets: XLSX_SHIM.toXL(marketBook()) })));
 async function exportMarketXlsx() {
   const btn = $('btnMxl'); btn.disabled = true;

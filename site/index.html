@@ -188,6 +188,24 @@ function render() {
 }
 document.getElementById('per').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; PER = b.dataset.k; try { localStorage.setItem('homePer', PER); } catch (x) {} render(); });
 document.getElementById('ref').addEventListener('change', e => { REF = e.target.value; saveRef(); render(); });
+/* Excel su skaičiavimais (auditui): visų fondų grąža grupėse – formulės; lyderis, paskutinis ir skirtumas – MAX / MIN / INDEX(MATCH) */
+XLB.set('gT', async () => {
+  const L = lang === 'lt', t = T(), c = compute(), provs = PROVS.filter(p => c.groups.some(g => g.out[p] != null)), hdrRow = 3;
+  const rows = [...c.groups].reverse().map(g => {
+    const { end } = groupEnd(g.g), anchor = anchorOf(PER, end), vs = provs.map(p => g.out[p] == null ? null : g.out[p] / 100), ok = vs.filter(v => v != null);
+    const mx = ok.length ? Math.max(...ok) : null, mn = ok.length ? Math.min(...ok) : null, nm = v => v == null ? '' : labelOf(provs[vs.indexOf(v)]);
+    const rng = (r, a, b) => `${a}${r}:${b}${r}`, hd = (a, b) => `$${a}$${hdrRow}:$${b}$${hdrRow}`;
+    return { label: groupLabel(g.g), cells: provs.map(p => { if (g.out[p] == null) return null; const f = g.g.funds.find(x => x.provider === p), s = seriesOf(f, anchor, end);
+        return s ? { f, name: `${groupLabel(g.g)} · ${labelOf(p)}`, ia: s.ia, ie: s.ie, col: labelOf(p) } : null; }),
+      extra: ok.length < 2 ? [] : [(r, a, b) => ({ f: `INDEX(${hd(a, b)},MATCH(MAX(${rng(r, a, b)}),${rng(r, a, b)},0))`, v: nm(mx) }), (r, a, b) => xlF(`MAX(${rng(r, a, b)})`, mx, '0.00%'),
+        (r, a, b) => ({ f: `INDEX(${hd(a, b)},MATCH(MIN(${rng(r, a, b)}),${rng(r, a, b)},0))`, v: nm(mn) }), (r, a, b) => xlF(`MIN(${rng(r, a, b)})`, mn, '0.00%'),
+        (r, a, b) => xlF(`(MAX(${rng(r, a, b)})-MIN(${rng(r, a, b)}))*100`, (mx - mn) * 100, '0.00')] };
+  });
+  return pairBook({ title: t.gH(t.per[PER]), cap: document.getElementById('gM').textContent, rowHdr: t.thG, cols: provs.map(labelOf), rows,
+    extraCols: [t.thLead, L ? 'Lyderio grąža' : 'Leader return', t.thLast, L ? 'Paskutinio grąža' : 'Last return', t.thGap],
+    meth: [[L ? 'Laikotarpis' : 'Period', L ? 'Pradžia – paskutinė vertė prieš laikotarpį (dieną, savaitę, mėnesį, ketvirtį ar metus atgal nuo grupės paskutinės dienos); fondai, neatnaujinę duomenų > 5 d., neįtraukiami.' : 'Start – last value before the period (a day, week, month, quarter or year back from the group’s latest day); funds more than 5 days behind are excluded.'],
+      [L ? 'Lyderis ir paskutinis' : 'Leader and last', L ? 'MAX ir MIN eilutėje; pavadinimas – INDEX(MATCH) iš antraštės; skirtumas – (MAX − MIN) × 100, procentiniais punktais.' : 'MAX and MIN of the row; name – INDEX(MATCH) from the header; gap – (MAX − MIN) × 100, percentage points.']] });
+});
 renderHeader('index', render);
 render();
 </script>
