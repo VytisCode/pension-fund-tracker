@@ -88,7 +88,7 @@ Eiga (žymėti [x]):
 - [x] 5 Fondo kortelė (manager.html#VALD/II:grupė): + kalendoriniai metai su grupe, nuoroda į portfelį (#fund=), grafiko žymos
 - [x] 6 Lyginamojo indekso sekimas fondo kortelėje: SEB ir Goindex (data_rep bm), kitiems – „neskelbia“
 - [x] 7 Rinkos įžvalgos → Rezultatai (kraunama tik priartėjus); journey.html#ins… → performance.html#go=insTitle
-- [ ] 8 Kelias į pensiją: „Kurį fondą rinktis“ kortelė (II pagal gimimo metus, III pagal kategoriją)
+- [x] 8 Kelias į pensiją: „Kurį fondą rinktis?“ (choose.js): balai pagal grąžą, pastovumą, grąžą/svyravimą, kritimus, mokestį; svoriai pagal laiką iki pensijos
 - [ ] 9 Nauji rodikliai (grąža po mokesčių, rizika pakoreguota vieta)
 - [ ] 10 Vaizdai prezentacijoms (pavadinimas, šaltinis, data PNG); Excel auditoriams
 - [ ] 11 LV/EE svetainių idėjos
