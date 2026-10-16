@@ -954,6 +954,8 @@ function renderAdvanced(parts, ALL) {
   setCap('tAdv', T().capAdv(a0 === a1 ? iso(a0) : `${iso(a0)}…${iso(a1)}`, iso(Math.max(...rngs.map(r => r.end)))));
   $('lblRf').textContent = T().rf; $('nAdv').textContent = T().nAdv;
   const rows = parts.flatMap(pt => pt.all.map((s, i) => ({ s, first: i === 0, a: advStats(s.f, pt.rng, P.rf) }))).filter(x => x.a);
+  /* papildomi rodikliai (savininkas 2026-10-16 – nauji palyginimo rodikliai kaip papildomas vaizdas): grąža prieš valdymo mokestį ir grąža / didž. kritimas */
+  rows.forEach(({ s, a }) => { const fee = typeof FEES !== 'undefined' && s.g ? FEES[`${s.f.provider}|${s.g.id}`] : null; a.fee = fee ?? null; a.gross = a.ann != null && fee != null ? a.ann + fee : null; a.calmar = a.ann != null && s.mdd ? a.ann / Math.abs(s.mdd) : null; });
   /* supaprastinta (savininkas 2026-10-16): 6 rodikliai, datos – užvedus pelę; geriausia reikšmė grupėje paryškinta */
   const L = lang === 'lt', mo = x => x ? iso(x.d).slice(0, 7) : '';
   const cols = [
@@ -963,6 +965,8 @@ function renderAdvanced(parts, ALL) {
     { h: T().thWorstM, v: a => a.worstM && a.worstM.v, f: v => fmtP(v, 1), hi: true, t: a => mo(a.worstM) },
     { h: T().thBestM, v: a => a.bestM && a.bestM.v, f: v => fmtP(v, 1), hi: true, t: a => mo(a.bestM) },
     { h: T().thPosM, v: a => a.posM, f: v => num(v, 0) + pctSfx(), hi: true, ik: 'posm' },
+    { h: L ? 'Metinė grąža prieš mokestį' : 'Annualised return before fee', v: a => a.gross, f: v => fmtP(v, 1), hi: true, ik: 'gross' },
+    { h: L ? 'Grąža / didž. kritimas' : 'Return / max fall', v: a => a.calmar, f: v => num(v, 2), hi: true, ik: 'calmar' },
   ];
   const best = new Map();                       // grupė → stulpelis → geriausia reikšmė
   parts.forEach(pt => { const rs = rows.filter(r => pt.all.includes(r.s)); best.set(pt, cols.map(c => { const vs = rs.map(r => c.v(r.a)).filter(v => v != null && isFinite(v)); return vs.length ? (c.hi ? Math.max(...vs) : Math.min(...vs)) : null; })); });
@@ -1409,3 +1413,7 @@ labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
 let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { chartState && drawChart(); renderRiskMap(); renderBars(lastParts); RDD && RDD.paint(); fitSticky(); }, 120); });
+
+/* paaiškinimai naujiems rodikliams */
+Object.assign(I18N.lt.info, { gross: 'Metinė grąža + dabartinis valdymo mokestis (Lietuvos banko sąrašas). Parodo, kaip sekėsi investuoti prieš mokestį – kiek skirtumą tarp fondų lemia mokestis, o kiek investavimas. Apytikslė: mokestis laikomas pastoviu visą laikotarpį.', calmar: 'Metinė grąža ÷ didžiausio kritimo laikotarpyje dydis (Calmar koeficientas). Kuo didesnis, tuo daugiau grąžos gauta už patirtą didžiausią nuosmukį.' });
+Object.assign(I18N.en.info, { gross: 'Annualised return + current management fee (Bank of Lithuania list). Shows investment results before the fee – how much of the gap between funds comes from the fee and how much from investing. Approximate: the fee is assumed constant over the period.', calmar: 'Annualised return ÷ size of the largest fall in the period (Calmar ratio). Higher = more return for the worst drawdown suffered.' });

@@ -89,7 +89,7 @@ Eiga (žymėti [x]):
 - [x] 6 Lyginamojo indekso sekimas fondo kortelėje: SEB ir Goindex (data_rep bm), kitiems – „neskelbia“
 - [x] 7 Rinkos įžvalgos → Rezultatai (kraunama tik priartėjus); journey.html#ins… → performance.html#go=insTitle
 - [x] 8 Kelias į pensiją: „Kurį fondą rinktis?“ (choose.js): balai pagal grąžą, pastovumą, grąžą/svyravimą, kritimus, mokestį; svoriai pagal laiką iki pensijos
-- [ ] 9 Nauji rodikliai (grąža po mokesčių, rizika pakoreguota vieta)
+- [x] 9 Nauji rodikliai „Papildomuose rodikliuose“: metinė grąža prieš mokestį, grąža / didž. kritimas (Calmar); III pakopai mokesčiai iš data_rep
 - [ ] 10 Vaizdai prezentacijoms (pavadinimas, šaltinis, data PNG); Excel auditoriams
 - [ ] 11 LV/EE svetainių idėjos
 - [ ] 12 Duomenys: S&P atsarginis, EONIA, III pakopos kasdienis turtas

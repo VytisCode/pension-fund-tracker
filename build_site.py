@@ -140,6 +140,16 @@ def build_perf3(ver: dict) -> None:
             'f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>')
     t3 = text.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', shim).replace("<title>", "<title>III pakopa · ")
     t3 = t3.replace(f'<script src="perf.js?v={ver["perf.js"]}"></script>', f'<script>p3Colors();</script><script src="perf.js?v={ver["perf.js"]}"></script>')
+    # III pakopos valdymo mokesčiai (iš data_rep.js) – „Papildomiems rodikliams“ (grąža prieš mokestį)
+    try:
+        nrm = lambda x: re.sub(r"\s+", " ", x.replace("–", "-").replace("—", "-")).strip().lower()
+        js3 = (DOCS / "data3.js").read_text(encoding="utf-8"); d3 = json.loads(js3[js3.index("=") + 1:].strip().rstrip(";").split(";\n")[0])
+        jr = (DOCS / "data_rep.js").read_text(encoding="utf-8"); rp = json.loads(jr[jr.index("=") + 1:].strip().rstrip(";").split(";\n")[0])
+        fee = {nrm(f["n"]): f["fee"] for f in rp["funds"] if f.get("pl") == "III" and f.get("fee") is not None}
+        f3 = {f"{fd['provider']}|{g['id']}": fee[nrm(fd['name'])] for g in d3["groups"] for fd in g["funds"] if nrm(fd["name"]) in fee}
+        t3 = t3.replace("<script>p3Colors();</script>", "<script>p3Colors(); if (typeof FEES !== 'undefined') Object.assign(FEES, " + json.dumps(f3) + ");</script>")
+    except Exception as e:
+        print("perf3: III mokesčių nepavyko pridėti:", e)
     assert "data3.js" in t3 and "p3Colors" in t3
     (DOCS / "performance3.html").write_text(t3, encoding="utf-8")
 
