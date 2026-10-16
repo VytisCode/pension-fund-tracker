@@ -122,7 +122,7 @@ addStrings({
   sigNoEm: f => `No emerging markets at all: ${f}.`, sigMost: (what, f, v) => `Most ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `least: ${f} (${v}).`,
   sigTer: (a, av, b, bv) => `Cheapest underlying funds: ${a} (${av}); most expensive: ${b} (${bv}).`, sigGold: f => `Holds gold: ${f}.`, sigNoGold: 'Nobody in the group holds gold.',
   wEq: 'equities', wAlt: 'alternatives', wIdx: 'in index funds', wEm: 'emerging markets', wNa: 'North American equities', wBaltic: 'Baltic equities',
-  pgNote: 'All columns are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. Equities by region: each equity fund counted fully in its region – “Global incl. EM” = world funds that also hold emerging markets (e.g. MSCI ACWI, EM ~10 % inside), “Global developed only” = world funds without EM (e.g. MSCI World), “Emerging markets” = funds investing only in EM + directly held EM shares. Colour intensity = relative to the highest value in the column. Bonds’ YTM and duration: directly held bonds only (see the note under the fund portfolio). Click a fund to open its portfolio below.',
+  pgNote: 'Bold – the highest value in the row (funds’ TER – the lowest); the bar shows size relative to the largest; click a fund name to open its portfolio. Values are % of the fund’s portfolio at the end of the quarter. Equities = directly held shares + equity funds; bonds = direct bonds + bond funds; cash includes money market funds. Equities by region: each equity fund counted fully in its region – “Global incl. EM” = world funds that also hold emerging markets (e.g. MSCI ACWI, EM ~10 % inside), “Global developed only” = world funds without EM (e.g. MSCI World), “Emerging markets” = funds investing only in EM + directly held EM shares. Colour intensity = relative to the highest value in the column. Bonds’ YTM and duration: directly held bonds only (see the note under the fund portfolio). Click a fund to open its portfolio below.',
   pgIII: 'III pillar (all funds)',
   ytm: 'YTM', dur: 'duration', cpn: 'coupon', frn: 'floating rate', matL: 'maturity',
   lkBond: b => `Directly held bonds (${b} of the portfolio)`, lkYtm: 'Yield to maturity (YTM)', lkDur: 'Modified duration', lkYrs: 'Average maturity', yrs: 'yrs',
@@ -146,7 +146,7 @@ addStrings({
   sigNoEm: f => `Besivystančių rinkų visai neturi: ${f}.`, sigMost: (what, f, v) => `Daugiausia ${what}: ${f} (${v})`, sigLeast: (what, f, v) => `mažiausiai: ${f} (${v}).`,
   sigTer: (a, av, b, bv) => `Pigiausi fondai portfelyje: ${a} (${av}); brangiausi: ${b} (${bv}).`, sigGold: f => `Turi aukso: ${f}.`, sigNoGold: 'Aukso grupėje neturi niekas.',
   wEq: 'akcijų', wAlt: 'alternatyvų', wIdx: 'indeksinių fondų', wEm: 'besivystančių rinkų', wNa: 'Šiaurės Amerikos akcijų', wBaltic: 'Baltijos akcijų',
-  pgNote: 'Visi stulpeliai – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. Akcijos pagal regioną: kiekvienas akcijų fondas visa verte priskiriamas savo regionui – „Pasaulis su EM“ = pasaulio fondai, kuriuose yra ir besivystančių rinkų (pvz. MSCI ACWI, EM viduje ~10 %), „Pasaulis be EM“ = pasaulio fondai be EM (pvz. MSCI World), „Besivystančios rinkos“ = fondai, investuojantys tik į EM, + tiesiogiai turimos EM akcijos. Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Obligacijų YTM ir trukmė – tik tiesiogiai turimų obligacijų (žr. paaiškinimą po fondo portfeliu). Paspaudus fondą atidaromas jo portfelis žemiau.',
+  pgNote: 'Paryškinta – didžiausia reikšmė eilutėje (fondų TER – mažiausia), juostelė – dydis palyginti su didžiausiu; paspaudus fondo pavadinimą atsiveria jo portfelis. Reikšmės – % fondo portfelio ketvirčio pabaigoje. Akcijos = tiesiogiai turimos akcijos + akcijų fondai; obligacijos = tiesioginės obligacijos + obligacijų fondai; pinigai apima pinigų rinkos fondus. Akcijos pagal regioną: kiekvienas akcijų fondas visa verte priskiriamas savo regionui – „Pasaulis su EM“ = pasaulio fondai, kuriuose yra ir besivystančių rinkų (pvz. MSCI ACWI, EM viduje ~10 %), „Pasaulis be EM“ = pasaulio fondai be EM (pvz. MSCI World), „Besivystančios rinkos“ = fondai, investuojantys tik į EM, + tiesiogiai turimos EM akcijos. Spalvos intensyvumas – lyginant su didžiausia stulpelio reikšme. Obligacijų YTM ir trukmė – tik tiesiogiai turimų obligacijų (žr. paaiškinimą po fondo portfeliu). Paspaudus fondą atidaromas jo portfelis žemiau.',
   pgIII: 'III pakopa (visi fondai)',
   ytm: 'YTM', dur: 'trukmė', cpn: 'kuponas', frn: 'kintamos palūkanos', matL: 'išpirkimas',
   lkBond: b => `Tiesiogiai turimos obligacijos (${b} portfelio)`, lkYtm: 'Pajamingumas iki išpirkimo (YTM)', lkDur: 'Modifikuota trukmė', lkYrs: 'Vidutinis likęs terminas', yrs: 'm.',
@@ -582,19 +582,49 @@ function renderPeers() {
     .sort((a, b) => a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
   const rows = funds.map(f => peerRow(f, qi));
   const cols = PG_COLS.concat(PG_REG.filter(k => rows.some(r => r['r_' + k] > 0.05)).map(k => ['r_' + k, null, k]));
-  const maxOf = k => Math.max(...rows.map(r => r[k] || 0));
-  const mx = Object.fromEntries(cols.map(([k]) => [k, maxOf(k)]));
-  const colr = k => k === 'ytm' || k === 'md' ? 'var(--s2)' : k === 'ter' ? 'var(--s6)' : k === 'gold' ? '#c9a227' : k === 'em' || k === 'r_em' ? '#d0453f' : k.startsWith('r_') ? REG_COL[k.slice(2)] : 'var(--s1)';
-  const cell = (r, k) => { const v = r[k]; if (v == null || (!v && (k === 'ytm' || k === 'md'))) return '<td>–</td>';   // nulinė dalis rodoma kaip 0, ne „–“ (auditas #49)
-    return `<td style="background:color-mix(in srgb, ${colr(k)} ${Math.round(v / (mx[k] || 1) * 45)}%, transparent)">${k === 'ter' || k === 'ytm' ? num(v, 2) + pctSfx() : num(v, 2)}</td>`; };
-  const nm = r => `${r.f.p}${ST.pg === 'III' ? ' ' + fundName(r.f).replace(r.f.p, '').trim() : ''}`;
+  /* Perdaryta (savininkas 2026-10-16: „sudėtinga skaityti“): rodikliai – eilutėmis su piktograma ir aiškiu pavadinimu,
+     fondai – stulpeliais; rodikliai sugrupuoti (struktūra, investavimo būdas ir kaina, obligacijos, akcijų regionai);
+     kiekviename langelyje – juostelė pagal dydį eilutėje, didžiausia reikšmė paryškinta, nulis – blyškiai. */
+  const L = lang === 'lt';
+  const ICO = {
+    eq: '<path d="M3 17l5-5 4 3 8-8"/><path d="M14 7h6v6"/>', bd: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+    alt: '<path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/>', cash: '<circle cx="9" cy="9" r="5"/><circle cx="15" cy="15" r="5"/>',
+    idx: '<path d="M4 6h16M4 12h16M4 18h10"/>', ter: '<path d="M20 12l-8 8-8-8V4h8z"/><circle cx="8" cy="8" r="1.5"/>',
+    gold: '<path d="M3 18l3-7h12l3 7z"/><path d="M8 11l2-5h4l2 5"/>', sfdr: '<path d="M5 19c8 0 14-6 14-14C11 5 5 11 5 19z"/><path d="M5 19l7-7"/>',
+    ytm: '<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>', md: '<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>',
+    reg: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>' };
+  const ico = k => `<svg class="pgi" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k.startsWith('r_') ? 'reg' : k] || ICO.reg}</svg>`;
+  const DESC = L ? { eq: 'Tiesiogiai turimos akcijos + akcijų fondai', bd: 'Tiesioginės obligacijos + obligacijų fondai', alt: 'Privatus kapitalas, nekilnojamas turtas, infrastruktūra, privati skola', cash: 'Pinigai, indėliai ir pinigų rinkos fondai',
+      idx: 'Dalis portfelio indeksiniuose fonduose (pasyvus investavimas)', ter: 'Portfelyje esančių fondų einamieji mokesčiai (be pensijų fondo valdymo mokesčio)', gold: 'Aukso fondai ir ETF', sfdr: 'Fondai, atitinkantys ES tvarumo 8 ar 9 straipsnį',
+      ytm: 'Obligacijų pajamingumas iki išpirkimo, svertinis', md: 'Obligacijų modifikuota trukmė (jautrumas palūkanoms), metai' }
+    : { eq: 'Directly held shares + equity funds', bd: 'Direct bonds + bond funds', alt: 'Private equity, real estate, infrastructure, private debt', cash: 'Cash, deposits and money-market funds',
+      idx: 'Share of the portfolio in index funds (passive)', ter: 'Ongoing charges of the funds held (excl. the pension fund fee)', gold: 'Gold funds and ETFs', sfdr: 'Funds under EU SFDR article 8 or 9',
+      ytm: 'Bond yield to maturity, weighted', md: 'Bond modified duration (rate sensitivity), years' };
+  const SECT = [[L ? 'Turto struktūra, % portfelio' : 'Asset mix, % of portfolio', ['eq', 'bd', 'alt', 'cash']],
+    [L ? 'Investavimo būdas ir kaina' : 'How it invests and what it costs', ['idx', 'ter', 'gold', 'sfdr']],
+    [L ? 'Obligacijos' : 'Bonds', ['ytm', 'md']],
+    [T().thReg, cols.slice(PG_COLS.length).map(([k]) => k)]];
+  const lab = k => k.startsWith('r_') ? T().reg[k.slice(2)] : T()[(PG_COLS.find(c => c[0] === k) || [])[1]] || k;
+  const unit = k => k === 'md' ? (L ? ' m.' : ' y') : '';
+  const fmtV = (k, v) => num(v, k === 'ter' || k === 'ytm' ? 2 : 1) + (k === 'ter' || k === 'ytm' ? pctSfx() : '');
+  const lowBest = k => k === 'ter';            // mažesnis – geriau (pigiau)
+  const rowHTML = k => {
+    const vs = rows.map(r => r[k]), ok = vs.filter(v => v != null), hi = ok.length ? Math.max(...ok) : 0, lo = ok.length ? Math.min(...ok) : 0;
+    if (!ok.length || hi === 0 && k !== 'ter') return '';
+    const best = lowBest(k) ? lo : hi;
+    return `<tr><th class="l pgk" title="${esc(DESC[k] || lab(k))}"><span class="pgkw">${ico(k)}<span>${esc(lab(k))}${unit(k) && !/%/.test(lab(k)) ? `<small>${unit(k).trim()}</small>` : ''}</span></span></th>` + vs.map(v => {
+      if (v == null || (!v && (k === 'ytm' || k === 'md'))) return '<td class="pgz">–</td>';
+      if (!v) return '<td class="pgz">0</td>';
+      const w = Math.round(v / (hi || 1) * 100);
+      return `<td class="${v === best && ok.length > 2 && hi !== lo ? 'pgb' : ''}"><span class="pgbar" style="width:${w}%"></span><span class="pgv">${fmtV(k, v)}</span></td>`;
+    }).join('') + '</tr>';
+  };
   const tb = document.getElementById('pgTable');
-  const nReg = cols.length - PG_COLS.length;
-  tb.innerHTML = `<thead><tr><th class="l" rowspan="2">${T().thFund}</th>${PG_COLS.map(([, t]) => `<th rowspan="2">${T()[t]}</th>`).join('')}${nReg ? `<th colspan="${nReg}" style="text-align:center">${T().thReg}</th>` : ''}</tr>
-    <tr>${cols.slice(PG_COLS.length).map(([, , r]) => `<th>${T().reg[r]}</th>`).join('')}</tr></thead><tbody>`
-    + rows.map(r => `<tr data-c="${r.f.c}"><td class="l">${sw(r.f.p)}${esc(ST.pg === 'III' ? fundName(r.f) : r.f.p)}</td>${cols.map(([k]) => cell(r, k)).join('')}</tr>`).join('') + '</tbody>';
-  tb.querySelectorAll('tbody tr[data-c]').forEach(tr => tr.addEventListener('click', () => {
-    ST.fund = tr.dataset.c; ST.fq = qi; ST.ft = 'all'; ST.pos = null; fcLimit = 40; save(); renderFund();
+  tb.classList.add('pgT');
+  tb.innerHTML = `<thead><tr><th class="l"></th>${rows.map(r => `<th class="pgf" data-c="${r.f.c}" title="${L ? 'Atidaryti fondo portfelį' : 'Open the fund portfolio'}">${sw(r.f.p)}${esc(ST.pg === 'III' ? fundName(r.f) : r.f.p)}</th>`).join('')}</tr></thead><tbody>`
+    + SECT.map(([h, ks]) => { const body = ks.map(rowHTML).join(''); return body ? `<tr class="pgs"><td colspan="${rows.length + 1}">${esc(h)}</td></tr>${body}` : ''; }).join('') + '</tbody>';
+  tb.querySelectorAll('thead th[data-c]').forEach(th => th.addEventListener('click', () => {
+    ST.fund = th.dataset.c; ST.fq = qi; ST.ft = 'all'; ST.pos = null; fcLimit = 40; save(); renderFund();
     openPane('fcTitle');
   }));
   document.getElementById('pgNote').textContent = T().pgNote;

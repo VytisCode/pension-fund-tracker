@@ -486,3 +486,18 @@ body[data-ptab="market"] #groupField, body[data-ptab="sum"] #groupField { displa
 body[data-ptab="ins"] #periodbar { display: none; }
 details.owner { margin-top: 14px; } details.owner > summary { cursor: pointer; color: var(--text-2); font-weight: 600; padding: 6px 0; }
 #chartCard:not(.more) .xtra { display: none !important; }
+
+/* Palyginimas grupėje – rodikliai eilutėmis su piktogramomis */
+table.pgT { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+table.pgT th, table.pgT td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+table.pgT thead th { font-weight: 600; color: var(--text); white-space: nowrap; vertical-align: bottom; }
+table.pgT thead th.pgf { cursor: pointer; } table.pgT thead th.pgf:hover { color: var(--accent); }
+table.pgT th.pgk { font-weight: 500; color: var(--text); white-space: nowrap; }
+table.pgT .pgkw { display: inline-flex; align-items: center; gap: 8px; }
+table.pgT th.pgk .pgi { color: var(--accent); flex: none; } table.pgT th.pgk small { color: var(--text-3); margin-left: 4px; font-weight: 400; }
+table.pgT tr.pgs td { text-align: left; background: var(--surface); color: var(--text-2); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding-top: 10px; }
+table.pgT td { position: relative; min-width: 92px; }
+table.pgT td .pgbar { position: absolute; left: 6px; bottom: 4px; height: 3px; max-width: calc(100% - 12px); border-radius: 2px; background: color-mix(in srgb, var(--accent) 45%, transparent); }
+table.pgT td .pgv { position: relative; }
+table.pgT td.pgb { font-weight: 700; background: color-mix(in srgb, var(--accent) 9%, transparent); }
+table.pgT td.pgz { color: var(--text-3); }
