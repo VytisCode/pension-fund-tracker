@@ -864,7 +864,11 @@ renderHeader('portfolios', renderAll);
 renderAll();
 /* paieška: „portfolios.html#pos=N“ – atidaromas fondas, kuriame ši investicija sudaro didžiausią dalį, ir jos istorija */
 function openPos() {
-  let si = null; try { si = new URLSearchParams(location.hash.slice(1)).get('pos'); } catch (e) {}
+  let si = null, fc = null; try { const q = new URLSearchParams(location.hash.slice(1)); si = q.get('pos'); fc = q.get('fund'); } catch (e) {}
+  if (fc && fundBy[fc]) {               // „portfolios.html#fund=KODAS“ – iš fondo kortelės (Valdytojai ir fondai)
+    ST.fund = fc; ST.fq = fundBy[fc].last; ST.pos = null; ST.ft = 'all'; save(); renderFund();
+    setTimeout(() => { const el = document.getElementById('fcTitle'); if (el) el.scrollIntoView({ block: 'start' }); }, 150); return;
+  }
   if (si == null || !S[+si]) return; si = +si;
   let best = null; FUNDS.forEach(f => { const qi = f.last, x = f.q[qi] && f.q[qi].get(si); if (x && f.tot[qi] && (!best || x.v / f.tot[qi] > best.w)) best = { f, w: x.v / f.tot[qi] }; });
   if (!best) return;

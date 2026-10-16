@@ -85,8 +85,8 @@ Eiga (žymėti [x]):
 - [x] 2 III pakopa Rezultatuose: performance3.html (perf.js IS3, build_perf3)
 - [x] 3 Metai ir mėnesiai: viena kortelė su jungikliu (metai / mėnesiai / slenkanti / vienas fondas); mėnesių grąža sutikrinta su Ataskaitomis
 - [x] 4 Bendras reitingas + Vieta pagal laikotarpį – viena kortelė su grupės pasirinkimu
-- [ ] 5 Fondo kortelė
-- [ ] 6 SEB indekso sekimas
+- [x] 5 Fondo kortelė (manager.html#VALD/II:grupė): + kalendoriniai metai su grupe, nuoroda į portfelį (#fund=), grafiko žymos
+- [x] 6 Lyginamojo indekso sekimas fondo kortelėje: SEB ir Goindex (data_rep bm), kitiems – „neskelbia“
 - [ ] 7 Rinkos įžvalgos → Rezultatai; senų nuorodų nukreipimas
 - [ ] 8 Kelias į pensiją: „Kurį fondą rinktis“ kortelė (II pagal gimimo metus, III pagal kategoriją)
 - [ ] 9 Nauji rodikliai (grąža po mokesčių, rizika pakoreguota vieta)

@@ -288,6 +288,56 @@ function renderManager() {
 }
 
 /* ---------- vienas fondas ---------- */
+/* ---------- fondo kortelė: kalendoriniai metai ir lyginamasis indeksas (savininkas 2026-10-16) ---------- */
+addStrings({
+  hYears: 'Calendar years compared with the group', mYears: 'Each year: 31 Dec → 31 Dec unit values; the current year – to the latest day. Median – of the other funds in the group.', thYr: 'Year',
+  hBm: 'Tracking the benchmark index', mBm: d => `Month-end values to ${d}. The fund’s return is after fees, the index’s is before fees, so a small negative difference is normal. Tracking error = annualised standard deviation of monthly differences (36 months).`,
+  bmNone: 'The manager does not publish the values of this fund’s benchmark index, so tracking cannot be calculated.', thIdx: 'Index', thFundR: 'Fund', thTd: 'Difference, pp', te: 'Tracking error (36 m.)', bmMonths: 'Last 12 months', ann: 'p.a.',
+  pfMore: 'Full portfolio analysis →' }, {
+  hYears: 'Kalendoriniai metai, palyginti su grupe', mYears: 'Kiekvieni metai: gruodžio 31 d. → gruodžio 31 d. vieneto vertės; šie metai – iki naujausios dienos. Mediana – kitų grupės fondų.', thYr: 'Metai',
+  hBm: 'Lyginamojo indekso sekimas', mBm: d => `Mėnesių pabaigų vertės iki ${d}. Fondo grąža – po mokesčių, indekso – be mokesčių, todėl nedidelis neigiamas skirtumas yra normalus. Sekimo paklaida = mėnesinių skirtumų standartinis nuokrypis, perskaičiuotas metams (36 mėn.).`,
+  bmNone: 'Valdytojas šio fondo lyginamojo indekso verčių neskelbia, todėl sekimo apskaičiuoti negalima.', thIdx: 'Indeksas', thFundR: 'Fondas', thTd: 'Skirtumas, p. p.', te: 'Sekimo paklaida (36 mėn.)', bmMonths: 'Paskutiniai 12 mėnesių', ann: 'metinė',
+  pfMore: 'Išsami portfelio analizė →' });
+function calYearRet(f, y, end) {           // kalendorinių metų grąža iš kasdienių vieneto verčių (null – fondo tada dar nebuvo)
+  const a = Math.round(Date.UTC(y - 1, 11, 31) / DAY), b = Math.min(end, Math.round(Date.UTC(y, 11, 31) / DAY));
+  const ia = lastOnOrBefore(f, a), ib = lastOnOrBefore(f, b);
+  if (ia < 0 && !(f.d[0] - a <= 7 && Math.abs(f.v[0] - 1) < 0.005)) return null;
+  const i0 = ia < 0 ? 0 : ia; return ib > i0 ? (f.v[ib] / f.v[i0] - 1) * 100 : null;
+}
+function yearsHTML(g, p, end) {
+  const t = T(), f = g.funds.find(x => x.provider === p), y1 = new Date(end * DAY).getUTCFullYear(), y0 = Math.max(2019, new Date(f.d[0] * DAY).getUTCFullYear());
+  let rows = '';
+  for (let y = y1; y >= y0; y--) {
+    const rets = Object.fromEntries(g.funds.map(x => [x.provider, calYearRet(x, y, end)])), v = rets[p];
+    const md = median(Object.entries(rets).filter(([q]) => q !== p).map(([, x]) => x)), pl1 = placeOf(rets, p);
+    rows += `<tr><td>${y === y1 ? T().periods.ytd + ' ' + y : y}</td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${md == null ? '–' : pct(md)}</td><td class="n">${v == null || md == null ? '–' : (v - md >= 0 ? '+' : '−') + num(Math.abs(v - md), 2)}</td><td class="n">${pl1 && v != null ? `${pl1.k} / ${pl1.n}` : '–'}</td></tr>`;
+  }
+  return `<section class="card" data-src="nav"><h2>${t.hYears}</h2><div class="meta">${t.mYears}</div><div class="scroll"><table class="mt" id="ty"><thead><tr><th>${t.thYr}</th><th class="n">${labelOf(p)}</th><th class="n">${t.thMed}</th><th class="n">${t.thDiff}</th><th class="n">${t.thPlace}</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
+/* lyginamasis indeksas: tik fondams, kurių valdytojas skelbia indekso vertes (data_rep.js „bm“ – SEB, Goindex); kitiems – pranešimas */
+function bmHTML(r) {
+  const t = T(), M = REP.months;
+  if (!r || !r.bm || !r.bm.some(v => v != null)) return `<section class="card"><h2>${t.hBm}</h2><p class="note">${t.bmNone}</p></section>`;
+  let e = M.length - 1; while (e > 0 && (r.m[e] == null || r.bm[e] == null)) e--;
+  const ok = i => i >= 0 && r.m[i] != null && r.bm[i] != null;
+  const yOf = i => new Date(M[i] * DAY).getUTCFullYear();
+  const per = [[t.periods['1m'] || '1 mėn.', 1], [t.periods['3m'], 3], [t.periods['6m'], 6], [t.periods.ytd, 'ytd'], [t.periods['1y'], 12], [t.periods['3y'] + ', ' + t.ann, 36], [t.periods['5y'] + ', ' + t.ann, 60]];
+  const rows = per.map(([lab, k]) => {
+    let a = k === 'ytd' ? M.findIndex(d => { const dt = new Date(d * DAY); return dt.getUTCFullYear() === yOf(e) - 1 && dt.getUTCMonth() === 11; }) : e - k;
+    if (!ok(a)) return '';
+    const yrs = typeof k === 'number' && k > 12 ? k / 12 : 1, an = x => (Math.pow(x, 1 / yrs) - 1) * 100;
+    const fr = an(r.m[e] / r.m[a]), br = an(r.bm[e] / r.bm[a]), d = fr - br;
+    return `<tr><td>${lab}<small> ${iso(M[a])} – ${iso(M[e])}</small></td><td class="n">${pct(fr)}</td><td class="n">${pct(br)}</td><td class="n ${d >= 0 ? 'pos' : 'neg'}">${(d >= 0 ? '+' : '−') + num(Math.abs(d), 2)}</td></tr>`;
+  }).join('');
+  const diffs = []; for (let i = Math.max(1, e - 35); i <= e; i++) if (ok(i) && ok(i - 1)) diffs.push(((r.m[i] / r.m[i - 1]) - (r.bm[i] / r.bm[i - 1])) * 100);
+  const te = diffs.length >= 12 ? (() => { const mu = diffs.reduce((s, x) => s + x, 0) / diffs.length; return Math.sqrt(diffs.reduce((s, x) => s + (x - mu) ** 2, 0) / (diffs.length - 1)) * Math.sqrt(12); })() : null;
+  const mrows = []; for (let i = e; i > e - 12 && i > 0; i--) if (ok(i) && ok(i - 1)) { const fr = (r.m[i] / r.m[i - 1] - 1) * 100, br = (r.bm[i] / r.bm[i - 1] - 1) * 100, d = fr - br; mrows.push(`<tr><td>${iso(M[i]).slice(0, 7)}</td><td class="n">${pct(fr)}</td><td class="n">${pct(br)}</td><td class="n ${d >= 0 ? 'pos' : 'neg'}">${(d >= 0 ? '+' : '−') + num(Math.abs(d), 2)}</td></tr>`); }
+  const head = `<thead><tr><th>${t.thPer}</th><th class="n">${t.thFundR}</th><th class="n">${t.thIdx}</th><th class="n">${t.thTd}</th></tr></thead>`;
+  return `<section class="card" data-src="rep"><h2>${t.hBm}</h2><div class="meta">${t.mBm(iso(M[e]))}</div>
+    <div class="scroll"><table class="mt" id="tbm">${head}<tbody>${rows}</tbody></table></div>${te != null ? `<p><b>${t.te}:</b> ${num(te, 2)} p. p.</p>` : ''}
+    <h3>${t.bmMonths}</h3><div class="scroll"><table class="mt" id="tbm12">${head}<tbody>${mrows.join('')}</tbody></table></div></section>`;
+}
+
 function renderFund() {
   const t = T(), p = ST.p, [pl, key] = [ST.f.slice(0, ST.f.indexOf(':')), ST.f.slice(ST.f.indexOf(':') + 1)];
   let h = '';
@@ -306,11 +356,13 @@ function renderFund() {
     h += `<div class="two"><section class="card chart-card" data-src="nav"><h2>${t.hChart}</h2><div class="mchart" id="fC"></div></section>
       <section class="card" data-src="nav"><h2>${groupLabel(g)} · ${T().periods.ytd}</h2><div class="scroll"><table class="mt" id="tq"><thead><tr><th>${t.thFund}</th><th class="n">${T().periods.ytd}</th><th class="n">${t.thFee}</th><th class="n">${t.thAum}</th><th class="n">${t.thVol}</th><th class="n">${t.thDd}</th></tr></thead><tbody>${prow}</tbody></table></div>
       <h3>${t.hRisk}</h3><table class="mt"><tbody><tr><td>${t.rVol1}</td><td class="n">${r1 ? fmt(r1.vol) + pctSfx() : '–'}</td></tr><tr><td>${t.rVol3}</td><td class="n">${r3 ? fmt(r3.vol) + pctSfx() : '–'}</td></tr><tr><td>${t.rDd3}</td><td class="n">${r3 ? fmt(r3.dd) + pctSfx() : '–'}</td></tr>${r && r.risky != null ? `<tr><td>${t.rRisky}</td><td class="n">${fmt(r.risky, 1)}${pctSfx()}</td></tr>` : ''}</tbody></table><p class="note">${t.rNote}</p></section></div>`;
-    h += aumHTML() + pfHTML(portfolio(p, key), t.pfOne);
+    h += yearsHTML(g, p, end) + bmHTML(r);
+    const pf = PF.funds.find(x => x.pl === 'II' && x.p === labelOf(p) && x.g === key);
+    h += aumHTML() + pfHTML(portfolio(p, key), t.pfOne) + (pf ? `<p class="more"><a href="portfolios.html#fund=${encodeURIComponent(pf.c)}">${t.pfMore}</a></p>` : '');
     $('body').innerHTML = h;
-    cardify($('tp')); cardify($('tq')); drawAum();
-    const x = peerRets(g, '3y');
-    drawLineChart($('fC'), buildSeries(g.funds, x.anchor, x.end), x.anchor, x.end, { height: 260 });
+    cardify($('tp')); cardify($('tq')); cardify($('ty')); drawAum();
+    const x = peerRets(g, '3y'), el = $('fC');
+    drawLineChart(el, buildSeries(g.funds, x.anchor, x.end), x.anchor, x.end, { height: 260, mr: el.clientWidth > 500 ? 92 : 16 });
   } else {
     const f = REP.funds.find(x => x.pl === 'III' && x.p === p && x.n === key);
     if (!f) { ST.f = ''; return renderManager(); }
@@ -323,7 +375,7 @@ function renderFund() {
     const prow = peers.map(({ x, v }) => `<tr${x === f ? ' class="me"' : ''}><td><i class="sw" style="background:${colorOf(x.p)}"></i>${hEsc(x.n)}</td><td class="n">${v == null ? '–' : pct(v)}</td><td class="n">${x.fee != null ? fmt(x.fee) : '–'}</td><td class="n">${fmt(assetsIII(x), 1)}</td></tr>`).join('');
     h += `<section class="card" data-src="p3"><h2>${t.hPeers} · ${t.cat[f.g] || f.g}</h2><div class="meta">${t.m3(iso(REP.months[M3E()]))}</div><div class="scroll"><table class="mt" id="tp"><thead><tr><th>${t.thPer}</th><th class="n">${hEsc(f.n)}</th><th class="n">${t.thMed}</th><th class="n">${t.thDiff}</th><th class="n">${t.thPlace}</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
     h += `<section class="card" data-src="p3"><h2>${t.cat[f.g] || f.g} · ${T().periods.ytd}</h2><div class="scroll"><table class="mt" id="tq"><thead><tr><th>${t.thFund}</th><th class="n">${T().periods.ytd}</th><th class="n">${t.thFee}</th><th class="n">${t.thAum}</th></tr></thead><tbody>${prow}</tbody></table></div></section>`;
-    h += aumHTML();
+    h += bmHTML(f) + aumHTML();
     $('body').innerHTML = h;
     cardify($('tp')); cardify($('tq')); drawAum();
   }
