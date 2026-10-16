@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>III pakopa · Pensijų fondų sekimas</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=02c9d3e2">
+<link rel="stylesheet" href="style.css?v=a5158d99">
 </head>
 <body>
 <div class="wrap">
@@ -90,14 +90,26 @@
     <div class="cap" id="c_relGrid" hidden></div><div class="relgrid" id="relGrid" hidden></div>
     <div class="group-h" id="hDd"></div>
     <div class="card" id="rddCard"></div>
+    <!-- „Metai ir mėnesiai“ (savininko patvirtinta struktūra 2026-10-16): kalendoriniai metai, mėnesiai, slenkanti grąža ir vieno fondo mėnesiai – viena kortelė su jungikliu -->
+    <div class="group-h ymh"><span id="hYM"></span><div class="seg" id="ymTabs" role="group"></div></div>
+    <div data-ym="cal">
     <div class="group-h" id="hCal"></div>
     <div class="cap" id="c_tCal"></div><div class="card scroll"><table class="metrics" id="tCal"></table></div>
+    </div>
+    <div data-ym="mon" hidden>
+    <div class="group-h"><span id="hMon"></span> <select id="monYear"></select></div>
+    <div class="cap" id="c_tMon"></div><div class="card scroll"><table class="metrics" id="tMon"></table></div>
+    </div>
+    <div data-ym="roll" hidden>
     <div class="group-h" id="hRoll"></div>
     <div class="cap" id="c_tRoll"></div><div class="card scroll"><table class="metrics" id="tRoll"></table></div>
-    <div class="group-h" id="hQP"></div>
-    <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
+    </div>
+    <div data-ym="hm" hidden>
     <div class="group-h"><span id="hHm"></span> <select id="hmGroup" hidden></select> <select id="hmProv"></select></div>
     <div class="cap" id="c_tHm"></div><div class="card scroll"><table class="hm" id="tHm"></table></div>
+    </div>
+    <div class="group-h" id="hQP"></div>
+    <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
 
     <div class="tools" id="optional-toggle"><button class="btn" type="button" id="btnAdv" aria-pressed="false"></button></div>
     <div class="adv" id="adv">
@@ -117,7 +129,7 @@
 <script src="data_fee.js?v=0e639ac4"></script>
 <script src="data_cpi.js?v=870ec578"></script>
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=a8d7d4ba"></script>
-<script>p3Colors();</script><script src="perf.js?v=8a833299"></script>
+<script src="common.js?v=cbaceaec"></script>
+<script>p3Colors();</script><script src="perf.js?v=3da7d59d"></script>
 </body>
 </html>

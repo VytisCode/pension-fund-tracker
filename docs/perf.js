@@ -30,7 +30,7 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `<b>${a}</b> earned the most (${ra}), <b>${z}</b> the least (${rz}); <b>${v}</b> was the least volatile (${rv}).`,
   cCal: (y, a, ra, z, rz) => `In ${y} the best was <b>${a}</b> (${ra}), the weakest <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Over ${y} years savings in the lowest-fee (${lo}) and highest-fee (${hi}) funds differ by <b>${d}</b>.`,
-  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Calendar'],
+  pnav: ['Summary', 'Whole market', 'Group comparison', 'Risk', 'Years & months'],
   hMetrics: 'Performance metrics', hCal: 'Calendar-year returns', hRoll: 'Rolling returns (to the latest date)',
   hQP: 'Rank by period (this group; 1 = best)', hHm: 'Monthly returns heat map –',
   thRank: '#', thFund: 'Provider', thPeriodRet: 'Return, period', thVol: 'Volatility p.a., period', thMdd: 'Max drawdown, period',
@@ -117,7 +117,7 @@ addStrings({
   cMetrics: (a, ra, z, rz, v, rv) => `Daugiausia uždirbo <b>${a}</b> (${ra}), mažiausiai – <b>${z}</b> (${rz}); mažiausiai svyravo <b>${v}</b> (${rv}).`,
   cCal: (y, a, ra, z, rz) => `${y} m. geriausias – <b>${a}</b> (${ra}), silpniausias – <b>${z}</b> (${rz}).`,
   cFee: (y, lo, hi, d) => `Per ${y} ${y >= 10 ? 'metų' : 'metus'} mažiausio (${lo}) ir didžiausio (${hi}) mokesčio fonduose sukauptos sumos skiriasi <b>${d}</b>.`,
-  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Kalendorius'],
+  pnav: ['Santrauka', 'Visa rinka', 'Grupės palyginimas', 'Rizika', 'Metai ir mėnesiai'],
   hMetrics: 'Rezultatų rodikliai', hCal: 'Kalendorinių metų grąža', hRoll: 'Slenkanti grąža (iki paskutinės dienos)',
   hQP: 'Vieta pagal laikotarpį (ši grupė; 1 = geriausia)', hHm: 'Mėnesių grąžos šilumos žemėlapis –',
   thRank: '#', thFund: 'Tiekėjas', thPeriodRet: 'Grąža laikotarpyje', thVol: 'Svyravimas per metus, laikotarpyje', thMdd: 'Didžiausias kritimas, laikotarpyje',
@@ -421,7 +421,7 @@ const relStyle = v => `background:${heatColor(v * 1.5)}`;
    kad nebūtų painiojama su viršutinėmis visos rinkos lentelėmis (savininkas 2026-10-16) */
 function markGroup() {
   const g = P.group === 'all' ? T().allFunds : groupName(P.group);
-  ['hMetrics', 'hDd', 'hCal', 'hRoll', 'hQP', 'hAdv'].forEach(id => { const h = $(id); if (!h) return; let b = h.querySelector(':scope > .gbadge');
+  ['hMetrics', 'hDd', 'hCal', 'hMon', 'hRoll', 'hQP', 'hAdv'].forEach(id => { const h = $(id); if (!h) return; let b = h.querySelector(':scope > .gbadge');
     if (!b) { b = document.createElement('a'); b.className = 'gbadge'; b.href = '#'; b.onclick = e => { e.preventDefault(); $('group').scrollIntoView({ block: 'center' }); $('group').focus(); }; h.append(b); }
     b.textContent = g; b.title = lang === 'lt' ? 'Grupė – keisti „Fondų palyginimo“ viršuje' : 'Group – change at the top of “Fund comparison”'; });
 }
@@ -514,8 +514,21 @@ function renderMarket() {
 }
 
 /* bendras reitingas: visos grupės × laikotarpiai */
+/* „Bendras reitingas“ + „Vieta pagal laikotarpį“ – viena kortelė (savininko patvirtinta struktūra 2026-10-16):
+   „Visos grupės“ – kiek kartų kiekvienas valdytojas buvo 1-as ar 2-as; pasirinkus grupę – tos grupės vietos kiekvienu laikotarpiu */
+addStrings({ ovG: 'Group:', ovGAll: 'All groups (summary)' }, { ovG: 'Grupė:', ovGAll: 'Visos grupės (suvestinė)' });
 function renderOverall() {
-  $('hOv').innerHTML = T().hOv; $('lblOvP').textContent = T().ovPick;
+  let gsel = $('ovG');
+  if (!gsel) { const l = document.createElement('label'); l.className = 'field'; l.innerHTML = '<span id="ovGL"></span> <select id="ovG"></select>'; $('lblOvP').before(l); gsel = $('ovG');
+    gsel.addEventListener('change', () => { P.ovG = gsel.value; renderOverall(); }); }
+  $('ovGL').textContent = T().ovG;
+  gsel.innerHTML = `<option value="all">${T().ovGAll}</option>` + DATA.groups.map(g => `<option value="${g.id}">${groupLabel(g)}</option>`).join('');
+  gsel.value = P.ovG && byId(P.ovG) ? P.ovG : 'all';
+  const one = gsel.value !== 'all';
+  ['lblOvP', 'ovPers', 'ovPreset', 'ovCommon'].forEach(id => { const e = $(id); if (e) e.hidden = one; });
+  $('hOv').innerHTML = T().hOv;
+  if (one) { const g = byId(gsel.value); renderRanksByPeriod([g], false, 'tOv'); $('nOv').textContent = ''; return; }
+  $('lblOvP').textContent = T().ovPick;
   $('ovPers').querySelectorAll('button').forEach(b => { b.textContent = T().periods[b.dataset.p]; b.setAttribute('aria-pressed', P.ovP.has(b.dataset.p)); });
   const isSet = ids => ids.length === P.ovP.size && ids.every(x => P.ovP.has(x));
   $('ovPreset').querySelectorAll('button').forEach(b => { b.textContent = T()[b.dataset.k]; b.setAttribute('aria-pressed', isSet(OV_PRESETS[b.dataset.k])); });
@@ -724,8 +737,10 @@ function renderFunds() {
       return rol.map((x, i) => tr(i === 0, `${nm(x.s)}${keys.map(k => cell(x.r[k[0]] ?? null, v => pct(v, 1), rb(k[0]))).join('')}${x.r.r1 ? `<td>${pct(x.r.r1.avg, 1)}</td><td>${pct(x.r.r1.min, 1)}</td><td>${pct(x.r.r1.max, 1)}</td><td>${num(x.r.r1.pos, 2)}${pctSfx()}</td>` : '<td class="na">–</td>'.repeat(4)}`)).join('');
     }).join('') + '</tbody>';
 
+  renderMonthsTable(parts, ALL, nm, tr); renderYM();
   renderRiskMap(); renderDrawdown();          // „Grąža palyginti su grupės vidurkiu“ pašalinta (savininkas 2026-10-16: dubliuoja palyginimą su konkurentais)
-  renderRanksByPeriod(gs, ALL); renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
+  if (IS3) renderRanksByPeriod(gs, ALL); else [$('hQP'), $('c_tQP'), $('tQP') && $('tQP').closest('.card')].forEach(e => { if (e) e.hidden = true; });   // II pakopa – „Bendrame reitinge“
+  renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   markGroup();
   fitSticky();
 }
@@ -852,12 +867,47 @@ function renderDrawdown() {
   $('hDd').innerHTML = T().hDd + ik('dd');
   RDD = runupDrawdown($('rddCard'), DATA.groups.map(g => ({ id: g.id, label: groupLabel(g), funds: g.funds })), 'p2', P.group !== 'all' ? P.group : DATA.groups[DATA.groups.length - 1].id);
 }
-function renderRanksByPeriod(gs, ALL) {
-  setCap('tQP', T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
-  $('tQP').innerHTML = `<thead><tr><th></th>${PERIOD_IDS.map(per => `<th>${T().periods[per]}</th>`).join('')}</tr></thead><tbody>`
+function renderRanksByPeriod(gs, ALL, tid = 'tQP') {
+  setCap(tid, T().capQP(ALL ? [...new Set(gs.map(g => iso(groupEnd(g).end)))].join(' / ') : iso(groupEnd(gs[0]).end), ALL ? iso(Math.min(...gs.map(g => rangeAt(g, 'max').anchor))) + '…' + iso(Math.max(...gs.map(g => rangeAt(g, 'max').anchor))) : iso(rangeAt(gs[0], 'max').anchor)));
+  $(tid).innerHTML = `<thead><tr><th></th>${PERIOD_IDS.map(per => `<th>${T().periods[per]}</th>`).join('')}</tr></thead><tbody>`
     + gs.map(g => {
       const ranks = {}; PERIOD_IDS.forEach(per => { const rng = rangeAt(g, per); ranks[per] = rankOf(g.funds.map(f => ({ key: f.provider, v: retOf(g, f.provider, rng) }))); });
       return marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).map((p, i) => `<tr${ALL && i === 0 ? ' class="gstart"' : ''}><td class="name"><span class="sw" style="background:${colorOf(p.id)}"></span>${p.label}${ALL ? ` <span class="na">${groupLabel(g)}</span>` : ''}</td>${PERIOD_IDS.map(per => { const r = ranks[per], k = r.map.get(p.id); return k && r.n >= 2 ? `<td class="${rkClass(k, r.n)}" title="${k}/${r.n}">${k}</td>` : '<td class="na">–</td>'; }).join('')}</tr>`).join('');
+    }).join('') + '</tbody>';
+}
+/* ---------- „Metai ir mėnesiai“: kalendoriniai metai, mėnesiai, slenkanti grąža, vieno fondo mėnesiai (viena kortelė) ----------
+   Mėnesio grąža = mėnesio paskutinės vieneto vertės ÷ ankstesnio mėnesio paskutinės − 1 – tas pats skaičiavimas kaip „Ataskaitose“. */
+addStrings({ ymH: 'Years and months', ymTabs: { cal: 'Calendar years', mon: 'Months', roll: 'Rolling', hm: 'One fund – all months' }, monH: 'Monthly returns', monY: 'Year', thYear: 'Year',
+  capMon: (y, e) => `${y}: return of each month = last unit value of the month ÷ last unit value of the previous month − 1 (same calculation as in Reports)${e ? `; the last month runs to ${e}` : ''}. Bold – best in the column.` },
+  { ymH: 'Metai ir mėnesiai', ymTabs: { cal: 'Kalendoriniai metai', mon: 'Mėnesiai', roll: 'Slenkanti grąža', hm: 'Vienas fondas – visi mėnesiai' }, monH: 'Mėnesių grąža', monY: 'Metai', thYear: 'Metai',
+  capMon: (y, e) => `${y} m.: kiekvieno mėnesio grąža = mėnesio paskutinė vieneto vertė ÷ ankstesnio mėnesio paskutinė vertė − 1 (tas pats skaičiavimas kaip „Ataskaitose“)${e ? `; paskutinis mėnuo – iki ${e}` : ''}. Paryškinta – geriausia stulpelyje.` });
+const YM_KEYS = ['cal', 'mon', 'roll', 'hm'];
+let YM = 'cal'; try { const v = localStorage.getItem('ymTab'); if (YM_KEYS.includes(v)) YM = v; } catch (e) {}
+function renderYM() {
+  $('hYM').textContent = T().ymH;
+  const tabs = $('ymTabs');
+  tabs.innerHTML = YM_KEYS.map(k => `<button type="button" data-k="${k}" aria-pressed="${k === YM}">${T().ymTabs[k]}</button>`).join('');
+  tabs.onclick = e => { const b = e.target.closest('button'); if (!b) return; YM = b.dataset.k; try { localStorage.setItem('ymTab', YM); } catch (er) {} renderYM(); };
+  document.querySelectorAll('[data-ym]').forEach(d => { d.hidden = d.dataset.ym !== YM; });
+}
+let MON_Y = null;
+function renderMonthsTable(parts, ALL, nm, tr) {
+  const endAll = Math.max(...parts.map(pt => groupEnd(pt.g).end)), lastY = new Date(endAll * DAY).getUTCFullYear();
+  const firstY = Math.max(2005, Math.min(...parts.flatMap(pt => pt.all.map(s => new Date(s.f.d[0] * DAY).getUTCFullYear()))));
+  if (!MON_Y || MON_Y > lastY || MON_Y < firstY) MON_Y = lastY;
+  const sel = $('monYear'); sel.innerHTML = Array.from({ length: lastY - firstY + 1 }, (_, i) => lastY - i).map(y => `<option value="${y}"${y === MON_Y ? ' selected' : ''}>${y}</option>`).join('');
+  sel.onchange = () => { MON_Y = +sel.value; renderMonthsTable(parts, ALL, nm, tr); };
+  $('hMon').textContent = T().monH;
+  const Y = MON_Y, lastM = Y === lastY ? new Date(endAll * DAY).getUTCMonth() : 11, ms = Array.from({ length: 12 }, (_, m) => m);
+  setCap('tMon', T().capMon(Y, Y === lastY ? iso(endAll) : ''));
+  const heat = v => v == null ? '' : ` style="background:${heatColor(v * 1.2)}"`;
+  $('tMon').innerHTML = `<thead><tr><th style="text-align:left">${T().thFund}</th>${ms.map(m => `<th>${T().monShort[m]}</th>`).join('')}<th>${Y === lastY ? T().ytd : T().thYear}</th></tr></thead><tbody>`
+    + parts.map(pt => {
+      const end = groupEnd(pt.g).end;
+      const rows = pt.all.map(s => { const mr = monthlyReturns(s.f, end)[Y] || {}, c = calendarReturns(s.f, end)[Y]; return { s, mr, y: c && !c.partial ? c.ret : null }; });
+      const best = m => { const vs = rows.map(r => r.mr[m]).filter(v => v != null); return vs.length ? Math.max(...vs) : null; };
+      const by = (() => { const vs = rows.map(r => r.y).filter(v => v != null); return vs.length ? Math.max(...vs) : null; })();
+      return rows.map((r, i) => tr(i === 0, `${nm(r.s)}${ms.map(m => m > lastM ? '<td class="na"></td>' : r.mr[m] == null ? '<td class="na">–</td>' : `<td class="${r.mr[m] === best(m) ? 'best' : ''}"${heat(r.mr[m])}>${pct(r.mr[m], 1)}</td>`).join('')}${r.y == null ? '<td class="na">–</td>' : `<td class="${r.y === by ? 'best' : ''}"><b>${pct(r.y, 1)}</b></td>`}`)).join('');
     }).join('') + '</tbody>';
 }
 function heatColor(v) {
@@ -1325,7 +1375,7 @@ function labelControls() {
   $('btnCpi').textContent = T().cpiBtn; $('btnCpi').hidden = typeof CPI === 'undefined'; $('btnCpi').setAttribute('aria-pressed', !!P.cpi);
   $('btnEvents').textContent = T().eventsBtn; $('evInfo').innerHTML = ik('events'); $('resetZoom').textContent = T().resetZoom; $('btnPng').textContent = T().png; $('zoomHint').textContent = T().zoomHint;
   $('btnAdv').innerHTML = T().advBtn;
-  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hCal'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || x.id !== 'hMarket'));   // vidinė navigacija (auditas #43)
+  addSubnav(['hSum', 'hMarket', 'hFund', 'hRisk', 'hYM'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || x.id !== 'hMarket'));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {

@@ -83,8 +83,8 @@ Priminimai tęsti: trig_01EZJuxDucAX4fTyA2cUYDVL, trig_01J6gQ1kJaQHwysV4WKTDCDv,
 Eiga (žymėti [x]):
 - [x] 1 Pradžia: Diena/Savaitė/Mėnuo/Ketvirtis/Metai jungiklis (index.html)
 - [x] 2 III pakopa Rezultatuose: performance3.html (perf.js IS3, build_perf3)
-- [ ] 3 Metai ir mėnesiai (kalendoriniai + mėnesiai + slenkanti), savos datos
-- [ ] 4 Vienas bendras reitingas
+- [x] 3 Metai ir mėnesiai: viena kortelė su jungikliu (metai / mėnesiai / slenkanti / vienas fondas); mėnesių grąža sutikrinta su Ataskaitomis
+- [x] 4 Bendras reitingas + Vieta pagal laikotarpį – viena kortelė su grupės pasirinkimu
 - [ ] 5 Fondo kortelė
 - [ ] 6 SEB indekso sekimas
 - [ ] 7 Rinkos įžvalgos → Rezultatai; senų nuorodų nukreipimas

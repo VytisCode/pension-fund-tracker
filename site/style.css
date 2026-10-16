@@ -461,3 +461,7 @@ section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
 
 .gbadge { display: inline-block; margin-left: 8px; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); text-decoration: none; vertical-align: 2px; }
 .gbadge:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+/* Metai ir mėnesiai – antraštė su jungikliu */
+.group-h.ymh { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 18px; color: var(--text); margin-top: 26px; }
+.group-h.ymh .seg { font-size: 13px; }
