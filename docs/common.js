@@ -335,6 +335,10 @@ const NT = {
     idxName: { MSCI_WORLD: 'MSCI World', MSCI_ACWI: 'MSCI ACWI', SP500: 'S&P 500 (eurais)', EUR_GOV7Y: 'Euro obligacijų (7 m.)' },
     idxWhat: { MSCI_WORLD: 'Išsivysčiusių šalių akcijų indeksas (MSCI) – palyginimo linija grafikuose.', MSCI_ACWI: 'Viso pasaulio akcijų indeksas (MSCI) – palyginimo linija grafikuose ir KID scenarijų pagrindas.',
                SP500: 'JAV akcijų indeksas S&P 500 su dividendais, perskaičiuotas eurais pagal ECB kursą (įprastai vėluoja 1–3 d.).', EUR_GOV7Y: 'Euro zonos AAA obligacijų indeksas iš ECB pajamingumo kreivės – naudojamas KID scenarijams.' },
+    estT: (n, d) => `${n}: nuo ${d} – apytikslės vertės`,
+    estWhy: d => `Tikslių S&P 500 su dividendais verčių po ${d} negauta, todėl jos pratęstos pagal oficialų S&P 500 kainų indeksą (FRED / Stooq), pridedant ~1,3 % metinių dividendų ir perskaičiuojant ECB kursu.`,
+    estImpact: 'Tik S&P 500 palyginimo linija paskutinėmis dienomis – paklaida paprastai iki kelių šimtųjų procento. Fondų rezultatams įtakos nėra.',
+    estTodo: 'Nieko – gavus tikslias vertes, jos automatiškai pakeis apytiksles.',
     idxImpact: 'Tik indekso palyginimo linija „Rezultatų“ grafikuose ir lentelėse baigiasi anksčiau. Fondų grąžoms, vietoms ir reitingams įtakos nėra.',
     idxTodo: 'Nieko – galima ignoruoti. Sistema bando kasdien; jei sutrikimas ilgas, Claude pataisys rinkimą (matysite dienos ataskaitoje).',
     estrWhat: 'Euro nerizikinga palūkanų norma (ECB) – naudojama tik Sharpe koeficientui.', estrImpact: 'Sharpe koeficientas skaičiuojamas su paskutine turima norma; skirtumas paprastai nežymus.',
@@ -375,6 +379,10 @@ const NT = {
     idxName: { MSCI_WORLD: 'MSCI World', MSCI_ACWI: 'MSCI ACWI', SP500: 'S&P 500 (in EUR)', EUR_GOV7Y: 'Euro bonds (7y)' },
     idxWhat: { MSCI_WORLD: 'Developed-market equity index (MSCI) – a comparison line on charts.', MSCI_ACWI: 'All-world equity index (MSCI) – a comparison line on charts and the base of the KID scenarios.',
                SP500: 'US equity index S&P 500 with dividends, converted to euros at the ECB rate (normally 1–3 days behind).', EUR_GOV7Y: 'Euro-area AAA bond index from the ECB yield curve – used for KID scenarios.' },
+    estT: (n, d) => `${n}: estimated values since ${d}`,
+    estWhy: d => `Exact S&P 500 total-return values after ${d} were not received, so they are extended from the official S&P 500 price index (FRED / Stooq) plus ~1.3 % annual dividends, converted at the ECB rate.`,
+    estImpact: 'Only the S&P 500 comparison line for the latest days – the error is usually a few hundredths of a percent. Fund results are not affected.',
+    estTodo: 'Nothing – exact values will replace the estimates automatically once received.',
     idxImpact: 'Only the index comparison line on the Results charts and tables ends earlier. Fund returns, ranks and ratings are not affected.',
     idxTodo: 'Nothing – can be ignored. The system retries daily; if the outage is long, Claude will fix the collection (you will see it in the daily report).',
     estrWhat: 'Euro risk-free rate (ECB) – used only for the Sharpe ratio.', estrImpact: 'The Sharpe ratio uses the latest available rate; the difference is usually negligible.',
@@ -410,7 +418,11 @@ function noticesList() {
   else if (st.proxy && st.proxy.err && st.proxy.kind === 'auth') { const x = out.find(x => x.id === 'nav-LUMINOR'); x.title = n.proxyT + ' · ' + x.title; x.todo = n.proxyTodo; x.what = n.proxyWhat; }
   // 3. indeksai (kiekvienas atskirai; įprastas vėlavimas neberodomas)
   const lim = { MSCI_WORLD: 3, MSCI_ACWI: 3, SP500: 5, EUR_GOV7Y: 4 };
-  Object.entries(FRESH.idx || {}).forEach(([k, d]) => {
+  const est = FRESH.idxEst || {};
+  Object.entries(FRESH.idx || {}).forEach(([k, d0]) => {
+    const d = est[k] ? Math.max(d0, est[k][1]) : d0;
+    if (est[k]) out.push({ id: `est-${k}`, lvl: 'info', title: n.estT(n.idxName[k] || k, iso(est[k][0])), what: n.idxWhat[k] || '', why: n.estWhy(iso(d0)) + (why(`idx.${k}`) ? ' ' + why(`idx.${k}`) : ''),
+      impact: n.estImpact, todo: n.estTodo });
     if (businessDaysBetween(d, today) <= (lim[k] || 4)) return;
     out.push({ id: `idx-${k}`, lvl: 'info', title: n.idxT(n.idxName[k] || k, iso(d)), what: n.idxWhat[k] || '', why: why(`idx.${k}`) || (k === 'SP500' ? why('idx.EURUSD') : ''),
       impact: n.idxImpact, todo: n.idxTodo, url: (FRESH.urls || {}).idx });

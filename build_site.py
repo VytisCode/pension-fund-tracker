@@ -176,7 +176,7 @@ def sources() -> list:
         last = {}
         for r in _csv.DictReader((ROOT / "data" / "indexes.csv").open(encoding="utf-8")):
             last[r["index"]] = max(last.get(r["index"], ""), r["date"])
-        d = iso_(min(last.values())); add("idx", d, d + timedelta(days=6))   # S&P 500 eurais vėluoja keliomis dienomis (ECB kursas)
+        d = iso_(min(v for k, v in last.items() if k in ("MSCI_WORLD", "MSCI_ACWI", "SP500", "EUR_GOV7Y"))); add("idx", d, d + timedelta(days=6))   # S&P 500 eurais vėluoja keliomis dienomis (ECB kursas)
     except Exception:
         pass
     try:
@@ -218,6 +218,10 @@ def build_fresh(groups: list, generated: str) -> None:
         for r in _csv.DictReader((ROOT / "data" / "indexes.csv").open(encoding="utf-8")):
             last[r["index"]] = max(last.get(r["index"], ""), r["date"])
         payload["idx"] = {k: day_number(v) for k, v in last.items() if k in ("MSCI_WORLD", "MSCI_ACWI", "SP500", "EUR_GOV7Y")}
+        import indexes as _ix
+        tail = sp500_tail(_ix.load())
+        if tail:
+            payload["idxEst"] = {"SP500": [day_number(min(tail)), day_number(max(tail))]}
     except Exception:
         pass
     inv = sources_list.inventory(payload["src"], top)
@@ -256,17 +260,51 @@ def build_fees() -> None:
     (DOCS / "data_fee.js").write_text("const FEES=" + json.dumps(fees, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 
+SP500_DIV_YIELD = 0.013   # S&P 500 dividendų pajamingumas (~1,3 % per metus, 2024–2026) – tik atsarginiam pratęsimui
+
+
+def sp500_tail(data: dict) -> dict:
+    """Kai Yahoo (S&P 500 TR) neveikia: SP500 eurais pratęsiamas pagal S&P 500 kainų indekso (SP500_PR, USD) pokytį,
+    pridedant dividendus (SP500_DIV_YIELD) ir perskaičiuojant ECB EUR/USD kursu. Grąžina {data: vertė} tik dienoms po
+    paskutinės tikros SP500 vertės; data/indexes.csv nekeičiamas, todėl gavus tikras vertes jos šias pakeičia."""
+    import math
+    tr, pr, fx = data.get("SP500", {}), data.get("SP500_PR", {}), data.get("EURUSD", {})
+    if not tr or not pr or not fx:
+        return {}
+    last = max(tr)
+    base_pr = [d for d in pr if d <= last]
+    base_fx = [d for d in fx if d <= last]
+    if not base_pr or not base_fx:
+        return {}
+    p0, x0, v0 = pr[max(base_pr)], fx[max(base_fx)], tr[last]
+    d_last = date.fromisoformat(last)
+    out, rate = {}, x0
+    for d in sorted(k for k in set(pr) | set(fx) if k > last):
+        rate = fx.get(d, rate)
+        if d in pr:
+            days = (date.fromisoformat(d) - d_last).days
+            out[d] = v0 * (pr[d] / p0) * (x0 / rate) * math.exp(math.log(1 + SP500_DIV_YIELD) * days / 365.25)
+    return out
+
+
 def build_indexes() -> None:
-    """Pasaulio akcijų indeksai (data/indexes.csv, žr. indexes.py) -> docs/data_idx.js: {id: {d0, dd, v}} nuo 2003-12-31."""
+    """Pasaulio akcijų indeksai (data/indexes.csv, žr. indexes.py) -> docs/data_idx.js: {id: {d0, dd, v}} nuo 2003-12-31.
+    SP500 gali turėti apytikslę pabaigą (sp500_tail) – tada {"est": pirmoji apytikslė diena}."""
     import indexes
     data = indexes.load()
     out = {}
+    tail = sp500_tail(data)
     for name in ("MSCI_ACWI", "MSCI_WORLD", "SP500"):
-        rows = sorted((d, v) for d, v in data.get(name, {}).items() if d >= "2003-12-31")
+        series = dict(data.get(name, {}))
+        if name == "SP500" and tail:
+            series.update(tail)
+        rows = sorted((d, v) for d, v in series.items() if d >= "2003-12-31")
         if not rows:
             continue
         days = [day_number(d) for d, _ in rows]
         out[name] = {"d0": days[0], "dd": [b - a for a, b in zip(days, days[1:])], "v": [round(v, 2) for _, v in rows]}
+        if name == "SP500" and tail:
+            out[name]["est"] = day_number(min(tail))
     (DOCS / "data_idx.js").write_text("const IDX=" + json.dumps(out, separators=(",", ":")) + ";\n", encoding="utf-8")
     print(f"docs/data_idx.js: {sum(len(x['v']) for x in out.values())} reikšmių")
 

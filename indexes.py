@@ -5,6 +5,9 @@ Pasaulio akcijų indeksai palyginimui su pensijų fondais: data/indexes.csv (dat
 - MSCI_WORLD – MSCI World Net Return, EUR (išsivysčiusių šalių akcijos, dividendai reinvestuoti po mokesčių);
 - MSCI_ACWI  – MSCI ACWI Net Return, EUR (viso pasaulio akcijos, ir besivystančios rinkos);
 - SP500      – S&P 500 Total Return (USD, Yahoo ^SP500TR) ÷ ECB EUR/USD kursas = vertė eurais.
+- SP500_PR   – S&P 500 kainų indeksas (USD, FRED; atsargai Stooq) – tik atsarginis: kai Yahoo neveikia, svetainė
+               SP500 pratęsia pagal jo pokytį + dividendų priedą (build_site.sp500_tail); tikros vertės vėliau jas pakeičia.
+- EURUSD     – ECB EUR/USD kursas (saugomas, kad atsarginį S&P 500 būtų galima perskaičiuoti eurais).
 - EUR_AAA_7Y – euro zonos AAA vyriausybės obligacijų 7 m. spot pajamingumas, % (ECB pajamingumo kreivė; gali būti neigiamas);
 - EUR_GOV7Y  – sintetinis obligacijų grąžos indeksas iš EUR_AAA_7Y: pastovios 7 m. trukmės nulinės atkarpos obligacija,
                dienos log grąža = y(t−1) × dienos ÷ 365 − 7 × (y(t) − y(t−1)) (pajamingumas % ÷ 100). Naudojamas KID scenarijams.
@@ -18,6 +21,7 @@ import csv
 import io
 import json
 import math
+import re
 import sys
 import time
 import urllib.request
@@ -125,6 +129,40 @@ def sp500_usd(start):
     raise last
 
 
+def parse_fred(raw):
+    out = {}
+    for r in csv.reader(io.StringIO(raw.decode("utf-8"))):
+        if len(r) >= 2 and re.match(r"\d{4}-\d\d-\d\d$", r[0]) and re.match(r"^\d+(\.\d+)?$", r[1]):
+            out[r[0]] = float(r[1])
+    return out
+
+
+def parse_stooq(raw):
+    out = {}
+    for r in csv.DictReader(io.StringIO(raw.decode("utf-8"))):
+        if r.get("Date") and r.get("Close"):
+            try:
+                out[r["Date"]] = float(r["Close"])
+            except ValueError:
+                pass
+    return out
+
+
+def sp500_price(start):
+    """S&P 500 kainų indeksas (USD): FRED, nepavykus – Stooq. Grąžina ({data: vertė}, šaltinio pavadinimas)."""
+    last = None
+    for name, url, parse in (("FRED", fund_links.FRED_SP500_CSV.format(start=start.isoformat()), parse_fred),
+                             ("Stooq", fund_links.STOOQ_SPX_CSV.format(start=start.strftime("%Y%m%d")), parse_stooq)):
+        try:
+            out = parse(_get(url))
+            if len(out) >= 3:
+                return out, name
+            last = ValueError(f"{name}: per mažai reikšmių")
+        except Exception as e:  # noqa: BLE001
+            last = e
+    raise last
+
+
 def update():
     data = load()
     start = date.today() - timedelta(days=40)
@@ -136,19 +174,30 @@ def update():
         except Exception as e:  # noqa: BLE001  – vieno indekso klaida kitų nestabdo
             print(f"{name}: nepavyko ({e.__class__.__name__}: {e})")
             source_status.fail(f"idx.{name}", e)
+    fx = {}
+    try:
+        fx = parse_ecb(_get(fund_links.ECB_EURUSD_API.format(start=(start - timedelta(days=10)).isoformat())))
+        print(f"EURUSD: +{merge(data, 'EURUSD', fx)}")
+        source_status.ok("idx.EURUSD")
+    except Exception as e:  # noqa: BLE001
+        print(f"EURUSD: nepavyko ({e.__class__.__name__}: {e})")
+        source_status.fail("idx.EURUSD", e)
     try:
         usd = sp500_usd(start)
-        try:
-            fx = parse_ecb(_get(fund_links.ECB_EURUSD_API.format(start=(start - timedelta(days=10)).isoformat())))
-            source_status.ok("idx.EURUSD")
-        except Exception as e:  # noqa: BLE001
-            source_status.fail("idx.EURUSD", e)
-            raise
+        if not fx:
+            raise RuntimeError("nėra ECB EUR/USD kurso")
         print(f"SP500: +{merge(data, 'SP500', sp500_eur(usd, fx))}")
         source_status.ok("idx.SP500")
     except Exception as e:  # noqa: BLE001
         print(f"SP500: nepavyko ({e.__class__.__name__}: {e})")
         source_status.fail("idx.SP500", e)
+    try:                                   # atsarginis kainų indeksas renkamas visada (mažas), kad būtų kuo pratęsti
+        pr, src = sp500_price(start - timedelta(days=10))
+        print(f"SP500_PR ({src}): +{merge(data, 'SP500_PR', pr)}")
+        source_status.ok("idx.SP500_PR", src)
+    except Exception as e:  # noqa: BLE001
+        print(f"SP500_PR: nepavyko ({e.__class__.__name__}: {e})")
+        source_status.fail("idx.SP500_PR", e)
     try:
         print(f"EUR_GOV7Y: +{update_bond(data)}")
         source_status.ok("idx.EUR_GOV7Y")
