@@ -465,3 +465,15 @@ section:hover .ttools, .card:hover .ttools, .ttools:focus-within { opacity: 1; }
 /* Metai ir mėnesiai – antraštė su jungikliu */
 .group-h.ymh { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 18px; color: var(--text); margin-top: 26px; }
 .group-h.ymh .seg { font-size: 13px; }
+
+/* Rinkos įžvalgos Rezultatų puslapyje (stiliai kaip „Kelyje į pensiją“) */
+#insSec { margin-top: 30px; }
+#insBody .bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0 12px; }
+#insBody .bar select, #insBody .bar input { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+#insBody .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 860px) { #insBody .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#insBody .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+#insBody .kpi .l { color: var(--text-3); font-size: 12px; } #insBody .kpi .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 2px; } #insBody .kpi .s { color: var(--text-3); font-size: 12px; margin-top: 2px; }
+#insBody .story { font-size: 14px; line-height: 1.6; max-width: 920px; margin: 0; } #insBody .story p { margin: 0 0 8px; }
+#insBody h3.sub3 { font-size: 15px; margin: 20px 0 8px; } #insBody .down { color: #d0453f; }
+#insBody table.jt { font-size: 13px; } #insBody table.jt th { white-space: normal; vertical-align: bottom; } #insBody table.jt td.l, #insBody table.jt th.l { text-align: left; } #insBody table.jt tr.cur td { font-weight: 650; }

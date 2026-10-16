@@ -1,3 +1,5 @@
+/* „Rinkos įžvalgos“ persikėlė į Rezultatus (2026-10-16) – seni adresai veda ten */
+if (/^#ins/.test(location.hash)) location.replace('performance.html#go=insTitle');
 /* „Kelias į pensiją“: vieno dalyvio kaupimas nuo pirmos įmokos iki šiandien (savininko Excel modelis).
    Kiekviena eilutė = Sodros pervedimo data (arba fondo keitimas). Įmoka = atlyginimas × tarifas (arba fiksuota suma); už ją perkami
    fondo vienetai tos dienos vieneto verte; sukaupta suma = vienetai × vieneto vertė.
@@ -455,7 +457,7 @@ function renderSchema() {
 }
 function renderNav() {
   const ids = ['top', 'schTitle', 'sumTitle', 'annTitle', 'futTitle', 'cmpTitle', 'ixTitle', 'gridTitle', 'tbTitle', 'feeTitle', 'insTitle', 'srcTitle'];
-  document.getElementById('jnav').innerHTML = T().nav.map((l, i) => (i === 3 && P.pl === 'III') ? '' : `<a href="#${ids[i]}">${i ? l : '⚙ ' + l}</a>`).join('');
+  document.getElementById('jnav').innerHTML = T().nav.map((l, i) => (i === 3 && P.pl === 'III') || !document.getElementById(ids[i]) ? '' : `<a href="#${ids[i]}">${i ? l : '⚙ ' + l}</a>`).join('');
 }
 function renderAnnuity() {
   const sec = document.getElementById('annTable').closest('section'), ti = document.getElementById('annTitle');

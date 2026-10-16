@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=a5158d99">
+<link rel="stylesheet" href="style.css?v=0674dbc3">
 </head>
 <body>
 <div class="wrap">
@@ -121,6 +121,8 @@
     </div>
     <p class="note" id="nFund"></p>
   </section>
+  <!-- Rinkos įžvalgos (perkelta iš „Kelio į pensiją“, savininko patvirtinta struktūra 2026-10-16); duomenys kraunami tik priartėjus prie skilties -->
+  <section class="sec" id="insSec" data-src="aum"><h2 class="sec" id="insTitle"></h2><p class="lead" id="insLead"></p><div id="insBody"></div></section>
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
@@ -129,7 +131,16 @@
 <script src="data_fee.js?v=0e639ac4"></script>
 <script src="data_cpi.js?v=870ec578"></script>
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=cbaceaec"></script>
-<script src="perf.js?v=3da7d59d"></script>
+<script src="common.js?v=4a78c0fc"></script>
+<script src="perf.js?v=18bc84b0"></script>
+<script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
+var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
+var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');
+var shortFund = f => f.replace(/ tikslinės grupės pensijų fondas/, '').replace(/^Allianz (\w+) gimusiems (\d{4}-\d{4}) m\./, 'Allianz $2');
+var pc = (x, p = 2) => (x < 0 ? '−' : '') + num(Math.abs(x) * 100, 2) + pctSfx(), field = (label, html) => `<label class="field">${label} ${html}</label>`;
+var seg = (id, opts, cur) => `<div class="seg" role="group" data-seg="${id}">` + opts.map(([v, t]) => `<button type="button" data-v="${v}" aria-pressed="${v === cur}">${t}</button>`).join('') + '</div>';
+var kpi = (l, v, s, cls = '') => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`, loadXlsx = () => Promise.resolve();
+if (typeof window.PL3 !== 'undefined') document.getElementById('insSec').hidden = true;</script>
+<script src="insights.js?v=5508c3ae"></script>
 </body>
 </html>

@@ -98,7 +98,7 @@ def main() -> None:
     build_indexes()
     build_fees()
     build_cpi()
-    assets = ("perf.js", "events.js", "style.css", "common.js", "methodology.js", "data.js", "data_idx.js", "data_fee.js", "data_cpi.js")
+    assets = ("perf.js", "insights.js", "events.js", "style.css", "common.js", "methodology.js", "data.js", "data_idx.js", "data_fee.js", "data_cpi.js")
     for name in ("index.html", "overview.html", "performance.html", "apie.html") + assets[:-4] + ("favicon.svg",):
         shutil.copyfile(SITE / name, DOCS / name)
     # Excel rašytuvas (site/xl.js) – pridedamas prie common.js, kad veiktų visuose puslapiuose be papildomo failo
