@@ -1257,7 +1257,7 @@ function xlCellOf(text) {                 // ekrano tekstas → Excel reikšmė:
   const raw = String(text).replace(/[  ]/g, ' ').replace(/[ⓘ▾▴⚠✓]/g, '').trim();
   if (!raw || raw === '–' || raw === '-') return null;
   if (/^\d{4}-\d\d-\d\d$/.test(raw)) return { v: Math.round(Date.parse(raw) / 864e5) + 25569, z: 'yyyy-mm-dd' };
-  const m = /^([−+-]?)([\d ,.]+?)\s?(%|p\. ?p\.|pp|€|mln\. €|mlrd\. €)?\*?$/.exec(raw);
+  const m = /^([−+-]?)([\d ,.]+?)\s?(%|p\. ?p\.|pp|€|EUR|mln\. €|mlrd\. €|tūkst\. €|mln\. EUR|€ ?\/ ?mėn\.|€ ?\/ ?month|m\.|d\.)?\*?$/.exec(raw);
   if (!m) return raw;
   let s = m[2].trim(); s = lang === 'en' ? s.replace(/,/g, '') : s.replace(/ /g, '').replace(',', '.');
   if (!/^\d+(\.\d+)?$/.test(s)) return raw;
