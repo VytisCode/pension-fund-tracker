@@ -3,7 +3,7 @@
    Skaičiuojama čia pat iš REP.kidm (mėnesių pabaigų MSCI ACWI EUR NR ir sintetinis ECB 7 m. AAA obligacijų indeksas, kid_scenarios.py);
    numatytosios reikšmės – f.kid (PID, jei turime, arba mūsų taisyklė). Excel – visas skaičiavimas formulėmis. */
 addStrings({
-  kidTitle: 'KID performance scenarios', kidLead: 'SEB III pillar funds by the EU key information document method (Regulation 2017/653, Annex IV), in the same layout as SEB’s KIDs: what 1,000 € invested at the start of each year could become after 1 year, about half the recommended holding period and the full period. Two calculations: “As in SEB’s KID” (repeats SEB’s Excel file to the cent, with its errors) and “By the regulation” (correct). You can change the holding and observation periods and costs; the Excel file has the whole calculation as formulas with instructions.',
+  kidTitle: 'KID performance scenarios', kidLead: 'What 1,000 € invested at the start of each year in an SEB III pillar fund could become, calculated by the rules of the EU key information document (KID). Choose the fund and the year. “Comparison with SEB’s KID” shows SEB’s published figures next to ours, “Why it differs” explains every difference.',
   kidW12: (n, a, b) => `As in the manager’s file, in the ${n}-year sheet the windows starting ${a} – ${b} take only the return of their last 12 months (the manager’s formula error; it lowers the moderate scenario; the corrected series uses full windows).`,
   kidMomDrop: k => `As in the manager’s file, the stress scenario moments (mean, σ, skewness, kurtosis) use only the first ${k} of the last 60 months (the manager’s formula range error; the corrected series uses all 60).`, kidFund: 'Fund', kidSer: 'Benchmark series', kidSerPid: 'As in the manager’s KID', kidRhpY: 'Holding period, years', kidEq: 'Equities, %', kidCost: 'Costs, % a year', kidFrom: 'Observation from', kidTo: 'to', kidReset: 'Defaults',
   kidInv: 'Investment 1,000 EUR a year', kidScH: 'Scenarios', kidRec: '(Recommended holding period)', kidYr: n => `${n} ${n === 1 ? 'year' : 'years'}`,
@@ -35,12 +35,19 @@ addStrings({
     { t: '5. Stress scenario', seb: '12-month rolling volatility windows also for 1 year; the subtracted term 0.5·σ²·N uses the ordinary 60-month σ.', reg: 'Annex IV point 18(a): for monthly prices w = 6 months for 1 year and 12 months for longer periods; point 19 (original 2017/653 Annex IV point 11): the subtracted term is 0.5·σS²·N with the stressed volatility σS.', why: 'Effect: the regulation’s stress result is lower (more conservative), especially for longer periods.' },
     { t: '6. The same in both', seb: '', reg: 'observation period RHP + 5 years (at least 10); month-end values; moderate = median and favourable = best of all full windows; percentiles 99 % (1 year) / 95 %; z for 1 % / 5 %; Cornish-Fisher; stress never better than unfavourable; 1,000 € at the start of each year; costs = ongoing + transaction costs, 1/12 subtracted from each monthly benchmark return; average return each year for longer periods = XIRR of the payments (the regulation gives no separate formula for regular payments).', why: 'Presentation: the regulation (Annex IV point 42) asks to round amounts to the nearest 10 €; here cents are shown so that the check is exact.' },
   ],
+  kidYear: 'Data up to the end of', kidYearPid: (y, d) => `${y} – SEB KID ${d}`, kidAdv: 'More settings', kidTabs: ['Scenarios', 'Comparison with SEB’s KID', 'Why it differs'],
+  kidResH: (f, m) => `${f}: ${m}`, kidModeShort: { reg: 'by the regulation', seb: 'as in SEB’s KID' },
+  kidPidLead: d => `SEB’s published KID (${d}) next to two of our calculations from the same data period: “As in SEB’s KID” repeats SEB’s method (a difference of 0 shows we reproduce it exactly), “By the regulation” is the correct calculation. Amounts after costs; the small number – average return each year.`,
+  kidCmpH: ['Scenario', 'Period', 'SEB KID', 'As in SEB’s KID (ours)', 'By the regulation', 'Regulation − KID'],
+  kidNoPid: l => `SEB has no KID for this year, so there is nothing to compare.${l ? ' KIDs exist for the data years: ' + l + '.' : ''}`,
+  kidWhyLead: n => `How SEB’s result becomes the correct one: each row fixes one thing, and the small number shows how much that fix changes the ${n}-year amount. Explanation of each fix below.`,
+  kidSrcT: 'Sources and notes',
   kidShI: 'Instructions', kidShE: 'Evidence', kidShP: 'Comparison',
-  kidRegL: 'Regulation (EU) 2017/653 on EUR-Lex (Lithuanian; amendments of 2021/2268 are in the consolidated version)',
+  kidRegL: 'Regulation (EU) 2017/653 (EUR-Lex, Lithuanian)',
   kidExt: a => `From ${a} SEB’s KID benchmark series is extended automatically with the monthly returns of the fund benchmark SEB publishes daily (SEB’s KID Excel files will no longer be used). Check: extending one year this way differs from SEB’s exact calculation by 0–7 €.`,
   kidShM: 'Months', kidShW: 'Windows', kidShC: 'Calculation', kidShT: 'Scenarios',
 }, {
-  kidTitle: 'KID veiklos rezultatų scenarijai', kidLead: 'SEB III pakopos fondai pagal ES pagrindinės informacijos dokumento (KID / PID) metodiką (Reglamentas 2017/653, IV priedas), tokio pat formato lentele kaip SEB PID: kiek galėtų tapti 1000 €, investuojamų kiekvienų metų pradžioje, po 1 metų, maždaug pusės rekomenduojamo laikymo laikotarpio ir viso laikotarpio. Du skaičiavimai: „Kaip SEB PID“ (atkartoja SEB Excel failą iki cento, su jo klaidomis) ir „Pagal reglamentą“ (teisingas). Galite keisti laikymo ir stebėjimo laikotarpį ir išlaidas; Excel faile – visas skaičiavimas formulėmis su instrukcija.',
+  kidTitle: 'KID veiklos rezultatų scenarijai', kidLead: 'Kiek galėtų tapti 1000 €, investuojami kiekvienų metų pradžioje SEB III pakopos fonde, apskaičiuota pagal ES pagrindinės informacijos dokumento (PID) taisykles. Pasirinkite fondą ir metus. „Palyginimas su SEB PID“ rodo SEB paskelbtus skaičius šalia mūsų, „Kodėl skiriasi“ paaiškina kiekvieną skirtumą.',
   kidW12: (n, a, b) => `Kaip valdytojo faile, ${n} m. lape langai, prasidedantys ${a} – ${b}, ima tik paskutinių 12 mėn. grąžą (valdytojo formulės klaida; ji sumažina nuosaikų scenarijų; pataisytoje eilutėje – pilni langai).`,
   kidMomDrop: k => `Kaip valdytojo faile, nepalankiausio scenarijaus momentai (vidurkis, σ, asimetrija, ekscesas) skaičiuojami tik iš pirmų ${k} iš paskutinių 60 mėn. (valdytojo formulės diapazono klaida; pataisytoje eilutėje – visi 60).`, kidFund: 'Fondas', kidSer: 'Indekso eilutė', kidSerPid: 'Kaip valdytojo PID', kidRhpY: 'Laikymo laikotarpis, metai', kidEq: 'Akcijos, %', kidCost: 'Išlaidos, % per metus', kidFrom: 'Stebėjimas nuo', kidTo: 'iki', kidReset: 'Numatytieji',
   kidInv: 'Investicija 1 000 EUR per metus', kidScH: 'Scenarijai', kidRec: '(Rekomenduojamas laikymo laikotarpis)', kidYr: n => `${n} ${n % 10 === 0 || (n % 100 > 9 && n % 100 < 21) ? 'metų' : 'metai'}`,
@@ -72,8 +79,15 @@ addStrings({
     { t: '5. Nepalankiausias (stresinis) scenarijus', seb: '12 mėn. slenkantys nuokrypio langai ir 1 metams; atimamame naryje 0,5·σ²·N naudojamas įprastas 60 mėn. σ.', reg: 'IV priedo 18(a) p.: mėnesiniams duomenims w = 6 mėn. 1 metams ir 12 mėn. ilgesniems laikotarpiams; 19 p. (pradinio 2017/653 IV priedo 11 p. tekstas): atimamas narys 0,5·σS²·N su stresiniu nuokrypiu σS.', why: 'Įtaka: pagal reglamentą stresinis rezultatas mažesnis (atsargesnis), ypač ilgesniems laikotarpiams.' },
     { t: '6. Kas abiem atvejais vienoda', seb: '', reg: 'stebėjimo laikotarpis RHP + 5 m. (ne mažiau 10); mėnesių pabaigų vertės; nuosaikus = mediana, palankus = geriausias iš visų pilnų langų; procentiliai 99 % (1 m.) / 95 %; z 1 % / 5 %; Cornish-Fisher; stresinis ne geresnis už nepalankų; 1000 € kiekvienų metų pradžioje; išlaidos = einamosios + sandorių, iš kiekvieno indekso mėnesio grąžos atimama 1/12; ilgesnių laikotarpių metinė vidutinė grąža = įmokų XIRR (reglamentas reguliarioms įmokoms atskiros formulės nenurodo).', why: 'Pateikimas: reglamentas (IV priedo 42 p.) liepia sumas apvalinti iki 10 €; čia rodomi centai, kad patikra būtų tiksli.' },
   ],
+  kidYear: 'Duomenys iki metų pabaigos', kidYearPid: (y, d) => `${y} – SEB PID ${d}`, kidAdv: 'Daugiau nustatymų', kidTabs: ['Scenarijai', 'Palyginimas su SEB PID', 'Kodėl skiriasi'],
+  kidResH: (f, m) => `${f}: ${m}`, kidModeShort: { reg: 'pagal reglamentą', seb: 'kaip SEB PID' },
+  kidPidLead: d => `SEB paskelbtas PID (${d}) šalia dviejų mūsų skaičiavimų iš to paties laikotarpio duomenų. „Kaip SEB PID“ atkartoja SEB metodą: skirtumas 0 rodo, kad jį atkartojame tiksliai. „Pagal reglamentą“ yra teisingas skaičiavimas. Sumos po išlaidų, mažas skaičius po suma – metinė vidutinė grąža.`,
+  kidCmpH: ['Scenarijus', 'Laikotarpis', 'SEB PID', 'Kaip SEB PID (mūsų)', 'Pagal reglamentą', 'Reglamentas − PID'],
+  kidNoPid: l => `Šiems metams SEB PID nėra, todėl palyginti nėra su kuo.${l ? ' PID yra duomenų metams: ' + l + '.' : ''}`,
+  kidWhyLead: n => `Kaip SEB rezultatas virsta teisingu: kiekviena eilutė ištaiso vieną dalyką, o mažas skaičius rodo, kiek tas pataisymas pakeičia ${n} m. sumą. Kiekvieno pataisymo paaiškinimas – žemiau.`,
+  kidSrcT: 'Šaltiniai ir pastabos',
   kidShI: 'Instrukcija', kidShE: 'Įrodymai', kidShP: 'Palyginimas',
-  kidRegL: 'Reglamentas (ES) 2017/653 EUR-Lex svetainėje (lietuviškai; 2021/2268 pakeitimai – konsoliduotoje redakcijoje)',
+  kidRegL: 'Reglamentas (ES) 2017/653 (EUR-Lex, lietuviškai)',
   kidExt: a => `Nuo ${a} SEB PID indekso eilutė automatiškai pratęsiama SEB kasdien skelbiamo fondo lyginamojo indekso mėnesio grąžomis (SEB PID Excel failų nebebus). Patikra: taip pratęsus vienus metus, skirtumas nuo tikslaus SEB skaičiavimo 0–7 €.`,
   kidShM: 'Mėnesiai', kidShW: 'Langai', kidShC: 'Skaičiavimai', kidShT: 'Scenarijai',
 });
@@ -214,57 +228,84 @@ function renderKid() {
   document.getElementById('kidLead').textContent = S.kidLead;
   MODELS.kid = null;
   if (!fs.length || !REP.kidm) { box.innerHTML = ''; return; }
-  const f = fs.find(x => kidKey(x) === KS.f) || fs[0], fk = kidKey(f), d = kidDefaults(f), o = KS.o[fk] || {}, p = kidParams(f, o);
+  const f = fs.find(x => kidKey(x) === KS.f) || fs[0], fk = kidKey(f), d = kidDefaults(f), o = KS.o[fk] || {}, p = kidParams(f, o), tab = KS.tab || 'res';
   const opts = fs.map(x => `<option value="${kidKey(x)}"${x === f ? ' selected' : ''}>${shortName(x)}</option>`).join('');
   const sel = (id, v, list) => `<select id="${id}">${list.map(([k, t]) => `<option value="${k}"${k === v ? ' selected' : ''}>${t}</option>`).join('')}</select>`;
   const inp = (k, v, a) => `<input type="number" data-k="${k}" value="${v}" ${a}>`, mon = (k, v) => `<input type="month" data-k="${k}" value="${kidYs(v)}">`;
-  let html = `<div class="controls kidc">${field(S.kidFund, `<select id="kidF">${opts}</select>`)}${field(S.kidMode, sel('kidM', p.mode, [['reg', S.kidModeReg], ['seb', S.kidModeSeb]]))}`
+  // Metai: stebėjimo laikotarpis baigiasi tų metų gruodžio 31 d.; pažymėti metai, kuriems yra SEB PID
+  const pids = [f.kid.off, ...(f.kid.old || [])].filter(Boolean), pidOf = y => pids.find(x => +x.to.slice(0, 4) === y);
+  const y0 = Math.floor(kidParams(f, Object.fromEntries(Object.entries(o).filter(([k]) => k !== 'to' && k !== 'from'))).to / 12), years = [];
+  for (let y = y0; y > y0 - 15; y--) { const t = y * 12 + 11; if (!kidCalc(kidParams(f, o, { to: t, from: t - 12 * Math.max(p.rhp + 5, 10) + 1 })).err) years.push(y); }
+  const py = p.to % 12 === 11 ? Math.floor(p.to / 12) : null;
+  const yearSel = `<select id="kidY">${py == null || !years.includes(py) ? `<option value="" selected>${kidYs(p.to)}</option>` : ''}${years.map(y => `<option value="${y}"${y === py ? ' selected' : ''}>${pidOf(y) ? S.kidYearPid(y, pidOf(y).doc.slice(0, 4)) : y}</option>`).join('')}</select>`;
+  const adv = ['rhp', 'cost', 'data'].some(k => k in o) || ('from' in o && o.from !== (o.to ?? p.to) - 12 * Math.max(p.rhp + 5, 10) + 1);
+  let html = `<div class="controls kidc">${field(S.kidFund, `<select id="kidF">${opts}</select>`)}${field(S.kidMode, seg('kidM', [['reg', S.kidModeReg], ['seb', S.kidModeSeb]], p.mode))}${field(S.kidYear, yearSel)}</div>`
+    + `<details class="kidadv"${adv ? ' open' : ''}><summary>${S.kidAdv}</summary><div class="controls kidc">`
     + `${p.mode === 'reg' ? field(S.kidData, sel('kidD', p.data, [['own', S.kidDataOwn], ['idx', S.kidDataIdx]])) : ''}`
     + `${field(S.kidRhpY, inp('rhp', p.rhp, 'min="1" max="25" step="1" style="width:5em"'))}${field(S.kidCost, inp('cost', p.cost, 'min="0" max="5" step="0.01" style="width:6em"'))}`
-    + `${field(S.kidFrom, mon('from', p.from))}${field(S.kidTo, mon('to', p.to))}<button class="btn" type="button" id="kidReset"${Object.keys(o).length ? '' : ' disabled'}>${S.kidReset}</button></div>`;
-  html += `<p class="note">${p.mode === 'seb' ? S.kidModeSebNote : S.kidModeRegNote}</p><p class="kidi"><a href="${KID_REG}" target="_blank" rel="noopener">${S.kidRegL}</a> · <a href="${KID_REGC}" target="_blank" rel="noopener">${lang === 'lt' ? 'konsoliduota redakcija' : 'consolidated version'}</a></p>`;
+    + `${field(S.kidFrom, mon('from', p.from))}${field(S.kidTo, mon('to', p.to))}<button class="btn" type="button" id="kidReset"${Object.keys(o).length ? '' : ' disabled'}>${S.kidReset}</button></div></details>`;
+  html += `<div class="kidtabs">${seg('kidT', S.kidTabs.map((t, i) => [['res', 'pid', 'why'][i], t]), tab)}</div>`;
   const R = kidCalc(p);
   if (R.err) html += `<p class="note late">${S.kidShort}${R.err}.</p>`;
   else {
     const ys = R.ns, rr = ys.map(n => R.per[n].ret), amt = ys.map((n, i) => rr[i].map(v => kidAmt(v, n))), ret = ys.map((n, i) => rr[i].map(v => kidXirr(v, n)));
-    html += `<p class="kidi">${S.kidIntro(kidYs(p.from) + '-01', isoEnd(p.to))}</p><h3 class="kidh">${S.kidOurs}: ${f.n} – ${p.mode === 'seb' ? S.kidModeSeb : S.kidModeReg}</h3>`
-      + `<div class="scroll"><table class="rt kidp">${kidTableHtml(ys, ret, amt, kidPct, kidEur)}</table></div>`;
-    if (p.own) html += `<p class="note">${R.nOwn ? S.kidOwnUsed(R.nOwn, R.N, kidYs(R.base + R.own.indexOf(1))) : S.kidOwnNone}</p>`;
-    const off = p.old || f.kid.off;
-    if (off) {
-      const ov = off.s, oa = off.a;
-      html += `<h3 class="kidh">${S.kidPid(off.doc)}</h3><p class="kidi">${S.kidIntro(off.from, off.to)}</p>`
-        + `<div class="scroll"><table class="rt kidp">${kidTableHtml(off.years, ov, oa, kidPct, kidEur)}</table></div>`;
-      if (off.years.every((n, i) => n === ys[i]) && kidYm(off.from.slice(0, 7)) === p.from && kidYm(off.to.slice(0, 7)) === p.to)
-        html += `<h3 class="kidh">${S.kidDiff}</h3><div class="scroll"><table class="rt kidp">${kidTableHtml(ys, ret.map((r, i) => r.map((v, j) => v - ov[i][j])), amt.map((r, i) => r.map((v, j) => v - oa[i][j])), v => pp(v), v => `${pp(v)} EUR`)}</table></div><p class="note">${S.kidDiffNote}</p>`;
-    }
-    const st = kidSteps(f, o);
-    if (st.length > 1) {
-      const A = x => S.kidSc.map((_, j) => kidAmt(x.R.per[p.rhp].ret[j], p.rhp));
-      let tb = `<thead><tr><th class="l">${S.kidStepH}</th>${S.kidSc.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody>`;
-      st.forEach((x, i) => {
-        const a = A(x), pr = i ? A(st[i - 1]) : null;
-        tb += `<tr${i === 0 || i === st.length - 1 ? ' class="kt"' : ''}><td class="l">${i}. ${x.t}</td>${a.map((v, j) => `<td>${num(v, 2)} EUR${pr ? `<br><small>${pp(v - pr[j])}</small>` : ''}</td>`).join('')}</tr>`;
-      });
-      html += `<h3 class="kidh">${S.kidStepT(p.rhp)}</h3><div class="scroll"><table class="rt kidp kids">${tb}</tbody></table></div><p class="note">${S.kidStepNote}</p>`;
-      MODELS.kidSteps = st;
-    } else MODELS.kidSteps = null;
-    html += `<details class="kidx"><summary>${S.kidDiffsT}</summary>${S.kidDiffs.map(x => `<h4>${x.t}</h4>${x.seb ? `<p><b>SEB PID:</b> ${x.seb}</p>` : ''}<p><b>${S.kidModeReg}:</b> ${x.reg}</p>${x.why ? `<p class="note">${x.why}</p>` : ''}`).join('')}</details>`;
     MODELS.kid = { f, p, R, ret, rr, amt };
+    const st = kidSteps(f, o);
+    MODELS.kidSteps = st.length > 1 ? st : null;
+    if (tab === 'res') {
+      html += `<h3 class="kidh">${S.kidResH(f.n, S.kidModeShort[p.mode])}</h3><p class="kidi">${S.kidIntro(kidYs(p.from) + '-01', isoEnd(p.to))}</p>`
+        + `<div class="scroll"><table class="rt kidp">${kidTableHtml(ys, ret, amt, kidPct, kidEur)}</table></div>`
+        + `<p class="note">${p.mode === 'seb' ? S.kidModeSebNote : S.kidModeRegNote}${p.own ? ' ' + (R.nOwn ? S.kidOwnUsed(R.nOwn, R.N, kidYs(R.base + R.own.indexOf(1))) : S.kidOwnNone) : ''}</p>`;
+    } else if (tab === 'pid') {
+      const off = pids.find(x => kidYm(x.from.slice(0, 7)) === p.from && kidYm(x.to.slice(0, 7)) === p.to && x.years.every((n, i) => n === ys[i]));
+      if (!off) html += `<p class="kidi">${S.kidNoPid(pids.map(x => `${x.to.slice(0, 4)} (PID ${x.doc.slice(0, 4)})`).join(', '))}</p>`;
+      else {
+        const Rs = kidCalc(kidParams(f, o, { mode: 'seb' })), Rg = kidCalc(kidParams(f, o, { mode: 'reg' }));
+        const cell = (RR, i, j) => RR.err ? '–' : `${kidEur(kidAmt(RR.per[ys[i]].ret[j], ys[i]))}<br><small>${kidPct(kidXirr(RR.per[ys[i]].ret[j], ys[i]))}</small>`;
+        let tb = `<thead><tr>${S.kidCmpH.map((h, i) => `<th${i < 2 ? ' class="l"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`;
+        S.kidSc.forEach((sc, j) => ys.forEach((n, i) => {
+          const g = Rg.err ? null : kidAmt(Rg.per[n].ret[j], n);
+          tb += `<tr${i === 0 ? ' class="kt"' : ''}>${i === 0 ? `<th class="l" rowspan="${ys.length}">${sc}</th>` : ''}<td class="l">${S.kidYr(n)}</td><td>${kidEur(off.a[i][j])}<br><small>${kidPct(off.s[i][j])}</small></td>`
+            + `<td>${cell(Rs, i, j)}</td><td>${cell(Rg, i, j)}</td><td>${g == null ? '–' : `${pp(g - off.a[i][j])} EUR`}</td></tr>`;
+        }));
+        html += `<p class="kidi">${S.kidPidLead(off.doc)}</p><div class="scroll"><table class="rt kidp">${tb}</tbody></table></div>`;
+      }
+    } else {
+      if (st.length > 1) {
+        const A = x => S.kidSc.map((_, j) => kidAmt(x.R.per[p.rhp].ret[j], p.rhp));
+        let tb = `<thead><tr><th class="l">${S.kidStepH}</th>${S.kidSc.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody>`;
+        st.forEach((x, i) => {
+          const a = A(x), pr = i ? A(st[i - 1]) : null;
+          tb += `<tr${i === 0 || i === st.length - 1 ? ' class="kt"' : ''}><td class="l">${i}. ${x.t}</td>${a.map((v, j) => `<td>${num(v, 2)} EUR${pr ? `<br><small>${pp(v - pr[j])}</small>` : ''}</td>`).join('')}</tr>`;
+        });
+        html += `<p class="kidi">${S.kidWhyLead(p.rhp)}</p><div class="scroll"><table class="rt kidp kids">${tb}</tbody></table></div>`;
+      }
+      // paaiškinimai ta pačia tvarka ir numeracija kaip žingsniai lentelėje
+      const sid = ['own', 'ser', 'err', 'tl', 'sm', null], ord = S.kidDiffs.map((x, i) => ({ ...x, k: st.findIndex(z => z.id === sid[i]) }))
+        .filter((x, i) => sid[i] === null || x.k > 0 || st.length < 2).sort((a, b) => (a.k < 1 ? 99 : a.k) - (b.k < 1 ? 99 : b.k))
+        .map(x => ({ ...x, t: (x.k > 0 ? x.k + '. ' : '') + x.t.replace(/^\d+\.\s*/, '') }));
+      html += `<div class="kidx">${ord.map(x => `<h4>${x.t}</h4>${x.seb ? `<p><b>SEB PID:</b> ${x.seb}</p>` : ''}<p><b>${S.kidModeReg}:</b> ${x.reg}</p>${x.why ? `<p class="note">${x.why}</p>` : ''}`).join('')}</div>`;
+    }
   }
   const ex = p.bench && REP.kidm.x[p.bench] && REP.kidm.x[p.bench].ext;
-  html += `<p class="note">${ex && p.to >= kidYm(ex) && !(p.own && R.nOwn === R.N) ? S.kidExt(ex) + ' ' : ''}${S.kidPidSrc} ${S.kidBenchNote} ${p.alt && p.mode === 'reg' ? (lang === 'lt' ? p.alt.note_lt : p.alt.note_en) + ' ' : ''}${p.momDrop ? S.kidMomDrop(60 - p.momDrop) + ' ' : ''}${p.w12 ? S.kidW12(p.rhp, kidYs(p.from - 1 + p.w12), kidYs(p.to - 12 * p.rhp)) + ' ' : ''}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')}</p>`;
+  html += `<p class="kidi"><a href="${KID_REG}" target="_blank" rel="noopener">${S.kidRegL}</a> · <a href="${KID_REGC}" target="_blank" rel="noopener">${lang === 'lt' ? 'konsoliduota redakcija su 2021/2268 pakeitimais' : 'consolidated version with the 2021/2268 amendments'}</a></p>`
+    + `<details class="kidsrc"><summary>${S.kidSrcT}</summary><p class="note">${ex && p.to >= kidYm(ex) && !(p.own && R.nOwn === R.N) ? S.kidExt(ex) + ' ' : ''}${S.kidPidSrc} ${S.kidBenchNote} ${p.alt && p.mode === 'reg' ? (lang === 'lt' ? p.alt.note_lt : p.alt.note_en) + ' ' : ''}${p.momDrop ? S.kidMomDrop(60 - p.momDrop) + ' ' : ''}${p.w12 ? S.kidW12(p.rhp, kidYs(p.from - 1 + p.w12), kidYs(p.to - 12 * p.rhp)) + ' ' : ''}</p></details>`;
   box.innerHTML = html;
   const set = (k, v) => { const cur = { ...(KS.o[fk] || {}) }; if (v === d[k]) delete cur[k]; else cur[k] = v; KS.o[fk] = cur; kidSave(); renderKid(); };
   document.getElementById('kidF').onchange = e => { KS.f = e.target.value; kidSave(); renderKid(); };
-  document.getElementById('kidM').onchange = e => set('mode', e.target.value);
+  wire(box, { kidM: v => set('mode', v), kidT: v => { KS.tab = v; kidSave(); renderKid(); } });
+  document.getElementById('kidY').onchange = e => {
+    const y = +e.target.value, cur = { ...(KS.o[fk] || {}) }; if (!y) return;
+    if (y === y0) { delete cur.to; delete cur.from; } else { cur.to = y * 12 + 11; cur.from = cur.to - 12 * Math.max(p.rhp + 5, 10) + 1; }
+    KS.o[fk] = cur; kidSave(); renderKid();
+  };
   const kd = document.getElementById('kidD'); if (kd) kd.onchange = e => set('data', e.target.value);
   document.getElementById('kidReset').onclick = () => { delete KS.o[fk]; kidSave(); renderKid(); };
   box.querySelectorAll('input[data-k]').forEach(el => el.addEventListener('change', () => {
     const k = el.dataset.k, cur = { ...(KS.o[fk] || {}) };
     if (k === 'from' || k === 'to') { if (!el.value) return; cur[k] = kidYm(el.value); }
     else { const v = parseFloat(el.value); if (!isFinite(v)) return; cur[k] = k === 'rhp' ? Math.max(1, Math.round(v)) : v;
-      if (k === 'rhp') cur.from = (cur.to ?? d.to) - 12 * Math.max(cur.rhp + 5, 10) + 1; }   // pakeitus RHP – stebėjimas RHP + 5 m.
+      if (k === 'rhp') cur.from = (cur.to ?? p.to) - 12 * Math.max(cur.rhp + 5, 10) + 1; }   // pakeitus RHP – stebėjimas RHP + 5 m.
     KS.o[fk] = cur; kidSave(); renderKid();
   }));
 }
