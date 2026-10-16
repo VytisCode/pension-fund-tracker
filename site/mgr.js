@@ -12,7 +12,7 @@ addStrings({
   h3: 'Pillar III funds: return and place in category', m3: (d) => `Month-end unit values to ${d}, not annualised; compared within the same risk category.`,
   thFund: 'Fund', thG: 'Group', thFee: 'Fee, %', thAum: 'Assets, € m', thVol: 'Volatility, %', thDd: 'Max fall, %', thCat: 'Category', thMed: 'Group median', thDiff: 'Difference, pp', thPer: 'Period', thPlace: 'Place',
   cat: { bond: 'Bonds', mixed: 'Mixed', equity: 'Equity' },
-  hAum: 'Net assets at quarter ends', mAum: 'Sum of the manager’s funds, € m. Until daily data exist – Bank of Lithuania quarter-end portfolio totals.',
+  hAum: 'Net assets', mAum: 'Sum of the manager’s funds, € m. Points – only days with data: daily since daily assets are collected, before that – Bank of Lithuania quarter-end portfolio totals; periods longer than ~13 months – last day of each month.',
   hAl: q => `Portfolio by asset type, ${q}`, hTop: q => `10 largest holdings, ${q}`, mPf: n => `Bank of Lithuania portfolio reports; ${n}.`, pfAll: 'all pillar II funds of the manager', pfOne: 'this fund',
   thPos: 'Holding', thType: 'Type', thW: 'Share, %',
   types: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' },
@@ -31,7 +31,7 @@ addStrings({
   h3: 'III pakopos fondai: grąža ir vieta kategorijoje', m3: (d) => `Mėnesio pabaigos vieneto vertės iki ${d}, ne metinis pokytis; lyginama toje pačioje rizikos kategorijoje.`,
   thFund: 'Fondas', thG: 'Grupė', thFee: 'Mokestis, %', thAum: 'Turtas, mln. €', thVol: 'Svyravimas, %', thDd: 'Didž. kritimas, %', thCat: 'Kategorija', thMed: 'Grupės mediana', thDiff: 'Skirtumas, p. p.', thPer: 'Laikotarpis', thPlace: 'Vieta',
   cat: { bond: 'Obligacijų', mixed: 'Mišrūs', equity: 'Akcijų' },
-  hAum: 'Grynieji aktyvai ketvirčių pabaigoje', mAum: 'Valdytojo fondų suma, mln. €. Kol nebuvo kasdienių duomenų – Lietuvos banko ketvirčio pabaigos portfelių sumos.',
+  hAum: 'Grynieji aktyvai', mAum: 'Valdytojo fondų suma, mln. €. Taškai – tik dienos, kurioms yra duomenų: nuo tada, kai renkami kasdieniai aktyvai, – kasdien, anksčiau – Lietuvos banko ketvirčio pabaigos portfelių sumos; ilgesniems nei ~13 mėn. laikotarpiams – kiekvieno mėnesio paskutinė diena.',
   hAl: q => `Portfelis pagal turto rūšį, ${q}`, hTop: q => `10 didžiausių pozicijų, ${q}`, mPf: n => `Lietuvos banko portfelių ataskaitos; ${n}.`, pfAll: 'visi valdytojo II pakopos fondai', pfOne: 'šis fondas',
   thPos: 'Pozicija', thType: 'Rūšis', thW: 'Dalis, %',
   types: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' },
@@ -122,10 +122,23 @@ function aumLines() {                    // diagramos eilutės pagal pasirinkim�
 }
 function aumData() {
   const L = aumLines().filter(x => x.fs.length); if (!L.length) return null;
-  const last = Math.min(asOf() || Infinity, Math.max(...L.flatMap(x => x.fs.map(f => f.d[f.d.length - 1]))));
+  const dataLast = Math.min(asOf() || Infinity, Math.max(...L.flatMap(x => x.fs.map(f => f.d[f.d.length - 1]))));
   const s0 = L.find(x => x.start), first = Math.min(...(s0 ? [s0] : L).flatMap(x => x.fs.map(f => f.d[0])));
-  const yrs = { all: 0, '5y': 5, '3y': 3, '1y': 1 }[ST.ar || 'all'], from = ST.ar === 'ytd' ? Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY) : yrs ? shiftMonths(last, 12 * yrs) : first;
-  const ends = qEnds(first, last).filter(d => d >= from - 1), tot = {}, NF = {}, fullN = pl => NF[pl] ??= sumAtN(aumFs(null, pl), last).n;
+  /* laikotarpis (savininkas 2026-10-16): mygtukai, savos datos „Nuo–Iki“ arba ketvirtis; taškai – tik dienos, kurioms yra duomenų:
+     iki ~13 mėn. – visos tokios dienos (nuo 2026 m. kasdien), ilgesniam – kiekvieno mėnesio paskutinė; „pokytis“ – ketvirčių pabaigos */
+  const custom = ST.ar === 'custom' && ST.af && ST.at;
+  const last = custom ? Math.min(ST.at, dataLast) : dataLast;
+  const yrs = { all: 0, '5y': 5, '3y': 3, '1y': 1 }[ST.ar || 'all'];
+  const from = custom ? Math.max(ST.af, first) : ST.ar === 'ytd' ? Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY) : yrs ? Math.max(first, shiftMonths(last, 12 * yrs)) : first;
+  const days = [...new Set(L.flatMap(x => x.fs.flatMap(f => f.d)))].sort((a, b) => a - b);
+  let ends;
+  if (ST.av === 'chg') ends = qEnds(first, last).filter(d => d >= from - 1);
+  else {
+    const inR = days.filter(d => d > from && d <= last), base = days.filter(d => d <= from).pop();
+    if (last - from <= 400) ends = inR; else { const mm = new Map(); inR.forEach(d => mm.set(iso(d).slice(0, 7), d)); ends = [...mm.values()]; }
+    if (base != null) ends.unshift(base);
+  }
+  const tot = {}, NF = {}, fullN = pl => NF[pl] ??= sumAtN(aumFs(null, pl), last).n;
   const val = (x, d) => { const v = sumAt(x.fs, d); if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
   L.forEach(x => { const raw = ends.map(d => val(x, d)); x.raw = raw; x.vals = ST.av === 'chg' ? raw.map((v, i) => i && v != null && raw[i - 1] ? (v / raw[i - 1] - 1) * 100 : null) : raw; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
   return { L, ends };
@@ -141,16 +154,31 @@ function moneyChart(el, series, unit) {  // paprasta linijinė diagrama (mln. �
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${hEsc(T().hAum)}">`;
   ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t === 0 && lo < 0 ? 'var(--text-3)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(t, unit === 'eur' || Math.abs(hi - lo) > 20 ? 0 : 1)}</text>`; });
   const y0 = new Date(x0 * DAY).getUTCFullYear(), y1 = new Date(x1 * DAY).getUTCFullYear(), step = Math.ceil((y1 - y0 + 1) / 8);
-  for (let y = y0 + 1; y <= y1; y += step) { const d = Math.round(Date.UTC(y, 0, 1) / DAY); s += `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${y}</text>`; }
+  if (x1 - x0 <= 800) {                     // trumpas laikotarpis – mėnesių žymos (savininkas 2026-10-16: „laiko nustatymas neaiškus“)
+    const d0 = new Date(x0 * DAY), months = Math.round((x1 - x0) / 30.4), k = Math.max(1, Math.ceil(months / 8));
+    for (let i = 1; ; i++) { const dt = new Date(Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + i, 1)), d = Math.round(dt / DAY); if (d > x1) break; if ((dt.getUTCMonth()) % k) continue;
+      const lab = dt.toLocaleDateString(T().locale, { month: 'short', timeZone: 'UTC' }) + (dt.getUTCMonth() === 0 || i === 1 ? ' ' + dt.getUTCFullYear() : '');
+      s += `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${lab}</text>`; }
+  } else for (let y = y0 + 1; y <= y1; y += step) { const d = Math.round(Date.UTC(y, 0, 1) / DAY); s += `<line x1="${X(d)}" x2="${X(d)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${y}</text>`; }
   series.forEach(r => { s += `<polyline fill="none" stroke="${r.c}" stroke-width="2" ${r.dash ? 'stroke-dasharray="5 4"' : ''} points="${r.pts.map(p => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}"/>`; const l = r.pts[r.pts.length - 1]; s += `<circle cx="${X(l[0])}" cy="${Y(l[1])}" r="3" fill="${r.c}"/>`; });
   el.innerHTML = s + '</svg>';
   el._legend = series.map(r => ({ c: r.c, l: r.l, d: r.dash ? '5 4' : '' }));
 }
+function aumQuarters() {                  // [pradžia (ankstesnio ketvirčio pabaiga), pabaiga, pavadinimas] – naujausi pirmi
+  const out = [], last = Math.min(asOf() || LATEST, LATEST);
+  for (let y = new Date(last * DAY).getUTCFullYear(); y >= 2019; y--) for (const q of [4, 3, 2, 1]) {
+    const e = Math.round(Date.UTC(y, q * 3, 0) / DAY), s = Math.round(Date.UTC(y, (q - 1) * 3, 0) / DAY);
+    if (s >= last) continue; out.push([s, Math.min(e, last), lang === 'lt' ? `${y} m. ${['I', 'II', 'III', 'IV'][q - 1]} ketv.${e > last ? ' (iki šiol)' : ''}` : `Q${q} ${y}${e > last ? ' (to date)' : ''}`]);
+  }
+  return out;
+}
 function aumHTML() {
   const t = T(), opt = (id, xs, v) => `<select id="${id}">${xs.map(([k, l]) => `<option value="${k}"${k === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
   const sc = ST.f ? '' : opt('aS', [['both', t.sBoth], ['II', t.optII], ['III', t.optIII], ['fII', t.sFII], ['fIII', t.sFIII]], ST.as);
-  const L = lang === 'lt', ar = ST.ar || 'all', rb = [['ytd', T().periods.ytd], ['1y', L ? '1 m.' : '1y'], ['3y', L ? '3 m.' : '3y'], ['5y', L ? '5 m.' : '5y'], ['all', L ? 'Visa istorija' : 'All']];
-  const seg = `<div class="seg aseg" id="aR" role="group" aria-label="${L ? 'Laikotarpis' : 'Period'}">${rb.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${k === ar}">${l}</button>`).join('')}</div>`;
+  const L = lang === 'lt', ar = ST.ar || 'all', rb = [['ytd', T().periods.ytd], ['1y', T().periods['1y']], ['3y', T().periods['3y']], ['5y', T().periods['5y']], ['all', L ? 'Visa istorija' : 'All']];
+  const seg = `<div class="seg aseg" id="aR" role="group" aria-label="${L ? 'Laikotarpis' : 'Period'}">${rb.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${k === ar}">${l}</button>`).join('')}</div>`
+    + `<select id="aQ" aria-label="${L ? 'Ketvirtis' : 'Quarter'}"><option value="">${L ? 'Ketvirtis' : 'Quarter'} ▾</option>${aumQuarters().map(([a, b, l]) => `<option value="${a}:${b}"${ar === 'custom' && ST.af === a && ST.at === b ? ' selected' : ''}>${l}</option>`).join('')}</select>`
+    + `<label class="field">${L ? 'Nuo' : 'From'} <input type="date" id="aF" value="${ar === 'custom' && ST.af ? iso(ST.af) : ''}"></label><label class="field">${L ? 'Iki' : 'To'} <input type="date" id="aT" value="${ar === 'custom' && ST.at ? iso(ST.at) : ''}"></label>`;
   /* lentelė paslėpta (savininkas 2026-10-16) – jos skaičiai patenka į diagramos Excel failą */
   return `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta" id="aumM"></div><div class="pick apick">${sc}${opt('aV', [['eur', t.vEur], ['share', t.vShare], ['chg', t.vChg]], ST.av)}${seg}</div>
     <div class="mchart" id="aumC"></div><div class="lgd" id="aumL"></div><table class="mt" id="aumT" hidden></table></section>`;
@@ -170,7 +198,10 @@ function drawAum() {
     + `<tbody>${rows.map(r => `<tr><td>${iso(r.d)}</td>${D.L.map(x => `<td class="n">${f(x.vals[r.i])}</td>`).join('')}${tot ? `<td class="n"><b>${f(sum(r.i))}</b></td>` : ''}</tr>`).join('')}</tbody>`;
   $('aS')?.addEventListener('change', e => { ST.as = e.target.value; save(); drawAum(); });
   $('aV').onchange = e => { ST.av = e.target.value; save(); drawAum(); };
-  $('aR').onclick = e => { const b = e.target.closest('button'); if (!b) return; ST.ar = b.dataset.k; save(); $('aR').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); drawAum(); };
+  $('aQ').onchange = e => { if (!e.target.value) return; const [a, b] = e.target.value.split(':').map(Number); ST.ar = 'custom'; ST.af = a; ST.at = b; save(); $('aR').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', false)); $('aF').value = iso(a); $('aT').value = iso(b); drawAum(); };
+  const dIn = v => v ? Math.round(Date.parse(v) / DAY) : 0;
+  ['aF', 'aT'].forEach(id => $(id).onchange = () => { const a = dIn($('aF').value), b = dIn($('aT').value); if (!a || !b || b <= a) return; ST.ar = 'custom'; ST.af = a; ST.at = b; save(); $('aQ').value = ''; $('aR').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', false)); drawAum(); });
+  $('aR').onclick = e => { const b = e.target.closest('button'); if (!b) return; ST.ar = b.dataset.k; $('aQ').value = ''; $('aF').value = $('aT').value = ''; save(); $('aR').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); drawAum(); };
 }
 
 /* ---------- portfelis (data_pf.js): naujausias ketvirtis ---------- */

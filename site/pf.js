@@ -703,23 +703,30 @@ const OVS = {
     det: 'Išsami analizė', detLead: 'Visi ketvirčio sandoriai, alternatyvios investicijos, palyginimas grupėje, panašumas ir kiekvieno fondo portfelis – kiekviena investicija nuo 2019 m.',
     chgH: (a, b) => `Kas pasikeitė: ${a} → ${b}`, outH: 'Kuo išsiskiria', cmpH: 'Palyginti fondus', thM: 'Valdytojas', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvos', thCash: 'Pinigai', thBuy: 'Didžiausi pirkimai', thSell: 'Didžiausi pardavimai', thNew: 'Naujos / parduotos',
     pickG: 'Grupė:', pickAdd: '+ pridėti fondą', rm: 'pašalinti', none: 'Pasirinkite bent du fondus.', more: 'daugiausia', less: 'mažiausiai', med: 'mediana', inG: g => `grupėje ${g}`, amongM: 'tarp valdytojų',
-    up: 'padidino', down: 'sumažino', by: d => `${d} p. p.`, outNone: 'Šį ketvirtį ryškių išskirtinumų nerasta.', outNote: 'Rodoma, kai skirtumas nuo grupės medianos ≥ 5 p. p. (TER – ≥ 0,1 p. p.). Paspauskite – fondai atsiras palyginime.',
+    up: 'padidino', down: 'sumažino', by: d => `${d} p. p.`, outNone: 'Šį ketvirtį ryškių išskirtinumų nerasta.', outNote: 'Rodoma, kai skirtumas nuo grupės medianos ≥ 5 p. p. (TER – ≥ 0,1 p. p.) arba akcijų dalis per ketvirtį pasikeitė ≥ 3 p. p. Paspauskite teiginį – atsivers fondo portfelis; „palyginti grupę“ – visa grupė palyginime.',
     m: { eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
-    pl: 'Pakopa:', q: 'Ketvirtis:', dEq: 'akcijų dalį', inQ: 'per ketvirtį', to: 'iki' },
+    pl: 'Pakopa:', q: 'Ketvirtis:', dEq: 'akcijų dalį', inQ: 'per ketvirtį', to: 'iki',
+    ctxBack: (q2, v2, q1, v1) => `Tai grįžimas, ne strategijos keitimas: ${q2} buvo ${v2} %, ${q1} laikinai ${v1} % (daugiau pinigų ir trumpų obligacijų).`, ctxAum: (a, b) => `Fondo turtas per ketvirtį: ${a} → ${b}.`,
+    toFund: 'Paspauskite – atsivers fondo portfelis ir jo pokyčiai per ketvirčius.', cmpG: 'palyginti grupę →' },
   en: { title: 'Quarter overview', lead: 'What changed in the quarter, what makes managers and funds stand out, and a comparison of chosen funds. Metrics – % of portfolio, look-through (ETF and fund contents by their attributes); Δ – change from the previous quarter, in percentage points.',
     det: 'Detailed analysis', detLead: 'All quarterly trades, alternatives, peer comparison, similarity and each fund’s portfolio – every investment since 2019.',
     chgH: (a, b) => `What changed: ${a} → ${b}`, outH: 'What stands out', cmpH: 'Compare funds', thM: 'Manager', thEq: 'Equity', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash', thBuy: 'Largest buys', thSell: 'Largest sells', thNew: 'New / exited',
     pickG: 'Group:', pickAdd: '+ add fund', rm: 'remove', none: 'Choose at least two funds.', more: 'highest', less: 'lowest', med: 'median', inG: g => `in group ${g}`, amongM: 'among managers',
-    up: 'raised', down: 'cut', by: d => `${d} pp`, outNone: 'No marked outliers this quarter.', outNote: 'Shown when the gap from the group median is ≥ 5 pp (TER – ≥ 0.1 pp). Click to add the funds to the comparison.',
+    up: 'raised', down: 'cut', by: d => `${d} pp`, outNone: 'No marked outliers this quarter.', outNote: 'Shown when the gap from the group median is ≥ 5 pp (TER – ≥ 0.1 pp) or the equity share changed ≥ 3 pp in the quarter. Click a line to open the fund’s portfolio; “compare group” puts the whole group into the comparison.',
     m: { eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
-    pl: 'Pillar:', q: 'Quarter:', dEq: 'equity share', inQ: 'in the quarter', to: 'to' },
+    pl: 'Pillar:', q: 'Quarter:', dEq: 'equity share', inQ: 'in the quarter', to: 'to',
+    ctxBack: (q2, v2, q1, v1) => `A return, not a strategy change: ${q2} it was ${v2} %, ${q1} temporarily ${v1} % (more cash and short bonds).`, ctxAum: (a, b) => `Fund assets over the quarter: ${a} → ${b}.`,
+    toFund: 'Click to open the fund’s portfolio and its changes by quarter.', cmpG: 'compare group →' },
 };
 const OT = () => OVS[lang] || OVS.lt;
 const OV = { q: NQ - 1, pl: 'II', sel: null };
 try { const s = JSON.parse(localStorage.getItem('pfOv') || '{}'); if (Array.isArray(s.sel)) OV.sel = s.sel.filter(c => fundBy[c]); if (s.pl) OV.pl = s.pl; } catch (e) {}
 const ovSave = () => { try { localStorage.setItem('pfOv', JSON.stringify({ sel: OV.sel, pl: OV.pl })); } catch (e) {} };
-const ovGroups = () => [...new Set(FUNDS.filter(f => f.pl === OV.pl && f.q[OV.q]).map(f => f.g))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b));
-const gLab = g => g === 'turto' ? (lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : g;
+const ogOf = f => { if (f.pl !== 'III') return f.g; if (f.cat) return f.cat; if (f._og) return f._og; const L = lookThrough(f, f.last); const e = L.b.eq || 0; return (f._og = e < 30 ? 'bond' : e < 70 ? 'mixed' : 'equity'); };
+const ovGroups = () => [...new Set(FUNDS.filter(f => f.pl === OV.pl && f.q[OV.q]).map(ogOf))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b));
+const ovName = f => { const n = fundName(f); return n.includes(f.p) || n.startsWith('INVL') ? n : `${f.p} ${n}`; };   // „Pensijos fondas 60+“ → „Swedbank Pensijos fondas 60+“
+const ovWho = (f, g) => f.pl === 'III' ? ovName(f) : `${f.p} ${gLab(g)}`;
+const gLab = g => ({ turto: lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation', bond: lang === 'lt' ? 'obligacijų fondai' : 'bond funds', mixed: lang === 'lt' ? 'mišraus investavimo fondai' : 'mixed funds', equity: lang === 'lt' ? 'akcijų fondai' : 'equity funds' })[g] || g.replace('-', '–');
 function ovMetrics(f, qi) {
   if (!f.q[qi]) return null;
   const r = peerRow(f, qi), m = f.q[qi], t = f.tot[qi];
@@ -746,7 +753,7 @@ function mgrTrades(mgr, q1) {               // valdytojo sandoriai: pirkimai / p
 function ovOutliers(qi) {
   const o = OT(), out = [], spec = [['eq', 5], ['alt', 5], ['cash', 5], ['em', 5], ['r_baltic', 3], ['idx', 15], ['ter', 0.1]];
   ovGroups().forEach(g => {
-    const rows = FUNDS.filter(f => f.pl === OV.pl && f.g === g && f.q[qi]).map(f => ({ f, m: ovMetrics(f, qi), p: f.q[qi - 1] ? ovMetrics(f, qi - 1) : null })).filter(x => x.m);
+    const rows = FUNDS.filter(f => f.pl === OV.pl && ogOf(f) === g && f.q[qi]).map(f => ({ f, m: ovMetrics(f, qi), p: f.q[qi - 1] ? ovMetrics(f, qi - 1) : null })).filter(x => x.m);
     if (rows.length < 3) return;
     spec.forEach(([k, thr]) => {
       const vals = rows.map(x => x.m[k]).filter(v => v != null); if (vals.length < 3) return;
@@ -754,12 +761,20 @@ function ovOutliers(qi) {
       [[Math.max(...vals), 'more'], [Math.min(...vals), 'less']].forEach(([v, dir]) => {
         if (Math.abs(v - med) < thr) return;
         const x = rows.find(r => r.m[k] === v);
-        out.push({ sc: Math.abs(v - med) / thr, f: x.f, g, html: `${sw(x.f.p)}<b>${esc(x.f.p)} ${esc(gLab(g))}</b>: ${o.m[k]} <b>${k === 'ter' ? num(v, 2) + ' %' : num(v, 1) + ' %'}</b> – ${o[dir]} ${o.inG(gLab(g))} (${o.med} ${k === 'ter' ? num(med, 2) : num(med, 1)} %)` });
+        out.push({ sc: Math.abs(v - med) / thr, f: x.f, g, html: `${sw(x.f.p)}<b>${esc(ovWho(x.f, g))}</b>: ${o.m[k]} <b>${k === 'ter' ? num(v, 2) + ' %' : num(v, 1) + ' %'}</b> – ${o[dir]} ${o.inG(gLab(g))} (${o.med} ${k === 'ter' ? num(med, 2) : num(med, 1)} %)` });
       });
     });
-    // didžiausias akcijų dalies pokytis per ketvirtį grupėje
+    // didžiausias akcijų dalies pokytis per ketvirtį grupėje – su kontekstu: ar tai laikinas pokytis (grįžimas prie ankstesnio
+    // lygio), kaip pasikeitė fondo turtas (pvz. išmokos dalyviams); savininkas 2026-10-16: teiginys neturi klaidinti
     const ch = rows.filter(x => x.p).map(x => ({ x, d: x.m.eq - x.p.eq })).sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
-    if (ch && Math.abs(ch.d) >= 3) out.push({ sc: Math.abs(ch.d) / 3, f: ch.x.f, g, html: `${sw(ch.x.f.p)}<b>${esc(ch.x.f.p)} ${esc(gLab(g))}</b>: ${o.inQ} ${ch.d > 0 ? o.up : o.down} ${o.dEq} <b>${pp(ch.d)} p. p.</b> (${o.to} ${num(ch.x.m.eq, 1)} %)` });
+    if (ch && Math.abs(ch.d) >= 3) {
+      const f = ch.x.f, pp2 = f.q[qi - 2] ? ovMetrics(f, qi - 2) : null, back = pp2 && Math.abs(ch.x.m.eq - pp2.eq) < Math.abs(ch.d) / 3;
+      const t0 = f.tot[qi - 1], t1 = f.tot[qi], dropT = t0 && t1 / t0 < 0.8;
+      const ctx = back ? o.ctxBack(qLabel(qi - 2), num(pp2.eq, 1), qLabel(qi - 1), num(ch.x.p.eq, 1)) : '';
+      const ctxT = dropT ? o.ctxAum(eur(t0), eur(t1)) : '';
+      out.push({ sc: Math.abs(ch.d) / 3 / (back ? 2 : 1), f, g, chg: true,
+        html: `${sw(f.p)}<b>${esc(ovWho(f, g))}</b>: ${o.m.eq} <b>${num(ch.x.m.eq, 1)} %</b> (${pp(ch.d)} p. p. ${o.inQ}).${ctx ? ' ' + ctx : ''}${ctxT ? ' ' + ctxT : ''}` });
+    }
   });
   const per = {}; return out.sort((a, b) => b.sc - a.sc).filter(x => { const k = x.f.p; per[k] = (per[k] || 0) + 1; return per[k] <= 2; }).slice(0, 10);   // ne daugiau 2 vienam valdytojui – įvairovei
 }
@@ -781,28 +796,29 @@ function renderOverview() {
   // 2. kuo išsiskiria
   document.getElementById('ovOutH').textContent = o.outH;
   const outs = ovOutliers(q1);
-  document.getElementById('ovOut').innerHTML = outs.length ? outs.map((x, i) => `<li><button type="button" class="ovo" data-i="${i}">${x.html}</button></li>`).join('') : `<li>${o.outNone}</li>`;
+  document.getElementById('ovOut').innerHTML = outs.length ? outs.map((x, i) => `<li><button type="button" class="ovo" data-i="${i}" title="${o.toFund}">${x.html}</button><button type="button" class="ovg" data-i="${i}">${o.cmpG}</button></li>`).join('') : `<li>${o.outNone}</li>`;
   document.getElementById('ovOutN').textContent = o.outNote;
-  document.getElementById('ovOut').querySelectorAll('.ovo').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; OV.sel = FUNDS.filter(f => f.pl === OV.pl && f.g === x.g && f.q[q1]).map(f => f.c); ovSave(); renderCompare(); document.getElementById('ovCmpH').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+  document.getElementById('ovOut').querySelectorAll('.ovg').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; OV.sel = FUNDS.filter(f => f.pl === OV.pl && ogOf(f) === x.g && f.q[q1]).map(f => f.c); ovSave(); renderCompare(); document.getElementById('ovCmpH').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+  document.getElementById('ovOut').querySelectorAll('.ovo').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; ST.fund = x.f.c; ST.fq = x.f.q[q1] ? q1 : x.f.last; ST.pos = null; ST.ft = 'all'; save(); renderFund(); document.getElementById('fcTitle').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
   renderCompare();
 }
 function renderCompare() {
   const o = OT(), q1 = OV.q, live = FUNDS.filter(f => f.pl === OV.pl && f.q[q1]);
-  if (!OV.sel || !OV.sel.some(c => live.some(f => f.c === c))) { const g0 = fundBy[ST.fund] && fundBy[ST.fund].pl === OV.pl ? fundBy[ST.fund].g : ovGroups()[ovGroups().length - 1]; OV.sel = live.filter(f => f.g === g0).map(f => f.c); }
+  if (!OV.sel || !OV.sel.some(c => live.some(f => f.c === c))) { const g0 = fundBy[ST.fund] && fundBy[ST.fund].pl === OV.pl ? ogOf(fundBy[ST.fund]) : ovGroups()[ovGroups().length - 1]; OV.sel = live.filter(f => ogOf(f) === g0).map(f => f.c); }
   const sel = OV.sel.map(c => fundBy[c]).filter(f => f && f.q[q1]);
   document.getElementById('ovCmpH').textContent = o.cmpH;
   const pick = document.getElementById('ovPick');
-  pick.innerHTML = `<span class="field">${o.pickG}</span>${ovGroups().map(g => `<button type="button" class="chip" data-g="${g}" aria-pressed="${sel.length && sel.every(f => f.g === g) && live.filter(f => f.g === g).length === sel.length}">${esc(gLab(g))}</button>`).join('')}`
-    + `<select id="ovAdd"><option value="">${o.pickAdd}</option>${live.filter(f => !OV.sel.includes(f.c)).map(f => `<option value="${f.c}">${esc(fundName(f))}</option>`).join('')}</select>`
-    + `<div class="ovsel">${sel.map(f => `<span class="chip on">${sw(f.p)}${esc(fundName(f))} <button type="button" data-rm="${f.c}" aria-label="${o.rm}">×</button></span>`).join('')}</div>`;
-  pick.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { OV.sel = live.filter(f => f.g === b.dataset.g).map(f => f.c); ovSave(); renderCompare(); });
+  pick.innerHTML = `<span class="field">${o.pickG}</span>${ovGroups().map(g => `<button type="button" class="chip" data-g="${g}" aria-pressed="${sel.length && sel.every(f => ogOf(f) === g) && live.filter(f => ogOf(f) === g).length === sel.length}">${esc(gLab(g))}</button>`).join('')}`
+    + `<select id="ovAdd"><option value="">${o.pickAdd}</option>${live.filter(f => !OV.sel.includes(f.c)).map(f => `<option value="${f.c}">${esc(ovName(f))}</option>`).join('')}</select>`
+    + `<div class="ovsel">${sel.map(f => `<span class="chip on">${sw(f.p)}${esc(ovName(f))} <button type="button" data-rm="${f.c}" aria-label="${o.rm}">×</button></span>`).join('')}</div>`;
+  pick.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { OV.sel = live.filter(f => ogOf(f) === b.dataset.g).map(f => f.c); ovSave(); renderCompare(); });
   pick.querySelector('#ovAdd').onchange = e => { if (e.target.value) { OV.sel.push(e.target.value); ovSave(); renderCompare(); } };
   pick.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { OV.sel = OV.sel.filter(c => c !== b.dataset.rm); ovSave(); renderCompare(); });
   const tb = document.getElementById('ovCmp');
   if (sel.length < 2) { tb.innerHTML = `<tbody><tr><td>${o.none}</td></tr></tbody>`; return; }
   const M = sel.map(f => ({ f, a: ovMetrics(f, q1), b: f.q[q1 - 1] ? ovMetrics(f, q1 - 1) : null }));
   const rows = [['eq', 1, true], ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
-  tb.innerHTML = `<thead><tr><th></th>${M.map(x => `<th class="n">${sw(x.f.p)}${esc(fundName(x.f))}</th>`).join('')}</tr></thead><tbody>`
+  tb.innerHTML = `<thead><tr><th></th>${M.map(x => `<th class="n">${sw(x.f.p)}${esc(ovName(x.f))}</th>`).join('')}</tr></thead><tbody>`
     + rows.map(([k, d, isPct]) => { const vs = M.map(x => x.a[k]).filter(v => v != null), hi = Math.max(...vs), lo = Math.min(...vs);
       return `<tr><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';
         const dv = x.b && x.b[k] != null && isPct ? v - x.b[k] : null, ex = vs.length > 2 && (v === hi || v === lo) && hi - lo > (isPct ? 2 : 0.0001);
@@ -817,4 +833,14 @@ function renderAll() {
 }
 renderHeader('portfolios', renderAll);
 renderAll();
+/* paieška: „portfolios.html#pos=N“ – atidaromas fondas, kuriame ši investicija sudaro didžiausią dalį, ir jos istorija */
+function openPos() {
+  let si = null; try { si = new URLSearchParams(location.hash.slice(1)).get('pos'); } catch (e) {}
+  if (si == null || !S[+si]) return; si = +si;
+  let best = null; FUNDS.forEach(f => { const qi = f.last, x = f.q[qi] && f.q[qi].get(si); if (x && f.tot[qi] && (!best || x.v / f.tot[qi] > best.w)) best = { f, w: x.v / f.tot[qi] }; });
+  if (!best) return;
+  ST.fund = best.f.c; ST.fq = best.f.last; ST.pos = si; ST.ft = 'all'; save(); renderFund();
+  setTimeout(() => { const el = document.getElementById('fcTitle'); if (el) el.scrollIntoView({ block: 'start' }); }, 150);
+}
+openPos(); addEventListener('hashchange', openPos);
 let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { renderPosition.paint && renderPosition.paint(); renderAlt.paint && renderAlt.paint(); }, 120); });

@@ -1,7 +1,7 @@
 /* Rezultatų ir palyginimo puslapis. Priklauso nuo: data.js (DATA), events.js (EVENTS), common.js. */
 addStrings({
   idxLbl: 'Compare with',
-  from: 'From', to: 'To', group: 'Group', ret: 'Return', rank: 'Rank (1 = best)', avg: 'Average', avgW: 'Asset-weighted',
+  from: 'From', to: 'To', group: 'Group', ret: 'Return', rank: 'Rank (1 = best)', avg: 'Average', avgW: 'Weighted', avgWt: 'Average weighted by the funds’ net assets (larger funds count more)',
   hSum: 'Automatic summary', winsel: p => `Selected period (${p})`, win1w: 'Last 7 days', win1m: 'Last month', qPlace: 'Quarter', yPlace: 'Year',
   hMarket: 'Whole market: return and rank by age group', hFund: 'Compare funds',
   hRet: 'Return over the period, %', hRank: 'Rank within the age group (1 = best return)',
@@ -88,7 +88,7 @@ addStrings({
   },
 }, {
   idxLbl: 'Palyginti su',
-  from: 'Nuo', to: 'Iki', group: 'Grupė', ret: 'Grąža', rank: 'Vieta (1 = geriausia)', avg: 'Vidurkis', avgW: 'Svertinis pagal aktyvus',
+  from: 'Nuo', to: 'Iki', group: 'Grupė', ret: 'Grąža', rank: 'Vieta (1 = geriausia)', avg: 'Vidurkis', avgW: 'Svertinis', avgWt: 'Svertinis vidurkis pagal fondų grynuosius aktyvus (didesni fondai sveria daugiau)',
   hSum: 'Automatinė santrauka', winsel: p => `Pasirinktas laikotarpis (${p})`, win1w: 'Paskutinės 7 dienos', win1m: 'Paskutinis mėnuo', qPlace: 'Ketvirtis', yPlace: 'Metai',
   hMarket: 'Visa rinka: grąža ir vieta pagal amžiaus grupes', hFund: 'Fondų palyginimas',
   hRet: 'Grąža laikotarpyje, %', hRank: 'Vieta amžiaus grupėje (1 = geriausia grąža)',
@@ -489,7 +489,7 @@ function renderMarket() {
   const rkCell = (v, rank, n, f) => v === null ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
   const retBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => rkCell(r.vals[p.id], r.ranks.get(p.id), r.n, pc2)).join('')}${pmCell(r.med)}</tr>`).join('')
     + gap(provs.length + 2) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgRet[p.id], arRank.map.get(p.id), arRank.n, pc2)).join('')}${pmCell(avgMed)}</tr>`
-    + `<tr class="avg"><td>${T().avgW}</td>${provs.map(p => rkCell(avgW[p.id], awRank.map.get(p.id), awRank.n, pc2)).join('')}${na}</tr>`;
+    + `<tr class="avg"><td title="${T().avgWt}">${T().avgW} <span class="info" aria-hidden="true">i</span></td>${provs.map(p => rkCell(avgW[p.id], awRank.map.get(p.id), awRank.n, pc2)).join('')}${na}</tr>`;
   const relKeys = ref ? [...peers.map(p => p.id), 'avg'] : provs.map(p => p.id);
   const relBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${relKeys.map(k => relCell(r.rel[k])).join('')}</tr>`).join('')
     + gap(relKeys.length + 1) + `<tr class="avg"><td>${T().avg}</td>${relKeys.map(k => relCell(avgRel[k])).join('')}</tr>`;

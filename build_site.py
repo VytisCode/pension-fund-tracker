@@ -118,6 +118,8 @@ def main() -> None:
     build_portfolios(ver)
     build_aum(ver)
     build_reports(ver)
+    pf_iii_categories()
+    build_search_index()
     build_journey(ver)
     build_manager(ver)
     text = (DOCS / "ops.html").read_text(encoding="utf-8")
@@ -505,6 +507,77 @@ def build_portfolios(ver: dict) -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "portfolios.html").write_text(text, encoding="utf-8")
     print(f"docs/data_pf.js: {len(data_js) / 1024:.0f} KB, ketvirčių: {len(quarters)}, fondų: {len(out)}, pozicijų: {len(secs)}")
+
+
+def pf_iii_categories() -> None:
+    """III pakopos fondams portfelių duomenyse (data_pf.js) – LB kategorija (bond / mixed / equity) iš ataskaitų duomenų
+    (data_rep.js), kad „Ketvirčio apžvalga“ lygintų tik tos pačios kategorijos fondus. Sutapatinama pagal pavadinimą."""
+    norm = lambda s: re.sub(r"\s+\+", "+", re.sub(r"[\s\u2013\u2014-]+", " ", s.lower())).strip()
+    rep_t = (DOCS / "data_rep.js").read_text(encoding="utf-8")
+    rep = json.loads(rep_t[rep_t.index("=") + 1:].rstrip().rstrip(";"))
+    cat = {norm(f["n"]): f["g"] for f in rep["funds"] if f.get("pl") == "III" and f.get("g")}
+    pf_p = DOCS / "data_pf.js"
+    pf_t = pf_p.read_text(encoding="utf-8")
+    head, body = pf_t[:pf_t.index("=") + 1], pf_t[pf_t.index("=") + 1:].rstrip().rstrip(";")
+    pf = json.loads(body)
+    n = 0
+    for f in pf["funds"]:
+        if f.get("pl") != "III":
+            continue
+        for k in (norm(f["n"]), norm(f["p"] + " " + f["n"])):   # Swedbank fondų vardai portfeliuose – be „Swedbank“
+            if k in cat:
+                f["cat"] = cat[k]
+                n += 1
+                break
+    pf_p.write_text(head + json.dumps(pf, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    v = hashlib.md5(pf_p.read_bytes()).hexdigest()[:8]                   # naujas talpyklos raktas po pakeitimo
+    for page in DOCS.glob("*.html"):
+        s = page.read_text(encoding="utf-8")
+        s2 = re.sub(r"data_pf\.js\?v=[0-9a-f]+", f"data_pf.js?v={v}", s)
+        if s2 != s:
+            page.write_text(s2, encoding="utf-8")
+    print(f"data_pf.js: III pakopos kategorijos {n} fondams")
+
+
+def build_search_index() -> None:
+    """Paieškos rodyklė (docs/data_search.js, kraunama tik atidarius paiešką): visi fondai (II ir III pakopa) ir visos
+    naujausio ketvirčio portfelių investicijos – kad paieška rastų „Amundi“, „Gold“, ISIN ar fondo pavadinimą.
+    Įrašas: fondui [„f“, pavadinimas, pakopa, grupė / kategorija, nuoroda, žodžiai]; investicijai [„s“, pavadinimas, rūšis, valdytojai,
+    didžiausia dalis fonde %, nuoroda, žodžiai] – tekstas abiem kalbomis sudaromas svetainėje (common.js)."""
+    def load(name, var):
+        t = (DOCS / name).read_text(encoding="utf-8")
+        return json.loads(t[t.index("=") + 1:].rstrip().rstrip(";"))
+    pf, rep, data = load("data_pf.js", "PF"), load("data_rep.js", "REP"), load("data.js", "DATA")
+    out = []
+    for g in data["groups"]:
+        for f in g["funds"]:
+            pid = f["provider"]
+            lab = f["name"]
+            out.append(["f", lab, "II", g["id"], f"manager.html#{pid}/II:{g['id']}", f"{pid} {g['id']} fondas fund"])
+    for f in rep["funds"]:
+        if f.get("pl") == "III":
+            out.append(["f", f["n"], "III", f.get("g") or "", f"manager.html#{f['p']}/III:{f['n']}", f"{f['p']} fondas fund iii"])
+    last = len(pf["quarters"]) - 1
+    held = {}
+    for f in pf["funds"]:
+        r = f["r"]
+        tot = sum(r[i + 3] for i in range(0, len(r), 4) if r[i] == last) or 1
+        for i in range(0, len(r), 4):
+            if r[i] == last:
+                si, w = r[i + 1], r[i + 3] / tot * 100
+                h = held.setdefault(si, {"p": set(), "w": 0})
+                h["p"].add(f["p"]); h["w"] = max(h["w"], w)
+    types = {"e": "akcija stock share", "b": "obligacija bond", "f": "fondas etf fund"}
+    for si, h in sorted(held.items(), key=lambda x: -x[1]["w"]):
+        s = pf["secs"][si]
+        if s[1] in ("c", "d"):
+            continue
+        name, isin, full, a = s[0], s[5], s[8], s[9]
+        theme = a[7] if a else ""
+        kw = " ".join(filter(None, [isin, s[0] if full else "", "gold auksas" if theme == "gold" else theme, types.get(s[1], ""), s[2]]))
+        out.append(["s", full or name, s[1], sorted(h["p"]), round(h["w"], 1), f"portfolios.html#pos={si}", kw])
+    (DOCS / "data_search.js").write_text("var QIDX=" + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    print(f"docs/data_search.js: {len(out)} įrašų")
 
 
 def build_aum(ver: dict) -> None:
