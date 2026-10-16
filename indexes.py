@@ -148,19 +148,37 @@ def parse_stooq(raw):
     return out
 
 
+def parse_nasdaq(raw):
+    """Nasdaq API: {"data": {"tradesTable": {"rows": [{"date": "10/15/2026", "close": "6,712.30"}, …]}}}."""
+    rows = ((json.loads(raw).get("data") or {}).get("tradesTable") or {}).get("rows") or []
+    out = {}
+    for r in rows:
+        m = re.match(r"(\d\d)/(\d\d)/(\d{4})$", str(r.get("date", "")))
+        v = str(r.get("close", "")).replace(",", "")
+        if m and re.match(r"^\d+(\.\d+)?$", v):
+            out[f"{m.group(3)}-{m.group(1)}-{m.group(2)}"] = float(v)
+    return out
+
+
 def sp500_price(start):
-    """S&P 500 kainų indeksas (USD): FRED, nepavykus – Stooq. Grąžina ({data: vertė}, šaltinio pavadinimas)."""
-    last = None
-    for name, url, parse in (("FRED", fund_links.FRED_SP500_CSV.format(start=start.isoformat()), parse_fred),
-                             ("Stooq", fund_links.STOOQ_SPX_CSV.format(start=start.strftime("%Y%m%d")), parse_stooq)):
+    """S&P 500 kainų indeksas (USD): FRED, Nasdaq, Stooq – pirmas veikiantis. Grąžina ({data: vertė}, šaltinis);
+    nepavykus – klaida su kiekvieno šaltinio priežastimi (matoma data/source_status.json)."""
+    errs = []
+    srcs = (("FRED", fund_links.FRED_SP500_CSV.format(start=start.isoformat()), parse_fred, {}),
+            ("Nasdaq", fund_links.NASDAQ_SPX_API.format(start=start.isoformat()), parse_nasdaq, {"Accept": "application/json", "Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}),
+            ("Stooq", fund_links.STOOQ_SPX_CSV.format(start=start.strftime("%Y%m%d")), parse_stooq, {}))
+    for name, url, parse, hdr in srcs:
         try:
-            out = parse(_get(url))
+            req = urllib.request.Request(url, headers={**UA, **hdr})
+            with urllib.request.urlopen(req, timeout=40) as r:
+                raw = r.read()
+            out = parse(raw)
             if len(out) >= 3:
                 return out, name
-            last = ValueError(f"{name}: per mažai reikšmių")
+            errs.append(f"{name}: {len(out)} reikšmės ({raw[:60].decode('utf-8', 'ignore').strip()!r})")
         except Exception as e:  # noqa: BLE001
-            last = e
-    raise last
+            errs.append(f"{name}: {e.__class__.__name__} {str(e)[:50]}")
+    raise RuntimeError("; ".join(errs))
 
 
 def update():

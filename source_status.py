@@ -31,7 +31,7 @@ def _today() -> str:
 def _clean(msg: str) -> str:
     msg = re.sub(r"https?://\S+", "<url>", str(msg))                 # nuorodose gali būti raktų
     msg = re.sub(r"[\w.-]+:[^@\s]+@", "", msg)                        # user:pass@
-    return msg.strip()[:160]
+    return msg.strip()[:300]
 
 
 def _save(data: dict) -> None:
