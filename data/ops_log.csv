@@ -138,3 +138,5 @@ ts,src,ev,dd,n,msg
 2026-10-16T11:34,idx.SP500_PR,fail,,,format: ValueError: Stooq: per mažai reikšmių
 2026-10-16T11:40,idx.SP500_PR,fail,,,"network: RuntimeError: FRED: TimeoutError The read operation timed out; Nasdaq: 0 reikšmės ('{""data"":null,""message"":null,""status"":{""rCode"":400,""bCodeMess'); Stooq: 0 reikšmės ('<!DOCTYPE html><html><h"
 2026-10-16T11:47,nav.ALLIANZ,new,2026-10-15,8,
+2026-10-16T12:52,nav.SEB,new,2026-10-15,8,
+2026-10-16T12:52,p3.SEB,new,2026-10-15,4,
