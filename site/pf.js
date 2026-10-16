@@ -705,7 +705,7 @@ const OVS = {
     chgH: (a, b) => `Kas pasikeitė: ${a} → ${b}`, outH: 'Kuo išsiskiria', cmpH: 'Palyginti fondus', thM: 'Valdytojas', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvos', thCash: 'Pinigai', thBuy: 'Didžiausi pirkimai', thSell: 'Didžiausi pardavimai', thNew: 'Naujos / parduotos',
     pickG: 'Grupė:', pickAdd: '+ pridėti fondą', rm: 'pašalinti', none: 'Pasirinkite bent du fondus.', more: 'daugiausia', less: 'mažiausiai', med: 'mediana', inG: g => `grupėje ${g}`, amongM: 'tarp valdytojų',
     up: 'padidino', down: 'sumažino', by: d => `${d} p. p.`, outNone: 'Šį ketvirtį ryškių išskirtinumų nerasta.', outNote: 'Rodoma, kai skirtumas nuo grupės medianos ≥ 5 p. p. (TER – ≥ 0,1 p. p.) arba akcijų dalis per ketvirtį pasikeitė ≥ 3 p. p. Paspauskite teiginį – atsivers fondo portfelis; „palyginti grupę“ – visa grupė palyginime.',
-    m: { eqX: 'akcijų dalis be išmokų rezervo', liq: 'išmokų rezervas (pinigai ir obligacijos iki 1 m.)', eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
+    m: { fee: 'valdymo mokestis', cost: 'bendros metinės išlaidos (mokestis + fondų TER)', eqX: 'akcijų dalis be išmokų rezervo', liq: 'išmokų rezervas (pinigai ir obligacijos iki 1 m.)', eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
     pl: 'Pakopa:', q: 'Ketvirtis:', dEq: 'akcijų dalį', inQ: 'per ketvirtį', to: 'iki',
     ctxBack: (q2, v2, q1, v1) => `Tai grįžimas, ne strategijos keitimas: ${q2} buvo ${v2} %, ${q1} laikinai ${v1} % (daugiau pinigų ir trumpų obligacijų).`, ctxAum: (a, b) => `Fondo turtas per ketvirtį: ${a} → ${b}.`,
     toFund: 'Paspauskite – atsivers fondo portfelis ir jo pokyčiai per ketvirčius.', cmpG: 'palyginti grupę →',
@@ -718,7 +718,7 @@ const OVS = {
     chgH: (a, b) => `What changed: ${a} → ${b}`, outH: 'What stands out', cmpH: 'Compare funds', thM: 'Manager', thEq: 'Equity', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash', thBuy: 'Largest buys', thSell: 'Largest sells', thNew: 'New / exited',
     pickG: 'Group:', pickAdd: '+ add fund', rm: 'remove', none: 'Choose at least two funds.', more: 'highest', less: 'lowest', med: 'median', inG: g => `in group ${g}`, amongM: 'among managers',
     up: 'raised', down: 'cut', by: d => `${d} pp`, outNone: 'No marked outliers this quarter.', outNote: 'Shown when the gap from the group median is ≥ 5 pp (TER – ≥ 0.1 pp) or the equity share changed ≥ 3 pp in the quarter. Click a line to open the fund’s portfolio; “compare group” puts the whole group into the comparison.',
-    m: { eqX: 'equity share ex payout reserve', liq: 'payout reserve (cash and bonds up to 1 y)', eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
+    m: { fee: 'management fee', cost: 'total annual costs (fee + underlying funds’ TER)', eqX: 'equity share ex payout reserve', liq: 'payout reserve (cash and bonds up to 1 y)', eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
     pl: 'Pillar:', q: 'Quarter:', dEq: 'equity share', inQ: 'in the quarter', to: 'to',
     ctxBack: (q2, v2, q1, v1) => `A return, not a strategy change: ${q2} it was ${v2} %, ${q1} temporarily ${v1} % (more cash and short bonds).`, ctxAum: (a, b) => `Fund assets over the quarter: ${a} → ${b}.`,
     toFund: 'Click to open the fund’s portfolio and its changes by quarter.', cmpG: 'compare group →',
@@ -746,7 +746,9 @@ function ovMetrics(f, qi) {
   if (!f.q[qi]) return null;
   const r = peerRow(f, qi), m = f.q[qi], t = f.tot[qi];
   let top = null; m.forEach((x, si) => { if (!top || x.v > top.v) top = { v: x.v, si }; });
-  return { ...r, glob: (r.r_glob || 0) + (r.r_gdm || 0), n: m.size, top: top && t ? top.v / t * 100 : null, topN: top ? posLabel(S[top.si]) : '' };
+  const L = lookThrough(f, qi), fee = typeof PFEE !== 'undefined' ? PFEE[f.c] ?? null : null;   // bendros išlaidos = valdymo mokestis + investicinių fondų TER × fondų dalis
+  const cost = fee != null && L.ter != null ? fee + L.ter * L.fw / 100 : fee;
+  return { ...r, fee, cost, glob: (r.r_glob || 0) + (r.r_gdm || 0), n: m.size, top: top && t ? top.v / t * 100 : null, topN: top ? posLabel(S[top.si]) : '' };
 }
 function mgrMix(mgr, qi) {                  // valdytojo (pakopos) turto struktūra, svertinė pagal fondų turtą
   const fs = FUNDS.filter(f => f.p === mgr && f.pl === OV.pl && f.q[qi]); let T0 = 0; const o = { eq: 0, bd: 0, alt: 0, cash: 0, liq: 0 };
@@ -846,10 +848,10 @@ function renderCompare() {
   const tb = document.getElementById('ovCmp');
   if (sel.length < 2) { tb.innerHTML = `<tbody><tr><td>${o.none}</td></tr></tbody>`; return; }
   const M = sel.map(f => ({ f, a: ovMetrics(f, q1), b: f.q[q1 - 1] ? ovMetrics(f, q1 - 1) : null }));
-  const rows = [['eq', 1, true], ...(inReform(q1) || inReform(q1 - 1) ? [['eqX', 1, true], ['liq', 1, true]] : []), ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
+  const rows = [['eq', 1, true], ...(inReform(q1) || inReform(q1 - 1) ? [['eqX', 1, true], ['liq', 1, true]] : []), ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['fee', 2, false], ['cost', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
   tb.innerHTML = `<thead><tr><th></th>${M.map(x => `<th class="n">${sw(x.f.p)}${esc(ovName(x.f))}</th>`).join('')}</tr></thead><tbody>`
     + rows.map(([k, d, isPct]) => { const vs = M.map(x => x.a[k]).filter(v => v != null), hi = Math.max(...vs), lo = Math.min(...vs);
-      return `<tr><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';
+      return `<tr><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' || k === 'fee' || k === 'cost' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';
         const dv = x.b && x.b[k] != null && isPct ? v - x.b[k] : null, ex = vs.length > 2 && (v === hi || v === lo) && hi - lo > (isPct ? 2 : 0.0001);
         return `<td class="n${ex ? (v === hi ? ' hi' : ' lo') : ''}"${k === 'top' ? ` title="${esc(x.a.topN)}"` : ''}>${num(v, d)}${dv != null && Math.abs(dv) >= 0.5 ? `<small> ${pp(dv)}</small>` : ''}</td>`; }).join('') + '</tr>'; }).join('') + '</tbody>';
 }

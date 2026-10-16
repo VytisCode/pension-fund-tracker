@@ -581,6 +581,29 @@ def build_portfolios(ver: dict) -> None:
     shutil.copyfile(SITE / "pf.js", DOCS / "pf.js")
     ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_pf.js", "pf.js")}}
     text = (DOCS / "portfolios.html").read_text(encoding="utf-8")
+    # valdymo mokesčiai „Bendroms metinėms išlaidoms“ (mokestis + investicinių fondų TER): II – data_fee.js, III – data_rep.js
+    try:
+        nrm = lambda x: re.sub(r"\s+\+", "+", re.sub(r"\s+", " ", x.replace("–", "-").replace("—", "-"))).strip().lower()
+        lab = dict(PROVIDERS)
+        jf = (DOCS / "data_fee.js").read_text(encoding="utf-8"); fees2 = json.loads(jf[jf.index("=") + 1:].strip().rstrip(";").split(";\n")[0])
+        pfee = {}
+        for f in out:
+            if f.get("pl") == "II":
+                pid = next((k for k, v in lab.items() if v == f.get("p")), None)
+                v = fees2.get(f"{pid}|{f.get('g')}") if pid else None
+                if v is not None:
+                    pfee[f["c"]] = v
+        if (DOCS / "data_rep.js").exists():
+            jr = (DOCS / "data_rep.js").read_text(encoding="utf-8"); rp = json.loads(jr[jr.index("=") + 1:].strip().rstrip(";").split(";\n")[0])
+            f3 = {nrm(x["n"]): x["fee"] for x in rp["funds"] if x.get("pl") == "III" and x.get("fee") is not None}
+            for f in out:
+                if f.get("pl") == "III":
+                    v = f3.get(nrm(f.get("n", ""))) or f3.get(nrm(f.get("full", ""))) or f3.get(nrm(f"{f.get('p', '')} {f.get('n', '')}"))
+                    if v is not None:
+                        pfee[f["c"]] = v
+        text = text.replace('<script src="pf.js"></script>', '<script>var PFEE = ' + json.dumps(pfee) + ';</script>\n<script src="pf.js"></script>')
+    except Exception as e:
+        print("portfeliai: mokesčių nepavyko pridėti:", e)
     for n in ("style.css", "common.js", "data_pf.js", "pf.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "portfolios.html").write_text(text, encoding="utf-8")

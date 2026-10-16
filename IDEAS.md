@@ -92,5 +92,6 @@ Eiga (žymėti [x]):
 - [x] 9 Nauji rodikliai „Papildomuose rodikliuose“: metinė grąža prieš mokestį, grąža / didž. kritimas (Calmar); III pakopai mokesčiai iš data_rep
 - [x] 10 PNG: tikslus pavadinimas, laikotarpio paaiškinimas, šaltinis+data; Excel Metodikoje – nuoroda su tuo pačiu vaizdu; pataisytas journey dubliuotas id chTitle
 - [x] 11 LV/EE: iš Estijos – svertinis pensijų indeksas (EPI analogas): grupės vidurkis grafike/lentelėse (GAVG), visos rinkos indeksas Pradžioje. LV – skirta dalyviams (testas, skaičiuoklė) – mūsų analogas „Kurį fondą rinktis?“. Idėja vėliau: bendros išlaidos = mokestis + investicinių fondų TER
-- [ ] 12 Duomenys: S&P atsarginis, EONIA, III pakopos kasdienis turtas
+- [x] 12 Duomenys: S&P 500 – CNBC atsarginis (.SPXTR, .SPX; veikia iš GitHub, 2026-10-09–15 spraga užpildyta); EONIA – pataisytas ECB raktas (EON/D.EONIA_TO.RATE, patikrins kitas paleidimas); III pakopos kasdienis SEB/Swedbank turtas – laukia
+- [x] papildomai: portfelių palyginime – valdymo mokestis ir bendros metinės išlaidos (mokestis + fondų TER), kaip Estijos „ongoing charges“
 - [ ] 13 Galutinė patikra, laiškas
