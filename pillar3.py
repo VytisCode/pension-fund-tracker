@@ -230,12 +230,14 @@ def fetch_seb_history(page, links: dict) -> list:
             filled = 0
             for r in recs:
                 old = existing.get((r["date"], fund))
-                if old and not old.get("benchmark_index") and r["benchmark_index"]:
-                    out.append({**r, "unit_value": float(old["unit_value"]), "net_assets": old.get("net_assets") or r["net_assets"]})
+                # pildomi tik tušti laukai (lyginamasis indeksas, grynieji aktyvai); esama vieneto vertė neperrašoma
+                if old and ((not old.get("benchmark_index") and r["benchmark_index"]) or (not old.get("net_assets") and r["net_assets"])):
+                    out.append({**r, "unit_value": float(old["unit_value"]), "net_assets": old.get("net_assets") or r["net_assets"],
+                                "benchmark_index": old.get("benchmark_index") or r["benchmark_index"]})
                     filled += 1
                 elif not old:
                     out.append(r)
-            DIAG.append(f"SEB {fund}: istorijos CSV {len(recs)} eil., lyginamasis indeksas papildytas {filled} d.")
+            DIAG.append(f"SEB {fund}: istorijos CSV {len(recs)} eil., tušti laukai (indeksas, aktyvai) papildyti {filled} d.")
         except Exception as exc:  # noqa: BLE001
             DIAG.append(f"SEB {fund}: istorijos CSV klaida – {str(exc)[:200]}")
     return out
