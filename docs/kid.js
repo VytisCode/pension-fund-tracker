@@ -207,7 +207,9 @@ function kidTableHtml(ys, ret, amt, fmtR, fmtA) {
 const kidEur = v => `${num(v, 2)} EUR`, kidPct = v => `${num(v, 2)}%`;
 
 function renderKid() {
-  const S = T(), fs = kidFunds(), box = document.getElementById('kidBox');
+  const S = T(), fs = kidFunds(), box = document.getElementById('kidBox'), wrap = document.getElementById('kidWrap');
+  if (wrap) wrap.hidden = ST.m !== 'SEB';   // KID scenarijai – tik SEB fondams, kitų valdytojų puslapyje skyriaus nėra
+  if (ST.m !== 'SEB') { MODELS.kid = null; box.innerHTML = ''; return; }
   document.getElementById('kidTitle').innerHTML = `${S.kidTitle} ${ik('kid')} ${xbtn('kid')}`;
   document.getElementById('kidLead').textContent = S.kidLead;
   MODELS.kid = null;
