@@ -385,6 +385,13 @@ td.soft { background-image: linear-gradient(rgba(255,255,255,.55), rgba(255,255,
 .kidadv[open] > .kidc { margin-top: 8px; }
 .kidtabs { margin: 6px 0 4px; padding-top: 10px; border-top: 1px solid var(--line); }
 .kidsrc { margin-top: 6px; font-size: 13px; }
+table.kidp .kidok { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+table.kidp th.kidok { color: var(--accent); font-weight: 700; }
+.kidleg { font-size: 13px; color: var(--text-2); margin: 8px 0 0; padding-left: 18px; max-width: 980px; }
+.kidleg li { margin: 3px 0; }
+.kide { max-width: 980px; }
+.kidx details { font-size: 13px; color: var(--text-2); margin-bottom: 10px; }
+.kidx details > summary { cursor: pointer; }
 .kidi { font-size: 13px; color: var(--text-2); margin: 8px 0; max-width: 980px; }
 .kidh { font-size: 15px; margin: 18px 0 6px; }
 table.kidp { width: auto; min-width: 720px; }
