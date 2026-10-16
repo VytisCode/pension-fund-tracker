@@ -35,7 +35,7 @@ ECB_ESTR_PAGE = "https://data.ecb.europa.eu/data/datasets/EST/EST.B.EU000A2X2A25
 # Visa €STR istorija (nuo 2019-10-01) – vidutinei laikotarpio normai Sharpe koeficiente
 ECB_ESTR_HIST_API = "https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?startPeriod=2019-10-01&format=csvdata"
 # Iki €STR (2018-12 – 2019-09) – EONIA; ECB nustatė EONIA = €STR + 0,085 p. p., todėl €STR atitikmuo = EONIA − 0,085
-ECB_EONIA_API = "https://data-api.ecb.europa.eu/service/data/FM/D.U2.EUR.4F.MM.EONIA.HSTA?startPeriod=2018-12-01&endPeriod=2019-09-30&format=csvdata"
+ECB_EONIA_API = "https://data-api.ecb.europa.eu/service/data/EON/D.EONIA_TO.RATE?startPeriod=2018-12-01&endPeriod=2019-09-30&format=csvdata"
 
 # Pasaulio akcijų indeksai palyginimui (žr. indexes.py): MSCI grynosios grąžos (NETR) indeksai eurais iš MSCI,
 # S&P 500 su dividendais (USD, Yahoo) perskaičiuojamas į eurus pagal ECB EUR/USD kursą.
