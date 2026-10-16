@@ -179,7 +179,7 @@ function bucket(s) {
 const regionOf = s => s.t === 'e' || s.t === 'b' ? ctyRegion(s.cty) : s.t !== 'f' ? null : s.a ? REG[s.a.reg] || 'oth' : 'unk';
 /* Fondo portfelio požymių suvestinė: visi rodikliai – % portfelio */
 function lookThrough(f, qi) {
-  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0, bw: 0, bdW: 0, mdS: 0, yrsS: 0, yW: 0, yS: 0, frn: 0 };
+  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0, bw: 0, bdW: 0, mdS: 0, yrsS: 0, yW: 0, yS: 0, frn: 0, sb: 0 };
   if (!m || !t) return L;
   m.forEach((x, si) => {
     const s = S[si], w = x.v / t * 100, b = bucket(s);
@@ -187,7 +187,7 @@ function lookThrough(f, qi) {
     if (b === 'eq') { const r = regionOf(s); L.reg[r] = (L.reg[r] || 0) + w; if (r === 'em') L.em += w; }
     if (s.t === 'b') {
       L.bw += w; const m = bondAt(si, qi);
-      if (m) { L.bdW += w; L.mdS += w * m.md; L.yrsS += w * m.yrs; if (m.y != null) { L.yW += w; L.yS += w * m.y; } else L.frn += w; }
+      if (m) { if (m.yrs <= 1) L.sb += w; L.bdW += w; L.mdS += w * m.md; L.yrsS += w * m.yrs; if (m.y != null) { L.yW += w; L.yS += w * m.y; } else L.frn += w; }
     }
     if (s.t !== 'f') return;
     L.fw += w;
@@ -562,6 +562,7 @@ const PG_REG = ['na', 'eu', 'baltic', 'gdm', 'glob', 'jp', 'ap', 'em', 'unk'];
 function peerRow(f, qi) {
   const L = lookThrough(f, qi);
   const r = { f, emUnk: L.emUnk, eq: L.b.eq || 0, bd: L.b.bd || 0, alt: L.b.alt || 0, cash: L.b.cash || 0, idx: L.idx, ter: L.ter, em: L.em, emW: L.emW, gold: L.gold, sfdr: L.sfdr, ytm: L.bw > 0.5 ? L.ytm : null, md: L.bw > 0.5 ? L.md : null };
+  r.liq = r.cash + L.sb; r.eqX = r.liq < 95 ? r.eq / (100 - r.liq) * 100 : null;   // likvidumo rezervas ir strategija be jo (žr. REFORM)
   PG_REG.forEach(k => { r['r_' + k] = L.reg[k] || 0; });
   return r;
 }
@@ -704,20 +705,34 @@ const OVS = {
     chgH: (a, b) => `Kas pasikeitė: ${a} → ${b}`, outH: 'Kuo išsiskiria', cmpH: 'Palyginti fondus', thM: 'Valdytojas', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvos', thCash: 'Pinigai', thBuy: 'Didžiausi pirkimai', thSell: 'Didžiausi pardavimai', thNew: 'Naujos / parduotos',
     pickG: 'Grupė:', pickAdd: '+ pridėti fondą', rm: 'pašalinti', none: 'Pasirinkite bent du fondus.', more: 'daugiausia', less: 'mažiausiai', med: 'mediana', inG: g => `grupėje ${g}`, amongM: 'tarp valdytojų',
     up: 'padidino', down: 'sumažino', by: d => `${d} p. p.`, outNone: 'Šį ketvirtį ryškių išskirtinumų nerasta.', outNote: 'Rodoma, kai skirtumas nuo grupės medianos ≥ 5 p. p. (TER – ≥ 0,1 p. p.) arba akcijų dalis per ketvirtį pasikeitė ≥ 3 p. p. Paspauskite teiginį – atsivers fondo portfelis; „palyginti grupę“ – visa grupė palyginime.',
-    m: { eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
+    m: { eqX: 'akcijų dalis be išmokų rezervo', liq: 'išmokų rezervas (pinigai ir obligacijos iki 1 m.)', eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
     pl: 'Pakopa:', q: 'Ketvirtis:', dEq: 'akcijų dalį', inQ: 'per ketvirtį', to: 'iki',
     ctxBack: (q2, v2, q1, v1) => `Tai grįžimas, ne strategijos keitimas: ${q2} buvo ${v2} %, ${q1} laikinai ${v1} % (daugiau pinigų ir trumpų obligacijų).`, ctxAum: (a, b) => `Fondo turtas per ketvirtį: ${a} → ${b}.`,
-    toFund: 'Paspauskite – atsivers fondo portfelis ir jo pokyčiai per ketvirčius.', cmpG: 'palyginti grupę →' },
+    toFund: 'Paspauskite – atsivers fondo portfelis ir jo pokyčiai per ketvirčius.', cmpG: 'palyginti grupę →',
+    thEqX: 'Akcijos be rezervo', thLiq: 'Išmokų rezervas',
+    ref: 'Vyksta pensijų reformos išmokos (2026–2027 m.): ketvirčių pabaigose II pakopos valdytojai laiko daugiau pinigų ir trumpų obligacijų išmokoms besitraukiantiems dalyviams, todėl akcijų ir pinigų dalys svyruoja laikinai. Išmokų rezervas = pinigai, indėliai, pinigų rinkos fondai ir obligacijos, išperkamos per 1 metus. „Akcijos be rezervo“ = akcijų dalis likusiame portfelyje – ji rodo strategiją; teiginiai „Kuo išsiskiria“ šiais ketvirčiais skaičiuojami pagal ją.',
+    ctxRef: (l0, l1, x0, x1) => `Tai išmokų rezervo pokytis, ne strategijos keitimas: pinigų ir obligacijų iki 1 m. dalis ${l0} → ${l1} %, o akcijų dalis be rezervo ${x0} → ${x1} %.`,
+    refTag: 'reformos išmokos' },
   en: { title: 'Quarter overview', lead: 'What changed in the quarter, what makes managers and funds stand out, and a comparison of chosen funds. Metrics – % of portfolio, look-through (ETF and fund contents by their attributes); Δ – change from the previous quarter, in percentage points.',
     det: 'Detailed analysis', detLead: 'All quarterly trades, alternatives, peer comparison, similarity and each fund’s portfolio – every investment since 2019.',
     chgH: (a, b) => `What changed: ${a} → ${b}`, outH: 'What stands out', cmpH: 'Compare funds', thM: 'Manager', thEq: 'Equity', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash', thBuy: 'Largest buys', thSell: 'Largest sells', thNew: 'New / exited',
     pickG: 'Group:', pickAdd: '+ add fund', rm: 'remove', none: 'Choose at least two funds.', more: 'highest', less: 'lowest', med: 'median', inG: g => `in group ${g}`, amongM: 'among managers',
     up: 'raised', down: 'cut', by: d => `${d} pp`, outNone: 'No marked outliers this quarter.', outNote: 'Shown when the gap from the group median is ≥ 5 pp (TER – ≥ 0.1 pp) or the equity share changed ≥ 3 pp in the quarter. Click a line to open the fund’s portfolio; “compare group” puts the whole group into the comparison.',
-    m: { eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
+    m: { eqX: 'equity share ex payout reserve', liq: 'payout reserve (cash and bonds up to 1 y)', eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
     pl: 'Pillar:', q: 'Quarter:', dEq: 'equity share', inQ: 'in the quarter', to: 'to',
     ctxBack: (q2, v2, q1, v1) => `A return, not a strategy change: ${q2} it was ${v2} %, ${q1} temporarily ${v1} % (more cash and short bonds).`, ctxAum: (a, b) => `Fund assets over the quarter: ${a} → ${b}.`,
-    toFund: 'Click to open the fund’s portfolio and its changes by quarter.', cmpG: 'compare group →' },
+    toFund: 'Click to open the fund’s portfolio and its changes by quarter.', cmpG: 'compare group →',
+    thEqX: 'Equity ex reserve', thLiq: 'Payout reserve',
+    ref: 'Pension-reform payouts are under way (2026–2027): at quarter ends pillar II managers hold more cash and short bonds to pay leaving participants, so equity and cash shares move temporarily. Payout reserve = cash, deposits, money-market funds and bonds maturing within 1 year. “Equity ex reserve” = equity share of the rest of the portfolio – it shows the strategy; “What stands out” uses it in these quarters.',
+    ctxRef: (l0, l1, x0, x1) => `A change in the payout reserve, not the strategy: cash and bonds up to 1 y ${l0} → ${l1} %, equity ex reserve ${x0} → ${x1} %.`,
+    refTag: 'reform payouts' },
 };
+/* Pensijų reformos išmokos (savininkas 2026-10-16): nuo 2026 m. iki 2027 m. pabaigos besitraukiantiems dalyviams išmokamas turtas,
+   todėl II pakopos valdytojai ketvirčio pabaigoje laiko daugiau pinigų ir trumpų obligacijų. Tokie akcijų / pinigų dalies pokyčiai
+   yra likvidumas išmokoms, ne strategijos keitimas. Šiais ketvirčiais (ir vieną po – grįžimas) II pakopos teiginiai skaičiuojami
+   pagal „akcijų dalį be išmokų rezervo“ = akcijos ÷ (100 − pinigai − obligacijos iki 1 m.). */
+const REFORM = ['2026-03', '2028-03'];
+const inReform = qi => OV.pl === 'II' && Q[qi] && Q[qi].slice(0, 7) >= REFORM[0] && Q[qi].slice(0, 7) <= REFORM[1];
 const OT = () => OVS[lang] || OVS.lt;
 const OV = { q: NQ - 1, pl: 'II', sel: null };
 try { const s = JSON.parse(localStorage.getItem('pfOv') || '{}'); if (Array.isArray(s.sel)) OV.sel = s.sel.filter(c => fundBy[c]); if (s.pl) OV.pl = s.pl; } catch (e) {}
@@ -734,9 +749,9 @@ function ovMetrics(f, qi) {
   return { ...r, glob: (r.r_glob || 0) + (r.r_gdm || 0), n: m.size, top: top && t ? top.v / t * 100 : null, topN: top ? posLabel(S[top.si]) : '' };
 }
 function mgrMix(mgr, qi) {                  // valdytojo (pakopos) turto struktūra, svertinė pagal fondų turtą
-  const fs = FUNDS.filter(f => f.p === mgr && f.pl === OV.pl && f.q[qi]); let T0 = 0; const o = { eq: 0, bd: 0, alt: 0, cash: 0 };
-  fs.forEach(f => { const L = lookThrough(f, qi), w = f.tot[qi]; T0 += w; Object.keys(o).forEach(k => { o[k] += (L.b[k] || 0) * w; }); });
-  if (!T0) return null; Object.keys(o).forEach(k => { o[k] /= T0; }); return o;
+  const fs = FUNDS.filter(f => f.p === mgr && f.pl === OV.pl && f.q[qi]); let T0 = 0; const o = { eq: 0, bd: 0, alt: 0, cash: 0, liq: 0 };
+  fs.forEach(f => { const L = lookThrough(f, qi), w = f.tot[qi]; T0 += w; Object.keys(o).forEach(k => { o[k] += (k === 'liq' ? (L.b.cash || 0) + L.sb : L.b[k] || 0) * w; }); });
+  if (!T0) return null; Object.keys(o).forEach(k => { o[k] /= T0; }); o.eqX = o.liq < 95 ? o.eq / (100 - o.liq) * 100 : null; return o;
 }
 function mgrTrades(mgr, q1) {               // valdytojo sandoriai: pirkimai / pardavimai pagal sumą (kaip „Didžiausi ketvirčio pokyčiai“)
   const q0 = q1 - 1, pos = new Map();
@@ -751,7 +766,7 @@ function mgrTrades(mgr, q1) {               // valdytojo sandoriai: pirkimai / p
   return { buy: out.filter(x => x.trade > 0).slice(0, 2), sell: out.filter(x => x.trade < 0).slice(-2).reverse(), nNew, nExit };
 }
 function ovOutliers(qi) {
-  const o = OT(), out = [], spec = [['eq', 5], ['alt', 5], ['cash', 5], ['em', 5], ['r_baltic', 3], ['idx', 15], ['ter', 0.1]];
+  const o = OT(), out = [], RF = inReform(qi) || inReform(qi - 1), spec = [[RF ? 'eqX' : 'eq', 5], ['alt', 5], [RF ? 'liq' : 'cash', RF ? 10 : 5], ['em', 5], ['r_baltic', 3], ['idx', 15], ['ter', 0.1]];
   ovGroups().forEach(g => {
     const rows = FUNDS.filter(f => f.pl === OV.pl && ogOf(f) === g && f.q[qi]).map(f => ({ f, m: ovMetrics(f, qi), p: f.q[qi - 1] ? ovMetrics(f, qi - 1) : null })).filter(x => x.m);
     if (rows.length < 3) return;
@@ -761,12 +776,24 @@ function ovOutliers(qi) {
       [[Math.max(...vals), 'more'], [Math.min(...vals), 'less']].forEach(([v, dir]) => {
         if (Math.abs(v - med) < thr) return;
         const x = rows.find(r => r.m[k] === v);
-        out.push({ sc: Math.abs(v - med) / thr, f: x.f, g, html: `${sw(x.f.p)}<b>${esc(ovWho(x.f, g))}</b>: ${o.m[k]} <b>${k === 'ter' ? num(v, 2) + ' %' : num(v, 1) + ' %'}</b> – ${o[dir]} ${o.inG(gLab(g))} (${o.med} ${k === 'ter' ? num(med, 2) : num(med, 1)} %)` });
+        out.push({ sc: Math.abs(v - med) / thr / (k === 'liq' ? 2 : 1), f: x.f, g, html: `${sw(x.f.p)}<b>${esc(ovWho(x.f, g))}</b>: ${o.m[k]} <b>${k === 'ter' ? num(v, 2) + ' %' : num(v, 1) + ' %'}</b> – ${o[dir]} ${o.inG(gLab(g))} (${o.med} ${k === 'ter' ? num(med, 2) : num(med, 1)} %)` });
       });
     });
     // didžiausias akcijų dalies pokytis per ketvirtį grupėje – su kontekstu: ar tai laikinas pokytis (grįžimas prie ankstesnio
     // lygio), kaip pasikeitė fondo turtas (pvz. išmokos dalyviams); savininkas 2026-10-16: teiginys neturi klaidinti
-    const ch = rows.filter(x => x.p).map(x => ({ x, d: x.m.eq - x.p.eq })).sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
+    // reformos išmokų laikotarpiu (REFORM) pirmiausia ieškoma tikro strategijos pokyčio – akcijų dalies be išmokų rezervo
+    const dOf = x => RF && x.m.eqX != null && x.p.eqX != null ? x.m.eqX - x.p.eqX : x.m.eq - x.p.eq;
+    const cands = rows.filter(x => x.p).map(x => ({ x, d: x.m.eq - x.p.eq, dX: dOf(x) }));
+    if (RF) {
+      const sx = [...cands].sort((a, b) => Math.abs(b.dX) - Math.abs(a.dX))[0];
+      if (sx && Math.abs(sx.dX) >= 3) { const f = sx.x.f;
+        out.push({ sc: Math.abs(sx.dX) / 3, f, g, chg: true, html: `${sw(f.p)}<b>${esc(ovWho(f, g))}</b>: ${o.m.eqX} <b>${num(sx.x.m.eqX, 1)} %</b> (${pp(sx.dX)} p. p. ${o.inQ}); ${o.m.eq} ${num(sx.x.p.eq, 1)} → ${num(sx.x.m.eq, 1)} %.` }); }
+      const lq = cands.filter(c => c !== sx && Math.abs(c.d) >= 3 && Math.abs(c.dX) < Math.abs(c.d) / 2).sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
+      if (lq) { const f = lq.x.f, t0 = f.tot[qi - 1], t1 = f.tot[qi];
+        out.push({ sc: Math.abs(lq.d) / 12, f, g, chg: true, html: `${sw(f.p)}<b>${esc(ovWho(f, g))}</b> <span class="gbadge">${o.refTag}</span>: ${o.m.eq} ${num(lq.x.p.eq, 1)} → <b>${num(lq.x.m.eq, 1)} %</b> (${pp(lq.d)} p. p.). ${o.ctxRef(num(lq.x.p.liq, 1), num(lq.x.m.liq, 1), num(lq.x.p.eqX, 1), num(lq.x.m.eqX, 1))}${t0 && t1 / t0 < 0.8 ? ' ' + o.ctxAum(eur(t0), eur(t1)) : ''}` }); }
+      return;
+    }
+    const ch = cands.sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
     if (ch && Math.abs(ch.d) >= 3) {
       const f = ch.x.f, pp2 = f.q[qi - 2] ? ovMetrics(f, qi - 2) : null, back = pp2 && Math.abs(ch.x.m.eq - pp2.eq) < Math.abs(ch.d) / 3;
       const t0 = f.tot[qi - 1], t1 = f.tot[qi], dropT = t0 && t1 / t0 < 0.8;
@@ -790,9 +817,11 @@ function renderOverview() {
   document.getElementById('ovChgH').textContent = o.chgH(qLabel(q0), qLabel(q1));
   const cellD = (a, b) => { if (a == null || b == null) return '<td class="n">–</td>'; const d = b - a; return `<td class="n">${num(b, 1)} %<small class="${Math.abs(d) >= 2 ? (d > 0 ? 'pos' : 'neg') : ''}"> ${pp(d)}</small></td>`; };
   const trade = x => `<div class="ovtr">${esc(posLabel(x.s).slice(0, 60))} <small>${eur(x.trade)}</small></div>`;
-  document.getElementById('ovChg').innerHTML = `<thead><tr><th>${o.thM}</th><th class="n">${o.thEq}</th><th class="n">${o.thBd}</th><th class="n">${o.thAlt}</th><th class="n">${o.thCash}</th><th class="tr">${o.thBuy}</th><th class="tr">${o.thSell}</th><th class="n">${o.thNew}</th></tr></thead><tbody>`
+  const RF = inReform(q1) || inReform(q0), KS = RF ? ['eq', 'eqX', 'liq', 'bd', 'alt', 'cash'] : ['eq', 'bd', 'alt', 'cash'];
+  const ref = document.getElementById('ovRef'); ref.hidden = !RF; ref.textContent = RF ? o.ref : '';
+  document.getElementById('ovChg').innerHTML = `<thead><tr><th>${o.thM}</th><th class="n">${o.thEq}</th>${RF ? `<th class="n">${o.thEqX}</th><th class="n">${o.thLiq}</th>` : ''}<th class="n">${o.thBd}</th><th class="n">${o.thAlt}</th><th class="n">${o.thCash}</th><th class="tr">${o.thBuy}</th><th class="tr">${o.thSell}</th><th class="n">${o.thNew}</th></tr></thead><tbody>`
     + MGRS.map(m => { const a = mgrMix(m, q0), b = mgrMix(m, q1); if (!b) return ''; const tr = mgrTrades(m, q1);
-      return `<tr><td class="nm">${sw(m)}${m}</td>${['eq', 'bd', 'alt', 'cash'].map(k => cellD(a && a[k], b[k])).join('')}<td class="tr">${tr.buy.map(trade).join('') || '–'}</td><td class="tr">${tr.sell.map(trade).join('') || '–'}</td><td class="n">${tr.nNew} / ${tr.nExit}</td></tr>`; }).join('') + '</tbody>';
+      return `<tr><td class="nm">${sw(m)}${m}</td>${KS.map(k => cellD(a && a[k], b[k])).join('')}<td class="tr">${tr.buy.map(trade).join('') || '–'}</td><td class="tr">${tr.sell.map(trade).join('') || '–'}</td><td class="n">${tr.nNew} / ${tr.nExit}</td></tr>`; }).join('') + '</tbody>';
   // 2. kuo išsiskiria
   document.getElementById('ovOutH').textContent = o.outH;
   const outs = ovOutliers(q1);
@@ -817,7 +846,7 @@ function renderCompare() {
   const tb = document.getElementById('ovCmp');
   if (sel.length < 2) { tb.innerHTML = `<tbody><tr><td>${o.none}</td></tr></tbody>`; return; }
   const M = sel.map(f => ({ f, a: ovMetrics(f, q1), b: f.q[q1 - 1] ? ovMetrics(f, q1 - 1) : null }));
-  const rows = [['eq', 1, true], ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
+  const rows = [['eq', 1, true], ...(inReform(q1) || inReform(q1 - 1) ? [['eqX', 1, true], ['liq', 1, true]] : []), ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
   tb.innerHTML = `<thead><tr><th></th>${M.map(x => `<th class="n">${sw(x.f.p)}${esc(ovName(x.f))}</th>`).join('')}</tr></thead><tbody>`
     + rows.map(([k, d, isPct]) => { const vs = M.map(x => x.a[k]).filter(v => v != null), hi = Math.max(...vs), lo = Math.min(...vs);
       return `<tr><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';

@@ -19,8 +19,8 @@ addStrings({
   hPeers: 'Compared with the group', mPeers: 'Each period ends on the group’s common latest day.', hChart: '3-year return compared with the group', hRisk: 'Risk',
   rVol1: 'Volatility, 1 year', rVol3: 'Volatility, 3 years', rDd3: 'Maximum fall, 3 years', rRisky: 'Risky assets (LB)', rNote: 'Volatility – annualised standard deviation of daily changes; maximum fall – the largest drop from a peak.',
   dEnd: 'Data as of:', selX: 'Add period:', xNone: 'none', dFrom: 'From', reset: 'Latest', yeL: 'Year end', qeL: 'Quarter end', shownL: p => `Shown: ${p}`,
-  aV: 'Show:', vEur: '€ m', vShare: 'Market share, %', vChg: 'Change over quarter, %', sBoth: 'Pillar II and III', sFII: 'Each pillar II fund', sFIII: 'Each pillar III fund', thDate: 'Date', thSum: 'Total',
-  mShare: 'Market share – of the assets of all managers’ funds of the same pillar on that day.', mChg: 'The change includes contributions, payouts and returns.',
+  aV: 'Show:', vEur: '€ m', vShare: 'Market share, %', vChg: 'Change over quarter, %', vCum: 'Change since period start, %', sMII: 'Whole market – pillar II', sMIII: 'Whole market – pillar III', sumH: 'Over the period:', sBoth: 'Pillar II and III', sFII: 'Each pillar II fund', sFIII: 'Each pillar III fund', thDate: 'Date', thSum: 'Total',
+  mShare: 'Market share – of the assets of all managers’ funds of the same pillar on that day.', mChg: 'The change includes contributions, payouts and returns.', mCum: 'Change of net assets from the first day of the selected period (e.g. YTD – from 31 December); includes contributions, payouts and returns.',
   noPf: 'No portfolio data for this fund.', foot: 'Returns are changes in unit value (fees already deducted), not annualised. Funds are compared only within their group. For information only, not investment advice.',
 }, {
   selP: 'Valdytojas:', selF: 'Rodyti:', allF: 'Valdytojo suvestinė (visi fondai)', optII: 'II pakopa', optIII: 'III pakopa', a4: '🖶 Vieno A4 lapo suvestinė',
@@ -38,8 +38,8 @@ addStrings({
   hPeers: 'Palyginimas su grupe', mPeers: 'Kiekvienas laikotarpis baigiasi bendra naujausia grupės diena.', hChart: '3 metų grąža, palyginti su grupe', hRisk: 'Rizika',
   rVol1: 'Svyravimas, 1 metai', rVol3: 'Svyravimas, 3 metai', rDd3: 'Didžiausias kritimas, 3 metai', rRisky: 'Rizikingas turtas (LB)', rNote: 'Svyravimas – metinis dienos pokyčių standartinis nuokrypis; didžiausias kritimas – didžiausias sumažėjimas nuo piko.',
   dEnd: 'Duomenys iki:', selX: 'Pridėti laikotarpį:', xNone: 'nepridėti', dFrom: 'Nuo', reset: 'Naujausi', yeL: 'Metų pabaiga', qeL: 'Ketvirčio pabaiga', shownL: p => `Rodoma: ${p}`,
-  aV: 'Rodyti:', vEur: 'mln. €', vShare: 'Rinkos dalis, %', vChg: 'Pokytis per ketvirtį, %', sBoth: 'II ir III pakopa', sFII: 'Kiekvienas II pakopos fondas', sFIII: 'Kiekvienas III pakopos fondas', thDate: 'Data', thSum: 'Iš viso',
-  mShare: 'Rinkos dalis – nuo visų valdytojų tos pačios pakopos fondų turto tą dieną.', mChg: 'Pokytis apima įmokas, išmokas ir grąžą.',
+  aV: 'Rodyti:', vEur: 'mln. €', vShare: 'Rinkos dalis, %', vChg: 'Pokytis per ketvirtį, %', vCum: 'Pokytis nuo laikotarpio pradžios, %', sMII: 'Visa rinka – II pakopa', sMIII: 'Visa rinka – III pakopa', sumH: 'Per laikotarpį:', sBoth: 'II ir III pakopa', sFII: 'Kiekvienas II pakopos fondas', sFIII: 'Kiekvienas III pakopos fondas', thDate: 'Data', thSum: 'Iš viso',
+  mShare: 'Rinkos dalis – nuo visų valdytojų tos pačios pakopos fondų turto tą dieną.', mChg: 'Pokytis apima įmokas, išmokas ir grąžą.', mCum: 'Grynųjų aktyvų pokytis nuo pasirinkto laikotarpio pirmos dienos (pvz. „Šie metai“ – nuo gruodžio 31 d.); apima įmokas, išmokas ir grąžą.',
   noPf: 'Šio fondo portfelio duomenų nėra.', foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Fondai lyginami tik savo grupėje. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 const $ = id => document.getElementById(id);
@@ -114,6 +114,8 @@ const assetsIII = f => asOf() ? sumAt(aumFs(f.p, 'III', null, f.n), asOf(), 92) 
 function aumLines() {                    // diagramos eilutės pagal pasirinkimą: [{l, c, dash, pl, fs}]
   const t = T(), p = ST.p;
   if (ST.f) { const k = ST.f.indexOf(':'), pl = ST.f.slice(0, k), key = ST.f.slice(k + 1); return [{ l: $('selF').selectedOptions[0].textContent, c: 'var(--mc)', pl, fs: pl === 'II' ? aumFs(p, 'II', key) : aumFs(p, 'III', null, key) }]; }
+  if (ST.as === 'mII') return [{ l: t.sMII, c: 'var(--mc)', pl: 'II', fs: aumFs(null, 'II') }];
+  if (ST.as === 'mIII') return [{ l: t.sMIII, c: 'var(--mc)', pl: 'III', fs: aumFs(null, 'III') }];
   if (ST.as === 'II') return [{ l: t.optII, c: 'var(--mc)', pl: 'II', fs: aumFs(p, 'II') }];
   if (ST.as === 'III') return [{ l: t.optIII, c: 'var(--mc)', pl: 'III', fs: aumFs(p, 'III') }];
   if (ST.as === 'fII') return fundsII(p).map(({ g }, i) => ({ l: groupLabel(g), c: PAL[i % PAL.length], pl: 'II', fs: aumFs(p, 'II', g.id) }));
@@ -139,8 +141,13 @@ function aumData() {
     if (base != null) ends.unshift(base);
   }
   const tot = {}, NF = {}, fullN = pl => NF[pl] ??= sumAtN(aumFs(null, pl), last).n;
-  const val = (x, d) => { const v = sumAt(x.fs, d); if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
-  L.forEach(x => { const raw = ends.map(d => val(x, d)); x.raw = raw; x.vals = ST.av === 'chg' ? raw.map((v, i) => i && v != null && raw[i - 1] ? (v / raw[i - 1] - 1) * 100 : null) : raw; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
+  /* suma tik tada, kai žinomas kiekvieno tuo metu veikusio fondo turtas (savininkas 2026-10-16: III pakopos YTD %) – kitaip
+     dalis fondų (pvz. kurių turtas skelbiamas tik ketvirčio pabaigoje) iškristų ir suma klaidingai „kristų“ */
+  const LMAX = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), lastD = f => f.d[f.d.length - 1];
+  const full = (fs, d) => { const r = sumAtN(fs, d), alive = fs.filter(f => f.d[0] <= d && (lastD(f) >= d || lastD(f) >= LMAX - 120)).length; return r.n >= alive ? r.s : null; };
+  const val = (x, d) => { const v = full(x.fs, d); if (v == null || ST.av !== 'share') return v; const k = x.pl + d; if (!(k in tot)) { const r = sumAtN(aumFs(null, x.pl), d); tot[k] = r.n >= 0.8 * fullN(x.pl) ? r.s : null; } return tot[k] ? v / tot[k] * 100 : null; };   // rinkos dalis – tik kai žinomas beveik viso rinkos turtas
+  L.forEach(x => { const raw = ends.map(d => val(x, d)); x.raw = raw; const b0 = raw.find(v => v != null); x.vals = ST.av === 'chg' ? raw.map((v, i) => i && v != null && raw[i - 1] ? (v / raw[i - 1] - 1) * 100 : null) : ST.av === 'cum' ? raw.map(v => v != null && b0 ? (v / b0 - 1) * 100 : null) : raw;
+    const ie = ends.map((d, i) => i).filter(i => full(x.fs, ends[i]) != null); x.e0 = ie.length ? [ends[ie[0]], full(x.fs, ends[ie[0]])] : null; x.e1 = ie.length ? [ends[ie[ie.length - 1]], full(x.fs, ends[ie[ie.length - 1]])] : null; x.miss = x.e1 && x.e1[0] < last - 10 ? [...new Set(x.fs.filter(f => lastD(f) < last - 10 && lastD(f) >= LMAX - 120).map(f => (DATA.providers.find(q => q.id === f.p) || { label: f.p }).label))] : []; x.pts = ends.map((d, i) => x.vals[i] == null ? null : [d, x.vals[i]]).filter(Boolean); });
   return { L, ends };
 }
 function moneyChart(el, series, unit) {  // paprasta linijinė diagrama (mln. € arba %)
@@ -174,23 +181,25 @@ function aumQuarters() {                  // [pradžia (ankstesnio ketvirčio pa
 }
 function aumHTML() {
   const t = T(), opt = (id, xs, v) => `<select id="${id}">${xs.map(([k, l]) => `<option value="${k}"${k === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
-  const sc = ST.f ? '' : opt('aS', [['both', t.sBoth], ['II', t.optII], ['III', t.optIII], ['fII', t.sFII], ['fIII', t.sFIII]], ST.as);
+  const sc = ST.f ? '' : opt('aS', [['both', t.sBoth], ['II', t.optII], ['III', t.optIII], ['fII', t.sFII], ['fIII', t.sFIII], ['mII', t.sMII], ['mIII', t.sMIII]], ST.as);
   const L = lang === 'lt', ar = ST.ar || 'all', rb = [['ytd', T().periods.ytd], ['1y', T().periods['1y']], ['3y', T().periods['3y']], ['5y', T().periods['5y']], ['all', L ? 'Visa istorija' : 'All']];
   const seg = `<div class="seg aseg" id="aR" role="group" aria-label="${L ? 'Laikotarpis' : 'Period'}">${rb.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${k === ar}">${l}</button>`).join('')}</div>`
     + `<select id="aQ" aria-label="${L ? 'Ketvirtis' : 'Quarter'}"><option value="">${L ? 'Ketvirtis' : 'Quarter'} ▾</option>${aumQuarters().map(([a, b, l]) => `<option value="${a}:${b}"${ar === 'custom' && ST.af === a && ST.at === b ? ' selected' : ''}>${l}</option>`).join('')}</select>`
     + `<label class="field">${L ? 'Nuo' : 'From'} <input type="date" id="aF" value="${ar === 'custom' && ST.af ? iso(ST.af) : ''}"></label><label class="field">${L ? 'Iki' : 'To'} <input type="date" id="aT" value="${ar === 'custom' && ST.at ? iso(ST.at) : ''}"></label>`;
   /* lentelė paslėpta (savininkas 2026-10-16) – jos skaičiai patenka į diagramos Excel failą */
-  return `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta" id="aumM"></div><div class="pick apick">${sc}${opt('aV', [['eur', t.vEur], ['share', t.vShare], ['chg', t.vChg]], ST.av)}${seg}</div>
-    <div class="mchart" id="aumC"></div><div class="lgd" id="aumL"></div><table class="mt" id="aumT" hidden></table></section>`;
+  return `<section class="card chart-card" data-src="aum"><h2>${t.hAum}</h2><div class="meta" id="aumM"></div><div class="pick apick">${sc}${opt('aV', [['eur', t.vEur], ['share', t.vShare], ['cum', t.vCum], ['chg', t.vChg]], ST.av)}${seg}</div>
+    <div class="aumsum" id="aumS"></div><div class="mchart" id="aumC"></div><div class="lgd" id="aumL"></div><table class="mt" id="aumT" hidden></table></section>`;
 }
 function drawAum() {
   const t = T(), el = $('aumC'); if (!el) return;
-  $('aumM').textContent = t.mAum + (ST.av === 'share' ? ' ' + t.mShare : ST.av === 'chg' ? ' ' + t.mChg : '');
+  $('aumM').textContent = t.mAum + (ST.av === 'share' ? ' ' + t.mShare : ST.av === 'chg' ? ' ' + t.mChg : ST.av === 'cum' ? ' ' + t.mCum : '');
   const D = aumData();
   if (!D) { el.innerHTML = `<p class="na">${t.noData}</p>`; $('aumT').innerHTML = $('aumL').innerHTML = ''; return; }
   moneyChart(el, D.L, ST.av);
+  const U = lang === 'lt' ? 'mln. €' : '€ m';
+  $('aumS').innerHTML = `<b>${t.sumH}</b> ` + D.L.filter(x => x.e0 && x.e1 && x.e0[1]).map(x => { const ch = x.e1[1] - x.e0[1], pc = (x.e1[1] / x.e0[1] - 1) * 100; return `<span>${D.L.length > 1 ? hEsc(x.l) + ': ' : ''}${fmt(x.e0[1], 1)} → ${fmt(x.e1[1], 1)} ${U} <b class="${pc >= 0 ? 'pos' : 'neg'}">${pct(pc)}</b> (${ch >= 0 ? '+' : '−'}${fmt(Math.abs(ch), 1)} ${U}) <small>${iso(x.e0[0])} – ${iso(x.e1[0])}${x.miss.length ? (lang === 'lt' ? ` (vėlesnių duomenų dar nėra: ${x.miss.join(', ')})` : ` (no later data yet: ${x.miss.join(', ')})`) : ''}</small></span>`; }).join(' · ');
   $('aumL').innerHTML = D.L.length > 1 ? D.L.map(x => `<span><i style="border-top:3px ${x.dash ? 'dashed' : 'solid'} ${x.c}"></i>${hEsc(x.l)}</span>`).join('') : '';
-  const f = v => v == null ? '–' : ST.av === 'eur' ? fmt(v, 1) : ST.av === 'share' ? fmt(v, 2) : pct(v);
+  const f = v => v == null ? '–' : ST.av === 'eur' ? fmt(v, 1) : ST.av === 'share' ? fmt(v, 2) : pct(v);   // cum, chg – %
   const tot = D.L.length > 1 && (ST.av === 'eur' || (ST.av === 'share' && D.L.every(x => x.pl === D.L[0].pl)));
   const sum = i => { const xs = D.L.map(x => x.vals[i]).filter(v => v != null); return xs.length ? xs.reduce((a, b) => a + b, 0) : null; };
   const rows = D.ends.map((d, i) => ({ d, i })).filter(r => D.L.some(x => x.vals[r.i] != null)).reverse();

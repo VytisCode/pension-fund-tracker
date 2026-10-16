@@ -70,3 +70,8 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 - Heatmap langelio užuomina: fondas, datos, vieneto vertės.
 - Paskutinės dienos pokytis („1 d.“ stulpelis apžvalgoje).
 - Rinkimo laikų žurnalas vakariniame laiške.
+
+## 2026-10-16 (vakaras) – savininko pastabos
+- Turto grafikas: naujas rodinys „Pokytis nuo laikotarpio pradžios, %“, eilutė „Per laikotarpį: X → Y mln. € (±%)“, pasirinkimai „Visa rinka – II / III pakopa“. Sumos rodomos tik kai žinomas visų veikiančių fondų turtas.
+- Reformos išmokos (2026–2027): II pakopos ketvirčio pabaigos pinigų / trumpų obligacijų rezervas – ne strategija. Portfeliuose „Akcijos be rezervo“, „Išmokų rezervas“; teiginiai skaičiuojami pagal akcijas be rezervo (REFORM pf.js, iki 2028-03).
+- Laukia: kasdienis Swedbank (ir SEB) III pakopos turtas – dabar III rinkos suma naujausia tik iki jų paskutinės datos.
