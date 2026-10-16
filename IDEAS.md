@@ -46,6 +46,8 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 - **Lyginamojo indekso sekimas (savininko idėja 2026-10-16)**: kiekvienam fondui – kaip seka savo lyginamąjį indeksą: nukrypimas per dieną, savaitę, mėnesį, YTD ir t. t. Grafikas: 1 fondas + 1 jo indeksas; lentelė: visų fondų heatmap (skirtumas, p. p.), kad matytųsi, ar aktyvūs sprendimai padėjo. Pirma patikrinti, kuriems fondams turime kasdienes indekso vertes (dabar – mėnesio pabaigos iš valdytojų; SEB – kasdien KID darbui).
   - **Savininko sprendimas 2026-10-16**: lyginti tik SEB (tik SEB skelbia indekso duomenis); kitiems valdytojams rašyti „indekso duomenys nepaskelbti“ (ateities projektas – gauti); analizuojant ne SEB fondus, indekso palyginimus slėpti, kad nesimaišytų. Neperkrauti – daryti kartu su struktūros pertvarka.
 
+- **Duomenų kalendorius (savininko idėja 2026-10-16)** – atlikta pirma versija: `ops.html` + `ops.js`, įvykiai `data/ops_log.csv` (`tools/ops_log.py` kiekviename paleidime prieš commit; istorija atkurta iš commit'ų nuo 2026-10-04). Rodo: kalendorių (atkeliavo / nepavyko / vėl veikia / laukiama / ranka), dienos įvykius, kada valdytojai paskelbia vertes (II ir III), artėjančius darbus su nuorodomis, nesėkmes. Toliau: įtraukti į naują navigaciją ir paiešką (skyrius „Pagalba“ arba „Pradžia“), mėnesio / ketvirčio statistika (vidutinis vėlavimas pagal valdytoją), LB paskelbimo dienos po ketvirčio pabaigos istorija (kai sukaups), rankiniai darbai – tiksli nuoroda į failą/vietą.
+
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
 ## Eilė: savininko užduotys 2026-10-14 (vakaras)

@@ -270,7 +270,8 @@ function freshRender() {
   sb.title = t.freshMore;
   const nl = noticesList(), nA = nl.filter(x => x.lvl === 'act').length, nW = nl.filter(x => x.lvl === 'wait' && !x.id.startsWith('nav-')).length;
   if (nA || nW) sb.innerHTML += ` <span class="late">· ${NTH().sum(nA, nW)}</span>`;
-  document.getElementById('fresh').innerHTML = noticesHTML(nl) + freshnessHTML() + srcHTML();
+  document.getElementById('fresh').innerHTML = noticesHTML(nl) + freshnessHTML() + srcHTML()
+    + `<div class="fr-src"><a href="ops.html">${lang === 'lt' ? 'Duomenų kalendorius: kas ir kada atkeliavo, kas nepavyko, kas laukia →' : 'Data calendar: what arrived when, what failed, what is coming →'}</a></div>`;
   noticeBar(nl);
   srcLines();
 }

@@ -120,6 +120,11 @@ def main() -> None:
     build_reports(ver)
     build_journey(ver)
     build_manager(ver)
+    text = (DOCS / "ops.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "data_ops.js", "ops.js"):
+        v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]
+        text = text.replace(f'src="{n}"', f'src="{n}?v={v}"').replace(f'href="{n}"', f'href="{n}?v={v}"')
+    (DOCS / "ops.html").write_text(text, encoding="utf-8")
 
 
 
@@ -232,6 +237,24 @@ def build_fresh(groups: list, generated: str) -> None:
     (DOCS / "data_fresh.js").write_text("var FRESH=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     # visų šaltinių sąrašas puslapiui „Apie“ (sources_list.py)
     (DOCS / "data_src.js").write_text("const SRCINV=" + json.dumps(inv, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    build_ops(inv, prov)
+
+
+def build_ops(inv: list, prov: list) -> None:
+    """„Duomenų kalendorius“ (ops.html + ops.js): docs/data_ops.js – įvykiai iš data/ops_log.csv (paskutiniai 400 d.) ir
+    artėjantys / pavėluoti atnaujinimai iš šaltinių sąrašo (sources_list.inventory)."""
+    import csv as _csv
+    from datetime import timedelta
+    ev = []
+    log = ROOT / "data" / "ops_log.csv"
+    if log.exists():
+        cut = (date.today() - timedelta(days=400)).isoformat()
+        ev = [[r["ts"], r["src"], r["ev"], r["dd"], r["n"], r["msg"]] for r in _csv.DictReader(log.open(encoding="utf-8")) if r["ts"] >= cut]
+    up = [{k: s.get(k) for k in ("id", "lt", "en", "url", "mode", "next", "last", "fmt", "f_lt", "f_en", "how_lt", "how_en", "src_lt", "src_en")} for s in inv]
+    payload = {"ev": ev, "up": up, "prov": [{"id": p["id"], "label": p["label"], "url": p.get("url", "")} for p in prov]}
+    (DOCS / "data_ops.js").write_text("const OPS=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    for n in ("ops.html", "ops.js"):
+        shutil.copyfile(SITE / n, DOCS / n)
 
 
 def build_cpi() -> None:
