@@ -1581,7 +1581,8 @@ const xlCol = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = St
 const xlDate = d => ({ t: 'n', v: d + 25569, z: 'yyyy-mm-dd' });
 const xlF = (f, v, z) => ({ t: 'n', f, v: v == null || !isFinite(v) ? 0 : v, z });
 /* ---------- Excel skaičiavimai auditui: kiekvienas lentelės langelis = pabaigos vieneto vertė ÷ pradžios vieneto vertė − 1 ----------
-   o.rows: [{ label, cells: [{ f, name, ia, ie, years?, note? } | null], extra?: [reikšmės] }]; o.cols – stulpelių pavadinimai.
+   o.rows: [{ label, cells: [{ f, name, ia, ie, col, years?, note? } | null], extra?: [reikšmė % | {langelis} | (eilutė, pirmas, paskutinis stulpelis) => langelis], calcOnly? }];
+   calcOnly – eilutė tik lape „Skaičiavimai“ (pvz. konkurentai vietai skaičiuoti); o.cols – stulpelių pavadinimai.
    Lapai: „Rezultatas“ (formulės į „Skaičiavimai“), „Skaičiavimai“ (vienas langelis – viena eilutė), „Vertės“ (valdytojų vieneto vertės), „Metodika“. */
 function pairBook(o) {
   const L = lang === 'lt', SC = L ? 'Skaičiavimai' : 'Calculations', SV = L ? 'Vertės' : 'Values', q = s => `'${s}'`;
@@ -1609,7 +1610,7 @@ function pairBook(o) {
   const vals = [[L ? 'Data' : 'Date', ...names], ...days.map(d => [xlDate(d), ...maps.map(m => m.has(d) ? m.get(d) : null)])];
   /* Rezultatas – ta pati lentelė kaip svetainėje, langeliai – formulės */
   const res = [[o.title], [o.cap || ''], [o.rowHdr || (L ? 'Fondas' : 'Fund'), ...o.cols, ...(o.extraCols || [])]];
-  o.rows.forEach((r, i) => res.push([r.label, ...cellRef[i].map(x => x ? xlF(x.ref, x.v, '0.00%') : null), ...(r.extra || []).map(v => v == null ? null : typeof v === 'function' ? v(res.length + 1, xlCol(1), xlCol(o.cols.length)) : typeof v === 'object' ? v : { t: 'n', v: v / 100, z: '0.00%' })]));
+  o.rows.forEach((r, i) => r.calcOnly || res.push([r.label, ...cellRef[i].map(x => x ? xlF(x.ref, x.v, '0.00%') : null), ...(r.extra || []).map(v => v == null ? null : typeof v === 'function' ? v(res.length + 1, xlCol(1), xlCol(o.cols.length)) : typeof v === 'object' ? v : { t: 'n', v: v / 100, z: '0.00%' })]));
   const meth = [[L ? 'Metodika ir šaltiniai' : 'Methodology and sources'],
     [L ? 'Kaip patikrinti' : 'How to check', L ? `Kiekvienas lentelės langelis „Rezultatas“ lape – formulė, nurodanti eilutę lape „${SC}“. Ten pradžios ir pabaigos vieneto vertės paimamos iš lapo „${SV}“ (INDEX/MATCH pagal datą), grąža = pabaigos vertė ÷ pradžios vertė − 1. Vieneto vertes galima palyginti su valdytojų svetainėse skelbiamomis.`
       : `Every cell of the “Result” sheet is a formula pointing to a row in “${SC}”. There, start and end unit values are taken from “${SV}” (INDEX/MATCH by date); return = end value ÷ start value − 1. Unit values can be compared with those published by the managers.`],

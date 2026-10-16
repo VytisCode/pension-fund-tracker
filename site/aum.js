@@ -263,6 +263,7 @@ function renderGrowth() {
   document.getElementById('gtTable').innerHTML = `<thead><tr><th class="l" rowspan="2">${T().thMgr}</th><th rowspan="2">${T().thAum}</th><th rowspan="2">${T().thDate}</th>${pers.map(p => `<th class="grp bl" colspan="2">${T().per[p]}</th>`).join('')}</tr>
     <tr>${pers.map(() => `<th class="bl">${lang === 'lt' ? 'mln. €' : '€ m'}</th><th>%</th>`).join('')}</tr></thead><tbody>`
     + rows.map((r, i) => line(sw(r.m) + MLABEL[r.m], vals[i])).join('') + (rows.length > 1 ? line(T().total, tot, true) : '') + '</tbody>';
+  renderGrowth.last = { pers, rows, vals };
   document.getElementById('gtNote').textContent = T().gtNote;
   cardify(document.getElementById('gtTable'));
 }
@@ -293,6 +294,7 @@ function renderQuarters() {
   document.getElementById('qtTitle').textContent = `${T().qtTitle} · ${ST.pl === 'II' ? 'II' : 'III'} ${lang === 'lt' ? 'pakopa' : 'pillar'}${ST.g === 'all' ? '' : ' · ' + grpLabel(ST.pl, ST.g)}`;
   document.getElementById('qtTable').innerHTML = `<thead><tr><th class="l">${T().thFund}</th>${cols.map(c => `<th class="bl">${c.now ? T().qtNow + '<br>' + c.lbl : c.lbl}</th>`).join('')}</tr></thead><tbody>`
     + body + (all.length > 1 ? row(T().total, tot, true) : '') + '</tbody>';
+  renderQuarters.last = { cols, all };
   document.getElementById('qtNote').textContent = T().qtNote;
 }
 
@@ -447,6 +449,60 @@ function decompBook() {
   add(sum, sh[0], [{ wch: 30 }, ...Array(4).fill({ wch: 18 })]); add(pts, sh[1], [{ wch: 22 }, { wch: 40 }, { wch: 11 }, { wch: 14 }, { wch: 12 }, { wch: 11 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }]); add(meth, sh[2], [{ wch: 18 }, { wch: 110 }]);
   return wb;
 }
+/* ---------- Excel su skaičiavimais (auditui): „Turto pokytis“ ir „Ketvirčių pabaigose“ ----------
+   Lapas „Fondų turtas“ – kiekvieno fondo paskelbti grynieji aktyvai (mln. €) naudojamomis datomis (mėlyni);
+   „Rezultatas“ – valdytojo suma = SUMIFS pagal valdytoją, pokytis = dabar − pradžia, % = dabar ÷ pradžia − 1. */
+const noteTxt = id => document.getElementById(id).textContent.replace(/\s*(Kaip skaityti|How to read)\?.*$/s, '');
+function assetsBook(kind) {
+  const L = lang === 'lt', SF = L ? 'Fondų turtas' : 'Fund assets', q = `'${SF}'`, M = '#,##0.00', fs = fundsOf(ST.pl, ST.g);
+  const days = new Set(), G = renderGrowth.last, Q = renderQuarters.last;
+  const startOf = (sr, p, end) => { const a = periodStart(p, end, sr.d[0]), i = lastOnOrBefore(sr, a); return i < 0 || sr.d[0] > a ? null : sr.d[i]; };
+  if (kind === 'gt') G.rows.forEach((r, k) => { days.add(G.vals[k].end); G.pers.forEach(p => { const d = startOf(r.s, p, G.vals[k].end); if (d != null) days.add(d); }); });
+  else Q.cols.forEach(c => days.add(c.d));
+  const ds = [...days].sort((a, b) => a - b), colOf = d => xlCol(3 + ds.indexOf(d)), N = fs.length + 2;
+  const src = [[L ? 'Valdytojas' : 'Manager', L ? 'Grupė' : 'Group', L ? 'Fondas' : 'Fund', ...ds.map(iso)],
+    [{ v: L ? 'Paskutinė paskelbta grynųjų aktyvų reikšmė, mln. €, tą dieną ar prieš ją (ne senesnė kaip 7 d. paskutiniam taškui)' : 'Last published net assets, € m, on or before the day (max 7 days old for the last point)', s: 'step' }]];
+  fs.forEach(f => src.push([MLABEL[f.p], grpLabel(ST.pl, f.g), f.n, ...ds.map(d => { const v = valueAt(f, d); return v == null ? null : { t: 'n', v, z: M }; })]));
+  const sumIf = (lab, d, v) => xlF(`SUMIFS(${q}!$${colOf(d)}$3:$${colOf(d)}$${N},${q}!$A$3:$A$${N},"${lab}")`, v, M);
+  const title = kind === 'gt' ? document.getElementById('gtTitle').textContent : document.getElementById('qtTitle').textContent;
+  let res, meth;
+  if (kind === 'gt') {
+    const hdr = [L ? 'Valdytojas' : 'Manager', L ? 'Turtas dabar, mln. €' : 'Assets now, € m', L ? 'Data' : 'Date'];
+    G.pers.forEach(p => hdr.push(`${T().per[p]}: ${L ? 'pradžios data' : 'start date'}`, `${T().per[p]}: ${L ? 'turtas pradžioje, mln. €' : 'assets at start, € m'}`, `${T().per[p]}: ${L ? 'pokytis, mln. €' : 'change, € m'}`, `${T().per[p]}: ${L ? 'pokytis, %' : 'change, %'}`));
+    res = [[title], [noteTxt('gtNote')], hdr];
+    G.rows.forEach((r, k) => { const c = G.vals[k], lab = MLABEL[r.m], n = res.length + 1, row = [lab, sumIf(lab, c.end, c.v), xlDate(c.end)];
+      G.pers.forEach((p, j) => { const d = startOf(r.s, p, c.end), b = c.base[p], cc = 3 + j * 4;
+        if (b == null || d == null) { row.push(null, null, null, null); return; }
+        const sc = xlCol(cc + 1); row.push(xlDate(d), sumIf(lab, d, b), xlF(`B${n}-${sc}${n}`, c.v - b, M), xlF(`B${n}/${sc}${n}-1`, c.v / b - 1, '0.00%')); });
+      res.push(row); });
+    if (G.rows.length > 1) { const a = 4, z = res.length, n = z + 1, tot = [T().total, xlF(`SUM(B${a}:B${z})`, G.vals.reduce((x, c) => x + c.v, 0), M), null];
+      G.pers.forEach((p, j) => { const cc = 3 + j * 4, sc = xlCol(cc + 1), all = G.vals.every(c => c.base[p] != null), b = all ? G.vals.reduce((x, c) => x + c.base[p], 0) : null, v = G.vals.reduce((x, c) => x + c.v, 0);
+        tot.push(null, all ? xlF(`SUM(${sc}${a}:${sc}${z})`, b, M) : null, all ? xlF(`B${n}-${sc}${n}`, v - b, M) : null, all ? xlF(`B${n}/${sc}${n}-1`, v / b - 1, '0.00%') : null); });
+      res.push(tot); }
+    meth = [[L ? 'Turtas dabar' : 'Assets now', L ? `SUMIFS: valdytojo fondų grynųjų aktyvų suma lape „${SF}“ paskutinę valdytojo duomenų dieną.` : `SUMIFS: sum of the manager’s fund net assets in “${SF}” on the manager’s latest day.`],
+      [L ? 'Pradžia' : 'Start', L ? 'Paskutinė diena su duomenimis laikotarpio pradžioje ar prieš ją (3 mėn., metų pradžia, 1 ir 3 metai atgal).' : 'Last day with data on or before the period start (3 months, year start, 1 and 3 years back).'],
+      [L ? 'Pokytis' : 'Change', L ? 'Dabar − pradžia (mln. €) ir dabar ÷ pradžia − 1 (%). Tai viso turto pokytis: grąža + įmokos − išmokos ± perėjimai.' : 'Now − start (€ m) and now ÷ start − 1 (%). Total asset change: return + contributions − payouts ± switches.'],
+      [L ? 'Iš viso' : 'Total', L ? 'SUM per valdytojus; tuščia, jei bent vienas valdytojas neturi duomenų laikotarpio pradžioje.' : 'SUM over managers; empty if any manager has no data at the period start.']];
+  } else {
+    const hdr = [L ? 'Fondas' : 'Fund'];
+    Q.cols.forEach((c, i) => hdr.push(`${c.now ? T().qtNow + ' ' : ''}${c.lbl}, ${L ? 'mln. €' : '€ m'}`, ...(i ? [`${c.lbl}: ${L ? 'pokytis, %' : 'change, %'}`] : [])));
+    res = [[title], [noteTxt('qtNote')], hdr];
+    const line = (lab, vals, ref) => { const n = res.length + 1, row = [lab]; vals.forEach((v, i) => { const cc = i === 0 ? 1 : 2 * i, me = xlCol(cc), pv = i ? xlCol(i === 1 ? 1 : cc - 2) : null;
+      row.push(v == null ? null : xlF(ref(i, n), v, M)); if (i) row.push(v == null || vals[i - 1] == null ? null : xlF(`${me}${n}/${pv}${n}-1`, v / vals[i - 1] - 1, '0.00%')); }); res.push(row); };
+    Q.all.forEach(({ f, v }) => { const r = fs.indexOf(f) + 3; line(`${MLABEL[f.p]} · ${grpLabel(ST.pl, f.g)}`, v, i => `${q}!${colOf(Q.cols[i].d)}${r}`); });
+    if (Q.all.length > 1) { const a = 4, z = res.length; line(T().total, Q.cols.map((_, i) => { const xs = Q.all.map(x => x.v[i]); return xs.some(x => x == null) ? null : xs.reduce((s, x) => s + x, 0); }), i => { const c = xlCol(i === 0 ? 1 : 2 * i); return `SUM(${c}${a}:${c}${z})`; }); }
+    meth = [[L ? 'Ketvirčio pabaiga' : 'Quarter end', L ? `Kiekvieno fondo grynieji aktyvai paskutinę ketvirčio dieną (paskutinė paskelbta reikšmė tą dieną ar prieš ją) – nuoroda į lapą „${SF}“.` : `Each fund’s net assets on the last day of the quarter (last published value on or before) – a reference to “${SF}”.`],
+      [L ? 'Pokytis, %' : 'Change, %', L ? 'Šio ketvirčio turtas ÷ ankstesnio ketvirčio turtas − 1.' : 'This quarter’s assets ÷ previous quarter’s assets − 1.']];
+  }
+  meth = [[L ? 'Metodika ir šaltiniai' : 'Methodology and sources'], [L ? 'Šaltinis' : 'Source', L ? 'Valdytojų skelbiami fondų grynieji aktyvai (mln. €); kol nebuvo kasdienių duomenų – Lietuvos banko ketvirčio duomenys.' : 'Fund net assets published by the managers (€ m); before daily data – Bank of Lithuania quarterly data.'], ...meth];
+  const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(res, L ? 'Rezultatas' : 'Result', [{ wch: 26 }, ...res[2].slice(1).map(() => ({ wch: 15 }))]);
+  add(src, SF, [{ wch: 12 }, { wch: 14 }, { wch: 44 }, ...ds.map(() => ({ wch: 12 }))]);
+  add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
+}
+XLB.set('gtTable', async () => renderGrowth.last ? assetsBook('gt') : null);
+XLB.set('qtTable', async () => renderQuarters.last ? assetsBook('qt') : null);
 async function decompXls() { await loadXlsx(); XLSX.writeFile(decompBook(), `${lang === 'lt' ? 'Turto_pokytis' : 'Asset_change'}_${String(AUM.generated).slice(0, 10)}.xlsx`); }
 
 function aumTabs() {                      // skirtukai (savininkas 2026-10-16: „per daug painus“)

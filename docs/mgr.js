@@ -409,5 +409,43 @@ $('btnA4').addEventListener('click', () => { const r = document.documentElement;
 addEventListener('afterprint', () => { delete document.documentElement.dataset.printA4; });
 addEventListener('hashchange', () => { const h = decodeURIComponent(location.hash.slice(1)), k = h.indexOf('/'), p = k < 0 ? h : h.slice(0, k), f = k < 0 ? '' : h.slice(k + 1); if (PROVS.includes(p)) { ST.p = p; ST.f = f || ''; render(); } });
 let rsz; addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(render, 200); });
+/* ---------- Excel su skaičiavimais (auditui): valdytojo fondų grąža ir vieta tarp konkurentų ----------
+   Lape „Skaičiavimai“ – ir šio valdytojo, ir visų konkurentų tos grupės fondai; vieta = COUNTIFS(didesnė grąža toje grupėje ir laikotarpyje) + 1. */
+function mgrRankCols(per, j, SCq) {
+  const lab = String(perLabel(per)).replace(/"/g, '""');
+  return (r, a) => { const c = xlCol(1 + j); return { t: 'n', f: `IF(${c}${r}="","",COUNTIFS(${SCq}!$A:$A,$A${r},${SCq}!$B:$B,"${lab}",${SCq}!$H:$H,">"&${c}${r})+1)`, v: null, z: '0' }; };
+}
+XLB.set('t2', async () => {
+  const t = T(), L = lang === 'lt', p = ST.p, ii = fundsII(p), P = pers(), SCq = `'${L ? 'Skaičiavimai' : 'Calculations'}'`, rows = [];
+  ii.forEach(({ g, f }) => {
+    const cellOf = (ff, per) => { const r = peerRets(g, per); if (r.rets[ff.provider] == null) return null; const s = seriesOf(ff, r.anchor, r.end); return s ? { f: ff, name: `${groupLabel(g)} · ${labelOf(ff.provider)}`, ia: s.ia, ie: s.ie, col: String(perLabel(per)) } : null; };
+    const rep = repOf('II', p, g.id), rk = risk(f, Math.max(...ii.map(x => peerRets(x.g, 'ytd').end)), 36), am = assetsII(p, g.id);
+    rows.push({ label: groupLabel(g), cells: P.map(per => cellOf(f, per)),
+      extra: [...P.map((per, j) => { const fn = mgrRankCols(per, j, SCq); return (r, a) => { const o = fn(r, a), pl = placeOf(peerRets(g, per).rets, p); o.v = pl ? pl.k : ''; return o; }; }),
+        ...P.map(per => { const pl = placeOf(peerRets(g, per).rets, p); return pl ? { t: 'n', v: pl.n, z: '0' } : null; }),
+        rep && rep.fee != null ? rep.fee : null, am == null ? null : { t: 'n', v: am, z: '#,##0.0' }, rk ? rk.vol : null, rk ? rk.dd : null] });
+    g.funds.filter(x => x.provider !== p).forEach(x => rows.push({ label: groupLabel(g), calcOnly: true, cells: P.map(per => cellOf(x, per)) }));
+  });
+  return pairBook({ title: `${labelOf(p)} · ${t.h2}`, cap: document.querySelector('#t2') ? document.querySelector('#t2').closest('section').querySelector('.meta').textContent : '', rowHdr: t.thG,
+    cols: P.map(perLabel), extraCols: [...P.map(per => `${L ? 'Vieta' : 'Rank'}: ${perLabel(per)}`), ...P.map(per => `${L ? 'Fondų sk.' : 'Funds'}: ${perLabel(per)}`), t.thFee, t.thAum, t.thVol, t.thDd], rows,
+    meth: [[L ? 'Vieta' : 'Rank', L ? 'COUNTIFS: kiek tos pačios grupės fondų tame laikotarpyje turi didesnę grąžą (lapas „Skaičiavimai“, visi konkurentai) + 1; „Fondų sk.“ – kiek fondų turi grąžą.' : 'COUNTIFS: how many funds of the same group have a higher return in that period (sheet “Calculations”, all peers) + 1; “Funds” – how many funds have a return.'],
+      [L ? 'Kiti stulpeliai' : 'Other columns', L ? 'Mokestis – iš valdytojų ataskaitų; turtas – mln. €; svyravimas ir didžiausias kritimas – 3 metų, iš dienos vieneto verčių (reikšmės).' : 'Fee – from manager reports; assets – € m; volatility and max drawdown – 3 years, from daily unit values (values).']] });
+});
+const M3S = new Map();
+const m3Series = f => { if (!M3S.has(f)) { const d = [], v = []; REP.months.forEach((x, i) => { if (f.m[i] != null) { d.push(x); v.push(f.m[i]); } }); M3S.set(f, { d, v, k: REP.months.map((_, i) => f.m[i] == null ? -1 : d.indexOf(REP.months[i])) }); } return M3S.get(f); };
+XLB.set('t3', async () => {
+  const t = T(), L = lang === 'lt', p = ST.p, P = pers(), SCq = `'${L ? 'Skaičiavimai' : 'Calculations'}'`, rows = [], iii = fundsIII(p);
+  const cellOf = (x, per) => { const r = rangeIII(per); if (!r || x.m[r[0]] == null || x.m[r[1]] == null) return null; const sr = m3Series(x); return { f: sr, name: x.n, ia: sr.k[r[0]], ie: sr.k[r[1]], col: String(perLabel(per)) }; };
+  [...new Set(iii.map(f => f.g))].forEach(cat => {
+    iii.filter(f => f.g === cat).forEach(f => rows.push({ label: f.n, grp: cat, cells: P.map(per => cellOf(f, per)),
+      extra: [...P.map(per => { const pl = placeOf(peersIII(f, per), f.n); return pl ? { t: 'n', v: pl.k, z: '0' } : null; }), ...P.map(per => { const pl = placeOf(peersIII(f, per), f.n); return pl ? { t: 'n', v: pl.n, z: '0' } : null; }),
+        f.fee != null ? f.fee : null, assetsIII(f) == null ? null : { t: 'n', v: assetsIII(f), z: '#,##0.0' }] }));
+    REP.funds.filter(x => x.pl === 'III' && x.g === cat && x.p !== p).forEach(x => rows.push({ label: x.n, calcOnly: true, cells: P.map(per => cellOf(x, per)) }));
+  });
+  return pairBook({ title: `${labelOf(p)} · ${t.h3}`, cap: document.querySelector('#t3') ? document.querySelector('#t3').closest('section').querySelector('.meta').textContent : '', rowHdr: t.thFund,
+    cols: P.map(perLabel), extraCols: [...P.map(per => `${L ? 'Vieta' : 'Rank'}: ${perLabel(per)}`), ...P.map(per => `${L ? 'Fondų sk.' : 'Funds'}: ${perLabel(per)}`), t.thFee, t.thAum], rows,
+    meth: [[L ? 'III pakopa' : 'Pillar III', L ? 'Mėnesio pabaigos vieneto vertės (valdytojų ataskaitos, Lietuvos bankas); lape „Vertės“ – tik mėnesių pabaigos.' : 'Month-end unit values (manager reports, Bank of Lithuania); the “Values” sheet holds month ends only.'],
+      [L ? 'Vieta' : 'Rank', L ? 'Tarp tos pačios kategorijos (obligacijų, mišrių, akcijų) III pakopos fondų; visų konkurentų skaičiavimai – lape „Skaičiavimai“.' : 'Among pillar III funds of the same category (bond, mixed, equity); all peers’ calculations – in the “Calculations” sheet.']] });
+});
 renderHeader('manager', render);
 render();
