@@ -438,7 +438,8 @@
      "note_en": "In the corrected series the monthly return of SEB’s SOLEBLS component (7 %; JGENVUEG before 2013-06, unchanged) is replaced by the Bloomberg SOLEBLS EUR month-end return (SEB’s file used another series before 2015, hence the +89.6 % jump in 2015-01); other components and weights as SEB."
     }
    ],
-   "mom_drop": 12
+   "mom_drop": 12,
+   "w12": 37
   },
   {
    "p": "SEB",

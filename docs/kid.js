@@ -4,6 +4,7 @@
    numatytosios reikšmės – f.kid (PID, jei turime, arba mūsų taisyklė). Excel – visas skaičiavimas formulėmis. */
 addStrings({
   kidTitle: 'KID performance scenarios', kidLead: 'By the EU key information document method (Regulation 2017/653, Annex IV), in the same layout as the managers’ KIDs: what 1,000 € invested at the start of each year could become after 1 year, about half the recommended holding period and the full period. Choose the fund and, if you wish, change the holding and observation periods, the equity share and costs; the Excel file has the whole calculation as formulas.',
+  kidW12: (n, a, b) => `As in the manager’s file, in the ${n}-year sheet the windows starting ${a} – ${b} take only the return of their last 12 months (the manager’s formula error; it lowers the moderate scenario; the corrected series uses full windows).`,
   kidMomDrop: k => `As in the manager’s file, the stress scenario moments (mean, σ, skewness, kurtosis) use only the first ${k} of the last 60 months (the manager’s formula range error; the corrected series uses all 60).`, kidFund: 'Fund', kidSer: 'Benchmark series', kidSerPid: 'As in the manager’s KID', kidRhpY: 'Holding period, years', kidEq: 'Equities, %', kidCost: 'Costs, % a year', kidFrom: 'Observation from', kidTo: 'to', kidReset: 'Defaults',
   kidInv: 'Investment 1,000 EUR a year', kidScH: 'Scenarios', kidRec: '(Recommended holding period)', kidYr: n => `${n} ${n === 1 ? 'year' : 'years'}`,
   kidSc: ['Stress scenario', 'Unfavourable scenario', 'Moderate scenario', 'Favourable scenario'], kidGet: 'What you might get back after costs', kidRet: 'Average return each year', kidPaid: 'Amount invested over time',
@@ -19,6 +20,7 @@ addStrings({
   kidShM: 'Months', kidShW: 'Windows', kidShC: 'Calculation', kidShT: 'Scenarios',
 }, {
   kidTitle: 'KID veiklos rezultatų scenarijai', kidLead: 'Pagal ES pagrindinės informacijos dokumento (KID / PID) metodiką (Reglamentas 2017/653, IV priedas), tokio pat formato lentele kaip valdytojų PID: kiek galėtų tapti 1000 €, investuojamų kiekvienų metų pradžioje, po 1 metų, maždaug pusės rekomenduojamo laikymo laikotarpio ir viso laikotarpio. Pasirinkite fondą ir, jei norite, pakeiskite laikymo ir stebėjimo laikotarpį, akcijų dalį ir išlaidas; Excel faile – visas skaičiavimas formulėmis.',
+  kidW12: (n, a, b) => `Kaip valdytojo faile, ${n} m. lape langai, prasidedantys ${a} – ${b}, ima tik paskutinių 12 mėn. grąžą (valdytojo formulės klaida; ji sumažina nuosaikų scenarijų; pataisytoje eilutėje – pilni langai).`,
   kidMomDrop: k => `Kaip valdytojo faile, nepalankiausio scenarijaus momentai (vidurkis, σ, asimetrija, ekscesas) skaičiuojami tik iš pirmų ${k} iš paskutinių 60 mėn. (valdytojo formulės diapazono klaida; pataisytoje eilutėje – visi 60).`, kidFund: 'Fondas', kidSer: 'Indekso eilutė', kidSerPid: 'Kaip valdytojo PID', kidRhpY: 'Laikymo laikotarpis, metai', kidEq: 'Akcijos, %', kidCost: 'Išlaidos, % per metus', kidFrom: 'Stebėjimas nuo', kidTo: 'iki', kidReset: 'Numatytieji',
   kidInv: 'Investicija 1 000 EUR per metus', kidScH: 'Scenarijai', kidRec: '(Rekomenduojamas laikymo laikotarpis)', kidYr: n => `${n} ${n % 10 === 0 || (n % 100 > 9 && n % 100 < 21) ? 'metų' : 'metai'}`,
   kidSc: ['Nepalankiausias scenarijus', 'Nepalankus scenarijus', 'Nuosaikus scenarijus', 'Palankus scenarijus'], kidGet: 'Ką galite atgauti atskaičius išlaidas', kidRet: 'Metinė vidutinė grąža', kidPaid: 'Sukaupta investuota suma',
@@ -74,7 +76,8 @@ function kidCalc(p) {
   const mid = Math.floor(p.rhp / 2 + 0.5), ns = [...new Set([1, mid, p.rhp])], per = {};
   for (const n of ns) {
     const g = (a, b) => Math.pow(px[b] / px[a], 1 / n) - 1, wins = [], tail = [];
-    for (let a = 0; a + 12 * n <= N; a++) wins.push(g(a, a + 12 * n));
+    const ws = [];   // lango pradžia; w12 – SEB 50+ 2026 faile RHP lapo eilutės nuo w12 skaičiuoja tik paskutinių 12 mėn. grąžą (jų klaida)
+    for (let a = 0; a + 12 * n <= N; a++) { ws.push(p.w12 && n === p.rhp && a >= p.w12 ? a + 12 * n - 12 : a); wins.push(g(ws[a], a + 12 * n)); }
     for (let a = Math.max(0, N - 12 * n - 1); a <= N - 12; a++) tail.push(g(a, N));   // kaip SEB: uodegos 12 … 12n+1 mėn.
     const srt = [...wins].sort((x, y) => x - y), h = srt.length >> 1, med = srt.length % 2 ? srt[h] : (srt[h - 1] + srt[h]) / 2;
     const unf = Math.min(srt[0], ...tail), w = 12, q = n === 1 ? 0.99 : 0.95, vols = [];   // kaip SEB: 12 mėn. langai tik paskutinių 60 mėn.
@@ -84,7 +87,7 @@ function kidCalc(p) {
       NN = 12 * n, z = n === 1 ? -2.326347874 : -1.644853627;
     const cf = z + (z * z - 1) / 6 * mu1 / Math.sqrt(NN) + (z ** 3 - 3 * z) / 24 * mu2 / NN - (2 * z ** 3 - 5 * z) / 36 * mu1 ** 2 / NN;
     const st0 = Math.pow(Math.exp(sig * Math.sqrt(NN) * cf - 0.5 * M2 * NN), 1 / n) - 1;   // atimamame naryje – bendras 60 mėn. σ (kaip SEB)
-    per[n] = { ret: [Math.min(st0, unf), unf, med, srt[srt.length - 1]].map(v => v * 100), nw: wins.length, nt: tail.length, w, q, k, sig, z, cf, st0 };
+    per[n] = { ret: [Math.min(st0, unf), unf, med, srt[srt.length - 1]].map(v => v * 100), nw: wins.length, ws, nt: tail.length, w, q, k, sig, z, cf, st0 };
   }
   return { ns: [1, mid, p.rhp], per, N, base, px, r, m, M2, mu1, mu2, L: Ln, onlyE, bench };
 }
@@ -125,6 +128,7 @@ function renderKid() {
   const alts = !old && p.bench ? (f.kid.alt || []).filter(x => REP.kidm.x[x.bench]) : [], alt = alts.find(x => x.bench === o.alt);
   if (alt) p.bench = alt.bench;   // pataisyta indekso eilutė vietoj valdytojo
   p.momDrop = p.bench && p.bench === f.kid.bench ? f.kid.momDrop || 0 : 0;
+  p.w12 = p.bench && p.bench === f.kid.bench && p.from === d.from && p.to === d.to && p.rhp === d.rhp ? f.kid.w12 || 0 : 0;
   const opts = fs.map(x => `<option value="${kidKey(x)}"${x === f ? ' selected' : ''}>${x.pl} · ${shortName(x)}</option>`).join('');
   const inp = (k, v, a) => `<input type="number" data-k="${k}" value="${v}" ${a}>`, mon = (k, v) => `<input type="month" data-k="${k}" value="${kidYs(v)}">`;
   let html = `<div class="controls kidc">${field(S.kidFund, `<select id="kidF">${opts}</select>`)}${field(S.kidRhpY, inp('rhp', p.rhp, 'min="1" max="25" step="1" style="width:5em"'))}`
@@ -147,7 +151,7 @@ function renderKid() {
     }
     MODELS.kid = { f, p, R, ret, rr, amt };
   }
-  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${alts.map(x => (lang === 'lt' ? x.note_lt : x.note_en) + ' ').join('')}${p.momDrop ? S.kidMomDrop(60 - p.momDrop) + ' ' : ''}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
+  html += `<p class="note">${f.kid.src === 'pid' ? S.kidPidSrc : S.kidRule} ${p.bench ? S.kidBenchNote + ' ' : ''}${alts.map(x => (lang === 'lt' ? x.note_lt : x.note_en) + ' ').join('')}${p.momDrop ? S.kidMomDrop(60 - p.momDrop) + ' ' : ''}${p.w12 ? S.kidW12(p.rhp, kidYs(p.from - 1 + p.w12), kidYs(p.to - 12 * p.rhp)) + ' ' : ''}${(f.kid.old || []).map(x => S.kidOld(x.doc, x.from.slice(0, 7), x.to.slice(0, 7), x.cost)).join(' ')} ${S.kidNote}</p>`;
   box.innerHTML = html;
   document.getElementById('kidF').onchange = e => { KS.f = e.target.value; kidSave(); renderKid(); };
   const ka = document.getElementById('kidAlt');
@@ -193,7 +197,7 @@ function kidBook() {
     for (let a = 0; a < pr.nw; a++) {
       W[a + 1] = W[a + 1] || [];
       W[a + 1][c] = kidYs(R.base + a); W[a + 1][c + 1] = kidYs(R.base + a + 12 * n);
-      W[a + 1][c + 2] = F(`(${MN}!F${a + 12 * n + 2}/${MN}!F${a + 2})^(1/${n})-1`, Math.pow(R.px[a + 12 * n] / R.px[a], 1 / n) - 1);
+      W[a + 1][c + 2] = F(`(${MN}!F${a + 12 * n + 2}/${MN}!F${pr.ws[a] + 2})^(1/${n})-1`, Math.pow(R.px[a + 12 * n] / R.px[pr.ws[a]], 1 / n) - 1);
     }
     ref[j] = { w: `${WN}!${gc}2:${gc}${pr.nw + 1}` };
     c += 3;
@@ -232,7 +236,7 @@ function kidBook() {
     rows[1][j + 1] = F(`COUNT(${rr.w})`, pr.nw, '0');
     rows[2][j + 1] = F(`MEDIAN(${rr.w})`, pr.ret[2] / 100);
     rows[3][j + 1] = F(`MAX(${rr.w})`, pr.ret[3] / 100);
-    const minW = Math.min(...Array.from({ length: pr.nw }, (_, a) => Math.pow(R.px[a + 12 * n] / R.px[a], 1 / n) - 1));
+    const minW = Math.min(...Array.from({ length: pr.nw }, (_, a) => Math.pow(R.px[a + 12 * n] / R.px[pr.ws[a]], 1 / n) - 1));
     rows[4][j + 1] = F(`MIN(${rr.w})`, minW);
     rows[5][j + 1] = rr.t ? F(`MIN(${rr.t})`, Math.min(...Array.from({ length: pr.nt }, (_, k) => Math.pow(R.px[N] / R.px[Math.max(0, N - 12 * n - 1) + k], 1 / n) - 1))) : null;
     rows[6][j + 1] = F(rr.t ? `MIN(${rn(4)},${rn(5)})` : rn(4), pr.ret[1] / 100);
