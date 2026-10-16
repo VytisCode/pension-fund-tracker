@@ -26,7 +26,7 @@
  "idx.SP500_PR": {
   "err": "2026-10-16",
   "kind": "network",
-  "msg": "RuntimeError: FRED: TimeoutError The read operation timed out; Nasdaq: 0 reikšmės ('{\"data\":null,\"message\":null,\"status\":{\"rCode\":400,\"bCodeMessage\":[{\"code\":1001,\"errorMessage\":\"Symbol not exists.\"}],\"developerMessage\":null}}'); Stooq: 0 reikšmės ('<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex,nofollow\"></head><body><noscript>This site requires JavaScript to verify your browser. Please enable JavaScript an')",
+  "msg": "RuntimeError: FRED: TimeoutError The read operation timed out; Nasdaq: 0 reikšmės ('{\"data\":null,\"message\":null,\"status\":{\"rCode\":400,\"bCodeMessage\":[{\"code\":1001,\"errorMessage\":\"Symbol not exists.\"}],\"developerMessage\":null}}'); Stooq: URLError <urlopen error timed out>",
   "since": "2026-10-16"
  },
  "lb": {
