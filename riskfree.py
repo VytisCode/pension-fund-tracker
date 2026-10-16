@@ -73,6 +73,14 @@ def monthly_avg(daily: dict) -> dict:
 MONTHLY = Path(__file__).parent / "data" / "estr_monthly.json"
 
 
+def _status(kind, key, exc=None):           # šaltinio būsena data/source_status.json (matoma Duomenų kalendoriuje)
+    try:
+        import source_status
+        source_status.ok(key) if kind == "ok" else source_status.fail(key, exc)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def monthly():
     """Mėnesių vidurkiai svetainei: {"start": "YYYY-MM", "v": [...], "last": "YYYY-MM-DD", "source": url} arba None.
     Jei ECB nepasiekiamas – paskutinė išsaugota versija; senesni išsaugoti mėnesiai niekada neprarandami."""
@@ -102,8 +110,13 @@ def monthly():
             for m, v in monthly_avg(eonia).items():
                 if m < "2019-10":
                     new[m] = v
+            print(f"EONIA: {len(eonia)} d.")
+            if len(eonia) < 100:
+                raise ValueError(f"tik {len(eonia)} d.")
+            _status("ok", "eonia")
         except Exception as exc:
             print(f"EONIA: nepavyko gauti iš ECB ({exc.__class__.__name__}: {exc})")
+            _status("fail", "eonia", exc)
     except Exception as exc:
         print(f"€STR istorija: nepavyko gauti iš ECB ({exc.__class__.__name__}: {exc})")
     merged = {**old, **new}
