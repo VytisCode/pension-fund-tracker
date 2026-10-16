@@ -114,13 +114,13 @@ const chWhy = x => { const X = T().ch, ks = Object.entries(x.p).filter(([, v]) =
 function renderChoose() {
   const box = document.getElementById('pickBody'); if (!box) return;
   const X = T().ch, now = new Date(CH_LAST * DAY).getUTCFullYear();
-  if (!CH.birth) CH.birth = (typeof ST !== 'undefined' && ST.birth) || 1990;
+  CH.birth = (typeof ST !== 'undefined' && ST.birth) || CH.birth || 1990;   // gimimo metai – iš nustatymų viršuje (vienas įvedimas puslapyje)
   document.getElementById('pickTitle').textContent = X.title;
   const left = Math.max(0, 65 - (now - CH.birth)), autoCat = left >= 15 ? 'equity' : left >= 7 ? 'mixed' : 'bond', cat = CH.cat || autoCat;
   const plSeg = `<div class="seg" role="group" data-ch="pl">${[['II', X.plII], ['III', X.plIII], ['both', X.plBoth]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === CH.pl}">${l}</button>`).join('')}</div>`;
   const catSel = `<select data-ch="cat"><option value="">${X.cats[autoCat]} (${X.catAuto})</option>${Object.keys(X.cats).map(k => `<option value="${k}"${k === CH.cat ? ' selected' : ''}>${X.cats[k]}</option>`).join('')}</select>`;
   let h = `<p class="lead" style="margin-top:0">${X.lead}</p><div class="bar" style="display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:10px 0">
-    <label class="field">${X.birth} <input type="number" data-ch="birth" min="1940" max="2010" value="${CH.birth}" style="width:90px"></label>${plSeg}${CH.pl !== 'II' ? `<label class="field">${X.cat} ${catSel}</label>` : ''}</div>
+    ${plSeg}${CH.pl !== 'II' ? `<label class="field">${X.cat} ${catSel}</label>` : ''}</div>
     <p>${X.years(CH.birth, left, CH.birth + 65)} ${X.weights}${Object.entries(chWeights(left)).map(([k, w]) => `${X.wNames[k]} ${w} %`).join(', ')}.</p>`;
   const parts = [];
   if (CH.pl !== 'III') {
@@ -139,7 +139,6 @@ function renderChoose() {
   }
   h += parts.join('') + `<details style="margin-top:12px"><summary>${X.how}</summary><p class="note">${X.howTxt}</p></details><p class="note"><b>${X.disc}</b></p>`;
   box.innerHTML = h;
-  box.querySelector('[data-ch="birth"]').addEventListener('change', e => { const v = +e.target.value; if (v >= 1940 && v <= 2010) { CH.birth = v; chSave(); renderChoose(); } });
   box.querySelectorAll('[data-ch="pl"] button').forEach(b => b.addEventListener('click', () => { CH.pl = b.dataset.v; chSave(); renderChoose(); }));
   const cs = box.querySelector('[data-ch="cat"]'); if (cs) cs.addEventListener('change', e => { CH.cat = e.target.value; chSave(); renderChoose(); });
   if (typeof tableTools === 'function') try { tableTools(box); } catch (e) {}

@@ -449,6 +449,11 @@ function decompBook() {
 }
 async function decompXls() { await loadXlsx(); XLSX.writeFile(decompBook(), `${lang === 'lt' ? 'Turto_pokytis' : 'Asset_change'}_${String(AUM.generated).slice(0, 10)}.xlsx`); }
 
+function aumTabs() {                      // skirtukai (savininkas 2026-10-16: „per daug painus“)
+  const L = lang === 'lt';
+  addSubnav([['chTitle', L ? 'Turtas' : 'Assets'], ['dcTitle', L ? 'Kas keitė turtą' : 'What changed assets'], ['gtTitle', L ? 'Turto pokytis' : 'Change in assets'],
+    ['qtTitle', L ? 'Ketvirčių pabaigose' : 'Quarter ends'], ['poTitle', L ? 'Reformos išmokos' : 'Reform payouts']].map(([id, label]) => ({ id, label })));
+}
 function renderAllParts() {
   const last = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), y0 = Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY);
   const tot = (pl, day) => AUM.funds.filter(f => f.pl === pl).reduce((s, f) => { const i = lastOnOrBefore(f, day); return s + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
@@ -461,6 +466,6 @@ function renderAllParts() {
   ['chTitle', 'chLead', 'poTitle', 'poLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
   renderChart(); renderGrowth(); renderQuarters(); renderPayouts();
 }
-renderHeader('aum', renderAllParts);
-renderAllParts();
+renderHeader('aum', () => { renderAllParts(); aumTabs(); });
+renderAllParts(); aumTabs();
 let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => renderChart.paint && renderChart.paint(hc.mr), 120); });

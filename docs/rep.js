@@ -410,6 +410,11 @@ async function download(k) {
   if (b) XLSX.writeFile(b.wb, b.file);
 }
 
+function repTabs() {                      // skirtukai; spausdinant rodomos visos dalys
+  const L = lang === 'lt';
+  addSubnav([['calTitle', L ? 'Grąža nuo 2019 m.' : 'Returns since 2019'], ['monTitle', L ? 'Mėnesių grąža' : 'Monthly returns'], ['kpiTitle', L ? 'Rezultatų rodikliai' : 'Performance KPI'],
+    ['hyTitle', L ? 'Pusmečio lentelės' : 'Half-year tables'], ['kidTitle', L ? 'KID scenarijai' : 'KID scenarios']].map(([id, label]) => ({ id, label })));
+}
 function renderAllParts() {
   const lbd = String(REP.lbDate || ''), lbIso = lbd.length === 8 ? `${lbd.slice(0, 4)}-${lbd.slice(4, 6)}-${lbd.slice(6)}` : lbd;
   kpiRow([[T().kpFunds, REP.funds.length, `${T().kpII} ${REP.funds.filter(f => f.pl === 'II').length} · ${T().kpIII} ${REP.funds.filter(f => f.pl === 'III').length}`],
@@ -436,6 +441,6 @@ document.addEventListener('click', e => {
   pop.style.left = Math.max(8, Math.min(r.left + scrollX - 8, scrollX + document.documentElement.clientWidth - w - 8)) + 'px'; pop.style.top = (r.bottom + scrollY + 6) + 'px';
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('pop').style.display = 'none'; });
-renderHeader('reports', renderAllParts);
-renderAllParts();
+renderHeader('reports', () => { renderAllParts(); repTabs(); });
+renderAllParts(); repTabs();
 loadDaily().then(renderHy); loadPf().then(renderHy);

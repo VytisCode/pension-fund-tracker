@@ -83,9 +83,10 @@
 <div class="wrap">
   <header id="top"></header>
   <div class="bar" id="inBar"></div>
-  <nav class="jnav" id="jnav"></nav>
+  <nav class="jnav" id="jnav" hidden></nav>
   <div id="staleBox"></div>
 
+  <div data-tab="my">
   <h2 class="sec" id="schTitle"></h2>
   <p class="lead" id="schLead"></p>
   <section class="card"><div id="schema"></div></section>
@@ -102,10 +103,14 @@
 
   <h2 class="sec" id="annTitle"></h2>
   <section class="card" data-src="journey"><div class="scroll"><table class="jt" id="annTable"></table></div><p class="note" id="annNote"></p></section>
+  </div>
 
+  <div data-tab="fut">
   <h2 class="sec" id="futTitle"></h2>
   <section class="card" data-src="journey" id="futBody"></section>
+  </div>
 
+  <div data-tab="cmp">
   <h2 class="sec" id="cmpTitle"></h2>
   <p class="lead" id="cmpLead"></p>
   <section class="card" data-src="journey"><div class="scroll"><table class="jt" id="cmpTable"></table></div><p class="note" id="cmpNote"></p></section>
@@ -118,20 +123,29 @@
   <h2 class="sec" id="gridTitle"></h2>
   <p class="lead" id="gridLead"></p>
   <div class="mgrid" id="mgrid"></div>
+  </div>
 
+  <div data-tab="tb">
   <h2 class="sec" id="tbTitle"></h2>
   <p class="lead" id="tbLead"></p>
   <div class="bar" id="tbBar" style="margin-bottom:12px"></div>
   <section class="card"><div class="scroll"><table class="jt" id="tbl"></table></div><p class="note" id="tbNote"></p></section>
+  </div>
 
-  <h2 class="sec" id="feeTitle" style="margin-top:40px"></h2>
+  <div data-tab="fee">
+  <h2 class="sec" id="feeTitle"></h2>
   <section class="card" data-src="journey" id="feeBody"></section>
+  </div>
 
-  <h2 class="sec" id="pickTitle" style="margin-top:40px"></h2>
+  <div data-tab="pick">
+  <h2 class="sec" id="pickTitle"></h2>
   <section class="card" data-src="nav" id="pickBody"></section>
+  </div>
 
-  <h2 class="sec" id="srcTitle" style="margin-top:40px"></h2>
+  <div data-tab="src">
+  <h2 class="sec" id="srcTitle"></h2>
   <section class="card" id="srcBody"></section>
+  </div>
 
   <footer id="foot"></footer>
 </div>
@@ -142,9 +156,9 @@
 <script src="data_journey.js?v=b7e88f02"></script>
 <script src="data_journey3.js?v=a714bc0e"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
-<script src="journey.js?v=b13afc92"></script>
+<script src="journey.js?v=0f9542d5"></script>
 <script src="future.js?v=324231a9"></script>
-<script src="choose.js?v=c77f9ab0"></script>
+<script src="choose.js?v=9eedf14e"></script>
 <script src="feeimp.js?v=cd29a988"></script>
 </body>
 </html>
