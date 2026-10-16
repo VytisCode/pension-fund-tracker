@@ -104,13 +104,14 @@ function chScore(funds, left) {
   st.sort((p, q) => (q.score ?? -1) - (p.score ?? -1));
   return { a, b, st, out, W, years: ((b - a) / 365.25).toFixed(1).replace('.', lang === 'lt' ? ',' : '.') };
 }
-function chTable(R) {
+function chTable(R, id) {
   const X = T().ch, cell = (v, f) => v == null ? '<td class="na">–</td>' : `<td>${f(v)}</td>`;
   const rows = R.st.map((x, i) => `<tr${i === 0 ? ' class="cur"' : ''}><td>${i + 1}</td><td class="l">${hEsc(x.f.name)}</td><td><b>${x.score == null ? '–' : num(x.score, 0)}</b></td>${cell(x.s.lt, v => pctPlain(v))}${cell(x.s.rec, v => pctPlain(v))}${cell(x.s.cons, v => num(v, 0) + ' / 100')}${cell(x.s.rr, v => num(v, 2))}${cell(x.s.dd, v => pctPlain(v))}${cell(x.s.fee, v => num(v, 2))}</tr>`).join('')
     + R.out.map(f => `<tr class="est"><td></td><td class="l">${hEsc(f.name)} <span class="na">(${X.short}, ${lang === 'lt' ? 'nuo' : 'since'} ${iso(f.d[0])})</span></td><td class="na">–</td><td colspan="6"></td></tr>`).join('');
-  return `<div class="scroll"><table class="jt"><thead><tr>${X.th.map((h, i) => `<th class="${i === 1 ? 'l' : ''}">${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  return `<div class="scroll"><table class="jt" id="${id}"><thead><tr>${X.th.map((h, i) => `<th class="${i === 1 ? 'l' : ''}">${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 const chWhy = x => { const X = T().ch, ks = Object.entries(x.p).filter(([, v]) => v != null && v >= 80).sort((p, q) => q[1] - p[1]).map(([k]) => X.strong[k]); return ks.length ? X.why + ks.slice(0, 3).join(', ') + '.' : ''; };
+const CH_R = {};
 function renderChoose() {
   const box = document.getElementById('pickBody'); if (!box) return;
   const X = T().ch, now = new Date(CH_LAST * DAY).getUTCFullYear();
@@ -126,7 +127,8 @@ function renderChoose() {
   if (CH.pl !== 'III') {
     const g = chGroupOf(CH.birth), funds = g.funds.map(f => ({ name: labelOf(f.provider) + ' ' + groupLabel(g), brand: f.provider, d: f.d, v: f.v, fee: typeof FEES !== 'undefined' ? FEES[`${f.provider}|${g.id}`] ?? null : null }));
     const R = chScore(funds, left);
-    parts.push(R.st.length ? `<h3 class="sub3">${X.plII} · ${groupLabel(g)}</h3><p>${X.pick2(groupLabel(g), hEsc(R.st[0].f.name), num(R.st[0].score, 0))} ${chWhy(R.st[0])}</p><p class="note">${X.win(iso(R.a), iso(R.b), R.years)}</p>${chTable(R)}` : `<p class="note">${X.none}</p>`);
+    parts.push(R.st.length ? `<h3 class="sub3">${X.plII} · ${groupLabel(g)}</h3><p>${X.pick2(groupLabel(g), hEsc(R.st[0].f.name), num(R.st[0].score, 0))} ${chWhy(R.st[0])}</p><p class="note">${X.win(iso(R.a), iso(R.b), R.years)}</p>${chTable(R, 'chT2')}` : `<p class="note">${X.none}</p>`);
+    CH_R.chT2 = { R, left, title: `${X.plII} · ${groupLabel(g)}` };
   }
   if (CH.pl !== 'II') {
     if (typeof REP === 'undefined') { parts.push(`<p class="note">${X.loading}</p>`); chLoadRep().then(renderChoose); }
@@ -134,7 +136,8 @@ function renderChoose() {
       const fee = n => { const r = REP.funds.find(x => x.pl === 'III' && chNorm(x.n) === chNorm(n)); return r && r.fee != null ? r.fee : null; };
       const funds = P3.filter(f => f.cat === cat).map(f => ({ name: f.name, brand: f.brand, d: f.d, v: f.v, fee: fee(f.name) }));
       const R = funds.length ? chScore(funds, left) : null;
-      parts.push(R && R.st.length ? `<h3 class="sub3">${X.plIII} · ${X.cats[cat]}</h3><p>${X.pick3(X.cats[cat], hEsc(R.st[0].f.name), num(R.st[0].score, 0))} ${chWhy(R.st[0])}</p><p class="note">${X.win(iso(R.a), iso(R.b), R.years)}</p>${chTable(R)}` : `<p class="note">${X.none}</p>`);
+      parts.push(R && R.st.length ? `<h3 class="sub3">${X.plIII} · ${X.cats[cat]}</h3><p>${X.pick3(X.cats[cat], hEsc(R.st[0].f.name), num(R.st[0].score, 0))} ${chWhy(R.st[0])}</p><p class="note">${X.win(iso(R.a), iso(R.b), R.years)}</p>${chTable(R, 'chT3')}` : `<p class="note">${X.none}</p>`);
+      if (R) CH_R.chT3 = { R, left, title: `${X.plIII} · ${X.cats[cat]}` };
     }
   }
   h += parts.join('') + `<details style="margin-top:12px"><summary>${X.how}</summary><p class="note">${X.howTxt}</p></details><p class="note"><b>${X.disc}</b></p>`;
@@ -143,4 +146,55 @@ function renderChoose() {
   const cs = box.querySelector('[data-ch="cat"]'); if (cs) cs.addEventListener('change', e => { CH.cat = e.target.value; chSave(); renderChoose(); });
   if (typeof tableTools === 'function') try { tableTools(box); } catch (e) {}
 }
+/* Excel su skaičiavimais (auditui): vertės → rodikliai → vieta grupėje (0–100) → balai; visa grandinė formulėmis */
+function chBook(id) {
+  const C = CH_R[id]; if (!C || !C.R.st.length) return null;
+  const { R, left, title } = C, X = T().ch, L = lang === 'lt', st = R.st, n = st.length, SV = L ? 'Vertės' : 'Values', SR = L ? 'Rodikliai' : 'Metrics', SY = L ? 'Metai' : 'Years', q = s_ => `'${s_}'`;
+  /* Vertės: kiekvienam fondui 5 stulpeliai – data, vertė, log grąža, viršūnė, kritimas nuo viršūnės */
+  const blocks = st.map(x => { const f = x.f, ia = lastOnOrBefore(f, R.a), ib = lastOnOrBefore(f, R.b); return { ia, ib, n: ib - ia + 1 }; });
+  const H = Math.max(...blocks.map(b => b.n)), vals = [st.flatMap(x => [`${x.f.name}: ${L ? 'data' : 'date'}`, L ? 'vertė' : 'value', L ? 'log grąža' : 'log return', L ? 'viršūnė' : 'peak', L ? 'kritimas' : 'drawdown'])];
+  const pk = st.map(() => 0);
+  for (let k = 0; k < H; k++) { const r = k + 2; vals.push(st.flatMap((x, i) => { const b = blocks[i], f = x.f, c = j => xlCol(i * 5 + j); if (k >= b.n) return [null, null, null, null, null]; const at = b.ia + k; pk[i] = Math.max(k ? pk[i] : f.v[at], f.v[at]);
+    const lr = k ? (f.v[at] !== f.v[at - 1] ? xlF(`IF(${c(1)}${r}=${c(1)}${r - 1},"",LN(${c(1)}${r}/${c(1)}${r - 1}))`, Math.log(f.v[at] / f.v[at - 1]), '0.000000') : { f: `IF(${c(1)}${r}=${c(1)}${r - 1},"",LN(${c(1)}${r}/${c(1)}${r - 1}))`, v: '' }) : null;
+    return [xlDate(f.d[at]), { t: 'n', v: f.v[at], z: '0.0000' }, lr, k ? xlF(`MAX(${c(3)}${r - 1},${c(1)}${r})`, pk[i], '0.0000') : xlF(`${c(1)}${r}`, f.v[at], '0.0000'), xlF(`${c(1)}${r}/${c(3)}${r}-1`, f.v[at] / pk[i] - 1, '0.00%')]; })); }
+  const rng = (i, j) => `${q(SV)}!$${xlCol(i * 5 + j)}$2:$${xlCol(i * 5 + j)}$${blocks[i].n + 1}`, look = (i, cell) => `INDEX(${rng(i, 1)},MATCH(${cell},${rng(i, 0)},1))`;
+  /* Rodikliai */
+  const met = [[L ? 'Fondas' : 'Fund', L ? 'Pradžia' : 'Start', L ? 'Pradžios vertė' : 'Start value', L ? 'Pabaiga' : 'End', L ? 'Pabaigos vertė' : 'End value', L ? 'Metai' : 'Years', X.th[3], L ? '3 m. pradžia' : '3 y start', L ? '3 m. pradžios vertė' : '3 y start value', X.th[4], L ? 'Svyravimas, metinis' : 'Volatility p.a.', X.th[6], X.th[7], X.th[8], X.th[5]]];
+  st.forEach((x, i) => { const r = i + 2, f = x.f, b = blocks[i], s_ = x.s, d3 = f.d[0] <= R.b - 3 * 365 ? lastOnOrBefore(f, R.b - Math.round(3 * 365.25)) : -1;
+    met.push([f.name, xlDate(f.d[b.ia]), xlF(`${q(SV)}!${xlCol(i * 5 + 1)}2`, f.v[b.ia], '0.0000'), xlDate(f.d[b.ib]), xlF(`${q(SV)}!${xlCol(i * 5 + 1)}${b.n + 1}`, f.v[b.ib], '0.0000'), xlF(`(D${r}-B${r})/365.25`, (f.d[b.ib] - f.d[b.ia]) / 365.25, '0.00'),
+      xlF(`(E${r}/C${r})^(1/F${r})-1`, s_.lt / 100, '0.00%'), d3 >= 0 ? xlDate(f.d[d3]) : null, d3 >= 0 ? (d3 >= b.ia ? xlF(look(i, `H${r}`), f.v[d3], '0.0000') : { t: 'n', v: f.v[d3], z: '0.0000' }) : null,
+      s_.rec == null ? null : xlF(`(E${r}/I${r})^(1/((D${r}-H${r})/365.25))-1`, s_.rec / 100, '0.00%'),
+      xlF(`STDEV(${rng(i, 2)})*SQRT(COUNT(${rng(i, 2)})/F${r})`, s_.vol / 100, '0.00%'), s_.rr == null ? null : xlF(`G${r}/K${r}`, s_.rr, '0.00'), xlF(`MIN(${rng(i, 4)})`, s_.dd / 100, '0.00%'),
+      s_.fee == null ? null : { t: 'n', v: s_.fee, z: '0.00' }, s_.cons == null ? null : xlF(`AVERAGE(${q(SY)}!${xlCol(1)}${n + 4 + i}:${xlCol(Math.max(1, 1 + yrs().length - 1))}${n + 4 + i})`, s_.cons, '0.0')]); });
+  function yrs() { const y0 = new Date(R.a * DAY).getUTCFullYear() + 1, y1 = new Date(R.b * DAY).getUTCFullYear() - 1, o = []; for (let y = y0; y <= y1; y++) o.push(y); return o; }
+  /* Metai: kalendorinių metų grąža ir vieta (0–100) kiekvienais metais */
+  const ys = yrs(), yr = [[L ? 'Kalendorinių metų grąža' : 'Calendar-year return', ...ys.map(String)]];
+  const yRet = st.map(x => ys.map(y => chYearRet(x.f, y, R.b)));
+  st.forEach((x, i) => yr.push([x.f.name, ...ys.map((y, j) => { const v = yRet[i][j]; if (v == null) return null; const a = Math.round(Date.UTC(y - 1, 11, 31) / DAY), e = Math.min(R.b, Math.round(Date.UTC(y, 11, 31) / DAY));
+    return xlF(`${look(i, e + 25569)}/${look(i, a + 25569)}-1`, v, '0.00%'); })]));
+  yr.push([], [L ? 'Vieta metais (0–100: 100 – geriausias)' : 'Rank in the year (0–100: 100 – best)', ...ys.map(String)]);
+  const pr = ys.map((_, j) => chPctRank(yRet.map(r => r[j]), 1));
+  st.forEach((x, i) => { const r = n + 4 + i; yr.push([x.f.name, ...ys.map((_, j) => { const c = xlCol(1 + j), cell = `${c}${i + 2}`, col = `$${c}$2:$${c}$${n + 1}`;
+    return pr[j][i] == null ? null : xlF(`IF(COUNT(${col})>1,100*(1-COUNTIF(${col},">"&${cell})/(COUNT(${col})-1)),100)`, pr[j][i], '0.0'); })]); void r; });
+  /* Rezultatas: rodiklių vietos ir balai */
+  const W = R.W, keys = ['lt', 'rec', 'cons', 'rr', 'dd', 'fee'], mc = { lt: 'G', rec: 'J', cons: 'O', rr: 'L', dd: 'M', fee: 'N' }, dir = { lt: 1, rec: 1, cons: 1, rr: 1, dd: 1, fee: -1 };
+  const res = [[`${X.title} · ${title}`], [X.win(iso(R.a), iso(R.b), R.years).replace(/<[^>]+>/g, '')], [...X.th, ...keys.map(k => `${L ? 'Vieta' : 'Rank'}: ${X.wNames[k]}`)]];
+  const wRow = n + 5;
+  st.forEach((x, i) => { const r = i + 4, mr = i + 2, metRef = k => `${q(SR)}!${mc[k]}${mr}`, colRef = k => `${q(SR)}!$${mc[k]}$2:$${mc[k]}$${n + 1}`;
+    const pc_ = keys.map((k, j) => x.p[k] == null ? null : xlF(`IF(COUNT(${colRef(k)})>1,100*(1-COUNTIF(${colRef(k)},"${dir[k] > 0 ? '>' : '<'}"&${metRef(k)})/(COUNT(${colRef(k)})-1)),100)`, x.p[k], '0.0'));
+    const pcl = j => xlCol(9 + j), num_ = keys.map((k, j) => `IF(${pcl(j)}${r}="",0,${pcl(j)}${r}*${pcl(j)}$${wRow})`).join('+'), den = keys.map((k, j) => `IF(${pcl(j)}${r}="",0,${pcl(j)}$${wRow})`).join('+');
+    res.push([i + 1, x.f.name, x.score == null ? null : xlF(`(${num_})/(${den})`, x.score, '0.0'), ...keys.map(k => { const v = x.s[k]; if (v == null) return null; const z = k === 'rr' ? '0.00' : k === 'cons' ? '0.0' : k === 'fee' ? '0.00' : '0.00%'; return xlF(metRef(k), k === 'lt' || k === 'rec' || k === 'dd' ? v / 100 : v, z); }), ...pc_]); });
+  res.push([], [L ? 'Svoriai, %' : 'Weights, %', null, null, null, null, null, null, null, null, ...keys.map(k => W[k])]);
+  const out = R.out.map(f => `${f.name} (${X.short}, ${iso(f.d[0])})`);
+  const wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(res, L ? 'Rezultatas' : 'Result', [{ wch: 4 }, { wch: 30 }, ...Array(13).fill({ wch: 12 })]); add(met, SR, [{ wch: 30 }, ...Array(14).fill({ wch: 12 })]); add(yr, SY, [{ wch: 30 }, ...ys.map(() => ({ wch: 9 }))]);
+  add(vals, SV, st.flatMap(() => [{ wch: 11 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 9 }]));
+  add([[L ? 'Metodika' : 'Methodology'], [L ? 'Laikotarpis' : 'Period', X.win(iso(R.a), iso(R.b), R.years).replace(/<[^>]+>/g, '')],
+    [L ? 'Rodikliai' : 'Metrics', L ? 'Ilgalaikė grąža = (pabaiga ÷ pradžia)^(1 ÷ metai) − 1; 3 metų – tas pats nuo vertės prieš 3 metus; svyravimas = STDEV(log dienos grąžų, kai vertė pasikeitė) × √(grąžų sk. per metus); grąža / svyravimas; didžiausias kritimas = MIN(vertė ÷ ankstesnė viršūnė − 1); pastovumas = vietų kalendoriniais metais vidurkis.' : 'Long-term return = (end ÷ start)^(1 ÷ years) − 1; 3 years – the same from the value 3 years earlier; volatility = STDEV(daily log returns where the value changed) × √(returns per year); return / volatility; max fall = MIN(value ÷ previous peak − 1); consistency = average calendar-year rank.'],
+    [L ? 'Vieta (0–100)' : 'Rank (0–100)', L ? '100 × (1 − kiek fondų geresni ÷ (fondų sk. − 1)); mokesčiui geresnis – mažesnis.' : '100 × (1 − number of better funds ÷ (number of funds − 1)); for the fee lower is better.'],
+    [L ? 'Balai' : 'Score', L ? 'Σ(vieta × svoris) ÷ Σ svorių (tik rodikliai su reikšme); svoriai priklauso nuo metų iki pensijos.' : 'Σ(rank × weight) ÷ Σ weights (metrics with a value only); weights depend on years to retirement.'],
+    ...(out.length ? [[L ? 'Nevertinti' : 'Not scored', out.join('; ')]] : []), [L ? 'Pastaba' : 'Note', X.disc]], L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
+}
+['chT2', 'chT3'].forEach(id => XLB.set(id, async () => chBook(id)));
 renderChoose();

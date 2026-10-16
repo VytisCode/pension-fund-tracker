@@ -819,6 +819,74 @@ function book() {
   const wsr = XLSX.utils.aoa_to_sheet(srcText()); wsr['!cols'] = [{ wch: 140 }]; XLSX.utils.book_append_sheet(wb, wsr, t.srcLink);
   return wb;
 }
+/* ---------- Excel su skaičiavimais kitoms puslapio lentelėms (auditui) ----------
+   Kiekviena lentelė gauna lapą „Rezultatas“ su formulėmis, nurodančiomis į skaičiavimo lapus (tas pats skaičiavimas kaip „⤓ Excel“),
+   plius pradiniai duomenys ir šaltiniai. */
+const jCell = c => c == null ? null : c.f ? { t: 'n', f: c.f, v: c.v, z: c.z } : typeof c.v === 'number' ? { t: 'n', v: c.v, z: c.z } : { t: 's', v: c.v };
+function jBook(res, resW, calcs, meth, extra) {        // calcs: [[lapo pavadinimas, calcAoa]]
+  const t = T(), wb = XLSX_SHIM.utils.book_new(), add = (rows, name, w) => { const ws = XLSX_SHIM.utils.aoa_to_sheet(rows); if (w) ws['!cols'] = w; XLSX_SHIM.utils.book_append_sheet(wb, ws, name); };
+  add(res, lang === 'lt' ? 'Rezultatas' : 'Result', resW);
+  (extra || []).forEach(([n, r, w]) => add(r, n, w));
+  calcs.forEach(([n, c]) => add(c.aoa.map(r => r.map(jCell)), n, c.head.map((h, i) => ({ wch: i === 1 ? 34 : 13 }))));
+  const base = book(), keep = [t.xSheets[1], t.srcLink];
+  base.sheets.filter(x => keep.includes(x.name)).forEach(x => wb.sheets.push(x));
+  add([[lang === 'lt' ? 'Metodika ir šaltiniai' : 'Methodology and sources'], ...meth], lang === 'lt' ? 'Metodika' : 'Methodology', [{ wch: 18 }, { wch: 110 }]);
+  return { sheets: XLSX_SHIM.toXL(wb), own: true };
+}
+const jParts = S => S.parts || [S];
+const jName = (pl, pay, k, S) => { const L = lang === 'lt', a = pl === 'both' ? 'II+III' : pl, b = pay === 'avg' ? (L ? 'VDU' : 'avg') : (L ? 'MMA' : 'min'); return S.parts ? `${a} ${b} (${k ? 'III' : 'II'})` : `${a} ${b}`; };
+/* Sodros anuitetai: išmoka = II pakopos turtas ÷ 1000 × tarifas */
+XLB.set('annTable', async () => {
+  if (P.pl === 'III') return null;
+  const t = T(), L = lang === 'lt', A = J.annuityModel, S2 = P.pl === 'both' ? SIM.parts[0] : SIM, c = calcAoa(S2), nm = L ? 'Skaičiavimas II' : 'Calculation II', V = `'${nm}'!O${c.N}`, v = S2.last.val;
+  const res = [[t.annTitle], [`${L ? 'II pakopos turtas' : 'Pillar II assets'}: ${eur(v, 0)} · ${iso(P.asof)}`], [L ? 'Anuiteto rūšis' : 'Annuity type', L ? 'Turtas, €' : 'Assets, €', L ? 'Tarifas, € / mėn. už 1000 €' : 'Rate, € / month per €1000', L ? 'Išmoka, € / mėn.' : 'Payment, € / month']];
+  [[t.ann.std, A.std], [t.ann.inh, A.inh], [`${t.ann.def} (${t.ann.defP})`, A.defPer], [`${t.ann.def} (${t.ann.defA})`, A.defAnn]].forEach(([n, k]) => { const r = res.length + 1;
+    res.push([n, { t: 'n', f: V, v, z: '#,##0.00' }, { t: 'n', v: k, z: '0.00' }, { t: 'n', f: `B${r}/1000*C${r}`, v: v / 1000 * k, z: '#,##0.00' }]); });
+  return jBook(res, [{ wch: 40 }, { wch: 14 }, { wch: 18 }, { wch: 14 }], [[nm, c]],
+    [[L ? 'Išmoka' : 'Payment', L ? `Turtas (paskutinė lapo „${nm}“ O stulpelio reikšmė) ÷ 1000 × Sodros tarifas. Tarifai – Sodros anuitetų skaičiuoklė, ${A.calc.date} (lapas „${t.xSheets[1]}“).` : `Assets (last value in column O of “${nm}”) ÷ 1000 × Sodra rate. Rates – Sodra annuity calculator, ${A.calc.date} (sheet “${t.xSheets[1]}”).`]]);
+});
+/* Palyginimai: kiekvienas atvejis – atskiras skaičiavimo lapas, „Rezultatas“ – nuorodos į paskutines eilutes */
+XLB.set('cmpTable', async () => {
+  const t = T(), L = lang === 'lt', cases = [['II', 'avg'], ['II', 'mma'], ['III', 'avg'], ['III', 'mma'], ['both', 'avg'], ['both', 'mma']].filter(([pl]) => pl === 'II' || P3.length);
+  const calcs = [], res = [[t.cmpTitle], [t.cmpLead], t.cmpH];
+  cases.forEach(([pl, pay]) => { const S = pl === P.pl && pay === P.pay ? SIM : simulate(params({ pl, pay, asof: ST.asof })); if (!S) return;
+    const ps = jParts(S), names = ps.map((x, k) => jName(pl, pay, k, S)), cs = ps.map(calcAoa); names.forEach((n, k) => calcs.push([n, cs[k]]));
+    const sum = col => names.map((n, k) => `'${n}'!${col}${cs[k].N}`).join('+'), Lr = S.last, o = S.lastOwn, r = res.length + 1;
+    const hasRr = Lr.rrd != null && cs[0].aoa[cs[0].N - 1][23] && cs[0].aoa[cs[0].N - 1][23].v != null;
+    res.push([`${pl === 'both' ? t.plBoth : pl === 'II' ? t.pl2 : t.pl3} · ${t.pay[pay]}`, iso(S.rows[0].d), o ? { t: 'n', v: o.eur, z: '#,##0.00' } : null, o && o.net ? { t: 'n', v: o.eur / o.net, z: '0.0%' } : null,
+      { t: 'n', f: sum('Q'), v: Lr.sd, z: '#,##0' }, { t: 'n', f: sum('R'), v: Lr.sv + (Lr.se || 0), z: '#,##0' }, { t: 'n', f: sum('O'), v: Lr.val, z: '#,##0' },
+      { t: 'n', f: `G${r}/(${sum('AE')})-1`, v: Lr.gainP, z: '0.0%' }, { t: 'n', f: sum('V'), v: Lr.ann, z: '#,##0.00' },
+      hasRr ? { t: 'n', f: `(${sum('V')})/'${names[0]}'!X${cs[0].N}`, v: Lr.rrd, z: '0.00%' } : null]); });
+  return jBook(res, [{ wch: 30 }, { wch: 11 }, ...Array(8).fill({ wch: 14 })], calcs,
+    [[L ? 'Atvejai' : 'Cases', L ? 'Kiekvienas atvejis apskaičiuotas atskirame lape (VDU – vidutinis darbo užmokestis, MMA – minimali alga); abiejų pakopų atveju – du lapai (II ir III), sumuojami.' : 'Each case is calculated on its own sheet (avg – average wage, min – minimum wage); for both pillars two sheets (II and III) are added up.'],
+      [L ? 'Stulpeliai' : 'Columns', L ? 'Savo įmokos – Q, valstybė / darbdavys – R, sukaupta – O, išmoka – V paskutinėje eilutėje; pokytis realia verte = sukaupta ÷ įmokos šiandienos kainomis (AE) − 1; papildoma pakeitimo norma = išmoka ÷ neto atlyginimas (X). „Savo įmoka, € / mėn.“ – paskutinio mėnesio dalyvio įmoka (reikšmė).' : 'Own contributions – Q, state / employer – R, assets – O, payment – V in the last row; real growth = assets ÷ contributions in today’s prices (AE) − 1; extra replacement rate = payment ÷ net wage (X). “Own contribution, € / month” – the last month’s own contribution (value).']]);
+});
+/* Palyginimas su indeksais: tos pačios įmokos perkamos indekso „vienetais“; metinė grąža – XIRR */
+XLB.set('ixTable', async () => {
+  const t = T(), X = t.ix, L = lang === 'lt', fs = idxFunds(), Lr = SIM.last, cont = SIM.rows.filter(r => r.ct > 0), paths = fs.map(f => ({ f, p: idxPath(f, SIM.rows, P.asof) })).filter(x => x.p);
+  const ps = jParts(SIM), names = ps.map((x, k) => SIM.parts ? `${L ? 'Skaičiavimas' : 'Calculation'} ${k ? 'III' : 'II'}` : (L ? 'Skaičiavimas' : 'Calculation')), cs = ps.map(calcAoa);
+  const SB = L ? 'Įmokos ir indeksai' : 'Contributions and indexes', SF = L ? 'Srautai (XIRR)' : 'Cash flows (XIRR)', n = cont.length, last = n + 1;
+  const rowOf = new Map(SIM.parts ? [] : SIM.rows.map((r, i) => [r, i + 2]));
+  const buy = [[L ? 'Data' : 'Date', L ? 'Įmoka, €' : 'Contribution, €', ...paths.flatMap(({ f }) => [`${f.label}: ${L ? 'vertė' : 'value'}`, `${f.label}: ${L ? 'įsigyta vnt.' : 'units bought'}`])]];
+  cont.forEach((r, i) => { const R = i + 2; buy.push([xlDate(r.d), rowOf.has(r) ? { t: 'n', f: `'${names[0]}'!K${rowOf.get(r)}`, v: r.ct, z: '#,##0.00' } : { t: 'n', v: r.ct, z: '#,##0.00' },
+    ...paths.flatMap(({ f }, k) => { const v = f.v[lastOnOrBefore(f, r.d)], vc = xlCol(2 + k * 2); return [{ t: 'n', v, z: '#,##0.0000' }, xlF(`B${R}/${vc}${R}`, r.ct / v, '0.000000')]; })]); });
+  const fin = [xlDate(P.asof), xlF(`SUM(B2:B${last})`, Lr.st, '#,##0.00'), ...paths.flatMap(({ f, p }, k) => { const v = f.v[lastOnOrBefore(f, P.asof)], uc = xlCol(3 + k * 2), vc = xlCol(2 + k * 2); return [{ t: 'n', v, z: '#,##0.0000' }, xlF(`SUM(${uc}2:${uc}${last})*${vc}${last + 1}`, p.val, '#,##0.00')]; })];
+  buy.push(fin);
+  const fundV = names.map((nm, k) => `'${nm}'!O${cs[k].N}`).join('+');
+  const flows = [[L ? 'Data' : 'Date', X.fund, ...paths.map(({ f }) => f.label)]];
+  cont.forEach((r, i) => { const R = i + 2; flows.push([{ t: 'n', f: `'${SB}'!A${R}`, v: r.d + 25569, z: 'yyyy-mm-dd' }, xlF(`-'${SB}'!B${R}`, -r.ct, '#,##0.00'), ...paths.map(() => xlF(`-'${SB}'!B${R}`, -r.ct, '#,##0.00'))]); });
+  flows.push([xlDate(P.asof), xlF(fundV, Lr.val, '#,##0.00'), ...paths.map(({ p }, k) => xlF(`'${SB}'!${xlCol(3 + k * 2)}${last + 1}`, p.val, '#,##0.00'))]);
+  const fr = n + 2, rg = c => `'${SF}'!${c}2:${c}${fr}`, irrF = c => `XIRR(${rg(c)},${rg('A')})`;
+  const cont0 = `'${SB}'!B${last + 1}`, fundIrr = xirr([...cont.map(r => [r.d, -r.ct]), [P.asof, Lr.val]]);
+  const res = [[X.title], [`${L ? 'Įmokos' : 'Contributions'}: ${eur(Lr.st, 0)} · ${iso(P.asof)}`], X.h.map((h, i) => i ? h : (L ? 'Kur investuota' : 'Invested in'))];
+  res.push([X.fund, xlF(fundV, Lr.val, '#,##0'), xlF(`B4-${cont0}`, Lr.val - Lr.st, '#,##0'), xlF(`C4/${cont0}`, (Lr.val - Lr.st) / Lr.st, '0.00%'), fundIrr == null ? null : xlF(irrF('B'), fundIrr, '0.00%'), null]);
+  paths.forEach(({ f, p }, k) => { const r = res.length + 1; res.push([f.label, xlF(`'${SF}'!${xlCol(2 + k)}${fr}`, p.val, '#,##0'), xlF(`B${r}-${cont0}`, p.val - Lr.st, '#,##0'), xlF(`C${r}/${cont0}`, (p.val - Lr.st) / Lr.st, '0.00%'),
+    p.irr == null ? null : xlF(irrF(xlCol(2 + k)), p.irr, '0.00%'), xlF(`B${r}-$B$4`, p.val - Lr.val, '#,##0')]); });
+  return jBook(res, [{ wch: 30 }, ...Array(5).fill({ wch: 14 })], names.map((nm, k) => [nm, cs[k]]),
+    [[L ? 'Indeksas' : 'Index', L ? `Kiekviena įmoka tą pačią dieną „perkama“ už indekso vertę (lapas „${SB}“): vienetai = įmoka ÷ vertė; turtas = Σ vienetų × paskutinė vertė. ${X.note}` : `Each contribution “buys” the index at that day’s value (sheet “${SB}”): units = contribution ÷ value; assets = Σ units × last value. ${X.note}`],
+      [L ? 'Metinė grąža' : 'Annual return', L ? `XIRR iš lapo „${SF}“ (įmokos – neigiamos, galutinis turtas – teigiamas). Svetainė metus skaičiuoja kaip 365,25 d., Excel XIRR – 365 d., todėl skirtumas gali būti iki kelių šimtųjų procentinio punkto.` : `XIRR over “${SF}” (contributions negative, final assets positive). The site uses 365.25-day years, Excel XIRR 365 days – differences of a few hundredths of a percentage point are possible.`]],
+    [[SB, buy, [{ wch: 11 }, { wch: 12 }, ...paths.flatMap(() => [{ wch: 14 }, { wch: 14 }])]], [SF, flows, [{ wch: 11 }, ...Array(paths.length + 1).fill({ wch: 14 })]]]);
+});
 /* šaltiniai, prielaidos ir galimi netikslumai (puslapio apačioje; nuoroda – santraukos antraštėje) */
 function renderSources() {
   const S = T().src, X = T().stale, today = new Date().toISOString().slice(0, 10), F = J.fresh || [];
