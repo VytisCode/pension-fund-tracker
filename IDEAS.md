@@ -90,7 +90,7 @@ Eiga (žymėti [x]):
 - [x] 7 Rinkos įžvalgos → Rezultatai (kraunama tik priartėjus); journey.html#ins… → performance.html#go=insTitle
 - [x] 8 Kelias į pensiją: „Kurį fondą rinktis?“ (choose.js): balai pagal grąžą, pastovumą, grąžą/svyravimą, kritimus, mokestį; svoriai pagal laiką iki pensijos
 - [x] 9 Nauji rodikliai „Papildomuose rodikliuose“: metinė grąža prieš mokestį, grąža / didž. kritimas (Calmar); III pakopai mokesčiai iš data_rep
-- [ ] 10 Vaizdai prezentacijoms (pavadinimas, šaltinis, data PNG); Excel auditoriams
+- [x] 10 PNG: tikslus pavadinimas, laikotarpio paaiškinimas, šaltinis+data; Excel Metodikoje – nuoroda su tuo pačiu vaizdu; pataisytas journey dubliuotas id chTitle
 - [ ] 11 LV/EE svetainių idėjos
 - [ ] 12 Duomenys: S&P atsarginis, EONIA, III pakopos kasdienis turtas
 - [ ] 13 Galutinė patikra, laiškas

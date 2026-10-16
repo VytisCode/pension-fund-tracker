@@ -112,10 +112,10 @@ function chTable(R) {
 }
 const chWhy = x => { const X = T().ch, ks = Object.entries(x.p).filter(([, v]) => v != null && v >= 80).sort((p, q) => q[1] - p[1]).map(([k]) => X.strong[k]); return ks.length ? X.why + ks.slice(0, 3).join(', ') + '.' : ''; };
 function renderChoose() {
-  const box = document.getElementById('chBody'); if (!box) return;
+  const box = document.getElementById('pickBody'); if (!box) return;
   const X = T().ch, now = new Date(CH_LAST * DAY).getUTCFullYear();
   if (!CH.birth) CH.birth = (typeof ST !== 'undefined' && ST.birth) || 1990;
-  document.getElementById('chTitle').textContent = X.title;
+  document.getElementById('pickTitle').textContent = X.title;
   const left = Math.max(0, 65 - (now - CH.birth)), autoCat = left >= 15 ? 'equity' : left >= 7 ? 'mixed' : 'bond', cat = CH.cat || autoCat;
   const plSeg = `<div class="seg" role="group" data-ch="pl">${[['II', X.plII], ['III', X.plIII], ['both', X.plBoth]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === CH.pl}">${l}</button>`).join('')}</div>`;
   const catSel = `<select data-ch="cat"><option value="">${X.cats[autoCat]} (${X.catAuto})</option>${Object.keys(X.cats).map(k => `<option value="${k}"${k === CH.cat ? ' selected' : ''}>${X.cats[k]}</option>`).join('')}</select>`;

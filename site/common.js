@@ -1088,32 +1088,38 @@ function cardify(tbl) {
 addStrings({ cpImg: 'Copy image', cpDone: 'Copied', cpFail: 'Copying is not allowed by this browser – the PNG was downloaded instead', pngImg: 'Download PNG' },
   { cpImg: 'Kopijuoti vaizdą', cpDone: 'Nukopijuota', cpFail: 'Ši naršyklė neleidžia kopijuoti – PNG atsisiųstas', pngImg: 'Atsisiųsti PNG' });
 const SVG_PROPS = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin', 'opacity', 'font-size', 'font-family', 'font-weight', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
-function chartTitle(box) {
-  const sec = box.closest('section, .card, .p3card') || box.parentElement;
-  let h = sec && sec.querySelector('h2, h3, .group-h');
-  if (!h) { let p = sec; while (p && !h) { p = p.previousElementSibling; if (p && /^H[23]$/.test(p.tagName)) h = p; } }
-  if (h) { h = h.cloneNode(true); h.querySelectorAll('button, select, .info, .ik').forEach(n => n.remove()); }
-  return (h ? h.textContent : document.title).replace(/[ⓘ▾▴]/g, '').trim();
+function chartTitle(box) {                  // artimiausia antraštė prieš lentelę / grafiką (einant aukštyn per tėvinius elementus)
+  const isH = p => p && (/^H[23]$/.test(p.tagName) || p.classList.contains('group-h')) && p.textContent.trim();
+  let h = null;
+  for (let n = box; n && n !== document.body && !h; n = n.parentElement) {
+    for (let p = n.previousElementSibling; p && !h; p = p.previousElementSibling) {
+      if (isH(p)) h = p; else if (p.querySelectorAll) { const hs = [...p.querySelectorAll('h2, h3, .group-h')].filter(isH); if (hs.length && !p.querySelector('table, svg')) h = hs[hs.length - 1]; }
+    }
+  }
+  if (h) { h = h.cloneNode(true); h.querySelectorAll('button, select, .info, .ik, .gbadge').forEach(n => n.remove()); }
+  return (h ? h.textContent : document.title).replace(/[ⓘ▾▴]/g, '').replace(/\s+/g, ' ').trim();
 }
 function chartPng(box) {
   return new Promise((ok, no) => {
     const svg = box.querySelector('svg'); if (!svg) return no();
     const r = svg.getBoundingClientRect(), W = Math.ceil(r.width), H = Math.ceil(r.height), bottom = 24;
     const lg = box._legend || [], cs0 = getComputedStyle(document.documentElement);
-    let lx = 16, ly = 50, leg = '';                       // legenda po pavadinimu, eilutėmis per plotį
+    let sub = pngSub(box); const maxC = Math.floor(W / 6.4); if (sub.length > maxC) sub = sub.slice(0, maxC - 1) + '…';
+    let lx = 16, ly = 50 + (sub ? 18 : 0), leg = '';                       // legenda po pavadinimu, eilutėmis per plotį
     lg.forEach(x => { const w = 34 + x.l.length * 7.4; if (lx + w > W + 16 && lx > 16) { lx = 16; ly += 18; }
       const col = x.c.startsWith('var(') ? cs0.getPropertyValue(x.c.slice(4, -1)).trim() : x.c;
       leg += `<line x1="${lx}" x2="${lx + 18}" y1="${ly - 4}" y2="${ly - 4}" stroke="${col}" stroke-width="2.5"${x.d ? ` stroke-dasharray="${x.d}"` : ''}/><text x="${lx + 23}" y="${ly}" font-size="12" fill="${cs0.getPropertyValue('--text-2').trim()}">${x.l.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text>`;
       lx += w; });
-    const top = lg.length ? ly + 12 : 40;
+    const top = lg.length ? ly + 12 : 40 + (sub ? 18 : 0);
     const clone = svg.cloneNode(true), src = [svg, ...svg.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
     src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', SVG_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';')); });
     clone.setAttribute('x', 16); clone.setAttribute('y', top); clone.setAttribute('width', W); clone.setAttribute('height', H);
     const cs = getComputedStyle(document.documentElement), v = k => cs.getPropertyValue(k).trim(), esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
     const font = getComputedStyle(document.body).fontFamily.replace(/"/g, "'");
-    const stamp = `${T().siteTitle} · ${typeof FRESH !== 'undefined' ? T().dataUntil + ' ' + iso(FRESH.top) : ''}`;
+    const stamp = pngStamp(box);
     const out = `<svg xmlns="http://www.w3.org/2000/svg" width="${W + 32}" height="${H + top + bottom}" font-family="${font}"><rect width="100%" height="100%" fill="${v('--card') || '#fff'}"/>`
       + `<text x="16" y="26" font-size="16" font-weight="600" fill="${v('--text')}">${esc(chartTitle(box))}</text>`
+      + (sub ? `<text x="16" y="44" font-size="12" fill="${v('--text-2')}">${esc(sub)}</text>` : '')
       + leg
       + new XMLSerializer().serializeToString(clone)
       + `<text x="16" y="${H + top + 16}" font-size="11" fill="${v('--text-3')}">${esc(stamp)}</text></svg>`;
@@ -1264,7 +1270,7 @@ async function tableBook(tbl) {
     rich.sheets.forEach(s => XL.sheet(wb, s.name, s.rows, s.o || {}));
   }
   const D = typeof DOC !== 'undefined' ? (DOC[lang] || DOC.lt) : null, sec = D && ctx.src ? D.secs.find(s => s.id === ({ rep: 'rep' }[ctx.src] || ctx.src)) : null;
-  const page = location.href.split('#')[0], apie = page.replace(/[^/]*$/, '') + 'apie.html' + (sec ? '#' + sec.id : '');
+  const page = location.href, apie = page.split('#')[0].replace(/[^/]*$/, '') + 'apie.html' + (sec ? '#' + sec.id : '');
   const m = [[{ v: L ? 'Metodika ir šaltiniai' : 'Methodology and sources', s: 'title' }], [],
     [{ v: L ? 'Lentelė' : 'Table', s: 'b' }, ctx.title], [{ v: L ? 'Puslapis' : 'Page', s: 'b' }, { v: page, l: page, s: 'link' }],
     [{ v: L ? 'Duomenys iki' : 'Data until', s: 'b' }, until], [{ v: L ? 'Failas sukurtas' : 'File created', s: 'b' }, new Date().toLocaleString(T().locale)], [],
@@ -1294,6 +1300,18 @@ async function tableCopy(tbl) {
 }
 const TBL_PROPS = ['color', 'background-color', 'font-family', 'font-size', 'font-weight', 'font-style', 'font-variant-numeric', 'text-align', 'vertical-align', 'white-space', 'line-height',
   'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse', 'border-spacing', 'width', 'min-width'];
+/* paveikslėliui prezentacijoms (savininkas 2026-10-16): po pavadinimu – laikotarpis / paaiškinimas, apačioje – šaltinis ir duomenų data */
+function pngSub(el) {
+  const c = el.id && document.getElementById('c_' + el.id), card = el.closest('.card, section') || el.parentElement;
+  const m = c && c.textContent.trim() ? c : card && [...card.querySelectorAll('.meta, .cap, p.note')].find(n => !n.closest('table') && n.textContent.trim());
+  const t = m ? m.textContent.replace(/\s+/g, ' ').trim() : '';
+  return t.length > 260 ? t.slice(0, 257) + '…' : t;
+}
+function pngStamp(el) {
+  const card = el.closest('.card, section') || el.parentElement, sl = card && [...card.querySelectorAll('p.srcl')].map(n => n.textContent.replace(/\s+/g, ' ').trim()).find(Boolean);
+  const src = sl ? sl.replace(/ · Metodika.*$|· Methodology.*$/, '').trim() : '';
+  return [T().siteTitle, src || (typeof FRESH !== 'undefined' ? T().dataUntil + ' ' + iso(FRESH.top) : '')].filter(Boolean).join(' · ');
+}
 function tablePng(tbl) {                    // lentelė → PNG: kopija su įterptais stiliais SVG foreignObject viduje → drobė
   return new Promise((ok, no) => {
     const cs0 = getComputedStyle(document.documentElement), v = k => cs0.getPropertyValue(k).trim();
@@ -1301,14 +1319,16 @@ function tablePng(tbl) {                    // lentelė → PNG: kopija su įter
     const src = [tbl, ...tbl.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
     src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', TBL_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';') + ';position:static'); });
     clone.querySelectorAll('button, .info, .ik').forEach(n => n.remove());
-    const W = Math.ceil(Math.max(tbl.scrollWidth, tbl.getBoundingClientRect().width)), H = Math.ceil(tbl.scrollHeight), pad = 16, head = 34, foot = 24;
-    const stamp = `${T().siteTitle} · ${typeof FRESH !== 'undefined' ? T().dataUntil + ' ' + iso(FRESH.top) : ''}`, font = getComputedStyle(document.body).fontFamily;
+    const sub = pngSub(tbl), W = Math.ceil(Math.max(tbl.scrollWidth, tbl.getBoundingClientRect().width)), H = Math.ceil(tbl.scrollHeight), pad = 16;
+    const head = 34 + (sub ? 18 * Math.ceil(sub.length * 6.6 / Math.max(300, W)) : 0), foot = 28;
+    const stamp = pngStamp(tbl), font = getComputedStyle(document.body).fontFamily;
     const wrap = document.createElement('div');
     wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
     wrap.setAttribute('style', `width:${W}px;padding:${pad}px;background:${v('--card') || '#fff'};font-family:${font};color:${v('--text')}`);
     const h = document.createElement('div'); h.textContent = chartTitle(tbl); h.setAttribute('style', 'font-size:16px;font-weight:600;margin-bottom:10px');
     const f = document.createElement('div'); f.textContent = stamp; f.setAttribute('style', `font-size:11px;color:${v('--text-3')};margin-top:8px`);
-    wrap.append(h, clone, f);
+    const sb = document.createElement('div'); sb.textContent = sub; sb.setAttribute('style', `font-size:12px;color:${v('--text-2')};margin:-6px 0 10px;line-height:1.45`);
+    wrap.append(h, ...(sub ? [sb] : []), clone, f);
     const TW = W + pad * 2, TH = H + head + foot + pad * 2;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${TH}"><foreignObject width="100%" height="100%">${new XMLSerializer().serializeToString(wrap)}</foreignObject></svg>`;
     const img = new Image();
@@ -1409,7 +1429,7 @@ const CATALOG = [
   ['jr', 'journey', '', 'c', 1, 'Pensijos sudėtis ir istorija', 'Kiek sukaupta nuo pirmos įmokos, kaip augo turtas, Sodros anuitetas.', 'Pension composition and history', 'Savings since the first contribution, asset growth, Sodra annuity.', 'kaupimas įmokos anuitetas'],
   ['jr', 'journey', 'Ateities scenarijai', 'c', 1, 'Ateities scenarijai', 'Kokios pensijos galima tikėtis: Sodra, LB, tik kaupimas.', 'Future scenarios', 'What pension to expect: Sodra, BoL, savings only.', 'ateitis pakeitimo norma'],
   ['jr', 'journey', 'Mokesčių poveikis', 'c', 0, 'Mokesčių poveikis santaupoms', 'Kiek valdymo mokestis sumažina santaupas per laiką.', 'Effect of fees on savings', 'How much the management fee reduces savings over time.', 'mokesčiai'],
-  ['jr', 'journey', 'chTitle', 'c', 1, 'Kurį fondą rinktis?', 'Pagal gimimo metus ir pakopą: visi palyginami fondai įvertinami balais (grąža, pastovumas, rizika, kritimai, mokestis) ir surikiuojami.', 'Which fund to choose?', 'By year of birth and pillar: comparable funds scored on return, consistency, risk, falls and fee, and ranked.', 'geriausias fondas rinktis rekomendacija best fund choose pick kurį'],
+  ['jr', 'journey', 'pickTitle', 'c', 1, 'Kurį fondą rinktis?', 'Pagal gimimo metus ir pakopą: visi palyginami fondai įvertinami balais (grąža, pastovumas, rizika, kritimai, mokestis) ir surikiuojami.', 'Which fund to choose?', 'By year of birth and pillar: comparable funds scored on return, consistency, risk, falls and fee, and ranked.', 'geriausias fondas rinktis rekomendacija best fund choose pick kurį'],
   ['results', 'performance', 'insTitle', 'x', 1, 'Rinkos įžvalgos', 'Automatinės išvados: kas pasikeitė, kas išsiskiria per laikotarpį.', 'Market insights', 'Automatic findings: what changed, what stands out.', 'įžvalgos'],
   ['help', 'apie', '', 'm', 0, 'Metodika ir šaltiniai', 'Iš kur kiekvienas duomuo, kaip skaičiuojama, žinomi apribojimai.', 'Methodology and sources', 'Where each figure comes from, how it is computed, known limitations.', 'metodika formulės'],
   ['help', 'apie', 'sources', 't', 0, 'Duomenų šaltiniai ir atnaujinimas', 'Visi šaltiniai, kada atnaujinami, rankinio atnaujinimo tvarkaraštis.', 'Data sources and updates', 'All sources, update schedule, manual update calendar.', 'šaltiniai'],
