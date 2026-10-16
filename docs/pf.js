@@ -695,12 +695,125 @@ function renderSim() {
   document.getElementById('smNote').textContent = T().smNote;
 }
 
+/* ---------- 0. Ketvirčio apžvalga (savininko vizija 2026-10-16) ----------
+   Atsidarius puslapį: kas pasikeitė per ketvirtį pas kiekvieną valdytoją, kuo kuris fondas ar valdytojas išsiskiria
+   (randama automatiškai) ir pasirinktų fondų palyginimas. Išsami analizė (visi pokyčiai, kiekviena investicija nuo pradžios) – žemiau. */
+const OVS = {
+  lt: { title: 'Ketvirčio apžvalga', lead: 'Kas pasikeitė per ketvirtį, kuo išsiskiria valdytojai ir fondai, ir pasirinktų fondų palyginimas. Rodikliai – % portfelio, „pro fondus“ (ETF ir fondų turinys pagal jų savybes); Δ – pokytis nuo praėjusio ketvirčio, procentiniais punktais.',
+    det: 'Išsami analizė', detLead: 'Visi ketvirčio sandoriai, alternatyvios investicijos, palyginimas grupėje, panašumas ir kiekvieno fondo portfelis – kiekviena investicija nuo 2019 m.',
+    chgH: (a, b) => `Kas pasikeitė: ${a} → ${b}`, outH: 'Kuo išsiskiria', cmpH: 'Palyginti fondus', thM: 'Valdytojas', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvos', thCash: 'Pinigai', thBuy: 'Didžiausi pirkimai', thSell: 'Didžiausi pardavimai', thNew: 'Naujos / parduotos',
+    pickG: 'Grupė:', pickAdd: '+ pridėti fondą', rm: 'pašalinti', none: 'Pasirinkite bent du fondus.', more: 'daugiausia', less: 'mažiausiai', med: 'mediana', inG: g => `grupėje ${g}`, amongM: 'tarp valdytojų',
+    up: 'padidino', down: 'sumažino', by: d => `${d} p. p.`, outNone: 'Šį ketvirtį ryškių išskirtinumų nerasta.', outNote: 'Rodoma, kai skirtumas nuo grupės medianos ≥ 5 p. p. (TER – ≥ 0,1 p. p.). Paspauskite – fondai atsiras palyginime.',
+    m: { eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
+    pl: 'Pakopa:', q: 'Ketvirtis:', dEq: 'akcijų dalį', inQ: 'per ketvirtį', to: 'iki' },
+  en: { title: 'Quarter overview', lead: 'What changed in the quarter, what makes managers and funds stand out, and a comparison of chosen funds. Metrics – % of portfolio, look-through (ETF and fund contents by their attributes); Δ – change from the previous quarter, in percentage points.',
+    det: 'Detailed analysis', detLead: 'All quarterly trades, alternatives, peer comparison, similarity and each fund’s portfolio – every investment since 2019.',
+    chgH: (a, b) => `What changed: ${a} → ${b}`, outH: 'What stands out', cmpH: 'Compare funds', thM: 'Manager', thEq: 'Equity', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash', thBuy: 'Largest buys', thSell: 'Largest sells', thNew: 'New / exited',
+    pickG: 'Group:', pickAdd: '+ add fund', rm: 'remove', none: 'Choose at least two funds.', more: 'highest', less: 'lowest', med: 'median', inG: g => `in group ${g}`, amongM: 'among managers',
+    up: 'raised', down: 'cut', by: d => `${d} pp`, outNone: 'No marked outliers this quarter.', outNote: 'Shown when the gap from the group median is ≥ 5 pp (TER – ≥ 0.1 pp). Click to add the funds to the comparison.',
+    m: { eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
+    pl: 'Pillar:', q: 'Quarter:', dEq: 'equity share', inQ: 'in the quarter', to: 'to' },
+};
+const OT = () => OVS[lang] || OVS.lt;
+const OV = { q: NQ - 1, pl: 'II', sel: null };
+try { const s = JSON.parse(localStorage.getItem('pfOv') || '{}'); if (Array.isArray(s.sel)) OV.sel = s.sel.filter(c => fundBy[c]); if (s.pl) OV.pl = s.pl; } catch (e) {}
+const ovSave = () => { try { localStorage.setItem('pfOv', JSON.stringify({ sel: OV.sel, pl: OV.pl })); } catch (e) {} };
+const ovGroups = () => [...new Set(FUNDS.filter(f => f.pl === OV.pl && f.q[OV.q]).map(f => f.g))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b));
+const gLab = g => g === 'turto' ? (lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : g;
+function ovMetrics(f, qi) {
+  if (!f.q[qi]) return null;
+  const r = peerRow(f, qi), m = f.q[qi], t = f.tot[qi];
+  let top = null; m.forEach((x, si) => { if (!top || x.v > top.v) top = { v: x.v, si }; });
+  return { ...r, glob: (r.r_glob || 0) + (r.r_gdm || 0), n: m.size, top: top && t ? top.v / t * 100 : null, topN: top ? posLabel(S[top.si]) : '' };
+}
+function mgrMix(mgr, qi) {                  // valdytojo (pakopos) turto struktūra, svertinė pagal fondų turtą
+  const fs = FUNDS.filter(f => f.p === mgr && f.pl === OV.pl && f.q[qi]); let T0 = 0; const o = { eq: 0, bd: 0, alt: 0, cash: 0 };
+  fs.forEach(f => { const L = lookThrough(f, qi), w = f.tot[qi]; T0 += w; Object.keys(o).forEach(k => { o[k] += (L.b[k] || 0) * w; }); });
+  if (!T0) return null; Object.keys(o).forEach(k => { o[k] /= T0; }); return o;
+}
+function mgrTrades(mgr, q1) {               // valdytojo sandoriai: pirkimai / pardavimai pagal sumą (kaip „Didžiausi ketvirčio pokyčiai“)
+  const q0 = q1 - 1, pos = new Map();
+  FUNDS.filter(f => f.p === mgr && f.pl === OV.pl).forEach(f => [[f.q[q0], 0], [f.q[q1], 1]].forEach(([m, k]) => m && m.forEach((x, si) => {
+    const s = S[si]; if (s.t === 'c' || s.t === 'd' || x.u == null) return;
+    const P = pos.get(si) || { si, u: [0, 0], v: [0, 0] }; P.u[k] += x.u; P.v[k] += x.v; pos.set(si, P); })));
+  const out = []; let nNew = 0, nExit = 0;
+  pos.forEach(P => { const [u0, u1] = P.u, du = u1 - u0; if (Math.abs(du) <= MIN_CHANGE * Math.max(Math.abs(u0), Math.abs(u1))) return;
+    const s = S[P.si]; if (u0 === 0) nNew++; else if (u1 === 0 && !matured(s, q1)) nExit++;
+    const price = u1 ? P.v[1] / u1 : P.v[0] / u0; out.push({ s, trade: du * price }); });
+  out.sort((a, b) => b.trade - a.trade);
+  return { buy: out.filter(x => x.trade > 0).slice(0, 2), sell: out.filter(x => x.trade < 0).slice(-2).reverse(), nNew, nExit };
+}
+function ovOutliers(qi) {
+  const o = OT(), out = [], spec = [['eq', 5], ['alt', 5], ['cash', 5], ['em', 5], ['r_baltic', 3], ['idx', 15], ['ter', 0.1]];
+  ovGroups().forEach(g => {
+    const rows = FUNDS.filter(f => f.pl === OV.pl && f.g === g && f.q[qi]).map(f => ({ f, m: ovMetrics(f, qi), p: f.q[qi - 1] ? ovMetrics(f, qi - 1) : null })).filter(x => x.m);
+    if (rows.length < 3) return;
+    spec.forEach(([k, thr]) => {
+      const vals = rows.map(x => x.m[k]).filter(v => v != null); if (vals.length < 3) return;
+      const s = [...vals].sort((a, b) => a - b), med = s.length % 2 ? s[s.length >> 1] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2;
+      [[Math.max(...vals), 'more'], [Math.min(...vals), 'less']].forEach(([v, dir]) => {
+        if (Math.abs(v - med) < thr) return;
+        const x = rows.find(r => r.m[k] === v);
+        out.push({ sc: Math.abs(v - med) / thr, f: x.f, g, html: `${sw(x.f.p)}<b>${esc(x.f.p)} ${esc(gLab(g))}</b>: ${o.m[k]} <b>${k === 'ter' ? num(v, 2) + ' %' : num(v, 1) + ' %'}</b> – ${o[dir]} ${o.inG(gLab(g))} (${o.med} ${k === 'ter' ? num(med, 2) : num(med, 1)} %)` });
+      });
+    });
+    // didžiausias akcijų dalies pokytis per ketvirtį grupėje
+    const ch = rows.filter(x => x.p).map(x => ({ x, d: x.m.eq - x.p.eq })).sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
+    if (ch && Math.abs(ch.d) >= 3) out.push({ sc: Math.abs(ch.d) / 3, f: ch.x.f, g, html: `${sw(ch.x.f.p)}<b>${esc(ch.x.f.p)} ${esc(gLab(g))}</b>: ${o.inQ} ${ch.d > 0 ? o.up : o.down} ${o.dEq} <b>${pp(ch.d)} p. p.</b> (${o.to} ${num(ch.x.m.eq, 1)} %)` });
+  });
+  const per = {}; return out.sort((a, b) => b.sc - a.sc).filter(x => { const k = x.f.p; per[k] = (per[k] || 0) + 1; return per[k] <= 2; }).slice(0, 10);   // ne daugiau 2 vienam valdytojui – įvairovei
+}
+function renderOverview() {
+  const o = OT(), q1 = OV.q, q0 = q1 - 1;
+  document.getElementById('ovTitle').textContent = o.title; document.getElementById('ovLead').textContent = o.lead;
+  document.getElementById('detTitle').textContent = o.det; document.getElementById('detLead').textContent = o.detLead;
+  const bar = document.getElementById('ovBar');
+  bar.innerHTML = field(o.q, quarterSelect('ovQ', q1, 1)) + field(o.pl, seg('ovPl', [['II', 'II'], ['III', 'III']], OV.pl));
+  bar.querySelector('#ovQ').onchange = e => { OV.q = +e.target.value; renderOverview(); };
+  wireSegs(bar, { ovPl: v => { OV.pl = v; OV.sel = null; ovSave(); renderOverview(); } });
+  // 1. kas pasikeitė
+  document.getElementById('ovChgH').textContent = o.chgH(qLabel(q0), qLabel(q1));
+  const cellD = (a, b) => { if (a == null || b == null) return '<td class="n">–</td>'; const d = b - a; return `<td class="n">${num(b, 1)} %<small class="${Math.abs(d) >= 2 ? (d > 0 ? 'pos' : 'neg') : ''}"> ${pp(d)}</small></td>`; };
+  const trade = x => `<div class="ovtr">${esc(posLabel(x.s).slice(0, 60))} <small>${eur(x.trade)}</small></div>`;
+  document.getElementById('ovChg').innerHTML = `<thead><tr><th>${o.thM}</th><th class="n">${o.thEq}</th><th class="n">${o.thBd}</th><th class="n">${o.thAlt}</th><th class="n">${o.thCash}</th><th class="tr">${o.thBuy}</th><th class="tr">${o.thSell}</th><th class="n">${o.thNew}</th></tr></thead><tbody>`
+    + MGRS.map(m => { const a = mgrMix(m, q0), b = mgrMix(m, q1); if (!b) return ''; const tr = mgrTrades(m, q1);
+      return `<tr><td class="nm">${sw(m)}${m}</td>${['eq', 'bd', 'alt', 'cash'].map(k => cellD(a && a[k], b[k])).join('')}<td class="tr">${tr.buy.map(trade).join('') || '–'}</td><td class="tr">${tr.sell.map(trade).join('') || '–'}</td><td class="n">${tr.nNew} / ${tr.nExit}</td></tr>`; }).join('') + '</tbody>';
+  // 2. kuo išsiskiria
+  document.getElementById('ovOutH').textContent = o.outH;
+  const outs = ovOutliers(q1);
+  document.getElementById('ovOut').innerHTML = outs.length ? outs.map((x, i) => `<li><button type="button" class="ovo" data-i="${i}">${x.html}</button></li>`).join('') : `<li>${o.outNone}</li>`;
+  document.getElementById('ovOutN').textContent = o.outNote;
+  document.getElementById('ovOut').querySelectorAll('.ovo').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; OV.sel = FUNDS.filter(f => f.pl === OV.pl && f.g === x.g && f.q[q1]).map(f => f.c); ovSave(); renderCompare(); document.getElementById('ovCmpH').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+  renderCompare();
+}
+function renderCompare() {
+  const o = OT(), q1 = OV.q, live = FUNDS.filter(f => f.pl === OV.pl && f.q[q1]);
+  if (!OV.sel || !OV.sel.some(c => live.some(f => f.c === c))) { const g0 = fundBy[ST.fund] && fundBy[ST.fund].pl === OV.pl ? fundBy[ST.fund].g : ovGroups()[ovGroups().length - 1]; OV.sel = live.filter(f => f.g === g0).map(f => f.c); }
+  const sel = OV.sel.map(c => fundBy[c]).filter(f => f && f.q[q1]);
+  document.getElementById('ovCmpH').textContent = o.cmpH;
+  const pick = document.getElementById('ovPick');
+  pick.innerHTML = `<span class="field">${o.pickG}</span>${ovGroups().map(g => `<button type="button" class="chip" data-g="${g}" aria-pressed="${sel.length && sel.every(f => f.g === g) && live.filter(f => f.g === g).length === sel.length}">${esc(gLab(g))}</button>`).join('')}`
+    + `<select id="ovAdd"><option value="">${o.pickAdd}</option>${live.filter(f => !OV.sel.includes(f.c)).map(f => `<option value="${f.c}">${esc(fundName(f))}</option>`).join('')}</select>`
+    + `<div class="ovsel">${sel.map(f => `<span class="chip on">${sw(f.p)}${esc(fundName(f))} <button type="button" data-rm="${f.c}" aria-label="${o.rm}">×</button></span>`).join('')}</div>`;
+  pick.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { OV.sel = live.filter(f => f.g === b.dataset.g).map(f => f.c); ovSave(); renderCompare(); });
+  pick.querySelector('#ovAdd').onchange = e => { if (e.target.value) { OV.sel.push(e.target.value); ovSave(); renderCompare(); } };
+  pick.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { OV.sel = OV.sel.filter(c => c !== b.dataset.rm); ovSave(); renderCompare(); });
+  const tb = document.getElementById('ovCmp');
+  if (sel.length < 2) { tb.innerHTML = `<tbody><tr><td>${o.none}</td></tr></tbody>`; return; }
+  const M = sel.map(f => ({ f, a: ovMetrics(f, q1), b: f.q[q1 - 1] ? ovMetrics(f, q1 - 1) : null }));
+  const rows = [['eq', 1, true], ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
+  tb.innerHTML = `<thead><tr><th></th>${M.map(x => `<th class="n">${sw(x.f.p)}${esc(fundName(x.f))}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map(([k, d, isPct]) => { const vs = M.map(x => x.a[k]).filter(v => v != null), hi = Math.max(...vs), lo = Math.min(...vs);
+      return `<tr><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';
+        const dv = x.b && x.b[k] != null && isPct ? v - x.b[k] : null, ex = vs.length > 2 && (v === hi || v === lo) && hi - lo > (isPct ? 2 : 0.0001);
+        return `<td class="n${ex ? (v === hi ? ' hi' : ' lo') : ''}"${k === 'top' ? ` title="${esc(x.a.topN)}"` : ''}>${num(v, d)}${dv != null && Math.abs(dv) >= 0.5 ? `<small> ${pp(dv)}</small>` : ''}</td>`; }).join('') + '</tr>'; }).join('') + '</tbody>';
+}
 function renderAll() {
   const qi = NQ - 1, live = FUNDS.filter(f => f.q[qi]), secs = new Set(live.flatMap(f => [...f.q[qi].keys()])).size;
   kpiRow([[T().kpQ, Q[qi]], [T().kpFunds, live.length], [T().kpPos, num(live.reduce((s, f) => s + f.q[qi].size, 0), 0)], [T().kpSecs, num(secs, 0)], [T().kpFrom, Q[0]]]);
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
   ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'smTitle', 'smLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderTopChanges(); renderAlt(); renderPeers(); renderSim(); renderFund();
+  renderOverview(); renderTopChanges(); renderAlt(); renderPeers(); renderSim(); renderFund();
 }
 renderHeader('portfolios', renderAll);
 renderAll();

@@ -64,12 +64,38 @@
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
   .smgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; } @media (max-width: 900px) { .smgrid { grid-template-columns: 1fr; } }
   .smgrid h3 { font-size: 14px; margin: 4px 0 6px; } table.smt td { text-align: right; } table.smt td.dg { color: var(--text-3); text-align: center; } .smtxt p { margin: 0 0 6px; font-size: 14px; }
+  .ovgrid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  table.ovt td.tr { text-align: left; min-width: 260px; white-space: normal; } table.ovt th.tr { text-align: left; }
+  ul.ovout { grid-template-columns: repeat(2, minmax(0, 1fr)); } @media (max-width: 900px) { ul.ovout { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) { .ovgrid { grid-template-columns: 1fr; } }
+  .ovgrid h3, #ovCmpH { margin: 0 0 8px; font-size: 16px; }
+  table.ovt td small { color: var(--text-3); } table.ovt td small.pos { color: var(--dpos); font-weight: 600; } table.ovt td small.neg { color: var(--dneg); font-weight: 600; }
+  table.ovt td.hi { background: color-mix(in srgb, var(--dpos) 14%, transparent); font-weight: 600; } table.ovt td.lo { background: color-mix(in srgb, var(--dneg) 12%, transparent); }
+  .ovtr { font-size: 12.5px; line-height: 1.35; white-space: normal; } .ovtr small { color: var(--text-3); }
+  ul.ovout { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .ovo { text-align: left; width: 100%; font: inherit; font-size: 13.5px; line-height: 1.45; color: var(--text); background: none; border: 1px solid transparent; border-radius: 8px; padding: 6px 8px; cursor: pointer; }
+  .ovo:hover { background: var(--hover); border-color: var(--line); }
+  .ovpick { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
+  .ovpick select { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  .ovsel { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; }
+  .ovsel .chip button { border: 0; background: none; cursor: pointer; color: var(--text-3); font-size: 14px; padding: 0 0 0 4px; }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 900px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header id="top"></header>
+
+  <h2 class="sec" id="ovTitle"></h2>
+  <p class="lead" id="ovLead"></p>
+  <div class="bar pfbar" id="ovBar"></div>
+  <div class="ovgrid">
+    <section class="card" data-src="pf"><h3 id="ovChgH"></h3><div class="scroll"><table class="pft ovt" id="ovChg"></table></div></section>
+    <section class="card" data-src="pf"><h3 id="ovOutH"></h3><ul class="ovout" id="ovOut"></ul><p class="note" id="ovOutN"></p></section>
+  </div>
+  <section class="card" data-src="pf" style="margin-top:12px"><h3 id="ovCmpH"></h3><div class="ovpick" id="ovPick"></div><div class="scroll"><table class="pft ovt" id="ovCmp"></table></div></section>
+  <h2 class="sec" id="detTitle" style="margin-top:28px"></h2>
+  <p class="lead" id="detLead"></p>
 
   <h2 class="sec" id="tcTitle"></h2>
   <p class="lead" id="tcLead"></p>
@@ -116,8 +142,8 @@
   </div>
   <footer id="foot"></footer>
 </div>
-<script src="common.js?v=1d908ba0"></script>
+<script src="common.js?v=d3e51c5b"></script>
 <script src="data_pf.js?v=7a086588"></script>
-<script src="pf.js?v=46ebfba3"></script>
+<script src="pf.js?v=67e23b27"></script>
 </body>
 </html>
