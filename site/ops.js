@@ -53,7 +53,7 @@ const byDay = {}; EV.forEach(e => (byDay[e.day] = byDay[e.day] || []).push(e));
 const DAILY = new Set(['nav', 'p3', 'idx', 'estr', 'isin']);       // kasdieniai – jų būklę rodo kalendorius ir pranešimai, ne „Artėja“
 const UP = (OPS.up || []).filter(s => s.next != null && !DAILY.has(s.id)).map(s => ({ ...s, due: iso(s.next), over: s.mode === 'manual' ? dayNum(todayLoc()) > s.next : false }));
 const upByDay = {}; UP.forEach(s => (upByDay[s.due] = upByDay[s.due] || []).push(s));
-let VIEW = todayLoc().slice(0, 7), SEL = todayLoc();
+let VIEW = todayLoc().slice(0, 7), SEL = todayLoc(), FILT = null;   // FILT – legendos mygtukas: rodyti tik tos rūšies įvykius
 function chipsOf(day) {
   const o = O(), ev = byDay[day] || [], out = [];
   const nav = new Set(ev.filter(e => e.ev === 'new' && e.src.startsWith('nav.')).map(e => e.src)), p3 = new Set(ev.filter(e => e.ev === 'new' && e.src.startsWith('p3.')).map(e => e.src));
@@ -64,7 +64,7 @@ function chipsOf(day) {
   [...new Set(ev.filter(e => e.ev === 'fail').map(e => e.src))].forEach(s => out.push(['fail', '⚠ ' + srcLabel(s)]));
   [...new Set(ev.filter(e => e.ev === 'ok').map(e => e.src))].forEach(s => out.push(['ok', '✓ ' + srcLabel(s)]));
   (upByDay[day] || []).forEach(s => out.push([s.mode === 'manual' ? 'man' : 'due', lang === 'lt' ? s.lt : s.en]));
-  return out;
+  return FILT ? out.filter(c => c[0] === FILT) : out;
 }
 function renderCal() {
   const o = O(), [y, m] = VIEW.split('-').map(Number), first = new Date(Date.UTC(y, m - 1, 1)), start = new Date(first); start.setUTCDate(1 - ((first.getUTCDay() + 6) % 7));
@@ -122,10 +122,35 @@ function renderKpis() {
   $('kpis').innerHTML = k(o.kToday, evT.filter(e => e.ev === 'new').length, o.kTodayS(evT.length)) + k(o.kFail, f7.size, o.kFailS(f7.size))
     + k(o.kNext, nx ? nx.due : '–', nx ? hEsc(lang === 'lt' ? nx.lt : nx.en) : '') + k(o.kMan, man.length, o.kManS(man.length));
 }
+/* Legendos mygtukai: paspaudus kalendorius rodo tik tos rūšies įvykius (ir pereina į artimiausią mėnesį su jais);
+   užvedus pelę – artimiausių datų sąrašas (ateities darbams – artėjančios, praeities įvykiams – paskutinės) */
+function kindList(k, n = 6) {
+  const now = dayNum(todayLoc()), L = lang === 'lt';
+  if (k === 'due' || k === 'man') return UP.filter(s => (k === 'man') === (s.mode === 'manual') && (s.next >= now || s.over)).sort((a, b) => a.next - b.next).slice(0, n)
+    .map(s => ({ d: s.due, t: L ? s.lt : s.en, x: (L ? s.how_lt : s.how_en) || '', url: s.url, over: s.over }));
+  const seen = new Set();
+  return EV.filter(e => e.ev === k).sort((a, b) => b.ts.localeCompare(a.ts)).filter(e => { const key = e.day + e.src; if (seen.has(key)) return false; seen.add(key); return true; }).slice(0, n)
+    .map(e => ({ d: `${e.day} ${e.hm}`, t: srcLabel(e.src) + (e.dd ? ` (${e.dd})` : ''), x: e.ev === 'fail' ? e.msg : '' }));
+}
+function renderLegend() {
+  const o = O(), L = lang === 'lt';
+  $('lgd').innerHTML = o.lg.map(([k, t]) => { const n = kindList(k, 99).length;
+    return `<span class="lgw"><button type="button" class="lgb${FILT === k ? ' on' : ''}" data-k="${k}" aria-pressed="${FILT === k}"><span class="chip ${k}">&nbsp;&nbsp;&nbsp;</span>${t}${n ? ` <small>${n}</small>` : ''}</button><span class="lgpop" role="tooltip"></span></span>`; }).join('')
+    + (FILT ? `<button type="button" class="lgb clr" data-k="">${L ? 'Rodyti viską ×' : 'Show all ×'}</button>` : '');
+  $('lgd').querySelectorAll('.lgw').forEach(w => { const b = w.querySelector('button'), pop = w.querySelector('.lgpop'), k = b.dataset.k;
+    const fill = () => { const xs = kindList(k); pop.innerHTML = `<b>${k === 'due' || k === 'man' ? (L ? 'Artimiausios datos' : 'Next dates') : (L ? 'Paskutiniai' : 'Latest')}</b>`
+      + (xs.length ? xs.map(x => `<div class="lgi${x.over ? ' late' : ''}"><span class="t">${x.d}</span><span>${hEsc(x.t)}${x.x ? `<small>${hEsc(x.x)}</small>` : ''}${x.url ? ` <a href="${hEsc(x.url)}" target="_blank" rel="noopener">↗</a>` : ''}</span></div>`).join('') : `<div class="lgi">${L ? 'Nėra' : 'None'}</div>`); };
+    w.addEventListener('mouseenter', fill); b.addEventListener('focus', fill); });
+  $('lgd').querySelectorAll('.lgb').forEach(b => b.onclick = () => {
+    FILT = b.dataset.k && FILT !== b.dataset.k ? b.dataset.k : null;
+    if (FILT) { const xs = kindList(FILT, 1); if (xs.length) { const d = xs[0].d.slice(0, 10); VIEW = d.slice(0, 7); SEL = d; } }
+    renderLegend(); renderCal(); renderDay();
+  });
+}
 function render() {
   const o = O();
   $('hCal').textContent = o.hCal; $('nCal').textContent = o.nCal; $('todayB').textContent = o.today;
-  $('lgd').innerHTML = o.lg.map(([k, t]) => `<span><span class="chip ${k}">&nbsp;&nbsp;&nbsp;</span>${t}</span>`).join('');
+  renderLegend();
   $('hArr').textContent = o.hArr; $('nArr').textContent = o.nArr; $('hUp').textContent = o.hUp; $('nUp').textContent = o.nUp; $('hFail').textContent = o.hFail; $('nFail').textContent = o.nFail;
   renderKpis(); renderCal(); renderDay(); renderArr(); renderUp(); renderFail();
 }
