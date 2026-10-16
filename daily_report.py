@@ -162,7 +162,7 @@ def source_lines() -> list:
         st = source_status.load()
     except Exception:  # noqa: BLE001
         return []
-    names = {"proxy": "Luminor proxy (Proxy-Cheap)", "estr": "€STR (ECB)", "cpi": "VKI (VDA)", "lb": "Lietuvos banko failai"}
+    names = {"site": "Svetainės patikra (puslapiai / lentelės)", "eonia": "EONIA (ECB, iki 2019-10)", "proxy": "Luminor proxy (Proxy-Cheap)", "estr": "€STR (ECB)", "cpi": "VKI (VDA)", "lb": "Lietuvos banko failai"}
     why = {"auth": "baigėsi arba neveikia prieiga", "blocked": "šaltinis blokuoja", "network": "nepasiekiamas",
            "format": "pasikeitė puslapis – reikia taisyti", "other": "klaida"}
     out = [f"  ⚠ {names.get(k, k.replace('idx.', 'indeksas ').replace('nav.', ''))}: {why.get(v.get('kind'), 'klaida')} nuo {v.get('since') or v['err']} ({v.get('msg', '')})"

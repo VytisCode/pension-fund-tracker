@@ -138,6 +138,13 @@ jobs:
             python build_site.py
           fi
 
+      # Svetainės patikra: kiekvienas puslapis atsidaro be klaidų, pagrindinės lentelės užpildytos (tools/smoke_test.py);
+      # problema įrašoma į source_status.json ir matoma vakariniame laiške bei svetainės pranešimuose
+      - name: Website check
+        if: always()
+        continue-on-error: true
+        run: python -u tools/smoke_test.py
+
       # Viena kasdienė ataskaita el. paštu: pirmame paleidime po 16:00 UTC (~19:00 Vilniaus laiku vasarą),
       # nesvarbu, ar jį paleido tvarkaraštis, ar išorinis žadintuvas (daily_report.py siunčia tik kartą per dieną),
       # arba paleidus ranka su „send_report“. Jei Gmail nustatymų (Secrets) dar nėra – ataskaita
