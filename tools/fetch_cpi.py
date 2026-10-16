@@ -70,4 +70,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    import source_status
+    try:
+        main()
+        source_status.ok("cpi")
+    except Exception as exc:  # noqa: BLE001
+        source_status.fail("cpi", exc)
+        raise

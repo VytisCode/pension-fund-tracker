@@ -199,11 +199,32 @@ def build_fresh(groups: list, generated: str) -> None:
         ds = [d for p, d in lasts if p == pid and d >= top - 30]
         if ds:
             prov.append({"id": pid, "label": label, "d": min(ds)})
+    import fund_links as FL
+    import source_status
+    import sources_list
+    pages = {"SEB": FL.SEB_II, "SWEDBANK": FL.SWEDBANK_II, "ARTEA": FL.ARTEA_PAGE, "ALLIANZ": FL.ALLIANZ_PAGE,
+             "GOINDEX": FL.GOINDEX_PAGE, "LUMINOR": FL.LUMINOR_TABLE_URLS[0]}
+    for x in prov:
+        x["url"] = pages.get(x["id"], "")
     payload = {"top": top, "generated": generated, "providers": prov, "src": sources()}
+    # Pranešimams (common.js notices): šaltinių būsena (kada pavyko / nepavyko ir kodėl), kiekvieno indekso
+    # paskutinė diena ir artėjantys ar pavėluoti rankiniai darbai su instrukcijomis
+    payload["st"] = source_status.load()
+    try:
+        import csv as _csv
+        last = {}
+        for r in _csv.DictReader((ROOT / "data" / "indexes.csv").open(encoding="utf-8")):
+            last[r["index"]] = max(last.get(r["index"], ""), r["date"])
+        payload["idx"] = {k: day_number(v) for k, v in last.items() if k in ("MSCI_WORLD", "MSCI_ACWI", "SP500", "EUR_GOV7Y")}
+    except Exception:
+        pass
+    inv = sources_list.inventory(payload["src"], top)
+    today = day_number(datetime.now(ZoneInfo("Europe/Vilnius")).date().isoformat())
+    payload["man"] = [{k: s.get(k) for k in ("id", "lt", "en", "how_lt", "how_en", "url", "next", "f_lt", "f_en")}
+                      for s in inv if s["mode"] == "manual" and s.get("next") is not None and s["next"] <= today + 21]
+    payload["urls"] = {s["id"]: s["url"] for s in inv if s.get("url")}
     (DOCS / "data_fresh.js").write_text("var FRESH=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     # visų šaltinių sąrašas puslapiui „Apie“ (sources_list.py)
-    import sources_list
-    inv = sources_list.inventory(payload["src"], top)
     (DOCS / "data_src.js").write_text("const SRCINV=" + json.dumps(inv, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 

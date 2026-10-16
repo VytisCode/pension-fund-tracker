@@ -15,6 +15,7 @@ import urllib.request
 from pathlib import Path
 
 import fund_links
+import source_status
 
 CACHE = Path(__file__).parent / "data" / "risk_free.json"
 
@@ -128,9 +129,12 @@ def fetch(timeout: int = 15):
     try:
         req = urllib.request.Request(fund_links.ECB_ESTR_API, headers={"Accept": "text/csv", "User-Agent": "pension-fund-tracker"})
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return parse(resp.read().decode("utf-8"))
+            out = parse(resp.read().decode("utf-8"))
+        source_status.ok("estr") if out else source_status.fail("estr", "neįtikėtina arba tuščia reikšmė", "format")
+        return out
     except Exception as exc:          # svetainės generavimas dėl to niekada nesustoja
         print(f"€STR: nepavyko gauti iš ECB ({exc.__class__.__name__}: {exc})")
+        source_status.fail("estr", exc)
         return None
 
 

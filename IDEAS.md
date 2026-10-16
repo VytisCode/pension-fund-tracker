@@ -37,6 +37,12 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 - Fondų dalyvių skaičiai iš LB ataskaitų.
 
+## Eilė: savininko užduotys 2026-10-16
+
+- **Patikimumas (spragos po audito 2026-10-16)**: II/III pakopos vertės turi tik vieną šaltinį (valdytojo svetainė) – ieškoti antro (pvz. valdytojų mėnesinės ataskaitos, LB duomenys) bent istorijai patikrinti; MSCI – vienintelis adresas; po kelių dienų patikrinti `data/source_status.json`, kodėl S&P 500 sustojo 2026-10-08 (Yahoo ar ECB kursas), ir ar veikia atsarginis Yahoo query2.
+- **Struktūra ir naršymas** (11 puslapių → ~6 skyriai, paieška su pasiūlymais, III pakopa tais pačiais įrankiais kaip II). Klausimai savininkui išsiųsti 2026-10-16 – laukti atsakymų, tada planas / maketas patvirtinti prieš pertvarką.
+- **Excel ir kopijavimas**: prie kiekvienos lentelės ir diagramos – „Kopijuoti kaip paveikslėlį“ (Teams) ir Excel su lapais Rezultatas / Skaičiavimas (gyvos formulės, spalvos, paaiškinimai) / Duomenys (su šaltiniu ir data) / Metodika. Klausimai išsiųsti 2026-10-16.
+
 ## Eilė: audito paketai (vienas ciklas = vienas paketas)
 
 ## Eilė: savininko užduotys 2026-10-14 (vakaras)

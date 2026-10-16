@@ -276,6 +276,15 @@ def fee_counts():
         return out
 
 
+def _status(ok: bool, msg: str = "") -> None:
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        import source_status
+        source_status.ok("lb") if ok else source_status.fail("lb", msg, "network")
+    except Exception:
+        pass
+
+
 def main():
     now = datetime.now(timezone(timedelta(hours=3)))
     today = now.strftime("%Y-%m-%d")
@@ -291,9 +300,11 @@ def main():
         found, other = guess()
     if not found and not other:
         print("LB puslapiai nepasiekiami arba be failų nuorodų – bus bandoma kito paleidimo metu.")
+        _status(False, "Lietuvos banko puslapiai nepasiekiami arba be failų nuorodų")
         state["fail"] = {"date": today, "n": (fail.get("n", 0) if fail.get("date") == today else 0) + 1}
         STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         return
+    _status(True)
     state.pop("fail", None)
     state["checked"] = today
     state.setdefault("files", {})

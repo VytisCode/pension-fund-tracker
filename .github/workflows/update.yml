@@ -69,6 +69,12 @@ jobs:
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
 
+      # Luminor proxy (Proxy-Cheap) patikra – svetainė praneš, jei prieiga nebeveikia (pvz. baigėsi prenumerata)
+      - name: Luminor proxy check
+        if: steps.need.outputs.needs_browser == 'true' || steps.need.outputs.needs_browser_p3 == 'true'
+        continue-on-error: true
+        run: python -u tools/check_proxy.py
+
       - name: Browser providers (SEB, Swedbank, Luminor)
         if: steps.need.outputs.needs_browser == 'true'
         run: python -u update.py browser
@@ -177,6 +183,7 @@ jobs:
           # paskutinė gauta €STR norma: jei kitą kartą ECB nepasieks, svetainė naudos ją, o ne 2 %
           if [ -f data/risk_free.json ]; then git add data/risk_free.json; fi
           if [ -f data/estr_monthly.json ]; then git add data/estr_monthly.json; fi
+          if [ -f data/source_status.json ]; then git add data/source_status.json; fi
           if [ -f data/isin_names.csv ]; then git add data/isin_names.csv; fi
           if [ -f data/security_terms.csv ]; then git add data/security_terms.csv; fi
           if [ -f data/indexes.csv ]; then git add data/indexes.csv; fi
@@ -188,6 +195,23 @@ jobs:
             echo "Nėra pakeitimų."
           else
             git commit -m "data: update $(TZ=Europe/Vilnius date '+%Y-%m-%d %H:%M')"
-            git pull --rebase origin main
-            git push
+            # Kol šis paleidimas veikė, kas nors galėjo įkelti svetainės pakeitimų (docs/ – sugeneruoti failai, todėl
+            # konfliktai neišvengiami). Konflikte imame savo versiją (-X theirs = šio paleidimo commit'as), o jei
+            # tarp to pasikeitė svetainės šaltiniai – svetainę sugeneruojame iš naujo, kad nedingtų ir jų pakeitimai.
+            BASE=$(git rev-parse HEAD~1)
+            ok=0
+            for i in 1 2 3 4; do
+              if git pull --rebase -X theirs origin main; then
+                if ! git diff --quiet "$BASE" HEAD -- site '*.py'; then
+                  python -c "import openpyxl" 2>/dev/null || pip install -q openpyxl
+                  python build_site.py > /dev/null && git add docs
+                  git diff --cached --quiet || git commit -m "site: rebuild after merge $(TZ=Europe/Vilnius date '+%Y-%m-%d %H:%M')"
+                fi
+                if git push; then ok=1; break; fi
+              else
+                git rebase --abort || true
+              fi
+              sleep $((i * 20))
+            done
+            [ "$ok" = 1 ] || { echo "Nepavyko įkelti duomenų po 4 bandymų"; exit 1; }
           fi

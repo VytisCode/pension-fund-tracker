@@ -25,6 +25,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import fund_links
+import source_status
 
 ROOT = Path(__file__).parent
 STORE = ROOT / "data" / "indexes.csv"
@@ -103,6 +104,27 @@ def save(data):
                 w.writerow([d, name, f"{data[name][d]:.4f}"])
 
 
+def sp500_usd(start):
+    """S&P 500 TR (USD) iš Yahoo: pirma query1, nepavykus – atsarginis query2 (Yahoo dažnai riboja vieną iš jų),
+    kiekvienas po 2 bandymus. Grąžina {data: vertė}; jei visi nepavyko – paskutinė klaida."""
+    p1, p2 = int(time.mktime(start.timetuple())), int(time.time()) + 86400
+    last = None
+    for host in ("query1", "query2"):
+        url = fund_links.YAHOO_CHART_API.replace("query1", host).format(symbol="%5ESP500TR", p1=p1, p2=p2)
+        for attempt in range(2):
+            try:
+                out = parse_yahoo(_get(url))
+                if out:
+                    if host != "query1":
+                        print(f"SP500: naudotas atsarginis Yahoo {host}")
+                    return out
+                last = ValueError("tuščias atsakymas")
+            except Exception as e:  # noqa: BLE001
+                last = e
+            time.sleep(5 * (attempt + 1))
+    raise last
+
+
 def update():
     data = load()
     start = date.today() - timedelta(days=40)
@@ -110,19 +132,29 @@ def update():
         try:
             n = merge(data, name, parse_msci(_get(fund_links.MSCI_LEVELS_API.format(start=start.strftime("%Y%m%d"), end=date.today().strftime("%Y%m%d"), code=code))))
             print(f"{name}: +{n}")
+            source_status.ok(f"idx.{name}")
         except Exception as e:  # noqa: BLE001  – vieno indekso klaida kitų nestabdo
             print(f"{name}: nepavyko ({e.__class__.__name__}: {e})")
+            source_status.fail(f"idx.{name}", e)
     try:
-        p1 = int(time.mktime(start.timetuple()))
-        usd = parse_yahoo(_get(fund_links.YAHOO_CHART_API.format(symbol="%5ESP500TR", p1=p1, p2=int(time.time()) + 86400)))
-        fx = parse_ecb(_get(fund_links.ECB_EURUSD_API.format(start=(start - timedelta(days=10)).isoformat())))
+        usd = sp500_usd(start)
+        try:
+            fx = parse_ecb(_get(fund_links.ECB_EURUSD_API.format(start=(start - timedelta(days=10)).isoformat())))
+            source_status.ok("idx.EURUSD")
+        except Exception as e:  # noqa: BLE001
+            source_status.fail("idx.EURUSD", e)
+            raise
         print(f"SP500: +{merge(data, 'SP500', sp500_eur(usd, fx))}")
+        source_status.ok("idx.SP500")
     except Exception as e:  # noqa: BLE001
         print(f"SP500: nepavyko ({e.__class__.__name__}: {e})")
+        source_status.fail("idx.SP500", e)
     try:
         print(f"EUR_GOV7Y: +{update_bond(data)}")
+        source_status.ok("idx.EUR_GOV7Y")
     except Exception as e:  # noqa: BLE001
         print(f"EUR_GOV7Y: nepavyko ({e.__class__.__name__}: {e})")
+        source_status.fail("idx.EUR_GOV7Y", e)
     save(data)
 
 

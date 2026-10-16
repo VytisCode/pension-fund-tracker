@@ -75,6 +75,22 @@ h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
 .fresh .fr.late { color: var(--warn); font-weight: 600; }
 .srcl { margin: 8px 0 0; font-size: 12px; color: var(--text-3); }
 .fresh .fr-src { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+/* pranešimai apie duomenis (common.js noticesList) */
+.fresh .ntc-list { flex-basis: 100%; display: grid; gap: 6px; margin-bottom: 4px; font-size: 13px; color: var(--text-2); }
+.ntc { border: 1px solid var(--line); border-left: 4px solid var(--axis); border-radius: 6px; background: var(--card, transparent); }
+.ntc.l-act { border-left-color: var(--dneg); } .ntc.l-wait { border-left-color: var(--warn); }
+.ntc summary { cursor: pointer; padding: 6px 10px; list-style-position: inside; }
+.ntc summary b { color: var(--text); font-weight: 600; }
+.ntc .ic { margin-right: 6px; } .ntc.l-act .ic, .ntc.l-act .lv { color: var(--dneg); } .ntc.l-wait .ic, .ntc.l-wait .lv { color: var(--warn); }
+.ntc .lv { font-size: 12px; color: var(--text-3); margin-left: 6px; white-space: nowrap; }
+.ntc dl { display: grid; grid-template-columns: 110px 1fr; gap: 4px 12px; margin: 0; padding: 4px 12px 10px; line-height: 1.45; }
+.ntc dt { color: var(--text-3); } .ntc dd { margin: 0; }
+@media (max-width: 600px) { .ntc dl { grid-template-columns: 1fr; gap: 0; } .ntc dd { margin-bottom: 6px; } }
+.ntcbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 8px 0; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--dneg); color: var(--text); font-size: 14px; background: color-mix(in srgb, var(--dneg) 8%, transparent); }
+.ntcbar span { flex: 1 1 260px; }
+.ntcbar button { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: inherit; cursor: pointer; }
+@media print { .ntcbar { display: none; } }
 @media print { .fresh .fr { cursor: auto; } }
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 22px; }
 .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; background: var(--card); overflow: hidden; }

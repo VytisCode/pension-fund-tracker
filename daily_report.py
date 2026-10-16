@@ -155,6 +155,23 @@ def stale_section(today: str) -> list:
         for f in late]
 
 
+def source_lines() -> list:
+    """Neveikiantys šaltiniai iš data/source_status.json (tie patys, kurie rodomi svetainės pranešimuose)."""
+    try:
+        import source_status
+        st = source_status.load()
+    except Exception:  # noqa: BLE001
+        return []
+    names = {"proxy": "Luminor proxy (Proxy-Cheap)", "estr": "€STR (ECB)", "cpi": "VKI (VDA)", "lb": "Lietuvos banko failai"}
+    why = {"auth": "baigėsi arba neveikia prieiga", "blocked": "šaltinis blokuoja", "network": "nepasiekiamas",
+           "format": "pasikeitė puslapis – reikia taisyti", "other": "klaida"}
+    out = [f"  ⚠ {names.get(k, k.replace('idx.', 'indeksas ').replace('nav.', ''))}: {why.get(v.get('kind'), 'klaida')} nuo {v.get('since') or v['err']} ({v.get('msg', '')})"
+           for k, v in sorted(st.items()) if v.get("err")]
+    if any(k == "proxy" and v.get("kind") == "auth" and v.get("err") for k, v in st.items()):
+        out.append("    → Patikrinkite Proxy-Cheap prenumeratą; jei ji baigėsi ir nenorite mokėti – praneškite Claude.")
+    return (["", "Neveikiantys šaltiniai:"] + out) if out else []
+
+
 def build() -> tuple:
     existing = store.load()
     expected = u.expected_date()
@@ -170,6 +187,7 @@ def build() -> tuple:
         body += ["", f"Luminor bandymų šiandien: {state['LUMINOR']} iš {u.MAX_BROWSER_ATTEMPTS}."]
     problems = todays_problems(today)
     body += ["", "Klaidos ir pastabos šiandien:"] + (problems or ["  nėra"])
+    body += source_lines()
     runs = runs_today(today)
     if runs:
         body += ["", runs]

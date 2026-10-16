@@ -95,6 +95,38 @@ SOURCES = [
 ]
 
 
+# Patikimumo auditas (savininko užduotis 2026-10-16): kiekvienam šaltiniui – atsarginis kelias ir kas nutinka, jei
+# neveikia nei pagrindinis, nei atsarginis. Rodoma „Apie“ puslapyje; spragos – IDEAS.md („Patikimumas“).
+RELIABILITY = {
+    "nav": ("Kiekvienas valdytojas bandomas iki 6 kartų per dieną; Luminor – per proxy, nepavykus be jo; kitą rytą papildomas paleidimas praleistoms dienoms.",
+            "Each manager is retried up to 6 times a day; Luminor via proxy, otherwise directly; an extra morning run fills missed days.",
+            "Rodoma paskutinė gauta diena, pranešimas paaiškina; vertę galima įkelti rankiniu būdu iš valdytojo svetainės.",
+            "The last day received is shown with an explanatory notice; values can be uploaded manually from the manager’s site."),
+    "p3": ("Kaip II pakopoje; Goindex istorija – iš savininko failų.", "As for pillar II; Goindex history from the owner’s files.",
+           "III pakopos puslapis rodo paskutinę gautą dieną.", "The pillar III page shows the last day received."),
+    "idx": ("MSCI – oficialus MSCI duomenų adresas; S&P 500 – Yahoo (du serveriai, po 2 bandymus); kursas – ECB.",
+            "MSCI – official MSCI data endpoint; S&P 500 – Yahoo (two servers, 2 tries each); FX – ECB.",
+            "Indekso linija baigiasi anksčiau; fondų rezultatams įtakos nėra.", "The index line ends earlier; fund results are not affected."),
+    "estr": ("ECB; nepavykus – paskutinė išsaugota norma ir mėnesių vidurkiai.", "ECB; otherwise the last saved rate and monthly averages.",
+             "Sharpe skaičiuojamas su paskutine norma (įtaka nedidelė).", "Sharpe uses the last rate (small effect)."),
+    "cpi": ("VDA duomenų API.", "State Data Agency API.", "Reali grąža naujausiems mėnesiams – su paskutiniu indeksu.", "Real return for the newest months uses the last index."),
+    "pens": ("VDA duomenų API.", "State Data Agency API.", "Kelio į pensiją skaičiai – su paskutiniais metais.", "Retirement path uses the last year."),
+    "wages": ("VDA duomenų API.", "State Data Agency API.", "Kelio į pensiją skaičiai – su paskutiniais metais.", "Retirement path uses the last year."),
+    "isin": ("OpenFIGI, obligacijoms – ESMA FIRDS; žinomi pavadinimai išsaugomi.", "OpenFIGI, for bonds ESMA FIRDS; known names are kept.",
+             "Naujos pozicijos rodomos su ISIN kodu vietoj pavadinimo.", "New holdings show the ISIN instead of a name."),
+    "pf": ("LB puslapių paieška; nepavykus – tiesioginiai LB failų adresai pagal įprastą pavadinimą.", "Search of the Bank of Lithuania pages; otherwise direct file addresses by the usual name.",
+           "Rodomas ankstesnis ketvirtis; failą galima atsiųsti Claude.", "The previous quarter is shown; the file can be sent to Claude."),
+    "lbr": ("Kaip portfelių ataskaitos.", "As for portfolio reports.", "Rodomas ankstesnis ketvirtis.", "The previous quarter is shown."),
+    "fee2": ("Kaip portfelių ataskaitos.", "As for portfolio reports.", "Naudojami ankstesni mokesčiai.", "Previous fees are used."),
+    "fee3": ("Kaip portfelių ataskaitos.", "As for portfolio reports.", "Naudojami ankstesni mokesčiai.", "Previous fees are used."),
+    "sodra": ("Datos po paskutinio grafiko įvertinamos taisykle (2-asis mėnesio ketvirtadienis).", "Dates after the last schedule are estimated (second Thursday).",
+              "Naudojamos įvertintos datos.", "Estimated dates are used."),
+}
+MANUAL_BACKUP = ("Rankinis darbas: priminimas svetainės pranešimuose ir vakariniame laiške likus 3 sav. iki termino.",
+                 "Manual task: reminder in site notices and the evening e-mail 3 weeks before the due date.",
+                 "Naudojamos ankstesnės reikšmės, kol neatnaujinta.", "Previous values are used until updated.")
+
+
 def _d(s):
     return date.fromisoformat(s[:10])
 
@@ -144,5 +176,8 @@ def inventory(src: list, top_day: int, today: date | None = None) -> list:
                 last = dn(_d(CHECKED[k])); nxt = None if k == "events" else last + 365
         except Exception:
             pass
+        r = RELIABILITY.get(k) or (MANUAL_BACKUP if s["mode"] == "manual" else None)
+        if r:
+            s = {**s, "bk_lt": r[0], "bk_en": r[1], "fl_lt": r[2], "fl_en": r[3]}
         out.append({**s, "last": last, "next": nxt, "fmt": fmt})
     return out

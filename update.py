@@ -31,6 +31,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import store
+import source_status
 
 ROOT = Path(__file__).parent
 STATE_FILE = ROOT / "data" / "update_state.json"
@@ -342,6 +343,10 @@ def run_browser_script(provider: str, log: list) -> list:
         files = sorted(Path(tmp).glob("*_data_*.xlsx"))
         if not files:
             log.append(f"  ! {provider}: skaitytuvas nesukūrė failo (kodas {result.returncode}). Pabaiga:\n{tail}")
+            low = tail.lower()
+            kind = ("auth" if re.search(r"\b407\b|proxy auth|err_proxy|err_tunnel", low) else
+                    "blocked" if re.search(r"cloudflare|security check|\b403\b|\b429\b|captcha", low) else "")
+            source_status.fail(f"nav.{provider}", f"skaitytuvas negavo duomenų (kodas {result.returncode})", kind or "format")
             return []
         records = []
         for path in files:
@@ -412,10 +417,13 @@ def run_group(providers: list, fetchers: dict) -> int:
                 rows = fetchers[provider]()
         except Exception as exc:  # noqa: BLE001
             log.append(f"{provider}: klaida – {exc}")
+            source_status.fail(f"nav.{provider}", exc)
             problems += 1
             continue
         changed = commit_rows(provider, rows, existing, expected, log)
         still = missing_funds(existing, provider, expected)
+        if rows:
+            source_status.ok(f"nav.{provider}")              # šaltinis pasiekiamas (net jei vertė dar nepaskelbta)
         log.append(f"{provider}: gauta {len(rows)} eil., nauja/pakeista {changed}; "
                    f"{'viskas iki ' + str(expected) if not still else 'dar trūksta: ' + str(len(still)) + ' fondų'}")
     save_state(state)

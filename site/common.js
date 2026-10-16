@@ -27,7 +27,7 @@ const I18N = {
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
     foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
-    srcLbl: 'Kiti duomenys:', srcLateLbl: 'vėluoja:', srcBy: d => `kitų laukiama iki ${d}`, srcNext: d => `Naujų duomenų laukiama iki ${d} (apytiksliai)`, srcIrreg: 'Atnaujinama, kai Lietuvos bankas paskelbia naują failą',
+    srcLbl: 'Kiti duomenys:', srcLateLbl: 'vėluoja:', srcBy: d => `naujų laukiama iki ${d}`, srcNext: d => `Naujų duomenų laukiama iki ${d} (apytiksliai)`, srcIrreg: 'Atnaujinama, kai Lietuvos bankas paskelbia naują failą',
     srcK: { p3: 'III pakopa', pf: 'LB portfelių ataskaitos', lbr: 'LB rezultatų ataskaita', fee2: 'LB mokesčiai (II)', fee3: 'LB mokesčiai (III)', idx: 'Indeksai', estr: '€STR', cpi: 'Infliacija (VKI)' },
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
@@ -268,9 +268,10 @@ function freshRender() {
     ? `<span class="late">${t.lateLbl} ${late.map(p => `${hEsc(p.label)} (${iso(p.d).slice(5)})`).join(', ')} <span class="chev">▾</span></span>`
     : `<span class="ok">${t.allFresh(FRESH.providers.length)} ✓ <span class="chev">▾</span></span>`);
   sb.title = t.freshMore;
-  const sl = srcLate();
-  if (sl.length) sb.innerHTML += ` <span class="late">· ${t.srcLateLbl} ${sl.map(x => t.srcK[x.k]).join(', ')}</span>`;
-  document.getElementById('fresh').innerHTML = freshnessHTML() + srcHTML();
+  const nl = noticesList(), nA = nl.filter(x => x.lvl === 'act').length, nW = nl.filter(x => x.lvl === 'wait' && !x.id.startsWith('nav-')).length;
+  if (nA || nW) sb.innerHTML += ` <span class="late">· ${NTH().sum(nA, nW)}</span>`;
+  document.getElementById('fresh').innerHTML = noticesHTML(nl) + freshnessHTML() + srcHTML();
+  noticeBar(nl);
   srcLines();
 }
 /* Po lentele – „Šaltinis: …, data · Metodika →“ (auditas #55): elementams su data-src (raktas = „Apie“ skyriaus id) */
@@ -293,9 +294,170 @@ const srcLate = () => (FRESH.src || []).filter(x => x.next && srcToday() > x.nex
 function srcHTML() {
   const t = T(); if (!FRESH.src || !FRESH.src.length) return '';
   return `<div class="fr-src"><span class="fr-l">${t.srcLbl}</span>` + FRESH.src.map(x => {
+    if (x.k === 'idx' && FRESH.idx) {          // indeksai – kiekvieno data atskirai (paaiškinimas – pranešimuose)
+      const nm = NTH().idxName, grp = {};
+      Object.entries(FRESH.idx).forEach(([k, d]) => { (grp[iso(d).slice(5)] = grp[iso(d).slice(5)] || []).push(nm[k] || k); });
+      return `<span class="fr" style="white-space:normal">${t.srcK.idx}: ${Object.entries(grp).sort((a, b) => b[0].localeCompare(a[0])).map(([d, ks]) => `${ks.join(', ')} ${d}`).join(' · ')}</span>`;
+    }
     const late = x.next && srcToday() > x.next, d = x.k === 'cpi' ? iso(x.d).slice(0, 7) : iso(x.d);
     return `<span class="fr${late ? ' late' : ''}" title="${x.next ? t.srcNext(iso(x.next)) : t.srcIrreg}">${t.srcK[x.k]} ${d}${x.next ? ` <small>· ${t.srcBy(iso(x.next))}</small>` : ''}${late ? ' ⚠' : ''}</span>`;
   }).join('') + '</div>';
+}
+/* ---------- pranešimai apie duomenis (savininko užduotis 2026-10-16) ----------
+   Kiekvienam vėluojančiam ar sutrikusiam duomeniui: kas tai, kodėl vėluoja (data/source_status.json), ką tai įtakoja,
+   ar reikia ką nors daryti ir ką. Lygiai: info – galima ignoruoti, wait – laukiama (veiksmų nereikia), act – reikia veiksmo.
+   „Reikia veiksmo“ pranešimai rodomi juosta virš puslapio, kol vartotojas paspaudžia „Šiandien nerodyti“. */
+const NT = {
+  lt: {
+    lvl: { info: 'Galima ignoruoti', wait: 'Laukiama – nieko daryti nereikia', act: 'Reikia veiksmo' },
+    what: 'Kas tai', why: 'Kodėl', impact: 'Ką įtakoja', todo: 'Ką daryti', open: 'Atidaryti šaltinį', hdr: 'Pranešimai',
+    sum: (a, w) => [a ? `⚠ ${a} reikia veiksmo` : '', w ? `${w} laukiama` : ''].filter(Boolean).join(', '),
+    barMore: 'Plačiau', barHide: 'Šiandien nerodyti', owner: 'Tai darbas svetainės prižiūrėtojui; kitiems lankytojams nieko daryti nereikia.',
+    cause: { blocked: s => `Šaltinis atmeta automatines užklausas (nuo ${s}).`, auth: s => `Neveikia prieiga prie šaltinio (nuo ${s}).`,
+             network: s => `Šaltinis nepasiekiamas (nuo ${s}); dažniausiai tai laikina.`, format: s => `Šaltinio puslapis tikriausiai pasikeitė – rinkimą reikia pataisyti (nepavyksta nuo ${s}).`,
+             other: s => `Automatinis rinkimas nepavyksta (nuo ${s}).` },
+    navT: (p, d) => `${p}: vertės iki ${d}`,
+    navWhat: p => `${p} II pakopos fondų vieneto vertės. Valdytojas jas skelbia savo svetainėje kiekvieną darbo dieną (už praėjusią), dažniausiai po pietų; čia jos surenkamos automatiškai kas 30 min.`,
+    navWait: 'Valdytojas dar nepaskelbė naujos vertės arba ji dar nesurinkta – tai įprasta iki vakaro.',
+    navImpact: (p, d) => `${p} grąža skaičiuojama iki ${d}, kitų valdytojų – iki naujesnės dienos, todėl šiandienos palyginimai su ${p} truputį netikslūs. Kiti duomenys nepaveikti.`,
+    navTodoWait: 'Nieko – sistema bandys dar kartą automatiškai.',
+    navTodoAct: p => `Patikrinkite, ar ${p} svetainėje vertė jau paskelbta (nuoroda žemiau). Jei paskelbta, bet čia jos nėra – praneškite Claude: rinkimą reikia pataisyti.`,
+    allT: d => `Visi valdytojai: vertės iki ${d}`,
+    allWhat: 'Nė vieno valdytojo naujų verčių kelias darbo dienas – greičiausiai sustojo automatinis rinkimas.',
+    allImpact: 'Visos grąžos ir palyginimai rodomi iki šios dienos.',
+    allTodo: 'Praneškite Claude – tikėtina, kad sustojo kasdienis paleidimas.',
+    proxyT: 'Luminor duomenų prieiga (proxy) neveikia',
+    proxyWhat: 'Luminor svetainė blokuoja automatinį skaitymą, todėl jos duomenys renkami per mokamą tarpinį serverį (proxy).',
+    proxyWhy: s => `Nuo ${s} prisijungti prie proxy nepavyksta – greičiausiai baigėsi prenumerata arba pasikeitė prisijungimo duomenys.`,
+    proxyImpact: 'Luminor II ir III pakopos vertės nebeatsinaujina; Luminor grąža ir vietos rodomos iki paskutinės gautos dienos.',
+    proxyTodo: '1) Prisijunkite prie proxy paslaugos paskyros ir patikrinkite, ar prenumerata galioja. 2) Jei atnaujinote prenumeratą ar gavote naujus prisijungimo duomenis – perduokite juos Claude (ar įrašykite projekto nustatymuose). 3) Jei nenorite mokėti – praneškite Claude: Luminor vertes tada galima įkelti rankiniu būdu.',
+    idxT: (n, d) => `Indeksas ${n}: iki ${d}`,
+    idxName: { MSCI_WORLD: 'MSCI World', MSCI_ACWI: 'MSCI ACWI', SP500: 'S&P 500 (eurais)', EUR_GOV7Y: 'Euro obligacijų (7 m.)' },
+    idxWhat: { MSCI_WORLD: 'Išsivysčiusių šalių akcijų indeksas (MSCI) – palyginimo linija grafikuose.', MSCI_ACWI: 'Viso pasaulio akcijų indeksas (MSCI) – palyginimo linija grafikuose ir KID scenarijų pagrindas.',
+               SP500: 'JAV akcijų indeksas S&P 500 su dividendais, perskaičiuotas eurais pagal ECB kursą (įprastai vėluoja 1–3 d.).', EUR_GOV7Y: 'Euro zonos AAA obligacijų indeksas iš ECB pajamingumo kreivės – naudojamas KID scenarijams.' },
+    idxImpact: 'Tik indekso palyginimo linija „Rezultatų“ grafikuose ir lentelėse baigiasi anksčiau. Fondų grąžoms, vietoms ir reitingams įtakos nėra.',
+    idxTodo: 'Nieko – galima ignoruoti. Sistema bando kasdien; jei sutrikimas ilgas, Claude pataisys rinkimą (matysite dienos ataskaitoje).',
+    estrWhat: 'Euro nerizikinga palūkanų norma (ECB) – naudojama tik Sharpe koeficientui.', estrImpact: 'Sharpe koeficientas skaičiuojamas su paskutine turima norma; skirtumas paprastai nežymus.',
+    cpiWhat: 'Lietuvos vartotojų kainų indeksas (Valstybės duomenų agentūra) – realiai (be infliacijos) grąžai.', cpiImpact: 'Reali grąža naujausiems mėnesiams skaičiuojama su paskutiniu paskelbtu indeksu.',
+    p3What: 'III pakopos fondų vieneto vertės (valdytojų svetainės).', p3Impact: 'III pakopos puslapis rodo vertes iki šios dienos.',
+    lbWhat: 'Lietuvos banko ketvirtinė ataskaita (skelbiama apie 3 mėn. po ketvirčio pabaigos); čia parsisiunčiama automatiškai kasdien.',
+    lbImpact: { pf: 'Puslapiuose „Portfeliai“ ir „Ataskaitos“ rodomas ankstesnis ketvirtis.', lbr: 'Ataskaitų lentelėse rizikingo turto dalis ir išlaidų rodikliai – ankstesnio ketvirčio.' },
+    lbTodo: 'Dažniausiai nieko – Lietuvos bankas dar nepaskelbė. Jei banko svetainėje failas jau yra (nuoroda žemiau), o čia per 2 d. neatsirado – praneškite Claude.',
+    srcTodo: 'Nieko – duomenys atsinaujins automatiškai, kai šaltinis paskelbs naujus.',
+    lateT: (n, d) => `${n}: duomenys iki ${d}`,
+    manT: n => `Priminimas: ${n}`, manWhat: f => `Šie duomenys atnaujinami rankiniu būdu (${f}).`,
+    manDue: d => `Atnaujinti iki ${d}.`, manOver: d => `Turėjo būti atnaujinta iki ${d}.`, manImpact: 'Kol neatnaujinta, svetainė naudoja ankstesnes reikšmes.',
+  },
+  en: {
+    lvl: { info: 'Can be ignored', wait: 'Waiting – nothing to do', act: 'Action needed' },
+    what: 'What it is', why: 'Why', impact: 'What it affects', todo: 'What to do', open: 'Open the source', hdr: 'Notices',
+    sum: (a, w) => [a ? `⚠ ${a} action needed` : '', w ? `${w} waiting` : ''].filter(Boolean).join(', '),
+    barMore: 'Details', barHide: 'Hide for today', owner: 'This is a task for the site maintainer; other visitors need not do anything.',
+    cause: { blocked: s => `The source rejects automated requests (since ${s}).`, auth: s => `Access to the source is not working (since ${s}).`,
+             network: s => `The source is unreachable (since ${s}); usually temporary.`, format: s => `The source page has probably changed – collection needs fixing (failing since ${s}).`,
+             other: s => `Automatic collection is failing (since ${s}).` },
+    navT: (p, d) => `${p}: values up to ${d}`,
+    navWhat: p => `${p} pillar II unit values. The manager publishes them on its website every business day (for the previous day), usually in the afternoon; they are collected here automatically every 30 min.`,
+    navWait: 'The manager has not published the new value yet or it has not been collected – normal until evening.',
+    navImpact: (p, d) => `${p} returns run to ${d}, other managers’ to a newer day, so today’s comparisons with ${p} are slightly off. Other data are not affected.`,
+    navTodoWait: 'Nothing – the system will retry automatically.',
+    navTodoAct: p => `Check whether the value is published on the ${p} website (link below). If it is, but not here – tell Claude: the collection needs fixing.`,
+    allT: d => `All managers: values up to ${d}`,
+    allWhat: 'No new values from any manager for several business days – the automatic collection has probably stopped.',
+    allImpact: 'All returns and comparisons are shown up to this day.',
+    allTodo: 'Tell Claude – the daily run has probably stopped.',
+    proxyT: 'Luminor data access (proxy) is not working',
+    proxyWhat: 'The Luminor website blocks automated reading, so its data are collected through a paid intermediary server (proxy).',
+    proxyWhy: s => `Since ${s} the proxy login fails – most likely the subscription expired or the login details changed.`,
+    proxyImpact: 'Luminor pillar II and III values no longer update; Luminor returns and ranks are shown up to the last day received.',
+    proxyTodo: '1) Log in to the proxy service account and check the subscription. 2) If you renewed it or got new login details – pass them to Claude (or enter them in the project settings). 3) If you do not want to pay – tell Claude: Luminor values can then be uploaded manually.',
+    idxT: (n, d) => `Index ${n}: up to ${d}`,
+    idxName: { MSCI_WORLD: 'MSCI World', MSCI_ACWI: 'MSCI ACWI', SP500: 'S&P 500 (in EUR)', EUR_GOV7Y: 'Euro bonds (7y)' },
+    idxWhat: { MSCI_WORLD: 'Developed-market equity index (MSCI) – a comparison line on charts.', MSCI_ACWI: 'All-world equity index (MSCI) – a comparison line on charts and the base of the KID scenarios.',
+               SP500: 'US equity index S&P 500 with dividends, converted to euros at the ECB rate (normally 1–3 days behind).', EUR_GOV7Y: 'Euro-area AAA bond index from the ECB yield curve – used for KID scenarios.' },
+    idxImpact: 'Only the index comparison line on the Results charts and tables ends earlier. Fund returns, ranks and ratings are not affected.',
+    idxTodo: 'Nothing – can be ignored. The system retries daily; if the outage is long, Claude will fix the collection (you will see it in the daily report).',
+    estrWhat: 'Euro risk-free rate (ECB) – used only for the Sharpe ratio.', estrImpact: 'The Sharpe ratio uses the latest available rate; the difference is usually negligible.',
+    cpiWhat: 'Lithuanian consumer price index (State Data Agency) – for real (after-inflation) returns.', cpiImpact: 'Real returns for the newest months use the latest published index.',
+    p3What: 'Pillar III fund unit values (managers’ websites).', p3Impact: 'The pillar III page shows values up to this day.',
+    lbWhat: 'Bank of Lithuania quarterly report (published about 3 months after quarter end); downloaded here automatically every day.',
+    lbImpact: { pf: 'The Portfolios and Reports pages show the previous quarter.', lbr: 'Report tables show the previous quarter’s risky share and cost ratios.' },
+    lbTodo: 'Usually nothing – the Bank has not published it yet. If the file is already on the Bank’s website (link below) but does not appear here within 2 days – tell Claude.',
+    srcTodo: 'Nothing – the data will update automatically when the source publishes new ones.',
+    lateT: (n, d) => `${n}: data up to ${d}`,
+    manT: n => `Reminder: ${n}`, manWhat: f => `These data are updated manually (${f}).`,
+    manDue: d => `Update by ${d}.`, manOver: d => `Should have been updated by ${d}.`, manImpact: 'Until updated, the site uses the previous values.',
+  },
+};
+const NTH = () => NT[lang] || NT.lt;
+function noticesList() {
+  if (typeof FRESH === 'undefined') return [];
+  const n = NTH(), t = T(), today = srcToday(), st = FRESH.st || {}, out = [];
+  const why = k => { const s = st[k]; return s && s.err ? (n.cause[s.kind] || n.cause.other)(s.since || s.err) : ''; };
+  // 1. valdytojų vertės
+  const allLag = businessDaysBetween(FRESH.top, today);
+  if (allLag >= 3) out.push({ id: 'nav-all', lvl: 'act', title: n.allT(iso(FRESH.top)), what: n.allWhat, impact: n.allImpact, todo: n.allTodo, owner: true });
+  FRESH.providers.forEach(p => {
+    const lag = businessDaysBetween(p.d, FRESH.top); if (!lag) return;
+    const w = why(`nav.${p.id}`), proxyDown = p.id === 'LUMINOR' && st.proxy && st.proxy.err && st.proxy.kind === 'auth';
+    const lvl = proxyDown ? 'act' : (lag >= 2 || (w && st[`nav.${p.id}`].kind === 'format')) ? 'act' : 'wait';
+    out.push({ id: `nav-${p.id}`, lvl, title: n.navT(p.label, iso(p.d)), what: n.navWhat(p.label), why: proxyDown ? n.proxyWhy(st.proxy.since || st.proxy.err) : (w || n.navWait),
+      impact: n.navImpact(p.label, iso(p.d)), todo: lvl === 'act' ? n.navTodoAct(p.label) : n.navTodoWait, url: p.url, owner: lvl === 'act' });
+  });
+  // 2. Luminor proxy – net jei Luminor dar nevėluoja (pvz. šiandien vertė gauta be proxy)
+  if (st.proxy && st.proxy.err && st.proxy.kind === 'auth' && !out.some(x => x.id === 'nav-LUMINOR'))
+    out.push({ id: 'proxy', lvl: 'act', title: n.proxyT, what: n.proxyWhat, why: n.proxyWhy(st.proxy.since || st.proxy.err), impact: n.proxyImpact, todo: n.proxyTodo, owner: true });
+  else if (st.proxy && st.proxy.err && st.proxy.kind === 'auth') { const x = out.find(x => x.id === 'nav-LUMINOR'); x.title = n.proxyT + ' · ' + x.title; x.todo = n.proxyTodo; x.what = n.proxyWhat; }
+  // 3. indeksai (kiekvienas atskirai; įprastas vėlavimas neberodomas)
+  const lim = { MSCI_WORLD: 3, MSCI_ACWI: 3, SP500: 5, EUR_GOV7Y: 4 };
+  Object.entries(FRESH.idx || {}).forEach(([k, d]) => {
+    if (businessDaysBetween(d, today) <= (lim[k] || 4)) return;
+    out.push({ id: `idx-${k}`, lvl: 'info', title: n.idxT(n.idxName[k] || k, iso(d)), what: n.idxWhat[k] || '', why: why(`idx.${k}`) || (k === 'SP500' ? why('idx.EURUSD') : ''),
+      impact: n.idxImpact, todo: n.idxTodo, url: (FRESH.urls || {}).idx });
+  });
+  // 4. kiti automatiniai šaltiniai, kurių naujų duomenų laukta anksčiau
+  const meta = { estr: [n.estrWhat, n.estrImpact, 'info', 'estr'], cpi: [n.cpiWhat, n.cpiImpact, 'info', 'cpi'], p3: [n.p3What, n.p3Impact, 'wait', ''],
+                 pf: [n.lbWhat, n.lbImpact.pf, 'wait', 'lb'], lbr: [n.lbWhat, n.lbImpact.lbr, 'wait', 'lb'] };
+  (FRESH.src || []).forEach(x => {
+    if (x.k === 'idx' || !x.next || today <= x.next || !meta[x.k]) return;
+    const [what, impact, lvl, sk] = meta[x.k], d = x.k === 'cpi' ? iso(x.d).slice(0, 7) : iso(x.d);
+    out.push({ id: `src-${x.k}`, lvl, title: n.lateT(t.srcK[x.k] || x.k, d), what, why: sk ? why(sk) : '', impact,
+      todo: sk === 'lb' ? n.lbTodo : n.srcTodo, url: (FRESH.urls || {})[x.k] });
+  });
+  // 5. rankiniai darbai: priminimai likus ≤ 21 d. ir pavėluoti
+  (FRESH.man || []).forEach(m => {
+    const over = today > m.next, L = lang === 'lt';
+    out.push({ id: `man-${m.id}`, lvl: over ? 'act' : 'info', title: n.manT(L ? m.lt : m.en), what: n.manWhat(L ? m.f_lt : m.f_en),
+      why: over ? n.manOver(iso(m.next)) : n.manDue(iso(m.next)), impact: n.manImpact, todo: L ? m.how_lt : m.how_en, url: m.url, owner: true });
+  });
+  const ord = { act: 0, wait: 1, info: 2 };
+  return out.sort((a, b) => ord[a.lvl] - ord[b.lvl]);
+}
+function noticesHTML(list) {
+  if (!list.length) return '';
+  const n = NTH(), ic = { act: '⚠', wait: '⏳', info: 'ℹ' };
+  return `<div class="ntc-list"><span class="fr-l">${n.hdr}</span>` + list.map(x => `<details class="ntc l-${x.lvl}" id="ntc-${hEsc(x.id)}"><summary><span class="ic">${ic[x.lvl]}</span><b>${hEsc(x.title)}</b> <span class="lv">${n.lvl[x.lvl]}</span></summary><dl>`
+    + `<dt>${n.what}</dt><dd>${hEsc(x.what)}</dd>` + (x.why ? `<dt>${n.why}</dt><dd>${hEsc(x.why)}</dd>` : '')
+    + `<dt>${n.impact}</dt><dd>${hEsc(x.impact)}</dd><dt>${n.todo}</dt><dd>${hEsc(x.todo)}${x.owner ? ` <span class="na">${n.owner}</span>` : ''}${x.url ? ` <a href="${hEsc(x.url)}" target="_blank" rel="noopener">${n.open} ↗</a>` : ''}</dd></dl></details>`).join('') + '</div>';
+}
+/* juosta virš puslapio: tik „reikia veiksmo“, kol nepaspausta „Šiandien nerodyti“ (atskirai kiekvienam pranešimui) */
+function noticeBar(list) {
+  const n = NTH(), key = 'ntcHide-' + new Date().toISOString().slice(0, 10);
+  let hidden = []; try { hidden = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
+  const show = list.filter(x => x.lvl === 'act' && !hidden.includes(x.id));
+  let bar = document.getElementById('ntcBar');
+  if (!show.length) { if (bar) bar.remove(); return; }
+  if (!bar) { bar = document.createElement('div'); bar.id = 'ntcBar'; bar.className = 'ntcbar'; bar.setAttribute('role', 'status'); const h = document.querySelector('header'); (h || document.body).after(bar); }
+  bar.innerHTML = `<span>⚠ ${show.map(x => hEsc(x.title)).join(' · ')}</span><button type="button" class="nb-more">${n.barMore}</button><button type="button" class="nb-hide">${n.barHide}</button>`;
+  bar.querySelector('.nb-more').onclick = () => {
+    const sb = document.getElementById('stBtn'), fr = document.getElementById('fresh');
+    if (fr) { fr.hidden = false; if (sb) sb.setAttribute('aria-expanded', 'true'); const d = document.getElementById('ntc-' + show[0].id); if (d) { d.open = true; d.scrollIntoView({ block: 'nearest' }); } }
+  };
+  bar.querySelector('.nb-hide').onclick = () => {
+    try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('ntcHide-') && k !== key) localStorage.removeItem(k); }
+      localStorage.setItem(key, JSON.stringify([...hidden, ...show.map(x => x.id)])); } catch (e) {}
+    bar.remove();
+  };
 }
 function freshnessHTML() {
   return `<span class="fr-l">${T().freshLbl}</span>` + FRESH.providers.map((p, i) => {
