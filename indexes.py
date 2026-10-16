@@ -165,12 +165,12 @@ def sp500_price(start):
     nepavykus – klaida su kiekvieno šaltinio priežastimi (matoma data/source_status.json)."""
     errs = []
     srcs = (("FRED", fund_links.FRED_SP500_CSV.format(start=start.isoformat()), parse_fred, {}),
-            ("Nasdaq", fund_links.NASDAQ_SPX_API.format(start=start.isoformat()), parse_nasdaq, {"Accept": "application/json", "Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}),
+            ("Nasdaq", fund_links.NASDAQ_SPX_API.format(start=start.isoformat(), end=date.today().isoformat()), parse_nasdaq, {"Accept": "application/json", "Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}),
             ("Stooq", fund_links.STOOQ_SPX_CSV.format(start=start.strftime("%Y%m%d")), parse_stooq, {}))
     for name, url, parse, hdr in srcs:
         try:
             req = urllib.request.Request(url, headers={**UA, **hdr})
-            with urllib.request.urlopen(req, timeout=40) as r:
+            with urllib.request.urlopen(req, timeout=90 if name == "FRED" else 40) as r:
                 raw = r.read()
             out = parse(raw)
             if len(out) >= 3:

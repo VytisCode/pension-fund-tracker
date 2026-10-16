@@ -44,7 +44,7 @@ MSCI_LEVELS_API = ("https://app2.msci.com/products/service/index/indexmaster/get
 YAHOO_CHART_API = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?period1={p1}&period2={p2}&interval=1d"
 # Atsarginis S&P 500 šaltinis, kai Yahoo (S&P 500 TR) neveikia: oficialus S&P 500 kainų indeksas (be dividendų)
 FRED_SP500_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500&cosd={start}"
-NASDAQ_SPX_API = "https://api.nasdaq.com/api/quote/SPX/historical?assetclass=index&fromdate={start}&limit=200"
+NASDAQ_SPX_API = "https://api.nasdaq.com/api/quote/SPX/historical?assetclass=index&fromdate={start}&todate={end}&limit=9999"
 STOOQ_SPX_CSV = "https://stooq.com/q/d/l/?s=%5Espx&i=d&d1={start}"
 ECB_EURUSD_API = "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod={start}"
 # Euro zonos AAA vyriausybės obligacijų 7 m. nulinės atkarpos (spot) pajamingumas, % (ECB pajamingumo kreivė, kasdien nuo 2004-09-06);
