@@ -82,10 +82,15 @@ def main() -> None:
             })
         groups.append({"id": gid, "label": label, "funds": items})
 
+    try:
+        mkt = market_index(groups)
+    except Exception as e:                  # rinkos indeksas – papildomas; jo klaida neturi sustabdyti svetainės
+        print("rinkos indeksas: nepavyko:", e); mkt = None
     payload = {
         "generated": datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M"),
         "providers": [{"id": pid, "label": label} for pid, label in PROVIDERS],
         "groups": groups,
+        "mkt": mkt,
         "rf": riskfree.current(),   # €STR Sharpe koeficientui (None, jei ECB nepasiekiamas ir nėra išsaugotos reikšmės)
         "rfm": riskfree.monthly(),  # €STR mėnesių vidurkiai – Sharpe naudoja laikotarpio vidutinę normą (None – tada paskutinė)
     }
@@ -131,6 +136,56 @@ def main() -> None:
 
 
 
+
+
+def market_index(groups: list) -> dict:
+    """Grupės (ir visos II pakopos gyvenimo ciklo rinkos) vidurkis, svertinis pagal turtą – kaip Estijos pensijų indeksas EPI
+    (savininkas 2026-10-16: idėjos iš pensionikeskus.ee). Kiekvieną dieną: r = Σ turtas(i, ankstesnė diena) × r(i) ÷ Σ turtas;
+    indeksas = 100 × Π(1 + r). Turtas – paskutinis žinomas (kasdienis arba LB ketvirčio pabaigos, data_aum); dienos, kai vertę
+    paskelbė mažiau nei pusė grupės fondų, praleidžiamos (pokytis skaičiuojamas iki kitos bendros dienos). {grupė | "all": {d0, dd, v}}"""
+    import aum
+    from bisect import bisect_right
+    A = {}
+    for f in aum.build()["funds"]:
+        if f.get("pl") == "II" and f.get("d") and f.get("a"):
+            A[(f["p"], f["g"])] = (f["d"], f["a"])
+    def at(series, d):                      # paskutinė reikšmė iki d imtinai
+        i = bisect_right(series[0], d) - 1
+        return series[1][i] if i >= 0 else None
+    def build(fs):
+        fs = [f for f in fs if len(f["d"]) > 1]
+        if len(fs) < 2:
+            return None
+        days = sorted({d for f in fs for d in f["d"]})
+        cnt = {}
+        for f in fs:
+            for d in f["d"]:
+                cnt[d] = cnt.get(d, 0) + 1
+        start = min(f["d"][0] for f in fs)
+        days = [d for d in days if d >= start and cnt[d] * 2 >= sum(1 for f in fs if f["d"][0] <= d)]
+        out_d, out_v, lvl = [days[0]], [100.0], 100.0
+        for d0, d1 in zip(days, days[1:]):
+            num_, den = 0.0, 0.0
+            for f in fs:
+                i0, i1 = bisect_right(f["d"], d0) - 1, bisect_right(f["d"], d1) - 1
+                if i0 < 0 or i1 <= i0 or d1 - f["d"][i1] > 5:
+                    continue
+                w = at(A[f["key"]], d0) if f["key"] in A else None
+                if not w:
+                    continue
+                num_ += w * (f["v"][i1] / f["v"][i0] - 1); den += w
+            if den:
+                lvl *= 1 + num_ / den
+            out_d.append(d1); out_v.append(round(lvl, 4))
+        return {"d0": out_d[0], "dd": [b - a for a, b in zip(out_d, out_d[1:])], "v": out_v}
+    res, allf = {}, []
+    for g in groups:
+        fs = [{"d": f["d"], "v": f["v"], "key": (f["provider"], g["id"])} for f in g["funds"]]
+        res[g["id"]] = build(fs)
+        if g["id"] != "turto":
+            allf += fs
+    res["all"] = build(allf)
+    return res
 
 def build_perf3(ver: dict) -> None:
     """III pakopa Rezultatuose (savininkas 2026-10-16): performance.html su data3.js – žr. perf.js PL3."""

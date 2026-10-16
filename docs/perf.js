@@ -213,7 +213,7 @@ function applyState(s) {
   if (typeof s.gx === 'boolean') P.gx = s.gx;
   if (typeof s.cpi === 'boolean') P.cpi = s.cpi;
   if (s.mref === '' || DATA.providers.some(p => p.id === s.mref)) P.mref = s.mref;
-  if (Array.isArray(s.idx)) P.idx = new Set(s.idx.filter(x => IDX_META[x]));
+  if (Array.isArray(s.idx)) P.idx = new Set(s.idx.filter(x => IDX_META[x] || x === 'GAVG'));
 }
 function loadHash() {
   const q = new URLSearchParams(location.hash.slice(1)); if (![...q.keys()].length) return;
@@ -625,6 +625,7 @@ function drawChart0() {
       if (pts.length > 1) series.push({ provider: 'CPI', label: T().cpiLine, color: '#b45309', dash: '1 3', points: pts });
     }
   }
+  if (P.view !== 'diff' && P.idx.has('GAVG') && grpAvg(g)) { const f = grpAvg(g), s = seriesOf(f, x0, x1); if (s && s.points.length > 1) series.push({ provider: f.provider, label: f.label, color: f.color, dash: f.dash, points: s.points }); }
   if (P.view !== 'diff') idxFunds().filter(f => P.idx.has(f.id)).forEach(f => {      // pasaulio akcijų indeksai – punktyrinės linijos
     const s = seriesOf(f, x0, x1); if (s && s.points.length > 1) series.push({ provider: f.provider, label: f.label, color: f.color, dash: f.dash, points: s.points });
   });
@@ -642,8 +643,16 @@ function drawChart0() {
   fin.innerHTML = narrow ? series.map(r => ({ r, v: r.points[r.points.length - 1][1] })).sort((a, b) => b.v - a.v).map(o => `<span><i style="background:${o.r.color || colorOf(o.r.provider)}"></i>${o.r.label || labelOf(o.r.provider)} <b>${pct(o.v, 1)}</b></span>`).join('') : '';
   $('evList').innerHTML = evs.map(e => `<li><span class="n">${e.n}</span><div><b>${iso(e.day)} · ${e.title}</b> – ${e.text} <span class="na">(${e.src.map(s => `<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`).join(', ')})</span></div></li>`).join('');
 }
+/* Grupės vidurkis, svertinis pagal turtą (kaip Estijos pensijų indeksas EPI): data.js „mkt“, skaičiuojama build_site.market_index */
+const GAVG_C = {};
+function grpAvg(g) {
+  if (!DATA.mkt || !DATA.mkt[g.id]) return null;
+  if (!GAVG_C[g.id]) { const x = DATA.mkt[g.id], d = [x.d0]; x.dd.forEach(v => d.push(d[d.length - 1] + v)); GAVG_C[g.id] = { provider: 'GAVG', id: 'GAVG', color: 'var(--text-2)', dash: '6 3 1 3', d, v: x.v }; }
+  const f = GAVG_C[g.id]; f.label = lang === 'lt' ? 'Grupės vidurkis (svertinis pagal turtą)' : 'Group average (asset-weighted)'; return f;
+}
 function renderIdxChips() {
-  $('idxChips').innerHTML = idxFunds().map(f => `<button type="button" class="chip" data-idx="${f.id}" aria-pressed="${P.idx.has(f.id)}"><span class="sw" style="background:${f.color}"></span>${f.label}</button>`).join('');
+  const ga = DATA.mkt ? `<button type="button" class="chip" data-idx="GAVG" aria-pressed="${P.idx.has('GAVG')}" title="${lang === 'lt' ? 'Visų grupės fondų grąža, pasverta pagal jų turtą (didesni fondai sveria daugiau) – kaip Estijos pensijų indeksas EPI' : 'Return of all funds in the group weighted by assets – like the Estonian pension index EPI'}"><span class="sw" style="background:var(--text-2)"></span>${lang === 'lt' ? 'Grupės vidurkis (svertinis)' : 'Group average (weighted)'}</button>` : '';
+  $('idxChips').innerHTML = ga + idxFunds().map(f => `<button type="button" class="chip" data-idx="${f.id}" aria-pressed="${P.idx.has(f.id)}"><span class="sw" style="background:${f.color}"></span>${f.label}</button>`).join('');
 }
 /* Indekso eilutė lentelėms: tie patys rodikliai, kaip fondų, bet „nuo pradžios“ – nuo anksčiausio grupės fondo pradžios */
 function idxStats(f, rng, start) {
@@ -654,7 +663,7 @@ function idxStats(f, rng, start) {
   return out;
 }
 const grpStart = g => Math.min(...g.funds.map(f => f.d[0]));
-const idxOf = pt => pt.g.id === 'turto' ? [] : idxFunds().filter(f => P.idx.has(f.id));     // turto išsaugojimo fondų su akcijomis nelyginame
+const idxOf = pt => [...(P.idx.has('GAVG') && grpAvg(pt.g) ? [grpAvg(pt.g)] : []), ...(pt.g.id === 'turto' ? [] : idxFunds().filter(f => P.idx.has(f.id)))];     // turto išsaugojimo fondų su akcijomis nelyginame
 const idxName = f => `<td class="name"><span class="sw" style="background:${f.color}"></span><i>${f.label}</i></td>`;
 const idxSince = (f, start) => { const ia = Math.max(0, lastOnOrBefore(f, start)); return { d: f.d.slice(ia), v: f.v.slice(ia) }; };
 function renderCoverage(gs, ALL) {

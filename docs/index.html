@@ -44,7 +44,7 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=9ea6d8d6"></script>
+<script src="data.js?v=1f56233a"></script>
 <script src="common.js?v=9e996fa1"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
@@ -150,6 +150,10 @@ function render() {
   const s = [t.s1(labelOf(L.id), pct(L.ytd), labelOf(W.id), pct(W.ytd))];
   if (c.byYW.length > 1) { const a = c.byYW[0], b = c.byYW[c.byYW.length - 1]; s.push(t.s1w(labelOf(a.id), pct(a.ytdW), labelOf(b.id), pct(b.ytdW))); }
   if (c.wAvg != null) s.push(t.s2(pctPlain(Math.abs(c.wAvg)), c.wAvg >= 0));
+  if (DATA.mkt && DATA.mkt.all) {           // visos rinkos indeksas, svertinis pagal turtą (kaip Estijos EPI)
+    const x = DATA.mkt.all, d = [x.d0]; x.dd.forEach(v => d.push(d[d.length - 1] + v)); const f = { d, v: x.v }, ia = lastOnOrBefore(f, c.anchor), ie = lastOnOrBefore(f, c.end);
+    if (ia >= 0 && ie > ia) { const r = (f.v[ie] / f.v[ia] - 1) * 100; s.push(lang === 'lt' ? `Visos rinkos indeksas (visi gyvenimo ciklo fondai, svertinis pagal turtą): <b>${pct(r)}</b>.` : `Whole-market index (all life-cycle funds, asset-weighted): <b>${pct(r)}</b>.`); }
+  }
   if (R) { const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd)); s.push(t.s3r(labelOf(R.id), d, k, c.byY.length)); }
   else if (c.tu.length) s.push(t.s3(labelOf(c.tu[0][0]), pct(c.tu[0][1])));
   $('say').innerHTML = s.map(x => `<p>${x}</p>`).join('');
