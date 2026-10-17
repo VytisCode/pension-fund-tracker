@@ -511,3 +511,69 @@ table.pgT td.pgz { color: var(--text-3); }
 .smt td.smc { cursor: pointer; } .smt td.smc:hover, .smt td.smc.on { outline: 2px solid var(--accent); outline-offset: -2px; }
 .smdet { margin-top: 12px; } .smdet h3 { font-size: 15px; margin: 6px 0 8px; }
 #altTable thead th { position: static !important; }
+
+/* ---------- Šoninis meniu (UI atnaujinimas 2026-10-17) ----------
+   Kompiuteryje (> 1000 px) – kairėje, suskleidžiamas iki ikonų juostos; turinys pasislenka pagal meniu plotį.
+   Planšetėje ir telefone – ištraukiamas mygtuku ☰ su uždengimu; uždarytas nepasiekiamas klaviatūra (visibility). */
+:root { --sidew: 236px; }
+:root.side-mini { --sidew: 64px; }
+.side { position: fixed; z-index: 30; top: 0; left: 0; bottom: 0; width: var(--sidew); display: flex; flex-direction: column; gap: 6px;
+  padding: 12px 10px; background: var(--card); border-right: 1px solid var(--line); overflow-y: auto; overflow-x: hidden; transition: width .2s ease, transform .2s ease, visibility .2s; }
+.side .nav { flex-direction: column; flex: 1; gap: 2px; }
+.side .nav > a { width: 100%; padding: 8px 12px; gap: 11px; font-size: 14.5px; border-radius: 9px; }
+.side .nav > a[aria-current="page"] { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: transparent; color: var(--text); box-shadow: inset 3px 0 0 var(--accent); }
+.side .nav a svg { width: 18px; height: 18px; }
+.side .nav .nav-about { margin: auto 0 0; }
+.side-sub { display: flex; flex-direction: column; margin: 0 0 6px 21px; padding-left: 12px; border-left: 1px solid var(--line); }
+.side .side-sub a { display: block; border: 0; font-size: 13.5px; color: var(--text-2); text-decoration: none; padding: 5px 10px; border-radius: 7px; white-space: nowrap; }
+.side-sub a:hover { background: var(--hover); color: var(--text); }
+.side .side-sub a[aria-current="page"] { color: var(--accent); font-weight: 600; background: none; }
+.side-tg { display: flex; align-items: center; gap: 11px; width: 100%; padding: 8px 12px; border: 0; border-radius: 9px; background: none; color: var(--text-3);
+  font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.side-tg:hover { background: var(--hover); color: var(--text); }
+.side-tg svg { flex: none; width: 18px; height: 18px; transition: transform .2s; }
+.side a:focus-visible, .side-tg:focus-visible, .menu-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.side-scrim { position: fixed; inset: 0; z-index: 29; background: rgba(0,0,0,.38); }
+.btn.menu-btn { display: none; }
+.vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (min-width: 1001px) {
+  body { padding-left: var(--sidew); transition: padding-left .2s ease; }
+  .side-scrim { display: none; }
+  .side-mini .side .nl, .side-mini .side-sub { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .side-mini .side .nav > a, .side-mini .side-tg { justify-content: center; padding-left: 0; padding-right: 0; }
+  .side-mini .side-tg svg { transform: rotate(180deg); }
+  html:not(.side-mini) .snav .subnav { display: none; }   /* skyriaus puslapiai matomi šoniniame meniu */
+}
+@media (max-width: 1000px) {
+  :root { --sidew: 264px; }
+  .btn.menu-btn { display: inline-flex; flex: none; }
+  .hrow { gap: 8px; } .hrow .brand { flex: 1 1 0; margin-right: auto; } .hrow .brand h1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .top-tools { gap: 6px; }
+  .side { transform: translateX(-100%); visibility: hidden; box-shadow: 0 0 32px rgba(0,0,0,.25); }
+  .side-open .side { transform: none; visibility: visible; }
+  .side-tg svg { transform: none; }
+}
+.snav:not(:has(> *)) { display: none; }
+@media print { .side, .side-scrim, .menu-btn { display: none !important; } body { padding-left: 0 !important; } }
+
+/* ---------- Būsenos: įkėlimo rėmeliai (skeleton), tuščia, klaida ---------- */
+.skel { display: grid; gap: 10px; padding: 6px 0; }
+.skel.kpis { display: grid; }
+.skrow { display: flex; gap: 14px; }
+.skb, .skchart, html:not(.booted) table:empty, html:not(.booted) .chart:empty {
+  display: block; height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--grid) 25%, var(--hover) 50%, var(--grid) 75%); background-size: 200% 100%; animation: skel 1.4s ease-in-out infinite; }
+.skel .kpi .skb + .skb { margin-top: 10px; height: 18px; }
+.skchart, html:not(.booted) .chart:empty { height: 260px; border-radius: 10px; }
+html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px; }
+@keyframes skel { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .skb, .skchart, html:not(.booted) table:empty, html:not(.booted) .chart:empty { animation: none; }
+  .side, .side-tg svg, body { transition: none !important; }
+}
+.state { display: flex; gap: 12px; align-items: flex-start; margin: 12px 0; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 10px; background: var(--card); color: var(--text-2); font-size: 13.5px; max-width: 640px; }
+.state svg { flex: none; color: var(--text-3); margin-top: 1px; }
+.state b { display: block; color: var(--text); font-weight: 600; margin-bottom: 2px; }
+.state span > span, .state div > span { display: block; }
+.state .btn { margin-top: 10px; }
+.state.st-error { border-style: solid; border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.state.st-error svg { color: var(--warn); }
+.chart > .state { position: absolute; inset: 40px auto auto 50%; transform: translateX(-50%); width: min(520px, calc(100% - 32px)); margin: 0; }

@@ -37,6 +37,16 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 - Fondų dalyvių skaičiai iš LB ataskaitų.
 
+## UI/UX atnaujinimas (savininko promptas 2026-10-17)
+Jau buvo: tamsusis režimas + jungiklis, skirtukai, KPI kortelės, paieška su katalogu, kasdienė puslapių patikra (`tools/smoke_test.py`).
+Atlikta 2026-10-17: suskleidžiamas šoninis meniu (savininkas pasirinko; `common.js` `sideUI`, ≤1000 px – ištraukiamas ☰, Esc, fokusas); bendri būsenų komponentai `showLoading` / `showError` / `stateHTML` (`common.js` „Būsenos“); tuščios lentelės ir grafikai, kol kraunasi – rėmeliai (CSS `html:not(.booted)`); tuščias grafikas – „nepasirinktas fondas“ / „laikotarpiui duomenų nėra“; Rinkos įžvalgos – klaida su „Bandyti dar kartą“ (anksčiau amžinai „Kraunama…“).
+Toliau (daryti pačiam, eilės tvarka):
+- Kiti vėliau kraunami failai (`rep.js` rep_daily/data_pf, `hy.js`, `choose.js` data_rep) – dabar klaida nutylima (`onerror = ok`); naudoti `showLoading`/`showError`.
+- Lentelė be eilučių po filtro – bendra būsena „filtras nieko nerado → atstatyti filtrą“ (`tableTools`).
+- Temos ir meniu būsena – į `<head>` (be blyksnio kraunant puslapį).
+- Klaviatūra: skirtukams `role=tablist` + rodyklės; fokuso žiedai visiems `.seg` mygtukams; kontrasto patikra (WCAG AA) abiem temoms.
+- Smoke testas: tikrinti šoninį meniu ir telefono plotį (be horizontalaus slinkimo).
+
 ## Eilė: savininko užduotys 2026-10-16
 
 - **Patikimumas (spragos po audito 2026-10-16)**: II/III pakopos vertės turi tik vieną šaltinį (valdytojo svetainė) – ieškoti antro (pvz. valdytojų mėnesinės ataskaitos, LB duomenys) bent istorijai patikrinti; MSCI – vienintelis adresas; S&P 500: Yahoo GitHub paleidimui grąžina 429; savininkas 2026-10-16 – indekso nekeisti (MSCI USA atmesta), ieškoti atsarginio šaltinio. Padaryta: pratęsimas pagal S&P 500 kainų indeksą (FRED, Stooq) + 1,3 % dividendai, pažymimas kaip apytikslis (build_site.sp500_tail); 2026-10-16 bandymai GitHub paleidime: FRED – baigiasi laukimo laikas, Nasdaq API – 400, Stooq – grąžina HTML (ne CSV); priežastys – `data/source_status.json` („idx.SP500_PR“). Toliau: pagal pilną Nasdaq klaidos tekstą pataisyti užklausą arba rasti kitą nemokamą šaltinį (bandyti per naršyklės žingsnį Playwright, kuris jau įdiegtas paleidime); EONIA (iki 2019-10) iš ECB negauta – patikrinti serijos raktą `FM/D.U2.EUR.4F.MM.EONIA.HSTA`.

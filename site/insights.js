@@ -84,7 +84,7 @@ function inLoad() {
   if (IN.loaded) return Promise.resolve();
   return new Promise((ok, no) => {
     const s = document.createElement('script'); s.src = 'data_aum.js?v=' + encodeURIComponent(JDATA.generated);
-    s.onload = () => { IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = no; document.head.appendChild(s);
+    s.onload = () => { IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = () => { s.remove(); no(); }; document.head.appendChild(s);
   });
 }
 const inLatest = () => Math.min(LAST, Math.max(...IN.F.map(f => f.d[f.d.length - 1])));
@@ -127,7 +127,8 @@ function renderInsights() {
   if (!box) return;
   document.getElementById('insTitle').innerHTML = `${X.title}${ik('ins')}<button type="button" class="btn xls ins-xls" title="Excel">⤓ ${X.xls}</button>`;
   document.getElementById('insLead').textContent = X.lead;
-  if (!IN.loaded) { box.innerHTML = `<p class="note">${X.loading}</p>`; inLoad().then(renderInsights).catch(() => {}); return; }
+  if (!IN.loaded) { showLoading(box, 'cards', 4); inLoad().then(renderInsights).catch(() => showError(box, renderInsights)); return; }   // nepavykus – klaida su „Bandyti dar kartą“
+  box.removeAttribute('aria-busy');
   const end = inEnd(), ys = []; for (let y = yearOf(end) - 1; y >= 2019; y--) ys.push(['y' + y, String(y)]);
   if (/^y\d{4}$/.test(IN.per) && !ys.some(([v]) => v === IN.per)) IN.per = 'ytd';     // pasirinkti metai vėlesni už „Iki“ datą
   const [a, b] = inRange(IN.per, end);

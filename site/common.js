@@ -12,7 +12,7 @@ const I18N = {
     thProvider: 'Manager', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
-    foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
+    foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', sideOpen: 'Open menu', sideClose: 'Close menu', sideCollapse: 'Collapse menu', sideExpand: 'Expand menu', stLoading: 'Loading data…', stErrT: 'Could not load the data', stErrW: 'The data file did not load (network glitch or the site is being updated). The rest of the page works.', stRetry: 'Try again', stNoSel: 'No funds selected', stNoSelW: 'Select at least one fund above to draw the chart.', stNoPer: 'No data for this period', stNoPerW: 'The selected funds did not exist yet in this period or values are not published. Choose a longer period or other dates.', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
     srcLbl: 'Other data:', srcLateLbl: 'overdue:', srcBy: d => `next by ${d}`, srcNext: d => `New data expected by ${d} (approximate)`, srcIrreg: 'Updated when the Bank of Lithuania publishes a new file',
     srcK: { p3: 'Pillar III', pf: 'LB portfolio reports', lbr: 'LB results report', fee2: 'LB fees (II)', fee3: 'LB fees (III)', idx: 'Indices', estr: '€STR', cpi: 'Inflation (CPI)' },
     freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
@@ -26,7 +26,7 @@ const I18N = {
     thProvider: 'Valdytojas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
-    foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
+    foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', sideOpen: 'Atidaryti meniu', sideClose: 'Uždaryti meniu', sideCollapse: 'Suskleisti meniu', sideExpand: 'Išskleisti meniu', stLoading: 'Kraunami duomenys…', stErrT: 'Duomenų įkelti nepavyko', stErrW: 'Duomenų failas neatsisiuntė (ryšio sutrikimas arba svetainė tuo metu atnaujinama). Kita puslapio dalis veikia.', stRetry: 'Bandyti dar kartą', stNoSel: 'Nepasirinktas nė vienas fondas', stNoSelW: 'Pažymėkite bent vieną fondą virš grafiko.', stNoPer: 'Šiam laikotarpiui duomenų nėra', stNoPerW: 'Pasirinkti fondai tuo metu dar neveikė arba vertės neskelbtos. Pasirinkite ilgesnį laikotarpį arba kitas datas.', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
     srcLbl: 'Kiti duomenys:', srcLateLbl: 'vėluoja:', srcBy: d => `naujų laukiama iki ${d}`, srcNext: d => `Naujų duomenų laukiama iki ${d} (apytiksliai)`, srcIrreg: 'Atnaujinama, kai Lietuvos bankas paskelbia naują failą',
     srcK: { p3: 'III pakopa', pf: 'LB portfelių ataskaitos', lbr: 'LB rezultatų ataskaita', fee2: 'LB mokesčiai (II)', fee3: 'LB mokesčiai (III)', idx: 'Indeksai', estr: '€STR', cpi: 'Infliacija (VKI)' },
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
@@ -80,13 +80,44 @@ const navKey = p => 'nav' + p[0].toUpperCase() + p.slice(1);
 const svgI = (body, s = 16) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
 const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+const MENU = '<path d="M4 6h16M4 12h16M4 18h16"/>', CHEV_L = '<path d="M15 6l-6 6 6 6"/>';
+/* Šoninio meniu elgsena: suskleidimas (kompiuteryje, įsimenamas), ištraukimas (≤ 1000 px), Esc ir fokusavimas klaviatūrai */
+const SIDE_MQ = matchMedia('(max-width: 1000px)');
+try { if (localStorage.getItem('side') === 'mini') document.documentElement.classList.add('side-mini'); } catch (e) {}
+function sideLabels() {
+  const t = T(), el = document.documentElement, tg = document.getElementById('sideTg'), mb = document.getElementById('menuBtn'); if (!tg) return;
+  const mini = el.classList.contains('side-mini') && !SIDE_MQ.matches, open = el.classList.contains('side-open');
+  tg.title = SIDE_MQ.matches ? t.sideClose : mini ? t.sideExpand : t.sideCollapse; tg.setAttribute('aria-label', tg.title);
+  tg.querySelector('.nl').textContent = SIDE_MQ.matches ? t.sideClose : t.sideCollapse;
+  tg.setAttribute('aria-expanded', SIDE_MQ.matches ? open : !mini);
+  if (mb) { mb.title = t.sideOpen; mb.setAttribute('aria-label', t.sideOpen); mb.setAttribute('aria-expanded', open); }
+  document.getElementById('side').querySelectorAll('.nav a[data-s]').forEach(a => a.title = mini ? (t.secNav[a.dataset.s] || '') : '');
+}
+function sideUI(side, scrim) {
+  const el = document.documentElement, mb = () => document.getElementById('menuBtn');
+  const setOpen = (on, focus) => {
+    el.classList.toggle('side-open', on); scrim.hidden = !on; sideLabels();
+    if (on && focus) (side.querySelector('.nav [aria-current]') || side.querySelector('a')).focus();
+    if (!on && focus && mb()) mb().focus();
+  };
+  document.getElementById('sideTg').addEventListener('click', () => {
+    if (SIDE_MQ.matches) return setOpen(false, true);
+    const mini = el.classList.toggle('side-mini');
+    try { localStorage.setItem('side', mini ? 'mini' : 'full'); } catch (e) {}
+    sideLabels(); setTimeout(() => { window.dispatchEvent(new Event('resize')); if (typeof fitSticky === 'function') fitSticky(); }, 220);   // grafikai ir lentelės – pagal naują plotį
+  });
+  mb().addEventListener('click', () => setOpen(!el.classList.contains('side-open'), true));
+  scrim.addEventListener('click', () => setOpen(false, true));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && el.classList.contains('side-open')) setOpen(false, true); });
+  SIDE_MQ.addEventListener('change', () => setOpen(false, false));
+}
 
 /* Antraštė (auditas #41): ženkliukas ir pavadinimas, šviežumo eilutė, lipni navigacija vienoje eilutėje su ikonomis,
    įrankiai – „⋯ Įrankiai“ meniu, kalba ir tema – ikonos kampe. onLang – iš naujo nupiešia puslapį. */
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   document.body.dataset.page = active;
-  h.innerHTML = `<div class="hrow"><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1></a>
+  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1></a>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
@@ -96,13 +127,23 @@ function renderHeader(active, onLang) {
       <button class="btn ico" type="button" id="lang"></button><button class="btn ico" type="button" id="theme"></button></div></div>
     <div class="status"><button type="button" class="stbtn" id="stBtn" aria-expanded="false"></button><span class="sub" id="sub"></span></div>
     <div class="fresh" id="fresh" hidden></div>`;
+  /* Šoninis meniu (UI atnaujinimas 2026-10-17): kompiuteryje – kairėje, suskleidžiamas iki ikonų juostos (įsimenama);
+     planšetėje ir telefone – ištraukiamas mygtuku ☰. Viršuje lieka lipni juosta su skyriaus puslapiais ir skirtukais. */
   const nav = document.createElement('nav');
   nav.className = 'snav'; nav.id = 'snav';
   const sec = SECTIONS.find(s => s.pages.includes(active));
-  nav.innerHTML = `<div class="nav">${SECTIONS.map(s => `<a href="${s.pages[0]}.html" data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`).join('')}`
-    + `<a href="apie.html" data-s="about" class="nav-about">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`
-    + (sec && sec.pages.length > 1 ? `<div class="subnav">${sec.pages.filter(p => p !== 'ops' || active === 'ops').map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '');   // Duomenų kalendorius – įrankių meniu (kolegoms nereikalingas)
+  const subs = s => s.pages.filter(p => p !== 'ops' || active === 'ops');   // Duomenų kalendorius – įrankių meniu (kolegoms nereikalingas)
+  nav.innerHTML = sec && sec.pages.length > 1 ? `<div class="subnav">${subs(sec).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '';
   h.after(nav);
+  const side = document.createElement('aside');
+  side.className = 'side'; side.id = 'side';
+  side.innerHTML = `<button class="side-tg" type="button" id="sideTg" aria-controls="side">${svgI(CHEV_L)}<span class="nl"></span></button>`
+    + `<div class="nav">${SECTIONS.map(s => `<a href="${s.pages[0]}.html" data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`
+      + (s === sec && s.pages.length > 1 ? `<div class="side-sub">${subs(s).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '')).join('')}`
+    + `<a href="apie.html" data-s="about" class="nav-about">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`;
+  const scrim = document.createElement('div'); scrim.className = 'side-scrim'; scrim.hidden = true;
+  document.body.prepend(side, scrim);
+  sideUI(side, scrim);
   const acts = document.getElementById('actions');
   if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
   /* Spausdinimas (auditas #51): du dizainai – jaukus (kaip ekrane) ir baltas (prezentacijoms); antraštė su data ir šaltiniais */
@@ -128,11 +169,12 @@ function renderHeader(active, onLang) {
     const tb = document.getElementById('theme'), dark = isDark();
     tb.innerHTML = svgI(dark ? SUN : MOON); tb.title = dark ? t.themeLight : t.themeDark; tb.setAttribute('aria-label', tb.title);
     nav.setAttribute('aria-label', t.navLbl);
-    nav.querySelectorAll('.nav a').forEach(a => {
+    sideLabels();
+    side.querySelectorAll('.nav a[data-s]').forEach(a => {
       a.querySelector('.nl').textContent = t.secNav[a.dataset.s]; a.title = t.secNav[a.dataset.s];
       if ((sec && a.dataset.s === sec.id) || (active === 'apie' && a.dataset.s === 'about')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
-    nav.querySelectorAll('.subnav a').forEach(a => {
+    document.querySelectorAll('.subnav a, .side-sub a').forEach(a => {
       a.textContent = t.subNav[a.dataset.p];
       if (a.dataset.p === active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
@@ -166,10 +208,9 @@ function renderHeader(active, onLang) {
     s.onload = freshRender; document.head.append(s);
   }
   apply();
-  const act = nav.querySelector('[aria-current]');
-  const row = nav.querySelector('.nav');
-  if (act && row.scrollWidth > row.clientWidth) row.scrollLeft = act.offsetLeft - 16;   // telefone aktyvus puslapis matomas
-  row.addEventListener('scroll', () => scrollEdges(row), { passive: true }); scrollEdges(row);
+  const row = nav.querySelector('.subnav');
+  if (row) { const act = row.querySelector('[aria-current]'); if (act && row.scrollWidth > row.clientWidth) row.scrollLeft = act.offsetLeft - 16;   // telefone aktyvus puslapis matomas
+    row.addEventListener('scroll', () => scrollEdges(row), { passive: true }); scrollEdges(row); }
   searchUI(); goTo();
   return apply;
 }
@@ -559,6 +600,28 @@ function anchorFor(per, end, funds) {
   }
 }
 
+/* ---------- Būsenos (UI atnaujinimas 2026-10-17): įkėlimas – rėmeliai, atkartojantys būsimą turinį (skeleton);
+   tuščia (pasirinkimas / laikotarpis be duomenų) ir klaida su „Bandyti dar kartą“. Visur vienodas vaizdas, kad nebūtų įspūdžio, jog sistema neveikia. ---------- */
+function skelHTML(kind = 'table', n = 6) {
+  const bar = w => `<span class="skb" style="width:${w}%"></span>`;
+  if (kind === 'cards') return `<div class="skel kpis" aria-hidden="true">${Array.from({ length: n }, () => `<div class="kpi">${bar(60)}${bar(40)}</div>`).join('')}</div>`;
+  if (kind === 'chart') return '<div class="skel skchart" aria-hidden="true"></div>';
+  return `<div class="skel" aria-hidden="true">${Array.from({ length: n }, (_, i) => `<div class="skrow">${bar(i ? 28 : 34)}${bar(14)}${bar(14)}${bar(14)}</div>`).join('')}</div>`;
+}
+function showLoading(box, kind, n) { box.setAttribute('aria-busy', 'true'); box.innerHTML = `<span class="vh">${T().stLoading}</span>` + skelHTML(kind, n); }
+function stateHTML(kind, title, why, retry) {   // kind: empty | error
+  const ico = kind === 'error' ? '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/>' : '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>';
+  return `<div class="state st-${kind}" role="${kind === 'error' ? 'alert' : 'status'}">${svgI(ico, 22)}<div><b>${title}</b>${why ? `<span>${why}</span>` : ''}`
+    + `${retry ? `<button class="btn" type="button" data-retry>${T().stRetry}</button>` : ''}</div></div>`;
+}
+function showError(box, retry) {
+  box.removeAttribute('aria-busy'); const t = T();
+  box.innerHTML = stateHTML('error', t.stErrT, t.stErrW, !!retry);
+  const b = box.querySelector('[data-retry]'); if (b) b.addEventListener('click', () => { showLoading(box); retry(); });
+}
+// Puslapio pradžia: tuščios lentelės ir grafikai rodomi kaip rėmeliai (CSS), kol puslapio skriptas jų neužpildo
+addEventListener('load', () => requestAnimationFrame(() => document.documentElement.classList.add('booted')));
+
 /* ---------- linijinė diagrama ----------
    series: [{ provider, points: [[diena, grąža %], ...] }] */
 function niceTicks(min, max, n = 5) {
@@ -569,10 +632,10 @@ function niceTicks(min, max, n = 5) {
 }
 function drawLineChart(el, series, x0, x1, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
-  series = series.filter(r => r.points.length > 1);
+  const nIn = series.length; series = series.filter(r => r.points.length > 1);
   const W = opts.width || el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
   const wide = W > 560, m = { l: opts.ml ?? 46, r: opts.mr ?? 16, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
-  if (!series.length || x1 <= x0) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return null; }
+  if (!series.length || x1 <= x0) { const t = T(), none = !nIn; el.insertAdjacentHTML('beforeend', `<p class="na state st-empty" role="status">${svgI('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', 22)}<span><b>${none ? t.stNoSel : t.stNoPer}</b><span>${none ? t.stNoSelW : t.stNoPerW}</span></span></p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
   el._legend = series.map(r => { let l = ''; try { l = sLab(r); } catch (e) {} return { c: sCol(r), l, d: r.dash || '' }; }).filter(x => x.l);   // PNG legendai (chartPng)
