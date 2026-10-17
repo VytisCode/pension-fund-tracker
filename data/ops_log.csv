@@ -143,3 +143,6 @@ ts,src,ev,dd,n,msg
 2026-10-16T16:03,idx.SP500,new,2026-10-15,5,
 2026-10-16T16:03,idx.SP500,ok,,,vėl veikia
 2026-10-16T16:03,idx.SP500_PR,ok,,,vėl veikia
+2026-10-17T08:48,idx.MSCI_ACWI,new,2026-10-16,1,
+2026-10-17T08:48,idx.MSCI_WORLD,new,2026-10-16,1,
+2026-10-17T08:48,idx.SP500,new,2026-10-16,1,
