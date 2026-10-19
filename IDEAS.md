@@ -35,7 +35,7 @@ Audito #3, #4, #13 (stulpelio „Sodra €“ neslėpti), #29, #33, #35, #37, #4
 
 - Ataskaitos: SFDR dar nežinomas ~40 mažesnių fondų (daugiausia Baltijos privataus kapitalo / NT) – papildyti `data/fund_attributes.csv`, kai bus šaltinis.
 
-- Fondų dalyvių skaičiai iš LB ataskaitų – **duomenys yra** (2026-10-19: savininkas atsiuntė 93 LB rezultatų failus 2015–2026, `lb_history.py` → `data/lb_results_history.csv`, atnaujinama automatiškai kas ketvirtį). Toliau: rodinys svetainėje (dalyviai pagal valdytoją / fondą / grupę, rinkos dalis pagal dalyvius, vidutinis turtas dalyviui) ir LIPFA faktų kortelės. Trūksta tik II pakopos 2015-06-30 failo.
+- Fondų dalyvių skaičiai iš LB ataskaitų – **duomenys yra** (2026-10-19: savininkas atsiuntė 93 LB rezultatų failus 2015–2026, `lb_history.py` → `data/lb_results_history.csv`, atnaujinama automatiškai kas ketvirtį). **Padaryta 2026-10-19:** Pradžios puslapis perdarytas (savininko prašymu – „LIPFA ir visai rinkai“): skirtukai Šiandien, Ketvirčio faktai (kopijuojami sakiniai su šaltiniu, paryškinamas valdytojas), Rinka laike, Valdytojai, Fondai pagal grupes. II pakopos 2015-06-30 failo nėra – LB klaida (nuoroda atidaro III pakopos failą), lieka tuščia. Toliau galima: tarptautiniai palyginimai (OECD), vietinės investicijos, faktai iš kasdienių duomenų (mėnesio grąža).
 
 ## UI/UX atnaujinimas (savininko promptas 2026-10-17)
 Jau buvo: tamsusis režimas + jungiklis, skirtukai, KPI kortelės, paieška su katalogu, kasdienė puslapių patikra (`tools/smoke_test.py`).

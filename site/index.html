@@ -36,22 +36,82 @@
   .gtile { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; color: var(--text); text-decoration: none; }
   .gtile:hover { border-color: var(--accent); } .gtile b { display: block; font-size: 15px; margin-bottom: 4px; } .gtile span { color: var(--text-2); font-size: 13px; line-height: 1.45; }
   .glist i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+  h2.sec { margin: 6px 0 0; font-size: 19px; }
+  p.lead { color: var(--text-2); font-size: 13.5px; margin: 0; max-width: 920px; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .fact { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: var(--card); }
+  .fact.hl { border-color: var(--accent); }
+  .fact .fh { color: var(--text-3); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  .fact p { margin: 0; font-size: 14.5px; line-height: 1.45; }
+  .fact small { color: var(--text-3); font-size: 11.5px; line-height: 1.4; }
+  .fact .btn { align-self: flex-start; margin-top: auto; }
+  .factbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+  table.at { font-size: 13px; }
+  table.at th { white-space: normal; vertical-align: bottom; }
+  table.at td, table.at th { text-align: right; font-variant-numeric: tabular-nums; }
+  table.at td.l, table.at th.l { text-align: left; }
+  table.at tr.tot td { border-top: 2px solid var(--line); font-weight: 700; }
+  table.at tr.hl td, table.at tr.cur td { background: var(--hover); font-weight: 600; }
+  table.at .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+  .up { color: var(--s5); } .down { color: #d0453f; }
+  h3.gh { font-size: 15px; margin: 16px 0 6px; } h3.gh:first-child { margin-top: 0; }
+  #mkSeg, #mgSeg { margin-bottom: 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header id="top"></header>
-  <main class="today">
+  <main>
+  <div data-tab="td" class="today">
+    <h2 class="sec" id="tdTitle"></h2>
     <div class="refrow"><div class="seg" id="per" role="group"></div><span class="note" id="perN"></span><span style="flex:1"></span><label for="ref" id="refL"></label><select id="ref"></select><span class="note" id="refN"></span></div>
     <div class="big" id="big"></div>
     <section class="card says" data-src="nav"><h2 id="sayH"></h2><div id="say"></div></section>
     <section class="card" data-src="nav"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
     <section class="guide"><h2 id="guH"></h2><div class="gtiles" id="guT"></div><p class="note" id="guN"></p></section>
+  </div>
+
+  <div data-tab="qf" class="today">
+    <h2 class="sec" id="qfTitle"></h2>
+    <p class="lead" id="qfLead"></p>
+    <div id="qfBar"></div>
+    <div class="kpis" id="qfKpis"></div>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" id="qfAll"></button></div><div class="facts" id="qfCards"></div></section>
+    <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="qfTable"></table></div><p class="note" id="qfNote"></p></section>
+  </div>
+
+  <div data-tab="mk" class="today">
+    <h2 class="sec" id="mkTitle"></h2>
+    <p class="lead" id="mkLead"></p>
+    <div id="mkBar"></div>
+    <section class="card" data-src="lbh"><div class="seg" id="mkSeg" role="group"></div><div class="chart" id="mkChart"></div>
+      <div class="scroll" style="margin-top:10px"><table class="at" id="mkTable"></table></div><p class="note" id="mkGainN"></p><p class="note" id="mkNote"></p></section>
+    <h2 class="sec" id="gpTitle"></h2>
+    <p class="lead" id="gpLead"></p>
+    <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="gpTable"></table></div></section>
+  </div>
+
+  <div data-tab="mg" class="today">
+    <h2 class="sec" id="mgTitle"></h2>
+    <p class="lead" id="mgLead"></p>
+    <div id="mgBar"></div>
+    <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="mgT"></table></div><p class="note" id="mgNote"></p></section>
+    <section class="card" data-src="lbh"><h2 id="mgChart"></h2><div class="seg" id="mgSeg" role="group"></div><div class="chart" id="mgChartBox"></div><div class="legend chips" id="mgLegend" style="margin-top:6px"></div></section>
+  </div>
+
+  <div data-tab="fd" class="today">
+    <h2 class="sec" id="fdTitle"></h2>
+    <p class="lead" id="fdLead"></p>
+    <div id="fdBar"></div>
+    <section class="card" data-src="lbh"><div id="fdTables"></div><p class="note" id="fdNote"></p></section>
+  </div>
   </main>
   <footer id="foot"></footer>
 </div>
 <script src="data.js"></script>
 <script src="common.js"></script>
+<script src="data_mkt.js"></script>
+<script src="mkt.js"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
@@ -206,8 +266,8 @@ XLB.set('gT', async () => {
     meth: [[L ? 'Laikotarpis' : 'Period', L ? 'Pradžia – paskutinė vertė prieš laikotarpį (dieną, savaitę, mėnesį, ketvirtį ar metus atgal nuo grupės paskutinės dienos); fondai, neatnaujinę duomenų > 5 d., neįtraukiami.' : 'Start – last value before the period (a day, week, month, quarter or year back from the group’s latest day); funds more than 5 days behind are excluded.'],
       [L ? 'Lyderis ir paskutinis' : 'Leader and last', L ? 'MAX ir MIN eilutėje; pavadinimas – INDEX(MATCH) iš antraštės; skirtumas – (MAX − MIN) × 100, procentiniais punktais.' : 'MAX and MIN of the row; name – INDEX(MATCH) from the header; gap – (MAX − MIN) × 100, percentage points.']] });
 });
-renderHeader('index', render);
-render();
+renderHeader('index', () => { render(); mkRender(); mkTabs(); });
+render(); mkRender(); mkTabs();
 </script>
 </body>
 </html>

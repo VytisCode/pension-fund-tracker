@@ -24,7 +24,7 @@ import source_status  # noqa: E402
 DOCS = ROOT / "docs"
 # puslapis -> [(CSS selektorius, mažiausias eilučių / elementų skaičius)]
 CHECKS = {
-    "index.html": [("#gT tbody tr", 7)],
+    "index.html": [("#gT tbody tr", 7), ("#mgT tbody tr", 5), ("#qfTable tbody tr", 6)],
     "review.html": [],
     "performance.html": [("#tRet tbody tr", 8), ("#tOv tbody tr", 5)],
     "performance3.html": [("#tSum tbody tr", 3)],

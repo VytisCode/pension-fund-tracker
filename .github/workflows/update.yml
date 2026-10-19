@@ -130,7 +130,7 @@ jobs:
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv \
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv data/lb_results_history.csv \
              && [ -z "$(git status --porcelain -- imports/lb_results imports/lb_portfolios imports/lb_fees)" ]; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else

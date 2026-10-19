@@ -119,6 +119,7 @@ def main() -> None:
             text = text.replace('src="data_src.js"', f'src="data_src.js?v={hashlib.md5((DOCS / "data_src.js").read_bytes()).hexdigest()[:8]}"')
         (DOCS / page).write_text(text, encoding="utf-8")
     print(f"docs/data.js: {len(data_js) / 1024:.0f} KB, grupių: {len(groups)}, fondų: {sum(len(g['funds']) for g in groups)}")
+    build_market()
     build_pillar3(ver)
     build_perf3(ver)
     build_portfolios(ver)
@@ -679,6 +680,21 @@ def build_search_index() -> None:
         out.append(["s", full or name, s[1], sorted(h["p"]), round(h["w"], 1), f"portfolios.html#pos={si}", kw])
     (DOCS / "data_search.js").write_text("var QIDX=" + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     print(f"docs/data_search.js: {len(out)} įrašų")
+
+
+def build_market() -> None:
+    """Pradžios puslapio rinkos dalis: docs/data_mkt.js (žr. market.py) + site/mkt.js; versijos įrašomos į docs/index.html."""
+    import market
+
+    payload = market.build()
+    data_js = "const MKT=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data_mkt.js").write_text(data_js, encoding="utf-8")
+    shutil.copyfile(SITE / "mkt.js", DOCS / "mkt.js")
+    text = (DOCS / "index.html").read_text(encoding="utf-8")
+    for n in ("data_mkt.js", "mkt.js"):
+        text = text.replace(f'src="{n}"', f'src="{n}?v={hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]}"')
+    (DOCS / "index.html").write_text(text, encoding="utf-8")
+    print(f"docs/data_mkt.js: {len(data_js) / 1024:.0f} KB, II ketv.: {len(payload['II']['dates'])}, III ketv.: {len(payload['III']['dates'])}")
 
 
 def build_aum(ver: dict) -> None:
