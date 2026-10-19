@@ -55,7 +55,12 @@
   #p23Bar .seg { display: none; }
   .fact .fmore summary { cursor: pointer; color: var(--accent); font-size: 13px; }
   .fact .fmore[open] { margin-bottom: 4px; }
-  .fact .fmore .fch { margin-top: 8px; }
+  .fact .fmore .fch { margin-top: 4px; }
+  .fact .fctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0 4px; font-size: 13px; }
+  .fact .fct { font-size: 15px; margin: 8px 0 0; padding: 2px 4px; border-radius: 4px; outline: none; }
+  .fact .fct:hover, .fact .fct:focus { background: var(--line); }
+  .fact .fleg .chip { cursor: pointer; font: inherit; }
+  .fact .fleg .chip.off { opacity: .4; text-decoration: line-through; }
   .fact .fmore .fnum { font-size: 12.5px; margin-top: 6px; }
   .fact .fsub { margin-top: 6px; font-size: 13px; }
   .fact .fsub summary { cursor: pointer; }
@@ -141,10 +146,12 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=3d3d84f3"></script>
+<script src="data.js?v=e0172679"></script>
 <script src="common.js?v=58b9e7e6"></script>
+<script src="data_cpi.js?v=870ec578"></script>
+<script src="data_journey.js"></script>
 <script src="data_mkt.js?v=bc1519ab"></script>
-<script src="mkt.js?v=e80c491d"></script>
+<script src="mkt.js?v=c57b0378"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
