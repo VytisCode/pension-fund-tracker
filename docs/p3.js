@@ -95,7 +95,7 @@ try {
 function saveCards() { try { const o = {}; Object.keys(CS).forEach(k => { o[k] = { provs: [...CS[k].provs], start: CS[k].start, events: CS[k].events }; }); localStorage.setItem('p3cards', JSON.stringify(o)); } catch (e) {} }
 
 const shortName = l => l.replace('Pensijos fondas ', '').replace(' (apriboto nutraukimo)', ' (apr.)').replace('pensija ', '').replace('Luminor ateitis ', 'Luminor ').replace('Ambicingas ', 'Amb. ');
-const HM_PERIODS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', '10y'];
+const HM_PERIODS = ['1d', '1w', '1m', '3m', '6m', 'ytd', '1y', '3y', '5y', '10y'];
 const ALL_EVENTS = () => EVENTS.map(e => ({ day: dayOf(e.day), title: e[lang].t, text: e[lang].d, src: e.src })).sort((a, b) => a.day - b.day).map((e, i) => ({ ...e, n: i + 1 }));
 
 // bendra pradžia – jauniausio pasirinkto fondo pradžia, neskaičiuojant fondų, jaunesnių nei 1 metai (auditas #8)

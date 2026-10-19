@@ -17,7 +17,7 @@ const I18N = {
     srcK: { p3: 'Pillar III', pf: 'LB portfolio reports', lbr: 'LB results report', fee2: 'LB fees (II)', fee3: 'LB fees (III)', idx: 'Indices', estr: '€STR', cpi: 'Inflation (CPI)' },
     freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
     chartLabel: 'Return over the selected period', born: 'Born', turto: 'Payout',
-    periods: { '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
+    periods: { '1d': '1 day', '1w': '1 wk', '1m': '1 mo', '3m': '3 mo', '6m': '6 mo', ytd: 'YTD', '1y': '1 yr', '3y': '3 yr', '5y': '5 yr', max: 'All history', custom: 'Custom' },
   },
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
@@ -31,7 +31,7 @@ const I18N = {
     srcK: { p3: 'III pakopa', pf: 'LB portfelių ataskaitos', lbr: 'LB rezultatų ataskaita', fee2: 'LB mokesčiai (II)', fee3: 'LB mokesčiai (III)', idx: 'Indeksai', estr: '€STR', cpi: 'Infliacija (VKI)' },
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
     chartLabel: 'Grąžos kitimas pasirinktu laikotarpiu', born: 'Gimę', turto: 'Turto išsaugojimo',
-    periods: { '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
+    periods: { '1d': '1 d.', '1w': '1 sav.', '1m': '1 mėn.', '3m': '3 mėn.', '6m': '6 mėn.', ytd: 'Šie metai', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', max: 'Visa istorija', custom: 'Pasirinktas' },
   },
 };
 function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt, lt); }
@@ -589,6 +589,10 @@ function groupEnd(group) {                  // bendra paskutinė diena grupėje 
 function anchorFor(per, end, funds) {
   const e = new Date(end * DAY);
   switch (per) {
+    case '1d': {                                   // savininkas 2026-10-19: „1D, 1W mygtukai kaip profesionaliame investicijų puslapyje“ – ankstesnė duomenų diena
+      let a = -Infinity; (funds || []).forEach(f => { for (let i = f.d.length - 1; i >= 0; i--) if (f.d[i] < end) { if (f.d[i] > a) a = f.d[i]; break; } });
+      return isFinite(a) ? a : end - 1; }
+    case '1w': return end - 7;
     case '1m': return shiftMonths(end, 1);
     case '3m': return shiftMonths(end, 3);
     case '6m': return shiftMonths(end, 6);
@@ -853,7 +857,7 @@ function seriesOf(f, anchor, end) {
 
 
 /* ---------- bendra laikotarpių logika (rezultatų ir apžvalgos puslapiai) ---------- */
-const PRESET_IDS = ['1m', '3m', '6m', 'ytd', 'Q', '1y', 'Y', '3y', '5y', 'max'];   // Q ir Y – išskleidžiami sąrašai (ketvirtis „q:2026-3“, metai „y:2025“)
+const PRESET_IDS = ['1d', '1w', '1m', '3m', '6m', 'ytd', 'Q', '1y', 'Y', '3y', '5y', 'max'];   // Q ir Y – išskleidžiami sąrašai (ketvirtis „q:2026-3“, metai „y:2025“)
 const isCalPeriod = id => /^q:\d{4}-[1-4]$/.test(id) || /^y:\d{4}$/.test(id);
 const periodLabel = id => { let m; if ((m = /^q:(\d{4})-([1-4])$/.exec(id))) return `Q${m[2]} ${m[1]}`; if ((m = /^y:(\d{4})$/.exec(id))) return m[1]; return T().periods[id]; };
 const maxAnchorOf = funds => {                  // „Visa istorija“: nuo ankstyviausio fondo; pradėję ≤31 d. vėliau laikomi pradėjusiais kartu
