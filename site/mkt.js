@@ -428,6 +428,7 @@ function renderFacts() {
   factCards(document.getElementById('qfCards'), fs, t.qfTitle, MS.pl);
   document.getElementById('qfAll').textContent = t.copyAll;
   document.getElementById('qfXl').textContent = t.fx.xlAll;
+  const rb = document.getElementById('qfRev'); if (rb) { rb.textContent = t.rv.btn; rb.title = t.rv.btnT; }
   renderKeyTable();
 }
 function renderMgrCards() {
@@ -453,16 +454,21 @@ document.addEventListener('click', async e => {
   try { await mkFactBook(pick, ttl, pl); b.textContent = '✓'; } catch (err) { console.error(err); b.textContent = '!'; }
   setTimeout(() => { b.textContent = o; b.disabled = false; }, 1500);
 });
-function renderKeyTable() {
-  const t = T(), I = t.ind, pl = MS.pl, d = MS.d, ds = [d, qBack(d, 3), qBack(d, 12)].map(x => dIdx(pl, x));
+function keyData(pl, d) {                   // pagrindinių rodiklių lentelė (svetainėje ir ketvirčio apžvalgoje)
+  const t = T(), I = t.ind, ds = [d, qBack(d, 3), qBack(d, 12)].map(x => dIdx(pl, x));
   const vals = ds.map(di => { if (di < 0) return null; const T0 = totals(pl, di), A = avgOf(pl, di, -1), m = MKT[pl].dates[di].slice(5, 7);
     return { part: T0.part, nav: T0.nav, per: pl === 'II' && T0.part ? T0.nav * 1e6 / T0.part : null, ytd: A ? A[MA.ret_ytd] : null, r1: A ? A[MA.ret_1y] : null, qret: qRet(pl, di), gain: gainAt(pl, di), gainY: m === '03' ? null : gainYtd(pl, di), nf: T0.nf }; });
   const fm = { part: mInt, nav: v => num(v, 1), per: mInt, ytd: v => pct(v), r1: v => pct(v), qret: v => pct(v), gain: v => num(v, 1), gainY: v => num(v, 1), nf: mInt };
   const dv = (k, a, b) => a == null || b == null ? '–' : ['ytd', 'r1', 'qret'].includes(k) ? `${(a - b >= 0 ? '+' : '−') + num(Math.abs(a - b), 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : ['gain', 'gainY', 'nf'].includes(k) ? (a - b >= 0 ? '+' : '−') + num(Math.abs(a - b), k === 'nf' ? 0 : 1) : b ? pct((a / b - 1) * 100) : '–';
   const keys = Object.keys(I).filter(k => k !== 'per' || pl === 'II');
   const c = (k, i) => vals[i] == null || vals[i][k] == null ? '–' : fm[k](vals[i][k]);
+  return { vals, dv, rows: keys.map(k => [I[k], c(k, 0), c(k, 1), c(k, 2), vals[1] ? dv(k, vals[0][k], vals[1][k]) : '–', vals[2] ? dv(k, vals[0][k], vals[2][k]) : '–']),
+    head: [t.thInd, `${t.thNow} ${d}`, `${t.thPrevQ} ${qBack(d, 3)}`, `${t.thPrevY} ${qBack(d, 12)}`, t.thDq, t.thDy] };
+}
+function renderKeyTable() {
+  const t = T(), pl = MS.pl, d = MS.d, { vals, dv, rows } = keyData(pl, d);
   document.getElementById('qfTable').innerHTML = `<thead><tr><th class="l">${t.thInd}</th><th>${t.thNow}<br><small>${d}</small></th><th>${t.thPrevQ}<br><small>${qBack(d, 3)}</small></th><th>${t.thPrevY}<br><small>${qBack(d, 12)}</small></th><th>${t.thDq}</th><th>${t.thDy}</th></tr></thead><tbody>`
-    + keys.map(k => `<tr><td class="l">${I[k]}</td><td>${c(k, 0)}</td><td>${c(k, 1)}</td><td>${c(k, 2)}</td><td>${vals[1] ? dv(k, vals[0][k], vals[1][k]) : '–'}</td><td>${vals[2] ? dv(k, vals[0][k], vals[2][k]) : '–'}</td></tr>`).join('') + '</tbody>';
+    + rows.map(r => `<tr><td class="l">${r[0]}</td>${r.slice(1).map(x => `<td>${x}</td>`).join('')}</tr>`).join('') + '</tbody>';
   const T0 = vals[0];
   const kp = document.getElementById('qfKpis'), items = [[t.kPart(pl), mInt(T0.part), vals[1] ? dv('part', T0.part, vals[1].part) + ' · ' + t.dq(d) : t.dq(d)], [t.kNav(pl), mMn(T0.nav), vals[1] ? dv('nav', T0.nav, vals[1].nav) : ''],
     T0.ytd != null ? [t.kYtd, pct(T0.ytd), t.dq(d)] : null, T0.gain != null ? [t.kGain, mMn(Math.abs(T0.gain)).replace(/^/, T0.gain < 0 ? '−' : '+'), t.qn(d)] : null];
@@ -951,13 +957,15 @@ const zFmt = (v, z) => v == null || !isFinite(v) ? '–' : z === 'yyyy-mm-dd' ? 
    laikotarpis (greiti mygtukai ir nuo–iki), linijos įjungiamos / išjungiamos paspaudus legendą, pavadinimą galima pataisyti (patenka į PNG) */
 addStrings({ fcFrom: 'From', fcTo: 'To', fcAll: 'All', fcY: n => `${n} y`, fcTitleH: 'Click to edit the chart title (it goes into the image)', fcLegH: 'Click a line name to hide or show it' },
   { fcFrom: 'Nuo', fcTo: 'Iki', fcAll: 'Visas', fcY: n => `${n} m.`, fcTitleH: 'Paspauskite ir pataisykite grafiko pavadinimą (jis patenka į paveikslėlį)', fcLegH: 'Paspauskite linijos pavadinimą, kad ją paslėptumėte ar parodytumėte' });
+const specSer = sp => !sp ? [] : sp.lines.map((L, i) => ({ provider: L.l, color: L.c || `var(--s${i + 1})`, label: L.l, points: L.pts ? L.pts : MKT[L.pl].dates.map((d, di) => { const v = L.fn(di); return v == null || !isFinite(v) || d > MS.d ? null : [dayOf(d), v]; }).filter(Boolean) })).filter(x => x.points.length > 1);
+const specFmt = u => ({ mn: v => mMn(v), int: v => mInt(v), pct: v => pctPlain(v, 1), eur: v => mEurs(v) })[u];
 function factMore(det) {
   const box = det.closest('.facts'), body = det.querySelector('.fxb'); if (!box || !body) return;
   const fs = det.dataset.m ? (box._byM || {})[det.dataset.m] || [] : [(box._facts || [])[+det.dataset.i]].filter(Boolean); if (!fs.length) return;
   const t = T(), sp = chartSpec(fs[0], box);
   const tbl = f => `<div class="scroll"><table class="at fnum"><tbody>${f.nums.map(n => `<tr><td class="l">${hEsc(n.l)}</td><td>${zFmt(n.v, n.z)}</td></tr>`).join('')}</tbody></table></div>`;
   const tables = fs.length > 1 ? fs.map(f => `<details class="fsub"><summary>${t.fNoCh}: ${hEsc(f.text.length > 70 ? f.text.slice(0, 68) + '…' : f.text)}</summary>${tbl(f)}</details>`).join('') : tbl(fs[0]);
-  const ser = !sp ? [] : sp.lines.map((L, i) => ({ provider: L.l, color: L.c || `var(--s${i + 1})`, label: L.l, points: L.pts ? L.pts : MKT[L.pl].dates.map((d, di) => { const v = L.fn(di); return v == null || !isFinite(v) || d > MS.d ? null : [dayOf(d), v]; }).filter(Boolean) })).filter(x => x.points.length > 1);
+  const ser = specSer(sp);
   if (!ser.length) { body.innerHTML = tables; return; }
   const ds = [...new Set(ser.flatMap(x => x.points.map(p => p[0])))].sort((a, b) => a - b), iso0 = x => new Date(x * 864e5).toISOString().slice(0, 10);
   const st = det._st || (det._st = { from: ds[0], to: ds[ds.length - 1], off: new Set(), title: `${fs[0].h}: ${ser.length > 1 ? ser.map(x => x.label).join(', ') : ser[0].label}` });
@@ -966,7 +974,7 @@ function factMore(det) {
   body.innerHTML = `<div class="fctl"><span class="seg">${[1, 3, 5, 10].filter(n => n < span).map(n => `<button type="button" data-fy="${n}">${t.fcY(n)}</button>`).join('')}<button type="button" data-fy="0">${t.fcAll}</button></span>`
     + `<label class="field">${t.fcFrom} <select data-fr="from">${opt(0, st.from)}</select></label><label class="field">${t.fcTo} <select data-fr="to">${opt(0, st.to)}</select></label></div>`
     + `<h3 class="fct" contenteditable="true" spellcheck="false" title="${t.fcTitleH}">${hEsc(st.title)}</h3><div class="chart fch"></div><div class="legend chips fleg" title="${t.fcLegH}"></div>` + tables;
-  const fm = { mn: v => mMn(v), int: v => mInt(v), pct: v => pctPlain(v, 1), eur: v => mEurs(v) }[sp.u], el = body.querySelector('.fch');
+  const fm = specFmt(sp.u), el = body.querySelector('.fch');
   const draw = () => {
     const on = ser.filter(x => !st.off.has(x.label)).map(x => ({ ...x, points: x.points.filter(p => p[0] >= st.from && p[0] <= st.to) })).filter(x => x.points.length > 1);
     el.querySelectorAll('.ctools').forEach(n => n.remove());
@@ -1221,3 +1229,108 @@ async function mkFactBook(facts, title, pl = MS.pl) {
   XL.sheet(wb, L ? 'Metodika' : 'Methodology', meth, { cols: [28, 110], grid: false });
   await XL.save(wb, `${title.replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40)}_${pl}_${d}.xlsx`);
 }
+
+/* ---------- Ketvirčio apžvalgos juodraštis vienu paspaudimu (savininkas 2026-10-19: „Ok. Gali dirbti“ – IDEAS.md) ----------
+   Word (.docx) failas iš tų pačių faktų kaip kortelėse: svarbiausia, II pakopos rinka, valdytojai, III pakopa, II ir III pakopa,
+   faktai visuomenei, pagrindinių rodiklių lentelės ir grafikai (PNG). Po kiekvienu faktu – kaip skaičiuota; skaičius galima patikrinti
+   „Excel su skaičiavimais“. Kuriama naršyklėje be išorinių bibliotekų (XL.zip), todėl veikia ir be interneto. */
+addStrings({ rv: { btn: 'Review draft (Word)', btnT: 'Download a quarterly review draft in Word: the same facts as the cards, key tables and charts. Edit it before publishing.',
+  title: q => `Pension fund market review: ${q}`, qn: d => `Q${Math.ceil(+d.slice(5, 7) / 3)} ${d.slice(0, 4)}`,
+  sub: (d, g) => `Draft generated on ${g} from Bank of Lithuania quarterly results (${d}). Check figures in the “Quarter facts” Excel file before publishing; edit the wording as needed.`,
+  top: 'Key points', s2: 'Pillar II market', s2m: 'Pillar II managers', s3: 'Pillar III market', s23: 'Pillar II and III', spv: 'Facts for the public', sKey: p => `Key indicators, pillar ${p}`, sMt: p => `Managers, pillar ${p}`, sSrc: 'Sources and method',
+  how: 'How calculated: ', mh: ['Manager', 'Participants', 'Net assets, € m', 'Share of assets', 'Change in assets, quarter'],
+  peer: 'Funds are compared only within their peer groups: life-cycle funds by birth-year group, asset-preservation funds with each other. Returns are Bank of Lithuania weighted averages; fees are already deducted from unit values.',
+  file: q => `Pension market review ${q}` } },
+{ rv: { btn: 'Apžvalgos juodraštis (Word)', btnT: 'Atsisiųsti ketvirčio apžvalgos juodraštį Word formatu: tie patys faktai kaip kortelėse, pagrindinės lentelės ir grafikai. Prieš skelbdami pataisykite.',
+  title: q => `Pensijų fondų rinkos apžvalga: ${q}`, qn: d => `${d.slice(0, 4)} m. ${ROMAN[Math.ceil(+d.slice(5, 7) / 3) - 1]} ketvirtis`,
+  sub: (d, g) => `Juodraštis sugeneruotas ${g} iš Lietuvos banko ketvirčio rezultatų (${d}). Prieš skelbdami patikrinkite skaičius „Ketvirčio faktų“ Excel faile ir pataisykite formuluotes.`,
+  top: 'Svarbiausia', s2: 'II pakopos rinka', s2m: 'II pakopos valdytojai', s3: 'III pakopos rinka', s23: 'II ir III pakopa', spv: 'Faktai visuomenei', sKey: p => `Pagrindiniai rodikliai, ${p} pakopa`, sMt: p => `Valdytojai, ${p} pakopa`, sSrc: 'Šaltiniai ir metodika',
+  how: 'Kaip skaičiuota: ', mh: ['Valdytojas', 'Dalyviai', 'Grynieji aktyvai, mln. €', 'Turto dalis', 'Turto pokytis per ketvirtį'],
+  peer: 'Fondai lyginami tik savo grupėse: gyvenimo ciklo – pagal gimimo metų grupę, turto išsaugojimo – tarpusavyje. Grąžos – Lietuvos banko svertiniai vidurkiai; valdymo mokesčiai jau atskaityti iš vieneto vertės.',
+  file: q => `Pensijų rinkos apžvalga ${q}` } });
+const DX = (() => {
+  const x = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
+  const run = (t, o = {}) => `<w:r>${o.b || o.c || o.sz ? `<w:rPr>${o.b ? '<w:b/>' : ''}${o.c ? `<w:color w:val="${o.c}"/>` : ''}${o.sz ? `<w:sz w:val="${o.sz}"/>` : ''}</w:rPr>` : ''}<w:t xml:space="preserve">${x(t)}</w:t></w:r>`;
+  const p = (runs, st, num) => `<w:p>${st || num ? `<w:pPr>${st ? `<w:pStyle w:val="${st}"/>` : ''}${num ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : ''}</w:pPr>` : ''}${typeof runs === 'string' ? run(runs) : runs.join('')}</w:p>`;
+  const cell = (t, h, w) => `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${h ? '<w:shd w:val="clear" w:color="auto" w:fill="2F6B5A"/>' : ''}</w:tcPr><w:p><w:pPr><w:spacing w:before="20" w:after="20"/></w:pPr>${run(t, h ? { b: 1, c: 'FFFFFF', sz: 18 } : { sz: 18 })}</w:p></w:tc>`;
+  const table = (head, rows) => { const n = head.length, w0 = 2600, w = Math.floor((9000 - w0) / (n - 1)), ws = head.map((_, i) => i ? w : w0);
+    return `<w:tbl><w:tblPr><w:tblStyle w:val="Lentele"/><w:tblW w:w="9000" w:type="dxa"/></w:tblPr><w:tblGrid>${ws.map(v => `<w:gridCol w:w="${v}"/>`).join('')}</w:tblGrid>`
+      + [head, ...rows].map((r, i) => `<w:tr>${i ? '' : '<w:trPr><w:tblHeader/></w:trPr>'}${r.map((c, j) => cell(c == null ? '–' : c, !i, ws[j])).join('')}</w:tr>`).join('') + '</w:tbl>' + p('', 'Small'); };
+  const img = (rid, n, wPx, hPx) => { const cx = 5760000, cy = Math.round(cx * hPx / wPx);
+    return `<w:p><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${n}" name="Grafikas ${n}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${n}" name="grafikas${n}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`; };
+  const sty = (id, name, rpr, ppr = '', based = 'Normal') => `<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${name}"/><w:basedOn w:val="${based}"/><w:next w:val="Normal"/><w:qFormat/>${ppr ? `<w:pPr>${ppr}</w:pPr>` : ''}<w:rPr>${rpr}</w:rPr></w:style>`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">`
+    + '<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="Calibri" w:cs="Calibri"/><w:sz w:val="22"/><w:lang w:val="lt-LT"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>'
+    + '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>'
+    + sty('Title', 'Title', '<w:b/><w:color w:val="2F6B5A"/><w:sz w:val="40"/>', '<w:spacing w:after="80"/>')
+    + sty('Heading1', 'heading 1', '<w:b/><w:color w:val="2F6B5A"/><w:sz w:val="30"/>', '<w:keepNext/><w:spacing w:before="360" w:after="120"/><w:outlineLvl w:val="0"/>')
+    + sty('Heading2', 'heading 2', '<w:b/><w:color w:val="333333"/><w:sz w:val="24"/>', '<w:keepNext/><w:spacing w:before="240" w:after="80"/><w:outlineLvl w:val="1"/>')
+    + sty('Small', 'Small', '<w:color w:val="777777"/><w:sz w:val="17"/>', '<w:spacing w:after="160"/>')
+    + sty('ListParagraph', 'List Paragraph', '', '<w:ind w:left="360" w:hanging="260"/><w:spacing w:after="60"/>')
+    + '<w:style w:type="table" w:styleId="Lentele"><w:name w:val="Lentele"/><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4" w:color="BBBBBB"/><w:bottom w:val="single" w:sz="4" w:color="BBBBBB"/><w:insideH w:val="single" w:sz="4" w:color="DDDDDD"/></w:tblBorders><w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>';
+  const numbering = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/><w:lvlJc w:val="left"/><w:pPr><w:ind w:left="360" w:hanging="260"/></w:pPr></w:lvl></w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>';
+  async function save(body, imgs, filename, title) {
+    const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main', R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="${W}" xmlns:r="${R}" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+    const files = {
+      '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>',
+      '_rels/.rels': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`,
+      'docProps/core.xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${x(title)}</dc:title><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0, 19)}Z</dcterms:created></cp:coreProperties>`,
+      'word/_rels/document.xml.rels': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdS" Type="${R}/styles" Target="styles.xml"/><Relationship Id="rIdN" Type="${R}/numbering" Target="numbering.xml"/>${imgs.map((_, i) => `<Relationship Id="rIdG${i + 1}" Type="${R}/image" Target="media/grafikas${i + 1}.png"/>`).join('')}</Relationships>`,
+      'word/document.xml': doc, 'word/styles.xml': styles, 'word/numbering.xml': numbering };
+    imgs.forEach((b, i) => { files[`word/media/grafikas${i + 1}.png`] = b; });
+    const blob = new Blob([await XL.zip(files, true)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename.replace(/[\\/:*?"<>|]+/g, '_') + '.docx'; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    return blob;
+  }
+  return { run, p, table, img, save };
+})();
+/* grafikas paslėptame lange → PNG (šviesi tema, kad tiktų spausdinti) */
+async function rvChart(f, pl, imgs) {
+  const sp = chartSpec(f, { id: '', dataset: { pl } }), ser = specSer(sp); if (!ser.length) return '';
+  const wrap = document.createElement('section'); wrap.className = 'card'; wrap.style.cssText = 'position:fixed;left:-12000px;top:0;width:820px';
+  wrap.innerHTML = `<h3>${hEsc(ser.length > 1 ? f.h : `${f.h}: ${ser[0].label}`)}</h3><div class="chart"></div><p class="srcl">${hEsc(f.src)}</p>`; document.body.append(wrap);
+  try {
+    const el = wrap.querySelector('.chart'), lo = Math.min(...ser.map(x => x.points[0][0])), hi = Math.max(...ser.map(x => x.points[x.points.length - 1][0]));
+    drawLineChart(el, ser, lo, hi, { fmt: specFmt(sp.u), axisUnit: '', zero: sp.u === 'mn', ml: 70, height: 260, width: 788, mr: ser.length > 1 ? 120 : 16 });
+    const blob = await chartPng(el), bm = await createImageBitmap(blob), u8 = new Uint8Array(await blob.arrayBuffer());
+    imgs.push(u8); return DX.img(`rIdG${imgs.length}`, imgs.length, bm.width, bm.height);
+  } catch (e) { console.error(e); return ''; } finally { wrap.remove(); }
+}
+async function quarterReview() {
+  const t = T(), V = t.rv, F = t.f, X = t.fx, Q = t.p23, P2 = t.pv2, P3 = t.pv3;
+  const last = (pl, d) => MKT[pl].dates.filter(x => x <= d).pop(), d2 = last('II', MS.d) || MKT.II.dates[MKT.II.dates.length - 1], d3 = last('III', d2);
+  const keep = { pl: MS.pl, d: MS.d, mgr: MS.mgr }, html = document.documentElement, th = html.dataset.theme, imgs = [], out = [];
+  const H1 = s => out.push(DX.p(s, 'Heading1')), H2 = s => out.push(DX.p(s, 'Heading2')), li = s => out.push(DX.p(s, 'ListParagraph', 1));
+  const fact = (f, b = true) => { out.push(DX.p([DX.run(f.h.replace(/\.?$/, '. '), { b: 1 }), DX.run(f.text)])); if (b) out.push(DX.p(V.how + f.calc, 'Small')); };
+  const chartsFor = async (fs, hs, pl) => { for (const h of hs) { const f = fs.find(x => x.h === h); if (f) { const s = await rvChart(f, pl, imgs); if (s) out.push(s); } } };
+  const mgrTable = (pl, d) => { const di = dIdx(pl, d), dq = dIdx(pl, qBack(d, 3)), T0 = totals(pl, di), bm = byMgr(pl, di), bq = dq >= 0 ? byMgr(pl, dq) : {};
+    return DX.table(V.mh, Object.entries(bm).sort((a, b) => b[1].nav - a[1].nav).map(([m, v]) => [m, mInt(v.part), num(v.nav, 1), T0.nav ? pctPlain(v.nav / T0.nav * 100, 1) : '–', bq[m] && bq[m].nav ? mRel(v.nav, bq[m].nav) : '–'])); };
+  const srcs = new Set();
+  if (th === 'dark' || (!th && matchMedia('(prefers-color-scheme: dark)').matches)) html.dataset.theme = 'light';
+  try {
+    Object.assign(MS, { pl: 'II', d: d2, mgr: '' });
+    const f2 = mkFacts(), pv = pvFacts(), r23 = d3 === d2 ? p23Facts() : { facts: [], mgr: {} }, di2 = dIdx('II', d2);
+    const mg = Object.entries(byMgr('II', di2)).sort((a, b) => b[1].nav - a[1].nav).map(([m]) => [m, [...mgrFacts('II', di2, m), strengthFact('II', di2, m)].filter(Boolean)]);
+    let f3 = []; if (d3) { Object.assign(MS, { pl: 'III', d: d3 }); f3 = mkFacts(); }
+    Object.assign(MS, { pl: 'II', d: d2 });
+    [...f2, ...f3, ...r23.facts, ...pv].forEach(f => f.src.split(/(?<=\.)\s+(?=Šaltinis:|Source:)/).forEach(x => srcs.add(x.trim())));
+    const title = V.title(V.qn(d2));
+    out.push(DX.p(title, 'Title'), DX.p(V.sub(t.dLong(d2), t.dLong(new Date().toISOString().slice(0, 10))), 'Small'));
+    H1(V.top); [[f2, [F.navH, X.flowH, X.beatH]], [f3, [F.navH]], [r23.facts, [Q.rH]]].forEach(([fs, hs]) => hs.forEach(h => { const f = fs.find(x => x.h === h); if (f) li(f.text); }));
+    H1(V.s2); out.push(DX.table(keyData('II', d2).head, keyData('II', d2).rows)); f2.forEach(f => fact(f)); await chartsFor(f2, [F.navH, X.flowH, F.mgrH], 'II');
+    H1(V.s2m); out.push(mgrTable('II', d2)); mg.forEach(([m, fs]) => { if (!fs.length) return; H2(m); fs.forEach(f => li(f.text)); });
+    if (f3.length) { Object.assign(MS, { pl: 'III', d: d3 }); H1(V.s3); out.push(DX.table(keyData('III', d3).head, keyData('III', d3).rows), mgrTable('III', d3)); f3.forEach(f => fact(f)); await chartsFor(f3, [F.navH, F.partH], 'III'); Object.assign(MS, { pl: 'II', d: d2 }); }
+    if (r23.facts.length) { H1(V.s23); r23.facts.forEach(f => fact(f)); await chartsFor(r23.facts, [Q.rH, Q.gH], 'II'); Object.entries(r23.mgr).forEach(([m, fs]) => { if (!fs.length) return; H2(m); fs.forEach(f => li(f.text)); }); }
+    if (pv.length) { H1(V.spv); pv.forEach(f => fact(f)); await chartsFor(pv, [P2.chH, P3.wH], 'II'); }
+    H1(V.sSrc); srcs.forEach(s => li(s)); out.push(DX.p(V.peer), DX.p(t.noteLB, 'Small'));
+    return await DX.save(out.join(''), imgs, V.file(V.qn(d2)), title);
+  } finally { Object.assign(MS, keep); if (th) html.dataset.theme = th; else delete html.dataset.theme; }
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('#qfRev'); if (!b) return;
+  const o = b.textContent; b.disabled = true; b.textContent = '…';
+  try { await quarterReview(); b.textContent = '✓'; } catch (err) { console.error(err); b.textContent = '!'; }
+  setTimeout(() => { b.textContent = o; b.disabled = false; }, 1500);
+});

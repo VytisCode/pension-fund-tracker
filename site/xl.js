@@ -101,11 +101,12 @@ const XL = (() => {
     if (typeof CompressionStream === 'undefined' || typeof Response === 'undefined') return null;
     try { return new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); } catch (e) { return null; }
   }
+  // files: { "kelias/failas": tekstas | Uint8Array } – tekstas užkoduojamas UTF-8, Uint8Array (pvz. PNG paveikslėlis .docx faile) įrašomas kaip yra
   async function zip(files, compress) {
     const enc = new TextEncoder(), parts = [], central = []; let off = 0;
     const u16 = v => [v & 255, (v >>> 8) & 255], u32 = v => [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255];
     for (const [name, text] of Object.entries(files)) {
-      const nb = enc.encode(name), raw = enc.encode(text), crc = crc32(raw), z = compress ? await deflate(raw) : null;
+      const nb = enc.encode(name), raw = typeof text === 'string' ? enc.encode(text) : text, crc = crc32(raw), z = compress ? await deflate(raw) : null;
       const data = z || raw, meth = z ? 8 : 0;
       const head = [...u32(0x04034b50), ...u16(20), ...u16(0x0800), ...u16(meth), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(raw.length), ...u16(nb.length), ...u16(0)];
       parts.push(new Uint8Array(head), nb, data);
@@ -124,7 +125,7 @@ const XL = (() => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename.replace(/[\\/:*?"<>|]+/g, '_'); document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }
-  return { book, sheet, bytes: (wb, compress) => zip(bytes(wb), compress), save, col };
+  return { book, sheet, bytes: (wb, compress) => zip(bytes(wb), compress), save, col, zip };
 })();
 /* Suderinamumas su ankstesniu kodu (SheetJS API: XLSX.utils.book_new / aoa_to_sheet / book_append_sheet, XLSX.writeFile):
    esami Excel mygtukai veikia per šį rašytuvą, be išorinės bibliotekos ir be interneto. Stilius parenkamas automatiškai:
