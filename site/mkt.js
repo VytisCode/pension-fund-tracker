@@ -11,7 +11,7 @@ const ROMAN = ['I', 'II', 'III', 'IV'];
 addStrings({
   tdTitle: 'Today', qfTitle: 'Quarter facts', mkTitle: 'Market over time', mgTitle: 'Managers', fdTitle: 'Funds by group',
   qfLead: 'Ready-to-use facts for news and reviews from the Bank of Lithuania quarterly results reports: whole market, managers and funds. Each card names the period, source and how it was calculated; “Copy” copies the sentence with its source.',
-  mkLead: 'Participants, net assets and asset-weighted returns of the whole pillar at each quarter end since 2015.',
+  mkLead: 'Participants, net assets and asset-weighted returns of the whole pillar at each quarter end since 2015.', mkMgr: m => `Showing ${m}: participants, assets, market shares and investment gain (weighted returns are not shown for a manager – they would mix different groups).`,
   mgLead: 'Each manager’s participants, assets and market share. Predecessors are counted with today’s manager (Aviva → Allianz; DNB → Luminor; Finasta, MP Pension Funds Baltic, INVL, SB Asset Management → Artea; Danske Capital → Swedbank).',
   fdLead: 'Funds are compared only with funds of the same Bank of Lithuania group (life-cycle funds by year of birth; asset-preservation funds with each other). The last row is the Bank of Lithuania asset-weighted group average.',
   pl: 'Pillar', q: 'Quarter end', hl: 'Highlight manager', hlNone: 'whole market', grp: 'Group', grpAll: 'all groups', sortBy: 'Sort by', show: 'Show',
@@ -53,7 +53,7 @@ addStrings({
 }, {
   tdTitle: 'Šiandien', qfTitle: 'Ketvirčio faktai', mkTitle: 'Rinka laike', mgTitle: 'Valdytojai', fdTitle: 'Fondai pagal grupes',
   qfLead: 'Naujienoms ir apžvalgoms paruošti faktai iš Lietuvos banko ketvirčio rezultatų ataskaitų: visa rinka, valdytojai ir fondai. Kiekvienoje kortelėje – laikotarpis, šaltinis ir kaip skaičiuota; „Kopijuoti“ nukopijuoja sakinį su šaltiniu.',
-  mkLead: 'Visos pakopos dalyviai, grynieji aktyvai ir svertinė grąža kiekvieno ketvirčio pabaigoje nuo 2015 m.',
+  mkLead: 'Visos pakopos dalyviai, grynieji aktyvai ir svertinė grąža kiekvieno ketvirčio pabaigoje nuo 2015 m.', mkMgr: m => `Rodomas valdytojas ${m}: dalyviai, turtas, rinkos dalys ir investicinis prieaugis (svertinės grąžos valdytojui nerodomos – jos sumaišytų skirtingas grupes).`,
   mgLead: 'Kiekvieno valdytojo dalyviai, turtas ir rinkos dalis. Pirmtakai priskirti dabartiniam valdytojui (Aviva → Allianz; DNB → Luminor; Finasta, MP Pension Funds Baltic, INVL, SB Asset Management → Artea; Danske Capital → Swedbank).',
   fdLead: 'Fondai lyginami tik su tos pačios Lietuvos banko grupės fondais (gyvenimo ciklo – pagal gimimo metus; turto išsaugojimo – tarpusavyje). Paskutinė eilutė – LB svertinis grupės vidurkis.',
   pl: 'Pakopa', q: 'Ketvirčio pabaiga', hl: 'Paryškinti valdytoją', hlNone: 'visa rinka', grp: 'Grupė', grpAll: 'visos grupės', sortBy: 'Rikiuoti pagal', show: 'Rodyti',
@@ -470,21 +470,27 @@ function renderKeyTable() {
 }
 
 /* ---------- rinka laike ---------- */
-function mkSeries() {
+/* m – paryškintas valdytojas (savininkas 2026-10-19: „pasirinkus valdytoją niekas nesikeičia“): tada rodomi jo dalyviai, turtas, rinkos dalys ir prieaugis;
+   svertinės grąžos valdytojui nerodomos – jos sumaišytų skirtingas grupes */
+function mkSeries(m = MS.mgr) {
   const pl = MS.pl;
-  return MKT[pl].dates.map((d, di) => { const T0 = totals(pl, di), A = avgOf(pl, di, -1); return { d, di, ...T0, per: T0.part ? T0.nav * 1e6 / T0.part : null, ytd: A ? A[MA.ret_ytd] : null, qret: qRet(pl, di), r1: A ? A[MA.ret_1y] : null, gain: gainAt(pl, di) }; });
+  return MKT[pl].dates.map((d, di) => { const A = avgOf(pl, di, -1), Tm = totals(pl, di), T0 = m ? { ...Tm, ...(byMgr(pl, di)[m] || { part: 0, nav: 0, nf: 0 }) } : Tm;
+    return { d, di, ...T0, per: T0.part ? T0.nav * 1e6 / T0.part : null, ytd: m ? null : A ? A[MA.ret_ytd] : null, qret: m ? null : qRet(pl, di), r1: m ? null : A ? A[MA.ret_1y] : null, gain: gainAt(pl, di, m || undefined),
+      shN: m && Tm.nav ? T0.nav / Tm.nav * 100 : null, shP: m && Tm.part ? T0.part / Tm.part * 100 : null }; });
 }
 function renderTime() {
   const t = T(), S = mkSeries(), el = document.getElementById('mkChart'), k = MS.ch;
-  document.getElementById('mkSeg').innerHTML = Object.keys(t.chOf).filter(x => x !== 'per' || MS.pl === 'II').map(x => `<button type="button" data-ch="${x}" aria-pressed="${x === k}">${t.chOf[x]}</button>`).join('');
-  const pts = S.filter(s => s[k] != null && s.nf).map(s => [dayOf(s.d), s[k]]);
-  if (!el.closest('[hidden]')) drawLineChart(el, [{ provider: 'mkt', color: 'var(--s1)', label: `${MS.pl} ${lang === 'lt' ? 'pakopa' : 'pillar'}`, points: pts }], pts[0][0], pts[pts.length - 1][0],
-    { axisUnit: '', zero: false, ml: 70, fmt: v => k === 'nav' ? mMn(v) : k === 'per' ? mEurs(v) : mInt(v) });
+  const m = MS.mgr, chs = { ...t.chOf, ...(m ? { shN: t.shOf.nav, shP: t.shOf.part } : {}) }, kk = chs[k] ? k : 'part';
+  document.getElementById('mkLead').textContent = t.mkLead + (m ? ' ' + t.mkMgr(m) : '');
+  document.getElementById('mkSeg').innerHTML = Object.keys(chs).filter(x => x !== 'per' || MS.pl === 'II').map(x => `<button type="button" data-ch="${x}" aria-pressed="${x === kk}">${chs[x]}</button>`).join('');
+  const pts = S.filter(s => s[kk] != null && s.nf).map(s => [dayOf(s.d), s[kk]]);
+  if (!el.closest('[hidden]') && pts.length > 1) drawLineChart(el, [{ provider: m || 'mkt', color: m ? mkColor(m) : 'var(--s1)', label: m || `${MS.pl} ${lang === 'lt' ? 'pakopa' : 'pillar'}`, points: pts }], pts[0][0], pts[pts.length - 1][0],
+    { axisUnit: '', zero: false, ml: 70, fmt: v => kk === 'nav' ? mMn(v) : kk === 'per' ? mEurs(v) : /^sh/.test(kk) ? pctPlain(v, 1) : mInt(v) });
   const qd = (a, b) => a.ok && b && b.ok && b.part ? b : null;
-  document.getElementById('mkTable').innerHTML = `<thead><tr><th class="l">${t.thDate}</th><th>${t.thPart}</th><th>${t.thDq}</th><th>${t.thDy}</th><th>${t.thNav}</th><th>${t.thDq}</th><th>${t.thDy}</th>${MS.pl === 'II' ? `<th>${t.thPer}</th>` : ''}<th>${t.thYtd}</th><th>${t.thQ}</th><th>${t.th1y}</th><th>${t.thGain}</th></tr></thead><tbody>`
+  document.getElementById('mkTable').innerHTML = `<thead><tr><th class="l">${t.thDate}</th><th>${t.thPart}</th><th>${t.thDq}</th><th>${t.thDy}</th><th>${t.thNav}</th><th>${t.thDq}</th><th>${t.thDy}</th>${MS.pl === 'II' ? `<th>${t.thPer}</th>` : ''}${m ? `<th>${t.shOf.nav}</th><th>${t.shOf.part}</th>` : `<th>${t.thYtd}</th><th>${t.thQ}</th><th>${t.th1y}</th>`}<th>${t.thGain}</th></tr></thead><tbody>`
     + [...S].reverse().filter(s => s.nf).map(s => { const q = S[dIdx(MS.pl, qBack(s.d, 3))], y = S[dIdx(MS.pl, qBack(s.d, 12))];
       return `<tr${s.d === MS.d ? ' class="cur"' : ''}><td class="l">${s.d}</td><td>${mInt(s.part)}</td><td class="${mCls(q && s.part - q.part)}">${q ? mSInt(s.part - q.part) : '–'}</td><td class="${mCls(y && s.part - y.part)}">${y ? mSInt(s.part - y.part) : '–'}</td>`
-        + `<td>${num(s.nav, 1)}</td><td>${q ? mRel(s.nav, q.nav) : '–'}</td><td>${y ? mRel(s.nav, y.nav) : '–'}</td>${MS.pl === 'II' ? `<td>${mCell(s.per, mInt)}</td>` : ''}<td>${mPct(s.ytd)}</td><td>${mPct(s.qret)}</td><td>${mPct(s.r1)}</td><td>${mCell(s.gain, v => num(v, 1))}</td></tr>`; }).join('') + '</tbody>';
+        + `<td>${num(s.nav, 1)}</td><td>${q ? mRel(s.nav, q.nav) : '–'}</td><td>${y ? mRel(s.nav, y.nav) : '–'}</td>${MS.pl === 'II' ? `<td>${mCell(s.per, mInt)}</td>` : ''}${m ? `<td>${mCell(s.shN, v => pctPlain(v, 2))}</td><td>${mCell(s.shP, v => pctPlain(v, 2))}</td>` : `<td>${mPct(s.ytd)}</td><td>${mPct(s.qret)}</td><td>${mPct(s.r1)}</td>`}<td>${mCell(s.gain, v => num(v, 1))}</td></tr>`; }).join('') + '</tbody>';
   // dalyviai pagal grupes – paskutiniai 6 ketvirčiai iki pasirinkto
   const pl = MS.pl, di = dIdx(pl, MS.d), cols = []; for (let i = di; i >= 0 && cols.length < 6; i--) cols.unshift(i);
   const gs = [...new Set(cols.flatMap(c => groupsAt(pl, c)))].sort((a, b) => MK_ORDER.indexOf(groupKeyOf(pl, a)) - MK_ORDER.indexOf(groupKeyOf(pl, b)));
@@ -652,8 +658,181 @@ function pvFacts() {
     nb.add(L ? 'Per ketvirtį vienam dalyviui, €' : 'Per participant in the quarter, €', g * 1e6 / T0.part, c => `${c(a)}*1000000/${c(p)}`, Zi);
     if (!q1 && gy != null) { const y = nb.add(I.gainY, gy, () => fxGainY(d0), Zm); nb.add(L ? 'Nuo metų pradžios vienam dalyviui, €' : 'Since year start per participant, €', gy * 1e6 / T0.part, c => `${c(y)}*1000000/${c(p)}`, Zi); }
     add(X.ppH, X.pp(mEurs(g * 1e6 / T0.part), t.qn(d), !q1 && gy != null ? mEurs(gy * 1e6 / T0.part) : ''), `${X.calcPp} ${F.calcGain}`, nb); }
+  out.push(...pvMore(), ...pvWages());
   return out;
 }
+/* sudėtingesni faktai visuomenei (savininkas 2026-10-19: „jų reiktų daugiau ir labiau sofistikuotų“): ilgo laikotarpio grandininė grąža,
+   blogiausias kritimas ir atsigavimas, metai su teigiama grąža, grąža po infliacijos, rizika ilgame laikotarpyje, viso laikotarpio prieaugis */
+addStrings({ pv2: {
+  cumH: 'Earned since 2015', cum: (v, s, y) => `Since ${y} pension funds have earned their participants about ${v} of investment gain – about ${s} of today’s assets.`,
+  calcCum: 'Sum of quarterly investment gains (Bank of Lithuania data) up to the selected quarter; quarters without previous-quarter data are not counted.',
+  yrH: 'Good and bad years', yr: (k, n, by, bv, wy, wv, fy) => `In ${k} of ${n} full years since ${fy} the average fund return was positive; the best year was ${by} (${bv}), the worst ${wy} (${wv}).`,
+  calcYr: 'Bank of Lithuania weighted average of all funds, return since the start of the year at 31 December.',
+  chH: '€ 100 since', ch: (y, v, bad) => `€ 100 invested at the start of ${y} at the average fund return would now be about ${v}${bad ? `, even though some years (${bad}) were negative` : ''}.`,
+  calcCh: 'Annual returns (weighted average of all funds at 31 December) chained: 100 × (1 + r₁) × (1 + r₂) × … × (1 + this year’s return so far).',
+  ddH: 'Fall and recovery', dd: (v, a, b, n, c) => `The largest fall of the average fund was ${v} (from ${a} to ${b}); ${c ? `the loss was recovered in ${n} quarters (${c})` : 'the loss has not yet been fully recovered'}.`,
+  ddNone: 'Fall and recovery', calcDd: 'Value index at quarter ends from the chained average return; fall = index ÷ previous peak − 1; recovery – first quarter the index is back at the peak.',
+  reH: 'After inflation', re: (n, c, r, m) => `Over 5 years the average fund return was ${n}, while prices rose ${c} – ${Math.abs(r) < 1 ? 'purchasing power of savings barely changed' : r >= 0 ? `purchasing power of savings grew about ${pctPlain(r, 1)}` : `inflation ate about ${pctPlain(-r, 1)} of purchasing power`} (prices up to ${m}).`,
+  calcRe: 'Fund: (1 + 5-year annual return)^5 − 1; prices: Lithuanian consumer price index (State Data Agency), month now ÷ same month 5 years ago − 1; real = (1 + fund) ÷ (1 + prices) − 1.',
+  r3H: '3-year periods', r3: (k, n, y) => `Since ${y}, in ${k} of ${n} quarter ends the average return over the previous 3 years was positive.`, calcR3: 'Bank of Lithuania weighted average of all funds, 3-year annual return at each quarter end.',
+  rkH: 'Risk over the long term', rk: (a, ar, b, br, ea, eb) => `Over 5 years ${a} funds earned on average ${ar} a year and ${b} funds ${br}: € 1,000 became ${ea} and ${eb}.`,
+  calcRk: 'Bank of Lithuania group weighted averages, 5-year annual return; 1,000 × (1 + r)^5. Groups are compared, not individual funds.',
+  idx: 'Value index', peak: 'Previous peak', ddL: 'Fall from peak', cpiL: 'Consumer price index', vki: 'CPI',
+} }, { pv2: {
+  cumH: 'Uždirbta nuo 2015 m.', cum: (v, s, y) => `Nuo ${y} m. pensijų fondai dalyviams uždirbo apie ${v} investicinio prieaugio – tai maždaug ${s} dabartinio turto.`,
+  calcCum: 'Ketvirčių investicinių prieaugių (LB duomenys) suma iki pasirinkto ketvirčio; ketvirčiai be ankstesnio ketvirčio duomenų neskaičiuojami.',
+  yrH: 'Geri ir blogi metai', yr: (k, n, by, bv, wy, wv, fy) => `Per ${k} iš ${n} pilnų metų nuo ${fy} m. vidutinė fondų grąža buvo teigiama; geriausi metai – ${by} (${bv}), blogiausi – ${wy} (${wv}).`,
+  calcYr: 'LB svertinis visų fondų vidurkis, grąža nuo metų pradžios gruodžio 31 d.',
+  chH: '100 € nuo pradžios', ch: (y, v, bad) => `100 €, investuoti ${y} m. pradžioje pagal vidutinę fondų grąžą, šiandien būtų apie ${v}${bad ? `, nors kai kurie metai (${bad}) buvo nuostolingi` : ''}.`,
+  calcCh: 'Metų grąžos (visų fondų svertinis vidurkis gruodžio 31 d.) sujungiamos: 100 × (1 + r₁) × (1 + r₂) × … × (1 + šių metų grąža iki šiol).',
+  ddH: 'Kritimas ir atsigavimas', dd: (v, a, b, n, c) => `Didžiausias vidutinio fondo vertės kritimas – ${v} (nuo ${a} iki ${b}); ${c ? `prarasta vertė atsigavo per ${n} ketv. (${c})` : 'prarasta vertė dar neatsigavo visiškai'}.`,
+  ddNone: 'Kritimas ir atsigavimas', calcDd: 'Vertės indeksas ketvirčių pabaigose iš sujungtos vidutinės grąžos; kritimas = indeksas ÷ ankstesnis didžiausias − 1; atsigavimas – pirmas ketvirtis, kai indeksas vėl pasiekia buvusį didžiausią.',
+  reH: 'Po infliacijos', re: (n, c, r, m) => `Per 5 metus vidutinė fondų grąža – ${n}, o kainos per tą laiką pakilo ${c} – ${Math.abs(r) < 1 ? 'fondai išsaugojo santaupų perkamąją galią' : r >= 0 ? `santaupų perkamoji galia padidėjo apie ${pctPlain(r, 1)}` : `infliacija suvalgė apie ${pctPlain(-r, 1)} perkamosios galios`} (kainos iki ${m}).`,
+  calcRe: 'Fondai: (1 + 5 metų metinė grąža)^5 − 1; kainos: Lietuvos vartotojų kainų indeksas (Valstybės duomenų agentūra), dabartinis mėnuo ÷ tas pats mėnuo prieš 5 metus − 1; realioji = (1 + fondai) ÷ (1 + kainos) − 1.',
+  r3H: 'Trejų metų laikotarpiai', r3: (k, n, y) => `Nuo ${y} m. ${k} iš ${n} ketvirčių pabaigų vidutinė praėjusių 3 metų grąža buvo teigiama.`, calcR3: 'LB svertinis visų fondų vidurkis, 3 metų metinė grąža kiekvieno ketvirčio pabaigoje.',
+  rkH: 'Rizika ilgame laikotarpyje', rk: (a, ar, b, br, ea, eb) => `Per 5 metus grupės „${a}“ fondai vidutiniškai uždirbo ${ar} per metus, o „${b}“ – ${br}: 1 000 € virto atitinkamai ${ea} ir ${eb}.`,
+  calcRk: 'LB grupių svertiniai vidurkiai, 5 metų metinė grąža; 1 000 × (1 + r)^5. Lyginamos grupės, ne atskiri fondai.',
+  idx: 'Vertės indeksas', peak: 'Ankstesnis didžiausias', ddL: 'Kritimas nuo didžiausio', cpiL: 'Vartotojų kainų indeksas', vki: 'VKI',
+} });
+const CHN = {};
+/* grandininis vidutinio fondo vertės indeksas: metų grąžos (gruodžio 31 d.) × šių metų grąža iki ketvirčio; pradžia – pirmi metai, nuo kurių grandinė nenutrūksta */
+function chainOf(pl, upto = MS.d) {
+  const key = pl + upto; if (CHN[key]) return CHN[key];
+  const P = MKT[pl], y0 = +upto.slice(0, 4), dec = y => avgK(pl, dIdx(pl, `${y}-12-31`), 'ret_ytd');
+  let fy = y0; while (fy - 1 >= 2015 && dec(fy - 1) != null) fy--;
+  const base = { [fy - 1]: 100 }; for (let y = fy; y < y0; y++) base[y] = base[y - 1] * (1 + dec(y) / 100);
+  const idx = {}; P.dates.forEach((d, di) => { const y = +d.slice(0, 4), a = avgK(pl, di, 'ret_ytd'); if (d <= upto && y >= fy && a != null && base[y - 1] != null) idx[di] = base[y - 1] * (1 + a / 100); });
+  return (CHN[key] = { fy, base, idx, dec });
+}
+const cpiM = m => typeof CPI !== 'undefined' ? CPI[m] : undefined;
+const mBack = (m, k) => { let y = +m.slice(0, 4), mm = +m.slice(5, 7) - k; while (mm <= 0) { y--; mm += 12; } return `${y}-${String(mm).padStart(2, '0')}`; };
+function pvMore() {
+  const t = T(), X = t.pv2, I = t.ind, L = lang === 'lt', pl = MS.pl, d = MS.d, di = dIdx(pl, d), T0 = totals(pl, di), src = t.srcLB(pl, d), out = [], ALL = L ? 'Visi fondai' : 'All funds', d0 = MKD.d0;
+  const add = (h, text, calc, nb, o = {}) => out.push({ h, text, calc, src, nums: nb.a, ...o });
+  // uždirbta nuo pradžios
+  { let s = 0, y = null; for (let i = 0; i <= di; i++) { const g = gainAt(pl, i); if (g != null) { s += g; if (!y) y = MKT[pl].dates[i].slice(0, 4); } }
+    if (y && T0.nav) { const nb = NB(), a = nb.add(L ? `Investicinis prieaugis nuo ${y} m., mln. € (apyt.)` : `Investment gain since ${y}, € m (est.)`, s, () => `SUMIFS(${MKX.D}!L:L,${MKX.D}!A:A,"<="&${d0})`, Zm), b = nb.add(I.nav, T0.nav, () => fxNav(d0), Zm);
+      nb.add(L ? 'Dalis dabartinio turto' : 'Share of today’s assets', s / T0.nav, c => `${c(a)}/${c(b)}`, Zr);
+      add(X.cumH, X.cum(mMn(s), `${Math.round(s / T0.nav * 100)} %`, y), `${X.calcCum} ${t.f.calcGain}`, nb); } }
+  const C = chainOf(pl), y0 = +d.slice(0, 4), yrs = []; for (let y = C.fy; y < y0; y++) yrs.push(y);
+  // geri ir blogi metai
+  if (yrs.length >= 3) { const nb = NB(), ix = yrs.map(y => nb.add(`${y} · ${t.thYtd.toLowerCase()} (31.12), %`, C.dec(y), () => fxAvg('C', `DATE(${y},12,31)`, ALL), Zp));
+    const k = yrs.filter(y => C.dec(y) > 0).length, best = yrs.reduce((a, b) => C.dec(b) > C.dec(a) ? b : a), worst = yrs.reduce((a, b) => C.dec(b) < C.dec(a) ? b : a);
+    nb.add(L ? 'Metai su teigiama grąža' : 'Years with a positive return', k, c => `COUNTIF(${c(ix[0])}:${c(ix[ix.length - 1])},">0")`, '0'); nb.add(L ? 'Pilnų metų' : 'Full years', yrs.length, c => `COUNT(${c(ix[0])}:${c(ix[ix.length - 1])})`, '0');
+    add(X.yrH, X.yr(k, yrs.length, best, pct(C.dec(best)), worst, pct(C.dec(worst)), C.fy), X.calcYr, nb); }
+  // 100 € nuo pradžios
+  if (yrs.length >= 3 && C.idx[di] != null) { const nb = NB(), b0 = nb.add(L ? `Pradžia (${C.fy} m. sausio 1 d.), €` : `Start (1 Jan ${C.fy}), €`, 100, () => '100', '0.00'); let prev = b0;
+    yrs.forEach(y => { const r = nb.add(`${y} · ${t.thYtd.toLowerCase()} (31.12), %`, C.dec(y), () => fxAvg('C', `DATE(${y},12,31)`, ALL), Zp), p0 = prev; prev = nb.add(`${L ? 'Vertė' : 'Value'} 31.12.${y}, €`, C.base[y], c => `${c(p0)}*(1+${c(r)}/100)`, '0.00'); });
+    if (d.slice(5) !== '12-31') { const r = nb.add(`${y0} · ${t.thYtd.toLowerCase()} (${d}), %`, avgK(pl, di, 'ret_ytd'), () => fxAvg('C', d0, ALL), Zp), p0 = prev; prev = nb.add(`${L ? 'Vertė' : 'Value'} ${d}, €`, C.idx[di], c => `${c(p0)}*(1+${c(r)}/100)`, '0.00'); }
+    const bad = yrs.filter(y => C.dec(y) < 0).join(', ');
+    add(X.chH, X.ch(C.fy, `${num(C.idx[di], 0)} €`, bad), X.calcCh, nb); }
+  // kritimas ir atsigavimas (ketvirčių pabaigose)
+  { const ks = Object.keys(C.idx).map(Number).sort((a, b) => a - b);
+    if (ks.length > 8) { let pk = 100, pkD = null, best = { v: 0 };
+      [[null, 100], ...ks.map(k => [k, C.idx[k]])].forEach(([k, v]) => { if (v >= pk) { pk = v; pkD = k; } else if (v / pk - 1 < best.v) best = { v: v / pk - 1, pk, pkD, tr: k }; });
+      if (best.v < -0.02) { const rec = ks.find(k => k > best.tr && C.idx[k] >= best.pk), qn = rec != null ? ks.filter(k => k > best.tr && k <= rec).length : 0;
+        const nb = NB(), D = MKT[pl].dates, lbl = k => k == null ? (L ? `${C.fy} m. pradžia` : `start of ${C.fy}`) : t.dq(D[k]), rows = {};
+        const b0 = nb.add(L ? `Pradžia (${C.fy} m. sausio 1 d.)` : `Start (1 Jan ${C.fy})`, 100, () => '100', '0.00');
+        const decRow = { [C.fy - 1]: b0 }; let pkr = b0;
+        ks.forEach(k => { const dd = D[k], y = +dd.slice(0, 4), r = nb.add(`${dd} · ${t.thYtd.toLowerCase()}, %`, avgK(pl, k, 'ret_ytd'), () => fxAvg('C', `DATE(${y},${+dd.slice(5, 7)},${+dd.slice(8)})`, ALL), Zp), pr = decRow[y - 1];
+          const v = nb.add(`${dd} · ${X.idx}`, C.idx[k], c => `${c(pr)}*(1+${c(r)}/100)`, '0.00'); rows[k] = v; if (dd.slice(5) === '12-31') decRow[y] = v; });
+        const vs = [b0, ...ks.map(k => rows[k])], ti = rows[best.tr], pi = best.pkD == null ? b0 : rows[best.pkD]; void pkr; void vs;
+        nb.add(X.peak, best.pk, c => `${c(pi)}`, '0.00'); nb.add(X.ddL, best.v, c => `${c(ti)}/${c(pi)}-1`, Zr);
+        add(X.ddH, X.dd(pctPlain(best.v * 100, 1), lbl(best.pkD), lbl(best.tr), qn, rec != null ? t.dq(D[rec]) : ''), X.calcDd, nb); } } }
+  // po infliacijos (5 metai)
+  { const A = avgOf(pl, di, -1), m0 = d.slice(0, 7), cm = cpiM(m0) != null ? m0 : Object.keys(typeof CPI !== 'undefined' ? CPI : {}).filter(k => k <= m0).sort().pop(), c5 = cm ? mBack(cm, 60) : null;
+    if (A && A[MA.ret_5y] != null && cm && cpiM(c5) != null) { const n = (1 + A[MA.ret_5y] / 100) ** 5 - 1, c = cpiM(cm) / cpiM(c5) - 1, r = (1 + n) / (1 + c) - 1, nb = NB(), V = `'${X.vki}'`;
+      const i = nb.add(`${ALL} · ${t.th5y.toLowerCase()} (${L ? 'metinė' : 'annual'}), %`, A[MA.ret_5y], () => fxAvg('F', d0, ALL), Zp), j = nb.add(L ? 'Fondai per 5 metus iš viso' : 'Funds, 5 years total', n, cc => `(1+${cc(i)}/100)^5-1`, Zr);
+      const a = nb.add(`${X.cpiL} ${cm}`, cpiM(cm), () => `INDEX(${V}!B:B,MATCH("${cm}",${V}!A:A,0))`, '0.0000'), b = nb.add(`${X.cpiL} ${c5}`, cpiM(c5), () => `INDEX(${V}!B:B,MATCH("${c5}",${V}!A:A,0))`, '0.0000');
+      const k = nb.add(L ? 'Kainų pokytis per 5 metus' : 'Price change over 5 years', c, cc => `${cc(a)}/${cc(b)}-1`, Zr); nb.add(L ? 'Realioji grąža per 5 metus' : 'Real return over 5 years', r, cc => `(1+${cc(j)})/(1+${cc(k)})-1`, Zr);
+      add(X.reH, X.re(pct(n * 100), pctPlain(c * 100, 1), r * 100, cm), X.calcRe, nb, { cpi: true }); } }
+  // trejų metų laikotarpiai
+  { const ks = MKT[pl].dates.map((x, i) => i).filter(i => i <= di && avgK(pl, i, 'ret_3y') != null);
+    if (ks.length > 4) { const nb = NB(), ix = ks.map(i => { const dd = MKT[pl].dates[i]; return nb.add(`${dd} · ${t.th3y.toLowerCase()}, %`, avgK(pl, i, 'ret_3y'), () => fxAvg('E', `DATE(${dd.slice(0, 4)},${+dd.slice(5, 7)},${+dd.slice(8)})`, ALL), Zp); });
+      const k = ks.filter(i => avgK(pl, i, 'ret_3y') > 0).length;
+      nb.add(L ? 'Teigiamų' : 'Positive', k, c => `COUNTIF(${c(ix[0])}:${c(ix[ix.length - 1])},">0")`, '0'); nb.add(L ? 'Iš viso' : 'Total', ks.length, c => `COUNT(${c(ix[0])}:${c(ix[ix.length - 1])})`, '0');
+      add(X.r3H, X.r3(k, ks.length, MKT[pl].dates[ks[0]].slice(0, 4)), X.calcR3, nb); } }
+  // rizika ilgame laikotarpyje: daugiausia ir mažiausiai rizikingos grupės
+  { const ks = groupsAt(pl, di).map(gi => ({ gi, k: groupKeyOf(pl, gi), a: avgOf(pl, di, gi) })).filter(x => x.a && x.a[MA.ret_5y] != null);
+    const lo = ks.find(x => x.k === (pl === 'II' ? 'turto' : 'obl')) || ks.find(x => x.k === 'kons'), lc = pl === 'II' ? ks.filter(x => /^\d{4}-\d{4}$/.test(x.k)) : ks.filter(x => x.k === 'akc'), hi = lc.sort((a, b) => b.a[MA.ret_5y] - a.a[MA.ret_5y])[0];
+    if (lo && hi) { const nb = NB(), e = r => 1000 * (1 + r / 100) ** 5, gh = groupLbl(pl, hi.gi), gl = groupLbl(pl, lo.gi);
+      const a = nb.add(`${gh} · ${t.th5y.toLowerCase()}, %`, hi.a[MA.ret_5y], () => fxAvg('F', d0, gh), Zp), b = nb.add(`${gl} · ${t.th5y.toLowerCase()}, %`, lo.a[MA.ret_5y], () => fxAvg('F', d0, gl), Zp);
+      nb.add(`${gh} · 1 000 €`, e(hi.a[MA.ret_5y]), c => `1000*(1+${c(a)}/100)^5`, Zi); nb.add(`${gl} · 1 000 €`, e(lo.a[MA.ret_5y]), c => `1000*(1+${c(b)}/100)^5`, Zi);
+      add(X.rkH, X.rk(gh, pct(hi.a[MA.ret_5y]), gl, pct(lo.a[MA.ret_5y]), mEurs(e(hi.a[MA.ret_5y])), mEurs(e(lo.a[MA.ret_5y]))), X.calcRk, nb, { gs: [hi.gi, lo.gi] }); } }
+  return out;
+}
+
+/* fondai prieš darbo užmokestį, pensiją, MMA ir infliaciją (savininkas 2026-10-19: „kas sparčiau augo, investicijos ar darbo užmokestis … gal ne visais laikotarpiais“).
+   Darbo užmokestis, pensija ir MMA – metų vidurkiai (Valstybės duomenų agentūra, docs/data_journey.js); fondai – grandininė vidutinė grąža (chainOf). */
+addStrings({ pv3: {
+  wH: 'Funds vs wages', pH: 'Funds vs pensions', mH: 'Funds vs minimum wage', iH: 'Funds vs inflation by year', eH: 'Savings in wages and pensions',
+  what: { w: 'the average net monthly wage', p: 'the average old-age pension', m: 'the minimum monthly wage (net)' },
+  cmp: (what, n, a, b, x, f, win) => `Over ${n} years (${a}–${b}) ${what} grew ${x}, while the value of the average pension fund grew ${f} – ${win}.`,
+  win: { f: 'investments grew faster', x: k => `${{ w: 'wages', p: 'pensions', m: 'the minimum wage' }[k]} grew faster`, e: 'about the same pace' },
+  oth: list => ` Other periods: ${list}.`, othI: (n, x, f, k) => `${n} y: ${{ w: 'wages', p: 'pensions', m: 'minimum wage' }[k]} ${x}, funds ${f}`,
+  inf: (k, n, best, worst) => `In ${k} of ${n} years the average fund return beat inflation (Dec to Dec)${best ? `; the largest margin was in ${best}` : ''}${worst ? `, the largest shortfall in ${worst}` : ''}.`,
+  eur: (v, y, a, b, c) => `Average savings of a pillar II participant (${v}) equal about ${a} average net monthly wages, ${b} average old-age pensions${c ? ` or ${c} net minimum wages` : ''} (${y}).`,
+  calcCmp: 'Growth = annual average in the last year ÷ annual average n years earlier − 1; funds – chained weighted average return of all funds (31 December to 31 December).',
+  calcInf: 'Fund return – Bank of Lithuania weighted average of all funds for the calendar year; inflation – consumer price index December ÷ previous December − 1.',
+  calcEur: 'Assets per participant ÷ annual average net wage, old-age pension and net minimum wage (State Data Agency).',
+  sh: 'Wages and pensions', srcW: 'Source: State Data Agency (osp.stat.gov.lt) – average monthly wage, old-age pension, minimum monthly wage (annual averages); consumer price index.',
+  lw: 'Average net wage, €', lp: 'Average old-age pension, €', lm: 'Net minimum wage, €', lf: 'Average fund value (index)', infL: 'Inflation', retL: 'Fund return', diffL: 'Difference, pp',
+} }, { pv3: {
+  wH: 'Fondai ir darbo užmokestis', pH: 'Fondai ir pensijos', mH: 'Fondai ir MMA', iH: 'Fondai ir infliacija kasmet', eH: 'Santaupos atlyginimais ir pensijomis',
+  what: { w: 'vidutinis neto darbo užmokestis', p: 'vidutinė senatvės pensija', m: 'minimali mėnesinė alga (neto)' },
+  cmp: (what, n, a, b, x, f, win) => `Per ${n} m. (${a}–${b}) ${what} išaugo ${x}, o vidutinio pensijų fondo vertė – ${f}: ${win}.`,
+  win: { f: 'investicijos augo sparčiau', x: k => `sparčiau augo ${{ w: 'atlyginimai', p: 'pensijos', m: 'MMA' }[k]}`, e: 'augo panašiu tempu' },
+  oth: list => ` Kiti laikotarpiai: ${list}.`, othI: (n, x, f, k) => `${n} m.: ${{ w: 'atlyginimai', p: 'pensijos', m: 'MMA' }[k]} ${x}, fondai ${f}`,
+  inf: (k, n, best, worst) => `${k} iš ${n} metų vidutinė fondų grąža viršijo infliaciją (gruodis prieš gruodį)${best ? `; labiausiai – ${best}` : ''}${worst ? `, labiausiai atsiliko – ${worst}` : ''}.`,
+  eur: (v, y, a, b, c) => `Vidutinis II pakopos dalyvio sukauptas turtas (${v}) – tai maždaug ${a} vidutinio neto mėnesio atlyginimo, ${b} vidutinės senatvės pensijos${c ? ` arba ${c} neto MMA` : ''} (${y} m.).`,
+  calcCmp: 'Augimas = paskutinių metų vidurkis ÷ vidurkis prieš n metų − 1; fondai – sujungta visų fondų svertinė vidutinė grąža (gruodžio 31 d. – gruodžio 31 d.).',
+  calcInf: 'Fondų grąža – LB svertinis visų fondų vidurkis per kalendorinius metus; infliacija – vartotojų kainų indeksas gruodį ÷ ankstesnių metų gruodį − 1.',
+  calcEur: 'Turtas vienam dalyviui ÷ metų vidutinis neto darbo užmokestis, senatvės pensija ir neto MMA (Valstybės duomenų agentūra).',
+  sh: 'Atlyginimai ir pensijos', srcW: 'Šaltinis: Valstybės duomenų agentūra (osp.stat.gov.lt) – vidutinis mėnesinis darbo užmokestis, senatvės pensija, minimali mėnesinė alga (metų vidurkiai); vartotojų kainų indeksas.',
+  lw: 'Vidutinis neto darbo užmokestis, €', lp: 'Vidutinė senatvės pensija, €', lm: 'Neto MMA, €', lf: 'Vidutinio fondo vertė (indeksas)', infL: 'Infliacija', retL: 'Fondų grąža', diffL: 'Skirtumas, p. p.',
+} });
+const JD = () => typeof JDATA !== 'undefined' ? JDATA : {};
+const wSer = k => { const J = JD(), o = {}; Object.entries(k === 'w' ? J.wages || {} : k === 'm' ? J.minWage || {} : J.pensions || {}).forEach(([y, v]) => { const x = Array.isArray(v) ? v[1] : v; if (x != null && !(k === 'p' && (J.pensionsQ || {})[y])) o[+y] = x; }); return o; };
+const WCOL = { w: 'C', m: 'E', p: 'F' };
+function pvWages() {
+  const t = T(), X = t.pv3, L = lang === 'lt', pl = MS.pl, d = MS.d, di = dIdx(pl, d), C = chainOf(pl), y0 = +d.slice(0, 4), out = [], ALL = L ? 'Visi fondai' : 'All funds', d0 = MKD.d0;
+  const src = `${t.srcLB(pl, d)} ${X.srcW}`, W = `'${X.sh}'`;
+  const add = (h, text, calc, nb, o = {}) => out.push({ h, text, calc, src, nums: nb.a, wages: true, ...o });
+  const look = (col, y) => `INDEX(${W}!${col}:${col},MATCH(${y},${W}!A:A,0))`;
+  /* fondų grandinė tarp metų a ir b Excel'yje: eilutės su metų grąžomis ir vertės indeksu */
+  const fundRows = (nb, a, b) => { let p = nb.add(`${L ? 'Vertė' : 'Value'} 31.12.${a}`, 100, () => '100', '0.00');
+    for (let y = a + 1; y <= b; y++) { const r = nb.add(`${y} · ${t.thYtd.toLowerCase()} (31.12), %`, C.dec(y), () => fxAvg('C', `DATE(${y},12,31)`, ALL), Zp), p0 = p; p = nb.add(`${L ? 'Vertė' : 'Value'} 31.12.${y}`, C.base[y] / C.base[a] * 100, c => `${c(p0)}*(1+${c(r)}/100)`, '0.00'); }
+    return p; };
+  ['w', 'p', 'm'].forEach(k => {
+    const S = wSer(k), ys = Object.keys(S).map(Number), last = Math.min(y0 - 1, Math.max(...ys)), ok = n => S[last] != null && S[last - n] != null && C.base[last] != null && C.base[last - n] != null;
+    const wins = [3, 5, 10].filter(ok); if (!wins.length) return;
+    const main = wins.includes(5) ? 5 : wins[wins.length - 1], g = n => S[last] / S[last - n] - 1, f = n => C.base[last] / C.base[last - n] - 1;
+    const nb = NB(), a = nb.add(`${X['l' + k]} · ${last - main}`, S[last - main], () => look(WCOL[k], last - main), '0.00'), b = nb.add(`${X['l' + k]} · ${last}`, S[last], () => look(WCOL[k], last), '0.00');
+    nb.add(`${X['l' + k]} · ${t.thDy.split(' ')[0].toLowerCase()} ${main} m., %`, g(main), c => `${c(b)}/${c(a)}-1`, Zr);
+    const fe = fundRows(nb, last - main, last); nb.add(`${X.lf} · ${main} m., %`, f(main), c => `${c(fe)}/100-1`, Zr);
+    const winOf = n => Math.abs(f(n) - g(n)) < 0.02 ? X.win.e : f(n) > g(n) ? X.win.f : X.win.x(k);
+    const others = wins.filter(n => n !== main).map(n => X.othI(n, pct(g(n) * 100), pct(f(n) * 100), k));
+    add(X[k + 'H'], X.cmp(X.what[k], main, last - main, last, pct(g(main) * 100), pct(f(main) * 100), winOf(main)) + (others.length ? X.oth(others.join('; ')) : ''), X.calcCmp, nb, { wk: k, wy: [Math.min(...wins.map(n => last - n)), last] });
+  });
+  // infliacija kiekvienais metais
+  { const ys = []; for (let y = C.fy; y < y0; y++) if (cpiM(`${y}-12`) != null && cpiM(`${y - 1}-12`) != null && C.dec(y) != null) ys.push(y);
+    if (ys.length >= 3) { const nb = NB(), V = `'${t.pv2.vki}'`, inf = y => cpiM(`${y}-12`) / cpiM(`${y - 1}-12`) - 1, df = y => C.dec(y) / 100 - inf(y);
+      const flags = ys.map(y => { const r = nb.add(`${y} · ${X.retL}, %`, C.dec(y), () => fxAvg('C', `DATE(${y},12,31)`, ALL), Zp), a = nb.add(`${y} · ${t.pv2.cpiL} 12`, cpiM(`${y}-12`), () => `INDEX(${V}!B:B,MATCH("${y}-12",${V}!A:A,0))`, '0.0000'), b = nb.add(`${y - 1} · ${t.pv2.cpiL} 12`, cpiM(`${y - 1}-12`), () => `INDEX(${V}!B:B,MATCH("${y - 1}-12",${V}!A:A,0))`, '0.0000');
+        const i = nb.add(`${y} · ${X.infL}`, inf(y), c => `${c(a)}/${c(b)}-1`, Zr); return nb.add(`${y} · ${X.diffL}`, df(y) * 100, c => `${c(r)}-${c(i)}*100`, Zp); });
+      const k = ys.filter(y => df(y) > 0).length, best = ys.reduce((p, q) => df(q) > df(p) ? q : p), worst = ys.reduce((p, q) => df(q) < df(p) ? q : p);
+      nb.add(L ? 'Metai, kai grąža viršijo infliaciją' : 'Years return beat inflation', k, c => flags.map(i => `(${c(i)}>0)`).join('+'), '0');
+      add(X.iH, X.inf(k, ys.length, df(best) > 0 ? `${best} (${mPP(df(best) * 100)})` : '', df(worst) < 0 ? `${worst} (${mPP(df(worst) * 100)})` : ''), X.calcInf, nb, { cpi: true, iys: ys }); } }
+  // santaupos atlyginimais
+  if (pl === 'II') { const T0 = totals(pl, di), per = T0.part ? T0.nav * 1e6 / T0.part : null, w = wSer('w'), p = wSer('p'), m = wSer('m'), yy = Math.max(...Object.keys(w).map(Number).filter(y => p[y] != null));
+    if (per && isFinite(yy)) { const nb = NB(), a = nb.add(I_per(), per, c => `${fxNav(d0)}*1000000/${fxPart(d0)}`, Zi);
+      const iw = nb.add(`${X.lw} · ${yy}`, w[yy], () => look('C', yy), '0.00'), ip = nb.add(`${X.lp} · ${yy}`, p[yy], () => look('F', yy), '0.00');
+      nb.add(L ? 'Atlyginimų' : 'Wages', per / w[yy], c => `${c(a)}/${c(iw)}`, '0.0'); nb.add(L ? 'Pensijų' : 'Pensions', per / p[yy], c => `${c(a)}/${c(ip)}`, '0.0');
+      if (m[yy] != null) { const im = nb.add(`${X.lm} · ${yy}`, m[yy], () => look('E', yy), '0.00'); nb.add(L ? 'MMA' : 'Minimum wages', per / m[yy], c => `${c(a)}/${c(im)}`, '0.0'); }
+      add(X.eH, X.eur(mEurs(per), yy, num(per / w[yy], 1), num(per / p[yy], 1), m[yy] != null ? num(per / m[yy], 1) : ''), X.calcEur, nb); } }
+  return out;
+}
+const I_per = () => T().ind.per;
+
 /* II ir III pakopa */
 function p23Facts() {
   const t = T(), X = t.p23, I = t.ind, L = lang === 'lt', d = MS.d, a2 = dIdx('II', d), a3 = dIdx('III', d), out = [], { d0, dy: Y } = MKD;
@@ -752,23 +931,58 @@ function chartSpec(f, box) {
     [Q.aH]: () => ({ u: 'int', lines: topMgrs('III').map(m => ({ l: m, pl: 'III', fn: di => (byMgr('III', di)[m] || {}).part || null, c: mkColor(m) })) }),
     [Q.cH]: () => ({ u: 'pct', lines: topMgrs('II').map(m => ({ l: m, pl: 'II', fn: di => { const d = MKT.II.dates[di], j = dIdx('III', d), a = byMgr('II', di)[m], b = j >= 0 ? byMgr('III', j)[m] : null, T2 = totals('II', di).nav, T3 = j >= 0 ? totals('III', j).nav : 0; return a || b ? ((a ? a.nav : 0) + (b ? b.nav : 0)) / (T2 + T3) * 100 : null; }, c: mkColor(m) })) }),
   };
+  const P2 = t.pv2, P3 = t.pv3, C = chainOf(pl), cIdx = di => C.idx[di] ?? null, yd = y => dayOf(`${y}-12-31`);
+  Object.assign(map, {
+    [P2.cumH]: () => one(S.gain.replace(/ per ketvirtį| in the quarter/, '') + (lang === 'lt' ? ' (sukauptas)' : ' (cumulative)'), di => { let s = 0, n = 0; for (let i = 0; i <= di; i++) { const g = gainAt(pl, i); if (g != null) { s += g; n++; } } return n ? s : null; }, 'mn'),
+    [P2.yrH]: () => one(P3.retL + ' (31.12), %', di => MKT[pl].dates[di].slice(5) === '12-31' ? avgK(pl, di, 'ret_ytd') : null, 'pct'),
+    [P2.chH]: () => one(P2.idx, cIdx, 'eur'), [P2.ddH]: () => one(P2.idx, cIdx, 'eur'),
+    [P2.r3H]: () => one(`${t.th3y}, %`, di => avgK(pl, di, 'ret_3y'), 'pct'),
+    [P2.rkH]: () => ({ u: 'pct', lines: (f.gs || []).map((gi, i) => ({ l: `${groupLbl(pl, gi)} · ${t.th5y}`, pl, fn: di => (avgOf(pl, di, gi) || [])[MA.ret_5y] ?? null, c: i ? 'var(--s4)' : 'var(--s1)' })) }),
+    [P2.reH]: () => { const d5 = qBack(MS.d, 60), j = dIdx(pl, d5), b = C.idx[j], m5 = d5.slice(0, 7), cb = cpiM(m5);
+      return b && cb ? { u: 'int', lines: [{ l: P3.lf, pl, fn: di => MKT[pl].dates[di] >= d5 && C.idx[di] ? C.idx[di] / b * 100 : null }, { l: P2.cpiL, pl, c: 'var(--s6)', fn: di => { const d = MKT[pl].dates[di], c = cpiM(d.slice(0, 7)); return d >= d5 && c ? c / cb * 100 : null; } }] } : null; },
+    [P3.iH]: () => ({ u: 'pct', lines: [{ l: P3.retL, pts: (f.iys || []).map(y => [yd(y), C.dec(y)]) }, { l: P3.infL, c: 'var(--s6)', pts: (f.iys || []).map(y => [yd(y), (cpiM(`${y}-12`) / cpiM(`${y - 1}-12`) - 1) * 100]) }] }),
+  });
+  ['w', 'p', 'm'].forEach(k => { map[P3[k + 'H']] = () => { const S2 = wSer(k), [a, b] = f.wy || [0, 0], ys = []; for (let y = a; y <= b; y++) if (S2[y] != null && C.base[y] != null) ys.push(y);
+    return ys.length > 1 ? { u: 'int', lines: [{ l: P3.lf, pts: ys.map(y => [yd(y), C.base[y] / C.base[ys[0]] * 100]) }, { l: `${P3['l' + k].replace(/, €$/, '')} (${ys[0]} = 100)`, c: 'var(--s6)', pts: ys.map(y => [yd(y), S2[y] / S2[ys[0]] * 100]) }] } : null; }; });
   return map[h] ? map[h]() : null;
 }
 const zFmt = (v, z) => v == null || !isFinite(v) ? '–' : z === 'yyyy-mm-dd' ? new Date((v - 25569) * 864e5).toISOString().slice(0, 10) : z === Zr ? pctPlain(v * 100, 2) : z === Zm ? num(v, 1) : z === Zp ? num(v, 2) : z === '0.000' ? num(v, 3) : z === '0.0' ? num(v, 1) : mInt(v);
+/* grafikas su valdikliais pristatymams (savininkas 2026-10-19: „koreguoti – susiaurinti laikotarpį, išimti kurį nors dalyvį“):
+   laikotarpis (greiti mygtukai ir nuo–iki), linijos įjungiamos / išjungiamos paspaudus legendą, pavadinimą galima pataisyti (patenka į PNG) */
+addStrings({ fcFrom: 'From', fcTo: 'To', fcAll: 'All', fcY: n => `${n} y`, fcTitleH: 'Click to edit the chart title (it goes into the image)', fcLegH: 'Click a line name to hide or show it' },
+  { fcFrom: 'Nuo', fcTo: 'Iki', fcAll: 'Visas', fcY: n => `${n} m.`, fcTitleH: 'Paspauskite ir pataisykite grafiko pavadinimą (jis patenka į paveikslėlį)', fcLegH: 'Paspauskite linijos pavadinimą, kad ją paslėptumėte ar parodytumėte' });
 function factMore(det) {
   const box = det.closest('.facts'), body = det.querySelector('.fxb'); if (!box || !body) return;
   const fs = det.dataset.m ? (box._byM || {})[det.dataset.m] || [] : [(box._facts || [])[+det.dataset.i]].filter(Boolean); if (!fs.length) return;
   const t = T(), sp = chartSpec(fs[0], box);
   const tbl = f => `<div class="scroll"><table class="at fnum"><tbody>${f.nums.map(n => `<tr><td class="l">${hEsc(n.l)}</td><td>${zFmt(n.v, n.z)}</td></tr>`).join('')}</tbody></table></div>`;
-  body.innerHTML = (sp ? `<div class="chart fch"></div><div class="legend chips"></div>` : '')
-    + (fs.length > 1 ? fs.map(f => `<details class="fsub"><summary>${t.fNoCh}: ${hEsc(f.text.length > 70 ? f.text.slice(0, 68) + '…' : f.text)}</summary>${tbl(f)}</details>`).join('') : tbl(fs[0]));
-  if (!sp) return;
-  const fm = { mn: v => mMn(v), int: v => mInt(v), pct: v => pctPlain(v, 1), eur: v => mEurs(v) }[sp.u];
-  const ser = sp.lines.map((L, i) => ({ provider: L.l, color: L.c || `var(--s${i + 1})`, label: L.l, points: MKT[L.pl].dates.map((d, di) => { const v = L.fn(di); return v == null || !isFinite(v) || d > MS.d ? null : [dayOf(d), v]; }).filter(Boolean) })).filter(x => x.points.length > 1);
-  const el = body.querySelector('.fch'); if (!ser.length) { el.remove(); return; }
-  const xs = ser.flatMap(x => x.points.map(p => p[0]));
-  drawLineChart(el, ser, Math.min(...xs), Math.max(...xs), { fmt: fm, axisUnit: '', zero: sp.u === 'mn', ml: 70, height: 220, mr: 16 });
-  body.querySelector('.legend').innerHTML = ser.length > 1 ? ser.map(x => `<span class="chip"><i style="background:${x.color}"></i>${hEsc(x.label)}</span>`).join(' ') : `<span class="note">${hEsc(ser[0].label)}</span>`;
+  const tables = fs.length > 1 ? fs.map(f => `<details class="fsub"><summary>${t.fNoCh}: ${hEsc(f.text.length > 70 ? f.text.slice(0, 68) + '…' : f.text)}</summary>${tbl(f)}</details>`).join('') : tbl(fs[0]);
+  const ser = !sp ? [] : sp.lines.map((L, i) => ({ provider: L.l, color: L.c || `var(--s${i + 1})`, label: L.l, points: L.pts ? L.pts : MKT[L.pl].dates.map((d, di) => { const v = L.fn(di); return v == null || !isFinite(v) || d > MS.d ? null : [dayOf(d), v]; }).filter(Boolean) })).filter(x => x.points.length > 1);
+  if (!ser.length) { body.innerHTML = tables; return; }
+  const ds = [...new Set(ser.flatMap(x => x.points.map(p => p[0])))].sort((a, b) => a - b), iso0 = x => new Date(x * 864e5).toISOString().slice(0, 10);
+  const st = det._st || (det._st = { from: ds[0], to: ds[ds.length - 1], off: new Set(), title: `${fs[0].h}: ${ser.length > 1 ? ser.map(x => x.label).join(', ') : ser[0].label}` });
+  const opt = (v, cur) => ds.map(x => `<option value="${x}"${x === cur ? ' selected' : ''}>${t.dq(iso0(x))}</option>`).join('');
+  const span = (ds[ds.length - 1] - ds[0]) / 365.25;
+  body.innerHTML = `<div class="fctl"><span class="seg">${[1, 3, 5, 10].filter(n => n < span).map(n => `<button type="button" data-fy="${n}">${t.fcY(n)}</button>`).join('')}<button type="button" data-fy="0">${t.fcAll}</button></span>`
+    + `<label class="field">${t.fcFrom} <select data-fr="from">${opt(0, st.from)}</select></label><label class="field">${t.fcTo} <select data-fr="to">${opt(0, st.to)}</select></label></div>`
+    + `<h3 class="fct" contenteditable="true" spellcheck="false" title="${t.fcTitleH}">${hEsc(st.title)}</h3><div class="chart fch"></div><div class="legend chips fleg" title="${t.fcLegH}"></div>` + tables;
+  const fm = { mn: v => mMn(v), int: v => mInt(v), pct: v => pctPlain(v, 1), eur: v => mEurs(v) }[sp.u], el = body.querySelector('.fch');
+  const draw = () => {
+    const on = ser.filter(x => !st.off.has(x.label)).map(x => ({ ...x, points: x.points.filter(p => p[0] >= st.from && p[0] <= st.to) })).filter(x => x.points.length > 1);
+    el.querySelectorAll('.ctools').forEach(n => n.remove());
+    drawLineChart(el, on, st.from, st.to, { fmt: fm, axisUnit: '', zero: sp.u === 'mn', ml: 70, height: 240, mr: on.length > 1 && el.clientWidth > 560 ? 120 : 16 });
+    body.querySelector('.fleg').innerHTML = ser.map(x => `<button type="button" class="chip${st.off.has(x.label) ? ' off' : ''}" data-fl="${hEsc(x.label)}" aria-pressed="${!st.off.has(x.label)}"><i style="background:${x.color}"></i>${hEsc(x.label)}</button>`).join(' ');
+    body.querySelectorAll('[data-fr]').forEach(sel => { sel.value = String(st[sel.dataset.fr]); });
+    body.querySelectorAll('[data-fy]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.fy ? st.to === ds[ds.length - 1] && Math.abs((st.to - st.from) / 365.25 - +b.dataset.fy) < 0.2 : st.from === ds[0] && st.to === ds[ds.length - 1])));
+  };
+  body.onclick = e => {
+    const y = e.target.closest('[data-fy]'), l = e.target.closest('[data-fl]');
+    if (y) { const n = +y.dataset.fy; st.to = ds[ds.length - 1]; st.from = n ? ds.find(x => x >= st.to - n * 365.25 - 5) : ds[0]; draw(); }
+    if (l) { const k = l.dataset.fl; if (st.off.has(k)) st.off.delete(k); else if (st.off.size < ser.length - 1) st.off.add(k); draw(); }
+  };
+  body.onchange = e => { const sel = e.target.closest('[data-fr]'); if (!sel) return; st[sel.dataset.fr] = +sel.value; if (st.from >= st.to) { if (sel.dataset.fr === 'from') st.to = ds[Math.min(ds.length - 1, ds.indexOf(st.from) + 1)]; else st.from = ds[Math.max(0, ds.indexOf(st.to) - 1)]; } draw(); };
+  body.querySelector('.fct').oninput = e => { st.title = e.target.textContent; };
+  draw();
 }
 document.addEventListener('toggle', e => { const d = e.target; if (d.classList && d.classList.contains('fmore') && d.open) factMore(d); }, true);
 /* kortelių atvaizdavimas (bendras visiems skirtukams) */
@@ -901,13 +1115,17 @@ XLB.set('qfTable', async () => {
   }, [44, 14, 14, 14, 16, 16], [[L ? 'Pokyčiai' : 'Changes', L ? 'Grąžų pokytis – procentiniais punktais (B − C); kiekių – procentais (B ÷ C − 1); prieaugio ir fondų skaičiaus – skirtumas.' : 'Return changes – percentage points (B − C); amounts – percent (B ÷ C − 1); gain and fund count – difference.']]);
 });
 XLB.set('mkTable', async () => {
-  const L = lang === 'lt', t = T(), pl = MS.pl, S = mkSeries();
+  const L = lang === 'lt', t = T(), pl = MS.pl, m = MS.mgr, S = mkSeries(), cm = m ? [crM(m)] : [];
   return mkBookOut(pl, X => {
-    const res = [[{ v: `${t.mkTitle} · ${pl} ${L ? 'pakopa' : 'pillar'}`, s: 'title' }], [{ v: t.srcLB(pl, MKT[pl].dates[MKT[pl].dates.length - 1]), s: 'sub' }],
-      xHdr([t.thDate, t.thPart, t.thDq, t.thDy, t.thNav, t.thDq, t.thDy, t.thPer, t.thYtd, t.thQ, t.th1y, t.thGain])];
+    const res = [[{ v: `${t.mkTitle} · ${pl} ${L ? 'pakopa' : 'pillar'}${m ? ' · ' + m : ''}`, s: 'title' }], [{ v: t.srcLB(pl, MKT[pl].dates[MKT[pl].dates.length - 1]), s: 'sub' }],
+      xHdr([t.thDate, t.thPart, t.thDq, t.thDy, t.thNav, t.thDq, t.thDy, t.thPer, ...(m ? [t.shOf.nav, t.shOf.part, ''] : [t.thYtd, t.thQ, t.th1y]), t.thGain])];
     [...S].reverse().filter(s => s.nf).forEach(s => {
       const r = res.length + 1, q = S[dIdx(pl, qBack(s.d, 3))], y = S[dIdx(pl, qBack(s.d, 12))], A = `A${r}`;
-      const prev = (col, m) => S_(col, byD(`EOMONTH(${A},-${m})`));
+      const prev = (col, k) => S_(col, byD(`EOMONTH(${A},-${k})`), ...cm);
+      if (m) { res.push([xDate(s.d), xF(S_('E', byD(A), ...cm), s.part, '#,##0', 'res'), q ? xF(`B${r}-${prev('E', 3)}`, s.part - q.part, '#,##0') : null, y ? xF(`B${r}-${prev('E', 12)}`, s.part - y.part, '#,##0') : null,
+        xF(S_('F', byD(A), ...cm), s.nav, '#,##0.0', 'res'), q && q.nav ? xF(`E${r}/${prev('F', 3)}-1`, s.nav / q.nav - 1, '0.00%') : null, y && y.nav ? xF(`E${r}/${prev('F', 12)}-1`, s.nav / y.nav - 1, '0.00%') : null,
+        s.per == null ? null : xF(`IF(B${r}=0,"",E${r}*1000000/B${r})`, s.per, '#,##0'), s.shN == null ? null : xF(`E${r}/${S_('F', byD(A))}`, s.shN / 100, '0.00%', 'res'), s.shP == null ? null : xF(`B${r}/${S_('E', byD(A))}`, s.shP / 100, '0.00%', 'res'), null,
+        s.gain == null ? null : xF(S_('L', byD(A), ...cm), s.gain, '#,##0.0', 'res')]); return; }
       res.push([xDate(s.d), xF(S_('E', byD(A)), s.part, '#,##0', 'res'), q ? xF(`B${r}-${prev('E', 3)}`, s.part - q.part, '#,##0') : null, y ? xF(`B${r}-${prev('E', 12)}`, s.part - y.part, '#,##0') : null,
         xF(S_('F', byD(A)), s.nav, '#,##0.0', 'res'), q ? xF(`E${r}/${prev('F', 3)}-1`, s.nav / q.nav - 1, '0.00%') : null, y ? xF(`E${r}/${prev('F', 12)}-1`, s.nav / y.nav - 1, '0.00%') : null,
         s.per == null ? null : xF(`IF(B${r}=0,"",E${r}*1000000/B${r})`, s.per, '#,##0'), s.ytd == null ? null : xF(`SUMIFS(${MKX.V}!C:C,${MKX.V}!A:A,${A},${MKX.V}!B:B,"${X.ALL}")`, s.ytd, '0.00', 'res'),
@@ -983,6 +1201,12 @@ async function mkFactBook(facts, title, pl = MS.pl) {
     tr.push([xDate(x), xF(S_('E', byD(`A${n}`)), T0.part, Zi), xF(S_('F', byD(`A${n}`)), T0.nav, Zm), g == null ? null : xF(S_('L', byD(`A${n}`)), g, Zm)]); });
   XL.sheet(wb, X0.sheetT, tr, { cols: [12, 12, 14, 16], freeze: { r: 1 } });
   X.sheets.forEach(s => XL.sheet(wb, s.name, s.rows, s.o));
+  if (facts.some(f => f.cpi) && typeof CPI !== 'undefined') XL.sheet(wb, t.pv2.vki, [xHdr([L ? 'Mėnuo' : 'Month', t.pv2.cpiL]), ...Object.entries(CPI).map(([m, v]) => [{ v: m, s: 'in' }, { v, z: '0.0000', s: 'in' }]),
+    [], [{ v: L ? 'Šaltinis: Valstybės duomenų agentūra, vartotojų kainų indeksas, https://osp.stat.gov.lt' : 'Source: State Data Agency, consumer price index, https://osp.stat.gov.lt', s: 'note' }]], { cols: [12, 22], freeze: { r: 1 } });
+  if (facts.some(f => f.wages)) { const J = JD(), X3 = t.pv3, ys = [...new Set([...Object.keys(J.wages || {}), ...Object.keys(J.pensions || {}), ...Object.keys(J.minWage || {})])].sort();
+    XL.sheet(wb, X3.sh, [xHdr([L ? 'Metai' : 'Year', L ? 'Vid. bruto DU, €' : 'Avg gross wage, €', X3.lw, L ? 'Bruto MMA, €' : 'Gross min. wage, €', X3.lm, X3.lp]),
+      ...ys.map(y => { const w = (J.wages || {})[y] || [], m = (J.minWage || {})[y] || [], p = (J.pensionsQ || {})[y] ? null : (J.pensions || {})[y]; const c = v => v == null ? null : { v, z: '0.00', s: 'in' }; return [{ v: +y, s: 'in' }, c(w[0]), c(w[1]), c(m[0]), c(m[1]), c(p)]; }),
+      [], [{ v: X3.srcW, s: 'note' }], [{ v: L ? 'Pensija – tik pilni metai (einamųjų metų ketvirčių vidurkis nerodomas).' : 'Pension – full years only.', s: 'note' }]], { cols: [8, 16, 18, 14, 14, 18], freeze: { r: 1 } }); }
   const oth = [...new Set(facts.map(f => f.other).filter(o => o && o !== pl))];
   oth.forEach(o => { const s = mkDataSheets(o).sheets[0]; XL.sheet(wb, `LB duomenys (${o})`, s.rows, s.o); });
   const legend = L ? [['Mėlyni skaičiai', 'Tiesiai iš LB failų (lapai „LB duomenys“, „LB vidurkiai“) – galima sutikrinti su LB paskelbtu failu.'], ['Geltoni skaičiai', 'Tie patys skaičiai kaip svetainėje ir fakto sakinyje; kiekvienas – Excel formulė. Spustelėkite langelį ir viršuje matysite formulę.'],

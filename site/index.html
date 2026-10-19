@@ -55,7 +55,12 @@
   #p23Bar .seg { display: none; }
   .fact .fmore summary { cursor: pointer; color: var(--accent); font-size: 13px; }
   .fact .fmore[open] { margin-bottom: 4px; }
-  .fact .fmore .fch { margin-top: 8px; }
+  .fact .fmore .fch { margin-top: 4px; }
+  .fact .fctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0 4px; font-size: 13px; }
+  .fact .fct { font-size: 15px; margin: 8px 0 0; padding: 2px 4px; border-radius: 4px; outline: none; }
+  .fact .fct:hover, .fact .fct:focus { background: var(--line); }
+  .fact .fleg .chip { cursor: pointer; font: inherit; }
+  .fact .fleg .chip.off { opacity: .4; text-decoration: line-through; }
   .fact .fmore .fnum { font-size: 12.5px; margin-top: 6px; }
   .fact .fsub { margin-top: 6px; font-size: 13px; }
   .fact .fsub summary { cursor: pointer; }
@@ -143,6 +148,8 @@
 </div>
 <script src="data.js"></script>
 <script src="common.js"></script>
+<script src="data_cpi.js"></script>
+<script src="data_journey.js"></script>
 <script src="data_mkt.js"></script>
 <script src="mkt.js"></script>
 <script>
