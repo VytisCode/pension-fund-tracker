@@ -1034,100 +1034,220 @@ function rdDrawBars(el, funds, start, gran) {
   s.onmouseleave = () => { tip.style.display = 'none'; hl.setAttribute('visibility', 'hidden'); };
 }
 
-/* ---------- Neapdorotų duomenų atsisiuntimas (antraštės mygtukas „Duomenys“, visuose puslapiuose) ----------
-   Duomenų failai (data.js, data3.js, data_pf.js) įkeliami atskirai ir vykdomi atskiroje funkcijoje, kad nesusimaišytų su puslapio DATA. */
+/* ---------- Neapdorotų duomenų atsisiuntimas (antraštės „Įrankiai“ › „Duomenys“, visuose puslapiuose) ----------
+   Savininkas 2026-10-19: „žali duomenys“ kitiems darbams – pasirenkamas duomenų tipas ir laikotarpis arba viskas vienu failu.
+   Kiekviename faile – lapas „Šaltiniai“ (iš kur kiekvienas duomuo, nuoroda, kaip dažnai atnaujinama).
+   Duomenų failai įkeliami atskirai ir vykdomi atskiroje funkcijoje, kad nesusimaišytų su puslapio kintamaisiais. */
 addStrings({
-  dlBtn: 'Data', dlWhat: 'What to download', dlNav2: 'Unit values – all Pillar II funds', dlNav3: 'Unit values – all Pillar III funds',
-  dlPf: 'Portfolios with instrument details', dlPillar: 'Pillar', dlMgr: 'Manager', dlFund: 'Fund', dlAll: 'All', dlFrom: 'From quarter', dlTo: 'To quarter',
+  dlBtn: 'Data', dlWhat: 'What to download', dlPillar: 'Pillar', dlMgr: 'Manager', dlFund: 'Fund', dlAll: 'All', dlFrom: 'From', dlTo: 'To', dlPerAll: 'empty = whole history',
   dlGo: 'Download (.xlsx)', dlBusy: 'Preparing…', dlFail: 'Could not prepare the file (no internet?).',
-  dlNoteNav: 'Excel file with two sheets: “Table” – one column per fund, one row per day; “List” – one row per fund and day. Unit values as published by the managers, full history.',
-  dlNotePf: 'One row per position per quarter end (Bank of Lithuania reports), with our extra details: asset class, region, emerging markets, index/active, SFDR, TER, currency hedging, and for bonds – maturity, coupon, yield to maturity and duration. Blank = not known.',
-  dlCols: { q: 'Quarter end', mgr: 'Manager', pl: 'Pillar', code: 'Fund code', fund: 'Fund', grp: 'Group', pos: 'Position', isin: 'ISIN', issuer: 'Issuer / company', type: 'Type', alt: 'Alternative kind', cty: 'Country', cur: 'Currency', units: 'Units / nominal', val: 'Value, €', w: 'Weight, %', ac: 'Asset class', reg: 'Region', em: 'Emerging markets', ap: 'Approach', sfdr: 'SFDR', ter: 'TER, %', hdg: 'Currency hedged', th: 'Theme', src: 'Source', mat: 'Maturity', cpn: 'Coupon, %', frn: 'Floating rate', ytm: 'Yield to maturity, %', md: 'Modified duration', yrs: 'Years to maturity', date: 'Date', unit: 'Unit value' },
+  dlSets: { all: 'Everything in one file', nav2: 'Unit values – Pillar II funds (daily)', nav3: 'Unit values – Pillar III funds (daily)', aum: 'Net assets and unit values (daily, II and III)',
+    lb: 'Bank of Lithuania quarterly results: participants, assets, returns', pay: 'Pension reform payouts', macro: 'Inflation, wages, pensions, minimum wage, state incentive, contribution rates',
+    estr: '€STR interest rate (monthly)', fee: 'Management fees', pf: 'Portfolios with instrument details' },
+  dlNote: { all: 'All data sets on separate sheets (portfolios – the latest quarter in the period; full portfolios can be downloaded separately).',
+    nav2: 'Two sheets: “Table” – one column per fund; “List” – one row per fund and day. As published by the managers.', nav3: 'Two sheets: “Table” – one column per fund; “List” – one row per fund and day. As published by the managers.',
+    aum: 'One row per fund and day: unit value and net assets (€). Before daily data – Bank of Lithuania quarter-end figures.',
+    lb: 'Each fund at each quarter end since 2015: participants, net assets, returns, benchmark, risk; Bank of Lithuania group averages; pillar and manager totals.',
+    pay: 'Payouts under the 2026 pension reform by manager and fund, as estimated from daily net assets (see Assets page methodology).',
+    macro: 'Separate sheets: CPI (monthly), average wage, average old-age pension, minimum wage, state incentive, contribution rates.',
+    estr: 'Monthly average of the euro short-term rate (ECB).', fee: 'Current annual management fee of each fund, %.',
+    pf: 'One row per position per quarter end (Bank of Lithuania reports), with asset class, region, SFDR, TER, and for bonds – maturity, coupon, yield and duration. Blank = not known.' },
+  dlSrcH: ['Data set', 'Sheet', 'What it contains', 'Source', 'Link', 'Updated', 'Notes'], dlSrcT: 'Sources of the data in this file', dlMade: 'File created', dlPer: 'Period', dlSite: 'Site',
+  dlDisc: 'For information only, not investment advice. Data are collected automatically from public sources; please cite the original source.',
+  dlCols: { q: 'Quarter end', mgr: 'Manager', pl: 'Pillar', code: 'Fund code', fund: 'Fund', grp: 'Group', pos: 'Position', isin: 'ISIN', issuer: 'Issuer / company', type: 'Type', alt: 'Alternative kind', cty: 'Country', cur: 'Currency', units: 'Units / nominal', val: 'Value, €', w: 'Weight, %', ac: 'Asset class', reg: 'Region', em: 'Emerging markets', ap: 'Approach', sfdr: 'SFDR', ter: 'TER, %', hdg: 'Currency hedged', th: 'Theme', src: 'Source', mat: 'Maturity', cpn: 'Coupon, %', frn: 'Floating rate', ytm: 'Yield to maturity, %', md: 'Modified duration', yrs: 'Years to maturity', date: 'Date', unit: 'Unit value', nav: 'Net assets, €', navm: 'Net assets, € m', part: 'Participants', nf: 'Funds', lbg: 'Bank of Lithuania group', ytd: 'Return since year start, %', r1: 'Return 1 year, %', r3: 'Return 3 years (annual), %', r5: 'Return 5 years (annual), %', gcf: 'Return since start (annual), %', bmytd: 'Benchmark since year start, %', bm1: 'Benchmark 1 year, %', std3: 'Std. deviation 3 years, %', risky: 'Risky assets, %', rq: 'Quarter return, % (computed)', file: 'Bank of Lithuania file', month: 'Month', year: 'Year', cpi: 'CPI (2025 = 100)', gross: 'Gross, €', net: 'Net, €', pens: 'Average old-age pension, €', imax: 'Incentive, €/month (participant pays 3 %)', imin: 'Incentive, €/month (gradual rate)', from: 'From', sodra: 'Sodra, % of wage', state: 'State, % of average wage', pp: 'Participant, % of wage', ppg: 'Participant (gradual), %', estr: '€STR, %', fee: 'Management fee, %/year', qa: 'Application quarter', pdate: 'Payout dates', paid: 'Paid out, € m', base: 'Assets before payout, € m', share: 'Share of assets, %', est: 'Estimated from quarter data' },
+  dlSheets: { tab: 'Table', list: 'List', lbf: 'LB funds', lba: 'LB averages', lbt: 'LB totals', cpi: 'CPI', wage: 'Average wage', pens: 'Average pension', mw: 'Minimum wage', inc: 'State incentive', rate: 'Contribution rates' },
   dlTypes: { e: 'Shares', b: 'Bonds', f: 'Funds & ETFs', c: 'Cash & deposits', d: 'Derivatives' }, dlYes: 'yes', dlNo: 'no', dlCat: { bond: 'Bond', mixed: 'Mixed', equity: 'Equity' },
 }, {
-  dlBtn: 'Duomenys', dlWhat: 'Ką atsisiųsti', dlNav2: 'Vieneto vertės – visi II pakopos fondai', dlNav3: 'Vieneto vertės – visi III pakopos fondai',
-  dlPf: 'Portfeliai su priemonių informacija', dlPillar: 'Pakopa', dlMgr: 'Valdytojas', dlFund: 'Fondas', dlAll: 'Visi', dlFrom: 'Nuo ketvirčio', dlTo: 'Iki ketvirčio',
+  dlBtn: 'Duomenys', dlWhat: 'Ką atsisiųsti', dlPillar: 'Pakopa', dlMgr: 'Valdytojas', dlFund: 'Fondas', dlAll: 'Visi', dlFrom: 'Nuo', dlTo: 'Iki', dlPerAll: 'tuščia = visa istorija',
   dlGo: 'Atsisiųsti (.xlsx)', dlBusy: 'Ruošiama…', dlFail: 'Nepavyko paruošti failo (nėra interneto?).',
-  dlNoteNav: 'Excel failas su dviem lapais: „Lentelė“ – kiekvienas fondas atskirame stulpelyje, kiekviena diena eilutėje; „Sąrašas“ – po eilutę kiekvienam fondui ir dienai. Vieneto vertės, kaip jas skelbia valdytojai, visa istorija.',
-  dlNotePf: 'Po eilutę kiekvienai pozicijai kiekvieno ketvirčio pabaigoje (Lietuvos banko ataskaitos) su mūsų surinkta papildoma informacija: turto klasė, regionas, besivystančios rinkos, indeksinis / aktyvus, SFDR, TER, valiutos apsauga, o obligacijoms – išpirkimo data, kuponas, pajamingumas iki išpirkimo ir trukmė. Tuščia = nežinoma.',
-  dlCols: { q: 'Ketvirčio pabaiga', mgr: 'Valdytojas', pl: 'Pakopa', code: 'Fondo kodas', fund: 'Fondas', grp: 'Grupė', pos: 'Pozicija', isin: 'ISIN', issuer: 'Emitentas / bendrovė', type: 'Tipas', alt: 'Alternatyvios rūšis', cty: 'Šalis', cur: 'Valiuta', units: 'Vienetai / nominalas', val: 'Vertė, €', w: 'Svoris, %', ac: 'Turto klasė', reg: 'Regionas', em: 'Besivystančios rinkos', ap: 'Valdymo būdas', sfdr: 'SFDR', ter: 'TER, %', hdg: 'Valiutos apsauga', th: 'Tema', src: 'Šaltinis', mat: 'Išpirkimo data', cpn: 'Kuponas, %', frn: 'Kintama palūkanų norma', ytm: 'Pajamingumas iki išpirkimo, %', md: 'Modifikuota trukmė', yrs: 'Metai iki išpirkimo', date: 'Data', unit: 'Vieneto vertė' },
+  dlSets: { all: 'Visi duomenys viename faile', nav2: 'Vieneto vertės – II pakopos fondai (kasdien)', nav3: 'Vieneto vertės – III pakopos fondai (kasdien)', aum: 'Grynieji aktyvai ir vieneto vertės (kasdien, II ir III)',
+    lb: 'LB ketvirčių rezultatai: dalyviai, turtas, grąžos', pay: 'Pensijų reformos išmokos', macro: 'Infliacija, darbo užmokestis, pensijos, MMA, valstybės paskata, įmokų tarifai',
+    estr: '€STR palūkanų norma (mėnesio)', fee: 'Valdymo mokesčiai', pf: 'Portfeliai su priemonių informacija' },
+  dlNote: { all: 'Visi duomenų rinkiniai atskiruose lapuose (portfeliai – paskutinis laikotarpio ketvirtis; visus portfelius galima atsisiųsti atskirai).',
+    nav2: 'Du lapai: „Lentelė“ – kiekvienas fondas atskirame stulpelyje; „Sąrašas“ – po eilutę kiekvienam fondui ir dienai. Kaip skelbia valdytojai.', nav3: 'Du lapai: „Lentelė“ – kiekvienas fondas atskirame stulpelyje; „Sąrašas“ – po eilutę kiekvienam fondui ir dienai. Kaip skelbia valdytojai.',
+    aum: 'Po eilutę kiekvienam fondui ir dienai: vieneto vertė ir grynieji aktyvai (€). Kol nebuvo kasdienių duomenų – LB ketvirčio pabaigos sumos.',
+    lb: 'Kiekvienas fondas kiekvieno ketvirčio pabaigoje nuo 2015 m.: dalyviai, grynieji aktyvai, grąžos, lyginamasis indeksas, rizika; LB grupių vidurkiai; pakopų ir valdytojų sumos.',
+    pay: '2026 m. pensijų reformos išmokos pagal valdytoją ir fondą, įvertintos iš kasdienių grynųjų aktyvų (žr. puslapio „Turtas“ metodiką).',
+    macro: 'Atskiri lapai: VKI (mėnesio), vidutinis darbo užmokestis, vidutinė senatvės pensija, MMA, valstybės paskata, įmokų tarifai.',
+    estr: 'Euro trumpalaikės palūkanų normos (€STR) mėnesio vidurkis (ECB).', fee: 'Kiekvieno fondo dabartinis metinis valdymo mokestis, %.',
+    pf: 'Po eilutę kiekvienai pozicijai kiekvieno ketvirčio pabaigoje (LB ataskaitos) su turto klase, regionu, SFDR, TER, o obligacijoms – išpirkimo data, kuponu, pajamingumu ir trukme. Tuščia = nežinoma.' },
+  dlSrcH: ['Duomenų rinkinys', 'Lapas', 'Ką rodo', 'Šaltinis', 'Nuoroda', 'Atnaujinama', 'Pastabos'], dlSrcT: 'Šio failo duomenų šaltiniai', dlMade: 'Failas sukurtas', dlPer: 'Laikotarpis', dlSite: 'Svetainė',
+  dlDisc: 'Informacinė medžiaga, ne investavimo rekomendacija. Duomenys renkami automatiškai iš viešų šaltinių; cituojant nurodykite pirminį šaltinį.',
+  dlCols: { q: 'Ketvirčio pabaiga', mgr: 'Valdytojas', pl: 'Pakopa', code: 'Fondo kodas', fund: 'Fondas', grp: 'Grupė', pos: 'Pozicija', isin: 'ISIN', issuer: 'Emitentas / bendrovė', type: 'Tipas', alt: 'Alternatyvios rūšis', cty: 'Šalis', cur: 'Valiuta', units: 'Vienetai / nominalas', val: 'Vertė, €', w: 'Svoris, %', ac: 'Turto klasė', reg: 'Regionas', em: 'Besivystančios rinkos', ap: 'Valdymo būdas', sfdr: 'SFDR', ter: 'TER, %', hdg: 'Valiutos apsauga', th: 'Tema', src: 'Šaltinis', mat: 'Išpirkimo data', cpn: 'Kuponas, %', frn: 'Kintama palūkanų norma', ytm: 'Pajamingumas iki išpirkimo, %', md: 'Modifikuota trukmė', yrs: 'Metai iki išpirkimo', date: 'Data', unit: 'Vieneto vertė', nav: 'Grynieji aktyvai, €', navm: 'Grynieji aktyvai, mln. €', part: 'Dalyviai', nf: 'Fondų', lbg: 'LB grupė', ytd: 'Grąža nuo metų pradžios, %', r1: 'Grąža per 1 m., %', r3: 'Grąža per 3 m. (metinė), %', r5: 'Grąža per 5 m. (metinė), %', gcf: 'Grąža nuo veiklos pradžios (metinė), %', bmytd: 'Lyginamasis indeksas nuo metų pradžios, %', bm1: 'Lyginamasis indeksas per 1 m., %', std3: 'Standartinis nuokrypis 3 m., %', risky: 'Rizikingas turtas, %', rq: 'Ketvirčio grąža, % (apskaičiuota)', file: 'LB failas', month: 'Mėnuo', year: 'Metai', cpi: 'VKI (2025 = 100)', gross: 'Bruto, €', net: 'Neto, €', pens: 'Vidutinė senatvės pensija, €', imax: 'Paskata, €/mėn. (dalyvis moka 3 %)', imin: 'Paskata, €/mėn. (laipsniškas tarifas)', from: 'Nuo', sodra: 'Sodra, % nuo atlyginimo', state: 'Valstybė, % nuo VDU', pp: 'Dalyvis, % nuo atlyginimo', ppg: 'Dalyvis (laipsniškas), %', estr: '€STR, %', fee: 'Valdymo mokestis, %/metus', qa: 'Prašymų ketvirtis', pdate: 'Išmokėjimo dienos', paid: 'Išmokėta, mln. €', base: 'Turtas prieš išmoką, mln. €', share: 'Dalis turto, %', est: 'Įvertinta iš ketvirčio duomenų' },
+  dlSheets: { tab: 'Lentelė', list: 'Sąrašas', lbf: 'LB fondai', lba: 'LB vidurkiai', lbt: 'LB sumos', cpi: 'VKI', wage: 'Darbo užmokestis', pens: 'Vidutinė pensija', mw: 'MMA', inc: 'Valstybės paskata', rate: 'Įmokų tarifai' },
   dlTypes: { e: 'Akcijos', b: 'Obligacijos', f: 'Fondai ir ETF', c: 'Pinigai ir indėliai', d: 'Išvestinės' }, dlYes: 'taip', dlNo: 'ne', dlCat: { bond: 'Obligacijų', mixed: 'Mišrus', equity: 'Akcijų' },
 });
-const DL = { what: 'nav2', pl: 'II', mgr: '', fund: '', q0: null, q1: null, cache: {} };
-function dlLoad(file, name) {             // grąžina failo kintamąjį (DATA ar PF), neliečiant puslapio kintamųjų
+const DL_SETS = ['all', 'nav2', 'nav3', 'aum', 'lb', 'pay', 'macro', 'estr', 'fee', 'pf'];
+const DL = { what: 'all', pl: '', mgr: '', fund: '', from: '', to: '', cache: {} };
+try { const s = JSON.parse(localStorage.getItem('dlState') || '{}'); if (DL_SETS.includes(s.what)) DL.what = s.what; if (s.from) DL.from = s.from; if (s.to) DL.to = s.to; } catch (e) {}
+function dlLoad(file, name) {             // grąžina failo kintamąjį (DATA, PF, AUM …), neliečiant puslapio kintamųjų
   if (!DL.cache[file]) DL.cache[file] = fetch(file, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(file); return r.text(); }).then(t => new Function(t + `;return ${name};`)());
   return DL.cache[file];
 }
-function dlXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
-async function dlRender() {
-  const p = document.getElementById('dlPanel'), t = T();
-  let pf = null; if (DL.what === 'pf') { try { pf = await dlLoad('data_pf.js', 'PF'); } catch (e) { pf = null; } }
-  const opt = (v, l, cur) => `<option value="${v}"${v === cur ? ' selected' : ''}>${l}</option>`;
-  let extra = '';
-  if (pf) {
-    const nq = pf.quarters.length; if (DL.q1 === null || DL.q1 >= nq) DL.q1 = nq - 1; if (DL.q0 === null || DL.q0 > DL.q1) DL.q0 = DL.q1;
-    const fs = pf.funds.filter(f => (!DL.pl || f.pl === DL.pl) && (!DL.mgr || f.p === DL.mgr)); if (!fs.some(f => f.c === DL.fund)) DL.fund = '';
-    const mgrs = [...new Set(pf.funds.map(f => f.p))].sort(), ql = i => pf.quarters[i];
-    extra = `<label class="field"><span>${t.dlPillar}</span><select data-k="pl">${opt('', t.dlAll, DL.pl)}${opt('II', 'II', DL.pl)}${opt('III', 'III', DL.pl)}</select></label>
-      <label class="field"><span>${t.dlMgr}</span><select data-k="mgr">${opt('', t.dlAll, DL.mgr)}${mgrs.map(m => opt(m, m, DL.mgr)).join('')}</select></label>
-      <label class="field"><span>${t.dlFund}</span><select data-k="fund">${opt('', t.dlAll, DL.fund)}${fs.map(f => opt(f.c, f.full || f.n, DL.fund)).join('')}</select></label>
-      <label class="field"><span>${t.dlFrom}</span><select data-k="q0">${pf.quarters.map((q, i) => opt(String(i), ql(i), String(DL.q0))).join('')}</select></label>
-      <label class="field"><span>${t.dlTo}</span><select data-k="q1">${pf.quarters.map((q, i) => opt(String(i), ql(i), String(DL.q1))).join('')}</select></label>`;
-  }
-  p.innerHTML = `<label class="field"><span>${t.dlWhat}</span><select data-k="what">${opt('nav2', t.dlNav2, DL.what)}${opt('nav3', t.dlNav3, DL.what)}${opt('pf', t.dlPf, DL.what)}</select></label>
-    ${extra}<p class="note">${DL.what === 'pf' ? t.dlNotePf : t.dlNoteNav}</p><button class="btn dlgo" type="button">${t.dlGo}</button>`;
-  p.querySelectorAll('select').forEach(sel => sel.addEventListener('change', () => {
-    const k = sel.dataset.k; DL[k] = k === 'q0' || k === 'q1' ? +sel.value : sel.value;
-    if (k === 'q0' && DL.q1 < DL.q0) DL.q1 = DL.q0; if (k === 'q1' && DL.q0 > DL.q1) DL.q0 = DL.q1;
-    dlRender();
-  }));
-  const go = p.querySelector('.dlgo');
-  go.addEventListener('click', async () => {
-    go.disabled = true; go.textContent = t.dlBusy;
-    try { await dlXlsx(); await (DL.what === 'pf' ? dlPortfolios() : dlNav(DL.what === 'nav3')); }
-    catch (e) { alert(t.dlFail); }
-    go.disabled = false; go.textContent = t.dlGo;
-  });
-}
+const LB_URL = 'https://www.lb.lt/lt/pf-veiklos-rodikliai';
+const dlIn = s => (!DL.from || s >= DL.from) && (!DL.to || s <= DL.to);          // ISO data / mėnuo / metai laikotarpyje
+const dlInY = y => (!DL.from || String(y) >= DL.from.slice(0, 4)) && (!DL.to || String(y) <= DL.to.slice(0, 4));
+const dlD = s => s ? { v: dayOf(s.length === 7 ? s + '-01' : s) + 25569, z: s.length === 7 ? 'yyyy-mm' : 'yyyy-mm-dd' } : null;
+const dlH = (hdr, rows) => [hdr.map(h => ({ v: h, s: 'hdr' })), ...rows];
+const dlSheet = (name, hdr, rows, w) => ({ name, rows: dlH(hdr, rows), o: { cols: w || hdr.map(h => Math.min(44, Math.max(10, String(h).length + 2))), freeze: { r: 1 }, filter: rows.length ? `A1:${XL.col(hdr.length - 1)}${rows.length + 1}` : null } });
 const dlDays = f => f.d || (() => { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); return d; })();
-async function dlNav(p3) {
-  const D = await dlLoad(p3 ? 'data3.js' : 'data.js', 'DATA'), t = T(), c = t.dlCols;
-  const label = id => (D.providers.find(p => p.id === id) || {}).label || id;
+const dlFresh = () => typeof FRESH !== 'undefined' ? FRESH : { urls: {}, providers: [] };
+const dlLink = u => u ? { v: u, l: u, s: 'link' } : '';
+
+/* kiekvienas rinkinys grąžina { sheets: [...], src: [[rinkinys, lapas, ką rodo, šaltinis, nuoroda, atnaujinama, pastabos], …] } */
+const DLB = {
+  async nav2() { return dlNavSet(false); },
+  async nav3() { return dlNavSet(true); },
+  async aum() {
+    const A = await dlLoad('data_aum.js', 'AUM'), c = T().dlCols, L = lang === 'lt', rows = [];
+    A.funds.forEach(f => (f.d || []).forEach((d, i) => { const s = iso(d); if (dlIn(s)) rows.push([dlD(s), f.pl, labelOfMgr(f.p), f.g === 'turto' ? (L ? 'turto išsaugojimo' : 'asset preservation') : T().dlCat[f.g] || f.g, f.n, f.code || '', f.u ? f.u[i] : null, f.a && f.a[i] != null ? Math.round(f.a[i] * 1e6) : null]); }));
+    rows.sort((a, b) => a[0].v - b[0].v);
+    const sh = L ? 'Turtas kasdien' : 'Daily assets';
+    return { sheets: [dlSheet(sh, [c.date, c.pl, c.mgr, c.grp, c.fund, c.code, c.unit, c.nav], rows, [11, 7, 11, 18, 46, 12, 12, 16])],
+      src: [[T().dlSets.aum, sh, T().dlNote.aum, L ? 'Valdytojų svetainės (kasdien); LB ketvirčio portfelių ataskaitos' : 'Managers’ websites (daily); Bank of Lithuania quarterly portfolio reports', dlLink(dlFresh().urls.pf || LB_URL), L ? 'Darbo dienomis' : 'Business days', '']] };
+  },
+  async lb() {
+    const M = typeof MKT !== 'undefined' ? MKT : await dlLoad('data_mkt.js', 'MKT'), t = T(), c = t.dlCols, L = lang === 'lt', K = Object.fromEntries(M.cols.row.map((k, i) => [k, i])), KA = Object.fromEntries(M.cols.avg.map((k, i) => [k, i]));
+    const fr = [], av = [], tot = [];
+    ['II', 'III'].forEach(pl => {
+      const P = M[pl];
+      P.rows.forEach(r => { const d = P.dates[r[0]], f = P.funds[r[1]]; if (!dlIn(d)) return;
+        fr.push([dlD(d), pl, f[0], f[1], P.groups[f[2]][1], r[K.part], r[K.nav], ...['ret_ytd', 'ret_1y', 'ret_3y', 'ret_5y', 'ret_gcf', 'bm_ytd', 'bm_1y', 'std_3y', 'risky', 'ret_q'].map(k => r[K[k]])]); });
+      P.avgs.forEach(a => { const d = P.dates[a[0]]; if (!dlIn(d)) return;
+        av.push([dlD(d), pl, a[1] < 0 ? (L ? 'Visi fondai' : 'All funds') : P.groups[a[1]][1], ...['ret_ytd', 'ret_1y', 'ret_3y', 'ret_5y', 'ret_gcf', 'bm_ytd', 'bm_1y'].map(k => a[KA[k]])]); });
+      P.dates.forEach((d, di) => { if (!dlIn(d)) return; const by = {};
+        P.rows.forEach(r => { if (r[0] !== di) return; const m = P.funds[r[1]][0]; [m, ''].forEach(k => { const x = by[k] || (by[k] = [0, 0, 0]); x[0] += r[K.part] || 0; x[1] += r[K.nav] || 0; x[2]++; }); });
+        Object.keys(by).sort().forEach(m => tot.push([dlD(d), pl, m || (L ? 'Visa pakopa' : 'Whole pillar'), by[m][0], +by[m][1].toFixed(3), by[m][2]])); });
+    });
+    const S = t.dlSheets;
+    return { sheets: [dlSheet(S.lbt, [c.q, c.pl, c.mgr, c.part, c.navm, c.nf], tot, [12, 7, 14, 12, 14, 7]),
+      dlSheet(S.lbf, [c.q, c.pl, c.mgr, c.fund, c.lbg, c.part, c.navm, c.ytd, c.r1, c.r3, c.r5, c.gcf, c.bmytd, c.bm1, c.std3, c.risky, c.rq], fr, [12, 7, 11, 46, 40, 11, 12, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12]),
+      dlSheet(S.lba, [c.q, c.pl, c.lbg, c.ytd, c.r1, c.r3, c.r5, c.gcf, c.bmytd, c.bm1], av, [12, 7, 50, 11, 11, 11, 11, 11, 11, 11])],
+      src: [[t.dlSets.lb, `${S.lbt}, ${S.lbf}, ${S.lba}`, t.dlNote.lb, L ? 'Lietuvos bankas, II ir III pakopos pensijų fondų veiklos rezultatai (ketvirčio failai)' : 'Bank of Lithuania, pillar II and III pension fund results (quarterly files)', dlLink(LB_URL), L ? 'Kas ketvirtį' : 'Quarterly',
+        L ? 'Pirmtakai priskirti dabartiniam valdytojui (Aviva → Allianz, DNB → Luminor, Finasta / MP Pension Funds Baltic / INVL / SB Asset Management → Artea, Danske Capital → Swedbank). II pakopos 2015-06-30 failo LB nepaskelbė. III pakopos dalyvių suma – per fondus. Ketvirčio grąža apskaičiuota iš LB grąžų nuo metų pradžios.'
+          : 'Predecessors are counted with today’s manager. The pillar II file for 2015-06-30 was not published. Pillar III participants are summed over funds. Quarter return computed from Bank of Lithuania year-to-date returns.']] };
+  },
+  async pay() {
+    const A = await dlLoad('data_aum.js', 'AUM'), c = T().dlCols, L = lang === 'lt', rows = [];
+    A.payouts.forEach(p => { if (!dlIn(p.dates[0] || '')) return; Object.entries(p.funds || {}).forEach(([n, v]) => rows.push([typeof appQ === 'function' ? appQ(p.q) : p.q, labelOfMgr(p.p), n, (p.dates || []).join(', '), v[0], v[1], v[1] ? +(v[0] / v[1] * 100).toFixed(3) : null, p.est ? T().dlYes : T().dlNo])); });
+    const sh = L ? 'Reformos išmokos' : 'Reform payouts';
+    return { sheets: [dlSheet(sh, [c.qa, c.mgr, c.fund, c.pdate, c.paid, c.base, c.share, c.est], rows, [12, 11, 46, 24, 13, 16, 12, 12])],
+      src: [[T().dlSets.pay, sh, T().dlNote.pay, L ? 'Apskaičiuota iš valdytojų skelbiamų kasdienių grynųjų aktyvų ir vieneto verčių' : 'Computed from managers’ daily net assets and unit values', '', L ? 'Kas ketvirtį' : 'Quarterly', L ? 'Išmoka = turto pokytis, kurio nepaaiškina vieneto vertės pokytis.' : 'Payout = change in assets not explained by the unit value change.']] };
+  },
+  async macro() {
+    const J = await dlLoad('data_journey.js', 'JDATA'), t = T(), c = t.dlCols, S = t.dlSheets, L = lang === 'lt';
+    const src = k => (J.fresh || []).find(x => x.key === k) || {}, yrs = o => Object.keys(o || {}).filter(dlInY).sort();
+    const sh = [dlSheet(S.cpi, [c.month, c.cpi], Object.keys(J.cpi || {}).filter(dlIn).sort().map(m => [dlD(m), J.cpi[m]]), [10, 16]),
+      dlSheet(S.wage, [c.year, c.gross, c.net], yrs(J.wages).map(y => [+y, ...J.wages[y]]), [8, 12, 12]),
+      dlSheet(S.pens, [c.year, c.pens], yrs(J.pensions).map(y => [+y, J.pensions[y]]), [8, 26]),
+      dlSheet(S.mw, [c.year, c.gross, c.net], yrs(J.minWage).map(y => [+y, ...J.minWage[y]]), [8, 12, 12]),
+      dlSheet(S.inc, [c.year, c.imax, c.imin], yrs(J.incentive).map(y => [+y, ...J.incentive[y]]), [8, 30, 30]),
+      dlSheet(S.rate, [c.from, c.sodra, c.state, c.pp, c.ppg], (J.rates || []).filter(r => !DL.to || r[0] <= DL.to).map(r => [dlD(r[0]), ...r.slice(1)]), [11, 18, 20, 20, 18])];
+    const row = (k, sheet, what, note = '') => { const s = src(k); return [s[lang] || s.lt || k, sheet, what, s[lang] || s.lt || '', dlLink(s.url), s.auto ? (L ? 'Automatiškai' : 'Automatic') : (L ? 'Ranka, kartą per metus' : 'By hand, yearly'), note]; };
+    const pq = J.pensionsQ && Object.entries(J.pensionsQ).map(([y, q]) => L ? `${y} m. – ${q} ketv. duomenys` : `${y} – Q${q} data`).join('; ');
+    return { sheets: sh, src: [row('cpi', S.cpi, L ? 'Vartotojų kainų indeksas, mėnesio' : 'Consumer price index, monthly', L ? 'Valstybės duomenų agentūra' : 'State Data Agency'),
+      row('wages', S.wage, L ? 'Vidutinis mėnesinis darbo užmokestis, metinis' : 'Average monthly wage, annual'), row('pensions', S.pens, L ? 'Vidutinė senatvės pensija' : 'Average old-age pension', pq || ''),
+      row('min_wage', S.mw, L ? 'Minimali mėnesinė alga (neto – metų vidurkis)' : 'Minimum monthly wage (net – annual average)'), row('incentive', S.inc, L ? 'Valstybės paskata II pakopos dalyviui, € per mėnesį' : 'State incentive for a pillar II participant, € per month'),
+      row('rates', S.rate, L ? 'II pakopos įmokų tarifai nuo datos' : 'Pillar II contribution rates from date')] };
+  },
+  async estr() {
+    const D = await dlLoad('data.js', 'DATA'), c = T().dlCols, L = lang === 'lt', m = D.rfm, rows = [];
+    if (m) { let [y, mo] = m.start.split('-').map(Number); m.v.forEach(v => { const k = `${y}-${String(mo).padStart(2, '0')}`; if (dlIn(k)) rows.push([dlD(k), v]); mo++; if (mo > 12) { mo = 1; y++; } }); }
+    return { sheets: [dlSheet('€STR', [c.month, c.estr], rows, [10, 10])],
+      src: [[T().dlSets.estr, '€STR', T().dlNote.estr, L ? 'Europos centrinis bankas' : 'European Central Bank', dlLink((m && m.source) || dlFresh().urls.estr), L ? 'Kasdien' : 'Daily', L ? 'Naudojama kaip nerizikinga palūkanų norma Sharpe rodikliui.' : 'Used as the risk-free rate for the Sharpe ratio.']] };
+  },
+  async fee() {
+    const F = await dlLoad('data_fee.js', 'FEES'), c = T().dlCols, L = lang === 'lt', sh = L ? 'Mokesčiai' : 'Fees';
+    const rows = Object.entries(F).filter(([k, v]) => typeof v === 'number').map(([k, v]) => { const [m, g] = k.split('|'); return [labelOfMgr(m), g === 'turto' ? (L ? 'turto išsaugojimo' : 'asset preservation') : g, v]; });
+    return { sheets: [dlSheet(sh, [c.mgr, c.grp, c.fee], rows, [12, 20, 20])],
+      src: [[T().dlSets.fee, sh, T().dlNote.fee, L ? 'Lietuvos bankas, pensijų fondų mokesčių failai; valdytojų taisyklės' : 'Bank of Lithuania pension fund fee files; fund rules', dlLink(dlFresh().urls.fee2 || LB_URL), L ? 'Pasikeitus mokesčiams' : 'When fees change', '']] };
+  },
+  async pf(only) { return dlPfSet(only); },
+};
+const labelOfMgr = id => ({ ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' })[id] || id;
+async function dlNavSet(p3) {
+  const D = await dlLoad(p3 ? 'data3.js' : 'data.js', 'DATA'), t = T(), c = t.dlCols, L = lang === 'lt', S = t.dlSheets, F = dlFresh();
+  const label = id => (D.providers.find(p => p.id === id) || {}).label || labelOfMgr(id);
   const brand = b => b === 'SWEDBANK' ? 'Swedbank' : b === 'GOINDEX' ? 'Goindex' : b[0] + b.slice(1).toLowerCase().replace(/^eb$/, 'EB');
-  const funds = D.groups.flatMap(g => g.funds.map(f => ({ g: p3 ? t.dlCat[g.id] || g.id : g.id, name: f.name, mgr: p3 ? brand(f.brand) : label(f.provider), d: dlDays(f), v: f.v })));
-  const days = [...new Set(funds.flatMap(f => f.d))].sort((a, b) => a - b), pos = new Map(days.map((d, i) => [d, i]));
-  const wide = [[c.date, ...funds.map(f => f.name)]], grid = days.map(d => [iso(d), ...funds.map(() => null)]);
-  funds.forEach((f, j) => f.d.forEach((d, i) => { grid[pos.get(d)][j + 1] = f.v[i]; }));
-  const long = [[c.date, c.mgr, c.grp, c.fund, c.unit]];
-  funds.forEach(f => f.d.forEach((d, i) => long.push([iso(d), f.mgr, f.g, f.name, f.v[i]])));
-  const wb = XLSX.utils.book_new();
-  const ws1 = XLSX.utils.aoa_to_sheet(wide.concat(grid)); ws1['!cols'] = [{ wch: 11 }, ...funds.map(() => ({ wch: 14 }))]; ws1['!freeze'] = { xSplit: 1, ySplit: 1 };
-  const ws2 = XLSX.utils.aoa_to_sheet(long); ws2['!cols'] = [{ wch: 11 }, { wch: 12 }, { wch: 10 }, { wch: 48 }, { wch: 12 }];
-  XLSX.utils.book_append_sheet(wb, ws1, lang === 'lt' ? 'Lentelė' : 'Table'); XLSX.utils.book_append_sheet(wb, ws2, lang === 'lt' ? 'Sąrašas' : 'List');
-  XLSX.writeFile(wb, `${lang === 'lt' ? 'Vieneto_vertes' : 'Unit_values'}_${p3 ? 'III' : 'II'}_${String(D.generated).slice(0, 10)}.xlsx`);
+  const funds = D.groups.flatMap(g => g.funds.map(f => ({ g: p3 ? t.dlCat[g.id] || g.id : g.id, name: f.name, mgr: p3 ? brand(f.brand || f.provider) : label(f.provider), d: dlDays(f), v: f.v })));
+  const days = [...new Set(funds.flatMap(f => f.d))].filter(d => dlIn(iso(d))).sort((a, b) => a - b), pos = new Map(days.map((d, i) => [d, i]));
+  const grid = days.map(d => [dlD(iso(d)), ...funds.map(() => null)]), long = [];
+  funds.forEach((f, j) => f.d.forEach((d, i) => { if (pos.has(d)) { grid[pos.get(d)][j + 1] = f.v[i]; long.push([dlD(iso(d)), f.mgr, f.g, f.name, f.v[i]]); } }));
+  const pl = p3 ? 'III' : 'II', tab = `${S.tab} ${pl}`, list = `${S.list} ${pl}`;
+  const src = [[t.dlSets[p3 ? 'nav3' : 'nav2'], `${tab}, ${list}`, t.dlNote.nav2, L ? 'Valdytojų svetainės ir duomenų sąsajos; ankstesnė istorija – valdytojų failai' : 'Managers’ websites and data interfaces; earlier history – managers’ files', dlLink(p3 ? F.urls.p3 : F.urls.nav), L ? 'Darbo dienomis' : 'Business days', L ? 'Vieneto vertės jau po valdymo mokesčio.' : 'Unit values are already net of fees.']];
+  if (!p3) (F.providers || []).forEach(p => src.push(['', '', p.label, L ? `${p.label} – vieneto vertės` : `${p.label} – unit values`, dlLink(p.url), '', '']));
+  return { sheets: [{ name: tab, rows: [[{ v: c.date, s: 'hdr' }, ...funds.map(f => ({ v: f.name, s: 'hdr' }))], ...grid], o: { cols: [11, ...funds.map(() => 14)], freeze: { r: 1, c: 1 } } },
+    dlSheet(list, [c.date, c.mgr, c.grp, c.fund, c.unit], long, [11, 12, 12, 48, 12])], src };
 }
-async function dlPortfolios() {
-  const PF = await dlLoad('data_pf.js', 'PF'), t = T(), c = t.dlCols;
+async function dlPfSet(only) {
+  const PF = await dlLoad('data_pf.js', 'PF'), t = T(), c = t.dlCols, L = lang === 'lt';
   const bm = {}; Object.entries(PF.bm || {}).forEach(([si, a]) => { const m = bm[si] = new Map(); for (let i = 0; i < a.length; i += 4) m.set(a[i], a.slice(i + 1, i + 4)); });
   const yn = x => x === true || x === 1 || x === '1' || x === 'yes' ? t.dlYes : x === false || x === 0 || x === '0' || x === 'no' ? t.dlNo : (x ?? '');
+  let qs = PF.quarters.map((q, i) => i).filter(i => dlIn(PF.quarters[i]));
+  if (only && qs.length) qs = [qs[qs.length - 1]];
+  const qset = new Set(qs);
   const cols = ['q', 'mgr', 'pl', 'code', 'fund', 'grp', 'pos', 'isin', 'issuer', 'type', 'alt', 'cty', 'cur', 'units', 'val', 'w', 'ac', 'reg', 'em', 'ap', 'sfdr', 'ter', 'hdg', 'th', 'src', 'mat', 'cpn', 'frn', 'ytm', 'md', 'yrs'];
-  const rows = [cols.map(k => c[k])];
-  PF.funds.filter(f => (!DL.pl || f.pl === DL.pl) && (!DL.mgr || f.p === DL.mgr) && (!DL.fund || f.c === DL.fund)).forEach(f => {
-    const tot = {}; for (let i = 0; i < f.r.length; i += 4) if (f.r[i] >= DL.q0 && f.r[i] <= DL.q1) tot[f.r[i]] = (tot[f.r[i]] || 0) + f.r[i + 3];
+  const rows = [];
+  PF.funds.filter(f => only || ((!DL.pl || f.pl === DL.pl) && (!DL.mgr || f.p === DL.mgr) && (!DL.fund || f.c === DL.fund))).forEach(f => {
+    const tot = {}; for (let i = 0; i < f.r.length; i += 4) if (qset.has(f.r[i])) tot[f.r[i]] = (tot[f.r[i]] || 0) + f.r[i + 3];
     for (let i = 0; i < f.r.length; i += 4) {
-      const qi = f.r[i]; if (qi < DL.q0 || qi > DL.q1) continue;
+      const qi = f.r[i]; if (!qset.has(qi)) continue;
       const si = f.r[i + 1], s = PF.secs[si], a = s[9] || [], b = s[10] || [], y = bm[si] && bm[si].get(qi);
-      rows.push([PF.quarters[qi], f.p, f.pl, f.c, f.full || f.n, f.g || '', s[8] || s[0], s[5] || '', s[8] ? s[0] : '', t.dlTypes[s[1]] || s[1], s[7] || '', s[2] || '', s[3] || '',
+      rows.push([dlD(PF.quarters[qi]), f.p, f.pl, f.c, f.full || f.n, f.g || '', s[8] || s[0], s[5] || '', s[8] ? s[0] : '', t.dlTypes[s[1]] || s[1], s[7] || '', s[2] || '', s[3] || '',
         f.r[i + 2], f.r[i + 3], tot[qi] ? +(f.r[i + 3] / tot[qi] * 100).toFixed(4) : null,
         a[0] || '', a[1] || '', yn(a[2]), a[3] || '', a[4] || '', a[5] ?? '', yn(a[6]), a[7] || '', a[8] || '',
         b[0] || '', b[1] ?? '', b.length ? yn(b[2]) : '', y ? y[0] : '', y && y[1] !== null ? y[1] : '', y ? y[2] : '']);
     }
   });
-  const ws = XLSX.utils.aoa_to_sheet(rows), wb = XLSX.utils.book_new();
-  ws['!cols'] = cols.map(k => ({ wch: { fund: 40, pos: 40, issuer: 28, src: 30 }[k] || 12 })); ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length - 1, c: cols.length - 1 } }) };
-  XLSX.utils.book_append_sheet(wb, ws, lang === 'lt' ? 'Portfeliai' : 'Portfolios');
-  const tag = [DL.pl, DL.fund || DL.mgr].filter(Boolean).join('_').replace(/[^\w-]+/g, '-');
-  XLSX.writeFile(wb, `${lang === 'lt' ? 'Portfeliai' : 'Portfolios'}${tag ? '_' + tag : ''}_${PF.quarters[DL.q0]}_${PF.quarters[DL.q1]}.xlsx`);
+  const sh = L ? 'Portfeliai' : 'Portfolios', F = dlFresh();
+  return { sheets: [dlSheet(sh, cols.map(k => c[k]), rows, cols.map(k => ({ fund: 40, pos: 40, issuer: 28, src: 30 }[k] || 12)))],
+    src: [[t.dlSets.pf, sh, t.dlNote.pf, L ? 'Lietuvos bankas, ketvirtinės pensijų fondų investicijų ataskaitos' : 'Bank of Lithuania quarterly pension fund investment reports', dlLink(F.urls.pf || LB_URL), L ? 'Kas ketvirtį' : 'Quarterly', ''],
+      ['', '', L ? 'Vertybinių popierių pavadinimai' : 'Security names', 'OpenFIGI', dlLink('https://www.openfigi.com/'), '', ''],
+      ['', '', L ? 'Obligacijų sąlygos (kuponas, išpirkimas)' : 'Bond terms (coupon, maturity)', 'ESMA FIRDS', dlLink(F.urls.isin), '', ''],
+      ['', '', L ? 'Fondų ir ETF savybės (TER, SFDR, regionas)' : 'Fund and ETF attributes (TER, SFDR, region)', L ? 'Fondų dokumentai, viešos ETF duomenų bazės' : 'Fund documents, public ETF databases', dlLink(F.urls.attrs), '', '']] };
+}
+async function dlBuild() {
+  const t = T(), L = lang === 'lt', sets = DL.what === 'all' ? DL_SETS.filter(k => k !== 'all') : [DL.what], parts = [];
+  for (const k of sets) { try { parts.push(await DLB[k](DL.what === 'all')); } catch (e) { console.warn('dl', k, e); } }
+  if (!parts.length) throw new Error('empty');
+  const site = location.href.split('#')[0].replace(/[^/]*$/, '');
+  const per = DL.from || DL.to ? `${DL.from || '…'} – ${DL.to || '…'}` : (L ? 'visa istorija' : 'whole history');
+  const src = [[{ v: t.dlSrcT, s: 'title' }], [{ v: t.dlMade, s: 'b' }, new Date().toLocaleString(T().locale)], [{ v: t.dlPer, s: 'b' }, per], [{ v: t.dlSite, s: 'b' }, { v: site, l: site, s: 'link' }],
+    [{ v: L ? 'Metodika' : 'Methodology', s: 'b' }, { v: site + 'apie.html', l: site + 'apie.html', s: 'link' }], [], t.dlSrcH.map(h => ({ v: h, s: 'hdr' })),
+    ...parts.flatMap(p => p.src), [], [{ v: t.dlDisc, s: 'note' }]];
+  const wb = XL.book();
+  XL.sheet(wb, L ? 'Šaltiniai' : 'Sources', src, { cols: [34, 26, 48, 48, 50, 18, 60], grid: false });
+  parts.forEach(p => p.sheets.forEach(s => XL.sheet(wb, s.name.slice(0, 31), s.rows, s.o)));
+  const name = { all: L ? 'Visi_duomenys' : 'All_data' }[DL.what] || (t.dlSets[DL.what] || DL.what).split(/[–(:]/)[0].trim().replace(/[^\p{L}\p{N}]+/gu, '_');
+  await XL.save(wb, `${name}${DL.from || DL.to ? `_${DL.from || 'pradzia'}_${DL.to || 'dabar'}` : ''}_${iso(Math.floor(Date.now() / DAY))}.xlsx`);
+}
+async function dlRender() {
+  const p = document.getElementById('dlPanel'), t = T();
+  const opt = (v, l, cur) => `<option value="${v}"${v === cur ? ' selected' : ''}>${hEsc(l)}</option>`;
+  let extra = '';
+  if (DL.what === 'pf') {
+    let pf = null; try { pf = await dlLoad('data_pf.js', 'PF'); } catch (e) { pf = null; }
+    if (pf) {
+      const fs = pf.funds.filter(f => (!DL.pl || f.pl === DL.pl) && (!DL.mgr || f.p === DL.mgr)); if (!fs.some(f => f.c === DL.fund)) DL.fund = '';
+      const mgrs = [...new Set(pf.funds.map(f => f.p))].sort();
+      extra = `<label class="field"><span>${t.dlPillar}</span><select data-k="pl">${opt('', t.dlAll, DL.pl)}${opt('II', 'II', DL.pl)}${opt('III', 'III', DL.pl)}</select></label>
+        <label class="field"><span>${t.dlMgr}</span><select data-k="mgr">${opt('', t.dlAll, DL.mgr)}${mgrs.map(m => opt(m, m, DL.mgr)).join('')}</select></label>
+        <label class="field"><span>${t.dlFund}</span><select data-k="fund">${opt('', t.dlAll, DL.fund)}${fs.map(f => opt(f.c, f.full || f.n, DL.fund)).join('')}</select></label>`;
+    }
+  }
+  p.innerHTML = `<label class="field"><span>${t.dlWhat}</span><select data-k="what">${DL_SETS.map(k => opt(k, t.dlSets[k], DL.what)).join('')}</select></label>${extra}
+    <label class="field"><span>${t.dlFrom}</span><input type="date" data-k="from" value="${DL.from}"></label><label class="field"><span>${t.dlTo}</span><input type="date" data-k="to" value="${DL.to}"></label>
+    <p class="note">${t.dlPerAll}. ${t.dlNote[DL.what]}</p><button class="btn dlgo" type="button">${t.dlGo}</button>`;
+  p.querySelectorAll('select, input').forEach(el => el.addEventListener('change', () => {
+    DL[el.dataset.k] = el.value; try { localStorage.setItem('dlState', JSON.stringify({ what: DL.what, from: DL.from, to: DL.to })); } catch (e) {}
+    dlRender();
+  }));
+  const go = p.querySelector('.dlgo');
+  go.addEventListener('click', async () => {
+    go.disabled = true; go.textContent = t.dlBusy;
+    try { await dlBuild(); } catch (e) { console.error(e); alert(t.dlFail); }
+    go.disabled = false; go.textContent = t.dlGo;
+  });
 }
 
 /* ---------- KPI kortelės puslapio viršuje (auditas #50) ----------

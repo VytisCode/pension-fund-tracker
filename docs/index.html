@@ -46,6 +46,13 @@
   .fact small { color: var(--text-3); font-size: 11.5px; line-height: 1.4; }
   .fact .btn { align-self: flex-start; margin-top: auto; }
   .factbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+  .factbar { gap: 8px; flex-wrap: wrap; }
+  .fact .fbtn { display: flex; gap: 6px; margin-top: auto; }
+  .fact .fbtn .btn { margin-top: 0; }
+  .fact.mi ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.45; display: grid; gap: 4px; }
+  .fact .fh .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .tdmk .kpis { margin-bottom: 8px; }
+  .tdmk ul { margin: 6px 0 8px; padding-left: 18px; line-height: 1.45; }
   table.at { font-size: 13px; }
   table.at th { white-space: normal; vertical-align: bottom; }
   table.at td, table.at th { text-align: right; font-variant-numeric: tabular-nums; }
@@ -68,6 +75,7 @@
     <div class="big" id="big"></div>
     <section class="card says" data-src="nav"><h2 id="sayH"></h2><div id="say"></div></section>
     <section class="card" data-src="nav"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
+    <section class="card tdmk" data-src="lbh"><h2 id="tdMkH"></h2><div class="meta" id="tdMkM"></div><div class="kpis" id="tdMkK"></div><ul id="tdMkL"></ul><p class="more" id="tdMkA"></p></section>
     <section class="guide"><h2 id="guH"></h2><div class="gtiles" id="guT"></div><p class="note" id="guN"></p></section>
   </div>
 
@@ -76,7 +84,7 @@
     <p class="lead" id="qfLead"></p>
     <div id="qfBar"></div>
     <div class="kpis" id="qfKpis"></div>
-    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" id="qfAll"></button></div><div class="facts" id="qfCards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" id="qfAll"></button><button type="button" class="btn xl" id="qfXl"></button></div><div class="facts" id="qfCards"></div></section>
     <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="qfTable"></table></div><p class="note" id="qfNote"></p></section>
   </div>
 
@@ -96,6 +104,7 @@
     <p class="lead" id="mgLead"></p>
     <div id="mgBar"></div>
     <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="mgT"></table></div><p class="note" id="mgNote"></p></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="miTitle" style="margin:0 0 4px"></h2><p class="meta" id="miLead" style="margin:0"></p></div><button type="button" class="btn xl" id="miXl"></button></div><div class="facts" id="miCards"></div></section>
     <section class="card" data-src="lbh"><h2 id="mgChart"></h2><div class="seg" id="mgSeg" role="group"></div><div class="chart" id="mgChartBox"></div><div class="legend chips" id="mgLegend" style="margin-top:6px"></div></section>
   </div>
 
@@ -108,10 +117,10 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=ac5ca4ff"></script>
-<script src="common.js?v=1ff77efe"></script>
+<script src="data.js?v=b2875e02"></script>
+<script src="common.js?v=193670f1"></script>
 <script src="data_mkt.js?v=bc1519ab"></script>
-<script src="mkt.js?v=1fbc7c2b"></script>
+<script src="mkt.js?v=cde9db41"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
