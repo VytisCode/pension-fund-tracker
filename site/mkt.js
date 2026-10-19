@@ -716,14 +716,69 @@ function p23Facts() {
     add(X.cH, X.c(v.slice(0, 3).map(x => `${x.m} (${pctPlain(x.s, 1)})`).join(', ')), X.calcC, nb); }
   return { facts: out, mgr };
 }
+/* išskleidžiama kortelės dalis (savininkas 2026-10-19: „išskleidus kortelę – faktą paremiantis grafikas ar lentelė“):
+   grafikas laike (visi ketvirčiai nuo 2015 m.) ir lentelė su visais fakto skaičiais (tie patys kaip Excel faile) */
+addStrings({ fmore: 'More: chart and figures', fNoCh: 'Figures behind the fact', fSer: { nav: 'Net assets, € m', part: 'Participants', r1: 'Weighted return over 1 year, %', r5: 'Weighted 5-year annual return, %', gain: 'Investment gain in the quarter, € m', flow: 'Contributions minus payouts in the quarter, € m', per: 'Assets per participant, €', shN: 'Share of assets, %', shP: 'Share of participants, %', beat: 'Funds above group average, %', bm: 'Funds beating benchmark, %', both: 'Pillars II + III assets, € m', ratio: 'Pillar III assets ÷ pillar II, %', p3: 'Pillar III participants', ppg: 'Gain per participant in the quarter, €', hhi: 'HHI' } },
+  { fmore: 'Daugiau: grafikas ir skaičiai', fNoCh: 'Fakto skaičiai', fSer: { nav: 'Grynieji aktyvai, mln. €', part: 'Dalyviai', r1: 'Svertinė grąža per 1 metus, %', r5: 'Svertinė 5 metų metinė grąža, %', gain: 'Investicinis prieaugis per ketvirtį, mln. €', flow: 'Įmokų ir išmokų balansas per ketvirtį, mln. €', per: 'Turtas vienam dalyviui, €', shN: 'Turto dalis, %', shP: 'Dalyvių dalis, %', beat: 'Fondai virš grupės vidurkio, %', bm: 'Fondai, lenkę lyginamąjį indeksą, %', both: 'II + III pakopos turtas, mln. €', ratio: 'III pakopos turtas ÷ II pakopos, %', p3: 'III pakopos dalyviai', ppg: 'Prieaugis vienam dalyviui per ketvirtį, €', hhi: 'HHI' } });
+const flowAt = (pl, di) => { const d = MKT[pl].dates[di], q = dIdx(pl, qBack(d, 3)), g = gainAt(pl, di); return q < 0 || g == null ? null : totals(pl, di).nav - totals(pl, q).nav - g; };
+const shareAt = (pl, di, m, k) => { const x = byMgr(pl, di)[m], T0 = totals(pl, di); return x && T0[k] ? x[k] / T0[k] * 100 : null; };
+const avgK = (pl, di, k) => { const a = avgOf(pl, di, -1); return a ? a[MA[k]] : null; };
+function beatAt(pl, di, bm) {
+  let k = 0, n = 0;
+  rowsAt(pl, di).forEach(r => { const v = r[MC.ret_ytd]; if (v == null) return; const ref = bm ? r[MC.bm_ytd] : (avgOf(pl, di, fundOf(pl, r)[2]) || [])[MA.ret_ytd]; if (ref == null) return; n++; if (v > ref) k++; });
+  return n > 2 ? k / n * 100 : null;
+}
+function topMgrs(pl, n = 6) { const di = dIdx(pl, MS.d) >= 0 ? dIdx(pl, MS.d) : MKT[pl].dates.length - 1; return Object.entries(byMgr(pl, di)).sort((a, b) => b[1].nav - a[1].nav).slice(0, n).map(x => x[0]); }
+/* grafiko aprašas: {u – vienetai, lines: [{l, pl, fn(di), c}]} */
+function chartSpec(f, box) {
+  const t = T(), S = t.fSer, pl = box.dataset.pl || MS.pl, h = f.h, F = t.f, X = t.fx, V = t.pv, Q = t.p23;
+  const one = (l, fn, u, p = pl) => ({ u, lines: [{ l, pl: p, fn }] }), mg = (p, k, ms) => ({ u: 'pct', lines: ms.map(m => ({ l: m, pl: p, fn: di => shareAt(p, di, m, k), c: mkColor(m) })) });
+  if (box.id === 'miCards' || (f.hl && MK_PROV.includes(h) && box.id !== 'p23Mgr')) return { u: 'pct', lines: [{ l: `${h} · ${S.shN}`, pl, fn: di => shareAt(pl, di, h, 'nav'), c: mkColor(h) }, { l: `${h} · ${S.shP}`, pl, fn: di => shareAt(pl, di, h, 'part'), c: 'var(--text-3)' }] };
+  if (box.id === 'p23Mgr') { const m = f.h; return { u: 'int', lines: [{ l: `${m} · ${S.p3}`, pl: 'III', fn: di => (byMgr('III', di)[m] || {}).part || null, c: mkColor(m) }] }; }
+  const map = {
+    [F.navH]: () => one(S.nav, di => totals(pl, di).nav || null, 'mn'), [X.recH]: () => one(S.nav, di => totals(pl, di).nav || null, 'mn'), [X.grH]: () => one(S.nav, di => totals(pl, di).nav || null, 'mn'),
+    [F.partH]: () => one(S.part, di => totals(pl, di).part || null, 'int'), [F.retH]: () => one(S.r1, di => avgK(pl, di, 'ret_1y'), 'pct'), [V.dblH]: () => one(S.r5, di => avgK(pl, di, 'ret_5y'), 'pct'),
+    [F.gainH]: () => one(S.gain, di => gainAt(pl, di), 'mn'), [V.dayH]: () => one(S.gain, di => gainAt(pl, di), 'mn'), [X.flowH]: () => ({ u: 'mn', lines: [{ l: S.gain, pl, fn: di => gainAt(pl, di), c: 'var(--s4)' }, { l: S.flow, pl, fn: di => flowAt(pl, di), c: 'var(--s1)' }] }),
+    [F.perH]: () => one(S.per, di => { const x = totals(pl, di); return x.part ? x.nav * 1e6 / x.part : null; }, 'eur'),
+    [V.ppH]: () => one(S.ppg, di => { const g = gainAt(pl, di), x = totals(pl, di); return g != null && x.part ? g * 1e6 / x.part : null; }, 'eur'),
+    [F.mgrH]: () => mg(pl, 'nav', topMgrs(pl)), [F.chgH]: () => mg(pl, 'part', topMgrs(pl)),
+    [X.concH]: () => one(S.hhi, di => { const T0 = totals(pl, di); if (!T0.nav) return null; return Object.values(byMgr(pl, di)).reduce((s, x) => s + (x.nav / T0.nav * 100) ** 2, 0); }, 'int'),
+    [X.beatH]: () => one(S.beat, di => beatAt(pl, di, false), 'pct'), [X.bmH]: () => one(S.bm, di => beatAt(pl, di, true), 'pct'),
+    [F.bothH]: () => one(S.both, di => { const d = MKT[pl].dates[di], o = pl === 'II' ? 'III' : 'II', j = dIdx(o, d); return j < 0 ? null : totals(pl, di).nav + totals(o, j).nav; }, 'mn'),
+    [Q.rH]: () => one(S.ratio, di => { const j = dIdx('III', MKT.II.dates[di]); return j < 0 ? null : totals('III', j).nav / totals('II', di).nav * 100; }, 'pct', 'II'),
+    [Q.gH]: () => one(S.p3, di => totals('III', di).part || null, 'int', 'III'),
+    [Q.fH]: () => ({ u: 'mn', lines: [{ l: `III · ${S.flow}`, pl: 'III', fn: di => flowAt('III', di), c: 'var(--s4)' }, { l: `II · ${S.flow}`, pl: 'II', fn: di => flowAt('II', di), c: 'var(--s1)' }] }),
+    [Q.lH]: () => ({ u: 'int', lines: topMgrs('III').map(m => ({ l: m, pl: 'III', fn: di => (byMgr('III', di)[m] || {}).part || null, c: mkColor(m) })) }),
+    [Q.aH]: () => ({ u: 'int', lines: topMgrs('III').map(m => ({ l: m, pl: 'III', fn: di => (byMgr('III', di)[m] || {}).part || null, c: mkColor(m) })) }),
+    [Q.cH]: () => ({ u: 'pct', lines: topMgrs('II').map(m => ({ l: m, pl: 'II', fn: di => { const d = MKT.II.dates[di], j = dIdx('III', d), a = byMgr('II', di)[m], b = j >= 0 ? byMgr('III', j)[m] : null, T2 = totals('II', di).nav, T3 = j >= 0 ? totals('III', j).nav : 0; return a || b ? ((a ? a.nav : 0) + (b ? b.nav : 0)) / (T2 + T3) * 100 : null; }, c: mkColor(m) })) }),
+  };
+  return map[h] ? map[h]() : null;
+}
+const zFmt = (v, z) => v == null || !isFinite(v) ? '–' : z === 'yyyy-mm-dd' ? new Date((v - 25569) * 864e5).toISOString().slice(0, 10) : z === Zr ? pctPlain(v * 100, 2) : z === Zm ? num(v, 1) : z === Zp ? num(v, 2) : z === '0.000' ? num(v, 3) : z === '0.0' ? num(v, 1) : mInt(v);
+function factMore(det) {
+  const box = det.closest('.facts'), body = det.querySelector('.fxb'); if (!box || !body) return;
+  const fs = det.dataset.m ? (box._byM || {})[det.dataset.m] || [] : [(box._facts || [])[+det.dataset.i]].filter(Boolean); if (!fs.length) return;
+  const t = T(), sp = chartSpec(fs[0], box);
+  const tbl = f => `<div class="scroll"><table class="at fnum"><tbody>${f.nums.map(n => `<tr><td class="l">${hEsc(n.l)}</td><td>${zFmt(n.v, n.z)}</td></tr>`).join('')}</tbody></table></div>`;
+  body.innerHTML = (sp ? `<div class="chart fch"></div><div class="legend chips"></div>` : '')
+    + (fs.length > 1 ? fs.map(f => `<details class="fsub"><summary>${t.fNoCh}: ${hEsc(f.text.length > 70 ? f.text.slice(0, 68) + '…' : f.text)}</summary>${tbl(f)}</details>`).join('') : tbl(fs[0]));
+  if (!sp) return;
+  const fm = { mn: v => mMn(v), int: v => mInt(v), pct: v => pctPlain(v, 1), eur: v => mEurs(v) }[sp.u];
+  const ser = sp.lines.map((L, i) => ({ provider: L.l, color: L.c || `var(--s${i + 1})`, label: L.l, points: MKT[L.pl].dates.map((d, di) => { const v = L.fn(di); return v == null || !isFinite(v) || d > MS.d ? null : [dayOf(d), v]; }).filter(Boolean) })).filter(x => x.points.length > 1);
+  const el = body.querySelector('.fch'); if (!ser.length) { el.remove(); return; }
+  const xs = ser.flatMap(x => x.points.map(p => p[0]));
+  drawLineChart(el, ser, Math.min(...xs), Math.max(...xs), { fmt: fm, axisUnit: '', zero: sp.u === 'mn', ml: 70, height: 220, mr: 16 });
+  body.querySelector('.legend').innerHTML = ser.length > 1 ? ser.map(x => `<span class="chip"><i style="background:${x.color}"></i>${hEsc(x.label)}</span>`).join(' ') : `<span class="note">${hEsc(ser[0].label)}</span>`;
+}
+document.addEventListener('toggle', e => { const d = e.target; if (d.classList && d.classList.contains('fmore') && d.open) factMore(d); }, true);
 /* kortelių atvaizdavimas (bendras visiems skirtukams) */
 function factCards(el, fs, title, pl) {
   const t = T(); el._facts = fs; el.dataset.title = title; el.dataset.pl = pl;
-  el.innerHTML = fs.map((f, i) => `<article class="fact${f.hl ? ' hl' : ''}"><span class="fh">${hEsc(f.h)}</span><p>${hEsc(f.text)}</p><small>${hEsc(f.src)} ${t.how} ${hEsc(f.calc)}</small><div class="fbtn"><button type="button" class="btn" data-fact="${i}">${t.copy}</button><button type="button" class="btn xl" data-fx="${i}" title="${t.tXl}">${t.fx.xl}</button></div></article>`).join('');
+  el.innerHTML = fs.map((f, i) => `<article class="fact${f.hl ? ' hl' : ''}"><span class="fh">${hEsc(f.h)}</span><p>${hEsc(f.text)}</p><small>${hEsc(f.src)} ${t.how} ${hEsc(f.calc)}</small><details class="fmore" data-i="${i}"><summary>${t.fmore}</summary><div class="fxb"></div></details><div class="fbtn"><button type="button" class="btn" data-fact="${i}">${t.copy}</button><button type="button" class="btn xl" data-fx="${i}" title="${t.tXl}">${t.fx.xl}</button></div></article>`).join('');
 }
 function mgrCards(el, byM, title, pl) {
   const t = T(), ms = Object.keys(byM); el._facts = ms.flatMap(m => byM[m]); el._byM = byM; el.dataset.title = title; el.dataset.pl = pl;
-  el.innerHTML = ms.map(m => `<article class="fact mi${m === MS.mgr ? ' hl' : ''}"><span class="fh"><i class="sw" style="background:${mkColor(m)}"></i>${hEsc(m)}</span><ul>${byM[m].map(f => `<li>${hEsc(f.text)}</li>`).join('')}</ul><small>${hEsc(byM[m][0] ? byM[m][0].src : '')}</small><div class="fbtn"><button type="button" class="btn" data-mcp="${hEsc(m)}">${t.copy}</button><button type="button" class="btn xl" data-mxl="${hEsc(m)}" title="${t.tXl}">${t.fx.xl}</button></div></article>`).join('');
+  el.innerHTML = ms.map(m => `<article class="fact mi${m === MS.mgr ? ' hl' : ''}"><span class="fh"><i class="sw" style="background:${mkColor(m)}"></i>${hEsc(m)}</span><ul>${byM[m].map(f => `<li>${hEsc(f.text)}</li>`).join('')}</ul><small>${hEsc(byM[m][0] ? byM[m][0].src : '')}</small><details class="fmore" data-m="${hEsc(m)}"><summary>${t.fmore}</summary><div class="fxb"></div></details><div class="fbtn"><button type="button" class="btn" data-mcp="${hEsc(m)}">${t.copy}</button><button type="button" class="btn xl" data-mxl="${hEsc(m)}" title="${t.tXl}">${t.fx.xl}</button></div></article>`).join('');
 }
 function renderPv() {
   const t = T(), el = document.getElementById('pvCards'); if (!el) return;

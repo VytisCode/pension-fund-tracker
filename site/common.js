@@ -1578,7 +1578,7 @@ function richXls(tbl) {                   // artimiausias puslapio „⤓ Excel�
 }
 function tableTools() {
   document.querySelectorAll('main table, .wrap table').forEach(tbl => {
-    if (tbl._tt || tbl.hidden || tbl.closest('.ntc, .ttools, header, .fresh') || tbl.rows.length < 2) return;
+    if (tbl._tt || tbl.hidden || tbl.closest('.ntc, .ttools, header, .fresh, .fmore') || tbl.rows.length < 2) return;
     tbl._tt = true; if (!tbl.id) tbl.id = 'tbl' + (++TBL_N);
     const host = tbl.closest('.scroll') || tbl;
     const t = document.createElement('div'); t.className = 'ttools';

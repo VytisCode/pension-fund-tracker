@@ -53,6 +53,14 @@
   .fact .fh .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
   .tdmk .kpis { margin-bottom: 8px; }
   #p23Bar .seg { display: none; }
+  .fact .fmore summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+  .fact .fmore[open] { margin-bottom: 4px; }
+  .fact .fmore .fch { margin-top: 8px; }
+  .fact .fmore .fnum { font-size: 12.5px; margin-top: 6px; }
+  .fact .fsub { margin-top: 6px; font-size: 13px; }
+  .fact .fsub summary { cursor: pointer; }
+  .fact .fmore .fnum td.l { white-space: normal; }
+  .facts > .fact:has(.fmore[open]) { grid-column: 1 / -1; }
   .tdmk ul { margin: 6px 0 8px; padding-left: 18px; line-height: 1.45; }
   table.at { font-size: 13px; }
   table.at th { white-space: normal; vertical-align: bottom; }
@@ -133,10 +141,10 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=dc0b8924"></script>
-<script src="common.js?v=54b33b19"></script>
+<script src="data.js?v=be60f3f4"></script>
+<script src="common.js?v=58b9e7e6"></script>
 <script src="data_mkt.js?v=bc1519ab"></script>
-<script src="mkt.js?v=59b977d2"></script>
+<script src="mkt.js?v=e80c491d"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
