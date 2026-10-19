@@ -27,7 +27,7 @@ addStrings({
   gpTitle: 'Participants by group', gpLead: 'Participants in each Bank of Lithuania group over the last quarters.',
   mgChart: 'Market share over time', fdNone: 'No funds in this quarter.',
   noteLB: 'Bank of Lithuania counts can differ from those published by managers or the association (e.g. participants whose payout is still in progress may still be counted). In pillar III a person saving in several funds is counted in each fund. The pillar II report for 2015-06-30 is not available (the Bank of Lithuania link opens the pillar III file).',
-  noteGain: 'Investment gain is an estimate: each fund’s assets at the previous quarter end × its quarter return (from the Bank of Lithuania year-to-date returns). Funds without the previous quarter are left out.',
+  noteGain: 'Investment gain is an estimate: fund quarter return × (assets at quarter start + half the net flow; from Q2 2026 the whole flow, as reform payouts are made at the start of the quarter). For pillar II in 2025 this gives € 618 m, as in the association’s review; 2026 figures differ because reform payouts are treated differently.',
   gl: { turto: 'Asset preservation', gc: 'Life-cycle (before 2019)', akc2: 'Equity (up to 100%)', vid: 'Medium equity (up to 70%)', maz: 'Low equity (up to 30%)', kons: 'Conservative', obl: 'Bond', mis: 'Mixed', akc3: 'Equity', born: g => `Born ${g.replace('-', '–')}` },
   dq: d => `${MK_MON.en[+d.slice(5, 7) - 1].slice(0, 3)} ${d.slice(0, 4)}`, qn: d => `Q${Math.ceil(+d.slice(5, 7) / 3)} ${d.slice(0, 4)}`,
   dLong: d => `${+d.slice(8)} ${MK_MON.en[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
@@ -47,8 +47,8 @@ addStrings({
     m2: (m, q, nq) => `Over the quarter ${m}’s participants changed by ${q} and assets by ${nq}.`,
     m3: (m, k, n) => `${m} funds beat the Bank of Lithuania group average since the start of the year in ${k} of ${n} groups.`,
     m4: (m, best) => `${m}’s best place in a group since the start of the year: ${best}.`,
-    calcNav: 'Sum of fund net assets in the report.', calcPart: 'Sum of fund participants in the report.', calcRet: 'Bank of Lithuania asset-weighted average of all funds (“All funds”); quarter return = (1 + YTD) ÷ (1 + previous quarter YTD) − 1.',
-    calcGain: 'Σ fund assets at the previous quarter end × fund quarter return.', calcPer: 'Net assets ÷ participants.', calcLc: 'Bank of Lithuania weighted group averages.', calcMgr: 'Manager’s funds ÷ whole pillar.', calcChg: 'Manager’s participants now − at previous quarter end.', calcM3: 'Manager fund’s YTD return vs Bank of Lithuania group average, groups where the manager has a fund.',
+    calcNav: 'Sum of fund net assets in the report.', calcPart: 'Sum of fund participants in the report.', calcRet: 'Bank of Lithuania asset-weighted average of all funds (“All funds”, weights – assets on the report date); quarter return – fund quarter returns weighted by quarter-end assets (fund quarter return = (1 + YTD) ÷ (1 + previous quarter YTD) − 1).',
+    calcGain: 'Σ fund quarter return × (assets at quarter start + half the net flow; from Q2 2026 the whole flow, as reform payouts are made at the start of the quarter). An estimate.', calcPer: 'Net assets ÷ participants.', calcLc: 'Bank of Lithuania weighted group averages.', calcMgr: 'Manager’s funds ÷ whole pillar.', calcChg: 'Manager’s participants now − at previous quarter end.', calcM3: 'Manager fund’s YTD return vs Bank of Lithuania group average, groups where the manager has a fund.',
   },
 }, {
   tdTitle: 'Šiandien', qfTitle: 'Ketvirčio faktai', mkTitle: 'Rinka laike', mgTitle: 'Valdytojai', fdTitle: 'Fondai pagal grupes',
@@ -69,7 +69,7 @@ addStrings({
   gpTitle: 'Dalyviai pagal grupes', gpLead: 'Dalyvių skaičius kiekvienoje Lietuvos banko grupėje per paskutinius ketvirčius.',
   mgChart: 'Rinkos dalis laike', fdNone: 'Šį ketvirtį fondų nėra.',
   noteLB: 'Lietuvos banko skaičiai gali skirtis nuo valdytojų ar asociacijos skelbiamų (pvz. gali būti dar skaičiuojami dalyviai, kurių išmoka vykdoma). III pakopoje žmogus, kaupiantis keliuose fonduose, skaičiuojamas kiekviename fonde. II pakopos 2015-06-30 ataskaitos nėra (LB nuoroda atidaro III pakopos failą).',
-  noteGain: 'Investicinis prieaugis – įvertis: kiekvieno fondo turtas ankstesnio ketvirčio pabaigoje × jo ketvirčio grąža (iš LB grąžos nuo metų pradžios). Fondai be ankstesnio ketvirčio duomenų neįtraukiami.',
+  noteGain: 'Investicinis prieaugis – įvertis: fondo ketvirčio grąža × (turtas ketvirčio pradžioje + pusė įmokų ir išmokų srauto; nuo 2026 II ketv. – visas srautas, nes reformos išmokos mokamos ketvirčio pradžioje). 2025 m. II pakopai gaunama 618 mln. €, kaip LIPFA apžvalgoje; 2026 m. LIPFA skaičiai skiriasi, nes jie kitaip vertina reformos išmokas.',
   gl: { turto: 'Turto išsaugojimo', gc: 'Gyvenimo ciklo (iki 2019 m.)', akc2: 'Akcijų (iki 100 %)', vid: 'Vidutinės akcijų dalies (iki 70 %)', maz: 'Mažos akcijų dalies (iki 30 %)', kons: 'Konservatyvaus investavimo', obl: 'Obligacijų', mis: 'Mišraus investavimo', akc3: 'Akcijų', born: g => `Gimę ${g.replace('-', '–')}` },
   dq: d => `${d.slice(0, 4)} ${ROMAN[Math.ceil(+d.slice(5, 7) / 3) - 1]} ketv.`, qn: d => `${d.slice(0, 4)} m. ${ROMAN[Math.ceil(+d.slice(5, 7) / 3) - 1]} ketvirtį`,
   dLong: d => `${d.slice(0, 4)} m. ${MK_MON.lt[+d.slice(5, 7) - 1]} ${+d.slice(8)} d.`,
@@ -89,8 +89,8 @@ addStrings({
     m2: (m, q, nq) => `Per ketvirtį ${m} dalyvių skaičius pakito ${q}, turtas – ${nq}.`,
     m3: (m, k, n) => `${m} fondų grąža nuo metų pradžios viršijo LB grupės vidurkį ${k} iš ${n} grupių.`,
     m4: (m, best) => `Geriausia ${m} fondo vieta grupėje nuo metų pradžios: ${best}.`,
-    calcNav: 'Fondų grynųjų aktyvų suma ataskaitoje.', calcPart: 'Fondų dalyvių suma ataskaitoje.', calcRet: 'LB svertinis visų fondų vidurkis („Visi fondai“); ketvirčio grąža = (1 + grąža nuo metų pradžios) ÷ (1 + ankstesnio ketvirčio grąža nuo metų pradžios) − 1.',
-    calcGain: 'Σ fondo turtas ankstesnio ketvirčio pabaigoje × fondo ketvirčio grąža.', calcPer: 'Grynieji aktyvai ÷ dalyviai.', calcLc: 'LB svertiniai grupių vidurkiai.', calcMgr: 'Valdytojo fondų suma ÷ visa pakopa.', calcChg: 'Valdytojo dalyviai dabar − ankstesnio ketvirčio pabaigoje.', calcM3: 'Valdytojo fondo grąža nuo metų pradžios lyginama su LB grupės vidurkiu tose grupėse, kur valdytojas turi fondą.',
+    calcNav: 'Fondų grynųjų aktyvų suma ataskaitoje.', calcPart: 'Fondų dalyvių suma ataskaitoje.', calcRet: 'LB svertinis visų fondų vidurkis („Visi fondai“, svoriai – turtas ataskaitos dieną); ketvirčio grąža – fondų ketvirčio grąžų vidurkis, svertas turtu ketvirčio pabaigoje (fondo ketvirčio grąža = (1 + grąža nuo metų pradžios) ÷ (1 + ankstesnio ketvirčio grąža nuo metų pradžios) − 1).',
+    calcGain: 'Σ fondo ketvirčio grąža × (turtas ketvirčio pradžioje + pusė įmokų ir išmokų srauto; nuo 2026 II ketv. – visas srautas, nes reformos išmokos mokamos ketvirčio pradžioje). Apytikslis įvertis.', calcPer: 'Grynieji aktyvai ÷ dalyviai.', calcLc: 'LB svertiniai grupių vidurkiai.', calcMgr: 'Valdytojo fondų suma ÷ visa pakopa.', calcChg: 'Valdytojo dalyviai dabar − ankstesnio ketvirčio pabaigoje.', calcM3: 'Valdytojo fondo grąža nuo metų pradžios lyginama su LB grupės vidurkiu tose grupėse, kur valdytojas turi fondą.',
   },
 });
 
@@ -115,11 +115,24 @@ function totals(pl, di) {
   rowsAt(pl, di).forEach(r => { t.part += r[MC.part] || 0; t.nav += r[MC.nav] || 0; t.nf++; });
   return t;
 }
-function gainAt(pl, di) {                // investicinis prieaugis: Σ turtas ankstesnio ketvirčio pabaigoje × ketvirčio grąža
+/* ketvirčio grąža visai pakopai ar grupei – fondų ketvirčio grąžų vidurkis, svertas fondų turtu ketvirčio pabaigoje
+   (taip skaičiuoja LIPFA: sutampa su jų III pakopos 2025 III ketv. 4,93 % ir II pakopos 2026 II ketv. 11,5 %) */
+function qRet(pl, di, gi = -1) {
+  let s = 0, w = 0;
   if (di < 0) return null;
-  const pd = dIdx(pl, qBack(MKT[pl].dates[di], 3)); if (pd < 0) return null;
+  rowsAt(pl, di).forEach(r => { if ((gi < 0 || fundOf(pl, r)[2] === gi) && r[MC.nav] && r[MC.ret_q] != null) { s += r[MC.nav] * r[MC.ret_q]; w += r[MC.nav]; } });
+  return w ? s / w : null;
+}
+/* investicinis prieaugis per ketvirtį: kiekvieno fondo q × (turtas pradžioje + pusė pinigų srauto), srautas = pabaiga − pradžia × (1 + q).
+   Nuo 2026 II ketv. reformos išmokos mokamos ketvirčio pradžioje, todėl tada visas srautas laikomas buvusiu pradžioje.
+   Patikra: 2025 m. II pakopa – 618 mln. €, kaip LIPFA metų apžvalgoje. */
+const payoutQ = d => d >= '2026-06-30';
+function gainAt(pl, di) {
+  if (di < 0) return null;
+  const d = MKT[pl].dates[di], pd = dIdx(pl, qBack(d, 3)); if (pd < 0) return null;
+  const k = payoutQ(d) ? 1 : 0.5;
   let s = 0, n = 0;
-  rowsAt(pl, di).forEach(r => { const p = rowOf(pl, pd, r[1]); if (p && p[MC.nav] && r[MC.ret_q] != null) { s += p[MC.nav] * r[MC.ret_q] / 100; n++; } });
+  rowsAt(pl, di).forEach(r => { const p = rowOf(pl, pd, r[1]); if (p && p[MC.nav] && r[MC.nav] && r[MC.ret_q] != null) { const q = r[MC.ret_q] / 100, fl = r[MC.nav] - p[MC.nav] * (1 + q); s += (p[MC.nav] + k * fl) * q; n++; } });
   return n ? s : null;
 }
 function gainYtd(pl, di) {
@@ -178,7 +191,7 @@ function mkFacts() {
   const add = (h, text, calc, hl) => out.push({ h, text, calc, src, hl });
   add(F.navH, F.nav(pl, L, mMn(T0.nav), Tq.ok && Tq.nav ? `${mSMn(T0.nav - Tq.nav)} (${mRel(T0.nav, Tq.nav)})` : '', Ty.ok && Ty.nav ? `${mSMn(T0.nav - Ty.nav)} (${mRel(T0.nav, Ty.nav)})` : ''), F.calcNav);
   add(F.partH, (pl === 'III' ? F.part3 : F.part)(pl, L, mInt(T0.part), Tq.ok && Tq.part ? `${mSInt(T0.part - Tq.part)} (${mRel(T0.part, Tq.part)})` : '', Ty.ok && Ty.part ? `${mSInt(T0.part - Ty.part)} (${mRel(T0.part, Ty.part)})` : ''), F.calcPart);
-  if (A && A[MA.ret_ytd] != null) add(F.retH, F.ret(pl, qn, pct(A[MA.ret_ytd]), d.slice(5, 7) !== '03' && A[MA.ret_q] != null ? pct(A[MA.ret_q]) : '', A[MA.ret_1y] != null ? pct(A[MA.ret_1y]) : ''), F.calcRet);
+  if (A && A[MA.ret_ytd] != null) add(F.retH, F.ret(pl, qn, pct(A[MA.ret_ytd]), d.slice(5, 7) !== '03' && qRet(pl, di) != null ? pct(qRet(pl, di)) : '', A[MA.ret_1y] != null ? pct(A[MA.ret_1y]) : ''), F.calcRet);
   const g = gainAt(pl, di), gy = gainYtd(pl, di);
   if (g != null) add(F.gainH, F.gain1(pl, qn, mMn(Math.abs(g)).replace(/^/, g < 0 ? '−' : ''), d.slice(5, 7) !== '03' && gy != null ? mMn(Math.abs(gy)).replace(/^/, gy < 0 ? '−' : '') : ''), F.calcGain);
   if (pl === 'II' && T0.part) add(F.perH, F.per(pl, mEurs(T0.nav * 1e6 / T0.part), Ty.part ? mEurs(Ty.nav * 1e6 / Ty.part) : ''), F.calcPer);
@@ -231,7 +244,7 @@ document.addEventListener('click', e => {
 function renderKeyTable() {
   const t = T(), I = t.ind, pl = MS.pl, d = MS.d, ds = [d, qBack(d, 3), qBack(d, 12)].map(x => dIdx(pl, x));
   const vals = ds.map(di => { if (di < 0) return null; const T0 = totals(pl, di), A = avgOf(pl, di, -1), m = MKT[pl].dates[di].slice(5, 7);
-    return { part: T0.part, nav: T0.nav, per: pl === 'II' && T0.part ? T0.nav * 1e6 / T0.part : null, ytd: A ? A[MA.ret_ytd] : null, r1: A ? A[MA.ret_1y] : null, qret: A ? A[MA.ret_q] : null, gain: gainAt(pl, di), gainY: m === '03' ? null : gainYtd(pl, di), nf: T0.nf }; });
+    return { part: T0.part, nav: T0.nav, per: pl === 'II' && T0.part ? T0.nav * 1e6 / T0.part : null, ytd: A ? A[MA.ret_ytd] : null, r1: A ? A[MA.ret_1y] : null, qret: qRet(pl, di), gain: gainAt(pl, di), gainY: m === '03' ? null : gainYtd(pl, di), nf: T0.nf }; });
   const fm = { part: mInt, nav: v => num(v, 1), per: mInt, ytd: v => pct(v), r1: v => pct(v), qret: v => pct(v), gain: v => num(v, 1), gainY: v => num(v, 1), nf: mInt };
   const dv = (k, a, b) => a == null || b == null ? '–' : ['ytd', 'r1', 'qret'].includes(k) ? `${(a - b >= 0 ? '+' : '−') + num(Math.abs(a - b), 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : ['gain', 'gainY', 'nf'].includes(k) ? (a - b >= 0 ? '+' : '−') + num(Math.abs(a - b), k === 'nf' ? 0 : 1) : b ? pct((a / b - 1) * 100) : '–';
   const keys = Object.keys(I).filter(k => k !== 'per' || pl === 'II');
@@ -247,7 +260,7 @@ function renderKeyTable() {
 /* ---------- rinka laike ---------- */
 function mkSeries() {
   const pl = MS.pl;
-  return MKT[pl].dates.map((d, di) => { const T0 = totals(pl, di), A = avgOf(pl, di, -1); return { d, di, ...T0, per: T0.part ? T0.nav * 1e6 / T0.part : null, ytd: A ? A[MA.ret_ytd] : null, qret: A ? A[MA.ret_q] : null, r1: A ? A[MA.ret_1y] : null, gain: gainAt(pl, di) }; });
+  return MKT[pl].dates.map((d, di) => { const T0 = totals(pl, di), A = avgOf(pl, di, -1); return { d, di, ...T0, per: T0.part ? T0.nav * 1e6 / T0.part : null, ytd: A ? A[MA.ret_ytd] : null, qret: qRet(pl, di), r1: A ? A[MA.ret_1y] : null, gain: gainAt(pl, di) }; });
 }
 function renderTime() {
   const t = T(), S = mkSeries(), el = document.getElementById('mkChart'), k = MS.ch;
@@ -311,7 +324,7 @@ function renderFunds() {
     const body = rs.map((r, i) => { const f = fundOf(pl, r), q = rowOf(pl, dq, r[1]);
       return `<tr${f[0] === MS.mgr ? ' class="hl"' : ''}><td>${r[k] == null ? '' : i + 1}</td><td class="l"><i class="sw" style="background:${mkColor(f[0])}"></i>${hEsc(f[1])}</td><td>${mCell(r[MC.part], mInt)}</td><td class="${mCls(q && r[MC.part] - q[MC.part])}">${q && q[MC.part] != null && r[MC.part] != null ? mSInt(r[MC.part] - q[MC.part]) : '–'}</td><td>${mCell(r[MC.nav], v => num(v, 2))}</td>`
         + ['ret_ytd', 'ret_q', 'ret_1y', 'ret_3y', 'ret_5y', 'ret_gcf', 'bm_ytd'].map(c => `<td>${mPct(r[MC[c]])}</td>`).join('') + `<td>${mCell(r[MC.risky], v => pctPlain(v, 1))}</td></tr>`; }).join('');
-    const avg = a ? `<tr class="tot"><td></td><td class="l">${t.thAvg}</td><td>${mInt(rs.reduce((s, r) => s + (r[MC.part] || 0), 0))}</td><td></td><td>${num(rs.reduce((s, r) => s + (r[MC.nav] || 0), 0), 2)}</td>${['ret_ytd', 'ret_q', 'ret_1y', 'ret_3y', 'ret_5y', 'ret_gcf', 'bm_ytd'].map(c => `<td>${mPct(a[MA[c]])}</td>`).join('')}<td></td></tr>` : '';
+    const avg = a ? `<tr class="tot"><td></td><td class="l">${t.thAvg}</td><td>${mInt(rs.reduce((s, r) => s + (r[MC.part] || 0), 0))}</td><td></td><td>${num(rs.reduce((s, r) => s + (r[MC.nav] || 0), 0), 2)}</td>${['ret_ytd', 'ret_q', 'ret_1y', 'ret_3y', 'ret_5y', 'ret_gcf', 'bm_ytd'].map(c => `<td>${mPct(c === 'ret_q' ? qRet(pl, di, gi) : a[MA[c]])}</td>`).join('')}<td></td></tr>` : '';
     return `<h3 class="gh">${hEsc(groupLbl(pl, gi))}</h3><div class="scroll"><table class="at" id="fd_${pl}_${groupKeyOf(pl, gi)}"><thead>${hdr}</thead><tbody>${body}${avg}</tbody></table></div>`;
   }).join('');
   document.getElementById('fdTables').innerHTML = html || `<p class="note">${t.fdNone}</p>`;
