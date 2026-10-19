@@ -52,6 +52,7 @@
   .fact.mi ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.45; display: grid; gap: 4px; }
   .fact .fh .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
   .tdmk .kpis { margin-bottom: 8px; }
+  #p23Bar .seg { display: none; }
   .tdmk ul { margin: 6px 0 8px; padding-left: 18px; line-height: 1.45; }
   table.at { font-size: 13px; }
   table.at th { white-space: normal; vertical-align: bottom; }
@@ -84,8 +85,23 @@
     <p class="lead" id="qfLead"></p>
     <div id="qfBar"></div>
     <div class="kpis" id="qfKpis"></div>
-    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" id="qfAll"></button><button type="button" class="btn xl" id="qfXl"></button></div><div class="facts" id="qfCards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" id="qfAll" data-all="qfCards"></button><button type="button" class="btn xl" id="qfXl" data-xall="qfCards"></button></div><div class="facts" id="qfCards"></div></section>
     <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="qfTable"></table></div><p class="note" id="qfNote"></p></section>
+  </div>
+
+  <div data-tab="pv" class="today">
+    <h2 class="sec" id="pvTitle"></h2>
+    <p class="lead" id="pvLead"></p>
+    <div id="pvBar"></div>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" data-all="pvCards" id="pvAll"></button><button type="button" class="btn xl" data-xall="pvCards" id="pvXl"></button></div><div class="facts" id="pvCards"></div><p class="note" id="pvNote"></p></section>
+  </div>
+
+  <div data-tab="p23" class="today">
+    <h2 class="sec" id="p23Title"></h2>
+    <p class="lead" id="p23Lead"></p>
+    <div id="p23Bar"></div>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" data-all="p23Cards" id="p23All"></button><button type="button" class="btn xl" data-xall="p23Cards" id="p23Xl"></button></div><div class="facts" id="p23Cards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between"><h2 id="p23MiTitle" style="margin:0"></h2><button type="button" class="btn xl" data-xall="p23Mgr" id="p23MXl"></button></div><div class="facts" id="p23Mgr"></div><p class="note" id="p23Note"></p></section>
   </div>
 
   <div data-tab="mk" class="today">
@@ -104,7 +120,7 @@
     <p class="lead" id="mgLead"></p>
     <div id="mgBar"></div>
     <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="mgT"></table></div><p class="note" id="mgNote"></p></section>
-    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="miTitle" style="margin:0 0 4px"></h2><p class="meta" id="miLead" style="margin:0"></p></div><button type="button" class="btn xl" id="miXl"></button></div><div class="facts" id="miCards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="miTitle" style="margin:0 0 4px"></h2><p class="meta" id="miLead" style="margin:0"></p></div><button type="button" class="btn xl" id="miXl" data-xall="miCards"></button></div><div class="facts" id="miCards"></div></section>
     <section class="card" data-src="lbh"><h2 id="mgChart"></h2><div class="seg" id="mgSeg" role="group"></div><div class="chart" id="mgChartBox"></div><div class="legend chips" id="mgLegend" style="margin-top:6px"></div></section>
   </div>
 
