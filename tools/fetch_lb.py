@@ -9,6 +9,7 @@ Kartą per dieną peržiūrimi LB puslapiai (PAGES) ir jų nuorodos į failus:
   tada import_lb_fees.py.
 Visi kiti tų puslapių Excel failai (III pakopos rezultatai, II pakopos IRR, lyginamieji indeksai ir kt.) kaupiami originaliais
 vardais imports/lb_archive/ (savininko prašymas 2026-10-14 – parsisiųsti visą LB informaciją).
+Po to visada perskaičiuojama data/lb_results_history.csv (lb_history.py: dalyviai, turtas, grąžos nuo 2015 m.).
 Imamas tik naujesnis už turimą failas (seni neperrašomi). Patikra: tikras Excel failas; apdorojimas be klaidų; portfelių
 naujo ketvirčio turtas 0,7–1,4 karto ankstesnio ir fondų ne mažiau 80 % ankstesnio. Nepavykus – naujas failas pašalinamas,
 apdoroti duomenys atstatomi (git checkout), o žurnale parašoma kodėl.
@@ -268,6 +269,22 @@ def process(kind: str, path: Path):
     return f"mokesčių eilučių sumažėjo: {before} -> {after}" if bad else None
 
 
+def history():
+    """II ir III pakopos rezultatų failai (seni imports/lb_history + nauji) -> data/lb_results_history.csv (lb_history.py).
+    Jei rezultate fondų eilučių mažiau nei buvo – pakeitimas atmetamas (git checkout)."""
+    deps()
+    out = ROOT / "data" / "lb_results_history.csv"
+    count = lambda: sum(1 for line in out.open(encoding="utf-8") if ",fund," in line) if out.exists() else 0
+    before = count()
+    r = subprocess.run([sys.executable, "lb_history.py"], cwd=ROOT, capture_output=True, text=True)
+    after = count()
+    if r.returncode or after < before:
+        print(f"  lb_history.py ATMESTA (fondų eilučių {before} -> {after}): {r.stderr[-300:]}")
+        subprocess.run(["git", "checkout", "--", "data/lb_results_history.csv"], cwd=ROOT)
+    else:
+        print(f"  LB rezultatų istorija: fondų eilučių {before} -> {after}")
+
+
 def fee_counts():
     with (ROOT / "data" / "fees.csv").open(encoding="utf-8", newline="") as f:
         out = {}
@@ -351,6 +368,7 @@ def main():
             print(f"  įrašyta {path.relative_to(ROOT)}")
             state["files"][kind] = {"date": d, "url": url, "at": today}
     archive(other)
+    history()
     STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 

@@ -25,6 +25,7 @@ Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – il
 
 **Duomenų rinkimas (Python):** `update.py` (kasdienis rinkimas, `python update.py status`), `sources/*.py` + `base_scraper.py` (valdytojų skaitytuvai), `fund_links.py` (visos nuorodos), `store.py` (įrašymas į `data/nav_history.csv`), `pillar3.py` (III pakopa, `status`), `riskfree.py` (€STR), `indexes.py`, `daily_report.py` (vakarinis laiškas), `notify.py` (ciklo laiškas).
 **Svetainės duomenys:** `build_site.py` generuoja `docs/` iš `site/` + `data/`; dalis duomenų – `aum.py`, `reports.py`, `portfolios.py`, `bonds.py`, `journey.py`.
+**LB rezultatų istorija:** `lb_history.py` – visi LB II/III pakopos ketvirčių rezultatų failai (2015-03 → dabar; `imports/lb_history/` + naujus parsisiunčia `tools/fetch_lb.py`) → `data/lb_results_history.csv`: fondų dalyviai, grynieji aktyvai, grąžos, lyginamieji indeksai, rizika, BAR/BIK, LB svertiniai grupių vidurkiai (svoriai – aktyvai ataskaitos dieną), valdymo įmonių sumos.
 **Puslapiai (šaltinis `site/`):** `performance.html`+`perf.js` (Rezultatai; `performance3.html` – tas pats su III pakopa, generuoja `build_perf3`), `overview.html`, `pillar3.html`+`p3.js`, `portfolios.html`+`pf.js`, `reports.html`+`rep.js`, `aum.html`+`aum.js`, `journey.html`+`journey.js`+`insights.js`; bendri `common.js` (+ `xl.js` Excel rašytuvas, skirtukai `showTab`/`addSubnav`, paieška), `style.css`, `events.js`, `methodology.js`; „Kurį fondą rinktis?“ – `choose.js`; rinkos įžvalgos – `insights.js` (Rezultatų skirtukas). Ilgi puslapiai suskirstyti į skirtukus `[data-tab]`.
 **Kasdien per `update.yml`:** `tools/fetch_isin_names.py`, `tools/fetch_security_terms.py`, `tools/fetch_cpi.py`, `tools/fetch_pension.py`.
 **Vienkartiniai:** `import_*.py`, `backfill_*.py`, kiti `tools/*` (`probe_*` – senos patikros) – neskaityti, nebent užduotis apie juos.
@@ -34,7 +35,7 @@ Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – il
 **Darbo eigos:** `.github/workflows/update.yml` (rinkimas + build + laiškas; keisti tik būtinai), `notify.yml`.
 **Idėjos:** `IDEAS.md` (aktyvus sąrašas). Ciklo nurodymas: `CIKLO-NURODYMAS.md`.
 
-**NESKAITYTI (dideli / sugeneruoti):** visas `docs/` (generuojamas – taisyti `site/`), `data/portfolios.csv` (14 MB), `data/nav_history.csv` (5 MB), `data/pillar3_history.csv` (4 MB), `data/indexes.csv`, kiti `data/*.csv` (tik `head`), `imports/` (pradiniai failai), `site/fonts/`, `archyvas/`, `README.md` (žmonėms), `data/last_update_log.txt` (tik `tail -40`). Draudimai įrašyti `.claude/settings.json`.
+**NESKAITYTI (dideli / sugeneruoti):** visas `docs/` (generuojamas – taisyti `site/`), `data/portfolios.csv` (14 MB), `data/lb_results_history.csv` (tik `head`), `data/nav_history.csv` (5 MB), `data/pillar3_history.csv` (4 MB), `data/indexes.csv`, kiti `data/*.csv` (tik `head`), `imports/` (pradiniai failai), `site/fonts/`, `archyvas/`, `README.md` (žmonėms), `data/last_update_log.txt` (tik `tail -40`). Draudimai įrašyti `.claude/settings.json`.
 
 ## Patikra prieš push
 

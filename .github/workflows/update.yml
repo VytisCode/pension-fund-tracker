@@ -200,6 +200,7 @@ jobs:
           git add imports/lb_results imports/lb_portfolios imports/lb_fees data/portfolios.csv data/fees.csv
           if [ -n "$(ls -A imports/lb_archive 2>/dev/null)" ]; then git add imports/lb_archive; fi
           if [ -f data/lb_files.json ]; then git add data/lb_files.json; fi
+          if [ -f data/lb_results_history.csv ]; then git add data/lb_results_history.csv; fi
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else
