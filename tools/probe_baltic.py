@@ -4,16 +4,27 @@ Gerbia robots.txt: draudžiamų puslapių neatidaro, tik pažymi summary.txt. Ni
 """
 import json
 import re
+import urllib.error
 import urllib.robotparser
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
-import requests
+import urllib.request
 from playwright.sync_api import sync_playwright
 
 OUT = Path("probe_out")
 OUT.mkdir(exist_ok=True)
 UA = "Mozilla/5.0 (pension-fund-tracker research; public statistics)"
+
+
+class Resp:
+    def __init__(self, url):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=40) as r:
+                self.status_code, self.content, self.headers = r.status, r.read(), dict(r.headers)
+        except urllib.error.HTTPError as e:
+            self.status_code, self.content, self.headers = e.code, e.read() or b"", dict(e.headers)
+        self.text = self.content.decode("utf-8", "replace")
 LOG = []
 ROBOTS = {}
 
@@ -29,7 +40,7 @@ def allowed(url):
     if host not in ROBOTS:
         rp = urllib.robotparser.RobotFileParser()
         try:
-            r = requests.get(f"https://{host}/robots.txt", headers={"User-Agent": UA}, timeout=30)
+            r = Resp(f"https://{host}/robots.txt")
             (OUT / f"robots_{host}.txt").write_text(r.text, encoding="utf-8")
             rp.parse(r.text.splitlines() if r.status_code == 200 else [])
             log("robots", host, r.status_code)
@@ -51,8 +62,8 @@ def get(url):
     if not allowed(url):
         return None
     try:
-        r = requests.get(url, headers={"User-Agent": UA}, timeout=40)
-        ext = ".xml" if "xml" in r.headers.get("content-type", "") else ".html"
+        r = Resp(url)
+        ext = ".xml" if "xml" in {k.lower(): v for k, v in r.headers.items()}.get("content-type", "") else ".html"
         (OUT / (safe(url) + ext)).write_bytes(r.content)
         log("GET", r.status_code, len(r.content), url)
         return r
