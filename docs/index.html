@@ -66,6 +66,31 @@
   .fact .fsub summary { cursor: pointer; }
   .fact .fmore .fnum td.l { white-space: normal; }
   .facts > .fact:has(.fmore[open]) { grid-column: 1 / -1; }
+  .ftool { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; margin: 0 0 10px; }
+  .ftool .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ftool .chip { cursor: pointer; font: inherit; font-size: 13px; }
+  .ftool .chip[aria-pressed="false"] { opacity: 1; color: var(--text); }
+  .ftool .chip.hotc[aria-pressed="false"] { background: #fff1cc; color: #8a5a00; border-color: #e7c66b; }
+  @media (max-width: 640px) { .ftool .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; width: 100%; } .ftool .chip { flex: none; } .factbar { justify-content: flex-start; } .factbar .btn { font-size: 12.5px; padding: 4px 9px; } }
+  .ftool .chip em { font-style: normal; color: var(--text-3); margin-left: 2px; }
+  .ftool .chip[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .ftool .chip[aria-pressed="true"] em { color: inherit; opacity: .8; }
+  .fact .ftop { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; }
+  .fact .ftp { color: var(--text-3); font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; }
+  .fact .fhot { font-size: 11.5px; font-weight: 600; color: #8a5a00; background: #fff1cc; border-radius: 999px; padding: 1px 8px; cursor: help; }
+  .fact.hot { border-color: #e7c66b; }
+  .facts .fact > .fh { color: var(--text); font-size: 15.5px; font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .fact .fmini svg { display: block; width: 100%; height: 52px; }
+  .fact .fmini span { display: block; color: var(--text-3); font-size: 11px; margin-top: 2px; }
+  .fact p b { font-weight: 650; }
+  .fact .fsrc summary { cursor: pointer; color: var(--text-3); font-size: 12px; }
+  .facts.flist { grid-template-columns: 1fr; gap: 6px; }
+  .facts.flist > .fact { padding: 8px 12px; gap: 3px; }
+  .facts.flist > .fact .fmini, .facts.flist > .fact .fsrc, .facts.flist > .fact .ftp { display: none; }
+  .facts.flist > .fact:not(:has(.fmore[open])) .fbtn { display: none; }
+  .facts.flist > .fact > .fh { font-size: 14px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fact .fhot { color: #ffd77a; background: #4a3a10; } :root:not([data-theme="light"]) .fact.hot { border-color: #7a6320; } }
+  :root[data-theme="dark"] .fact .fhot { color: #ffd77a; background: #4a3a10; } :root[data-theme="dark"] .fact.hot { border-color: #7a6320; }
   .fact .fxt { display: flex; gap: 10px; align-items: flex-start; background: var(--hover); border-radius: 8px; padding: 8px 10px; margin: 6px 0 2px; }
   .fact .fxt p { margin: 0; flex: 1; font-size: 14.5px; line-height: 1.5; color: var(--text); }
   .fact .fctl .chips { flex-basis: 100%; }
@@ -145,6 +170,7 @@
     <div id="mgBar"></div>
     <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="mgT"></table></div><p class="note" id="mgNote"></p></section>
     <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="miTitle" style="margin:0 0 4px"></h2><p class="meta" id="miLead" style="margin:0"></p></div><button type="button" class="btn xl" id="miXl" data-xall="miCards"></button></div><div class="facts" id="miCards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="brTitle" style="margin:0 0 4px"></h2><p class="meta" id="brLead" style="margin:0"></p></div><button type="button" class="btn xl" id="brXl" data-xall="brCards"></button></div><div class="facts" id="brCards"></div><p class="note" id="brNote"></p></section>
     <section class="card" data-src="lbh"><h2 id="mgChart"></h2><div class="seg" id="mgSeg" role="group"></div><div class="chart" id="mgChartBox"></div><div class="legend chips" id="mgLegend" style="margin-top:6px"></div></section>
   </div>
 
@@ -157,13 +183,13 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=ef304d41"></script>
+<script src="data.js?v=492d02e3"></script>
 <script src="common.js?v=e36b8038"></script>
 <script src="data_cpi.js?v=870ec578"></script>
 <script src="data_journey.js"></script>
-<script src="data_rep.js?v=eabfb4dc"></script>
-<script src="data_mkt.js?v=ab8aba87"></script>
-<script src="mkt.js?v=163672c9"></script>
+<script src="data_rep.js?v=98affdb8"></script>
+<script src="data_mkt.js?v=8c3b65a2"></script>
+<script src="mkt.js?v=a25872e6"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
