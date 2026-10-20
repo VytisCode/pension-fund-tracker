@@ -35,6 +35,7 @@ CHECKS = {
     "aum.html": [],
     "reports.html": [("#calTable tbody tr", 5)],
     "journey.html": [("#annTable tbody tr", 1)],
+    "baltic.html": [("#fTbl tbody tr", 10), ("#rkTbl tbody tr", 4)],
     "ops.html": [],
     "apie.html": [],
 }

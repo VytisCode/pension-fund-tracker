@@ -129,6 +129,10 @@ def main() -> None:
     build_search_index()
     build_journey(ver)
     build_manager(ver)
+    try:
+        build_baltic(ver)
+    except Exception as e:              # Baltijos šalių puslapis – papildomas; jo klaida neturi sustabdyti svetainės
+        print("baltic: nepavyko:", e)
     text = (DOCS / "ops.html").read_text(encoding="utf-8")
     for n in ("style.css", "common.js", "data_ops.js", "ops.js"):
         v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]
@@ -221,6 +225,24 @@ def build_manager(ver: dict) -> None:
         for n in names:
             text = text.replace(f'src="{n}"', f'src="{n}?v={v[n]}"').replace(f'href="{n}"', f'href="{n}?v={v[n]}"')
         (DOCS / page).write_text(text, encoding="utf-8")
+
+
+def build_baltic(ver: dict) -> None:
+    """„Baltijos šalys“: docs/data_baltic.js (žr. baltic.py) + site/baltic.html, site/baltic.js."""
+    import baltic
+
+    payload = baltic.build()
+    data_js = "const BALTIC=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (DOCS / "data_baltic.js").write_text(data_js, encoding="utf-8")
+    for n in ("baltic.html", "baltic.js"):
+        shutil.copyfile(SITE / n, DOCS / n)
+    names = ("style.css", "common.js", "data.js", "data_baltic.js", "baltic.js")
+    v = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in names if n not in ver}}
+    text = (DOCS / "baltic.html").read_text(encoding="utf-8")
+    for n in names:
+        text = text.replace(f'src="{n}"', f'src="{n}?v={v[n]}"').replace(f'href="{n}"', f'href="{n}?v={v[n]}"')
+    (DOCS / "baltic.html").write_text(text, encoding="utf-8")
+    print(f"docs/data_baltic.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")
 
 
 def sources() -> list:

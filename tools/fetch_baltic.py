@@ -8,7 +8,8 @@
   valdymo tipas) ir plāno grafiko API (vertė, indeksuota į 100 nuo pradžios, ~kas 9 d.; kartu – grupės vidurkis).
 
 Įrašo (tik papildo, istorijos neperrašo – žr. CLAUDE.md 6 taisyklę):
-  data/baltic_ee.csv        date,pillar,fund_id,isin,fund,nav,net_assets,investors
+  data/baltic_ee.csv        date,pillar,fund_id,nav,net_assets,investors (aktyvai – €, sveikas skaičius)
+  data/baltic_ee_meta.csv   pillar,fund_id,isin,fund,first,last
   data/baltic_ee_funds.csv  snapshot_date,pillar,fund,date,nav,r3m,r6m,r1y,r3y,r5y,r10y,r15y,r20y,ytd,ter,investors,net_assets_m
   data/baltic_lv_plans.csv  pillar,plan_id,provider,name,profit,fee_fixed,stock_pct,management,slug,seen
   data/baltic_lv_index.csv  pillar,plan_id,date,value,avg
@@ -21,7 +22,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 UA = "Mozilla/5.0 (pension-fund-tracker; public pension statistics)"
@@ -81,7 +82,15 @@ def merge(path, key, rows, fields):
 
 
 def ee():
-    rows, snap = {}, []
+    rows, snap, meta, since = {}, [], {}, {}
+    # tik papildymas: atsisiunčiama nuo paskutinės turimos fondo datos − 10 d. (naujam fondui – visa istorija nuo 2002 m.)
+    if (OUT / "baltic_ee.csv").exists():
+        for r in csv.DictReader((OUT / "baltic_ee.csv").open(encoding="utf-8")):
+            k = (r["pillar"], int(r["fund_id"]))
+            since[k] = max(since.get(k, ""), r["date"])
+    if (OUT / "baltic_ee_meta.csv").exists():
+        for r in csv.DictReader((OUT / "baltic_ee_meta.csv").open(encoding="utf-8")):
+            meta[(r["pillar"], int(r["fund_id"]))] = {**r, "fund_id": int(r["fund_id"])}
     for pl, (daily, kinds) in EE_PAGES.items():
         page = get(EE + daily).decode("utf-8", "replace")
         ids = sorted({int(x) for x in re.findall(r"[?&]f=(\d+)&", page)})
@@ -100,7 +109,9 @@ def ee():
                          "net_assets_m": num(r.get("Net assets"))})
         for fid in ids:
             for k, path in kinds.items():
-                t = get(f"{EE}{path}?download=xls&date_from=2002-01-01&date_to={TODAY}&f%5B0%5D={fid}").decode("utf-16")
+                d0 = since.get((pl, fid))
+                d0 = (date.fromisoformat(d0) - timedelta(days=10)).isoformat() if d0 else "2002-01-01"
+                t = get(f"{EE}{path}?download=xls&date_from={d0}&date_to={TODAY}&f%5B0%5D={fid}").decode("utf-16")
                 ls = [l.split("\t") for l in t.splitlines() if l.strip()]
                 if not ls or len(ls[0]) < 5:
                     print("  tuščia", pl, fid, k)
@@ -111,10 +122,14 @@ def ee():
                     v = num(l[4])
                     if not v:                       # 0 – fondas dar neveikė
                         continue
-                    rr = rows.setdefault((l[0], pl, fid), {"date": l[0], "pillar": pl, "fund_id": fid, "isin": l[3], "fund": l[1].strip()})
-                    rr[k] = int(v) if k == "investors" else v
+                    rr = rows.setdefault((l[0], pl, fid), {"date": l[0], "pillar": pl, "fund_id": fid})
+                    rr[k] = int(round(v)) if k in ("investors", "net_assets") else v
+                    m = meta.setdefault((pl, fid), {"pillar": pl, "fund_id": fid, "isin": l[3], "fund": l[1].strip(), "first": l[0], "last": l[0]})
+                    m["first"], m["last"], m["fund"] = min(m["first"], l[0]), max(m["last"], l[0]), l[1].strip()
                 time.sleep(0.5)
-    merge(OUT / "baltic_ee.csv", ["date", "pillar", "fund_id"], rows.values(), ["date", "pillar", "fund_id", "isin", "fund", "nav", "net_assets", "investors"])
+    merge(OUT / "baltic_ee.csv", ["date", "pillar", "fund_id"], rows.values(), ["date", "pillar", "fund_id", "nav", "net_assets", "investors"])
+    with (OUT / "baltic_ee_meta.csv").open("w", encoding="utf-8", newline="") as fh:   # aprašai – visada naujausi
+        w = csv.DictWriter(fh, ["pillar", "fund_id", "isin", "fund", "first", "last"]); w.writeheader(); w.writerows(sorted(meta.values(), key=lambda m: (m["pillar"], m["fund_id"])))
     merge(OUT / "baltic_ee_funds.csv", ["snapshot_date", "pillar", "fund"], snap,
           ["snapshot_date", "pillar", "fund", "date", "nav", "r3m", "r6m", "r1y", "r3y", "r5y", "r10y", "r15y", "r20y", "ytd", "ter", "investors", "net_assets_m"])
 

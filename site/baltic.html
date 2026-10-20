@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Baltijos šalys</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .bx { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+  .bx > [data-tab] { min-width: 0; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+  .bx .seg { max-width: 100%; overflow-x: auto; }
+  .bx .card { min-width: 0; }
+  .bx h2 { margin-top: 0; }
+  .kp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .kp .card h3 { margin: 0 0 6px; font-size: 15px; display: flex; gap: 8px; align-items: center; }
+  .kp .card p { margin: 4px 0; font-size: 13.5px; color: var(--text-2); }
+  .kp .card b { color: var(--text); }
+  .flag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; padding: 2px 6px; border-radius: 5px; background: var(--hover); color: var(--text-2); }
+  @media (max-width: 900px) { .kp { grid-template-columns: 1fr; } }
+  .flt { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .flt input[type="search"] { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px; min-width: 200px; }
+  .bt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .bt th, .bt td { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  .bt th { cursor: pointer; user-select: none; font-weight: 600; color: var(--text-2); position: sticky; top: 0; background: var(--card); }
+  .bt th[aria-sort="ascending"]::after { content: " ▲"; } .bt th[aria-sort="descending"]::after { content: " ▼"; }
+  .bt td.n, .bt th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .bt td.nm { white-space: normal; min-width: 180px; }
+  .bt td.neg { color: var(--dneg); } .bt td.pos { color: var(--dpos); }
+  .bt tr.cmp td { background: var(--hover); }
+  .bt input[type="checkbox"] { margin: 0; }
+  .rg { display: inline-block; padding: 1px 6px; border-radius: 5px; font-size: 11.5px; }
+  .rg.r1 { background: #d9eadf; color: #1d4a2d; } .rg.r2 { background: #e8efd2; color: #3d4a17; } .rg.r3 { background: #f4e5c8; color: #5a3d0c; } .rg.r4 { background: #f2d4c8; color: #6b2a14; }
+  .sel { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+  .sel .chip b { font-weight: 600; }
+  .sel .chip .x { margin-left: 2px; color: var(--text-3); }
+  .note { font-size: 12.5px; color: var(--text-2); }
+  .mt p, .mt li { font-size: 14px; line-height: 1.55; }
+  .mt h3 { margin: 16px 0 6px; font-size: 15px; }
+  .chart { min-height: 260px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <main class="bx">
+    <div data-tab="ov">
+      <h2 class="sec" id="ovT"></h2>
+      <p class="lead" id="ovL"></p>
+      <div class="kp" id="kp"></div>
+      <section class="card"><h2 id="rkT"></h2><p class="note" id="rkN"></p><div class="seg" id="rkSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="rkTbl"></table></div></section>
+      <section class="card"><h2 id="eeT"></h2><div class="seg" id="eeSeg" role="group"></div><div class="chart" id="eeCh"></div><p class="note" id="eeN"></p></section>
+    </div>
+    <div data-tab="fd">
+      <h2 class="sec" id="fdT"></h2>
+      <p class="lead" id="fdL"></p>
+      <div class="bar flt" id="flt"></div>
+      <section class="card"><div class="scroll"><table class="bt" id="fTbl"></table></div><p class="note" id="fN"></p></section>
+    </div>
+    <div data-tab="cmp">
+      <h2 class="sec" id="cmT"></h2>
+      <p class="lead" id="cmL"></p>
+      <div class="bar flt" id="cmBar"></div>
+      <section class="card"><div class="sel" id="cmSel"></div><div class="chart" id="cmCh"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="cmTbl"></table></div><p class="note" id="cmN"></p></section>
+    </div>
+    <div data-tab="mt">
+      <h2 class="sec" id="mtT"></h2>
+      <section class="card mt" id="mtB"></section>
+    </div>
+  </main>
+  <footer id="foot"></footer>
+</div>
+<div id="actions"><button class="btn" type="button" id="xlBtn"></button></div>
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="data_baltic.js"></script>
+<script src="baltic.js"></script>
+</body>
+</html>
