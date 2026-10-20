@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 SRC = ROOT / "data" / "lb_results_history.csv"
 RET = ["ret_ytd", "ret_1y", "ret_3y", "ret_5y", "ret_gcf", "bm_ytd", "bm_1y", "std_3y", "risky"]
+LONG = ["ret_10y", "ret_15y"]   # metinės 10 ir 15 m. grąžos (išskleistų kortelių ilgesni laikotarpiai); gale, kad nepasislinktų Excel stulpeliai
 
 
 def group_key(pillar: str, g: str) -> str:
@@ -92,7 +93,7 @@ def build() -> dict:
                     qret = round(((1 + ytd / 100) / (1 + f(q1["ret_ytd"]) / 100) - 1) * 100, 2)
             part, nav = f(r["participants"]), r["nav_meur"]
             R.append([di[r["date"]], fid, int(part) if part is not None else None, round(float(nav), 3) if nav else None]
-                     + [f(r[k]) for k in RET] + [qret])
+                     + [f(r[k]) for k in RET] + [qret] + [f(r[k]) for k in LONG])
         A = []
         prev = {}
         for r in sorted((r for r in rs if r["kind"] in ("group_avg", "all_avg")), key=lambda r: r["date"]):
@@ -107,9 +108,9 @@ def build() -> dict:
                 elif p is not None:
                     qret = round(((1 + ytd / 100) / (1 + p / 100) - 1) * 100, 2)
             prev[(g, r["date"])] = ytd
-            A.append([di[r["date"]], g] + [f(r[k]) for k in RET[:7]] + [qret])
+            A.append([di[r["date"]], g] + [f(r[k]) for k in RET[:7]] + [qret] + [f(r[k]) for k in LONG])
         out[pillar] = {"dates": dates, "groups": groups, "funds": F, "rows": R, "avgs": A}
-    out["cols"] = {"row": ["d", "f", "part", "nav"] + RET + ["ret_q"], "avg": ["d", "g"] + RET[:7] + ["ret_q"]}
+    out["cols"] = {"row": ["d", "f", "part", "nav"] + RET + ["ret_q"] + LONG, "avg": ["d", "g"] + RET[:7] + ["ret_q"] + LONG}
     return out
 
 

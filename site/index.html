@@ -55,7 +55,7 @@
   #p23Bar .seg { display: none; }
   .fact .fmore summary { cursor: pointer; color: var(--accent); font-size: 13px; }
   .fact .fmore[open] { margin-bottom: 4px; }
-  .fact .fmore .fch { margin-top: 4px; }
+  .fact .fmore .fch { margin-top: 4px; min-height: 0; }
   .fact .fctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0 4px; font-size: 13px; }
   .fact .fct { font-size: 15px; margin: 8px 0 0; padding: 2px 4px; border-radius: 4px; outline: none; }
   .fact .fct:hover, .fact .fct:focus { background: var(--line); }
@@ -66,6 +66,10 @@
   .fact .fsub summary { cursor: pointer; }
   .fact .fmore .fnum td.l { white-space: normal; }
   .facts > .fact:has(.fmore[open]) { grid-column: 1 / -1; }
+  .fact .fxt { display: flex; gap: 10px; align-items: flex-start; background: var(--hover); border-radius: 8px; padding: 8px 10px; margin: 6px 0 2px; }
+  .fact .fxt p { margin: 0; flex: 1; font-size: 14.5px; line-height: 1.5; color: var(--text); }
+  .fact .fctl .chips { flex-basis: 100%; }
+  .fact .xtab { margin-top: 6px; font-size: 12.5px; }
   .tdmk ul { margin: 6px 0 8px; padding-left: 18px; line-height: 1.45; }
   table.at { font-size: 13px; }
   table.at th { white-space: normal; vertical-align: bottom; }

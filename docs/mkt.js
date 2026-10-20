@@ -33,20 +33,20 @@ addStrings({
   dLong: d => `${+d.slice(8)} ${MK_MON.en[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
   f: {
     navH: 'Assets', partH: 'Participants', retH: 'Return', gainH: 'Investment gain', perH: 'Per participant', lcH: 'Life-cycle groups', mgrH: 'Market shares', bothH: 'Pillars II and III', chgH: 'Change in participants',
-    nav: (pl, d, v, q, y) => `On ${d} pillar ${pl} pension funds managed ${v} of net assets${q ? ` – ${q} over the quarter` : ''}${y ? ` and ${y} over the year` : ''}.`,
-    part: (pl, d, v, q, y) => `On ${d} ${v} people were saving in pillar ${pl} pension funds${q ? `; change over the quarter ${q}` : ''}${y ? `, over the year ${y}` : ''}.`,
-    part3: (pl, d, v, q, y) => `On ${d} pillar ${pl} pension funds had ${v} participants (sum over funds)${q ? `; change over the quarter ${q}` : ''}${y ? `, over the year ${y}` : ''}.`,
-    ret: (pl, qn, ytd, qr, r1) => `The asset-weighted return of all pillar ${pl} funds since the start of the year was ${ytd}${qr ? `, ${qr} in ${qn}` : ''}${r1 ? `; over 12 months ${r1}` : ''}.`,
-    gain1: (pl, qn, v, y) => `Pillar ${pl} funds earned an investment gain of about ${v} in ${qn}${y ? ` and about ${y} since the start of the year` : ''}.`,
+    nav: (pl, d, v, q, y) => `On ${d} pillar ${pl} pension funds managed ${v} of net assets.${wSeq('assets', [q && [wPer()[0], ...q], y && [wPer()[1], ...y]], mMn)}`,
+    part: (pl, d, n, q, y) => `On ${d} ${mInt(n)} people were saving in pillar ${pl} pension funds.${wSeq('the number of participants', [q && [wPer()[0], ...q], y && [wPer()[1], ...y]], mInt)}`,
+    part3: (pl, d, n, q, y) => `On ${d} pillar ${pl} pension funds had ${mInt(n)} participants (a person saving in several funds is counted in each).${wSeq('the number of participants', [q && [wPer()[0], ...q], y && [wPer()[1], ...y]], mInt)}`,
+    ret: (pl, qn, ytd, qr, r1) => `Since the start of the year the average (asset-weighted) return of pillar ${pl} pension funds was ${ytd}${qr ? `; in ${qn} it was ${qr}` : ''}${r1 ? `, and over the last 12 months ${r1}` : ''}.`,
+    gain1: (pl, qn, g, y) => `In ${qn} pillar ${pl} pension funds ${g >= 0 ? `earned an investment gain of about ${mMn(g)}` : `made an investment loss of about ${mMn(-g)}`}${y == null ? '' : (y >= 0) === (g >= 0) ? `, and about ${mMn(Math.abs(y))} since the start of the year` : y >= 0 ? `, but since the start of the year they have earned about ${mMn(y)}` : `, but since the start of the year they have lost about ${mMn(-y)}`}.`,
     per: (pl, v, y) => `Assets per pillar ${pl} participant averaged ${v}${y ? ` (a year earlier ${y})` : ''}.`,
-    lc: (lo, lg, hi, hg) => `Since the start of the year life-cycle group averages ranged from ${lo} (${lg}) to ${hi} (${hg}).`,
-    mgr: (a, as, p, ps) => `The largest manager by assets is ${a} (${as} of the market), by participants – ${p} (${ps}).`,
-    both: (d, v, n) => `On ${d} pillar II and III pension funds together managed ${v}${n ? ` and had ${n} participations` : ''}.`,
-    chg: (hi, hv, lo, lv) => `Change in participants over the quarter by manager: from ${lo} (${lv}) to ${hi} (${hv}).`,
-    m1: (m, pl, v, s, p, ps) => `${m} managed ${v} of pillar ${pl} assets (${s} of the market) and had ${p} participants (${ps}).`,
+    lc: (lo, lg, hi, hg) => `Since the start of the year the average return of life-cycle groups ranged from ${lo} (“${lg}”) to ${hi} (“${hg}”).`,
+    mgr: (a, as, p, ps) => a === p ? `The largest manager is ${a}, with ${as} of the pillar’s assets and ${ps} of its participants.` : `${a} manages the most assets (${as} of the pillar), while ${p} has the most participants (${ps}).`,
+    both: (d, v, n) => `On ${d} pillar II and III pension funds together managed ${v}${n ? ` and had ${mInt(n)} participants (a person saving in several funds is counted in each)` : ''}.`,
+    chg: (hi, hv, lo, lv) => hv < 0 ? `Over the quarter every manager lost participants: ${lo} the most (${mInt(-lv)}), ${hi} the fewest (${mInt(-hv)}).` : lv > 0 ? `Over the quarter every manager gained participants: ${hi} the most (${mInt(hv)}), ${lo} the fewest (${mInt(lv)}).` : `Over the quarter ${hi} gained the most participants (${mInt(hv)}), while ${lo} lost the most (${mInt(-lv)}).`,
+    m1: (m, pl, v, s, p, ps) => `${m} managed ${v} of pillar ${pl} assets (${s} of the pillar) and had ${mInt(p)} participants (${ps} of all).`,
     m2: (m, q, nq) => `Over the quarter ${m}’s participants changed by ${q} and assets by ${nq}.`,
     m3: (m, k, n) => `${m} funds beat the Bank of Lithuania group average since the start of the year in ${k} of ${n} groups.`,
-    m4: (m, best) => `${m}’s best place in a group since the start of the year: ${best}.`,
+    m4: (m, pos, of, gl) => `Since the start of the year ${m}’s best result was in the “${gl}” group: place ${pos} of ${of}.`,
     calcNav: 'Sum of fund net assets in the report.', calcPart: 'Sum of fund participants in the report.', calcRet: 'Bank of Lithuania asset-weighted average of all funds (“All funds”, weights – assets on the report date); quarter return – fund quarter returns weighted by quarter-end assets (fund quarter return = (1 + YTD) ÷ (1 + previous quarter YTD) − 1).',
     calcGain: 'Σ fund quarter return × (assets at quarter start + half the net flow; from Q2 2026 the whole flow, as reform payouts are made at the start of the quarter). An estimate.', calcPer: 'Net assets ÷ participants.', calcLc: 'Bank of Lithuania weighted group averages.', calcMgr: 'Manager’s funds ÷ whole pillar.', calcChg: 'Manager’s participants now − at previous quarter end.', calcM3: 'Manager fund’s YTD return vs Bank of Lithuania group average, groups where the manager has a fund.',
   },
@@ -75,20 +75,20 @@ addStrings({
   dLong: d => `${d.slice(0, 4)} m. ${MK_MON.lt[+d.slice(5, 7) - 1]} ${+d.slice(8)} d.`,
   f: {
     navH: 'Turtas', partH: 'Dalyviai', retH: 'Grąža', gainH: 'Investicinis prieaugis', perH: 'Vienam dalyviui', lcH: 'Gyvenimo ciklo grupės', mgrH: 'Rinkos dalys', bothH: 'II ir III pakopa', chgH: 'Dalyvių pokytis',
-    nav: (pl, d, v, q, y) => `${d} ${pl} pakopos pensijų fondai valdė ${v} grynųjų aktyvų${q ? ` – per ketvirtį ${q}` : ''}${y ? `, per metus ${y}` : ''}.`,
-    part: (pl, d, v, q, y) => `${d} ${pl} pakopos pensijų fonduose kaupė ${v} dalyvių${q ? `; per ketvirtį pokytis ${q}` : ''}${y ? `, per metus ${y}` : ''}.`,
-    part3: (pl, d, v, q, y) => `${d} ${pl} pakopos pensijų fondai turėjo ${v} dalyvių (suma per fondus)${q ? `; per ketvirtį pokytis ${q}` : ''}${y ? `, per metus ${y}` : ''}.`,
-    ret: (pl, qn, ytd, qr, r1) => `Visų ${pl} pakopos pensijų fondų svertinė grąža nuo metų pradžios – ${ytd}${qr ? `, ${qn} – ${qr}` : ''}${r1 ? `; per 12 mėnesių – ${r1}` : ''}.`,
-    gain1: (pl, qn, v, y) => `${pl} pakopos pensijų fondai ${qn} uždirbo apie ${v} investicinio prieaugio${y ? `, nuo metų pradžios – apie ${y}` : ''}.`,
+    nav: (pl, d, v, q, y) => `${d} ${pl} pakopos pensijų fondai valdė ${v} grynųjų aktyvų.${wSeq('turtas', [q && [wPer()[0], ...q], y && [wPer()[1], ...y]], mMn)}`,
+    part: (pl, d, n, q, y) => `${d} ${pl} pakopos pensijų fonduose kaupė ${mInt(n)} ${ltN(n, 'dalyvis', 'dalyviai', 'dalyvių')}.${wSeq('dalyvių', [q && [wPer()[0], ...q], y && [wPer()[1], ...y]], mInt, 1)}`,
+    part3: (pl, d, n, q, y) => `${d} ${pl} pakopos pensijų fondai turėjo ${mInt(n)} ${ltN(n, 'dalyvį', 'dalyvius', 'dalyvių')} (žmogus, kaupiantis keliuose fonduose, skaičiuojamas kiekviename).${wSeq('dalyvių', [q && [wPer()[0], ...q], y && [wPer()[1], ...y]], mInt, 1)}`,
+    ret: (pl, qn, ytd, qr, r1) => `Nuo metų pradžios ${pl} pakopos pensijų fondų vidutinė (pagal turtą svertinė) grąža – ${ytd}${qr ? `, ${qn} – ${qr}` : ''}${r1 ? `, per pastaruosius 12 mėnesių – ${r1}` : ''}.`,
+    gain1: (pl, qn, g, y) => `${qn[0].toUpperCase() + qn.slice(1)} ${pl} pakopos pensijų fondai ${g >= 0 ? `uždirbo apie ${mMn(g)} investicinio prieaugio` : `patyrė apie ${mMn(-g)} investicinių nuostolių`}${y == null ? '' : (y >= 0) === (g >= 0) ? `, nuo metų pradžios – apie ${mMn(Math.abs(y))}` : y >= 0 ? `, tačiau nuo metų pradžios uždirbo apie ${mMn(y)}` : `, tačiau nuo metų pradžios patyrė apie ${mMn(-y)} nuostolių`}.`,
     per: (pl, v, y) => `Vienam ${pl} pakopos dalyviui vidutiniškai teko ${v} sukaupto turto${y ? ` (prieš metus – ${y})` : ''}.`,
-    lc: (lo, lg, hi, hg) => `Gyvenimo ciklo grupių vidutinė grąža nuo metų pradžios svyravo nuo ${lo} (${lg}) iki ${hi} (${hg}).`,
-    mgr: (a, as, p, ps) => `Didžiausias valdytojas pagal turtą – ${a} (${as} rinkos), pagal dalyvių skaičių – ${p} (${ps}).`,
-    both: (d, v, n) => `${d} II ir III pakopos pensijų fondai kartu valdė ${v}${n ? `, juose buvo ${n} dalyvavimų` : ''}.`,
-    chg: (hi, hv, lo, lv) => `Dalyvių skaičiaus pokytis per ketvirtį pagal valdytoją – nuo ${lo} (${lv}) iki ${hi} (${hv}).`,
-    m1: (m, pl, v, s, p, ps) => `${m} valdė ${v} ${pl} pakopos turto (${s} rinkos) ir turėjo ${p} dalyvių (${ps}).`,
+    lc: (lo, lg, hi, hg) => `Nuo metų pradžios gyvenimo ciklo grupių vidutinė grąža svyravo nuo ${lo} (grupė „${lg}“) iki ${hi} (grupė „${hg}“).`,
+    mgr: (a, as, p, ps) => a === p ? `Didžiausias valdytojas – ${a}: jam tenka ${as} pakopos turto ir ${ps} visų dalyvių.` : `Daugiausia pakopos turto valdo ${a} (${as}), daugiausia dalyvių turi ${p} (${ps}).`,
+    both: (d, v, n) => `${d} II ir III pakopos pensijų fondai kartu valdė ${v}${n ? `; juose kaupė ${mInt(n)} ${ltN(n, 'dalyvis', 'dalyviai', 'dalyvių')} (žmogus, kaupiantis keliuose fonduose, skaičiuojamas kiekviename)` : ''}.`,
+    chg: (hi, hv, lo, lv) => hv < 0 ? `Per ketvirtį dalyvių sumažėjo visų valdytojų fonduose: labiausiai – ${lo} (${mInt(-lv)}), mažiausiai – ${hi} (${mInt(-hv)}).` : lv > 0 ? `Per ketvirtį dalyvių padaugėjo visų valdytojų fonduose: labiausiai – ${hi} (${mInt(hv)}), mažiausiai – ${lo} (${mInt(lv)}).` : `Per ketvirtį dalyvių labiausiai padaugėjo ${hi} fonduose (${mInt(hv)}), o labiausiai sumažėjo – ${lo} fonduose (${mInt(-lv)}).`,
+    m1: (m, pl, v, s, p, ps) => `${m} valdė ${v} ${pl} pakopos turto (${s} pakopos) ir turėjo ${mInt(p)} ${ltN(p, 'dalyvį', 'dalyvius', 'dalyvių')} (${ps} visų dalyvių).`,
     m2: (m, q, nq) => `Per ketvirtį ${m} dalyvių skaičius pakito ${q}, turtas – ${nq}.`,
     m3: (m, k, n) => `${m} fondų grąža nuo metų pradžios viršijo LB grupės vidurkį ${k} iš ${n} grupių.`,
-    m4: (m, best) => `Geriausia ${m} fondo vieta grupėje nuo metų pradžios: ${best}.`,
+    m4: (m, pos, of, gl) => `Nuo metų pradžios geriausiai ${m} fondui sekėsi grupėje „${gl}“: ${pos} vieta iš ${of}.`,
     calcNav: 'Fondų grynųjų aktyvų suma ataskaitoje.', calcPart: 'Fondų dalyvių suma ataskaitoje.', calcRet: 'LB svertinis visų fondų vidurkis („Visi fondai“, svoriai – turtas ataskaitos dieną); ketvirčio grąža – fondų ketvirčio grąžų vidurkis, svertas turtu ketvirčio pabaigoje (fondo ketvirčio grąža = (1 + grąža nuo metų pradžios) ÷ (1 + ankstesnio ketvirčio grąža nuo metų pradžios) − 1).',
     calcGain: 'Σ fondo ketvirčio grąža × (turtas ketvirčio pradžioje + pusė įmokų ir išmokų srauto; nuo 2026 II ketv. – visas srautas, nes reformos išmokos mokamos ketvirčio pradžioje). Apytikslis įvertis.', calcPer: 'Grynieji aktyvai ÷ dalyviai.', calcLc: 'LB svertiniai grupių vidurkiai.', calcMgr: 'Valdytojo fondų suma ÷ visa pakopa.', calcChg: 'Valdytojo dalyviai dabar − ankstesnio ketvirčio pabaigoje.', calcM3: 'Valdytojo fondo grąža nuo metų pradžios lyginama su LB grupės vidurkiu tose grupėse, kur valdytojas turi fondą.',
   },
@@ -153,12 +153,29 @@ const groupsAt = (pl, di) => [...new Set(rowsAt(pl, di).map(r => fundOf(pl, r)[2
 /* ---------- formatai ---------- */
 const mInt = x => Math.round(x).toLocaleString(T().locale);
 const mSInt = x => (x >= 0 ? '+' : '−') + mInt(Math.abs(x));
-const mMn = v => v >= 1000 ? `${num(v / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(v, v < 10 ? 2 : 1)} ${lang === 'lt' ? 'mln. €' : 'm €'}`;
+const mMn = v => Math.abs(v) >= 1000 ? `${num(v / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(v, Math.abs(v) < 10 ? 2 : 1)} ${lang === 'lt' ? 'mln. €' : 'm €'}`;
 const mSMn = v => (v >= 0 ? '+' : '−') + mMn(Math.abs(v));
 const mRel = (a, b) => a != null && b ? pct((a / b - 1) * 100) : '';
 const mPct = v => v == null ? '–' : pct(v);
 const mShare = (a, b) => b ? pctPlain(a / b * 100, 1) : '–';
 const mEurs = v => `${mInt(v)} €`;
+/* sakinių kalba: kryptis žodžiu, skaičiai be „+“, kad sakinį būtų galima kopijuoti į tekstą */
+const ltN = (n, a, b, c) => { const k = Math.abs(Math.round(n)), d = k % 10, h = k % 100; return d === 1 && h !== 11 ? a : d >= 2 && (h < 12 || h > 19) ? b : c; };
+const pA = v => pctPlain(Math.abs(v));
+const ppA = v => `${num(Math.abs(v), 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}`;
+const wDir = (d, cnt) => lang === 'lt' ? (d > 0 ? (cnt ? 'padaugėjo' : 'padidėjo') : d < 0 ? 'sumažėjo' : 'nepakito') : (d > 0 ? 'rose by' : d < 0 ? 'fell by' : 'was unchanged');
+const wList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} ${lang === 'lt' ? 'ir' : 'and'} ${a[a.length - 1]}`;
+/* „Per ketvirtį turtas sumažėjo A (a %), per metus – B (b %).“ parts = [[laikotarpis, skirtumas, santykinis % | null], …] */
+function wSeq(subj, parts, fmt, cnt) {
+  const L = lang === 'lt', ps = parts.filter(x => x && x[1] != null && isFinite(x[1])); if (!ps.length) return '';
+  const fig = x => x[1] ? `${fmt(Math.abs(x[1]))}${x[2] != null && isFinite(x[2]) ? ` (${pA(x[2])})` : ''}` : '';
+  return ' ' + ps.map((x, i) => {
+    if (!i) return `${x[0][0].toUpperCase() + x[0].slice(1)} ${subj} ${wDir(x[1], cnt)} ${fig(x)}`.trim();
+    const same = x[1] && Math.sign(x[1]) === Math.sign(ps[i - 1][1]);
+    return L ? `${x[0]} – ${same ? fig(x) : `${wDir(x[1], cnt)} ${fig(x)}`.trim()}` : `${x[0]} ${same ? 'by ' + fig(x) : `${wDir(x[1], cnt)} ${fig(x)}`.trim()}`;
+  }).join(', ') + '.';
+}
+const wPer = () => lang === 'lt' ? ['per ketvirtį', 'per metus', 'per 3 metus'] : ['over the quarter', 'over the year', 'over 3 years'];
 const mCell = (v, f) => v == null || (typeof v === 'number' && !isFinite(v)) ? '–' : f(v);
 const mCls = v => v == null ? '' : v > 0 ? ' up' : v < 0 ? ' down' : '';
 
@@ -189,24 +206,24 @@ document.addEventListener('change', e => {
    X – duomenų lapų informacija), z – formatas}. Excel faile (mkFactBook) kiekvienas skaičius – formulė iš lapų „LB duomenys“ ir „LB vidurkiai“. */
 addStrings({
   fx: {
-    flowH: 'Change in assets', flow: (v, g, fl) => `Over the quarter assets changed by ${v}: investment gain of about ${g} and contributions minus payouts of about ${fl}.`,
+    flowH: 'Change in assets', flow: (v, g, fl, pl) => `Over the quarter pillar ${pl} assets ${wDir(v)} ${mMn(Math.abs(v))}: investments ${g >= 0 ? `earned about ${mMn(g)}` : `lost about ${mMn(-g)}`}, and ${fl >= 0 ? 'contributions exceeded payouts' : 'payouts exceeded contributions'} by about ${mMn(Math.abs(fl))}.`,
     calcFlow: 'Change = assets at quarter end − at quarter start; contributions minus payouts = change − investment gain (an estimate).',
     concH: 'Market concentration', conc: (n3, s3, hhi) => `The three largest managers (${n3}) manage ${s3} of the pillar’s assets; the market concentration index (HHI) is ${hhi}.`,
     calcConc: 'Managers’ shares of assets; HHI = Σ (share, %)²; above 2,500 a market is considered highly concentrated.',
-    beatH: 'Funds vs group averages', beat: (k, n) => `Since the start of the year ${k} of ${n} funds earned more than their Bank of Lithuania group weighted average.`,
+    beatH: 'Funds vs group averages', beat: (k, n) => `Since the start of the year ${k} of ${n} funds earned more than the average of their group (Bank of Lithuania weighted average).`,
     calcBeat: 'In each Bank of Lithuania group – funds whose return since the start of the year is above the group average; summed over groups.',
     bmH: 'Benchmarks', bm: (k, n) => `Since the start of the year ${k} of ${n} funds beat their benchmark.`,
     calcBm: 'Fund return since the start of the year > its benchmark return (both from the Bank of Lithuania file); only funds with both figures.',
-    recH: 'Records', recNow: v => `Pillar assets (${v}) are the highest in the whole Bank of Lithuania series since 2015.`, recWas: (v, d, now) => `The highest pillar assets were ${v} on ${d}; now ${now}.`,
+    recH: 'Records', recNow: v => `Pillar assets (${v}) are the highest in the whole Bank of Lithuania series since 2015.`, recWas: (v, d, now) => `Pillar assets peaked at ${v} on ${d}; they now stand at ${now}.`,
     calcRec: 'Largest sum of pillar net assets over all quarters up to the selected one.',
-    grH: 'Assets over 5 years', gr: (a, b, x, c, up) => `Over 5 years pillar assets ${up ? 'grew' : 'fell'} from ${a} to ${b}${up && x >= 1.5 ? ` (×${num(x, 1)})` : ''}, on average ${c} a year.`,
+    grH: 'Assets over 5 years', gr: (a, b, x, c, up) => `Over 5 years pillar assets ${up ? 'grew' : 'fell'} from ${a} to ${b}${up && x >= 1.5 ? ` (×${num(x, 1)})` : ''}, an average of ${c} a year.`,
     calcGr: 'Assets now ÷ assets 5 years ago; annual growth = ratio^(1/5) − 1 (includes both contributions and returns).',
-    m2: (m, pq, pr, mq, py, pyr, my) => `Over the quarter ${m}’s participants changed by ${pq} (${pr}; whole pillar ${mq}), over the year by ${py} (${pyr}; whole pillar ${my}).`,
-    m5: (m, s0, a, b) => `${m}’s share of assets is ${s0}; over the year it changed by ${a}${b ? `, over 3 years by ${b}` : ''}.`,
+    m2: (m, pq, pr, mq, py, pyr, my) => `${wSeq(`the number of ${m} participants`, [[wPer()[0], pq, pr], [wPer()[1], py, pyr]], mInt).trim()}${wSeq('the number of participants in the whole pillar', [[wPer()[0], mq, null], [wPer()[1], my, null]], pA)}`,
+    m5: (m, s0, a, b) => `${m}’s share of pillar assets is ${s0}.${wSeq('it', [[wPer()[1], a, null], b != null && [wPer()[2], b, null]], ppA)}`,
     calcM5: 'Manager’s assets ÷ whole pillar assets; change in percentage points.',
-    m6: (m, g, s) => `${m}’s funds earned an investment gain of about ${g} in the quarter${s ? ` (${s} of the pillar’s gain)` : ''}.`,
+    m6: (m, g, s) => g >= 0 ? `Over the quarter ${m}’s funds earned an investment gain of about ${mMn(g)}${s ? ` (${s} of the pillar’s total gain)` : ''}.` : `Over the quarter ${m}’s funds made an investment loss of about ${mMn(-g)}.`,
     m7: (m, a, b) => `Average assets per ${m} participant: ${a} (pillar average ${b}).`,
-    m3: (m, parts) => `${m}’s funds beat the Bank of Lithuania group average ${parts}.`,
+    m3: (m, parts) => `${m}’s funds earned more than their group average (Bank of Lithuania) ${parts}.`,
     per: { ytd: 'since the start of the year', r1: 'over 1 year', r3: 'over 3 years' }, ofG: (k, n) => `in ${k} of ${n} groups`,
     calcM3: 'In each group where the manager has a fund, its best fund is compared with the Bank of Lithuania weighted group average (same group only).',
     calcM4: 'Place of the manager’s best fund by return since the start of the year among funds of the same group.',
@@ -216,24 +233,24 @@ addStrings({
   },
 }, {
   fx: {
-    flowH: 'Turto pokytis', flow: (v, g, fl) => `Per ketvirtį turtas pakito ${v}: investicinis prieaugis – apie ${g}, įmokų ir išmokų balansas – apie ${fl}.`,
+    flowH: 'Turto pokytis', flow: (v, g, fl, pl) => `Per ketvirtį ${pl} pakopos turtas ${wDir(v)} ${mMn(Math.abs(v))}: investicijos ${g >= 0 ? `uždirbo apie ${mMn(g)}` : `prarado apie ${mMn(-g)}`}, o ${fl >= 0 ? 'įmokos viršijo išmokas' : 'išmokos viršijo įmokas'} apie ${mMn(Math.abs(fl))}.`,
     calcFlow: 'Pokytis = turtas ketvirčio pabaigoje − pradžioje; įmokų ir išmokų balansas = pokytis − investicinis prieaugis (įvertis).',
-    concH: 'Rinkos koncentracija', conc: (n3, s3, hhi) => `Trys didžiausi valdytojai (${n3}) valdo ${s3} pakopos turto; rinkos koncentracijos indeksas (HHI) – ${hhi}.`,
+    concH: 'Rinkos koncentracija', conc: (n3, s3, hhi) => `Trys didžiausi valdytojai – ${n3} – valdo ${s3} pakopos turto; rinkos koncentracijos indeksas (HHI) – ${hhi}.`,
     calcConc: 'Valdytojų turto dalys; HHI = Σ (dalis, %)²; virš 2 500 rinka laikoma labai koncentruota.',
-    beatH: 'Fondai ir grupių vidurkiai', beat: (k, n) => `Nuo metų pradžios ${k} iš ${n} fondų uždirbo daugiau nei jų LB grupės svertinis vidurkis.`,
+    beatH: 'Fondai ir grupių vidurkiai', beat: (k, n) => `Nuo metų pradžios ${k} iš ${n} fondų uždirbo daugiau nei vidutiniškai jų grupės fondai (LB svertinis grupės vidurkis).`,
     calcBeat: 'Kiekvienoje LB grupėje – fondai, kurių grąža nuo metų pradžios didesnė už LB grupės vidurkį; sudėta per grupes.',
-    bmH: 'Lyginamieji indeksai', bm: (k, n) => `Nuo metų pradžios ${k} iš ${n} fondų grąža viršijo jų lyginamąjį indeksą.`,
+    bmH: 'Lyginamieji indeksai', bm: (k, n) => `Nuo metų pradžios ${k} iš ${n} fondų uždirbo daugiau nei jų lyginamasis indeksas.`,
     calcBm: 'Fondo grąža nuo metų pradžios > jo lyginamojo indekso grąža (abi – LB failas); tik fondai, turintys abu skaičius.',
-    recH: 'Rekordai', recNow: v => `Pakopos turtas (${v}) – didžiausias per visą LB duomenų laikotarpį nuo 2015 m.`, recWas: (v, d, now) => `Didžiausias pakopos turtas – ${v} (${d}); dabar ${now}.`,
+    recH: 'Rekordai', recNow: v => `Pakopos fondų turtas (${v}) dabar didžiausias per visą LB duomenų laikotarpį nuo 2015 m.`, recWas: (v, d, now) => `Daugiausia turto pakopos fondai valdė ${d} – ${v}; dabar jie valdo ${now}.`,
     calcRec: 'Didžiausia pakopos grynųjų aktyvų suma tarp visų ketvirčių iki pasirinkto.',
-    grH: 'Turtas per 5 metus', gr: (a, b, x, c, up) => `Per 5 metus pakopos turtas ${up ? 'išaugo' : 'sumažėjo'} nuo ${a} iki ${b}${up && x >= 1.5 ? ` (${num(x, 1)} karto)` : ''}, vidutiniškai ${c} per metus.`,
+    grH: 'Turtas per 5 metus', gr: (a, b, x, c, up) => `Per 5 metus pakopos turtas ${up ? 'išaugo' : 'sumažėjo'} nuo ${a} iki ${b}${up && x >= 1.5 ? ` (${num(x, 1)} karto)` : ''}, t. y. vidutiniškai ${up ? 'augo' : 'mažėjo'} po ${c} per metus.`,
     calcGr: 'Turtas dabar ÷ turtas prieš 5 metus; metinis augimas = santykis^(1/5) − 1 (apima ir įmokas, ir grąžą).',
-    m2: (m, pq, pr, mq, py, pyr, my) => `Per ketvirtį ${m} dalyvių skaičius pakito ${pq} (${pr}; visos pakopos – ${mq}), per metus – ${py} (${pyr}; visos pakopos – ${my}).`,
-    m5: (m, s0, a, b) => `${m} turto dalis rinkoje – ${s0}; per metus pakito ${a}${b ? `, per 3 metus – ${b}` : ''}.`,
+    m2: (m, pq, pr, mq, py, pyr, my) => `${wSeq(`${m} fondų dalyvių`, [[wPer()[0], pq, pr], [wPer()[1], py, pyr]], mInt, 1).trim()}${wSeq('visoje pakopoje dalyvių', [[wPer()[0], mq, null], [wPer()[1], my, null]], pA, 1)}`,
+    m5: (m, s0, a, b) => `${m} dalis pakopos turto – ${s0}.${wSeq('ji', [[wPer()[1], a, null], b != null && [wPer()[2], b, null]], ppA)}`,
     calcM5: 'Valdytojo turtas ÷ visos pakopos turtas; pokytis procentiniais punktais.',
-    m6: (m, g, s) => `${m} fondai per ketvirtį uždirbo apie ${g} investicinio prieaugio${s ? ` (${s} visos pakopos prieaugio)` : ''}.`,
+    m6: (m, g, s) => g >= 0 ? `Per ketvirtį ${m} fondai uždirbo apie ${mMn(g)} investicinio prieaugio${s ? ` (${s} visos pakopos prieaugio)` : ''}.` : `Per ketvirtį ${m} fondai patyrė apie ${mMn(-g)} investicinių nuostolių.`,
     m7: (m, a, b) => `Vidutinis ${m} dalyvio sukauptas turtas – ${a} (pakopos vidurkis – ${b}).`,
-    m3: (m, parts) => `${m} fondų grąža viršijo LB grupės vidurkį ${parts}.`,
+    m3: (m, parts) => `${m} fondai uždirbo daugiau nei jų grupės vidurkis (LB): ${parts}.`,
     per: { ytd: 'nuo metų pradžios', r1: 'per 1 metus', r3: 'per 3 metus' }, ofG: (k, n) => `${k} iš ${n} grupių`,
     calcM3: 'Kiekvienoje grupėje, kur valdytojas turi fondą, geriausias jo fondas lyginamas su LB svertiniu grupės vidurkiu (tik tos pačios grupės).',
     calcM4: 'Geriausio valdytojo fondo vieta pagal grąžą nuo metų pradžios tarp tos pačios grupės fondų.',
@@ -267,27 +284,27 @@ function mkFacts() {
   { const nb = NB(), i = nb.add(I.nav + now, T0.nav, () => fxNav(d0), Zm);
     if (Tq.ok && Tq.nav) nbCmp(nb, i, I.nav, Tq.nav, () => fxNav(Q), Zm, 1);
     if (Ty.ok && Ty.nav) nbCmp(nb, i, I.nav, Ty.nav, () => fxNav(Y), Zm, 2);
-    add(F.navH, F.nav(pl, Ln, mMn(T0.nav), Tq.ok && Tq.nav ? `${mSMn(T0.nav - Tq.nav)} (${mRel(T0.nav, Tq.nav)})` : '', Ty.ok && Ty.nav ? `${mSMn(T0.nav - Ty.nav)} (${mRel(T0.nav, Ty.nav)})` : ''), F.calcNav, nb); }
+    add(F.navH, F.nav(pl, Ln, mMn(T0.nav), Tq.ok && Tq.nav ? [T0.nav - Tq.nav, (T0.nav / Tq.nav - 1) * 100] : null, Ty.ok && Ty.nav ? [T0.nav - Ty.nav, (T0.nav / Ty.nav - 1) * 100] : null), F.calcNav, nb); }
   { const nb = NB(), i = nb.add(I.part + now, T0.part, () => fxPart(d0), Zi);
     if (Tq.ok && Tq.part) nbCmp(nb, i, I.part, Tq.part, () => fxPart(Q), Zi, 1);
     if (Ty.ok && Ty.part) nbCmp(nb, i, I.part, Ty.part, () => fxPart(Y), Zi, 2);
-    add(F.partH, (pl === 'III' ? F.part3 : F.part)(pl, Ln, mInt(T0.part), Tq.ok && Tq.part ? `${mSInt(T0.part - Tq.part)} (${mRel(T0.part, Tq.part)})` : '', Ty.ok && Ty.part ? `${mSInt(T0.part - Ty.part)} (${mRel(T0.part, Ty.part)})` : ''), F.calcPart, nb); }
+    add(F.partH, (pl === 'III' ? F.part3 : F.part)(pl, Ln, T0.part, Tq.ok && Tq.part ? [T0.part - Tq.part, (T0.part / Tq.part - 1) * 100] : null, Ty.ok && Ty.part ? [T0.part - Ty.part, (T0.part / Ty.part - 1) * 100] : null), F.calcPart, nb); }
   const q1 = d.slice(5, 7) === '03', qr = qRet(pl, di);
   if (A && A[MA.ret_ytd] != null) {
     const nb = NB(); nb.add(I.ytd, A[MA.ret_ytd], () => fxAvg('C', d0, ALL), Zp);
     if (!q1 && qr != null) nb.add(I.qret, qr, () => fxQret(d0), Zp);
     if (A[MA.ret_1y] != null) nb.add(I.r1, A[MA.ret_1y], () => fxAvg('D', d0, ALL), Zp);
-    add(F.retH, F.ret(pl, qn, pct(A[MA.ret_ytd]), !q1 && qr != null ? pct(qr) : '', A[MA.ret_1y] != null ? pct(A[MA.ret_1y]) : ''), F.calcRet, nb);
+    add(F.retH, F.ret(pl, qn, pctPlain(A[MA.ret_ytd]), !q1 && qr != null ? pctPlain(qr) : '', A[MA.ret_1y] != null ? pctPlain(A[MA.ret_1y]) : ''), F.calcRet, nb);
   }
   const g = gainAt(pl, di), gy = gainYtd(pl, di);
   if (g != null) {
     const nb = NB(); nb.add(I.gain, g, () => fxGain(d0), Zm); if (!q1 && gy != null) nb.add(I.gainY, gy, () => fxGainY(d0), Zm);
-    add(F.gainH, F.gain1(pl, qn, mSg(g), !q1 && gy != null ? mSg(gy) : ''), F.calcGain, nb);
+    add(F.gainH, F.gain1(pl, qn, g, !q1 && gy != null ? gy : null), F.calcGain, nb);
     if (Tq.ok && Tq.nav) {
       const nb2 = NB(), a = nb2.add(I.nav + now, T0.nav, () => fxNav(d0), Zm), b = nb2.add(`${I.nav} · ${t.thPrevQ.toLowerCase()}`, Tq.nav, () => fxNav(Q), Zm);
       const c0 = nb2.add(t.thDq, T0.nav - Tq.nav, c => `${c(a)}-${c(b)}`, Zm), gi = nb2.add(I.gain, g, () => fxGain(d0), Zm);
       nb2.add(L ? 'Įmokų ir išmokų balansas, mln. € (apyt.)' : 'Contributions minus payouts, € m (est.)', T0.nav - Tq.nav - g, c => `${c(c0)}-${c(gi)}`, Zm);
-      add(X.flowH, X.flow(mSMn(T0.nav - Tq.nav), mSg(g), mSg(T0.nav - Tq.nav - g)), `${X.calcFlow} ${F.calcGain}`, nb2);
+      add(X.flowH, X.flow(T0.nav - Tq.nav, g, T0.nav - Tq.nav - g, pl), `${X.calcFlow} ${F.calcGain}`, nb2);
     }
   }
   if (pl === 'II' && T0.part) {
@@ -300,7 +317,7 @@ function mkFacts() {
   const lc = groupsAt(pl, di).filter(gi => /^\d{4}-\d{4}$/.test(groupKeyOf(pl, gi))).map(gi => ({ gi, a: avgOf(pl, di, gi) })).filter(x => x.a && x.a[MA.ret_ytd] != null).sort((a, b) => a.a[MA.ret_ytd] - b.a[MA.ret_ytd]);
   if (lc.length > 1) {
     const nb = NB(); lc.forEach(x => nb.add(`${groupLbl(pl, x.gi)} · ${t.thYtd.toLowerCase()}`, x.a[MA.ret_ytd], () => fxAvg('C', d0, groupLbl(pl, x.gi)), Zp));
-    add(F.lcH, F.lc(pct(lc[0].a[MA.ret_ytd]), groupLbl(pl, lc[0].gi), pct(lc[lc.length - 1].a[MA.ret_ytd]), groupLbl(pl, lc[lc.length - 1].gi)), F.calcLc, nb);
+    add(F.lcH, F.lc(pctPlain(lc[0].a[MA.ret_ytd]), groupLbl(pl, lc[0].gi), pctPlain(lc[lc.length - 1].a[MA.ret_ytd]), groupLbl(pl, lc[lc.length - 1].gi)), F.calcLc, nb);
   }
   // fondai virš savo grupės vidurkio (lyginama tik grupės viduje)
   { const nb = NB(), ks = [], ns = []; let K = 0, Nn = 0;
@@ -329,13 +346,13 @@ function mkFacts() {
       const s3 = srt.slice(0, 3).reduce((s, [, x]) => s + x.nav / T0.nav * 100, 0), hhi = srt.reduce((s, [, x]) => s + (x.nav / T0.nav * 100) ** 2, 0);
       nb.add(L ? 'Trijų didžiausių dalis, %' : 'Top-3 share, %', s3, c => ix.slice(0, 3).map(c).join('+'), Zp);
       nb.add('HHI', hhi, c => `SUMSQ(${c(ix[0])}:${c(ix[ix.length - 1])})`, Zi);
-      add(X.concH, X.conc(srt.slice(0, 3).map(x => x[0]).join(', '), pctPlain(s3, 1), mInt(hhi)), X.calcConc, nb);
+      add(X.concH, X.conc(wList(srt.slice(0, 3).map(x => x[0])), pctPlain(s3, 1), mInt(hhi)), X.calcConc, nb);
     }
     const ch = ms.filter(([m]) => Mq[m]).map(([m, x]) => [m, x.part - Mq[m].part]).sort((x, y) => y[1] - x[1]);
     if (ch.length > 1) {
       const nb = NB(), pair = ([m, v]) => { const i = nb.add(`${m} · ${I.part}${now}`, M[m].part, () => fxPart(d0, crM(m)), Zi), j = nb.add(`${m} · ${I.part} · ${t.thPrevQ.toLowerCase()}`, Mq[m].part, () => fxPart(Q, crM(m)), Zi); nb.add(`${m} · ${t.thDq}`, v, c => `${c(i)}-${c(j)}`, Zi); };
       pair(ch[0]); pair(ch[ch.length - 1]);
-      add(F.chgH, F.chg(ch[0][0], mSInt(ch[0][1]), ch[ch.length - 1][0], mSInt(ch[ch.length - 1][1])), F.calcChg, nb);
+      add(F.chgH, F.chg(ch[0][0], ch[0][1], ch[ch.length - 1][0], ch[ch.length - 1][1]), F.calcChg, nb);
     }
   }
   // rekordas ir augimas per 5 metus
@@ -348,13 +365,13 @@ function mkFacts() {
     if (d5 >= 0 && T5.nav) { const nb = NB(), a = nb.add(I.nav + now, T0.nav, () => fxNav(d0), Zm), b = nb.add(`${I.nav} · ${L ? 'prieš 5 metus' : '5 years ago'}`, T5.nav, () => fxNav(fxBack(60)), Zm);
       const r = nb.add(L ? 'Santykis' : 'Ratio', T0.nav / T5.nav, c => `${c(a)}/${c(b)}`, '0.00'), cg = (T0.nav / T5.nav) ** 0.2 - 1;
       nb.add(L ? 'Vidutinis metinis augimas' : 'Average annual growth', cg, c => `${c(r)}^(1/5)-1`, Zr);
-      add(X.grH, X.gr(mMn(T5.nav), mMn(T0.nav), T0.nav / T5.nav, pct(cg * 100), T0.nav >= T5.nav), X.calcGr, nb); } }
+      add(X.grH, X.gr(mMn(T5.nav), mMn(T0.nav), T0.nav / T5.nav, pA(cg * 100), T0.nav >= T5.nav), X.calcGr, nb); } }
   const other = pl === 'II' ? 'III' : 'II', od = dIdx(other, d);
   if (od >= 0) { const o = totals(other, od); if (o.nav) {
     const OD = `'LB duomenys (${other})'`, nb = NB(), oS = (col) => `SUMIFS(${OD}!${col}:${col},${OD}!A:A,${d0})`;
     const a = nb.add(`${pl} · ${I.nav}`, T0.nav, () => fxNav(d0), Zm), b = nb.add(`${other} · ${I.nav}`, o.nav, () => oS('F'), Zm); nb.add(`${X.tot} · ${I.nav}`, T0.nav + o.nav, c => `${c(a)}+${c(b)}`, Zm);
     const p = nb.add(`${pl} · ${I.part}`, T0.part, () => fxPart(d0), Zi), q = nb.add(`${other} · ${I.part}`, o.part, () => oS('E'), Zi); nb.add(`${X.tot} · ${I.part}`, T0.part + o.part, c => `${c(p)}+${c(q)}`, Zi);
-    add(F.bothH, F.both(Ln, mMn(T0.nav + o.nav), mInt(T0.part + o.part)), F.calcNav, nb, { other }); } }
+    add(F.bothH, F.both(Ln, mMn(T0.nav + o.nav), T0.part + o.part), F.calcNav, nb, { other }); } }
   if (MS.mgr && M[MS.mgr]) out.unshift(...[...mgrFacts(pl, di, MS.mgr), strengthFact(pl, di, MS.mgr)].filter(Boolean));
   return out;
 }
@@ -368,7 +385,7 @@ function mgrFacts(pl, di, m) {
     nb.add(`${m} · ${t.shOf.nav}`, x.nav / T0.nav, c => `${c(a)}/${c(b)}`, Zr);
     const p = nb.add(`${m} · ${I.part}`, x.part, () => fxPart(d0, cm), Zi), q = nb.add(`${I.part} · ${X.shTot}`, T0.part, () => fxPart(d0), Zi);
     nb.add(`${m} · ${t.shOf.part}`, x.part / T0.part, c => `${c(p)}/${c(q)}`, Zr);
-    add(F.m1(m, pl, mMn(x.nav), mShare(x.nav, T0.nav), mInt(x.part), mShare(x.part, T0.part)), F.calcMgr, nb); }
+    add(F.m1(m, pl, mMn(x.nav), mShare(x.nav, T0.nav), x.part, mShare(x.part, T0.part)), F.calcMgr, nb); }
   // rinkos dalies kryptis
   { const share = k => { const Mk = byMgr(pl, k), Tk = totals(pl, k); return Mk[m] && Tk.nav ? Mk[m].nav / Tk.nav * 100 : null; };
     const s0 = share(di), sy = dy >= 0 ? share(dy) : null, s3 = d3 >= 0 ? share(d3) : null;
@@ -378,7 +395,7 @@ function mgrFacts(pl, di, m) {
       const i0 = blk(t.thNow.toLowerCase(), di, d0), iy = blk(t.thPrevY.toLowerCase(), dy, Y);
       nb.add(`${t.thDy}, ${L ? 'p. p.' : 'pp'}`, s0 - sy, c => `${c(i0)}-${c(iy)}`, Zp);
       if (s3 != null) { const i3 = blk(L ? 'prieš 3 metus' : '3 years ago', d3, fxBack(36)); nb.add(`${L ? 'Pokytis per 3 metus' : 'Change in 3 years'}, ${L ? 'p. p.' : 'pp'}`, s0 - s3, c => `${c(i0)}-${c(i3)}`, Zp); }
-      add(X.m5(m, pctPlain(s0, 1), mPP(s0 - sy), s3 != null ? mPP(s0 - s3) : ''), X.calcM5, nb); } }
+      add(X.m5(m, pctPlain(s0, 1), s0 - sy, s3 != null ? s0 - s3 : null), X.calcM5, nb); } }
   // dalyvių pokytis prieš visą pakopą
   { const Mq = byMgr(pl, dq)[m], My = byMgr(pl, dy)[m], Tq = totals(pl, dq), Ty = totals(pl, dy);
     if (Mq && My && Tq.part && Ty.part) {
@@ -386,12 +403,12 @@ function mgrFacts(pl, di, m) {
       nbCmp(nb, a, `${m} · ${I.part}`, Mq.part, () => fxPart(Q, cm), Zi, 1); nbCmp(nb, a, `${m} · ${I.part}`, My.part, () => fxPart(Y, cm), Zi, 2);
       const b = nb.add(`${X.shTot} · ${I.part}${now}`, T0.part, () => fxPart(d0), Zi);
       nbCmp(nb, b, `${X.shTot} · ${I.part}`, Tq.part, () => fxPart(Q), Zi, 1); nbCmp(nb, b, `${X.shTot} · ${I.part}`, Ty.part, () => fxPart(Y), Zi, 2);
-      add(X.m2(m, mSInt(x.part - Mq.part), mRel(x.part, Mq.part), mRel(T0.part, Tq.part), mSInt(x.part - My.part), mRel(x.part, My.part), mRel(T0.part, Ty.part)), F.calcChg, nb); } }
+      add(X.m2(m, x.part - Mq.part, (x.part / Mq.part - 1) * 100, (T0.part / Tq.part - 1) * 100, x.part - My.part, (x.part / My.part - 1) * 100, (T0.part / Ty.part - 1) * 100), F.calcChg, nb); } }
   // investicinis prieaugis
   { const g = gainAt(pl, di, m), G = gainAt(pl, di);
     if (g != null) { const nb = NB(), a = nb.add(`${m} · ${I.gain}`, g, () => fxGain(d0, cm), Zm), b = nb.add(`${X.shTot} · ${I.gain}`, G, () => fxGain(d0), Zm), ok = G > 0 && g > 0;
       if (ok) nb.add(L ? 'Dalis' : 'Share', g / G, c => `${c(a)}/${c(b)}`, Zr);
-      add(X.m6(m, mSg(g), ok ? pctPlain(g / G * 100, 1) : ''), F.calcGain, nb); } }
+      add(X.m6(m, g, ok ? pctPlain(g / G * 100, 1) : ''), F.calcGain, nb); } }
   if (pl === 'II' && x.part && T0.part) {
     const nb = NB(), a = nb.add(`${m} · ${I.nav}`, x.nav, () => fxNav(d0, cm), Zm), b = nb.add(`${m} · ${I.part}`, x.part, () => fxPart(d0, cm), Zi), p = nb.add(`${m} · ${I.per}`, x.nav * 1e6 / x.part, c => `${c(a)}*1000000/${c(b)}`, Zi);
     const a2 = nb.add(`${X.shTot} · ${I.nav}`, T0.nav, () => fxNav(d0), Zm), b2 = nb.add(`${X.shTot} · ${I.part}`, T0.part, () => fxPart(d0), Zi); nb.add(`${X.shTot} · ${I.per}`, T0.nav * 1e6 / T0.part, c => `${c(a2)}*1000000/${c(b2)}`, Zi); void p;
@@ -420,7 +437,7 @@ function mgrFacts(pl, di, m) {
     if (best) { const nb = NB(), gl = groupLbl(pl, best.gi), cg = crG(pl, best.gi);
       const iv = nb.add(`${gl} · ${X.best} · ${t.thYtd.toLowerCase()}`, best.v, () => `_xlfn.MAXIFS(${MKX.D}!G:G,${byD(d0)},${cg},${cm})`, Zp);
       nb.add(X.rank, best.pos, c => `COUNTIFS(${byD(d0)},${cg},${MKX.D}!G:G,">"&${c(iv)})+1`, '0'); nb.add(X.of, best.of, () => `COUNTIFS(${byD(d0)},${cg},${MKX.D}!G:G,"<>")`, '0');
-      add(F.m4(m, L ? `${best.pos} iš ${best.of} (${gl})` : `${best.pos} of ${best.of} (${gl})`), X.calcM4, nb); } }
+      add(F.m4(m, best.pos, best.of, gl), X.calcM4, nb); } }
   return out;
 }
 function renderFacts() {
@@ -563,30 +580,30 @@ addStrings({
     k1H: '€ 1,000 five years ago', k1: (lo, lg, hi, hg) => `Had you put € 1,000 into an average life-cycle fund 5 years ago, today you would have from ${lo} (${lg}) to ${hi} (${hg}), depending on the age group.`,
     k1g: (lo, lg, hi, hg) => `Had you put € 1,000 into an average fund 5 years ago, today you would have from ${lo} (${lg}) to ${hi} (${hg}), depending on the fund group.`,
     calcK1: '1,000 × (1 + Bank of Lithuania group average 5-year annual return)^5. Past returns do not guarantee future returns.',
-    dayH: 'Every day', day: (v, d) => `Since the start of the year pension funds earned on average about ${v} a day for their participants (${d} days).`, calcDay: 'Investment gain since the start of the year ÷ number of days since 1 January.',
+    dayH: 'Every day', day: (v, d) => `Since the start of the year (${d} days) pension funds ${v >= 0 ? 'earned' : 'lost'} on average about ${mMn(Math.abs(v))} a day for their participants.`, calcDay: 'Investment gain since the start of the year ÷ number of days since 1 January.',
     ppH: 'Per participant', pp: (q, qn, y) => `In ${qn} the funds earned on average about ${q} per participant${y ? `, since the start of the year about ${y}` : ''}.`, calcPp: 'Investment gain ÷ participants at quarter end.',
-    dblH: 'What a return means', dbl: (r5, c5, e, n) => `A +100 % return means the money has doubled: € 1,000 became € 2,000. Over the last 5 years the average fund return was ${r5} a year, ${c5} in total – € 1,000 became about ${e}. At this pace money doubles in about ${n} years.`,
+    dblH: 'What a return means', dbl: (r5, c5, e, n) => `A 100 % return means the money has doubled: € 1,000 became € 2,000. Over the last 5 years the average fund return was ${r5} a year, ${c5} in total, so € 1,000 became about ${e}. At this pace money doubles in about ${n} years.`,
     calcDbl: 'Bank of Lithuania weighted average of all funds, 5-year annual return r; total = (1 + r)^5 − 1; doubling time = ln 2 ÷ ln(1 + r).',
-    hiH: 'Strong 5 years', hi: (k, n, th) => `${k} of ${n} funds earned more than ${th} over 5 years – every € 100 invested 5 years ago became more than € ${100 + th}.`, calcHi: 'Funds whose 5-year annual return r gives (1 + r)^5 − 1 above the threshold.',
+    hiH: 'Strong 5 years', hi: (k, n, th) => `${k} of ${n} funds earned more than ${th}% over 5 years – every € 100 invested 5 years ago became more than € ${100 + th}.`, calcHi: 'Funds whose 5-year annual return r gives (1 + r)^5 − 1 above the threshold.',
     dTot: 'Days since 1 January', perDay: 'Per day, € m', thr: 'Threshold (annual return giving the total), %',
   },
   p23: {
     title: 'Pillars II and III', lead: 'How pillar III is growing alongside the pillar II reform: assets, participants and money flows by manager. Bank of Lithuania quarterly data; in pillar III a person saving in several funds is counted in each fund.',
     rH: 'Pillar III vs pillar II', r: (a, b) => `Pillar III assets already equal ${a} of pillar II assets (a year earlier ${b}).`, calcR: 'Pillar III net assets ÷ pillar II net assets.',
-    gH: 'Growth of pillar III', g: (a, b, w) => `Since the start of the year pillar III gained ${a} participants – ${w} than in the same period last year (${b}).`,
-    gW: x => x >= 1.2 ? `${num(x, 1)} times more` : x <= 0.8 ? 'fewer' : 'about as many',
+    gH: 'Growth of pillar III', g: (a, b, w) => `Since the start of the year the number of pillar III participants ${a >= 0 ? 'grew' : 'fell'} by ${mInt(Math.abs(a))} – ${w} the same period last year (${mInt(Math.abs(b))}).`,
+    gW: x => x >= 1.2 ? `${num(x, 1)} times as much as in` : x <= 0.8 ? 'less than in' : 'about as much as in',
     calcG: 'Participants (sum over funds) at quarter end − at the end of last year; the same period a year earlier.',
-    fH: 'Money flows', f: (a, b) => `Over the quarter pillar III funds received a net ${a} (contributions minus payouts), while the pillar II balance was ${b}.`, calcF: 'Flow = change in assets − investment gain (an estimate, as in “Change in assets”).',
-    lH: 'Who attracts pillar III participants', l: (m, n, s) => `Since the start of the year ${m} attracted the most new pillar III participants (${n}${s ? `, ${s} of the growth` : ''}).`, calcL: 'Manager’s pillar III participants now − at the end of last year.',
-    aH: 'Fastest acceleration', a: list => `Pillar III participant growth accelerated most at ${list} (since the start of the year vs the same period last year).`, calcA: 'Participant growth since the start of the year ÷ growth in the same period last year; managers with growth in both periods.',
+    fH: 'Money flows', f: (a, b) => `Over the quarter ${a >= 0 ? `pillar III funds took in about ${mMn(a)} more than they paid out` : `pillar III funds paid out about ${mMn(-a)} more than they took in`}, while ${b >= 0 ? `pillar II funds took in about ${mMn(b)} more than they paid out` : `pillar II funds paid out about ${mMn(-b)} more than they took in`}.`, calcF: 'Flow = change in assets − investment gain (an estimate, as in “Change in assets”).',
+    lH: 'Who attracts pillar III participants', l: (m, n, s) => `Since the start of the year ${m} attracted the most new pillar III participants: ${mInt(n)}${s ? `, or ${s} of the net growth` : ''}.`, calcL: 'Manager’s pillar III participants now − at the end of last year.',
+    aH: 'Fastest acceleration', a: list => `Compared with the same period last year, pillar III participant growth since the start of the year accelerated most at ${list}.`, calcA: 'Participant growth since the start of the year ÷ growth in the same period last year; managers with growth in both periods.',
     cH: 'Pillars II and III together', c: list => `Taking pillars II and III together, the largest managers by assets are ${list}.`, calcC: 'Manager’s pillar II + III assets ÷ all pillar II + III assets.',
-    m1: (m, a, b, w) => `Since the start of the year ${m}’s pillar III participants changed by ${a} (same period last year ${b}${w ? `; ${w}` : ''}).`,
-    m2: (m, s, d) => `${m}’s share of pillar III assets is ${s}; over the year it changed by ${d}.`,
+    m1: (m, a, b, w) => `Since the start of the year the number of ${m}’s pillar III participants ${a >= 0 ? 'grew' : 'fell'} by ${mInt(Math.abs(a))} (same period last year: ${b == null ? '–' : (b < 0 ? '−' : '') + mInt(Math.abs(b))}${w ? `; ${w}` : ''}).`,
+    m2: (m, s, d) => `${m}’s share of pillar III assets is ${s}.${wSeq('it', [[wPer()[1], d, null]], ppA)}`,
     m3: (m, s2, s3, s) => `${m}’s share of assets: pillar II ${s2}, pillar III ${s3}, together ${s}.`,
     acc: x => x >= 1.2 ? `growth ${num(x, 1)} times faster` : x <= 0.8 ? 'growth slower' : 'similar pace',
     miTitle: 'Managers in pillars II and III', ytd: 'since start of year', ly: 'same period last year', ratio: 'Ratio', ys: 'end of last year', ys1: 'end of the year before',
   },
-  stH: 'Strengths', st: (m, list) => `${m} fund is the best in its group ${list}.`, calcSt: 'The manager’s best fund in each Bank of Lithuania group is compared with the group’s best result (same group only).',
+  stH: 'Strengths', st: (m, list) => `${m} funds were the best in their group: ${list}.`, calcSt: 'The manager’s best fund in each Bank of Lithuania group is compared with the group’s best result (same group only).',
   stP: { ytd: 'since the start of the year', r1: 'over 1 year', r3: 'over 3 years', r5: 'over 5 years' }, stMax: 'Best in group',
 }, {
   pv: {
@@ -594,9 +611,9 @@ addStrings({
     k1H: '1 000 € prieš 5 metus', k1: (lo, lg, hi, hg) => `Jei prieš 5 metus į vidutinį gyvenimo ciklo fondą būtumėte įdėję 1 000 €, šiandien turėtumėte nuo ${lo} (${lg}) iki ${hi} (${hg}) – priklausomai nuo amžiaus grupės.`,
     k1g: (lo, lg, hi, hg) => `Jei prieš 5 metus į vidutinį fondą būtumėte įdėję 1 000 €, šiandien turėtumėte nuo ${lo} (${lg}) iki ${hi} (${hg}) – priklausomai nuo fondų grupės.`,
     calcK1: '1 000 × (1 + LB grupės vidutinė 5 metų metinė grąža)^5. Ankstesnė grąža negarantuoja būsimos.',
-    dayH: 'Kiekvieną dieną', day: (v, d) => `Nuo metų pradžios pensijų fondai savo dalyviams vidutiniškai uždirbdavo apie ${v} per dieną (${d} d.).`, calcDay: 'Investicinis prieaugis nuo metų pradžios ÷ dienų nuo sausio 1 d. skaičius.',
+    dayH: 'Kiekvieną dieną', day: (v, d) => `Nuo metų pradžios (per ${d} ${ltN(d, 'dieną', 'dienas', 'dienų')}) pensijų fondai dalyviams vidutiniškai ${v >= 0 ? 'uždirbdavo' : 'prarasdavo'} apie ${mMn(Math.abs(v))} per dieną.`, calcDay: 'Investicinis prieaugis nuo metų pradžios ÷ dienų nuo sausio 1 d. skaičius.',
     ppH: 'Vienam dalyviui', pp: (q, qn, y) => `${qn[0].toUpperCase() + qn.slice(1)} fondai vienam dalyviui vidutiniškai uždirbo apie ${q}${y ? `, nuo metų pradžios – apie ${y}` : ''}.`, calcPp: 'Investicinis prieaugis ÷ dalyvių skaičius ketvirčio pabaigoje.',
-    dblH: 'Ką reiškia grąža', dbl: (r5, c5, e, n) => `+100 % grąža reiškia, kad pinigai padvigubėjo: 1 000 € virto 2 000 €. Per pastaruosius 5 metus vidutinė fondų grąža – ${r5} per metus, iš viso ${c5}: 1 000 € virto maždaug ${e}. Tokiu tempu pinigai padvigubėja maždaug per ${n} m.`,
+    dblH: 'Ką reiškia grąža', dbl: (r5, c5, e, n) => `100 % grąža reiškia, kad pinigai padvigubėjo: 1 000 € virto 2 000 €. Per pastaruosius 5 metus vidutinė fondų grąža buvo ${r5} per metus, iš viso – ${c5}, taigi 1 000 € virto maždaug ${e}. Tokiu tempu pinigai padvigubėja maždaug per ${n} ${ltN(+n, 'metus', 'metus', 'metų')}.`,
     calcDbl: 'LB svertinis visų fondų vidurkis, 5 metų metinė grąža r; iš viso = (1 + r)^5 − 1; padvigubėjimo laikas = ln 2 ÷ ln(1 + r).',
     hiH: 'Stiprūs 5 metai', hi: (k, n, th) => `${k} iš ${n} fondų per 5 metus uždirbo daugiau nei ${th} % – kiekvienas prieš 5 metus įneštas 100 € virto daugiau nei ${100 + th} €.`, calcHi: 'Fondai, kurių 5 metų metinė grąža r duoda (1 + r)^5 − 1 daugiau už ribą.',
     dTot: 'Dienų nuo sausio 1 d.', perDay: 'Per dieną, mln. €', thr: 'Riba (metinė grąža, duodanti bendrą grąžą), %',
@@ -604,20 +621,20 @@ addStrings({
   p23: {
     title: 'II ir III pakopa', lead: 'Kaip auga III pakopa vykstant II pakopos reformai: turtas, dalyviai ir pinigų srautai pagal valdytoją. LB ketvirčio duomenys; III pakopoje žmogus, kaupiantis keliuose fonduose, skaičiuojamas kiekviename fonde.',
     rH: 'III ir II pakopa', r: (a, b) => `III pakopos turtas jau sudaro ${a} II pakopos turto (prieš metus – ${b}).`, calcR: 'III pakopos grynieji aktyvai ÷ II pakopos grynieji aktyvai.',
-    gH: 'III pakopos augimas', g: (a, b, w) => `Nuo metų pradžios III pakopos fondų dalyvių padaugėjo ${a} – ${w} nei per tą patį laikotarpį pernai (${b}).`,
-    gW: x => x >= 1.2 ? `${num(x, 1)} karto daugiau` : x <= 0.8 ? 'mažiau' : 'panašiai',
+    gH: 'III pakopos augimas', g: (a, b, w) => `Nuo metų pradžios III pakopos fondų dalyvių ${a >= 0 ? 'padaugėjo' : 'sumažėjo'} ${mInt(Math.abs(a))} – ${w} per tą patį laikotarpį pernai (${mInt(Math.abs(b))}).`,
+    gW: x => x >= 1.2 ? `${num(x, 1)} karto daugiau nei` : x <= 0.8 ? 'mažiau nei' : 'panašiai kaip',
     calcG: 'Dalyviai (suma per fondus) ketvirčio pabaigoje − praėjusių metų pabaigoje; tas pats laikotarpis prieš metus.',
-    fH: 'Pinigų srautai', f: (a, b) => `Per ketvirtį į III pakopos fondus grynai atiteko ${a} (įmokos minus išmokos), o II pakopos balansas – ${b}.`, calcF: 'Srautas = turto pokytis − investicinis prieaugis (įvertis, kaip „Turto pokytis“).',
-    lH: 'Kas pritraukia III pakopos dalyvių', l: (m, n, s) => `Nuo metų pradžios daugiausia naujų III pakopos dalyvių pritraukė ${m} (${n}${s ? `, ${s} viso prieaugio` : ''}).`, calcL: 'Valdytojo III pakopos dalyviai dabar − praėjusių metų pabaigoje.',
-    aH: 'Labiausiai paspartėjo', a: list => `Labiausiai III pakopos dalyvių augimas paspartėjo: ${list} (nuo metų pradžios, palyginti su tuo pačiu laikotarpiu pernai).`, calcA: 'Dalyvių prieaugis nuo metų pradžios ÷ prieaugis per tą patį laikotarpį pernai; valdytojai, kurių dalyvių daugėjo abiem laikotarpiais.',
-    cH: 'II ir III pakopa kartu', c: list => `Sudėjus II ir III pakopas, didžiausi valdytojai pagal turtą: ${list}.`, calcC: 'Valdytojo II + III pakopos turtas ÷ visas II + III pakopos turtas.',
-    m1: (m, a, b, w) => `Nuo metų pradžios ${m} III pakopos dalyvių skaičius pakito ${a} (pernai per tą patį laikotarpį – ${b}${w ? `; ${w}` : ''}).`,
-    m2: (m, s, d) => `${m} III pakopos turto dalis – ${s}; per metus pakito ${d}.`,
+    fH: 'Pinigų srautai', f: (a, b) => `Per ketvirtį ${a >= 0 ? `į III pakopos fondus įmokėta apie ${mMn(a)} daugiau, nei išmokėta` : `iš III pakopos fondų išmokėta apie ${mMn(-a)} daugiau, nei įmokėta`}, o ${b >= 0 ? `į II pakopos fondus įmokėta apie ${mMn(b)} daugiau, nei išmokėta` : `iš II pakopos fondų išmokėta apie ${mMn(-b)} daugiau, nei įmokėta`}.`, calcF: 'Srautas = turto pokytis − investicinis prieaugis (įvertis, kaip „Turto pokytis“).',
+    lH: 'Kas pritraukia III pakopos dalyvių', l: (m, n, s) => `Nuo metų pradžios daugiausia naujų III pakopos dalyvių pritraukė ${m} – ${mInt(n)}${s ? `, arba ${s} viso grynojo prieaugio` : ''}.`, calcL: 'Valdytojo III pakopos dalyviai dabar − praėjusių metų pabaigoje.',
+    aH: 'Labiausiai paspartėjo', a: list => `Palyginti su tuo pačiu laikotarpiu pernai, nuo metų pradžios III pakopos dalyvių augimas labiausiai paspartėjo šių valdytojų fonduose: ${list}.`, calcA: 'Dalyvių prieaugis nuo metų pradžios ÷ prieaugis per tą patį laikotarpį pernai; valdytojai, kurių dalyvių daugėjo abiem laikotarpiais.',
+    cH: 'II ir III pakopa kartu', c: list => `Sudėjus II ir III pakopas, daugiausia turto valdo ${list}.`, calcC: 'Valdytojo II + III pakopos turtas ÷ visas II + III pakopos turtas.',
+    m1: (m, a, b, w) => `Nuo metų pradžios ${m} III pakopos fondų dalyvių ${a >= 0 ? 'padaugėjo' : 'sumažėjo'} ${mInt(Math.abs(a))} (per tą patį laikotarpį pernai – ${b == null ? '–' : (b < 0 ? '−' : '') + mInt(Math.abs(b))}${w ? `; ${w}` : ''}).`,
+    m2: (m, s, d) => `${m} dalis III pakopos turto – ${s}.${wSeq('ji', [[wPer()[1], d, null]], ppA)}`,
     m3: (m, s2, s3, s) => `${m} turto dalis: II pakopoje ${s2}, III pakopoje ${s3}, kartu ${s}.`,
     acc: x => x >= 1.2 ? `augimas ${num(x, 1)} karto spartesnis` : x <= 0.8 ? 'augimas lėtesnis' : 'panašus tempas',
     miTitle: 'Valdytojai II ir III pakopoje', ytd: 'nuo metų pradžios', ly: 'tas pats laikotarpis pernai', ratio: 'Santykis', ys: 'praėjusių metų pabaiga', ys1: 'užpraeitų metų pabaiga',
   },
-  stH: 'Stiprybės', st: (m, list) => `${m} fondas – geriausias savo grupėje ${list}.`, calcSt: 'Geriausias valdytojo fondas kiekvienoje LB grupėje lyginamas su geriausiu tos grupės rezultatu (tik tos pačios grupės fondai).',
+  stH: 'Stiprybės', st: (m, list) => `${m} fondai buvo geriausi savo grupėje: ${list}.`, calcSt: 'Geriausias valdytojo fondas kiekvienoje LB grupėje lyginamas su geriausiu tos grupės rezultatu (tik tos pačios grupės fondai).',
   stP: { ytd: 'nuo metų pradžios', r1: 'per 1 metus', r3: 'per 3 metus', r5: 'per 5 metus' }, stMax: 'Geriausias grupėje',
 });
 const OD3 = "'LB duomenys (III)'";
@@ -636,7 +653,7 @@ function strengthFact(pl, di, m) {
       const i = nb.add(`${gl} · ${t.fx.best} · ${t.stP[pk]}`, b, () => `_xlfn.MAXIFS(${MKX.D}!${col}:${col},${byD(d0)},${cg},${cm})`, Zp);
       const j = nb.add(`${gl} · ${t.stMax} · ${t.stP[pk]}`, top, () => `_xlfn.MAXIFS(${MKX.D}!${col}:${col},${byD(d0)},${cg})`, Zp);
       nb.add(`${gl} · ${L ? 'Pirmas (1 = taip)' : 'First (1 = yes)'} · ${t.stP[pk]}`, 1, c => `IF(${c(i)}>=${c(j)},1,0)`, '0'); gs.push(gl); });
-    if (gs.length) parts.push(`${t.stP[pk]} (${gs.join(', ')})`);
+    if (gs.length) parts.push(`${t.stP[pk]} – ${gs.map(g => L ? `„${g}“` : `“${g}”`).join(', ')}`);
   });
   return parts.length ? { h: m, text: t.st(m, parts.join('; ')), calc: t.calcSt, src: t.srcLB(pl, MKT[pl].dates[di]), hl: true, nums: nb.a } : null;
 }
@@ -651,7 +668,7 @@ function pvFacts() {
   if (A && A[MA.ret_5y] != null) { const r = A[MA.ret_5y] / 100, nb = NB(), i = nb.add(`${ALL} · ${t.th5y.toLowerCase()} (${L ? 'metinė' : 'annual'}), %`, A[MA.ret_5y], () => fxAvg('F', d0, ALL), Zp);
     const c5 = nb.add(L ? 'Iš viso per 5 metus' : 'Total over 5 years', (1 + r) ** 5 - 1, c => `(1+${c(i)}/100)^5-1`, Zr); nb.add(L ? '1 000 € po 5 metų' : '€ 1,000 after 5 years', 1000 * (1 + r) ** 5, c => `1000*(1+${c(c5)})`, Zi);
     if (r > 0) nb.add(L ? 'Padvigubėjimo laikas, metai' : 'Doubling time, years', Math.log(2) / Math.log(1 + r), c => `LN(2)/LN(1+${c(i)}/100)`, '0.0');
-    if (r > 0) add(X.dblH, X.dbl(pct(A[MA.ret_5y]), pct(((1 + r) ** 5 - 1) * 100), mEurs(1000 * (1 + r) ** 5), num(Math.log(2) / Math.log(1 + r), 0)), X.calcDbl, nb); }
+    if (r > 0) add(X.dblH, X.dbl(pctPlain(A[MA.ret_5y]), pctPlain(((1 + r) ** 5 - 1) * 100), mEurs(1000 * (1 + r) ** 5), num(Math.log(2) / Math.log(1 + r), 0)), X.calcDbl, nb); }
   { const rs = rowsAt(pl, di).filter(r => r[MC.ret_5y] != null), cum = r => (1 + r[MC.ret_5y] / 100) ** 5 - 1, th = rs.some(r => cum(r) > 1) ? 100 : 50, k = rs.filter(r => cum(r) > th / 100).length;
     if (rs.length > 2 && k) { const nb = NB(), ti = nb.add(X.thr, ((1 + th / 100) ** 0.2 - 1) * 100, () => `((1+${th}/100)^(1/5)-1)*100`, '0.000');
       nb.add(L ? `Fondai, per 5 metus uždirbę daugiau nei ${th} %` : `Funds earning over ${th} % in 5 years`, k, c => `COUNTIFS(${byD(d0)},${MKX.D}!O:O,">"&${c(ti)})`, '0');
@@ -659,7 +676,7 @@ function pvFacts() {
       add(X.hiH, X.hi(k, rs.length, th), X.calcHi, nb); } }
   const q1 = d.slice(5, 7) === '03', g = gainAt(pl, di), gy = q1 ? g : gainYtd(pl, di);
   if (gy != null) { const days = dayOf(d) - dayOf(`${d.slice(0, 4)}-01-01`) + 1, nb = NB(), a = nb.add(I.gainY, gy, () => fxGainY(d0), Zm), b = nb.add(X.dTot, days, () => `${d0}-DATE(YEAR(${d0}),1,1)+1`, '0');
-    nb.add(X.perDay, gy / days, c => `${c(a)}/${c(b)}`, '0.00'); add(X.dayH, X.day(mSg(gy / days), days), `${X.calcDay} ${F.calcGain}`, nb); }
+    nb.add(X.perDay, gy / days, c => `${c(a)}/${c(b)}`, '0.00'); add(X.dayH, X.day(gy / days, days), `${X.calcDay} ${F.calcGain}`, nb); }
   if (g != null && T0.part) { const nb = NB(), a = nb.add(I.gain, g, () => fxGain(d0), Zm), p = nb.add(I.part, T0.part, () => fxPart(d0), Zi);
     nb.add(L ? 'Per ketvirtį vienam dalyviui, €' : 'Per participant in the quarter, €', g * 1e6 / T0.part, c => `${c(a)}*1000000/${c(p)}`, Zi);
     if (!q1 && gy != null) { const y = nb.add(I.gainY, gy, () => fxGainY(d0), Zm); nb.add(L ? 'Nuo metų pradžios vienam dalyviui, €' : 'Since year start per participant, €', gy * 1e6 / T0.part, c => `${c(y)}*1000000/${c(p)}`, Zi); }
@@ -672,30 +689,30 @@ function pvFacts() {
 addStrings({ pv2: {
   cumH: 'Earned since 2015', cum: (v, s, y) => `Since ${y} pension funds have earned their participants about ${v} of investment gain – about ${s} of today’s assets.`,
   calcCum: 'Sum of quarterly investment gains (Bank of Lithuania data) up to the selected quarter; quarters without previous-quarter data are not counted.',
-  yrH: 'Good and bad years', yr: (k, n, by, bv, wy, wv, fy) => `In ${k} of ${n} full years since ${fy} the average fund return was positive; the best year was ${by} (${bv}), the worst ${wy} (${wv}).`,
+  yrH: 'Good and bad years', yr: (k, n, by, bv, wy, wv, fy) => `The average fund return was positive in ${k} of ${n} full years since ${fy}; the best year was ${by} (${bv}), the worst ${wy} (${wv}).`,
   calcYr: 'Bank of Lithuania weighted average of all funds, return since the start of the year at 31 December.',
   chH: '€ 100 since', ch: (y, v, bad) => `€ 100 invested at the start of ${y} at the average fund return would now be about ${v}${bad ? `, even though some years (${bad}) were negative` : ''}.`,
   calcCh: 'Annual returns (weighted average of all funds at 31 December) chained: 100 × (1 + r₁) × (1 + r₂) × … × (1 + this year’s return so far).',
-  ddH: 'Fall and recovery', dd: (v, a, b, n, c) => `The largest fall of the average fund was ${v} (from ${a} to ${b}); ${c ? `the loss was recovered in ${n} quarters (${c})` : 'the loss has not yet been fully recovered'}.`,
+  ddH: 'Fall and recovery', dd: (v, a, b, n, c) => `The largest fall of the average fund was ${v} (from ${a} to ${b}); ${c ? `the funds recovered the loss in ${n} ${n === 1 ? 'quarter' : 'quarters'}, by ${c}` : 'the loss has not yet been fully recovered'}.`,
   ddNone: 'Fall and recovery', calcDd: 'Value index at quarter ends from the chained average return; fall = index ÷ previous peak − 1; recovery – first quarter the index is back at the peak.',
-  reH: 'After inflation', re: (n, c, r, m) => `Over 5 years the average fund return was ${n}, while prices rose ${c} – ${Math.abs(r) < 1 ? 'purchasing power of savings barely changed' : r >= 0 ? `purchasing power of savings grew about ${pctPlain(r, 1)}` : `inflation ate about ${pctPlain(-r, 1)} of purchasing power`} (prices up to ${m}).`,
+  reH: 'After inflation', re: (n, c, r, m) => `Over 5 years the average fund return was ${n}, while prices rose ${c}, so ${Math.abs(r) < 1 ? 'the funds preserved the purchasing power of savings' : r >= 0 ? `the purchasing power of savings grew about ${pctPlain(r, 1)}` : `inflation ate about ${pctPlain(-r, 1)} of their purchasing power`} (prices up to ${m}).`,
   calcRe: 'Fund: (1 + 5-year annual return)^5 − 1; prices: Lithuanian consumer price index (State Data Agency), month now ÷ same month 5 years ago − 1; real = (1 + fund) ÷ (1 + prices) − 1.',
-  r3H: '3-year periods', r3: (k, n, y) => `Since ${y}, in ${k} of ${n} quarter ends the average return over the previous 3 years was positive.`, calcR3: 'Bank of Lithuania weighted average of all funds, 3-year annual return at each quarter end.',
+  r3H: '3-year periods', r3: (k, n, y) => `Since ${y} the average fund’s return over the previous 3 years was positive at ${k === n ? `all ${n}` : `${k} of ${n}`} quarter ends.`, calcR3: 'Bank of Lithuania weighted average of all funds, 3-year annual return at each quarter end.',
   rkH: 'Risk over the long term', rk: (a, ar, b, br, ea, eb) => `Over 5 years ${a} funds earned on average ${ar} a year and ${b} funds ${br}: € 1,000 became ${ea} and ${eb}.`,
   calcRk: 'Bank of Lithuania group weighted averages, 5-year annual return; 1,000 × (1 + r)^5. Groups are compared, not individual funds.',
   idx: 'Value index', peak: 'Previous peak', ddL: 'Fall from peak', cpiL: 'Consumer price index', vki: 'CPI',
 } }, { pv2: {
   cumH: 'Uždirbta nuo 2015 m.', cum: (v, s, y) => `Nuo ${y} m. pensijų fondai dalyviams uždirbo apie ${v} investicinio prieaugio – tai maždaug ${s} dabartinio turto.`,
   calcCum: 'Ketvirčių investicinių prieaugių (LB duomenys) suma iki pasirinkto ketvirčio; ketvirčiai be ankstesnio ketvirčio duomenų neskaičiuojami.',
-  yrH: 'Geri ir blogi metai', yr: (k, n, by, bv, wy, wv, fy) => `Per ${k} iš ${n} pilnų metų nuo ${fy} m. vidutinė fondų grąža buvo teigiama; geriausi metai – ${by} (${bv}), blogiausi – ${wy} (${wv}).`,
+  yrH: 'Geri ir blogi metai', yr: (k, n, by, bv, wy, wv, fy) => `Nuo ${fy} m. vidutinė fondų grąža buvo teigiama ${k} iš ${n} pilnų metų; geriausi metai – ${by} m. (${bv}), blogiausi – ${wy} m. (${wv}).`,
   calcYr: 'LB svertinis visų fondų vidurkis, grąža nuo metų pradžios gruodžio 31 d.',
   chH: '100 € nuo pradžios', ch: (y, v, bad) => `100 €, investuoti ${y} m. pradžioje pagal vidutinę fondų grąžą, šiandien būtų apie ${v}${bad ? `, nors kai kurie metai (${bad}) buvo nuostolingi` : ''}.`,
   calcCh: 'Metų grąžos (visų fondų svertinis vidurkis gruodžio 31 d.) sujungiamos: 100 × (1 + r₁) × (1 + r₂) × … × (1 + šių metų grąža iki šiol).',
-  ddH: 'Kritimas ir atsigavimas', dd: (v, a, b, n, c) => `Didžiausias vidutinio fondo vertės kritimas – ${v} (nuo ${a} iki ${b}); ${c ? `prarasta vertė atsigavo per ${n} ketv. (${c})` : 'prarasta vertė dar neatsigavo visiškai'}.`,
+  ddH: 'Kritimas ir atsigavimas', dd: (v, a, b, n, c) => `Didžiausias vidutinio fondo vertės kritimas – ${v} (nuo ${a} iki ${b}); ${c ? `prarastą vertę fondai atgavo per ${n} ${ltN(n, 'ketvirtį', 'ketvirčius', 'ketvirčių')}, iki ${c}` : 'prarasta vertė dar neatgauta visiškai'}.`,
   ddNone: 'Kritimas ir atsigavimas', calcDd: 'Vertės indeksas ketvirčių pabaigose iš sujungtos vidutinės grąžos; kritimas = indeksas ÷ ankstesnis didžiausias − 1; atsigavimas – pirmas ketvirtis, kai indeksas vėl pasiekia buvusį didžiausią.',
-  reH: 'Po infliacijos', re: (n, c, r, m) => `Per 5 metus vidutinė fondų grąža – ${n}, o kainos per tą laiką pakilo ${c} – ${Math.abs(r) < 1 ? 'fondai išsaugojo santaupų perkamąją galią' : r >= 0 ? `santaupų perkamoji galia padidėjo apie ${pctPlain(r, 1)}` : `infliacija suvalgė apie ${pctPlain(-r, 1)} perkamosios galios`} (kainos iki ${m}).`,
+  reH: 'Po infliacijos', re: (n, c, r, m) => `Per 5 metus vidutinė fondų grąža buvo ${n}, o kainos per tą laiką pakilo ${c}, taigi ${Math.abs(r) < 1 ? 'fondai išsaugojo santaupų perkamąją galią' : r >= 0 ? `santaupų perkamoji galia padidėjo apie ${pctPlain(r, 1)}` : `infliacija suvalgė apie ${pctPlain(-r, 1)} santaupų perkamosios galios`} (kainų duomenys iki ${m}).`,
   calcRe: 'Fondai: (1 + 5 metų metinė grąža)^5 − 1; kainos: Lietuvos vartotojų kainų indeksas (Valstybės duomenų agentūra), dabartinis mėnuo ÷ tas pats mėnuo prieš 5 metus − 1; realioji = (1 + fondai) ÷ (1 + kainos) − 1.',
-  r3H: 'Trejų metų laikotarpiai', r3: (k, n, y) => `Nuo ${y} m. ${k} iš ${n} ketvirčių pabaigų vidutinė praėjusių 3 metų grąža buvo teigiama.`, calcR3: 'LB svertinis visų fondų vidurkis, 3 metų metinė grąža kiekvieno ketvirčio pabaigoje.',
+  r3H: 'Trejų metų laikotarpiai', r3: (k, n, y) => `Nuo ${y} m. vidutinio fondo pastarųjų 3 metų grąža buvo teigiama ${k === n ? `visų ${n}` : `${k} iš ${n}`} ketvirčių pabaigose.`, calcR3: 'LB svertinis visų fondų vidurkis, 3 metų metinė grąža kiekvieno ketvirčio pabaigoje.',
   rkH: 'Rizika ilgame laikotarpyje', rk: (a, ar, b, br, ea, eb) => `Per 5 metus grupės „${a}“ fondai vidutiniškai uždirbo ${ar} per metus, o „${b}“ – ${br}: 1 000 € virto atitinkamai ${ea} ir ${eb}.`,
   calcRk: 'LB grupių svertiniai vidurkiai, 5 metų metinė grąža; 1 000 × (1 + r)^5. Lyginamos grupės, ne atskiri fondai.',
   idx: 'Vertės indeksas', peak: 'Ankstesnis didžiausias', ddL: 'Kritimas nuo didžiausio', cpiL: 'Vartotojų kainų indeksas', vki: 'VKI',
@@ -725,7 +742,7 @@ function pvMore() {
   if (yrs.length >= 3) { const nb = NB(), ix = yrs.map(y => nb.add(`${y} · ${t.thYtd.toLowerCase()} (31.12), %`, C.dec(y), () => fxAvg('C', `DATE(${y},12,31)`, ALL), Zp));
     const k = yrs.filter(y => C.dec(y) > 0).length, best = yrs.reduce((a, b) => C.dec(b) > C.dec(a) ? b : a), worst = yrs.reduce((a, b) => C.dec(b) < C.dec(a) ? b : a);
     nb.add(L ? 'Metai su teigiama grąža' : 'Years with a positive return', k, c => `COUNTIF(${c(ix[0])}:${c(ix[ix.length - 1])},">0")`, '0'); nb.add(L ? 'Pilnų metų' : 'Full years', yrs.length, c => `COUNT(${c(ix[0])}:${c(ix[ix.length - 1])})`, '0');
-    add(X.yrH, X.yr(k, yrs.length, best, pct(C.dec(best)), worst, pct(C.dec(worst)), C.fy), X.calcYr, nb); }
+    add(X.yrH, X.yr(k, yrs.length, best, pctPlain(C.dec(best)), worst, pctPlain(C.dec(worst)), C.fy), X.calcYr, nb); }
   // 100 € nuo pradžios
   if (yrs.length >= 3 && C.idx[di] != null) { const nb = NB(), b0 = nb.add(L ? `Pradžia (${C.fy} m. sausio 1 d.), €` : `Start (1 Jan ${C.fy}), €`, 100, () => '100', '0.00'); let prev = b0;
     yrs.forEach(y => { const r = nb.add(`${y} · ${t.thYtd.toLowerCase()} (31.12), %`, C.dec(y), () => fxAvg('C', `DATE(${y},12,31)`, ALL), Zp), p0 = prev; prev = nb.add(`${L ? 'Vertė' : 'Value'} 31.12.${y}, €`, C.base[y], c => `${c(p0)}*(1+${c(r)}/100)`, '0.00'); });
@@ -744,14 +761,14 @@ function pvMore() {
           const v = nb.add(`${dd} · ${X.idx}`, C.idx[k], c => `${c(pr)}*(1+${c(r)}/100)`, '0.00'); rows[k] = v; if (dd.slice(5) === '12-31') decRow[y] = v; });
         const vs = [b0, ...ks.map(k => rows[k])], ti = rows[best.tr], pi = best.pkD == null ? b0 : rows[best.pkD]; void pkr; void vs;
         nb.add(X.peak, best.pk, c => `${c(pi)}`, '0.00'); nb.add(X.ddL, best.v, c => `${c(ti)}/${c(pi)}-1`, Zr);
-        add(X.ddH, X.dd(pctPlain(best.v * 100, 1), lbl(best.pkD), lbl(best.tr), qn, rec != null ? t.dq(D[rec]) : ''), X.calcDd, nb); } } }
+        add(X.ddH, X.dd(pA(best.v * 100), lbl(best.pkD), lbl(best.tr), qn, rec != null ? t.dq(D[rec]) : ''), X.calcDd, nb); } } }
   // po infliacijos (5 metai)
   { const A = avgOf(pl, di, -1), m0 = d.slice(0, 7), cm = cpiM(m0) != null ? m0 : Object.keys(typeof CPI !== 'undefined' ? CPI : {}).filter(k => k <= m0).sort().pop(), c5 = cm ? mBack(cm, 60) : null;
     if (A && A[MA.ret_5y] != null && cm && cpiM(c5) != null) { const n = (1 + A[MA.ret_5y] / 100) ** 5 - 1, c = cpiM(cm) / cpiM(c5) - 1, r = (1 + n) / (1 + c) - 1, nb = NB(), V = `'${X.vki}'`;
       const i = nb.add(`${ALL} · ${t.th5y.toLowerCase()} (${L ? 'metinė' : 'annual'}), %`, A[MA.ret_5y], () => fxAvg('F', d0, ALL), Zp), j = nb.add(L ? 'Fondai per 5 metus iš viso' : 'Funds, 5 years total', n, cc => `(1+${cc(i)}/100)^5-1`, Zr);
       const a = nb.add(`${X.cpiL} ${cm}`, cpiM(cm), () => `INDEX(${V}!B:B,MATCH("${cm}",${V}!A:A,0))`, '0.0000'), b = nb.add(`${X.cpiL} ${c5}`, cpiM(c5), () => `INDEX(${V}!B:B,MATCH("${c5}",${V}!A:A,0))`, '0.0000');
       const k = nb.add(L ? 'Kainų pokytis per 5 metus' : 'Price change over 5 years', c, cc => `${cc(a)}/${cc(b)}-1`, Zr); nb.add(L ? 'Realioji grąža per 5 metus' : 'Real return over 5 years', r, cc => `(1+${cc(j)})/(1+${cc(k)})-1`, Zr);
-      add(X.reH, X.re(pct(n * 100), pctPlain(c * 100, 1), r * 100, cm), X.calcRe, nb, { cpi: true }); } }
+      add(X.reH, X.re(pctPlain(n * 100), pctPlain(c * 100, 1), r * 100, cm), X.calcRe, nb, { cpi: true }); } }
   // trejų metų laikotarpiai
   { const ks = MKT[pl].dates.map((x, i) => i).filter(i => i <= di && avgK(pl, i, 'ret_3y') != null);
     if (ks.length > 4) { const nb = NB(), ix = ks.map(i => { const dd = MKT[pl].dates[i]; return nb.add(`${dd} · ${t.th3y.toLowerCase()}, %`, avgK(pl, i, 'ret_3y'), () => fxAvg('E', `DATE(${dd.slice(0, 4)},${+dd.slice(5, 7)},${+dd.slice(8)})`, ALL), Zp); });
@@ -764,7 +781,7 @@ function pvMore() {
     if (lo && hi) { const nb = NB(), e = r => 1000 * (1 + r / 100) ** 5, gh = groupLbl(pl, hi.gi), gl = groupLbl(pl, lo.gi);
       const a = nb.add(`${gh} · ${t.th5y.toLowerCase()}, %`, hi.a[MA.ret_5y], () => fxAvg('F', d0, gh), Zp), b = nb.add(`${gl} · ${t.th5y.toLowerCase()}, %`, lo.a[MA.ret_5y], () => fxAvg('F', d0, gl), Zp);
       nb.add(`${gh} · 1 000 €`, e(hi.a[MA.ret_5y]), c => `1000*(1+${c(a)}/100)^5`, Zi); nb.add(`${gl} · 1 000 €`, e(lo.a[MA.ret_5y]), c => `1000*(1+${c(b)}/100)^5`, Zi);
-      add(X.rkH, X.rk(gh, pct(hi.a[MA.ret_5y]), gl, pct(lo.a[MA.ret_5y]), mEurs(e(hi.a[MA.ret_5y])), mEurs(e(lo.a[MA.ret_5y]))), X.calcRk, nb, { gs: [hi.gi, lo.gi] }); } }
+      add(X.rkH, X.rk(gh, pctPlain(hi.a[MA.ret_5y]), gl, pctPlain(lo.a[MA.ret_5y]), mEurs(e(hi.a[MA.ret_5y])), mEurs(e(lo.a[MA.ret_5y]))), X.calcRk, nb, { gs: [hi.gi, lo.gi] }); } }
   return out;
 }
 
@@ -773,10 +790,10 @@ function pvMore() {
 addStrings({ pv3: {
   wH: 'Funds vs wages', pH: 'Funds vs pensions', mH: 'Funds vs minimum wage', iH: 'Funds vs inflation by year', eH: 'Savings in wages and pensions',
   what: { w: 'the average net monthly wage', p: 'the average old-age pension', m: 'the minimum monthly wage (net)' },
-  cmp: (what, n, a, b, x, f, win) => `Over ${n} years (${a}–${b}) ${what} grew ${x}, while the value of the average pension fund grew ${f} – ${win}.`,
-  win: { f: 'investments grew faster', x: k => `${{ w: 'wages', p: 'pensions', m: 'the minimum wage' }[k]} grew faster`, e: 'about the same pace' },
-  oth: list => ` Other periods: ${list}.`, othI: (n, x, f, k) => `${n} y: ${{ w: 'wages', p: 'pensions', m: 'minimum wage' }[k]} ${x}, funds ${f}`,
-  inf: (k, n, best, worst) => `In ${k} of ${n} years the average fund return beat inflation (Dec to Dec)${best ? `; the largest margin was in ${best}` : ''}${worst ? `, the largest shortfall in ${worst}` : ''}.`,
+  cmp: (what, n, a, b, x, f, win) => `Over ${n} years (${a}–${b}) ${what} grew ${x}, while the value of the average pension fund grew ${f}, so ${win}.`,
+  win: { f: 'investments grew faster', x: k => `${{ w: 'wages', p: 'pensions', m: 'the minimum wage' }[k]} grew faster`, e: 'both grew at about the same pace' },
+  oth: list => ` ${list[0].toUpperCase() + list.slice(1)}.`, othI: (n, x, f, k) => `over ${n} years ${{ w: 'wages', p: 'pensions', m: 'the minimum wage' }[k]} grew ${x} and funds ${f}`,
+  inf: (k, n, by, bv, wy, wv) => `In ${k} of ${n} years the average fund return beat inflation (December to December)${by ? `; the largest lead was in ${by} (${bv})` : ''}${wy ? `, the largest shortfall in ${wy} (${wv})` : ''}.`,
   eur: (v, y, a, b, c) => `Average savings of a pillar II participant (${v}) equal about ${a} average net monthly wages, ${b} average old-age pensions${c ? ` or ${c} net minimum wages` : ''} (${y}).`,
   calcCmp: 'Growth = annual average in the last year ÷ annual average n years earlier − 1; funds – chained weighted average return of all funds (31 December to 31 December).',
   calcInf: 'Fund return – Bank of Lithuania weighted average of all funds for the calendar year; inflation – consumer price index December ÷ previous December − 1.',
@@ -786,10 +803,10 @@ addStrings({ pv3: {
 } }, { pv3: {
   wH: 'Fondai ir darbo užmokestis', pH: 'Fondai ir pensijos', mH: 'Fondai ir MMA', iH: 'Fondai ir infliacija kasmet', eH: 'Santaupos atlyginimais ir pensijomis',
   what: { w: 'vidutinis neto darbo užmokestis', p: 'vidutinė senatvės pensija', m: 'minimali mėnesinė alga (neto)' },
-  cmp: (what, n, a, b, x, f, win) => `Per ${n} m. (${a}–${b}) ${what} išaugo ${x}, o vidutinio pensijų fondo vertė – ${f}: ${win}.`,
-  win: { f: 'investicijos augo sparčiau', x: k => `sparčiau augo ${{ w: 'atlyginimai', p: 'pensijos', m: 'MMA' }[k]}`, e: 'augo panašiu tempu' },
-  oth: list => ` Kiti laikotarpiai: ${list}.`, othI: (n, x, f, k) => `${n} m.: ${{ w: 'atlyginimai', p: 'pensijos', m: 'MMA' }[k]} ${x}, fondai ${f}`,
-  inf: (k, n, best, worst) => `${k} iš ${n} metų vidutinė fondų grąža viršijo infliaciją (gruodis prieš gruodį)${best ? `; labiausiai – ${best}` : ''}${worst ? `, labiausiai atsiliko – ${worst}` : ''}.`,
+  cmp: (what, n, a, b, x, f, win) => `Per ${n} ${ltN(n, 'metus', 'metus', 'metų')} (${a}–${b} m.) ${what} išaugo ${x}, o vidutinio pensijų fondo vertė – ${f}, taigi ${win}.`,
+  win: { f: 'investicijos augo sparčiau', x: k => `${{ w: 'atlyginimai', p: 'pensijos', m: 'MMA' }[k]} augo sparčiau`, e: 'abu augo panašiu tempu' },
+  oth: list => ` ${list[0].toUpperCase() + list.slice(1)}.`, othI: (n, x, f, k) => `per ${n} ${ltN(n, 'metus', 'metus', 'metų')} ${{ w: 'atlyginimai', p: 'pensijos', m: 'MMA' }[k]} išaugo ${x}, fondai – ${f}`,
+  inf: (k, n, by, bv, wy, wv) => `${k} iš ${n} metų vidutinė fondų grąža viršijo infliaciją (gruodis prieš gruodį)${by ? `; didžiausias pranašumas – ${by} m. (${bv})` : ''}${wy ? `, didžiausias atsilikimas – ${wy} m. (${wv})` : ''}.`,
   eur: (v, y, a, b, c) => `Vidutinis II pakopos dalyvio sukauptas turtas (${v}) – tai maždaug ${a} vidutinio neto mėnesio atlyginimo, ${b} vidutinės senatvės pensijos${c ? ` arba ${c} neto MMA` : ''} (${y} m.).`,
   calcCmp: 'Augimas = paskutinių metų vidurkis ÷ vidurkis prieš n metų − 1; fondai – sujungta visų fondų svertinė vidutinė grąža (gruodžio 31 d. – gruodžio 31 d.).',
   calcInf: 'Fondų grąža – LB svertinis visų fondų vidurkis per kalendorinius metus; infliacija – vartotojų kainų indeksas gruodį ÷ ankstesnių metų gruodį − 1.',
@@ -817,8 +834,8 @@ function pvWages() {
     nb.add(`${X['l' + k]} · ${t.thDy.split(' ')[0].toLowerCase()} ${main} m., %`, g(main), c => `${c(b)}/${c(a)}-1`, Zr);
     const fe = fundRows(nb, last - main, last); nb.add(`${X.lf} · ${main} m., %`, f(main), c => `${c(fe)}/100-1`, Zr);
     const winOf = n => Math.abs(f(n) - g(n)) < 0.02 ? X.win.e : f(n) > g(n) ? X.win.f : X.win.x(k);
-    const others = wins.filter(n => n !== main).map(n => X.othI(n, pct(g(n) * 100), pct(f(n) * 100), k));
-    add(X[k + 'H'], X.cmp(X.what[k], main, last - main, last, pct(g(main) * 100), pct(f(main) * 100), winOf(main)) + (others.length ? X.oth(others.join('; ')) : ''), X.calcCmp, nb, { wk: k, wy: [Math.min(...wins.map(n => last - n)), last] });
+    const others = wins.filter(n => n !== main).map(n => X.othI(n, pctPlain(g(n) * 100), pctPlain(f(n) * 100), k));
+    add(X[k + 'H'], X.cmp(X.what[k], main, last - main, last, pctPlain(g(main) * 100), pctPlain(f(main) * 100), winOf(main)) + (others.length ? X.oth(others.join('; ')) : ''), X.calcCmp, nb, { wk: k, wy: [Math.min(...wins.map(n => last - n)), last] });
   });
   // infliacija kiekvienais metais
   { const ys = []; for (let y = C.fy; y < y0; y++) if (cpiM(`${y}-12`) != null && cpiM(`${y - 1}-12`) != null && C.dec(y) != null) ys.push(y);
@@ -827,7 +844,7 @@ function pvWages() {
         const i = nb.add(`${y} · ${X.infL}`, inf(y), c => `${c(a)}/${c(b)}-1`, Zr); return nb.add(`${y} · ${X.diffL}`, df(y) * 100, c => `${c(r)}-${c(i)}*100`, Zp); });
       const k = ys.filter(y => df(y) > 0).length, best = ys.reduce((p, q) => df(q) > df(p) ? q : p), worst = ys.reduce((p, q) => df(q) < df(p) ? q : p);
       nb.add(L ? 'Metai, kai grąža viršijo infliaciją' : 'Years return beat inflation', k, c => flags.map(i => `(${c(i)}>0)`).join('+'), '0');
-      add(X.iH, X.inf(k, ys.length, df(best) > 0 ? `${best} (${mPP(df(best) * 100)})` : '', df(worst) < 0 ? `${worst} (${mPP(df(worst) * 100)})` : ''), X.calcInf, nb, { cpi: true, iys: ys }); } }
+      add(X.iH, X.inf(k, ys.length, df(best) > 0 ? best : '', ppA(df(best) * 100), df(worst) < 0 ? worst : '', ppA(df(worst) * 100)), X.calcInf, nb, { cpi: true, iys: ys }); } }
   // santaupos atlyginimais
   if (pl === 'II') { const T0 = totals(pl, di), per = T0.part ? T0.nav * 1e6 / T0.part : null, w = wSer('w'), p = wSer('p'), m = wSer('m'), yy = Math.max(...Object.keys(w).map(Number).filter(y => p[y] != null));
     if (per && isFinite(yy)) { const nb = NB(), a = nb.add(I_per(), per, c => `${fxNav(d0)}*1000000/${fxPart(d0)}`, Zi);
@@ -860,7 +877,7 @@ function p23Facts() {
     const j0 = nb.add(`III · ${I.part} · ${t.thPrevY.toLowerCase()}`, totals('III', y3).part, () => p3(Y), Zi), j1 = nb.add(`III · ${I.part} · ${X.ys1}`, totals('III', e31).part, () => p3(YS1), Zi);
     const ib = nb.add(`${t.thDy.split(' ')[0]} · ${X.ly}`, b, c => `${c(j0)}-${c(j1)}`, Zi);
     if (b > 0) nb.add(X.ratio, a / b, c => `${c(ia)}/${c(ib)}`, '0.00');
-    add(X.gH, X.g(mSInt(a), mSInt(b), b > 0 ? X.gW(a / b) : (L ? 'daugiau' : 'more')), X.calcG, nb);
+    add(X.gH, X.g(a, b, b > 0 ? X.gW(a / b) : (L ? 'daugiau nei' : 'more than in')), X.calcG, nb);
   }
   const g2 = gainAt('II', a2), g3 = gainAt('III', a3);
   if (g2 != null && g3 != null && q2 >= 0 && q3 >= 0) { const nb = NB(), Q = MKD.dq;
@@ -868,7 +885,7 @@ function p23Facts() {
     const f3 = T3.nav - totals('III', q3).nav - g3; nb.add(`III · ${L ? 'srautas, mln. €' : 'flow, € m'}`, f3, c => `${c(i)}-${c(j)}-${c(k)}`, Zm);
     const i2 = nb.add(`II · ${I.nav}`, T2.nav, () => fxNav(d0), Zm), j2 = nb.add(`II · ${I.nav} · ${t.thPrevQ.toLowerCase()}`, totals('II', q2).nav, () => fxNav(Q), Zm), k2 = nb.add(`II · ${I.gain}`, g2, () => fxGain(d0), Zm);
     const f2 = T2.nav - totals('II', q2).nav - g2; nb.add(`II · ${L ? 'srautas, mln. €' : 'flow, € m'}`, f2, c => `${c(i2)}-${c(j2)}-${c(k2)}`, Zm);
-    add(X.fH, X.f(mSg(f3), mSg(f2)), `${X.calcF} ${t.f.calcGain}`, nb); }
+    add(X.fH, X.f(f3, f2), `${X.calcF} ${t.f.calcGain}`, nb); }
   const mgr = {};
   if (e3 >= 0 && e31 >= 0 && y3 >= 0) {
     const ms = Object.keys(byMgr('III', a3)), ch = ms.map(m => ({ m, a: ytdP(a3, m) - (ytdP(e3, m) || 0), b: ytdP(y3, m) != null && ytdP(e31, m) != null ? ytdP(y3, m) - ytdP(e31, m) : null }));
@@ -876,21 +893,21 @@ function p23Facts() {
     { const nb = NB(), i = nb.add(`${top.m} · III · ${I.part}`, ytdP(a3, top.m), () => p3(d0, top.m), Zi), j = nb.add(`${top.m} · III · ${I.part} · ${X.ys}`, ytdP(e3, top.m) || 0, () => p3(YS, top.m), Zi);
       const k = nb.add(`${top.m} · ${X.ytd}`, top.a, c => `${c(i)}-${c(j)}`, Zi), i2 = nb.add(`III · ${I.part}`, T3.part, () => p3(d0), Zi), j2 = nb.add(`III · ${I.part} · ${X.ys}`, totals('III', e3).part, () => p3(YS), Zi);
       const k2 = nb.add(`III · ${X.ytd}`, totA, c => `${c(i2)}-${c(j2)}`, Zi); if (totA > 0 && top.a > 0) nb.add(L ? 'Dalis' : 'Share', top.a / totA, c => `${c(k)}/${c(k2)}`, Zr);
-      add(X.lH, X.l(top.m, mSInt(top.a), totA > 0 && top.a > 0 ? pctPlain(top.a / totA * 100, 1) : ''), X.calcL, nb); }
+      add(X.lH, X.l(top.m, top.a, totA > 0 && top.a > 0 ? pctPlain(top.a / totA * 100, 1) : ''), X.calcL, nb); }
     const acc = ch.filter(x => x.b > 0 && x.a > 0).map(x => ({ ...x, r: x.a / x.b })).sort((x, y) => y.r - x.r);
     if (acc.length > 1 && acc[0].r >= 1.2) { const nb = NB(), list = acc.filter(x => x.r >= 1.2).slice(0, 3);
       acc.forEach(x => { const i = nb.add(`${x.m} · ${X.ytd}`, x.a, () => `${p3(d0, x.m)}-${p3(YS, x.m)}`, Zi), j = nb.add(`${x.m} · ${X.ly}`, x.b, () => `${p3(Y, x.m)}-${p3(YS1, x.m)}`, Zi); nb.add(`${x.m} · ${X.ratio}`, x.r, c => `${c(i)}/${c(j)}`, '0.00'); });
-      add(X.aH, X.a(list.map(x => `${x.m} (${L ? `${num(x.r, 1)} karto` : `×${num(x.r, 1)}`})`).join(', ')), X.calcA, nb); }
+      add(X.aH, X.a(wList(list.map(x => `${x.m} (${L ? `${num(x.r, 1)} karto` : `×${num(x.r, 1)}`})`))), X.calcA, nb); }
     ch.forEach(x => { const nb = NB(), m = x.m, i = nb.add(`${m} · III · ${I.part}`, ytdP(a3, m), () => p3(d0, m), Zi), j = nb.add(`${m} · III · ${I.part} · ${X.ys}`, ytdP(e3, m) || 0, () => p3(YS, m), Zi);
       const ia = nb.add(`${m} · ${X.ytd}`, x.a, c => `${c(i)}-${c(j)}`, Zi);
       if (x.b != null) { const ib = nb.add(`${m} · ${X.ly}`, x.b, () => `${p3(Y, m)}-${p3(YS1, m)}`, Zi); if (x.b > 0 && x.a > 0) nb.add(X.ratio, x.a / x.b, c => `${c(ia)}/${c(ib)}`, '0.00'); }
-      (mgr[m] = mgr[m] || []).push({ h: m, text: fin(X.m1(m, mSInt(x.a), x.b != null ? mSInt(x.b) : '–', x.b > 0 && x.a > 0 ? X.acc(x.a / x.b) : '')), calc: X.calcL, src, hl: true, nums: nb.a, other: 'III' }); });
+      (mgr[m] = mgr[m] || []).push({ h: m, text: fin(X.m1(m, x.a, x.b, x.b > 0 && x.a > 0 ? X.acc(x.a / x.b) : '')), calc: X.calcL, src, hl: true, nums: nb.a, other: 'III' }); });
   }
   if (y3 >= 0) { const Ty3 = totals('III', y3), M3 = byMgr('III', a3), My = byMgr('III', y3);
     Object.keys(M3).forEach(m => { if (!My[m]) return; const nb = NB(), s = M3[m].nav / T3.nav * 100, sy = My[m].nav / Ty3.nav * 100;
       const i = nb.add(`${m} · III · ${t.shOf.nav}, %`, s, () => `${n3(d0, m)}/${n3(d0)}*100`, Zp), j = nb.add(`${m} · III · ${t.shOf.nav}, % · ${t.thPrevY.toLowerCase()}`, sy, () => `${n3(Y, m)}/${n3(Y)}*100`, Zp);
       nb.add(`${t.thDy}, ${L ? 'p. p.' : 'pp'}`, s - sy, c => `${c(i)}-${c(j)}`, Zp);
-      (mgr[m] = mgr[m] || []).push({ h: m, text: fin(X.m2(m, pctPlain(s, 1), mPP(s - sy))), calc: t.fx.calcM5, src, hl: true, nums: nb.a, other: 'III' }); }); }
+      (mgr[m] = mgr[m] || []).push({ h: m, text: fin(X.m2(m, pctPlain(s, 1), s - sy)), calc: t.fx.calcM5, src, hl: true, nums: nb.a, other: 'III' }); }); }
   { const M2 = byMgr('II', a2), M3 = byMgr('III', a3), all = [...new Set([...Object.keys(M2), ...Object.keys(M3)])], tot = T2.nav + T3.nav;
     const v = all.map(m => ({ m, n2: M2[m] ? M2[m].nav : 0, n3: M3[m] ? M3[m].nav : 0 })).map(x => ({ ...x, s: (x.n2 + x.n3) / tot * 100 })).sort((a, b) => b.s - a.s);
     const nb = NB(), t2 = nb.add(`II · ${I.nav}`, T2.nav, () => fxNav(d0), Zm), t3 = nb.add(`III · ${I.nav}`, T3.nav, () => n3(d0), Zm);
@@ -898,7 +915,7 @@ function p23Facts() {
       const nb2 = NB(), a = nb2.add(`${x.m} · II · ${I.nav}`, x.n2, () => fxNav(d0, crM(x.m)), Zm), b = nb2.add(`II · ${I.nav}`, T2.nav, () => fxNav(d0), Zm), a3_ = nb2.add(`${x.m} · III · ${I.nav}`, x.n3, () => n3(d0, x.m), Zm), b3 = nb2.add(`III · ${I.nav}`, T3.nav, () => n3(d0), Zm);
       nb2.add(`II · ${t.thShare}`, x.n2 / T2.nav, c => `${c(a)}/${c(b)}`, Zr); nb2.add(`III · ${t.thShare}`, x.n3 / T3.nav, c => `${c(a3_)}/${c(b3)}`, Zr); nb2.add(`II + III · ${t.thShare}`, x.s / 100, c => `(${c(a)}+${c(a3_)})/(${c(b)}+${c(b3)})`, Zr);
       if (x.n2 && x.n3) (mgr[x.m] = mgr[x.m] || []).push({ h: x.m, text: fin(X.m3(x.m, pctPlain(x.n2 / T2.nav * 100, 1), pctPlain(x.n3 / T3.nav * 100, 1), pctPlain(x.s, 1))), calc: X.calcC, src, hl: true, nums: nb2.a, other: 'III' }); void k; });
-    add(X.cH, X.c(v.slice(0, 3).map(x => `${x.m} (${pctPlain(x.s, 1)})`).join(', ')), X.calcC, nb); }
+    add(X.cH, X.c(wList(v.slice(0, 3).map(x => `${x.m} (${pctPlain(x.s, 1)})`))), X.calcC, nb); }
   return { facts: out, mgr };
 }
 /* išskleidžiama kortelės dalis (savininkas 2026-10-19: „išskleidus kortelę – faktą paremiantis grafikas ar lentelė“):
@@ -993,7 +1010,7 @@ function factMore(det) {
   body.querySelector('.fct').oninput = e => { st.title = e.target.textContent; };
   draw();
 }
-document.addEventListener('toggle', e => { const d = e.target; if (d.classList && d.classList.contains('fmore') && d.open) factMore(d); }, true);
+document.addEventListener('toggle', e => { const d = e.target; if (d.classList && d.classList.contains('fmore') && d.open) (typeof exMore === 'function' ? exMore : factMore)(d); }, true);
 /* kortelių atvaizdavimas (bendras visiems skirtukams) */
 function factCards(el, fs, title, pl) {
   const t = T(); el._facts = fs; el.dataset.title = title; el.dataset.pl = pl;
@@ -1342,21 +1359,21 @@ document.addEventListener('click', async e => {
    turtą mėnesio pradžioje (III pakopoje kasdienio turto nėra – paprastas vidurkis). Kiekvienas skaičius – Excel formulė lape „Faktai“. */
 addStrings({ mf: { title: 'Month facts', lead: 'Facts between Bank of Lithuania quarters, from managers’ daily unit values and net assets at month end: the month’s return, leaders in each group, history. Funds are compared only within their group.',
   sel: 'Month:',
-  mon: d => `${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`, inM: d => `in ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
+  mon: d => `${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`, gen: d => `${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`, inM: d => `in ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
   src: d => `Source: managers’ published daily unit values and net assets (last working day of the month), ${d}.`,
   shV: 'Month-end values', shR: 'Market by month', shF: 'Facts',
-  hR: 'Month return', tR: (m, w, p, n, y) => `${m} the asset-weighted return of pillar II funds was ${w}; ${p} of ${n} funds rose. Since the start of the year: ${y}.`,
+  hR: 'Month return', tR: (m, w, p, n, y) => `${m} the average (asset-weighted) return of pillar II funds was ${w}, and ${p} of ${n} funds rose in value. Since the start of the year the return is ${y}.`,
   cR: 'Each fund: month-end unit value ÷ previous month-end − 1; weights – fund net assets at the start of the month; year to date – monthly returns chained.',
-  hG: 'Investment gain and assets', tG: (m, up, g, a, da, fl) => `${m} pillar II funds ${up ? 'earned' : 'lost'} about ${g} in investment ${up ? 'gains' : 'value'}; assets at month end – ${a} (${da}), of which contributions, switches and payouts – ${fl}.`,
+  hG: 'Investment gain and assets', tG: (m, up, g, a, da, fl) => `${m} pillar II funds ${g >= 0 ? `earned an investment gain of about ${mMn(g)}` : `made an investment loss of about ${mMn(-g)}`}. At month end they managed ${mMn(a)}, ${mMn(Math.abs(da))} ${da >= 0 ? 'more' : 'less'} than a month earlier; ${fl >= 0 ? 'contributions exceeded payouts' : 'payouts exceeded contributions'} by about ${mMn(Math.abs(fl))}.`,
   cG: 'Gain = Σ fund return × assets at the start of the month; contributions, switches and payouts = change in assets − gain.',
-  hL: 'Leaders in groups', tL: (m, xs) => `Leaders in their groups ${m}: ${xs}.`, cL: 'Highest month return within each group (funds compared only within their group).',
-  hS: 'Largest gap in a group', tS: (g, a, pa, b, pb, v) => `The largest gap was in the ${g} group: ${a} (${pa}) and ${b} (${pb}) differ by ${v} pp.`, cS: 'Highest minus lowest month return within a group.',
+  hL: 'Leaders in groups', tL: (m, xs) => `${m} the best return in each group: ${xs}.`, cL: 'Highest month return within each group (funds compared only within their group).',
+  hS: 'Largest gap in a group', tS: (g, a, pa, b, pb, v, m) => `${m} the gap between funds was largest in the “${g}” group: ${a} returned ${pa} and ${b} ${pb}, a difference of ${v} pp.`, cS: 'Highest minus lowest month return within a group.',
   hY: 'Year-to-date leaders', tY: (m, xs) => `Year-to-date leaders (${m}): ${xs}.`, cY: 'Unit value at month end ÷ value on 31 December − 1, highest within each group.',
   hW: 'Most often first', tW: (p, n, tot, rest) => `This year ${p} was first in its group most often – ${n} times of ${tot} (groups × months)${rest ? `; then ${rest}` : ''}.`, cW: 'Count of months this year in which the manager’s fund had the highest month return in its group.',
-  hH: 'The month in history', tH: (r, n, y, b, bv, w, wv) => `By asset-weighted return this month ranks ${r} of ${n} months since ${y} (1 – best). Best: ${b} (${bv}); worst: ${w} (${wv}).`, cH: 'Rank of the asset-weighted pillar II month return among all months in the data.',
+  hH: 'The month in history', tH: (r, n, y, b, bv, w, wv) => `By the average pillar II return this month ranks ${r} of ${n} months since ${y} (1 is the best). The best month was ${b} (${bv}), the worst ${w} (${wv}).`, cH: 'Rank of the asset-weighted pillar II month return among all months in the data.',
   hP: 'Positive months', tP: (p, n, P, N, s) => `This year the pillar II return was positive in ${p} of ${n} months; over all data – ${P} of ${N} months (${s}).`, cP: 'Months with a positive asset-weighted pillar II return.',
-  h3: 'Pillar III: category leaders', t3: (m, xs) => `Pillar III ${m}: ${xs}.`, c3: 'Simple average and highest month return within each category (bond, mixed, equity); pillar III daily assets are not published, so no weights.',
-  x3: (c, a, f, v) => `${c} – average ${a}, leader ${f} (${v})`, h3y: 'Pillar III: year-to-date leaders', t3y: (m, xs) => `Pillar III year-to-date leaders (${m}): ${xs}.`, end: d => `end of ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
+  h3: 'Pillar III: category leaders', t3: (m, xs) => `Pillar III fund returns ${m}: ${xs}.`, c3: 'Simple average and highest month return within each category (bond, mixed, equity); pillar III daily assets are not published, so no weights.',
+  x3: (c, a, f, v) => `${c} – average ${a}, best ${f} (${v})`, h3y: 'Pillar III: year-to-date leaders', t3y: (m, xs) => `Pillar III year-to-date leaders (${m}): ${xs}.`, end: d => `end of ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
   lW: 'Weighted return', lPos: 'Funds that rose', lN: 'Funds with a return', lYtd: 'Since start of year', lGain: 'Investment gain, € m', lNav: 'Net assets at month end, € m', lNavP: 'Net assets at the end of the previous month, € m', lFlow: 'Contributions, switches and payouts, € m',
   lMax: 'Highest', lMin: 'Lowest', lGap: 'Gap, pp', lRank: 'Rank of the month', lCnt: 'Months in data', lBest: 'Best month', lWorst: 'Worst month', lAvg: 'Average', lTot: 'All group-months',
   lPy: 'Positive months this year', lNy: 'Months this year', lPa: 'Positive months, all data', lNa: 'Months, all data', lSh: 'Share positive',
@@ -1367,21 +1384,22 @@ addStrings({ mf: { title: 'Month facts', lead: 'Facts between Bank of Lithuania 
   legend: [['Blue numbers', 'Month-end unit values and net assets from the managers’ daily data (sheet “Month-end values”).'], ['Black numbers', 'Formulas: returns, weights, ranks (sheets “Month-end values”, “Market by month”).'], ['Yellow numbers', 'The same figures as on the site; each is a formula. Change cell B4 in “Facts” to another month end to recalculate them (the sentence text does not change).']] } },
 { mf: { title: 'Mėnesio faktai', lead: 'Faktai tarp Lietuvos banko ketvirčių iš valdytojų kasdien skelbiamų vieneto verčių ir grynųjų aktyvų mėnesio pabaigoje: mėnesio grąža, lyderiai kiekvienoje grupėje, istorija. Fondai lyginami tik savo grupėje.',
   sel: 'Mėnuo:', mon: d => `${d.slice(0, 4)} m. ${['sausis', 'vasaris', 'kovas', 'balandis', 'gegužė', 'birželis', 'liepa', 'rugpjūtis', 'rugsėjis', 'spalis', 'lapkritis', 'gruodis'][+d.slice(5, 7) - 1]}`,
+  gen: d => `${d.slice(0, 4)} m. ${MK_MON.lt[+d.slice(5, 7) - 1]}`,
   inM: d => `${d.slice(0, 4)} m. ${['sausį', 'vasarį', 'kovą', 'balandį', 'gegužę', 'birželį', 'liepą', 'rugpjūtį', 'rugsėjį', 'spalį', 'lapkritį', 'gruodį'][+d.slice(5, 7) - 1]}`,
   src: d => `Šaltinis: valdytojų skelbiamos kasdienės vieneto vertės ir grynieji aktyvai (paskutinė mėnesio darbo diena), ${d}.`,
   shV: 'Mėnesio vertės', shR: 'Rinka pagal mėnesius', shF: 'Faktai',
-  hR: 'Mėnesio grąža', tR: (m, w, p, n, y) => `${m} II pakopos fondų svertinė grąža – ${w}; augo ${p} iš ${n} fondų. Nuo metų pradžios – ${y}.`,
+  hR: 'Mėnesio grąža', tR: (m, w, p, n, y) => `${m} II pakopos fondų vidutinė (pagal turtą svertinė) grąža buvo ${w}, vertė padidėjo ${p} iš ${n} fondų. Nuo metų pradžios grąža siekia ${y}.`,
   cR: 'Kiekvieno fondo: vieneto vertė mėnesio pabaigoje ÷ ankstesnio mėnesio pabaigos vertė − 1; svoriai – fondų grynieji aktyvai mėnesio pradžioje; nuo metų pradžios – mėnesių grąžos sujungtos grandine.',
-  hG: 'Prieaugis ir turtas', tG: (m, up, g, a, da, fl) => `${m} II pakopos fondai ${up ? 'uždirbo' : 'prarado'} apie ${g} ${up ? 'investicinio prieaugio' : 'vertės'}; turtas mėnesio pabaigoje – ${a} (${da}), iš jų įmokos, perėjimai ir išmokos – ${fl}.`,
+  hG: 'Prieaugis ir turtas', tG: (m, up, g, a, da, fl) => `${m} II pakopos fondai ${g >= 0 ? `uždirbo apie ${mMn(g)} investicinio prieaugio` : `patyrė apie ${mMn(-g)} investicinių nuostolių`}. Mėnesio pabaigoje jie valdė ${mMn(a)} – ${mMn(Math.abs(da))} ${da >= 0 ? 'daugiau' : 'mažiau'} nei prieš mėnesį; ${fl >= 0 ? 'įmokos viršijo išmokas' : 'išmokos viršijo įmokas'} apie ${mMn(Math.abs(fl))}.`,
   cG: 'Prieaugis = Σ fondo grąža × turtas mėnesio pradžioje; įmokos, perėjimai ir išmokos = turto pokytis − prieaugis.',
-  hL: 'Lyderiai grupėse', tL: (m, xs) => `${m} lyderiai savo grupėse: ${xs}.`, cL: 'Didžiausia mėnesio grąža kiekvienoje grupėje (fondai lyginami tik savo grupėje).',
-  hS: 'Didžiausias skirtumas grupėje', tS: (g, a, pa, b, pb, v) => `Didžiausias skirtumas – grupėje „${g}“: ${a} (${pa}) ir ${b} (${pb}) skiriasi ${v} p. p.`, cS: 'Didžiausia minus mažiausia mėnesio grąža grupėje.',
+  hL: 'Lyderiai grupėse', tL: (m, xs) => `${m} grupių lyderiai: ${xs}.`, cL: 'Didžiausia mėnesio grąža kiekvienoje grupėje (fondai lyginami tik savo grupėje).',
+  hS: 'Didžiausias skirtumas grupėje', tS: (g, a, pa, b, pb, v, m) => `${m} didžiausias grąžų skirtumas buvo grupėje „${g}“: ${a} fondo grąža – ${pa}, ${b} – ${pb}, skirtumas – ${v} p. p.`, cS: 'Didžiausia minus mažiausia mėnesio grąža grupėje.',
   hY: 'Nuo metų pradžios lyderiai', tY: (m, xs) => `Nuo metų pradžios lyderiai (${m}): ${xs}.`, cY: 'Vieneto vertė mėnesio pabaigoje ÷ vertė gruodžio 31 d. − 1, didžiausia kiekvienoje grupėje.',
   hW: 'Dažniausiai pirmi', tW: (p, n, tot, rest) => `Šiais metais dažniausiai savo grupėje pirmas buvo ${p} – ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'kartą' : n % 10 === 0 || (n % 100 > 10 && n % 100 < 20) ? 'kartų' : 'kartus'} iš ${tot} (grupės × mėnesiai)${rest ? `; toliau ${rest}` : ''}.`, cW: 'Kiek kartų šiais metais valdytojo fondo mėnesio grąža buvo didžiausia jo grupėje.',
-  hH: 'Mėnuo istorijoje', tH: (r, n, y, b, bv, w, wv) => `Pagal svertinę grąžą šis mėnuo – ${r} vietoje iš ${n} mėnesių nuo ${y} (1 – geriausias). Geriausias – ${b} (${bv}), blogiausias – ${w} (${wv}).`, cH: 'II pakopos svertinės mėnesio grąžos vieta tarp visų duomenų mėnesių.',
+  hH: 'Mėnuo istorijoje', tH: (r, n, y, b, bv, w, wv) => `Pagal II pakopos fondų vidutinę grąžą šis mėnuo užima ${r} vietą iš ${n} mėnesių nuo ${y} (1 – geriausias). Geriausias mėnuo – ${b} (${bv}), blogiausias – ${w} (${wv}).`, cH: 'II pakopos svertinės mėnesio grąžos vieta tarp visų duomenų mėnesių.',
   hP: 'Teigiami mėnesiai', tP: (p, n, P, N, s) => `Šiais metais II pakopos grąža buvo teigiama ${p} iš ${n} mėnesių; per visą duomenų laikotarpį – ${P} iš ${N} mėnesių (${s}).`, cP: 'Mėnesiai, kai II pakopos svertinė grąža buvo teigiama.',
-  h3: 'III pakopa: kategorijų lyderiai', t3: (m, xs) => `III pakopa ${m}: ${xs}.`, c3: 'Paprastas vidurkis ir didžiausia mėnesio grąža kiekvienoje kategorijoje (obligacijų, mišrūs, akcijų); III pakopos kasdienis turtas neskelbiamas, todėl be svorių.',
-  x3: (c, a, f, v) => `${c} – vidurkis ${a}, lyderis ${f} (${v})`, h3y: 'III pakopa: nuo metų pradžios', t3y: (m, xs) => `III pakopos lyderiai nuo metų pradžios (${m}): ${xs}.`, end: d => `${d.slice(0, 4)} m. ${MK_MON.lt[+d.slice(5, 7) - 1]} pabaiga`,
+  h3: 'III pakopa: kategorijų lyderiai', t3: (m, xs) => `${m} III pakopos fondų grąža: ${xs}.`, c3: 'Paprastas vidurkis ir didžiausia mėnesio grąža kiekvienoje kategorijoje (obligacijų, mišrūs, akcijų); III pakopos kasdienis turtas neskelbiamas, todėl be svorių.',
+  x3: (c, a, f, v) => `${c} – vidutiniškai ${a}, geriausias ${f} (${v})`, h3y: 'III pakopa: nuo metų pradžios', t3y: (m, xs) => `III pakopos lyderiai nuo metų pradžios (${m}): ${xs}.`, end: d => `${d.slice(0, 4)} m. ${MK_MON.lt[+d.slice(5, 7) - 1]} pabaiga`,
   lW: 'Svertinė grąža', lPos: 'Fondų, kurių vertė augo', lN: 'Fondų su grąža', lYtd: 'Nuo metų pradžios', lGain: 'Investicinis prieaugis, mln. €', lNav: 'Grynieji aktyvai mėnesio pabaigoje, mln. €', lNavP: 'Grynieji aktyvai praėjusio mėnesio pabaigoje, mln. €', lFlow: 'Įmokos, perėjimai ir išmokos, mln. €',
   lMax: 'Didžiausia', lMin: 'Mažiausia', lGap: 'Skirtumas, p. p.', lRank: 'Mėnesio vieta', lCnt: 'Mėnesių duomenyse', lBest: 'Geriausias mėnuo', lWorst: 'Blogiausias mėnuo', lAvg: 'Vidurkis', lTot: 'Visi grupių mėnesiai',
   lPy: 'Teigiami mėnesiai šiais metais', lNy: 'Mėnesių šiais metais', lPa: 'Teigiami mėnesiai, visi duomenys', lNa: 'Mėnesių, visi duomenys', lSh: 'Teigiamų dalis',
@@ -1416,7 +1434,7 @@ let MFK = MFD ? MFD.RM.length - 1 : -1;
 function mfFacts(k) {
   const t = T(), V = t.mf, D = MFD; if (!D || k < 1) return [];
   const { RM, fs, II, III, mkt, mon } = D, d = iso(RM[k]), m = V.inM(d), src = V.src(d), out = [], L = lang === 'lt';
-  const VS = `'${V.shV}'`, RS = `'${V.shR}'`, M = '$B$4', MP = '$B$5', MY = '$B$6', rp = x => pct(x * 100), pp = x => num(x * 100, 2);
+  const VS = `'${V.shV}'`, RS = `'${V.shR}'`, M = '$B$4', MP = '$B$5', MY = '$B$6', rp = x => pctPlain(x * 100), pp = x => num(x * 100, 2);
   const cr = (pl, gl) => `${VS}!A:A,"${pl}"${gl ? `,${VS}!C:C,${xq(gl)}` : ''},${VS}!E:E,${M}`;
   const add = (h, text, calc, nb, sp) => out.push({ h, text, calc, src, nums: nb.a, sp, book: mfBook });
   const kd = k - mon(k), yr = []; for (let j = Math.max(1, kd + 1); j <= k; j++) yr.push(j);
@@ -1433,7 +1451,7 @@ function mfFacts(k) {
   if (X.w != null && mkt[k - 1].nav) { const nb = NB(), da = X.nav - mkt[k - 1].nav, fl = da - X.g;
     const i0 = nb.add(V.lGain, X.g, () => `SUMIFS(${VS}!J:J,${cr('II')})`, Zm), i1 = nb.add(V.lNav, X.nav, () => `SUMIFS(${VS}!G:G,${cr('II')})`, Zm);
     const i2 = nb.add(V.lNavP, mkt[k - 1].nav, () => `SUMIFS(${VS}!G:G,${VS}!A:A,"II",${VS}!E:E,${MP})`, Zm); nb.add(V.lFlow, fl, c => `${c(i1)}-${c(i2)}-${c(i0)}`, Zm);
-    add(V.hG, V.tG(m[0].toUpperCase() + m.slice(1), X.g >= 0, mMn(Math.abs(X.g)), mMn(X.nav), mSMn(da), mSMn(fl)), V.cG, nb, { u: 'mn', lines: [{ l: V.sNav, pts: RM.map((x, j) => j <= k && mkt[j].nav ? [x, mkt[j].nav] : null).filter(Boolean) }] }); }
+    add(V.hG, V.tG(m[0].toUpperCase() + m.slice(1), X.g >= 0, X.g, X.nav, da, fl), V.cG, nb, { u: 'mn', lines: [{ l: V.sNav, pts: RM.map((x, j) => j <= k && mkt[j].nav ? [x, mkt[j].nav] : null).filter(Boolean) }] }); }
   { const nb = NB(), xs = [];
     groupsOf('II').forEach(gl => { const b = best('II', gl, 'r'); if (!b.length) return; xs.push(`${gl} – ${b[0].pv} (${rp(b[0].r[k])})`); nb.add(`${gl}: ${b[0].pv}`, b[0].r[k], () => `_xlfn.MAXIFS(${VS}!H:H,${cr('II', gl)})`, Zr); });
     if (xs.length) add(V.hL, V.tL(m[0].toUpperCase() + m.slice(1), xs.join('; ')), V.cL, nb, null); }
@@ -1441,7 +1459,7 @@ function mfFacts(k) {
     if (gs.length) { const g = gs[0], a = g.b[0], z = g.b[g.b.length - 1], nb = NB();
       const i0 = nb.add(`${V.lMax}: ${a.pv}`, a.r[k], () => `_xlfn.MAXIFS(${VS}!H:H,${cr('II', g.gl)})`, Zr), i1 = nb.add(`${V.lMin}: ${z.pv}`, z.r[k], () => `_xlfn.MINIFS(${VS}!H:H,${cr('II', g.gl)})`, Zr);
       nb.add(V.lGap, g.gap * 100, c => `(${c(i0)}-${c(i1)})*100`, Zp);
-      add(V.hS, V.tS(g.gl, a.pv, rp(a.r[k]), z.pv, rp(z.r[k]), pp(g.gap)), V.cS, nb, { u: 'pct', lines: g.b.map(f => ({ l: f.pv, c: mkColor(f.pv), pts: last(12, j => f.r[j] == null ? null : f.r[j] * 100) })) }); } }
+      add(V.hS, V.tS(g.gl, a.pv, rp(a.r[k]), z.pv, rp(z.r[k]), pp(g.gap), m[0].toUpperCase() + m.slice(1)), V.cS, nb, { u: 'pct', lines: g.b.map(f => ({ l: f.pv, c: mkColor(f.pv), pts: last(12, j => f.r[j] == null ? null : f.r[j] * 100) })) }); out[out.length - 1].gx = g.gl; } }
   if (kd >= 0) { const nb = NB(), xs = [];
     groupsOf('II').forEach(gl => { const b = best('II', gl, 'y'); if (!b.length) return; xs.push(`${gl} – ${b[0].pv} (${rp(b[0].y[k])})`); nb.add(`${gl}: ${b[0].pv}`, b[0].y[k], () => `_xlfn.MAXIFS(${VS}!K:K,${cr('II', gl)})`, Zr); });
     if (xs.length) add(V.hY, V.tY(V.end(d), xs.join('; ')), V.cY, nb, null); }
@@ -1511,3 +1529,387 @@ function renderMf() {
   document.getElementById('mfNote').textContent = V.cR;
 }
 document.addEventListener('change', e => { if (e.target.id !== 'mfSel') return; MFK = +e.target.value; renderMf(); });
+
+/* ---------- Išskleista kortelė – faktas perskaičiuojamas pagal pasirinkimą (savininkas 2026-10-20) ----------
+   „Valdikliai tik priartina vaizdą, o ne perskaičiuoja“, „netinka linijinis grafikas“, „nėra galimybės patikrinti ilgesniais laikotarpiais“,
+   „koreguoti rodomus valdytojus“. Kiekvienam faktui – tyrimo modelis (exOf): pasirinkus laikotarpį, datą, grupę ar valdytojus iš naujo
+   apskaičiuojamas sakinys (kopijuojamas), grafikas (linija – lygiams laike, stulpeliai – pokyčiams ir srautams, horizontalūs – palyginimui)
+   ir lentelė. Rūšys: lvl (lygis laike), flow (ketvirčių sumos), real (vertė prieš infliaciją / atlyginimus), ret (grąžos grupėse ir fonduose),
+   mser / mgrp / mwin (mėnesio duomenys). Pradinis vaizdas atitinka kortelės faktą. */
+addStrings({ ex: { per: 'Period', at: 'Date', from: 'From', to: 'To', all: 'Full history', y: n => `${n} y`, hor: 'Return', grp: 'Group', gAvg: 'Group averages', gLead: 'Leaders in all groups',
+  view: 'View', vLine: 'Over time', vQ: 'Change by quarter', vY: 'Change by year', vSnap: 'Comparison', vQs: 'Quarters', vYs: 'Years', vC: 'Cumulative', vM: 'Months', vYr: 'Each year',
+  who: 'Show', whoAll: 'Whole pillar', whoM: 'By manager', cp: 'Copy sentence', cpd: 'Copied', ttl: 'Click to edit the chart title (it goes into the image)', nums: 'Figures of the card fact (as in the Excel file)', none: 'No data for this choice.',
+  h: { ytd: 'since the start of the year', '1y': 'over 1 year', '3y': 'over 3 years (annualised)', '5y': 'over 5 years (annualised)', gcf: 'since launch (annualised)', '10y': 'over 10 years (annualised)', '15y': 'over 15 years (annualised)', r: 'in the month', y: 'since the start of the year', y12: 'over 12 months' },
+  hs: { ytd: 'Since start of year', '1y': '1 year', '3y': '3 years', '5y': '5 years', gcf: 'Since launch', '10y': '10 years', '15y': '15 years', r: 'Month', y: 'Since start of year', y12: '12 months' },
+  up: 'rose', dn: 'fell', same: 'did not change', bigger: 'more', from_: (a, b) => `from ${a} to ${b}`,
+  lvl1: (a, b, w, dir, va, vb, abs, rel) => `From ${a} to ${b} ${w} ${dir} from ${va} to ${vb} (${abs}${rel ? `, ${rel}` : ''}).`, cagr: v => `On average ${v} a year.`,
+  lvlM: (a, b, w, xs) => `From ${a} to ${b} ${w}: ${xs}.`, rec: (v, d) => `The highest value in the period was ${v} (${d}).`, pos: (p, n) => `Positive at ${p} of ${n} quarter ends.`,
+  flow1: (n, a, b, w, s) => `In ${n} quarters (${a} – ${b}) ${w} totalled ${s}.`, flowB: (p, n, hi, hv, lo, lv) => `${p} of ${n} quarters were positive; the largest was ${hi} (${hv}), the smallest ${lo} (${lv}).`,
+  flowM: (n, a, b, w, xs) => `In ${n} quarters (${a} – ${b}) ${w}: ${xs}.`, flow0: (a, w, s) => `${a}: ${w} ${s}.`, flowM0: (a, w, xs) => `${a}, ${w}: ${xs}.`,
+  real1: (a, b, pl, dir, r, c, e) => `From ${a} to ${b} the value of the average pillar ${pl} fund ${dir} ${r}${c ? ` (${c} a year)` : ''}: € 1,000 became € ${e}.`,
+  realCpi: (dir, c, rr, pw) => `Prices (CPI) ${dir} ${c} over the same period, so the real return was ${rr}: purchasing power ${pw}.`,
+  realW: (nm, dir, c, who, pp) => `${nm} ${dir} ${c} over the same period; ${who} grew faster (by ${pp} pp).`, fundsW: 'the funds',
+  dd: (v, a, b, rec) => `The largest fall in the period was ${v} (${a} – ${b}); ${rec}.`, ddRec: n => `the loss was recovered in ${n} quarter(s)`, ddNo: 'the loss has not been recovered yet',
+  retG: (d, h, pl, all, lo, lg, hi, hg) => `On ${d} the asset-weighted return of all pillar ${pl} funds ${h} was ${all}; group averages ranged from ${lo} (${lg}) to ${hi} (${hg}).`,
+  retE: (lo, hi, h) => `€ 1,000 invested ${h} became € ${lo} – € ${hi}.`, ago: n => `${n} year(s) ago`,
+  retF: (d, g, h, a, av, z, zv, avg, k, n) => `On ${d} in the ${g} group the return ${h}: best ${a} (${av}), weakest ${z} (${zv}); BoL weighted group average ${avg}. ${k} of ${n} funds beat the average.`,
+  mser: (a, b, n, cum, p, hi, hv, lo, lv) => `From ${a} to ${b} (${n} months) the asset-weighted pillar II return totalled ${cum}; ${p} of ${n} months were positive. Best month ${hi} (${hv}), worst ${lo} (${lv}).`,
+  mserG: (a, b, n, s, hi, hv, lo, lv) => `From ${a} to ${b} (${n} months) pillar II funds’ investment gain totalled ${s}. Largest ${hi} (${hv}), smallest ${lo} (${lv}).`,
+  mserN: (a, b, va, vb, dir, abs) => `From the end of ${a} to the end of ${b} pillar II net assets ${dir} from ${va} to ${vb} (${abs}).`,
+  mser3: (a, b, n, xs) => `From ${a} to ${b} (${n} months) cumulative average returns of pillar III categories: ${xs}.`,
+  mgrp: (m, g, h, a, av, z, zv, gap) => `${m[0].toUpperCase() + m.slice(1)}, group ${g}, return ${h}: first ${a} (${av}), last ${z} (${zv}); gap ${gap} pp.`, mlead: (m, h, xs) => `${m} leaders (return ${h}): ${xs}.`,
+  mwin: (y, p, n, tot, rest) => `In ${y} ${p} was first in its group most often – ${n} times of ${tot} (groups × months)${rest ? `; then ${rest}` : ''}.`,
+  th: { item: 'Series', start: 'Start', end: 'End', chg: 'Change', chgP: 'Change, %', cagr: 'A year', q: 'Quarter', y: 'Year', sum: 'Total', fund: 'Value of average fund', cmp: 'Comparison', diff: 'Difference, pp', e: '€ 1,000 became', grp: 'Group', mgr: 'Manager', ret: 'Return', m: 'Month', n: 'Times first' } } },
+{ ex: { per: 'Laikotarpis', at: 'Data', from: 'Nuo', to: 'Iki', all: 'Visa istorija', y: n => `${n} m.`, hor: 'Grąža', grp: 'Grupė', gAvg: 'Grupių vidurkiai', gLead: 'Lyderiai visose grupėse',
+  view: 'Vaizdas', vLine: 'Laike', vQ: 'Pokytis per ketvirtį', vY: 'Pokytis per metus', vSnap: 'Palyginimas', vQs: 'Ketvirčiai', vYs: 'Metai', vC: 'Sukaupta', vM: 'Mėnesiai', vYr: 'Kasmet',
+  who: 'Rodyti', whoAll: 'Visa pakopa', whoM: 'Pagal valdytojus', cp: 'Kopijuoti sakinį', cpd: 'Nukopijuota', ttl: 'Paspauskite ir pataisykite grafiko pavadinimą (jis patenka į paveikslėlį)', nums: 'Kortelės fakto skaičiai (kaip Excel faile)', none: 'Šiam pasirinkimui duomenų nėra.',
+  h: { ytd: 'nuo metų pradžios', '1y': 'per 1 metus', '3y': 'per 3 metus (metinė)', '5y': 'per 5 metus (metinė)', gcf: 'nuo veiklos pradžios (metinė)', '10y': 'per 10 metų (metinė)', '15y': 'per 15 metų (metinė)', r: 'per mėnesį', y: 'nuo metų pradžios', y12: 'per 12 mėnesių' },
+  hs: { ytd: 'Nuo metų pradžios', '1y': '1 metai', '3y': '3 metai', '5y': '5 metai', gcf: 'Nuo veiklos pradžios', '10y': '10 metų', '15y': '15 metų', r: 'Mėnesio', y: 'Nuo metų pradžios', y12: '12 mėn.' },
+  up: 'padidėjo', dn: 'sumažėjo', same: 'nepakito', bigger: 'daugiau', from_: (a, b) => `nuo ${a} iki ${b}`,
+  lvl1: (a, b, w, dir, va, vb, abs, rel) => `Nuo ${a} iki ${b} ${w} ${dir} nuo ${va} iki ${vb} (${abs}${rel ? `, ${rel}` : ''}).`, cagr: v => `Vidutiniškai – ${v} per metus.`,
+  lvlM: (a, b, w, xs) => `Nuo ${a} iki ${b} ${w}: ${xs}.`, rec: (v, d) => `Didžiausia reikšmė per laikotarpį – ${v} (${d}).`, pos: (p, n) => `Teigiama ${p} iš ${n} ketvirčių pabaigų.`,
+  flow1: (n, a, b, w, s) => `Per ${n} ketv. (${a} – ${b}) ${w} iš viso – ${s}.`, flowB: (p, n, hi, hv, lo, lv) => `Teigiamas ${p} iš ${n} ketvirčių; didžiausias – ${hi} (${hv}), mažiausias – ${lo} (${lv}).`,
+  flowM: (n, a, b, w, xs) => `Per ${n} ketv. (${a} – ${b}) ${w}: ${xs}.`, flow0: (a, w, s) => `${a} ${w} – ${s}.`, flowM0: (a, w, xs) => `${a} ${w}: ${xs}.`,
+  real1: (a, b, pl, dir, r, c, e) => `Nuo ${a} iki ${b} vidutinio ${pl} pakopos fondo vertė ${dir} ${r}${c ? ` (vidutiniškai ${c} per metus)` : ''}: 1 000 € virto ${e} €.`,
+  realCpi: (dir, c, rr, pw) => `Kainos (VKI) per tą laiką ${dir} ${c}, todėl reali grąža – ${rr}: perkamoji galia ${pw}.`,
+  realW: (nm, dir, c, who, pp) => `${nm} per tą laiką ${dir} ${c}; sparčiau augo ${who} (skirtumas – ${pp} p. p.).`, fundsW: 'fondai',
+  dd: (v, a, b, rec) => `Didžiausias kritimas per laikotarpį – ${v} (${a} – ${b}); ${rec}.`, ddRec: n => `prarasta vertė atsigavo per ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'ketvirtį' : n % 10 === 0 || (n % 100 > 10 && n % 100 < 20) ? 'ketvirčių' : 'ketvirčius'}`, ddNo: 'prarasta vertė dar neatsigavo',
+  retG: (d, h, pl, all, lo, lg, hi, hg) => `${d} visų ${pl} pakopos fondų svertinė grąža ${h} – ${all}; grupių vidurkiai – nuo ${lo} („${lg}“) iki ${hi} („${hg}“).`,
+  retE: (lo, hi, h) => `Prieš ${h} investuoti 1 000 € virto ${lo === hi ? `${lo} €` : `nuo ${lo} € iki ${hi} €`}.`, ago: n => `${n} m.`,
+  retF: (d, g, h, a, av, z, zv, avg, k, n) => `${d} grupėje „${g}“ grąža ${h}: geriausiai sekėsi ${a} (${av}), silpniausiai – ${z} (${zv}); LB svertinis grupės vidurkis – ${avg}. Vidurkį viršijo ${k} iš ${n} fondų.`,
+  mser: (a, b, n, cum, p, hi, hv, lo, lv) => `Nuo ${a} iki ${b} (${n} mėn.) II pakopos fondų svertinė grąža sukaupta – ${cum}; teigiami ${p} iš ${n} mėnesių. Geriausias mėnuo – ${hi} (${hv}), blogiausias – ${lo} (${lv}).`,
+  mserG: (a, b, n, s, hi, hv, lo, lv) => `Nuo ${a} iki ${b} (${n} mėn.) II pakopos fondų investicinis prieaugis iš viso – ${s}. Didžiausias – ${hi} (${hv}), mažiausias – ${lo} (${lv}).`,
+  mserN: (a, b, va, vb, dir, abs) => `Nuo ${a} pabaigos iki ${b} pabaigos II pakopos turtas ${dir} nuo ${va} iki ${vb} (${abs}).`,
+  mser3: (a, b, n, xs) => `Nuo ${a} iki ${b} (${n} mėn.) III pakopos kategorijų vidutinė sukaupta grąža: ${xs}.`,
+  mgrp: (m, g, h, a, av, z, zv, gap) => `${m[0].toUpperCase() + m.slice(1)} grupėje „${g}“ grąža ${h}: pirmas – ${a} (${av}), paskutinis – ${z} (${zv}); skirtumas – ${gap} p. p.`, mlead: (m, h, xs) => `${m} lyderiai (grąža ${h}): ${xs}.`,
+  mwin: (y, p, n, tot, rest) => `${y} m. dažniausiai savo grupėje pirmas buvo ${p} – ${n} k. iš ${tot} (grupės × mėnesiai)${rest ? `; toliau ${rest}` : ''}.`,
+  th: { item: 'Eilutė', start: 'Pradžia', end: 'Pabaiga', chg: 'Pokytis', chgP: 'Pokytis, %', cagr: 'Per metus', q: 'Ketvirtis', y: 'Metai', sum: 'Iš viso', fund: 'Vidutinio fondo vertė', cmp: 'Palyginimas', diff: 'Skirtumas, p. p.', e: '1 000 € virto', grp: 'Grupė', mgr: 'Valdytojas', ret: 'Grąža', m: 'Mėnuo', n: 'Kartų pirmas' } } });
+
+/* stulpeliai (vertikalūs, grupuoti) ir horizontalūs stulpeliai – SVG, kaip drawLineChart (PNG ir „Kopijuoti“ veikia per chartTools) */
+const svgEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function niceTicks(lo, hi, n = 5) {
+  const span = hi - lo || 1, raw = span / n, p = 10 ** Math.floor(Math.log10(raw)), st = [1, 2, 2.5, 5, 10].map(x => x * p).find(x => x >= raw);
+  const out = []; for (let v = Math.ceil(lo / st) * st; v <= hi + st * 1e-9; v += st) out.push(Math.abs(v) < st * 1e-9 ? 0 : v); return out;
+}
+function drawCols(el, cats, series, o = {}) {
+  el.querySelectorAll('svg, p.na').forEach(s => s.remove());
+  const W = o.width || el.clientWidth || 720, H = o.height || 260, m = { l: o.ml ?? 62, r: 12, t: 12, b: 38 }, ns = series.length;
+  let lo = 0, hi = 0; series.forEach(s => s.v.forEach(v => { if (v != null && isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }));
+  if (lo === hi) hi = 1; const pad = (hi - lo) * 0.08; if (hi > 0) hi += pad; if (lo < 0) lo -= pad;
+  const ticks = niceTicks(lo, hi), Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b), bw = (W - m.l - m.r) / Math.max(1, cats.length), gw = bw * 0.78, w1 = gw / ns;
+  const fmt = o.fmt || (v => num(v, 1)), afmt = o.afmt || fmt, every = Math.max(1, Math.ceil(cats.length / Math.floor((W - m.l - m.r) / 52)));
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img">`;
+  ticks.forEach(v => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--grid);stroke-width:1"/><text x="${m.l - 6}" y="${Y(v) + 4}" style="fill:var(--text-3);font-size:11px;text-anchor:end">${svgEsc(afmt(v))}</text>`; });
+  cats.forEach((c, i) => {
+    const x0 = m.l + i * bw + (bw - gw) / 2;
+    series.forEach((sr, j) => { const v = sr.v[i]; if (v == null || !isFinite(v)) return; const y = Y(Math.max(0, v)), h = Math.abs(Y(v) - Y(0)) || 1;
+      const col = o.sign && ns === 1 ? (v >= 0 ? 'var(--dpos)' : 'var(--dneg)') : sr.c;
+      s += `<rect x="${x0 + j * w1}" y="${y}" width="${Math.max(1, w1 - 1)}" height="${h}" style="fill:${col}"><title>${svgEsc(`${c} · ${sr.l}: ${fmt(v)}`)}</title></rect>`;
+      if (o.labels && cats.length * ns <= 14) s += `<text x="${x0 + j * w1 + w1 / 2}" y="${v >= 0 ? y - 4 : y + h + 12}" style="fill:var(--text-2);font-size:10.5px;text-anchor:middle">${svgEsc(fmt(v))}</text>`; });
+    if (i % every === 0) s += `<text x="${m.l + i * bw + bw / 2}" y="${H - m.b + 16}" style="fill:var(--text-3);font-size:11px;text-anchor:middle">${svgEsc(c)}</text>`;
+  });
+  s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(0)}" y2="${Y(0)}" style="stroke:var(--axis);stroke-width:1"/></svg>`;
+  el.insertAdjacentHTML('afterbegin', s); el._legend = ns > 1 ? series.map(x => ({ c: x.c, l: x.l })) : [];
+}
+function drawHBars(el, rows, o = {}) {
+  el.querySelectorAll('svg, p.na').forEach(s => s.remove());
+  const W = o.width || el.clientWidth || 720, rh = 24, fmt = o.fmt || (v => num(v, 1)), lw = Math.min(260, Math.max(70, ...rows.map(r => String(r.l).length * 6.6))) + 10;
+  const H = rows.length * rh + 16, vals = rows.map(r => r.v).filter(v => v != null && isFinite(v)), lo = Math.min(0, ...vals), hi = Math.max(0, ...vals) || 1, vw = 64;
+  const X = v => lw + (v - lo) / (hi - lo || 1) * (W - lw - vw - 8);
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img">`;
+  rows.forEach((r, i) => { const y = 8 + i * rh, v = r.v; if (v == null || !isFinite(v)) return; const x = Math.min(X(0), X(v)), w = Math.max(1, Math.abs(X(v) - X(0)));
+    s += `<text x="${lw - 8}" y="${y + 15}" style="fill:var(--text-2);font-size:12px;text-anchor:end;font-weight:${r.b ? 600 : 400}">${svgEsc(r.l)}</text>`
+      + `<rect x="${x}" y="${y + 3}" width="${w}" height="${rh - 8}" rx="2" style="fill:${r.c || 'var(--s1)'};opacity:${r.dim ? 0.45 : 1}"><title>${svgEsc(`${r.l}: ${fmt(v)}`)}</title></rect>`
+      + `<text x="${v >= 0 ? x + w + 5 : x - 5}" y="${y + 15}" style="fill:var(--text);font-size:11.5px;text-anchor:${v >= 0 ? 'start' : 'end'}">${svgEsc(fmt(v))}</text>`; });
+  if (lo < 0) s += `<line x1="${X(0)}" x2="${X(0)}" y1="4" y2="${H - 4}" style="stroke:var(--axis);stroke-width:1"/>`;
+  el.insertAdjacentHTML('afterbegin', s + '</svg>'); el._legend = [];
+}
+
+/* tyrimo variklis */
+const XU = { mn: v => mMn(v), int: v => mInt(v), eur: v => `${mInt(v)} €`, pct: v => pctPlain(v, 2) };
+const xAbs = (d, u) => u === 'pct' ? `${num(Math.abs(d), 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : XU[u](Math.abs(d));
+const xSg = (d, u) => (d >= 0 ? '+' : '−') + xAbs(d, u);
+const xDir = v => { const E = T().ex; return v > 0 ? E.up : v < 0 ? E.dn : E.same; };
+const xYrs = (a, b) => (dayOf(b) - dayOf(a)) / 365.25;
+const xCagr = (va, vb, yrs) => va > 0 && vb > 0 && yrs >= 1.5 ? pctPlain(((vb / va) ** (1 / yrs) - 1) * 100) : '';
+const yEndL = y => lang === 'lt' ? `${y} m. pabaigos` : `the end of ${y}`;
+const CMPN = { lt: { cpi: ['Kainos (VKI)', 'kainos'], w: ['Vidutinis neto darbo užmokestis', 'atlyginimai'], p: ['Vidutinė senatvės pensija', 'pensijos'], m: ['Minimali mėnesinė alga (neto)', 'MMA'] },
+  en: { cpi: ['Prices (CPI)', 'prices'], w: ['The average net wage', 'wages'], p: ['The average old-age pension', 'pensions'], m: ['The net minimum wage', 'the minimum wage'] } };
+const cmpN = k => (CMPN[lang] || CMPN.lt)[k];
+const lastD = pl => MKT[pl].dates[MKT[pl].dates.length - 1];
+const atIdx = (pl, d) => { const ds = MKT[pl].dates; let i = ds.indexOf(d); if (i < 0) i = ds.filter(x => x <= d).length - 1; return Math.max(0, i); };
+const mgrsAt = (pl, di) => Object.entries(byMgr(pl, di)).sort((a, b) => b[1].nav - a[1].nav).map(([m]) => m);
+
+/* periodo valdikliai: ds – reikšmių sąrašas, lab – pavadinimas, per – žingsnių per metus */
+function xPeriod(o, ds, lab, per, min = 0, inc = 0) {   // min – pirmas leidžiamas indeksas; inc – 1, kai abu galai įskaičiuojami (ketvirčių / mėnesių sumos)
+  const t = T().ex, span = (ds.length - 1 - min + inc) / per, opt = cur => ds.map((x, i) => i < min ? '' : `<option value="${i}"${i === cur ? ' selected' : ''}>${hEsc(lab(x))}</option>`).join('');
+  const at = `data-xper="${per}" data-xmin="${min}" data-xinc="${inc}"`;
+  const pr = [1, 3, 5, 10].filter(n => n < span - 0.01).map(n => `<button type="button" data-xy="${n}" ${at} aria-pressed="${o.b - o.a + inc === n * per}">${t.y(n)}</button>`).join('');
+  return `<span class="seg">${pr}<button type="button" data-xy="0" ${at} aria-pressed="${o.a === min}">${t.all}</button></span><label class="field">${t.from} <select data-xk="a">${opt(o.a)}</select></label><label class="field">${t.to} <select data-xk="b">${opt(o.b)}</select></label>`;
+}
+const xSeg = (k, cur, opts, lbl) => `<span class="seg" role="group"${lbl ? ` aria-label="${hEsc(lbl)}"` : ''}>${opts.map(([v, l]) => `<button type="button" data-xk="${k}" data-xv="${v}" aria-pressed="${String(v) === String(cur)}">${hEsc(l)}</button>`).join('')}</span>`;
+const xSel = (k, cur, opts, lbl) => `<label class="field">${hEsc(lbl)} <select data-xk="${k}">${opts.map(([v, l]) => `<option value="${v}"${String(v) === String(cur) ? ' selected' : ''}>${hEsc(l)}</option>`).join('')}</select></label>`;
+const xChips = (ms, on) => `<div class="chips fleg">${ms.map(m => `<button type="button" class="chip" data-xm="${hEsc(m)}" aria-pressed="${on.has(m)}"><i style="background:${mkColor(m)}"></i>${hEsc(m)}</button>`).join('')}</div>`;
+
+const EXK = {
+  /* lygis laike (turtas, dalyviai, dalys, santykiai): sp = { pl, u, w, fn?(di), mfn?(m, di), wm?, lab, rec?, pos?, dy?, who?, ms?, view? } */
+  lvl: {
+    init(sp) { const pl = sp.pl, b = atIdx(pl, MS.d), ds = MKT[pl].dates.map((d, i) => i).filter(i => i <= MKT[pl].dates.length - 1);
+      const who = sp.fn ? sp.who || 'all' : 'm', ms = new Set(sp.ms || topMgrs(pl, 4)); return { ds, b, a: sp.dy === 0 ? 0 : Math.max(0, b - 4 * (sp.dy || 1)), who, ms, view: sp.view || 'line' }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, pl = sp.pl, D = MKT[pl].dates, u = sp.u, A = D[o.a], B = D[o.b], mList = sp.mfn ? mgrsAt(pl, o.b) : [];
+      const ser = o.who === 'all' ? [{ l: sp.lab, c: 'var(--s1)', fn: sp.fn }] : mList.filter(m => o.ms.has(m)).map(m => ({ l: m, c: mkColor(m), fn: di => sp.mfn(m, di) }));
+      const idx = []; for (let i = o.a; i <= o.b; i++) idx.push(i);
+      const S = ser.map(s => ({ ...s, vals: idx.map(i => { const v = s.fn(i); return v == null || !isFinite(v) ? null : v; }) })).filter(s => s.vals.some(v => v != null));
+      if (!S.length) return null;
+      const first = s => s.vals.find(v => v != null), last = s => [...s.vals].reverse().find(v => v != null), yrs = xYrs(A, B);
+      let text;
+      if (S.length === 1) { const s = S[0], va = first(s), vb = last(s), d = vb - va;
+        text = E.lvl1(t.dLong(A), t.dLong(B), o.who === 'm' ? (sp.w1 ? sp.w1(s.l) : `${s.l}: ${sp.wm}`) : sp.w, xDir(d), XU[u](va), XU[u](vb), xAbs(d, u), u !== 'pct' && va ? pctPlain(Math.abs(vb / va - 1) * 100) : '');
+        const cg = u !== 'pct' && sp.cagr !== false ? xCagr(va, vb, yrs) : ''; if (cg) text += ' ' + E.cagr(cg);
+        if (sp.rec) { let mi = 0; s.vals.forEach((v, i) => { if (v != null && v > s.vals[mi]) mi = i; }); text += ' ' + E.rec(XU[u](s.vals[mi]), t.dLong(D[idx[mi]])); }
+        if (sp.pos) { const xs = s.vals.filter(v => v != null); text += ' ' + E.pos(xs.filter(v => v > 0).length, xs.length); }
+      } else text = E.lvlM(t.dLong(A), t.dLong(B), sp.wm || sp.w, S.map(s => `${s.l} – ${E.from_(XU[u](first(s)), XU[u](last(s)))} (${xSg(last(s) - first(s), u)})`).join('; '));
+      let ch;
+      if (o.view === 'q') { const cats = idx.slice(1).map(i => t.dq(D[i])); ch = { t: 'cols', cats, ser: S.map(s => ({ l: s.l, c: s.c, v: s.vals.slice(1).map((v, j) => v != null && s.vals[j] != null ? v - s.vals[j] : null) })), u, sign: S.length === 1 }; }
+      else if (o.view === 'y') { const ye = []; idx.forEach((i, j) => { const y = D[i].slice(0, 4); if (j === idx.length - 1 || D[idx[j + 1]].slice(0, 4) !== y) ye.push(j); });
+        ch = { t: 'cols', cats: ye.slice(1).map(j => D[idx[j]].slice(0, 4)), ser: S.map(s => ({ l: s.l, c: s.c, v: ye.slice(1).map((j, k) => s.vals[j] != null && s.vals[ye[k]] != null ? s.vals[j] - s.vals[ye[k]] : null) })), u, sign: S.length === 1 }; }
+      else if (o.view === 'snap') { const R = [...S].sort((a, b) => last(b) - last(a));
+        ch = { t: 'cols', cats: R.map(s => s.l), ser: [{ l: t.dq(A), c: '#a9b3bd', v: R.map(first) }, { l: t.dq(B), c: 'var(--s1)', v: R.map(last) }], u }; }
+      else ch = { t: 'line', ser: S.map(s => ({ l: s.l, c: s.c, pts: idx.map((i, j) => s.vals[j] == null ? null : [dayOf(D[i]), s.vals[j]]).filter(Boolean) })), u };
+      const views = [['line', E.vLine], ['q', E.vQ], ['y', E.vY]].concat(S.length > 1 || o.who === 'm' ? [['snap', E.vSnap]] : []);
+      const ctl = xPeriod(o, D, d => t.dq(d), 4) + (sp.fn && sp.mfn ? xSeg('who', o.who, [['all', E.whoAll], ['m', E.whoM]]) : '') + xSeg('view', o.view, views)
+        + (o.who === 'm' ? xChips(mList, o.ms) : '');
+      return { text, ch, ctl, title: `${sp.lab}: ${t.dq(A)} – ${t.dq(B)}`,
+        head: [E.th.item, t.dq(A), t.dq(B), E.th.chg].concat(u !== 'pct' ? [E.th.chgP, E.th.cagr] : []), rows: S.map(s => { const va = first(s), vb = last(s); return [s.l, XU[u](va), XU[u](vb), xSg(vb - va, u)].concat(u !== 'pct' ? [va ? pct((vb / va - 1) * 100) : '–', xCagr(va, vb, yrs) || '–'] : []); }) };
+    } },
+  /* ketvirčių sumos (prieaugis, srautai, dalyvių pokyčiai): sp = { pl, u, w, ser?: [{l, c, fn(di)}], mfn?(m, di), lab, n?, ytd? } */
+  flow: {
+    init(sp) { const pl = sp.pl, b = atIdx(pl, MS.d), D = MKT[pl].dates, a = sp.ytd ? D.findIndex(d => d.slice(0, 4) === D[b].slice(0, 4)) : Math.max(1, b - (sp.n || 4) + 1);
+      return { b, a: sp.all ? 1 : a, who: sp.ser ? 'all' : 'm', ms: new Set(sp.ms || topMgrs(pl, 4)), view: sp.view || 'q' }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, pl = sp.pl, D = MKT[pl].dates, u = sp.u, mList = sp.mfn ? mgrsAt(pl, o.b) : [];
+      const ser = o.who === 'all' ? sp.ser : mList.filter(m => o.ms.has(m)).map(m => ({ l: m, c: mkColor(m), fn: di => sp.mfn(m, di) }));
+      const idx = []; for (let i = Math.max(1, o.a); i <= o.b; i++) idx.push(i);
+      const S = ser.map(s => ({ ...s, vals: idx.map(i => { const v = s.fn(i); return v == null || !isFinite(v) ? null : v; }) })).filter(s => s.vals.some(v => v != null));
+      if (!S.length || !idx.length) return null;
+      const sum = s => s.vals.reduce((a, v) => a + (v || 0), 0), A = t.dq(D[idx[0]]), B = t.dq(D[idx[idx.length - 1]]), n = idx.length;
+      let text;
+      if (S.length === 1) { const s = S[0]; text = n === 1 ? E.flow0(A, sp.w, xSg(sum(s), u)) : E.flow1(n, A, B, sp.w, xSg(sum(s), u).replace(/^\+/, ''));
+        if (n >= 3) { let hi = 0, lo = 0; s.vals.forEach((v, i) => { if (v != null && v > s.vals[hi]) hi = i; if (v != null && v < s.vals[lo]) lo = i; });
+          text += ' ' + E.flowB(s.vals.filter(v => v > 0).length, n, t.dq(D[idx[hi]]), xSg(s.vals[hi], u), t.dq(D[idx[lo]]), xSg(s.vals[lo], u)); } }
+      else text = (n === 1 ? E.flowM0(A, sp.w, S.map(s => `${s.sl || s.l} – ${xSg(sum(s), u)}`).join('; ')) : E.flowM(n, A, B, sp.w, S.map(s => `${s.sl || s.l} – ${xSg(sum(s), u)}`).join('; ')));
+      const years = [...new Set(idx.map(i => D[i].slice(0, 4)))], ySum = (s, y) => s.vals.reduce((a, v, j) => a + (D[idx[j]].slice(0, 4) === y ? v || 0 : 0), 0);
+      let ch;
+      if (o.view === 'y') ch = { t: 'cols', cats: years, ser: S.map(s => ({ l: s.l, c: s.c, v: years.map(y => ySum(s, y)) })), u, sign: S.length === 1 };
+      else if (o.view === 'c') ch = { t: 'line', ser: S.map(s => { let c = 0; return { l: s.l, c: s.c, pts: idx.map((i, j) => { c += s.vals[j] || 0; return [dayOf(D[i]), c]; }) }; }), u };
+      else ch = { t: 'cols', cats: idx.map(i => t.dq(D[i])), ser: S.map(s => ({ l: s.l, c: s.c, v: s.vals })), u, sign: S.length === 1 };
+      const ctl = xPeriod(o, D, d => t.dq(d), 4, 1, 1)
+        + (sp.ser && sp.mfn ? xSeg('who', o.who, [['all', E.whoAll], ['m', E.whoM]]) : '') + xSeg('view', o.view, [['q', E.vQs], ['y', E.vYs], ['c', E.vC]]) + (o.who === 'm' ? xChips(mList, o.ms) : '');
+      return { text, ch, ctl, title: `${sp.lab}: ${A} – ${B}`, head: [E.th.y, ...S.map(s => s.l)], rows: years.map(y => [y, ...S.map(s => xSg(ySum(s, y), u))]).concat([[E.th.sum, ...S.map(s => xSg(sum(s), u))]]) };
+    } },
+  /* vidutinio fondo vertė prieš infliaciją ar atlyginimus: sp = { pl, cmp: null|'cpi'|'w'|'p'|'m', dy?, dd?, view? } */
+  real: {
+    axis(sp) { const pl = sp.pl, C = chainOf(pl, lastD(pl)), D = MKT[pl].dates;
+      if (sp.cmp && sp.cmp !== 'cpi') { const S2 = wSer(sp.cmp), ys = Object.keys(C.base).map(Number).filter(y => S2[y] != null).sort((a, b) => a - b);
+        return { yearly: true, keys: ys, lab: y => String(y), long: yEndL, F: y => C.base[y], Cm: y => S2[y], per: 1 }; }
+      const ks = D.map((d, i) => i).filter(i => C.idx[i] != null && (sp.cmp !== 'cpi' || cpiM(D[i].slice(0, 7)) != null));
+      const d0 = `${C.fy - 1}-12-31`, dt = i => i < 0 ? d0 : D[i], ok0 = sp.cmp !== 'cpi' || cpiM(d0.slice(0, 7)) != null;   // −1 – praėjusių metų gruodžio 31 d. (indeksas 100)
+      return { yearly: false, keys: (ok0 ? [-1] : []).concat(ks), lab: i => T().dq(dt(i)), long: i => T().dLong(dt(i)), F: i => i < 0 ? C.base[C.fy - 1] : C.idx[i], Cm: i => sp.cmp === 'cpi' ? cpiM(dt(i).slice(0, 7)) : null, per: 4, date: dt }; },
+    init(sp) { const X = this.axis(sp), n = X.keys.length - 1, b = X.yearly ? n : Math.max(0, X.keys.filter(i => X.date(i) <= MS.d).length - 1);
+      return { b, a: sp.dy === 0 ? 0 : Math.max(0, b - X.per * (sp.dy || 5)), view: sp.view || 'c' }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, X = this.axis(sp), K = X.keys, ka = K[o.a], kb = K[o.b]; if (ka == null || kb == null || o.a >= o.b) return null;
+      const r = X.F(kb) / X.F(ka) - 1, yrs = X.yearly ? kb - ka : xYrs(X.date(ka), X.date(kb));
+      let text = E.real1(X.long(ka), X.long(kb), sp.pl, xDir(r), pctPlain(Math.abs(r) * 100), yrs >= 1.5 ? pct(((1 + r) ** (1 / yrs) - 1) * 100) : '', mInt(1000 * (1 + r)));
+      let c = null;
+      if (sp.cmp) { c = X.Cm(kb) / X.Cm(ka) - 1; const N = cmpN(sp.cmp);
+        if (sp.cmp === 'cpi') { const rr = (1 + r) / (1 + c) - 1; text += ' ' + E.realCpi(c >= 0 ? (lang === 'lt' ? 'pakilo' : 'rose') : (lang === 'lt' ? 'nukrito' : 'fell'), pctPlain(Math.abs(c) * 100), pct(rr * 100), xDir(rr)); }
+        else text += ' ' + E.realW(N[0], c >= 0 ? (lang === 'lt' ? 'išaugo' : 'rose') : (lang === 'lt' ? 'sumažėjo' : 'fell'), pctPlain(Math.abs(c) * 100), r > c ? E.fundsW : N[1], num(Math.abs(r - c) * 100, 2)); }
+      const seg = K.slice(o.a, o.b + 1);
+      if (sp.dd && !X.yearly) { let pk = seg[0], best = { v: 0 }; seg.forEach(k => { if (X.F(k) > X.F(pk)) pk = k; const v = X.F(k) / X.F(pk) - 1; if (v < best.v) best = { v, p: pk, tr: k }; });
+        if (best.v < 0) { const after = K.filter(k => k > best.tr), rec = after.find(k => X.F(k) >= X.F(best.p)); text += ' ' + E.dd(pctPlain(Math.abs(best.v) * 100), X.lab(best.p), X.lab(best.tr), rec != null ? E.ddRec(K.indexOf(rec) - K.indexOf(best.tr)) : E.ddNo); } }
+      /* metų atkarpos: kiekvienų metų paskutinis taškas (ir pradžia) */
+      const ends = [0]; seg.forEach((k, j) => { if (j && (j === seg.length - 1 || (X.yearly ? true : X.date(seg[j + 1]).slice(0, 4) !== X.date(k).slice(0, 4)))) ends.push(j); });
+      const ylab = j => X.yearly ? String(seg[j]) : X.date(seg[j]).slice(0, 4) + (X.date(seg[j]).slice(5) === '12-31' ? '' : ` (${X.lab(seg[j])})`);
+      const yr = ends.slice(1).map((j, i) => { const p = seg[ends[i]], q = seg[j], fr = X.F(q) / X.F(p) - 1, cr = sp.cmp ? X.Cm(q) / X.Cm(p) - 1 : null; return { l: ylab(j), fr, cr, e: 1000 * X.F(q) / X.F(ka) }; });
+      const N = sp.cmp ? cmpN(sp.cmp) : null; let ch;
+      if (o.view === 'y') ch = { t: 'cols', cats: yr.map(x => x.l.slice(0, 4)), ser: [{ l: E.th.fund, c: 'var(--s1)', v: yr.map(x => x.fr * 100) }].concat(sp.cmp ? [{ l: N[0], c: 'var(--s6)', v: yr.map(x => x.cr * 100) }] : []), u: 'pct', sign: !sp.cmp };
+      else ch = { t: 'line', ser: [{ l: `${E.th.fund} (${X.lab(ka)} = 100)`, c: 'var(--s1)', pts: seg.map(k => [X.yearly ? dayOf(`${k}-12-31`) : dayOf(X.date(k)), X.F(k) / X.F(ka) * 100]) }]
+        .concat(sp.cmp ? [{ l: `${N[0]} (= 100)`, c: 'var(--s6)', pts: seg.map(k => [X.yearly ? dayOf(`${k}-12-31`) : dayOf(X.date(k)), X.Cm(k) / X.Cm(ka) * 100]) }] : []), u: 'int' };
+      const ctl = xPeriod(o, K, X.lab, X.per) + xSeg('view', o.view, [['c', E.vC], ['y', E.vYr]]);
+      return { text, ch, ctl, title: `${sp.cmp ? `${E.th.fund} / ${N[0]}` : E.th.fund}: ${X.lab(ka)} – ${X.lab(kb)}`,
+        head: [E.th.y, E.th.ret].concat(sp.cmp ? [N[0], E.th.diff] : []).concat([E.th.e]),
+        rows: yr.map(x => [x.l, pct(x.fr * 100)].concat(sp.cmp ? [pct(x.cr * 100), (x.fr - x.cr >= 0 ? '+' : '−') + num(Math.abs(x.fr - x.cr) * 100, 2)] : []).concat([`${mInt(x.e)} €`])) };
+    } },
+  /* grąžos grupėse ir grupės fonduose: sp = { pl, h?, g?, eur? } */
+  ret: {
+    init(sp) { return { at: atIdx(sp.pl, MS.d), h: sp.h || 'ytd', g: sp.g ?? '', ms: new Set(MK_PROV) }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, pl = sp.pl, di = o.at, d = MKT[pl].dates[di], key = 'ret_' + o.h, gs = groupsAt(pl, di), ALL = lang === 'lt' ? 'Visi fondai' : 'All funds';
+      const hz = ['ytd', '1y', '3y', '5y', '10y', '15y', 'gcf'].filter(h => MA['ret_' + h] != null && gs.concat([-1]).some(g => { const a = avgOf(pl, di, g); return a && a[MA['ret_' + h]] != null; }));
+      const H = hz.includes(o.h) ? o.h : 'ytd', k = 'ret_' + H, hl = E.h[H], yrs = { '1y': 1, '3y': 3, '5y': 5, '10y': 10, '15y': 15 }[H];
+      const Ee = v => yrs ? 1000 * (1 + v / 100) ** yrs : null;
+      let text, rows;
+      if (o.g === '' || !gs.includes(+o.g)) {
+        rows = gs.map(g => ({ l: groupLbl(pl, g), v: (avgOf(pl, di, g) || [])[MA[k]] ?? null, c: 'var(--s1)' })).filter(r => r.v != null);
+        const all = (avgOf(pl, di, -1) || [])[MA[k]]; if (!rows.length) return null;
+        const so = [...rows].sort((a, b) => a.v - b.v), lo = so[0], hi = so[so.length - 1];
+        text = E.retG(t.dLong(d), hl, pl, all != null ? pct(all) : '–', pct(lo.v), lo.l, pct(hi.v), hi.l);
+        if (sp.eur && yrs) text += ' ' + E.retE(mInt(Ee(lo.v)), mInt(Ee(hi.v)), E.ago(yrs));
+        if (all != null) rows.push({ l: ALL, v: all, c: 'var(--text-3)', b: 1 });
+      } else {
+        const g = +o.g, rs = rowsAt(pl, di).filter(r => fundOf(pl, r)[2] === g && r[MC[k]] != null), mgrs = rs.map(r => fundOf(pl, r)[0]);
+        rows = rs.map(r => { const f = fundOf(pl, r), dup = mgrs.filter(x => x === f[0]).length > 1; return { l: dup ? f[1] : f[0], m: f[0], v: r[MC[k]], c: mkColor(f[0]), dim: !o.ms.has(f[0]) }; }).sort((a, b) => b.v - a.v);
+        const avg = (avgOf(pl, di, g) || [])[MA[k]]; if (!rows.length) return null;
+        const a = rows[0], z = rows[rows.length - 1];
+        text = E.retF(t.dLong(d), groupLbl(pl, g), hl, a.l, pct(a.v), z.l, pct(z.v), avg != null ? pct(avg) : '–', avg != null ? rows.filter(r => r.v > avg).length : '–', rows.length);
+        if (avg != null) rows.push({ l: t.thAvg, v: avg, c: 'var(--text-3)', b: 1 });
+      }
+      const ctl = xSel('at', di, MKT[pl].dates.map((x, i) => [i, t.dq(x)]).reverse(), E.at) + xSeg('h', H, hz.map(h => [h, E.hs[h]]))
+        + xSel('g', o.g, [['', E.gAvg]].concat(gs.map(g => [g, groupLbl(pl, g)])), E.grp) + (o.g !== '' ? xChips([...new Set(rows.map(r => r.m).filter(Boolean))], o.ms) : '');
+      return { text, ch: { t: 'hbar', rows, u: 'pct' }, ctl, title: `${o.g === '' ? E.gAvg : groupLbl(pl, +o.g)}: ${E.hs[H]}, ${t.dq(d)}`,
+        head: [o.g === '' ? E.th.grp : E.th.mgr, `${E.th.ret} ${hl}`].concat(yrs ? [E.th.e] : []), rows: rows.map(r => [r.l, pct(r.v)].concat(yrs ? [`${mInt(Ee(r.v))} €`] : [])) };
+    } },
+  /* mėnesio eilutės: sp = { key: 'w'|'g'|'nav'|'r3', n? } */
+  mser: {
+    init(sp) { const b = MFK; return { b, a: Math.max(1, b - (sp.n || 12) + 1), view: sp.view || (sp.key === 'r3' ? 'c' : 'm') }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, V = t.mf, D = MFD, RM = D.RM, idx = []; for (let k = Math.max(1, o.a); k <= o.b; k++) idx.push(k);
+      if (!idx.length) return null;
+      const L = k => V.mon(iso(RM[k])), G = k => V.gen(iso(RM[k])), A = G(idx[0]), B = G(idx[idx.length - 1]), n = idx.length, c3 = ['bond', 'mixed', 'equity'].map(c => (CAT3[lang] || CAT3.lt)[c]);
+      const S = sp.key === 'r3' ? c3.map((gl, i) => ({ l: gl, c: `var(--s${i + 1})`, v: idx.map(k => { const xs = D.III.filter(f => f.gl === gl && f.r[k] != null); return xs.length ? xs.reduce((s, f) => s + f.r[k], 0) / xs.length * 100 : null; }) }))
+        : [{ l: sp.key === 'w' ? V.sR : sp.key === 'g' ? V.lGain : V.sNav, c: 'var(--s1)', v: idx.map(k => { const x = D.mkt[k]; return sp.key === 'w' ? (x.w == null ? null : x.w * 100) : sp.key === 'g' ? x.g : x.nav || null; }) }];
+      const u = sp.key === 'g' || sp.key === 'nav' ? 'mn' : 'pct', cum = v => v.reduce((a, x) => a * (1 + (x || 0) / 100), 1) - 1;
+      let text; const s0 = S[0], hiI = s0.v.reduce((m, v, i) => v != null && (s0.v[m] == null || v > s0.v[m]) ? i : m, 0), loI = s0.v.reduce((m, v, i) => v != null && (s0.v[m] == null || v < s0.v[m]) ? i : m, 0);
+      if (sp.key === 'w') text = E.mser(A, B, n, pct(cum(s0.v) * 100), s0.v.filter(v => v > 0).length, L(idx[hiI]), pct(s0.v[hiI]), L(idx[loI]), pct(s0.v[loI]));
+      else if (sp.key === 'g') text = E.mserG(A, B, n, xSg(s0.v.reduce((a, v) => a + (v || 0), 0), 'mn'), L(idx[hiI]), xSg(s0.v[hiI], 'mn'), L(idx[loI]), xSg(s0.v[loI], 'mn'));
+      else if (sp.key === 'nav') { const va = D.mkt[idx[0] - 1].nav || s0.v[0], vb = s0.v[n - 1]; text = E.mserN(G(idx[0] - 1 >= 1 ? idx[0] - 1 : idx[0]), B, mMn(va), mMn(vb), xDir(vb - va), xAbs(vb - va, 'mn')); }
+      else text = E.mser3(A, B, n, S.map(s => `${s.l} – ${pct(cum(s.v) * 100)}`).join('; '));
+      const years = [...new Set(idx.map(k => iso(RM[k]).slice(0, 4)))], yv = (s, y) => { const xs = s.v.filter((v, j) => iso(RM[idx[j]]).slice(0, 4) === y); return u === 'pct' ? cum(xs) * 100 : sp.key === 'nav' ? xs[xs.length - 1] : xs.reduce((a, v) => a + (v || 0), 0); };
+      let ch;
+      if (o.view === 'y') ch = { t: 'cols', cats: years, ser: S.map(s => ({ l: s.l, c: s.c, v: years.map(y => yv(s, y)) })), u, sign: S.length === 1 && sp.key !== 'nav' };
+      else if (o.view === 'c' || sp.key === 'nav') ch = { t: 'line', ser: S.map(s => { let c = u === 'pct' ? 100 : 0; return { l: s.l, c: s.c, pts: idx.map((k, j) => { if (sp.key === 'nav') return s.v[j] == null ? null : [RM[k], s.v[j]]; c = u === 'pct' ? c * (1 + (s.v[j] || 0) / 100) : c + (s.v[j] || 0); return [RM[k], c]; }).filter(Boolean) }; }), u: u === 'pct' ? 'int' : 'mn' };
+      else ch = { t: 'cols', cats: idx.map(k => iso(RM[k]).slice(0, 7)), ser: S.map(s => ({ l: s.l, c: s.c, v: s.v })), u, sign: S.length === 1 };
+      const views = sp.key === 'nav' ? [['m', E.vLine], ['y', E.vYs]] : [['m', E.vM], ['y', E.vYs], ['c', E.vC]];
+      const ctl = xPeriod(o, RM, x => V.mon(iso(x)), 12, 1, 1) + xSeg('view', o.view, views);
+      return { text, ch, ctl, title: `${S.length === 1 ? S[0].l : t.mf.h3}: ${L(idx[0])} – ${L(idx[idx.length - 1])}`, head: [E.th.y, ...S.map(s => s.l)], rows: years.map(y => [y, ...S.map(s => u === 'pct' ? pct(yv(s, y)) : sp.key === 'nav' ? mMn(yv(s, y)) : xSg(yv(s, y), 'mn'))]) };
+    } },
+  /* mėnesio grąžos grupėje: sp = { pl, h? } */
+  mgrp: {
+    init(sp) { return { at: MFK, h: sp.h || 'r', g: sp.g || '*' }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, V = t.mf, D = MFD, k = o.at, pl = sp.pl, key = o.h, c3 = CAT3[lang] || CAT3.lt;
+      const gs = pl === 'II' ? DATA.groups.map(g => groupLabel(g)) : ['bond', 'mixed', 'equity'].map(c => c3[c]), lab = f => pl === 'II' ? f.pv : f.n, m = V.mon(iso(D.RM[k])), mg = V.gen(iso(D.RM[k])), ma = V.inM(iso(D.RM[k]));
+      let rows, text;
+      if (o.g === '*') { rows = gs.map(gl => { const b = D.fs.filter(f => f.pl === pl && f.gl === gl && f[key][k] != null).sort((a, b) => b[key][k] - a[key][k])[0]; return b ? { l: `${gl} – ${lab(b)}`, v: b[key][k] * 100, c: mkColor(b.pv) } : null; }).filter(Boolean);
+        if (!rows.length) return null; text = E.mlead(mg, E.h[key], rows.map(r => `${r.l} (${pct(r.v)})`).join('; ')); }
+      else { rows = D.fs.filter(f => f.pl === pl && f.gl === o.g && f[key][k] != null).map(f => ({ l: lab(f), v: f[key][k] * 100, c: mkColor(f.pv) })).sort((a, b) => b.v - a.v);
+        if (!rows.length) return null; const a = rows[0], z = rows[rows.length - 1]; text = E.mgrp(ma, o.g, E.h[key], a.l, pct(a.v), z.l, pct(z.v), num(a.v - z.v, 2)); }
+      const ctl = xSel('at', k, D.RM.map((x, i) => [i, V.mon(iso(x))]).slice(1).reverse(), E.at) + xSeg('h', key, [['r', E.hs.r], ['y', E.hs.y], ['y12', E.hs.y12]]) + xSel('g', o.g, [['*', E.gLead]].concat(gs.map(g => [g, g])), E.grp);
+      return { text, ch: { t: 'hbar', rows, u: 'pct' }, ctl, title: `${o.g === '*' ? E.gLead : o.g}: ${E.hs[key]}, ${m}`, head: [o.g === '*' ? E.th.grp : E.th.mgr, E.th.ret], rows: rows.map(r => [r.l, pct(r.v)]) };
+    } },
+  /* kiek kartų valdytojo fondas buvo pirmas savo grupėje: sp = {} */
+  mwin: {
+    init() { return { y: iso(MFD.RM[MFK]).slice(0, 4) }; },
+    run(sp, o) {
+      const t = T(), E = t.ex, D = MFD, ks = D.RM.map((x, k) => k).filter(k => k && iso(D.RM[k]).slice(0, 4) === o.y), ys = [...new Set(D.RM.slice(1).map(x => iso(x).slice(0, 4)))].reverse();
+      const ps = [...new Set(D.II.map(f => f.pv))], rows = ps.map(p => ({ l: p, v: D.II.filter(f => f.pv === p).reduce((s, f) => s + ks.filter(k => f.rk[k] === 1).length, 0), c: mkColor(p) })).filter(r => r.v).sort((a, b) => b.v - a.v);
+      if (!rows.length) return null; const tot = rows.reduce((s, r) => s + r.v, 0);
+      const text = E.mwin(o.y, rows[0].l, rows[0].v, tot, rows.slice(1, 3).map(r => `${r.l} (${r.v})`).join(', '));
+      return { text, ch: { t: 'hbar', rows, u: 'int' }, ctl: xSel('y', o.y, ys.map(y => [y, y]), E.th.y), title: `${t.mf.hW}: ${o.y}`, head: [E.th.mgr, E.th.n], rows: rows.map(r => [r.l, r.v]) };
+    } },
+};
+
+/* fakto → tyrimo modelio priskyrimas (pradinis vaizdas atitinka kortelės sakinį) */
+function exOf(f, box) {
+  const t = T(), pl = box.dataset.pl || MS.pl, F = t.f, X = t.fx, V = t.pv, P2 = t.pv2, P3 = t.pv3, Q = t.p23, M = t.mf, h = f.h, L = lang === 'lt';
+  const bm = (p, k) => (m, di) => (byMgr(p, di)[m] || {})[k] ?? null, pn = p => L ? `${p} pakopos` : `pillar ${p}`;
+  const nav = p => ({ k: 'lvl', pl: p, u: 'mn', w1: m => L ? `${m} valdomas ${p} pakopos turtas` : `${m}’s pillar ${p} assets`, w: L ? `${p} pakopos turtas` : `pillar ${p} assets`, wm: L ? 'valdytojų turtas' : 'managers’ assets', lab: L ? `${p} pakopos turtas` : `Pillar ${p} assets`, fn: di => totals(p, di).nav || null, mfn: bm(p, 'nav') });
+  const part = p => ({ k: 'lvl', pl: p, u: 'int', w1: m => L ? `${m} ${p} pakopos dalyvių skaičius` : `${m}’s pillar ${p} participants`, w: L ? `${p} pakopos dalyvių skaičius` : `the number of pillar ${p} participants`, wm: L ? 'valdytojų dalyvių skaičius' : 'managers’ participants', lab: L ? `${p} pakopos dalyviai` : `Pillar ${p} participants`, fn: di => totals(p, di).part || null, mfn: bm(p, 'part') });
+  const share = (p, k) => ({ k: 'lvl', pl: p, u: 'pct', w1: m => L ? `${m} ${k === 'nav' ? 'turto' : 'dalyvių'} dalis ${p} pakopoje` : `${m}’s share of pillar ${p} ${k === 'nav' ? 'assets' : 'participants'}`, wm: L ? (k === 'nav' ? 'valdytojų turto dalis' : 'valdytojų dalyvių dalis') : (k === 'nav' ? 'managers’ share of assets' : 'managers’ share of participants'), lab: L ? `${p} pakopos ${k === 'nav' ? 'turto' : 'dalyvių'} dalys` : `Pillar ${p} shares`, mfn: (m, di) => shareAt(p, di, m, k) });
+  const gain = p => ({ k: 'flow', pl: p, u: 'mn', w: L ? 'investicinis prieaugis' : 'investment gain', lab: L ? `${p} pakopos investicinis prieaugis` : `Pillar ${p} investment gain`, ser: [{ l: t.fSer.gain, c: 'var(--s4)', fn: di => gainAt(p, di) }], mfn: (m, di) => gainAt(p, di, m) });
+  const per = p => ({ k: 'lvl', pl: p, u: 'eur', w1: m => L ? `${m} dalyvio vidutinis turtas` : `${m}’s assets per participant`, w: L ? 'turtas vienam dalyviui' : 'assets per participant', wm: L ? 'turtas vienam dalyviui' : 'assets per participant', lab: L ? `${p} pakopos turtas vienam dalyviui` : `Pillar ${p} assets per participant`,
+    fn: di => { const x = totals(p, di); return x.part ? x.nav * 1e6 / x.part : null; }, mfn: (m, di) => { const x = byMgr(p, di)[m]; return x && x.part ? x.nav * 1e6 / x.part : null; } });
+  const dPart = p => ({ k: 'flow', pl: p, u: 'int', w: L ? 'dalyvių skaičiaus pokytis' : 'change in participants', lab: L ? `${p} pakopos dalyvių pokytis` : `Pillar ${p} change in participants`,
+    mfn: (m, di) => { const j = dIdx(p, qBack(MKT[p].dates[di], 3)), a = byMgr(p, di)[m], b = j >= 0 ? byMgr(p, j)[m] : null; return a && b ? a.part - b.part : null; } });
+  const at3 = di => dIdx('III', MKT.II.dates[di]);
+  if (box.id === 'miCards') return { ...share(pl, 'nav'), ms: [h], dy: 3 };
+  if (box.id === 'p23Mgr') return { ...part('III'), who: 'm', ms: [h], dy: 3 };
+  if (box.id === 'mfCards') {
+    const mm = { [M.hR]: { k: 'mser', key: 'w' }, [M.hG]: { k: 'mser', key: 'g' }, [M.hL]: { k: 'mgrp', pl: 'II' }, [M.hS]: { k: 'mgrp', pl: 'II', g: f.gx }, [M.hY]: { k: 'mgrp', pl: 'II', h: 'y' }, [M.hW]: { k: 'mwin' },
+      [M.hH]: { k: 'mser', key: 'w', n: 999 }, [M.hP]: { k: 'mser', key: 'w', n: 999, view: 'y' }, [M.h3]: { k: 'mgrp', pl: 'III' }, [M.h3y]: { k: 'mgrp', pl: 'III', h: 'y' } };
+    return mm[h] || null;
+  }
+  const lc0 = () => groupsAt(pl, atIdx(pl, MS.d)).find(g => /^\d{4}-\d{4}$/.test(groupKeyOf(pl, g))) ?? '';
+  const map = {
+    [F.navH]: () => nav(pl), [X.recH]: () => ({ ...nav(pl), dy: 0, rec: true }), [X.grH]: () => ({ ...nav(pl), dy: 5 }),
+    [F.partH]: () => part(pl), [F.perH]: () => per(pl), [P3.eH]: () => ({ ...per(pl), dy: 5 }),
+    [F.retH]: () => ({ k: 'ret', pl }), [F.lcH]: () => ({ k: 'ret', pl }), [X.beatH]: () => ({ k: 'ret', pl, g: lc0() }), [X.bmH]: () => ({ k: 'ret', pl, g: lc0() }),
+    [F.gainH]: () => ({ ...gain(pl), ytd: true }), [V.dayH]: () => ({ ...gain(pl), ytd: true }), [P2.cumH]: () => ({ ...gain(pl), all: true, view: 'c' }),
+    [V.ppH]: () => ({ k: 'flow', pl, u: 'eur', ytd: true, w: L ? 'prieaugis vienam dalyviui' : 'gain per participant', lab: L ? 'Prieaugis vienam dalyviui' : 'Gain per participant',
+      ser: [{ l: L ? 'Prieaugis vienam dalyviui, €' : 'Gain per participant, €', c: 'var(--s4)', fn: di => { const g = gainAt(pl, di), x = totals(pl, di); return g != null && x.part ? g * 1e6 / x.part : null; } }] }),
+    [X.flowH]: () => ({ k: 'flow', pl, u: 'mn', w: L ? 'turto pokyčio dalys' : 'parts of the change in assets', lab: L ? `${pl} pakopos turto pokytis` : `Pillar ${pl} change in assets`,
+      ser: [{ l: t.fSer.gain, sl: L ? 'investicinis prieaugis' : 'investment gain', c: 'var(--s4)', fn: di => gainAt(pl, di) }, { l: t.fSer.flow, sl: L ? 'įmokų ir išmokų balansas' : 'net contributions', c: 'var(--s1)', fn: di => flowAt(pl, di) }] }),
+    [F.mgrH]: () => ({ ...share(pl, 'nav'), view: 'snap', dy: 1 }), [F.chgH]: () => ({ ...dPart(pl), n: 1, view: 'q', ms: mgrsAt(pl, atIdx(pl, MS.d)) }),
+    [X.concH]: () => ({ k: 'lvl', pl, u: 'int', dy: 5, cagr: false, w: L ? 'rinkos koncentracijos indeksas (HHI)' : 'the market concentration index (HHI)', lab: 'HHI',
+      fn: di => { const T0 = totals(pl, di); return T0.nav ? Object.values(byMgr(pl, di)).reduce((s, x) => s + (x.nav / T0.nav * 100) ** 2, 0) : null; } }),
+    [F.bothH]: () => ({ k: 'lvl', pl: 'II', u: 'mn', dy: 5, w: L ? 'II ir III pakopos turtas kartu' : 'pillar II and III assets together', lab: L ? 'II ir III pakopos turtas' : 'Pillar II and III assets',
+      fn: di => { const j = at3(di); return j < 0 ? null : totals('II', di).nav + totals('III', j).nav; } }),
+    [V.k1H]: () => ({ k: 'ret', pl, h: '5y', eur: true }), [V.hiH]: () => ({ k: 'ret', pl, h: '5y', eur: true }), [P2.rkH]: () => ({ k: 'ret', pl, h: '5y', eur: true }),
+    [V.dblH]: () => ({ k: 'real', pl, cmp: null, dy: 5 }), [P2.yrH]: () => ({ k: 'real', pl, cmp: null, dy: 0, view: 'y' }), [P2.chH]: () => ({ k: 'real', pl, cmp: null, dy: 0 }),
+    [P2.ddH]: () => ({ k: 'real', pl, cmp: null, dy: 0, dd: true }), [P2.reH]: () => ({ k: 'real', pl, cmp: 'cpi', dy: 5 }), [P3.iH]: () => ({ k: 'real', pl, cmp: 'cpi', dy: 0, view: 'y' }),
+    [P2.r3H]: () => ({ k: 'lvl', pl, u: 'pct', dy: 0, cagr: false, pos: true, w: L ? 'vidutinė 3 metų grąža (metinė)' : 'the average 3-year return (annualised)', lab: L ? 'Vidutinė 3 metų grąža (metinė)' : 'Average 3-year return', fn: di => avgK(pl, di, 'ret_3y') }),
+    [Q.rH]: () => ({ k: 'lvl', pl: 'II', u: 'pct', dy: 3, w: L ? 'III ir II pakopos turto santykis' : 'the ratio of pillar III to pillar II assets', lab: L ? 'III pakopos turtas ÷ II pakopos, %' : 'Pillar III ÷ pillar II assets, %',
+      fn: di => { const j = at3(di); return j < 0 ? null : totals('III', j).nav / totals('II', di).nav * 100; } }),
+    [Q.gH]: () => ({ ...part('III'), dy: 3 }), [Q.lH]: () => ({ ...dPart('III'), ytd: true, view: 'y' }), [Q.aH]: () => ({ ...dPart('III'), all: true, view: 'y' }),
+    [Q.fH]: () => ({ k: 'flow', pl: 'II', u: 'mn', n: 4, w: L ? 'įmokų ir išmokų balansas' : 'net contributions', lab: L ? 'Įmokų ir išmokų balansas' : 'Net contributions',
+      ser: [{ l: L ? 'III pakopa' : 'Pillar III', c: 'var(--s4)', fn: di => { const j = at3(di); return j < 0 ? null : flowAt('III', j); } }, { l: L ? 'II pakopa' : 'Pillar II', c: 'var(--s1)', fn: di => flowAt('II', di) }] }),
+    [Q.cH]: () => ({ k: 'lvl', pl: 'II', u: 'pct', dy: 3, view: 'snap', wm: L ? 'valdytojų dalis II ir III pakopoje kartu' : 'managers’ combined share of pillars II and III', lab: L ? 'Dalis II ir III pakopoje kartu' : 'Combined share',
+      w1: m => L ? `${m} dalis II ir III pakopoje kartu` : `${m}’s combined share of pillars II and III`, mfn: (m, di) => { const j = at3(di), a = byMgr('II', di)[m], b = j >= 0 ? byMgr('III', j)[m] : null, T2 = totals('II', di).nav, T3 = j >= 0 ? totals('III', j).nav : 0; return a || b ? ((a ? a.nav : 0) + (b ? b.nav : 0)) / (T2 + T3) * 100 : null; } }),
+  };
+  ['w', 'p', 'm'].forEach(k => { map[P3[k + 'H']] = () => ({ k: 'real', pl, cmp: k, dy: 5 }); });
+  return map[h] ? map[h]() : null;
+}
+const exFmt = u => ({ mn: v => mMn(v), int: v => mInt(v), eur: v => `${mInt(v)} €`, pct: v => pctPlain(v, 1) })[u];
+function exMore(det) {
+  const box = det.closest('.facts'), body = det.querySelector('.fxb'); if (!box || !body) return;
+  const fs = det.dataset.m ? (box._byM || {})[det.dataset.m] || [] : [(box._facts || [])[+det.dataset.i]].filter(Boolean); if (!fs.length) return;
+  const f = fs[0]; let sp = null; try { sp = exOf(f, box); } catch (e) { console.error(e); }
+  if (!sp || !EXK[sp.k] || (sp.k.startsWith('m') && !MFD)) return factMore(det);
+  const t = T(), E = t.ex, K = EXK[sp.k], o = det._xo || (det._xo = K.init(sp));
+  const nums = fs.map(x => `<div class="scroll"><table class="at fnum"><tbody>${x.nums.map(n => `<tr><td class="l">${hEsc(n.l)}</td><td>${zFmt(n.v, n.z)}</td></tr>`).join('')}</tbody></table></div>`).join('');
+  const draw = () => {
+    let r = null; try { r = K.run(sp, o); if (r) r.text = r.text.replace(/([–:] |\(|nuo |iki |from |to |vidutiniškai |average )\+(?=\d)(?![\d\s ,.]*(p\. p\.|pp))/g, '$1'); } catch (e) { console.error(e); }
+    const ttl = det._ttlEd || (r ? r.title : f.h);
+    body.innerHTML = `<div class="fctl">${r ? r.ctl : ''}</div>`
+      + (r ? `<div class="fxt"><p>${hEsc(r.text)}</p><button type="button" class="btn" data-xcp>${E.cp}</button></div>` : `<p class="na">${E.none}</p>`)
+      + `<h3 class="fct" contenteditable="true" spellcheck="false" title="${E.ttl}">${hEsc(ttl)}</h3><div class="chart fch"></div>`
+      + (r ? `<div class="scroll"><table class="at fnum xtab"><thead><tr>${r.head.map((x, i) => `<th${i ? '' : ' class="l"'}>${hEsc(x)}</th>`).join('')}</tr></thead><tbody>${r.rows.map(row => `<tr>${row.map((x, i) => `<td${i ? '' : ' class="l"'}>${hEsc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '')
+      + `<details class="fsub"><summary>${E.nums}</summary>${nums}</details>`;
+    body._txt = r ? r.text : '';
+    if (!r) return;
+    const el = body.querySelector('.fch'), ch = r.ch, fm = exFmt(ch.u);
+    if (ch.t === 'line') { const ss = ch.ser.filter(s => s.pts.length > 1), xs = ss.flatMap(s => s.pts.map(p => p[0]));
+      if (ss.length) drawLineChart(el, ss.map(s => ({ provider: s.l, label: s.l, color: s.c, points: s.pts })), Math.min(...xs), Math.max(...xs), { fmt: fm, axisUnit: { mn: lang === 'lt' ? ' mln. €' : ' € m', pct: ' %', eur: ' €' }[ch.u] || '', zero: ch.u === 'mn', ml: ch.u === 'mn' ? 92 : 70, height: 250, mr: 16 }); }
+    else if (ch.t === 'cols') { const mx = Math.max(...ch.ser.flatMap(x => x.v.filter(v => v != null && isFinite(v)).map(Math.abs)), 0), bn = ch.u === 'mn' && mx >= 1000;
+      const af = ch.u === 'mn' ? v => bn ? `${num(v / 1000, 1)} ${lang === 'lt' ? 'mlrd.' : 'bn'}` : `${num(v, mx < 20 ? 1 : 0)} ${lang === 'lt' ? 'mln.' : 'm'}` : ch.u === 'pct' ? v => `${num(v, 0)} %` : ch.u === 'eur' ? v => `${mInt(v)} €` : fm;
+      const lf = ch.u === 'mn' ? v => Math.abs(v) >= 1000 ? `${num(v / 1000, 2)} ${lang === 'lt' ? 'mlrd.' : 'bn'}` : `${num(v, Math.abs(v) < 10 ? 1 : 0)} ${lang === 'lt' ? 'mln.' : 'm'}` : fm;
+      drawCols(el, ch.cats, ch.ser, { fmt: lf, afmt: af, sign: ch.sign, labels: true, ml: 72 }); }
+    else drawHBars(el, ch.rows, { fmt: ch.u === 'pct' ? v => pct(v) : fm });
+    const lg = ch.t === 'hbar' ? [] : ch.ser.filter(x => ch.t !== 'line' || x.pts.length > 1);
+    if (lg.length > 1) el.insertAdjacentHTML('afterend', `<div class="legend chips xleg">${lg.map(x => `<span class="chip"><i style="background:${x.c}"></i>${hEsc(x.l)}</span>`).join('')}</div>`);
+  };
+  const fix = () => { const inc = sp.k === 'flow' || sp.k === 'mser'; if (o.a > o.b) [o.a, o.b] = [o.b, o.a]; if (!inc && o.a === o.b) o.a = Math.max(0, o.b - 1); };
+  body.onclick = e => {
+    const y = e.target.closest('[data-xy]'), s = e.target.closest('button[data-xk]'), m = e.target.closest('[data-xm]'), c = e.target.closest('[data-xcp]');
+    if (c) return mkCopy(`${body._txt} ${f.src}`, c);
+    if (y) { const n = +y.dataset.xy, per = +y.dataset.xper, min = +y.dataset.xmin, inc = +y.dataset.xinc; o.a = n ? Math.max(min, o.b - n * per + inc) : min; fix(); return draw(); }
+    if (s) { const k = s.dataset.xk, v = s.dataset.xv; o[k] = v; return draw(); }
+    if (m) { const k = m.dataset.xm; if (o.ms.has(k)) { if (o.ms.size > 1) o.ms.delete(k); } else o.ms.add(k); return draw(); }
+  };
+  body.onchange = e => { const s = e.target.closest('select[data-xk]'); if (!s) return; const k = s.dataset.xk, v = s.value;
+    o[k] = ['a', 'b', 'at'].includes(k) ? +v : k === 'g' && sp.k === 'ret' && v !== '' ? +v : v; fix(); draw(); };
+  body.oninput = e => { if (e.target.classList.contains('fct')) det._ttlEd = e.target.textContent; };
+  draw();
+}
