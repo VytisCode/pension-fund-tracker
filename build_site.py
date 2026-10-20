@@ -759,6 +759,8 @@ def build_reports(ver: dict) -> None:
     for n in ("style.css", "common.js", "data_rep.js", "hy.js", "kid.js", "rep.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "reports.html").write_text(text, encoding="utf-8")
+    ix = (DOCS / "index.html").read_text(encoding="utf-8")         # Pradžios „Mėnesio faktai“ (mkt.js) naudoja REP
+    (DOCS / "index.html").write_text(ix.replace('src="data_rep.js"', f'src="data_rep.js?v={ver["data_rep.js"]}"'), encoding="utf-8")
     print(f"docs/data_rep.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")
 
 

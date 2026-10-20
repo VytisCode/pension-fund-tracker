@@ -451,7 +451,7 @@ document.addEventListener('click', async e => {
   const pick = b.dataset.xall ? fs : b.dataset.fx != null ? [fs[+b.dataset.fx]] : bm[b.dataset.mxl] || [];
   const ttl = b.dataset.fx != null ? `${title} · ${pick[0].h}` : b.dataset.mxl ? `${title} · ${b.dataset.mxl}` : title;
   const o = b.textContent; b.disabled = true; b.textContent = '…';
-  try { await mkFactBook(pick, ttl, pl); b.textContent = '✓'; } catch (err) { console.error(err); b.textContent = '!'; }
+  try { await (pick[0] && pick[0].book ? pick[0].book(pick, ttl) : mkFactBook(pick, ttl, pl)); b.textContent = '✓'; } catch (err) { console.error(err); b.textContent = '!'; }
   setTimeout(() => { b.textContent = o; b.disabled = false; }, 1500);
 });
 function keyData(pl, d) {                   // pagrindinių rodiklių lentelė (svetainėje ir ketvirčio apžvalgoje)
@@ -916,6 +916,7 @@ function beatAt(pl, di, bm) {
 function topMgrs(pl, n = 6) { const di = dIdx(pl, MS.d) >= 0 ? dIdx(pl, MS.d) : MKT[pl].dates.length - 1; return Object.entries(byMgr(pl, di)).sort((a, b) => b[1].nav - a[1].nav).slice(0, n).map(x => x[0]); }
 /* grafiko aprašas: {u – vienetai, lines: [{l, pl, fn(di), c}]} */
 function chartSpec(f, box) {
+  if (f.sp !== undefined) return f.sp;                  // faktas su savo grafiku (mėnesio faktai)
   const t = T(), S = t.fSer, pl = box.dataset.pl || MS.pl, h = f.h, F = t.f, X = t.fx, V = t.pv, Q = t.p23;
   const one = (l, fn, u, p = pl) => ({ u, lines: [{ l, pl: p, fn }] }), mg = (p, k, ms) => ({ u: 'pct', lines: ms.map(m => ({ l: m, pl: p, fn: di => shareAt(p, di, m, k), c: mkColor(m) })) });
   if (box.id === 'miCards' || (f.hl && MK_PROV.includes(h) && box.id !== 'p23Mgr')) return { u: 'pct', lines: [{ l: `${h} · ${S.shN}`, pl, fn: di => shareAt(pl, di, h, 'nav'), c: mkColor(h) }, { l: `${h} · ${S.shP}`, pl, fn: di => shareAt(pl, di, h, 'part'), c: 'var(--text-3)' }] };
@@ -1046,11 +1047,11 @@ function mkRender() {
   ['qfNote', 'mkNote', 'mgNote', 'fdNote', 'pvNote', 'p23Note'].forEach(id => { document.getElementById(id).textContent = t.noteLB; });
   document.getElementById('mkGainN').textContent = t.noteGain;
   ['qfBar', 'mkBar', 'mgBar'].forEach(id => { document.getElementById(id).innerHTML = mkBar(); });
-  renderFacts(); renderPv(); renderP23(); renderTime(); renderMgr(); renderMgrCards(); renderFunds(); renderTd();
+  renderFacts(); renderMf(); renderPv(); renderP23(); renderTime(); renderMgr(); renderMgrCards(); renderFunds(); renderTd();
   if (typeof srcLines === 'function') srcLines();
 }
 function mkTabs() {
-  const t = T(); addSubnav([['tdTitle', t.tdTitle], ['qfTitle', t.qfTitle], ['pvTitle', t.pv.title], ['p23Title', t.p23.title], ['mkTitle', t.mkTitle], ['mgTitle', t.mgTitle], ['fdTitle', t.fdTitle]].map(([id, label]) => ({ id, label })));
+  const t = T(); addSubnav([['tdTitle', t.tdTitle], ['qfTitle', t.qfTitle], ['mfTitle', t.mf.title], ['pvTitle', t.pv.title], ['p23Title', t.p23.title], ['mkTitle', t.mkTitle], ['mgTitle', t.mgTitle], ['fdTitle', t.fdTitle]].map(([id, label]) => ({ id, label })));
 }
 let mkRz; addEventListener('resize', () => { clearTimeout(mkRz); mkRz = setTimeout(() => { renderTime(); renderMgr(); }, 120); });
 
@@ -1334,3 +1335,179 @@ document.addEventListener('click', async e => {
   try { await quarterReview(); b.textContent = '✓'; } catch (err) { console.error(err); b.textContent = '!'; }
   setTimeout(() => { b.textContent = o; b.disabled = false; }, 1500);
 });
+
+/* ---------- Mėnesio faktai iš kasdienių duomenų (savininkas 2026-10-20: „Pratęsk abu darbus“ – IDEAS.md) ----------
+   Faktai tarp LB ketvirčių: valdytojų skelbiamos kasdienės vieneto vertės ir grynieji aktyvai mėnesio pabaigoje (REP iš data_rep.js).
+   Fondai lyginami tik savo grupėje (II – gimimo metų grupė ar turto išsaugojimo, III – kategorija). Rinkos grąža – svertinė pagal
+   turtą mėnesio pradžioje (III pakopoje kasdienio turto nėra – paprastas vidurkis). Kiekvienas skaičius – Excel formulė lape „Faktai“. */
+addStrings({ mf: { title: 'Month facts', lead: 'Facts between Bank of Lithuania quarters, from managers’ daily unit values and net assets at month end: the month’s return, leaders in each group, history. Funds are compared only within their group.',
+  sel: 'Month:',
+  mon: d => `${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`, inM: d => `in ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
+  src: d => `Source: managers’ published daily unit values and net assets (last working day of the month), ${d}.`,
+  shV: 'Month-end values', shR: 'Market by month', shF: 'Facts',
+  hR: 'Month return', tR: (m, w, p, n, y) => `${m} the asset-weighted return of pillar II funds was ${w}; ${p} of ${n} funds rose. Since the start of the year: ${y}.`,
+  cR: 'Each fund: month-end unit value ÷ previous month-end − 1; weights – fund net assets at the start of the month; year to date – monthly returns chained.',
+  hG: 'Investment gain and assets', tG: (m, up, g, a, da, fl) => `${m} pillar II funds ${up ? 'earned' : 'lost'} about ${g} in investment ${up ? 'gains' : 'value'}; assets at month end – ${a} (${da}), of which contributions, switches and payouts – ${fl}.`,
+  cG: 'Gain = Σ fund return × assets at the start of the month; contributions, switches and payouts = change in assets − gain.',
+  hL: 'Leaders in groups', tL: (m, xs) => `Leaders in their groups ${m}: ${xs}.`, cL: 'Highest month return within each group (funds compared only within their group).',
+  hS: 'Largest gap in a group', tS: (g, a, pa, b, pb, v) => `The largest gap was in the ${g} group: ${a} (${pa}) and ${b} (${pb}) differ by ${v} pp.`, cS: 'Highest minus lowest month return within a group.',
+  hY: 'Year-to-date leaders', tY: (m, xs) => `Year-to-date leaders (${m}): ${xs}.`, cY: 'Unit value at month end ÷ value on 31 December − 1, highest within each group.',
+  hW: 'Most often first', tW: (p, n, tot, rest) => `This year ${p} was first in its group most often – ${n} times of ${tot} (groups × months)${rest ? `; then ${rest}` : ''}.`, cW: 'Count of months this year in which the manager’s fund had the highest month return in its group.',
+  hH: 'The month in history', tH: (r, n, y, b, bv, w, wv) => `By asset-weighted return this month ranks ${r} of ${n} months since ${y} (1 – best). Best: ${b} (${bv}); worst: ${w} (${wv}).`, cH: 'Rank of the asset-weighted pillar II month return among all months in the data.',
+  hP: 'Positive months', tP: (p, n, P, N, s) => `This year the pillar II return was positive in ${p} of ${n} months; over all data – ${P} of ${N} months (${s}).`, cP: 'Months with a positive asset-weighted pillar II return.',
+  h3: 'Pillar III: category leaders', t3: (m, xs) => `Pillar III ${m}: ${xs}.`, c3: 'Simple average and highest month return within each category (bond, mixed, equity); pillar III daily assets are not published, so no weights.',
+  x3: (c, a, f, v) => `${c} – average ${a}, leader ${f} (${v})`, h3y: 'Pillar III: year-to-date leaders', t3y: (m, xs) => `Pillar III year-to-date leaders (${m}): ${xs}.`, end: d => `end of ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`,
+  lW: 'Weighted return', lPos: 'Funds that rose', lN: 'Funds with a return', lYtd: 'Since start of year', lGain: 'Investment gain, € m', lNav: 'Net assets at month end, € m', lNavP: 'Net assets at the end of the previous month, € m', lFlow: 'Contributions, switches and payouts, € m',
+  lMax: 'Highest', lMin: 'Lowest', lGap: 'Gap, pp', lRank: 'Rank of the month', lCnt: 'Months in data', lBest: 'Best month', lWorst: 'Worst month', lAvg: 'Average', lTot: 'All group-months',
+  lPy: 'Positive months this year', lNy: 'Months this year', lPa: 'Positive months, all data', lNa: 'Months, all data', lSh: 'Share positive',
+  sR: 'Pillar II weighted month return, %', sNav: 'Pillar II net assets, € m', s3: c => `${c}: average month return, %`, sW: 'Times first (cumulative)',
+  vh: ['Pillar', 'Manager', 'Group', 'Fund', 'Month end', 'Unit value, €', 'Net assets, € m', 'Month return', 'Weight (assets at start), € m', 'Return × weight', 'Since start of year', '12 months', 'Rank in group', 'Funds in group'],
+  rh: ['Month end', 'II weighted return', 'II investment gain, € m', 'II net assets, € m', 'III average return', 'II index (start = 100)'],
+  dates: 'Dates', dM: 'Month end (change it to recalculate)', dP: 'Previous month end', dY: 'End of last year',
+  legend: [['Blue numbers', 'Month-end unit values and net assets from the managers’ daily data (sheet “Month-end values”).'], ['Black numbers', 'Formulas: returns, weights, ranks (sheets “Month-end values”, “Market by month”).'], ['Yellow numbers', 'The same figures as on the site; each is a formula. Change cell B4 in “Facts” to another month end to recalculate them (the sentence text does not change).']] } },
+{ mf: { title: 'Mėnesio faktai', lead: 'Faktai tarp Lietuvos banko ketvirčių iš valdytojų kasdien skelbiamų vieneto verčių ir grynųjų aktyvų mėnesio pabaigoje: mėnesio grąža, lyderiai kiekvienoje grupėje, istorija. Fondai lyginami tik savo grupėje.',
+  sel: 'Mėnuo:', mon: d => `${d.slice(0, 4)} m. ${['sausis', 'vasaris', 'kovas', 'balandis', 'gegužė', 'birželis', 'liepa', 'rugpjūtis', 'rugsėjis', 'spalis', 'lapkritis', 'gruodis'][+d.slice(5, 7) - 1]}`,
+  inM: d => `${d.slice(0, 4)} m. ${['sausį', 'vasarį', 'kovą', 'balandį', 'gegužę', 'birželį', 'liepą', 'rugpjūtį', 'rugsėjį', 'spalį', 'lapkritį', 'gruodį'][+d.slice(5, 7) - 1]}`,
+  src: d => `Šaltinis: valdytojų skelbiamos kasdienės vieneto vertės ir grynieji aktyvai (paskutinė mėnesio darbo diena), ${d}.`,
+  shV: 'Mėnesio vertės', shR: 'Rinka pagal mėnesius', shF: 'Faktai',
+  hR: 'Mėnesio grąža', tR: (m, w, p, n, y) => `${m} II pakopos fondų svertinė grąža – ${w}; augo ${p} iš ${n} fondų. Nuo metų pradžios – ${y}.`,
+  cR: 'Kiekvieno fondo: vieneto vertė mėnesio pabaigoje ÷ ankstesnio mėnesio pabaigos vertė − 1; svoriai – fondų grynieji aktyvai mėnesio pradžioje; nuo metų pradžios – mėnesių grąžos sujungtos grandine.',
+  hG: 'Prieaugis ir turtas', tG: (m, up, g, a, da, fl) => `${m} II pakopos fondai ${up ? 'uždirbo' : 'prarado'} apie ${g} ${up ? 'investicinio prieaugio' : 'vertės'}; turtas mėnesio pabaigoje – ${a} (${da}), iš jų įmokos, perėjimai ir išmokos – ${fl}.`,
+  cG: 'Prieaugis = Σ fondo grąža × turtas mėnesio pradžioje; įmokos, perėjimai ir išmokos = turto pokytis − prieaugis.',
+  hL: 'Lyderiai grupėse', tL: (m, xs) => `${m} lyderiai savo grupėse: ${xs}.`, cL: 'Didžiausia mėnesio grąža kiekvienoje grupėje (fondai lyginami tik savo grupėje).',
+  hS: 'Didžiausias skirtumas grupėje', tS: (g, a, pa, b, pb, v) => `Didžiausias skirtumas – grupėje „${g}“: ${a} (${pa}) ir ${b} (${pb}) skiriasi ${v} p. p.`, cS: 'Didžiausia minus mažiausia mėnesio grąža grupėje.',
+  hY: 'Nuo metų pradžios lyderiai', tY: (m, xs) => `Nuo metų pradžios lyderiai (${m}): ${xs}.`, cY: 'Vieneto vertė mėnesio pabaigoje ÷ vertė gruodžio 31 d. − 1, didžiausia kiekvienoje grupėje.',
+  hW: 'Dažniausiai pirmi', tW: (p, n, tot, rest) => `Šiais metais dažniausiai savo grupėje pirmas buvo ${p} – ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'kartą' : n % 10 === 0 || (n % 100 > 10 && n % 100 < 20) ? 'kartų' : 'kartus'} iš ${tot} (grupės × mėnesiai)${rest ? `; toliau ${rest}` : ''}.`, cW: 'Kiek kartų šiais metais valdytojo fondo mėnesio grąža buvo didžiausia jo grupėje.',
+  hH: 'Mėnuo istorijoje', tH: (r, n, y, b, bv, w, wv) => `Pagal svertinę grąžą šis mėnuo – ${r} vietoje iš ${n} mėnesių nuo ${y} (1 – geriausias). Geriausias – ${b} (${bv}), blogiausias – ${w} (${wv}).`, cH: 'II pakopos svertinės mėnesio grąžos vieta tarp visų duomenų mėnesių.',
+  hP: 'Teigiami mėnesiai', tP: (p, n, P, N, s) => `Šiais metais II pakopos grąža buvo teigiama ${p} iš ${n} mėnesių; per visą duomenų laikotarpį – ${P} iš ${N} mėnesių (${s}).`, cP: 'Mėnesiai, kai II pakopos svertinė grąža buvo teigiama.',
+  h3: 'III pakopa: kategorijų lyderiai', t3: (m, xs) => `III pakopa ${m}: ${xs}.`, c3: 'Paprastas vidurkis ir didžiausia mėnesio grąža kiekvienoje kategorijoje (obligacijų, mišrūs, akcijų); III pakopos kasdienis turtas neskelbiamas, todėl be svorių.',
+  x3: (c, a, f, v) => `${c} – vidurkis ${a}, lyderis ${f} (${v})`, h3y: 'III pakopa: nuo metų pradžios', t3y: (m, xs) => `III pakopos lyderiai nuo metų pradžios (${m}): ${xs}.`, end: d => `${d.slice(0, 4)} m. ${MK_MON.lt[+d.slice(5, 7) - 1]} pabaiga`,
+  lW: 'Svertinė grąža', lPos: 'Fondų, kurių vertė augo', lN: 'Fondų su grąža', lYtd: 'Nuo metų pradžios', lGain: 'Investicinis prieaugis, mln. €', lNav: 'Grynieji aktyvai mėnesio pabaigoje, mln. €', lNavP: 'Grynieji aktyvai praėjusio mėnesio pabaigoje, mln. €', lFlow: 'Įmokos, perėjimai ir išmokos, mln. €',
+  lMax: 'Didžiausia', lMin: 'Mažiausia', lGap: 'Skirtumas, p. p.', lRank: 'Mėnesio vieta', lCnt: 'Mėnesių duomenyse', lBest: 'Geriausias mėnuo', lWorst: 'Blogiausias mėnuo', lAvg: 'Vidurkis', lTot: 'Visi grupių mėnesiai',
+  lPy: 'Teigiami mėnesiai šiais metais', lNy: 'Mėnesių šiais metais', lPa: 'Teigiami mėnesiai, visi duomenys', lNa: 'Mėnesių, visi duomenys', lSh: 'Teigiamų dalis',
+  sR: 'II pakopos svertinė mėnesio grąža, %', sNav: 'II pakopos grynieji aktyvai, mln. €', s3: c => `${c}: vidutinė mėnesio grąža, %`, sW: 'Kartų pirmas (sukaupta)',
+  vh: ['Pakopa', 'Valdytojas', 'Grupė', 'Fondas', 'Mėnesio pabaiga', 'Vieneto vertė, €', 'Grynieji aktyvai, mln. €', 'Mėnesio grąža', 'Svoris (turtas pradžioje), mln. €', 'Grąža × svoris', 'Nuo metų pradžios', '12 mėn.', 'Vieta grupėje', 'Fondų grupėje'],
+  rh: ['Mėnesio pabaiga', 'II svertinė grąža', 'II investicinis prieaugis, mln. €', 'II grynieji aktyvai, mln. €', 'III vidutinė grąža', 'II indeksas (pradžia = 100)'],
+  dates: 'Datos', dM: 'Mėnesio pabaiga (pakeiskite – skaičiai persiskaičiuos)', dP: 'Praėjusio mėnesio pabaiga', dY: 'Praėjusių metų pabaiga',
+  legend: [['Mėlyni skaičiai', 'Vieneto vertės ir grynieji aktyvai mėnesio pabaigoje iš valdytojų kasdienių duomenų (lapas „Mėnesio vertės“).'], ['Juodi skaičiai', 'Formulės: grąžos, svoriai, vietos (lapai „Mėnesio vertės“, „Rinka pagal mėnesius“).'], ['Geltoni skaičiai', 'Tie patys skaičiai kaip svetainėje; kiekvienas – formulė. Lape „Faktai“ pakeitus langelį B4 į kitą mėnesio pabaigą, jie persiskaičiuoja (sakinių tekstas nesikeičia).']] } });
+const MFD = (() => {                       // mėnesių duomenys: fondai, grąžos, rinkos eilutė (skaičiuojama vieną kartą)
+  if (typeof REP === 'undefined') return null;
+  const RM = REP.months, gl2 = Object.fromEntries(DATA.groups.map(g => [g.id, groupLabel(g)])), c3 = CAT3[lang] || CAT3.lt;
+  const fs = REP.funds.filter(f => (f.pl === 'II' && gl2[f.g]) || (f.pl === 'III' && c3[f.g])).map(f => ({ ...f, gl: f.pl === 'II' ? gl2[f.g] : c3[f.g], pv: labelOfMgr(f.p) }));
+  const mon = k => +iso(RM[k]).slice(5, 7);
+  fs.forEach(f => {
+    f.r = RM.map((_, k) => k > 0 && f.m[k] != null && f.m[k - 1] != null ? f.m[k] / f.m[k - 1] - 1 : null);
+    f.a = f.am.map(x => x == null ? null : x / 1e6);
+    f.w = RM.map((_, k) => f.r[k] != null && k > 0 && f.a[k - 1] != null ? f.a[k - 1] : null);
+    f.y = RM.map((_, k) => { const j = k - mon(k); return j >= 0 && f.m[k] != null && f.m[j] != null ? f.m[k] / f.m[j] - 1 : null; });
+    f.y12 = RM.map((_, k) => k >= 12 && f.m[k] != null && f.m[k - 12] != null ? f.m[k] / f.m[k - 12] - 1 : null);
+  });
+  fs.forEach(f => { f.rk = RM.map((_, k) => f.r[k] == null ? null : fs.filter(x => x.pl === f.pl && x.gl === f.gl && x.r[k] != null && x.r[k] > f.r[k]).length + 1);
+    f.ng = RM.map((_, k) => f.r[k] == null ? null : fs.filter(x => x.pl === f.pl && x.gl === f.gl && x.r[k] != null).length); });
+  const II = fs.filter(f => f.pl === 'II'), III = fs.filter(f => f.pl === 'III');
+  const mkt = RM.map((_, k) => { let sw = 0, sx = 0, nav = 0, n3 = 0, s3 = 0;
+    II.forEach(f => { if (f.w[k] != null) { sw += f.w[k]; sx += f.r[k] * f.w[k]; } if (f.a[k] != null) nav += f.a[k]; });
+    III.forEach(f => { if (f.r[k] != null) { n3++; s3 += f.r[k]; } });
+    return { w: sw ? sx / sw : null, g: sx, nav, r3: n3 ? s3 / n3 : null }; });
+  let ix = 100; mkt.forEach((x, k) => { if (k > 0 && x.w != null) ix *= 1 + x.w; x.ix = ix; });   // mėnuo be grąžos – indeksas nesikeičia
+  return { RM, fs, II, III, mkt, mon, k0: 1 };
+})();
+let MFK = MFD ? MFD.RM.length - 1 : -1;
+function mfFacts(k) {
+  const t = T(), V = t.mf, D = MFD; if (!D || k < 1) return [];
+  const { RM, fs, II, III, mkt, mon } = D, d = iso(RM[k]), m = V.inM(d), src = V.src(d), out = [], L = lang === 'lt';
+  const VS = `'${V.shV}'`, RS = `'${V.shR}'`, M = '$B$4', MP = '$B$5', MY = '$B$6', rp = x => pct(x * 100), pp = x => num(x * 100, 2);
+  const cr = (pl, gl) => `${VS}!A:A,"${pl}"${gl ? `,${VS}!C:C,${xq(gl)}` : ''},${VS}!E:E,${M}`;
+  const add = (h, text, calc, nb, sp) => out.push({ h, text, calc, src, nums: nb.a, sp, book: mfBook });
+  const kd = k - mon(k), yr = []; for (let j = Math.max(1, kd + 1); j <= k; j++) yr.push(j);
+  const last = (n, fn) => { const pts = []; for (let j = Math.max(1, k - n + 1); j <= k; j++) { const v = fn(j); if (v != null) pts.push([RM[j], v]); } return pts; };
+  const ord = pl => pl === 'II' ? DATA.groups.map(g => groupLabel(g)) : ['bond', 'mixed', 'equity'].map(c => (CAT3[lang] || CAT3.lt)[c]);
+  const groupsOf = pl => { const o = ord(pl); return [...new Set(fs.filter(f => f.pl === pl).map(f => f.gl))].sort((a, b) => o.indexOf(a) - o.indexOf(b)); };
+  const best = (pl, gl, key) => fs.filter(f => f.pl === pl && f.gl === gl && f[key][k] != null).sort((a, b) => b[key][k] - a[key][k]);
+  const X = mkt[k];
+  if (X.w != null) { const nb = NB(), rs = II.filter(f => f.r[k] != null), pos = rs.filter(f => f.r[k] > 0).length, y = kd >= 0 && mkt[kd].ix ? X.ix / mkt[kd].ix - 1 : null;
+    nb.add(V.lW, X.w, () => `SUMIFS(${VS}!J:J,${cr('II')})/SUMIFS(${VS}!I:I,${cr('II')})`, Zr);
+    nb.add(V.lPos, pos, () => `COUNTIFS(${cr('II')},${VS}!H:H,">0")`, Zi); nb.add(V.lN, rs.length, () => `COUNTIFS(${cr('II')},${VS}!H:H,">-1")`, Zi);
+    if (y != null) nb.add(V.lYtd, y, () => `SUMIFS(${RS}!F:F,${RS}!A:A,${M})/SUMIFS(${RS}!F:F,${RS}!A:A,${MY})-1`, Zr);
+    add(V.hR, V.tR(m[0].toUpperCase() + m.slice(1), rp(X.w), pos, rs.length, y == null ? '–' : rp(y)), V.cR, nb, { u: 'pct', lines: [{ l: V.sR, pts: last(36, j => mkt[j].w == null ? null : mkt[j].w * 100) }] }); }
+  if (X.w != null && mkt[k - 1].nav) { const nb = NB(), da = X.nav - mkt[k - 1].nav, fl = da - X.g;
+    const i0 = nb.add(V.lGain, X.g, () => `SUMIFS(${VS}!J:J,${cr('II')})`, Zm), i1 = nb.add(V.lNav, X.nav, () => `SUMIFS(${VS}!G:G,${cr('II')})`, Zm);
+    const i2 = nb.add(V.lNavP, mkt[k - 1].nav, () => `SUMIFS(${VS}!G:G,${VS}!A:A,"II",${VS}!E:E,${MP})`, Zm); nb.add(V.lFlow, fl, c => `${c(i1)}-${c(i2)}-${c(i0)}`, Zm);
+    add(V.hG, V.tG(m[0].toUpperCase() + m.slice(1), X.g >= 0, mMn(Math.abs(X.g)), mMn(X.nav), mSMn(da), mSMn(fl)), V.cG, nb, { u: 'mn', lines: [{ l: V.sNav, pts: RM.map((x, j) => j <= k && mkt[j].nav ? [x, mkt[j].nav] : null).filter(Boolean) }] }); }
+  { const nb = NB(), xs = [];
+    groupsOf('II').forEach(gl => { const b = best('II', gl, 'r'); if (!b.length) return; xs.push(`${gl} – ${b[0].pv} (${rp(b[0].r[k])})`); nb.add(`${gl}: ${b[0].pv}`, b[0].r[k], () => `_xlfn.MAXIFS(${VS}!H:H,${cr('II', gl)})`, Zr); });
+    if (xs.length) add(V.hL, V.tL(m[0].toUpperCase() + m.slice(1), xs.join('; ')), V.cL, nb, null); }
+  { const gs = groupsOf('II').map(gl => ({ gl, b: best('II', gl, 'r') })).filter(x => x.b.length > 1).map(x => ({ ...x, gap: x.b[0].r[k] - x.b[x.b.length - 1].r[k] })).sort((a, b) => b.gap - a.gap);
+    if (gs.length) { const g = gs[0], a = g.b[0], z = g.b[g.b.length - 1], nb = NB();
+      const i0 = nb.add(`${V.lMax}: ${a.pv}`, a.r[k], () => `_xlfn.MAXIFS(${VS}!H:H,${cr('II', g.gl)})`, Zr), i1 = nb.add(`${V.lMin}: ${z.pv}`, z.r[k], () => `_xlfn.MINIFS(${VS}!H:H,${cr('II', g.gl)})`, Zr);
+      nb.add(V.lGap, g.gap * 100, c => `(${c(i0)}-${c(i1)})*100`, Zp);
+      add(V.hS, V.tS(g.gl, a.pv, rp(a.r[k]), z.pv, rp(z.r[k]), pp(g.gap)), V.cS, nb, { u: 'pct', lines: g.b.map(f => ({ l: f.pv, c: mkColor(f.pv), pts: last(12, j => f.r[j] == null ? null : f.r[j] * 100) })) }); } }
+  if (kd >= 0) { const nb = NB(), xs = [];
+    groupsOf('II').forEach(gl => { const b = best('II', gl, 'y'); if (!b.length) return; xs.push(`${gl} – ${b[0].pv} (${rp(b[0].y[k])})`); nb.add(`${gl}: ${b[0].pv}`, b[0].y[k], () => `_xlfn.MAXIFS(${VS}!K:K,${cr('II', gl)})`, Zr); });
+    if (xs.length) add(V.hY, V.tY(V.end(d), xs.join('; ')), V.cY, nb, null); }
+  if (yr.length) { const ps = [...new Set(II.map(f => f.pv))], win = p => II.filter(f => f.pv === p).reduce((s, f) => s + yr.filter(j => f.rk[j] === 1).length, 0);
+    const tot = II.reduce((s, f) => s + yr.filter(j => f.rk[j] === 1).length, 0), rk = ps.map(p => ({ p, n: win(p) })).filter(x => x.n).sort((a, b) => b.n - a.n);
+    if (rk.length) { const nb = NB(), per = `${VS}!E:E,">"&${MY},${VS}!E:E,"<="&${M}`;
+      rk.forEach(x => nb.add(x.p, x.n, () => `COUNTIFS(${VS}!A:A,"II",${VS}!B:B,${xq(x.p)},${VS}!M:M,1,${per})`, Zi)); nb.add(V.lTot, tot, () => `COUNTIFS(${VS}!A:A,"II",${VS}!M:M,1,${per})`, Zi);
+      add(V.hW, V.tW(rk[0].p, rk[0].n, tot, rk.slice(1, 3).map(x => `${x.p} (${x.n})`).join(', ')), V.cW, nb,
+        { u: 'int', lines: rk.slice(0, 6).map(x => ({ l: x.p, c: mkColor(x.p), pts: yr.map(j => [RM[j], II.filter(f => f.pv === x.p).reduce((s, f) => s + yr.filter(i => i <= j && f.rk[i] === 1).length, 0)]) })) }); } }
+  if (X.w != null) { const all = mkt.map((x, j) => ({ j, w: x.w })).filter(x => x.j >= 1 && x.w != null), r = all.filter(x => x.w > X.w).length + 1;
+    const b = all.reduce((a, x) => x.w > a.w ? x : a), w = all.reduce((a, x) => x.w < a.w ? x : a), nb = NB(), cur = `SUMIFS(${RS}!B:B,${RS}!A:A,${M})`;
+    nb.add(V.lRank, r, () => `RANK(${cur},${RS}!B:B,0)`, Zi); nb.add(V.lCnt, all.length, () => `COUNT(${RS}!B:B)`, Zi);
+    nb.add(`${V.lBest}: ${V.mon(iso(RM[b.j]))}`, b.w, () => `MAX(${RS}!B:B)`, Zr); nb.add(`${V.lWorst}: ${V.mon(iso(RM[w.j]))}`, w.w, () => `MIN(${RS}!B:B)`, Zr);
+    add(V.hH, V.tH(r, all.length, L ? `${iso(RM[all[0].j]).slice(0, 4)} m. ${['sausio', 'vasario', 'kovo', 'balandžio', 'gegužės', 'birželio', 'liepos', 'rugpjūčio', 'rugsėjo', 'spalio', 'lapkričio', 'gruodžio'][+iso(RM[all[0].j]).slice(5, 7) - 1]}` : V.mon(iso(RM[all[0].j])),
+      V.mon(iso(RM[b.j])), rp(b.w), V.mon(iso(RM[w.j])), rp(w.w)), V.cH, nb, { u: 'pct', lines: [{ l: V.sR, pts: all.map(x => [RM[x.j], x.w * 100]) }] });
+    const py = yr.filter(j => mkt[j].w > 0).length, ny = yr.filter(j => mkt[j].w != null).length, upto = all.filter(x => x.j <= k), pa = upto.filter(x => x.w > 0).length, nb2 = NB();
+    const yc = `${RS}!A:A,">"&${MY},${RS}!A:A,"<="&${M}`;
+    nb2.add(V.lPy, py, () => `COUNTIFS(${RS}!B:B,">0",${yc})`, Zi); nb2.add(V.lNy, ny, () => `COUNTIFS(${RS}!B:B,">-1",${yc})`, Zi);
+    const i2 = nb2.add(V.lPa, pa, () => `COUNTIFS(${RS}!B:B,">0",${RS}!A:A,"<="&${M})`, Zi), i3 = nb2.add(V.lNa, upto.length, () => `COUNTIFS(${RS}!B:B,">-1",${RS}!A:A,"<="&${M})`, Zi);
+    nb2.add(V.lSh, pa / upto.length, c => `${c(i2)}/${c(i3)}`, Zr);
+    add(V.hP, V.tP(py, ny, pa, upto.length, pctPlain(pa / upto.length * 100)), V.cP, nb2, null); }
+  [['r', V.h3, V.t3, m], ['y', V.h3y, V.t3y, V.end(d)]].forEach(([key, h, tx, mm]) => { if (key === 'y' && kd < 0) return;
+    const nb = NB(), xs = [], col = key === 'r' ? 'H' : 'K';
+    groupsOf('III').forEach(gl => { const b = best('III', gl, key); if (!b.length) return; const av = b.reduce((s, f) => s + f[key][k], 0) / b.length;
+      nb.add(`${gl}: ${V.lAvg.toLowerCase()}`, av, () => `AVERAGEIFS(${VS}!${col}:${col},${cr('III', gl)})`, Zr); nb.add(`${gl}: ${b[0].n}`, b[0][key][k], () => `_xlfn.MAXIFS(${VS}!${col}:${col},${cr('III', gl)})`, Zr);
+      xs.push(V.x3(gl, rp(av), b[0].n, rp(b[0][key][k]))); });
+    if (xs.length) add(h, tx(mm, xs.join('; ')), V.c3, nb, key === 'r' ? { u: 'pct', lines: groupsOf('III').map((gl, i) => ({ l: V.s3(gl), c: `var(--s${i + 1})`, pts: last(36, j => { const xs2 = III.filter(f => f.gl === gl && f.r[j] != null); return xs2.length ? xs2.reduce((s, f) => s + f.r[j], 0) / xs2.length * 100 : null; }) })) } : null); });
+  return out;
+}
+async function mfBook(facts, title) {
+  const t = T(), V = t.mf, D = MFD, L = lang === 'lt', k = MFK, d = iso(D.RM[k]), wb = XL.book(), ser = x => x + 25569, Rq = `'${V.shR}'`, Vq = `'${V.shV}'`;
+  const res = [[{ v: `${title} · ${V.mon(d)}`, s: 'title' }], [{ v: V.src(d), s: 'sub' }], [{ v: V.dates, s: 'b' }],
+    [{ v: V.dM, s: 'b' }, { v: ser(D.RM[k]), z: 'yyyy-mm-dd', s: 'in' }], [{ v: V.dP, s: 'b' }, xF('EOMONTH(B4,-1)', ser(D.RM[k - 1]), 'yyyy-mm-dd')],
+    [{ v: V.dY, s: 'b' }, xF('EOMONTH(B4,-MONTH(B4))', ser(Math.round(Date.UTC(+d.slice(0, 4) - 1, 11, 31) / DAY)), 'yyyy-mm-dd')], [], xHdr([t.fx.fact, t.fx.fig, t.fx.val])];
+  facts.forEach(f => { res.push([{ v: f.h, s: 'step' }, { v: f.text, s: 'b' }], [null, { v: `${t.how} ${f.calc}`, s: 'note' }]);
+    const r0 = res.length + 1, c = i => `C${r0 + i}`; f.nums.forEach(n => res.push([null, n.l, n.v == null ? null : xF(n.f(c), n.v, n.z, 'res')])); res.push([]); });
+  XL.sheet(wb, V.shF, res, { cols: [24, 70, 16], freeze: { r: 8 } });
+  const rr = [xHdr(V.rh)];
+  D.RM.forEach((x, j) => { const n = rr.length + 1, X = D.mkt[j], c = `${Vq}!A:A,"II",${Vq}!E:E,A${n}`;
+    rr.push([{ v: ser(x), z: 'yyyy-mm-dd', s: 'in' }, { f: `IFERROR(SUMIFS(${Vq}!J:J,${c})/SUMIFS(${Vq}!I:I,${c}),"")`, v: X.w ?? '', z: Zr }, { f: `SUMIFS(${Vq}!J:J,${c})`, v: X.g, z: Zm },
+      { f: `SUMIFS(${Vq}!G:G,${c})`, v: X.nav, z: Zm }, { f: `IFERROR(AVERAGEIFS(${Vq}!H:H,${Vq}!A:A,"III",${Vq}!E:E,A${n}),"")`, v: X.r3 ?? '', z: Zr },
+      n === 2 ? { v: 100, z: '0.00', s: 'in' } : { f: `F${n - 1}*(1+N(B${n}))`, v: X.ix, z: '0.00' }]); });
+  XL.sheet(wb, V.shR, rr, { cols: [12, 14, 16, 16, 14, 14], freeze: { r: 1 } });
+  const vr = [xHdr(V.vh)], e = (f, v, z) => ({ f, v: v == null ? '' : v, z });
+  D.fs.forEach(f => D.RM.forEach((x, j) => { const n = vr.length + 1;
+    vr.push([f.pl, f.pv, f.gl, f.n, { v: ser(x), z: 'yyyy-mm-dd', s: 'in' }, f.m[j] == null ? null : { v: f.m[j], z: '0.0000', s: 'in' }, f.a[j] == null ? null : { v: f.a[j], z: '0.000', s: 'in' },
+      e(`IF(AND(D${n}=D${n - 1},ISNUMBER(F${n}),ISNUMBER(F${n - 1})),F${n}/F${n - 1}-1,"")`, f.r[j], Zr), e(`IF(AND(ISNUMBER(H${n}),ISNUMBER(G${n - 1})),G${n - 1},"")`, f.w[j], '0.000'),
+      e(`IF(ISNUMBER(I${n}),H${n}*I${n},"")`, f.w[j] == null ? null : f.r[j] * f.w[j], '0.0000'),
+      e(`IFERROR(IF(AND(INDEX(D:D,ROW()-MONTH(E${n}))=D${n},ISNUMBER(F${n}),ISNUMBER(INDEX(F:F,ROW()-MONTH(E${n})))),F${n}/INDEX(F:F,ROW()-MONTH(E${n}))-1,""),"")`, f.y[j], Zr),
+      e(`IFERROR(IF(AND(INDEX(D:D,ROW()-12)=D${n},ISNUMBER(F${n}),ISNUMBER(INDEX(F:F,ROW()-12))),F${n}/INDEX(F:F,ROW()-12)-1,""),"")`, f.y12[j], Zr),
+      e(`IF(ISNUMBER(H${n}),COUNTIFS(A:A,A${n},C:C,C${n},E:E,E${n},H:H,">"&(H${n}+1E-12))+1,"")`, f.rk[j], Zi), e(`IF(ISNUMBER(H${n}),COUNTIFS(A:A,A${n},C:C,C${n},E:E,E${n},H:H,">-1"),"")`, f.ng[j], Zi)]); }));
+  XL.sheet(wb, V.shV, vr, { cols: [7, 11, 22, 44, 12, 12, 14, 12, 14, 12, 12, 12, 10, 10], freeze: { r: 1 } });
+  const meth = [[{ v: L ? 'Metodika ir šaltiniai' : 'Methodology and sources', s: 'title' }], [], ...V.legend.map(([a, b]) => [{ v: a, s: 'b' }, { v: b, s: 'note' }]), [],
+    ...facts.map(f => [{ v: f.h, s: 'b' }, { v: f.calc, s: 'note' }]), [],
+    [{ v: L ? 'Puslapis' : 'Page', s: 'b' }, { v: location.href.split('#')[0], l: location.href.split('#')[0], s: 'link' }], [{ v: L ? 'Failas sukurtas' : 'File created', s: 'b' }, new Date().toLocaleString(t.locale)],
+    [{ v: L ? 'Pastaba' : 'Note', s: 'b' }, { v: L ? 'Informacinė medžiaga, ne investavimo rekomendacija. Valdytojų skelbiamos vertės gali būti vėliau patikslintos.' : 'For information only, not investment advice. Values published by managers may later be revised.', s: 'note' }]];
+  XL.sheet(wb, L ? 'Metodika' : 'Methodology', meth, { cols: [28, 110], grid: false });
+  await XL.save(wb, `${title.replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40)}_${d}.xlsx`);
+}
+function renderMf() {
+  const el = document.getElementById('mfCards'); if (!el) return;
+  const t = T(), V = t.mf; document.getElementById('mfTitle').textContent = V.title; document.getElementById('mfLead').textContent = V.lead;
+  if (!MFD) { el.innerHTML = ''; return; }
+  document.getElementById('mfBar').innerHTML = `<div class="bar mkbar"><label class="field">${V.sel} <select id="mfSel">${MFD.RM.map((x, k) => k ? `<option value="${k}"${k === MFK ? ' selected' : ''}>${hEsc(V.mon(iso(x)))}</option>` : '').reverse().join('')}</select></label></div>`;
+  factCards(el, mfFacts(MFK), V.title, 'II');
+  document.getElementById('mfAll').textContent = t.copyAll; document.getElementById('mfXl').textContent = t.fx.xlAll;
+  document.getElementById('mfNote').textContent = V.cR;
+}
+document.addEventListener('change', e => { if (e.target.id !== 'mfSel') return; MFK = +e.target.value; renderMf(); });
