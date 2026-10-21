@@ -129,13 +129,13 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data_bx_ee2.js?v=6aa8a1a0"></script><script>var PL3 = 1, PLX = {"c": "EE", "pl": "II", "page": "baltic_ee", "ppy": 251.7, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_ee2.js?v=d892423a"></script><script>var PL3 = 1, PLX = {"c": "EE", "pl": "II", "page": "baltic_ee", "ppy": 251.7, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="data_idx.js?v=87f2e19d"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
 
 <script src="events.js?v=37e94529"></script>
 <script src="common.js?v=a467dfad"></script>
-<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {"f0|r1": 0.53, "f1|r1": 1.13, "f2|r1": 0.88, "f3|r1": 0.5, "f4|r1": 0.47, "f5|r1": 0.28, "f6|r2": 1.57, "f7|r2": 1.21, "f8|r2": 1.14, "f9|r2": 0.9, "f10|r2": 0.74, "f11|r3": 1.08, "f12|r3": 1.13, "f13|r3": 0.95, "f14|r3": 0.99, "f15|r3": 0.28, "f16|r3": 0.74, "f17|r3": 0.28, "f18|r4": 0.27, "f19|r4": 0.27, "f20|r4": 0.72, "f21|r4": 0.31, "f22|r4": 0.75, "f23|r4": 0.27}); }</script><script src="perf.js?v=36ddf652"></script>
+<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {"f0|r1": 0.53, "f1|r1": 1.13, "f2|r1": 0.88, "f3|r1": 0.5, "f4|r1": 0.47, "f5|r1": 0.28, "f6|r2": 1.57, "f7|r2": 1.21, "f8|r2": 1.14, "f9|r2": 0.9, "f10|r2": 0.74, "f11|r3": 1.08, "f12|r3": 1.13, "f13|r3": 0.95, "f14|r3": 0.99, "f15|r3": 0.28, "f16|r3": 0.74, "f17|r3": 0.28, "f18|r4": 0.27, "f19|r4": 0.27, "f20|r4": 0.72, "f21|r4": 0.31, "f22|r4": 0.75, "f23|r4": 0.27}); }</script><script src="perf.js?v=e21e3c30"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');

@@ -394,6 +394,15 @@ function mkBuild() {
   });
   return { reps: reps.filter(p => big.some(g => g.funds.some(f => f.provider === p.id))), big, all, mode: (() => { try { return localStorage.getItem('bxMkMode') || 'all'; } catch (e) { return 'all'; } })() };
 }
+function mkStartOf(g, pid, rng) {                     // pasirinkto valdytojo pirmojo (veikiančio) fondo grupėje pradžia; neturi fondo – grupė be pakeitimų
+  const d = g.funds.filter(f => f.provider === pid && !isStale(f, rng.overallLast)).map(f => f.d[0]);
+  return d.length ? Math.min(...d) : null;
+}
+function mkStart(g, rng) {                             // bendra pradžia: vėliausia iš valdytojų pirmųjų (veikiančių) fondų pradžių grupėje
+  const st = {};
+  g.funds.forEach(f => { if (isStale(f, rng.overallLast)) return; st[f.provider] = Math.min(st[f.provider] ?? Infinity, f.d[0]); });
+  const v = Object.values(st); return v.length ? Math.max(...v) : null;
+}
 function mkSwap(on) {                                 // valdytojų vaizdas: grupės ir stulpelių pavadinimai
   if (on) { MK.G = DATA.groups; MK.L = MK.reps.map(p => p.label); DATA.groups = MK.mode === 'all' ? MK.all : MK.big; MK.reps.forEach(p => { p.label = p.m || p.label; }); }
   else { DATA.groups = MK.G; MK.reps.forEach((p, i) => { p.label = MK.L[i]; }); }
@@ -482,8 +491,8 @@ function renderMarket() {
   const rows = DATA.groups.map(g => {
     const rng = rangeFor(g), vals = {}, ann = {};
     if (P.gx) {                                   // visi nuo Goindex fondo pradžios (arba nuo vėlesnės laikotarpio pradžios)
-      const gf = g.funds.find(f => f.provider === 'GOINDEX');
-      if (gf) { rng.anchor = Math.max(rng.anchor, gf.d[0]); gxStarts.push(gf.d[0]); }
+      const gs = MK_ON ? (MK.gxm && MK.gxm !== 'common' ? mkStartOf(g, MK.gxm, rng) : mkStart(g, rng)) : (g.funds.find(f => f.provider === 'GOINDEX') || { d: [null] }).d[0];   // LV/EE – kai visi grupės valdytojai jau turi fondą
+      if (gs != null) { rng.anchor = Math.max(rng.anchor, gs); gxStarts.push(gs); }
     }
     g.rngM = rng;
     provs.forEach(p => {
@@ -1071,7 +1080,7 @@ function marketBook() {
     rank.push([groupLabel(g), ...provs.map((p, i) => valOf(g, p, 'J') == null ? null : xlF(`RANK(${R}!${colOf(i)}${r},${R}!$B${r}:$${colOf(provs.length - 1)}${r},0)`, rankOf(provs.map(o => ({ key: o.id, v: valOf(g, o, 'J') }))).map.get(p.id), '0')) ]); });
   rank.push([S.avg, ...provs.map((p, i) => xlF(`AVERAGE(${colOf(i)}2:${colOf(i)}${last})`, meanOf(rank.slice(1).map(x => x[i + 1] ? x[i + 1].v : null)), '0.0'))]);
   /* 4. Metodika */
-  const meth = L ? [['Metodika ir šaltiniai'], [], ['Laikotarpis', periodText() + (P.gx ? ' · nuo Goindex pradžios' : '')], ['Duomenys iki', iso(LATEST)], ['Atsisiųsta', DATA.generated],
+  const meth = L ? [['Metodika ir šaltiniai'], [], ['Laikotarpis', periodText() + (P.gx ? ' · ' + T().gxBtn : '')], ['Duomenys iki', iso(LATEST)], ['Atsisiųsta', DATA.generated],
     ['Šaltinis', 'Valdytojų skelbiamos vieneto vertės (lapas „Vertės“) – patikrinamos valdytojų svetainėse.'], [],
     ['Grąža', 'Pabaigos vieneto vertė ÷ pradžios vieneto vertė − 1 (lapas „Skaičiavimai“, stulpelis J). Pradžios vertė – paskutinė vertė laikotarpio pradžios dieną arba prieš ją.' + (REAL ? ' Reali grąža: dar padalinta iš VKI pokyčio (M, N stulpeliai).' : '')],
     ['Metinė grąža', '(1 + grąža) ^ (365,25 ÷ dienos) − 1; dienos = laikotarpio pabaiga − pradžia (stulpeliai K, L).'],
@@ -1079,7 +1088,7 @@ function marketBook() {
     ['Palyginimas', ref ? `${labelOf(ref)} grąža minus kiekvieno konkurento grąža; paskutinis stulpelis – minus konkurentų vidurkis.` : 'Kiekvieno valdytojo grąža minus kitų valdytojų medianos toje grupėje (MEDIAN).'],
     ['Vieta', 'RANK: 1 – didžiausia grąža grupėje.'], ['Vidurkis', 'Paprastas grupių vidurkis (AVERAGE), tušti langeliai neskaičiuojami.'],
     ['Pastaba', 'Fondas be naujų duomenų (> 5 d. atsilikęs) arba neturintis vertės laikotarpio pradžioje – paliekamas tuščias. 2003–2009 fondai, pradėti ≤ 7 d. po laikotarpio pradžios už 1,00 €, skaičiuojami nuo pirmos vertės.']]
-    : [['Methodology and sources'], [], ['Period', periodText() + (P.gx ? ' · since Goindex start' : '')], ['Data until', iso(LATEST)], ['Downloaded', DATA.generated],
+    : [['Methodology and sources'], [], ['Period', periodText() + (P.gx ? ' · ' + T().gxBtn : '')], ['Data until', iso(LATEST)], ['Downloaded', DATA.generated],
     ['Source', 'Unit values published by the managers (sheet “Values”) – can be checked on the managers’ websites.'], [],
     ['Return', 'End unit value ÷ start unit value − 1 (sheet “Calculations”, column J). Start value – the last value on or before the period start.' + (REAL ? ' Real return: also divided by the CPI change (columns M, N).' : '')],
     ['Annualized', '(1 + return) ^ (365.25 ÷ days) − 1; days = period end − start (columns K, L).'],
@@ -1503,9 +1512,22 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
   if (PX.c !== 'LT') {                                  // „Visa rinka“: valdytojai × grupės (didžiausias valdytojo fondas grupėje)
     MK = mkBuild();
     document.body.classList.add('bxmk');
-    $('btnGx').style.display = 'none';
-    const nO = MK.reps.length - 1, wO = n => ({ 2: ['two', 'dviejų'], 3: ['three', 'trijų'], 4: ['four', 'keturių'], 5: ['five', 'penkių'], 6: ['six', 'šešių'] })[n] || [n, n];
-    addStrings({ mrefNone: `each vs. median of the other ${wO(nO)[0]}` }, { mrefNone: `kiekvienas – su kitų ${wO(nO)[1]} mediana` });
+    addStrings({ gxOff: 'Each fund from the period start', gxCommon: 'Common start of all the group’s managers', gxOf: m => `Since ${m} start`, gxLbl: 'Start:',
+      gxNoteC: d => `“Common start” is on: in each group every fund is measured from the date when all the group’s managers already had a fund (${d}) or from the period start, whichever is later, so all managers are compared over the same dates.`,
+      gxNoteM: (m, d) => `“Since ${m} start” is on: in each group every fund is measured from the start of ${m}’s first fund in that group (${d}) or from the period start, whichever is later. Funds that started later show “–”; groups without a ${m} fund are not changed.` },
+      { gxOff: 'Kiekvienas fondas nuo laikotarpio pradžios', gxCommon: 'Nuo bendros visų grupės valdytojų pradžios', gxOf: m => `Nuo ${m} pradžios`, gxLbl: 'Pradžia:',
+      gxNoteC: d => `Įjungta „Nuo bendros pradžios“: kiekvienoje grupėje visi fondai skaičiuojami nuo dienos, kai fondą jau turėjo visi tos grupės valdytojai (${d}), arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi valdytojai lyginami per tas pačias datas.`,
+      gxNoteM: (m, d) => `Įjungta „Nuo ${m} pradžios“: kiekvienoje grupėje visi fondai skaičiuojami nuo ${m} pirmojo fondo toje grupėje pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė. Vėliau pradėję fondai rodomi „–“; grupės be ${m} fondo nesikeičia.` });
+    try { MK.gxm = localStorage.getItem(STKEY + 'gxm') || 'common'; } catch (e) { MK.gxm = 'common'; }
+    const mName = id => { const r = MK.reps.find(p => p.id === id); return r ? r.m || r.label : ''; };
+    const gxLabels = () => { [['lt'], ['en']].forEach(([l]) => { const S = I18N[l], m = mName(MK.gxm);
+      S.gxBtn = MK.gxm === 'common' ? S.gxCommon : S.gxOf(m); S.gxNote = MK.gxm === 'common' ? S.gxNoteC : d => S.gxNoteM(m, d); }); };
+    const gl = document.createElement('label'); gl.className = 'field'; gl.innerHTML = '<span id="gxLbl"></span> <select id="gxSel"></select>';
+    $('btnGx').before(gl); $('btnGx').style.display = 'none';
+    $('gxSel').addEventListener('change', e => { const v = e.target.value; P.gx = v !== 'off'; if (P.gx) MK.gxm = v; try { localStorage.setItem(STKEY + 'gxm', MK.gxm); } catch (er) {} saveState(); renderMarket(); });
+    MK.gxUi = () => { gxLabels(); $('gxLbl').textContent = T().gxLbl;
+      $('gxSel').innerHTML = `<option value="off">${T().gxOff}</option><option value="common">${T().gxCommon}</option>` + MK.reps.map(p => `<option value="${p.id}">${T().gxOf(p.m || p.label)}</option>`).join('');
+      $('gxSel').value = P.gx ? MK.gxm : 'off'; };
     addStrings({ hMarket: 'Whole market: return and rank by group', mkAll: 'All manager’s funds', mkBig: 'Largest fund', mkXl: 'Excel with formulas – in the “Largest fund” view',
       mkNote: { all: 'Column = manager; cell = asset-weighted average return of all the manager’s active funds in the group (equal weights where assets are unknown), so the whole market is covered.', big: 'Column = manager; cell = the manager’s largest active fund in the group (by net assets).' } },
       { hMarket: 'Visa rinka: grąža ir vieta pagal grupes', mkAll: 'Visi valdytojo fondai', mkBig: 'Didžiausias fondas', mkXl: 'Excel su formulėmis – „Didžiausias fondas“ vaizde',
@@ -1517,7 +1539,7 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
     $('btnGx').before(seg);
     seg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MK.mode = b.dataset.v; try { localStorage.setItem('bxMkMode', MK.mode); } catch (er) {} renderMarket(); });
     const rm = renderMarket, ro = renderOverall, xm = exportMarketXlsx, ox = XLB.get('tOv');
-    renderMarket = () => withMk(() => { rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode];
+    renderMarket = () => withMk(() => { MK.gxUi(); rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode];
       $('mkMode').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === 'all' ? T().mkAll : T().mkBig; b.setAttribute('aria-pressed', String(b.dataset.v === MK.mode)); });
       const xb = $('btnMxl'); xb.disabled = MK.mode === 'all'; if (MK.mode === 'all') xb.title = T().mkXl; });
     renderOverall = () => withMk(ro);
