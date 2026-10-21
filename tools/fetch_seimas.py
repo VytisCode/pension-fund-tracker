@@ -14,6 +14,7 @@ import sys
 import time
 import urllib.request
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
@@ -101,15 +102,20 @@ def run(kads, recent_only):
         if recent_only:
             ses = ses[-2:]
         for sid, _ in ses:
-            for pid, start, no, typ in sittings(sid):
-                if recent_only and start[:10] < date.fromordinal(date.today().toordinal() - 45).isoformat():
-                    continue
+            todo = [x for x in sittings(sid) if not recent_only or x[1][:10] >= date.fromordinal(date.today().toordinal() - 45).isoformat()]
+
+            def one(x):
                 try:
-                    rows += agenda(pid, start, no, typ)
+                    return agenda(*x)
                 except Exception as e:
-                    print("klaida", pid, e)
-                time.sleep(0.15)
-            print(k, sid, len(rows))
+                    print("klaida", x[0], e)
+                    return []
+            with ThreadPoolExecutor(4) as ex:               # 4 lygiagrečios užklausos – istorija per kelias minutes
+                for r in ex.map(one, todo):
+                    rows += r
+            print(k, sid, len(todo), len(rows), flush=True)
+            if not recent_only:
+                merge(rows); rows = []                      # istorija įrašoma po kiekvienos sesijos
     merge(rows)
 
 

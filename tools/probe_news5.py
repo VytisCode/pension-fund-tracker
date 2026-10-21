@@ -13,6 +13,9 @@ a = sys.argv[1:] or ["seimas"]
 cmd = {"seimas": ["tools/fetch_seimas.py", str(out), "--backfill"] + a[1:],
        "newsbf": ["tools/fetch_news.py", str(out), "--backfill", "2019-01", "--extra-only"],
        "enrich": ["tools/fetch_news.py", str(out), "--enrich", a[1] if len(a) > 1 else "1000"]}[a[0]]
-r = subprocess.run([sys.executable, "-u"] + cmd, capture_output=True, text=True, timeout=1080)
+try:
+    r = subprocess.run([sys.executable, "-u"] + cmd, capture_output=True, text=True, timeout=960)
+except subprocess.TimeoutExpired as e:                          # laiko riba – išsaugoti, kas spėta
+    r = e; r.stdout = (e.stdout or b"").decode() if isinstance(e.stdout, bytes) else (e.stdout or ""); r.stderr = "TIMEOUT"
 (out / "summary.txt").write_text(r.stdout[-8000:] + "\n" + r.stderr[-4000:], encoding="utf-8")
 print(r.stdout[-3000:], r.stderr[-2000:])
