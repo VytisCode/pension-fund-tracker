@@ -86,7 +86,12 @@ def num(x):
 
 def ee_rows():
     out = []
-    p = find(EE, "majandus", lambda t: t.upper().startswith("PA001") or ("GROSS WAGES" in t.upper() and "QUARTER" in t.upper() and "ACTIVITY" not in t.upper()))
+    test = lambda t: t.upper().startswith("PA001") or ("GROSS WAGES" in t.upper() and "QUARTER" in t.upper() and not any(x in t.upper() for x in ("ACTIVITY", "COUNTY", "SEX", "OCCUPATION")))
+    p = None
+    for root in ("sotsiaalelu/palk-ja-toojeukulu", "sotsiaalelu", "majandus"):   # palgad Statistikaameti medyje – „Sotsiaalelu“ skyriuje
+        p = find(EE, root, test)
+        if p:
+            break
     if p:
         cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: "average monthly gross wages" in t, "näitaja": lambda t: "average monthly gross wages" in t,
                                              "economic activity": lambda t: t.startswith("total"), "tegevusala": lambda t: t.startswith("total")})
