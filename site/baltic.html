@@ -58,6 +58,7 @@
   .sel .chip i, .chip i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
   .crt tr.hl td { outline: 2px solid var(--accent); outline-offset: -2px; }
   #mgBr ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; } #mgBr h3 { margin: 0; font-size: 15px; }
+  .jks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; } .jk p.note { margin: 2px 0; } .jk b { display: block; font-size: 26px; font-weight: 700; margin: 4px 0; font-variant-numeric: tabular-nums; } .jk b.pos { color: var(--dpos); } .jk b.neg { color: var(--dneg); }
   .topc h3 { margin: 0 0 2px; font-size: 14px; } .topc .bt td.nm { min-width: 0; }
 </style>
 </head>
@@ -97,6 +98,12 @@
       <p class="lead" id="topL"></p>
       <div class="topg" id="topG"></div>
     </div>
+    <div data-tab="jr">
+      <h2 class="sec" id="jrT"></h2>
+      <p class="lead" id="jrL"></p>
+      <div class="bar flt" id="jrBar"></div>
+      <div id="jrBody" class="bx"></div>
+    </div>
     <div data-tab="rk">
       <h2 class="sec" id="xT"></h2>
       <p class="lead" id="xL"></p>
@@ -131,6 +138,7 @@
 <script src="data.js"></script>
 <script src="common.js"></script>
 <script src="data_baltic.js"></script>
+<script src="bxjr.js"></script>
 <script src="baltic.js"></script>
 </body>
 </html>

@@ -348,7 +348,7 @@ def build() -> dict:
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
         print("baltic: reformų palyginimas nepavyko:", e)
         rf = None
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "_perf": perf}
+    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "_perf": perf}
 
 
 PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],
@@ -431,3 +431,55 @@ if __name__ == "__main__":
     b = build()
     from collections import Counter
     print(Counter((f["c"], f["pl"]) for f in b["funds"]), Counter(f["risk"] for f in b["funds"]))
+
+
+# ---------- Kelias į pensiją: Latvija ir Estija (savininkas 2026-10-21: „net ir Estišką; Latvišką kelią į pensiją“) ----------
+# II pakopos įmokų tarifai (% nuo bruto darbo užmokesčio) nuo mėnesio „from“; own – darbuotojo, state – iš socialinio mokesčio / draudimo įmokos.
+# Apytiksliai (šaltiniai skiriasi) – pažymėta tekste; vartotojas mato visas taisykles ir šaltinius puslapyje.
+JR_SRC = {"LV": "https://www.manapensija.lv/", "EE": "https://www.pensionikeskus.ee/"}
+JR_RATES = {
+    "LV": [
+        ("2001-07", None, 2, "II pakopa pradėta: 2 % iš 20 % socialinio draudimo įmokos pensijoms", "Pillar II started: 2% out of the 20% pension social contribution"),
+        ("2007-01", None, 4, "4 %", "4%"),
+        ("2008-01", None, 8, "8 % (buvo planuota kilti iki 10 %)", "8% (planned to rise to 10%)"),
+        ("2009-05", None, 2, "Krizė: sumažinta iki 2 % (mėnuo apytikslis – 2009 m. gegužė)", "Crisis: cut to 2% (month approximate – May 2009)"),
+        ("2013-01", None, 4, "4 %", "4%"),
+        ("2015-01", None, 5, "5 %", "5%"),
+        ("2016-01", None, 6, "6 %", "6%"),
+        ("2025-01", None, 5, "5 % (1 p. p. grąžintas į I pakopą)", "5% (1 pp moved back to pillar I)"),
+    ],
+    "EE": [
+        ("2002-07", 2, 4, "II pakopa pradėta: darbuotojas 2 % + valstybė 4 % iš 33 % socialinio mokesčio", "Pillar II started: employee 2% + state 4% out of the 33% social tax"),
+        ("2009-06", 0, 0, "Krizė: valstybės įmoka sustabdyta (iki 2010-12-31), darbuotojo – tik pateikus prašymą (čia – nemokėjo)", "Crisis: state contribution suspended (to 2010-12-31), employee only on application (here – not paid)"),
+        ("2011-01", 2, 2, "Dalinai atnaujinta: valstybė 2 % (apytiksliai – šaltiniai skiriasi)", "Partly restored: state 2% (approximate – sources differ)"),
+        ("2012-01", 2, 4, "Vėl 2 % + 4 % (2014–2017 m. pateikusieji prašymą mokėjo 3 % + 6 % – čia neįskaičiuota)", "Back to 2% + 4% (in 2014–2017 those who applied paid 3% + 6% – not modelled here)"),
+        ("2020-07", 2, 0, "Valstybės 4 % sustabdyta iki 2021-08-31; nesumokėta dalis kompensuota 2023–2024 m. (čia – lygiomis dalimis)", "State 4% suspended to 2021-08-31; the missed part was compensated in 2023–2024 (here – in equal parts)"),
+        ("2021-09", 2, 4, "Vėl 2 % + 4 %; nuo 2021 m. II pakopa savanoriška (galima išeiti)", "Back to 2% + 4%; since 2021 pillar II is voluntary (can leave)"),
+        ("2025-01", 2, 4, "Savo įmoka pasirenkama: 2, 4 arba 6 % + valstybės 4 %", "Own contribution chosen: 2, 4 or 6% + state 4%"),
+    ],
+}
+JR_TXT = {
+    "LV": ("Latvijos II pakopos (fondētā pensiju shēma) įmokos – dalis 20 % socialinio draudimo pensijų įmokos, kurią moka darbdavys ir darbuotojas; dalyvis papildomai nemoka. Pensinis amžius – 65 m. Atlyginimai – Centrālā statistikas pārvalde (DSV010m), pensijos – PPP040.",
+           "Latvian pillar II (funded scheme) contributions are part of the 20% pension social contribution paid by employer and employee; the participant pays nothing extra. Retirement age 65. Wages – Central Statistical Bureau (DSV010m), pensions – PPP040."),
+    "EE": ("Estijos II pakopos įmokas sudaro darbuotojo 2 % (nuo 2025 m. – 2, 4 arba 6 %) ir valstybės 4 % iš 33 % socialinio mokesčio. Pensinis amžius 2026 m. – 65 m., nuo 2027 m. susietas su gyvenimo trukme. Atlyginimai ir pensijos – Statistikaamet (ketvirčiai).",
+           "Estonian pillar II contributions: employee 2% (from 2025 – 2, 4 or 6%) and state 4% out of the 33% social tax. Retirement age 65 in 2026, linked to life expectancy from 2027. Wages and pensions – Statistics Estonia (quarters)."),
+}
+
+
+def jr():
+    """Kelio į pensiją duomenys: tarifai, vidutinis bruto darbo užmokestis (EE – ketvirčiai, LV – mėnesiai), vidutinė senatvės pensija."""
+    wage, pen = {"LV": {}, "EE": {}}, {"LV": {}, "EE": {}}
+    p = D / "baltic_macro.csv"
+    if p.exists():
+        for r in csv.DictReader(p.open(encoding="utf-8")):
+            v = fnum(r["value"])
+            if v is None or r["geo"] not in wage:
+                continue
+            if r["series"] == "wage_gross":
+                wage[r["geo"]][r["period"]] = v
+            elif r["series"] == "pension":
+                pen[r["geo"]][r["period"]] = v
+    rates = {c: [{"from": f, "own": o, "state": st, "choice": c == "EE" and f >= "2025-01", "lt": lt, "en": en, "src": JR_SRC[c]} for f, o, st, lt, en in R]
+             for c, R in JR_RATES.items()}
+    return {"rates": rates, "wage": wage, "pension": pen, "src": {c: {"lt": a, "en": b} for c, (a, b) in JR_TXT.items()},
+            "comp": {"EE": {"from": "2020-07", "to": "2021-08", "pct": 4, "payFrom": "2023-01", "payTo": "2024-12", "payN": 24}}}

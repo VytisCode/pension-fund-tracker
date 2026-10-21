@@ -368,7 +368,31 @@ function rankOf(values) {                   // values: [{key, v}] -> Map key -> 
 }
 const rkClass = (rank, n) => (!rank || n < 2) ? '' : 'rk' + (Math.round((rank - 1) / (n - 1) * 5) + 1);
 const MARKET_ORDER = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // lentelių stulpelių tvarka
-const marketProvs = () => IS3 ? DATA.providers : MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
+const marketProvs = () => MK_ON ? MK.reps : IS3 ? DATA.providers : MARKET_ORDER.map(id => DATA.providers.find(p => p.id === id));
+/* Latvija ir Estija (savininkas 2026-10-21: „tokių pačių keturių lentelių, kaip turime Lietuvoje“): vienas valdytojas grupėje turi kelis fondus,
+   todėl „Visos rinkos“ lentelėse stulpelis = valdytojas, langelis = jo didžiausias (pagal grynuosius aktyvus) veikiantis fondas toje grupėje.
+   Lentelių kodas tas pats: kol jos piešiamos, DATA.groups laikinai pakeičiamos valdytojų vaizdu (withMk). */
+let MK = null, MK_ON = false;
+const MKT = PX ? !(PX.c === 'LT' && PX.pl === 'III') : !IS3;   // ar rodomas „Visos rinkos“ skirtukas
+function mkBuild() {
+  const last = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1])));
+  const brandOf = id => DATA.providers.find(p => p.id === id), first = {}, reps = [];
+  DATA.providers.forEach(p => { const k = p.m || p.brand; if (!first[k]) { first[k] = p; reps.push(p); } });
+  const groups = DATA.groups.map(g => {
+    const pick = {};
+    g.funds.forEach(f => { const pr = brandOf(f.provider), k = pr.m || pr.brand, alive = !isStale(f, last), sc = (alive ? 1e15 : 0) + (f.assets || 0);
+      if (!pick[k] || sc > pick[k].sc) pick[k] = { f, sc }; });
+    return { ...g, funds: Object.entries(pick).map(([k, x]) => ({ ...x.f, provider: first[k].id })) };
+  });
+  return { reps: reps.filter(p => groups.some(g => g.funds.some(f => f.provider === p.id))), groups };
+}
+function mkSwap(on) {                                 // valdytojų vaizdas: grupės ir stulpelių pavadinimai
+  if (on) { MK.G = DATA.groups; MK.L = MK.reps.map(p => p.label); DATA.groups = MK.groups; MK.reps.forEach(p => { p.label = p.m || p.label; }); }
+  else { DATA.groups = MK.G; MK.reps.forEach((p, i) => { p.label = MK.L[i]; }); }
+  MK_ON = on;
+}
+function withMk(fn) { if (!MK || MK_ON) return fn(); mkSwap(true); try { return fn(); } finally { mkSwap(false); } }
+async function withMkA(fn) { if (!MK || MK_ON) return fn(); mkSwap(true); try { return await fn(); } finally { mkSwap(false); } }
 const retOf = (g, pid, rng) => { const f = g.funds.find(x => x.provider === pid); if (!f || isStale(f, rng.overallLast)) return null; const s = seriesOf(f, rng.anchor, rng.end); return s ? s.ret : null; };
 const fmtP = (v, p = 1) => pct(v, p);
 
@@ -675,7 +699,7 @@ function renderCoverage(gs, ALL) {
 let lastParts = [];
 const XS = {};          // paskutinės atvaizduotų lentelių būsenos – Excel skaičiavimų failams
 // heatmap lentelėse – trumpas pavadinimas, kad neužliptų ant langelių (auditas #18)
-const groupShort = g => g.id === 'turto' ? (lang === 'lt' ? 'Turto išsaug.' : 'Preservation') : groupLabel(g);   // be neaiškios santrumpos „TIF“
+const groupShort = g => g.id === 'turto' ? (lang === 'lt' ? 'Turto išsaug.' : 'Preservation') : PX && PX.c !== 'LT' ? groupLabel(g).replace(/\s*\(.*\)\s*$/, '') : groupLabel(g);   // LV/EE – be skliaustų (lentelėse per ilga)   // be neaiškios santrumpos „TIF“
 const groupName = id => id === 'all' ? T().allFunds : groupLabel(byId(id));
 function renderFunds() {
   const ALL = P.group === 'all', gs = ALL ? DATA.groups : [byId(P.group)];
@@ -1346,7 +1370,7 @@ function buildControls() {
     b.addEventListener('click', () => { P.ovP = new Set(OV_PRESETS[k]); saveState(); renderOverall(); });
     $('ovPreset').appendChild(b); });
   $('btnGx').addEventListener('click', () => { P.gx = !P.gx; saveState(); renderMarket(); });
-  $('btnMxl').addEventListener('click', exportMarketXlsx); $('btnMetXl').addEventListener('click', exportMetricsXlsx);
+  $('btnMxl').addEventListener('click', () => exportMarketXlsx()); $('btnMetXl').addEventListener('click', exportMetricsXlsx);
   $('mref').addEventListener('change', e => { P.mref = e.target.value; saveState(); renderMarket(); });
   $('chips').innerHTML = '';
   DATA.providers.forEach(p => {
@@ -1424,7 +1448,7 @@ function labelControls() {
   $('btnAdv').innerHTML = T().advBtn;
   { const bm = $('btnMore'), card = $('chartCard'); bm.textContent = lang === 'lt' ? '⚙ Daugiau nustatymų' : '⚙ More settings';   // retai naudojami nustatymai suskleisti (savininkas 2026-10-16: „per daug painus“)
     bm.onclick = () => { const on = !card.classList.contains('more'); card.classList.toggle('more', on); bm.setAttribute('aria-pressed', on); }; }
-  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !(IS3 || PX) || (x.id !== 'hMarket' && x.id !== 'insTitle')));   // vidinė navigacija (auditas #43)
+  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => x.id === 'hMarket' ? MKT : x.id !== 'insTitle' || !(IS3 || PX)));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1445,7 +1469,7 @@ function syncAll() {
   syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);
   $('printMeta').textContent = `${T().siteTitle} · ${groupName(P.group)} · ${periodText()} · ${T().updated} ${DATA.generated}`;
-  renderSummary(); if (!IS3) renderMarket(); renderFunds(); fitSticky();
+  renderSummary(); if (!IS3 || (PX && MKT)) renderMarket(); renderFunds(); fitSticky();
 }
 buildControls(); syncChips();
 if (IS3) {   // III pakopa: valdytojų lentelių ir Sharpe matricos (grupės × valdytojai) nėra – Sharpe yra „Papildomuose rodikliuose“
@@ -1454,7 +1478,25 @@ if (IS3) {   // III pakopa: valdytojų lentelių ir Sharpe matricos (grupės × 
   addStrings({ thFund: 'Fund' }, { thFund: 'Fondas' });
 }
 if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – baltic.html (vienodai visoms šalims); Lietuvos įvykiai kitoms šalims netinka
-  ['hMarket', 'insTitle'].forEach(id => { const sm = $(id) && $(id).closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; } });
+  ['insTitle'].concat(MKT ? [] : ['hMarket']).forEach(id => { const sm = $(id) && $(id).closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; } });
+  if (MKT) { const sm = $('hMarket').closest('section'); sm.hidden = false; sm.setAttribute('data-tab', 'market'); }
+  if (PX.c !== 'LT') {                                  // LV/EE grupės – ne amžiaus, o rizikos / akcijų dalies: tekstuose „amžiaus grupė“ → „grupė“
+    const fix = x => typeof x === 'string' ? x.replace(/amžiaus (grup)/g, '$1').replace(/Amžiaus grup/g, 'Grup').replace(/\bage (group)/g, '$1').replace(/\bAge group/g, 'Group') : x;
+    ['lt', 'en'].forEach(l => Object.keys(I18N[l]).forEach(k => { const v = I18N[l][k]; I18N[l][k] = typeof v === 'function' ? (...a) => fix(v(...a)) : fix(v); }));
+  }
+  if (PX.c !== 'LT') {                                  // „Visa rinka“: valdytojai × grupės (didžiausias valdytojo fondas grupėje)
+    MK = mkBuild();
+    $('btnGx').style.display = 'none';
+    const nO = MK.reps.length - 1, wO = n => ({ 2: ['two', 'dviejų'], 3: ['three', 'trijų'], 4: ['four', 'keturių'], 5: ['five', 'penkių'], 6: ['six', 'šešių'] })[n] || [n, n];
+    addStrings({ mrefNone: `each vs. median of the other ${wO(nO)[0]}` }, { mrefNone: `kiekvienas – su kitų ${wO(nO)[1]} mediana` });
+    addStrings({ hMarket: 'Whole market: return and rank by group', mkNote: 'Column = manager; where a manager has several funds in a group, its largest active fund (by net assets) is shown.' },
+      { hMarket: 'Visa rinka: grąža ir vieta pagal grupes', mkNote: 'Stulpelis – valdytojas; kai valdytojas grupėje turi kelis fondus, rodomas didžiausias veikiantis (pagal grynuosius aktyvus).' });
+    const rm = renderMarket, ro = renderOverall, xm = exportMarketXlsx, ox = XLB.get('tOv');
+    renderMarket = () => withMk(() => { rm(); $('nMarket').textContent += ' ' + T().mkNote; });
+    renderOverall = () => withMk(ro);
+    exportMarketXlsx = () => withMkA(xm);
+    if (ox) XLB.set('tOv', () => withMkA(ox));
+  }
   if (PX.c !== 'LT') { ['btnEvents', 'evInfo'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); P.events = false; }
 }
 renderHeader(PX ? PX.page : IS3 ? 'performance3' : 'performance', () => { labelControls(); syncAll(); });

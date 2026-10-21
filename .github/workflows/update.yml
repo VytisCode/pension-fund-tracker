@@ -147,6 +147,7 @@ jobs:
           python -u tools/fetch_lv_lb.py || echo "Latvijas Banka lentelė nepasiekiama"
           python -u tools/fetch_ee_reports.py || echo "pensionikeskus ataskaitos nepasiekiamos"
           python -u tools/fetch_hicp.py || echo "Eurostat SVKI nepasiekiamas"
+          python -u tools/fetch_baltic_macro.py || echo "EE/LV statistika nepasiekiama"
 
       # Naujienos apie pensijas (LT, LV, EE): Google News ir leidinių RSS -> data/news.csv (tik papildoma)
       - name: Pension news
@@ -165,7 +166,7 @@ jobs:
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv data/lb_results_history.csv data/baltic_ee.csv data/baltic_lv_index.csv data/baltic_lv_plans.csv data/lv_reports.csv data/lv_holdings.csv data/lv_files.csv data/baltic_lv_lb.csv data/ee_holdings.csv data/hicp.csv data/news.csv data/seimas.csv \
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv data/lb_results_history.csv data/baltic_ee.csv data/baltic_lv_index.csv data/baltic_lv_plans.csv data/lv_reports.csv data/lv_holdings.csv data/lv_files.csv data/baltic_lv_lb.csv data/ee_holdings.csv data/hicp.csv data/baltic_macro.csv data/news.csv data/seimas.csv \
              && [ -z "$(git status --porcelain -- imports/lb_results imports/lb_portfolios imports/lb_fees)" ]; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
@@ -239,7 +240,7 @@ jobs:
           git add data/baltic_*.csv 2>/dev/null || true
           git add data/news.csv 2>/dev/null || true
           git add data/seimas.csv 2>/dev/null || true
-          git add data/lv_reports.csv data/lv_holdings.csv data/lv_files.csv data/baltic_lv_lb.csv data/ee_holdings.csv data/hicp.csv 2>/dev/null || true
+          git add data/lv_reports.csv data/lv_holdings.csv data/lv_files.csv data/baltic_lv_lb.csv data/ee_holdings.csv data/hicp.csv data/baltic_macro.csv 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

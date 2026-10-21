@@ -352,9 +352,10 @@ function bxTabs(c, pl) {
   const b = (k, lt, en) => ['baltic', k, lt, en, `c=${c}&pl=${pl}`];
   if (c === 'X') return [b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
   const pp = bxPage(c, pl), lt2 = c === 'LT' && pl === 'II';
-  return [b('ov', 'Apžvalga', 'Overview'), b('cr', 'Visa rinka', 'Whole market'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
+  const mk = c === 'LT' && pl === 'III' ? [] : [[pp, 'market', 'Visa rinka', 'Whole market']];   // LT III – valdytojų lentelių nėra
+  return [b('ov', 'Apžvalga', 'Overview'), ...mk, b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
-    b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments')];
+    b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : [])];
 }
 const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];
 function bxBar() {                        // šalies ir pakopos juosta (nuorodos): perjungus šalį lieka tas pats skirtukas

@@ -124,7 +124,7 @@ const rgHtml = f => f.risk ? `<span class="rg ${f.risk}" title="${hEsc(T().rg[f.
    vaizdas. Šalių palyginime – tik panašios rizikos fondai, laisvas palyginimas ir reformos. ---------- */
 addStrings({ bx: {
   modes: { X: 'Compare countries' }, modesS: { X: 'Compare' },
-  tabs: { ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms' },
+  tabs: { ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', jr: 'Road to retirement', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms' },
   ovT: c => `${c}: overview`, ovL: { LT: 'Lithuanian pillar II and III funds in the same views as Latvian and Estonian ones. More about Lithuania – on the Results and Market facts pages.', LV: 'Latvian pillar II and III pension plans (manapensija.lv). Funds are compared within Latvian groups by equity share.', EE: 'Estonian pillar II and III pension funds (pensionikeskus.ee). Estonia has no official groups, so funds are compared within risk groups.' },
   ldT: p => `Leaders of each group, ${p}`, ldN: 'Median return of the group and its best and weakest fund. 3, 5 and 10-year returns are annual.',
   ldH: ['Group', 'Funds', 'Median', 'Best', 'Weakest'],
@@ -139,7 +139,7 @@ addStrings({ bx: {
   topLt: 'Full portfolios of Lithuanian funds – on the <a href="portfolios.html">Portfolios and assets</a> page.',
   cmTop: 'Largest investments of the selected funds', closed: 'closed', fClosed: 'Show closed funds', mt: 'How it is calculated (methodology)' } }, { bx: {
   modes: { X: 'Šalių palyginimas' }, modesS: { X: 'Palyginimas' },
-  tabs: { ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos' },
+  tabs: { ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', jr: 'Kelias į pensiją', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos' },
   ovT: c => `${c}: apžvalga`, ovL: { LT: 'Lietuvos II ir III pakopos fondai tais pačiais vaizdais kaip Latvijos ir Estijos. Daugiau apie Lietuvą – puslapiuose „Rezultatai“ ir „Rinkos faktai“.', LV: 'Latvijos II ir III pakopos pensijų plānai (manapensija.lv). Fondai lyginami Latvijos grupėse pagal akcijų dalį.', EE: 'Estijos II ir III pakopos pensijų fondai (pensionikeskus.ee). Estijoje oficialių grupių nėra, todėl fondai lyginami rizikos grupėse.' },
   ldT: p => `Grupių lyderiai, ${p}`, ldN: 'Grupės grąžos mediana, geriausias ir silpniausias fondas. 3, 5 ir 10 metų grąžos – metinės.',
   ldH: ['Grupė', 'Fondų', 'Mediana', 'Geriausias', 'Silpniausias'],
@@ -153,10 +153,10 @@ addStrings({ bx: {
   topT: c => `${c}: didžiausios investicijos`, topL: { LV: 'Kiekvieno Latvijos II pakopos plāno 10 didžiausių investicijų iš valdytojų ketvirčio ataskaitų (manapensija.lv).', EE: 'Kiekvieno Estijos fondo 10 didžiausių investicijų iš mėnesio investicijų ataskaitų (pensionikeskus.ee).' },
   topLt: 'Visi Lietuvos fondų portfeliai – puslapyje <a href="portfolios.html">Portfeliai ir turtas</a>.',
   cmTop: 'Pasirinktų fondų didžiausios investicijos', closed: 'uždarytas', fClosed: 'Rodyti uždarytus fondus', mt: 'Kaip skaičiuota (metodika)' } });
-const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'top'], X: ['rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
-const TMAP = { ov: 'rk', cr: 'rk', rs: 'rk', mg: 'rk', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov' };   // perjungus režimą – artimiausias skirtukas
-const TID = { ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT' };
-const modeTabs = () => CR.c === 'X' ? TABS.X : TABS.c;
+const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'top', 'jr'], X: ['rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
+const TMAP = { jr: 'rk', ov: 'rk', cr: 'rk', rs: 'rk', mg: 'rk', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov' };   // perjungus režimą – artimiausias skirtukas
+const TID = { ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', jr: 'jrT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT' };
+const modeTabs = () => CR.c === 'X' ? TABS.X : TABS.c.filter(k => k !== 'jr' || CR.pl === 'II');   // kelias į pensiją – tik II pakopa
 
 /* ---------- Apžvalga (šalis) ir „Panaši rizika“ (šalių palyginimas) ---------- */
 let RKH = 'ytd', EEK = 'na';   // numatytasis laikotarpis – nuo metų pradžios, kaip Lietuvos puslapiuose
@@ -541,7 +541,7 @@ async function excel() {
       if (!s) { row.push(null, null, null); return; }
       row.push(xd(s.d), xv(s.v), { f: y === 1 ? `E${r}/${cv}${r}-1` : `(E${r}/${cv}${r})^(365.25/(D${r}-${cd}${r}))-1`, z: '0.00%', s: 'calc', v: y === 1 ? e.v / s.v - 1 : Math.pow(e.v / s.v, 365.25 / (e.d - s.d)) - 1 }); });
     V.push(row); });
-  hmSheet(wb); rfSheet(wb);
+  hmSheet(wb); rfSheet(wb); if (CR.pl === 'II') jrSheet(wb);
   XL.sheet(wb, t.xlV, V, { cols: [10, 7, 44, 12, 11, 12, 11, 10, 12, 11, 10, 12, 11, 10], freeze: { r: 4 } });
   const tmp = document.createElement('div'); tmp.innerHTML = MT[lang];
   XL.sheet(wb, t.xlM, [[{ v: t.mtT, s: 'title' }], ...[...tmp.querySelectorAll('h3, p, li')].map(n => [{ v: (n.tagName === 'LI' ? '• ' : '') + n.textContent, s: n.tagName === 'H3' ? 'b' : '' }])], { cols: [140] });
@@ -669,7 +669,7 @@ function render() {
   BXM.c = CR.c; BXM.pl = CR.pl;
   document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  if (CR.c === 'X') { renderX(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderTop(); }
+  if (CR.c === 'X') { renderX(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderTop(); if (CR.pl === 'II') renderJr(); }
   $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
   const ks = modeTabs();
@@ -693,4 +693,4 @@ function fromHash() {                                   // #c=LV&pl=III&tab=rs (
 renderHeader('baltic', render);
 { const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, false); }
 addEventListener('hashchange', () => { const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, true); });
-addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else renderOv(); }, 200); });
+addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else { renderOv(); if (CR.pl === 'II' && TAB_CUR === 'jr') renderJr(); } }, 200); });

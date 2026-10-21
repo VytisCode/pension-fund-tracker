@@ -250,9 +250,9 @@ def build_baltic(ver: dict) -> None:
     perf = payload.pop("_perf", {})
     data_js = "const BALTIC=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_baltic.js").write_text(data_js, encoding="utf-8")
-    for n in ("baltic.html", "baltic.js"):
+    for n in ("baltic.html", "baltic.js", "bxjr.js"):
         shutil.copyfile(SITE / n, DOCS / n)
-    names = ("style.css", "common.js", "data.js", "data_baltic.js", "baltic.js")
+    names = ("style.css", "common.js", "data.js", "data_baltic.js", "baltic.js", "bxjr.js")
     v = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in names if n not in ver}}
     text = (DOCS / "baltic.html").read_text(encoding="utf-8")
     for n in names:
