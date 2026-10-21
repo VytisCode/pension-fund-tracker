@@ -258,6 +258,13 @@ def build_baltic(ver: dict) -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={v[n]}"').replace(f'href="{n}"', f'href="{n}?v={v[n]}"')
     (DOCS / "baltic.html").write_text(text, encoding="utf-8")
     print(f"docs/data_baltic.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")
+    # Latvijos ir Estijos fondai – ir viršutinėje paieškoje (auditas 2026-10-21): [„b“, pavadinimas, pakopa, šalis, nuoroda, žodžiai, valdytojas]
+    from urllib.parse import quote
+    sp = DOCS / "data_search.js"
+    t = sp.read_text(encoding="utf-8"); idx = json.loads(t[t.index("=") + 1:].rstrip().rstrip(";"))
+    idx += [["b", f["n"], f["pl"], f["c"], f"baltic.html#tab=fd&bq={quote(f['n'])}", f"{f['m']} {f.get('isin') or ''} {'latvija latvia' if f['c'] == 'LV' else 'estija estonia'}", f["m"]]
+            for f in payload["funds"] if f["c"] in ("LV", "EE")]
+    sp.write_text("var QIDX=" + json.dumps(idx, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 
 
 def sources() -> list:

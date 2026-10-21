@@ -167,6 +167,8 @@ function defaults() {                           // kiekvienai šaliai – didži
     .sort((a, b) => (b.na || 0) - (a.na || 0) || a.first - b.first)[0]).filter(Boolean).map(f => f.id);
 }
 if (!SEL) SEL = defaults();
+{ let q = null; try { q = new URLSearchParams(location.hash.slice(1)).get('bq'); } catch (e) {}   // paieškos nuoroda į fondą: „Visi fondai“ su užpildyta paieška
+  if (q) { const f = BX.find(x => x.n === q); Object.assign(FS, { q, g: '', closed: !!(f && f.closed), c: { LT: true, LV: true, EE: true }, pl: f ? f.pl : 'all' }); } }
 const COLS = ['cmp', 'c', 'pl', 'm', 'n', 'cg', 'risk', 'vol', 'y1', 'y3', 'y5', 'y10', 'max', 'fee', 'eq', 'na', 'inv', 'last'];
 const NUMC = new Set(['vol', 'y1', 'y3', 'y5', 'y10', 'max', 'fee', 'eq', 'na', 'inv', 'last']);
 function rows() {

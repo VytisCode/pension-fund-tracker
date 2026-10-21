@@ -1753,6 +1753,7 @@ function catalogItems() {
     const cat = { bond: L ? 'obligacijų' : 'bond', mixed: L ? 'mišraus investavimo' : 'mixed', equity: L ? 'akcijų' : 'equity' }, ty = { e: L ? 'Akcija' : 'Stock', b: L ? 'Obligacija' : 'Bond', f: L ? 'Fondas / ETF' : 'Fund / ETF' };
     QIDX.forEach(r => {
       if (r[0] === 'n') out.push({ s: 'home', url: r[4], k: 'n', xl: false, t: r[1], d: `${r[2]} · ${r[3]} · ${r[5]}`, kw: r[6], sub: true, news: true, ext: true, date: r[2] });
+      else if (r[0] === 'b') out.push({ s: 'baltic', url: r[4], k: 'f', xl: false, t: r[1], d: L ? `${({ LV: 'Latvijos', EE: 'Estijos' })[r[3]]} ${r[2]} pakopos fondas · ${r[6]}` : `${({ LV: 'Latvian', EE: 'Estonian' })[r[3]]} pillar ${r[2]} fund · ${r[6]}`, kw: r[5], sub: true });   // Baltijos šalių fondai (auditas 2026-10-21)
       else if (r[0] === 'f') out.push({ s: 'mgr', url: r[4], k: 'f', xl: true, t: r[1], d: r[2] === 'II' ? (L ? `II pakopos fondas · grupė ${r[3]}` : `Pillar II fund · group ${r[3]}`) : (L ? `III pakopos ${cat[r[3]] || ''} fondas` : `Pillar III ${cat[r[3]] || ''} fund`), kw: r[5], sub: true });
       else out.push({ s: 'pf', url: r[5], k: 's', xl: false, t: r[1], d: `${ty[r[2]] || ''} · ${L ? 'laiko' : 'held by'}: ${r[3].join(', ')} · ${L ? 'iki' : 'up to'} ${num(r[4], 1)} % ${L ? 'fondo' : 'of a fund'}`, kw: r[6], sub: true, sec: true });
     });
