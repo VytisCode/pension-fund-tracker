@@ -5,6 +5,7 @@ Paleidžiama po kiekvieno duomenų atnaujinimo (žr. .github/workflows/update.ym
 """
 import news_tags
 import csv
+import sys
 import json
 import re
 import hashlib
@@ -727,11 +728,13 @@ def build_market() -> None:
     shutil.copyfile(SITE / "mkt.js", DOCS / "mkt.js")
     shutil.copyfile(SITE / "earn.js", DOCS / "earn.js")
     shutil.copyfile(SITE / "news.js", DOCS / "news.js")
+    sys.path.insert(0, str(ROOT / "tools"))
+    import fetch_news                   # temos perskaičiuojamos iš antraštės ir aprašo (CSV nekeičiamas)
     news = []                           # naujienų archyvas (tools/fetch_news.py) – naujausi pirmi
     if (ROOT / "data" / "news.csv").exists():
         with (ROOT / "data" / "news.csv").open(encoding="utf-8") as fh:
             news = [[r["date"], r["country"], r["source"], r["title"], r["summary"], r.get("article_url") if (r.get("article_url") or "").startswith("http") else r["url"],
-                     r["topics"], news_tags.actors(r["title"], r["summary"], r["country"], r["source"])] for r in csv.DictReader(fh)]
+                     ";".join(dict.fromkeys(filter(None, r["topics"].split(";") + fetch_news.topics(r["title"] + " " + r["summary"]).split(";")))), news_tags.actors(r["title"], r["summary"], r["country"], r["source"])] for r in csv.DictReader(fh)]
     news.sort(key=lambda r: r[0], reverse=True)
     seimas = []                         # Seimo darbotvarkių pensijų klausimai (tools/fetch_seimas.py)
     if (ROOT / "data" / "seimas.csv").exists():

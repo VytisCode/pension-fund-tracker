@@ -113,7 +113,7 @@ function nwInsights() {
   const hot = NW_TOPICS.map(tp => { const n = cnt(r30, tp), base = cnt(all.filter(r => inD(r, 395, 30)), tp) / 12.17; return { tp, n, x: base ? n / base : 0 }; }).sort((a, b) => b.n - a.n)[0];
   if (hot && hot.n >= 2) out.push({ s: I.hot(nwTopic(hot.tp), hot.n, hot.x >= 1.3 ? num(hot.x, 1) : ''), go: { t: hot.tp, p: '30' } });
   const W = nwWaves(all);
-  const run = NW_TOPICS.map(tp => W[tp].ep.slice(-1)[0]).filter(e => e && e.w1 >= cw - 1 && e.w1 - e.w0 >= 2).sort((a, b) => (b.w1 - b.w0) - (a.w1 - a.w0)).slice(0, 2);
+  const run = NW_TOPICS.map(tp => W[tp].ep.slice(-1)[0]).filter(e => e && e.w1 >= cw - 1 && e.w1 - e.w0 >= 2 && e.n >= 5).sort((a, b) => (b.w1 - b.w0) - (a.w1 - a.w0)).slice(0, 2);
   run.forEach(e => out.push({ s: I.run(nwTopic(e.tp), e.w1 - e.w0 + 1, nwSpan(e)[0], e.n), go: { t: e.tp, w: [e.w0, e.w1] } }));
   NW_TOPICS.forEach(tp => { const ep = W[tp].ep, e = ep[ep.length - 1], pr = ep[ep.length - 2];
     if (e && pr && e.w0 >= cw - 3 && e.w0 - pr.w1 >= 9 && !run.includes(e)) { const f = e.rows.slice().sort((a, b) => a[0].localeCompare(b[0]))[0];

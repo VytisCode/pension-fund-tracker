@@ -207,7 +207,7 @@ def enrich(old, budget):
                 r["article_url"] = u or "-"
                 if d and norm(d) != norm(r["title"]):
                     r["summary"] = d; ok += 1
-                    r["topics"] = topics(r["title"] + " " + d)
+                    r["topics"] = r["topics"] or topics(r["title"] + " " + d)   # istoriniai laukai neperrašomi; svetainė temas perskaičiuoja
     left = sum(1 for r in old.values() if not r.get("article_url"))
     print(f"aprašai: bandyta {n}, papildyta {ok}, liko nebandytų {left}")
 
