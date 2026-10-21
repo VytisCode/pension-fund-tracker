@@ -45,6 +45,8 @@
   .hm tr.med td { font-weight: 600; border-top: 2px solid var(--line); } .hm tr.med td.nm { font-size: 12.5px; }
   .hmw { max-height: 70vh; overflow: auto; }
   @media (max-width: 700px) { .hm td.nm { min-width: 130px; max-width: 150px; font-size: 12px; } .hm td.nm small { display: none; } }
+  .topg { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .topc h3 { margin: 0 0 2px; font-size: 14px; } .topc .bt td.nm { min-width: 0; }
 </style>
 </head>
 <body>
@@ -69,6 +71,7 @@
       <p class="lead" id="cmL"></p>
       <div class="bar flt" id="cmBar"></div>
       <section class="card"><div class="sel" id="cmSel"></div><div class="chart" id="cmCh"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="cmTbl"></table></div><p class="note" id="cmN"></p></section>
+      <section class="card"><h2 id="topT"></h2><p class="note" id="topL"></p><div class="topg" id="topG"></div></section>
     </div>
     <div data-tab="hm">
       <h2 class="sec" id="hmT"></h2>
@@ -93,7 +96,7 @@
 <div id="actions"><button class="btn" type="button" id="xlBtn"></button></div>
 <script src="data.js?v=e56fa67b"></script>
 <script src="common.js?v=cabf10e7"></script>
-<script src="data_baltic.js?v=ed5e4fbb"></script>
-<script src="baltic.js?v=1cbe6a42"></script>
+<script src="data_baltic.js?v=07f9a143"></script>
+<script src="baltic.js?v=89a0bd13"></script>
 </body>
 </html>

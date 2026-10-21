@@ -7,6 +7,7 @@ tekste) ir 10 didžiausių investicijų su dalimis.
 Tekstas – `pdftotext -layout` (poppler-utils). Rezultatai (tik papildomi, istorija neperrašoma):
   data/lv_reports.csv  – plan_id, quarter (YYYY-MM-DD), file_id, name, assets_eur, unit, participants, n_hold, first_seen
   data/lv_holdings.csv – plan_id, quarter, rank, name, weight
+  data/lv_files.csv    – visų žinomų ataskaitų sąrašas (plan_id, file_id, name)
 Kasdien patikrinama, ar yra naujų ketvirčių, ir apdorojama iki BUDGET dar neapdorotų failų (nuo naujausių) – taip istorija
 užsipildo per kelias dienas be atskiro paleidimo.
 
@@ -35,6 +36,7 @@ OUT = Path(args[0]) if args and "--test" not in sys.argv else Path(__file__).res
 TODAY = date.today().isoformat()
 RF = ["plan_id", "quarter", "file_id", "name", "assets_eur", "unit", "participants", "n_hold", "first_seen"]
 HF = ["plan_id", "quarter", "rank", "name", "weight"]
+FF = ["plan_id", "file_id", "name", "first_seen"]                   # visų žinomų ketvirčio ataskaitų sąrašas (kas dar neapdorota)
 QEND = {"1": "03-31", "2": "06-30", "3": "09-30", "4": "12-31"}
 
 
@@ -231,19 +233,23 @@ def plan_files(pl):
 
 def run():
     plans = [r["plan_id"] for r in csv.DictReader((OUT / "baltic_lv_plans.csv").open(encoding="utf-8")) if r["pillar"] == "II"]
-    rp, hp = OUT / "lv_reports.csv", OUT / "lv_holdings.csv"
-    R, H = load(rp, RF), load(hp, HF)
+    rp, hp, fp = OUT / "lv_reports.csv", OUT / "lv_holdings.csv", OUT / "lv_files.csv"
+    R, H, F = load(rp, RF), load(hp, HF), load(fp, FF)
     have = {r["file_id"] for r in R}
-    first = not R
-    todo = []
-    for pl in plans:                                      # pirmą kartą – visas sąrašas, vėliau – tik pirmas puslapis (nauji ketvirčiai)
+    known = {r["file_id"] for r in F}
+    def lst(pl):                                          # plano sąrašas visas – tik pirmą kartą, vėliau – pirmas puslapis (nauji ketvirčiai)
         try:
-            fl = plan_files(pl) if first or not any(r["plan_id"] == pl for r in R) else [(x["id"], x["name"]) for x in get(f"{B}/api/data/file-list?plan={pl}&level=2&type=quarter", True)["other_files"]["items"]]
+            full = not any(r["plan_id"] == pl for r in F)
+            return pl, plan_files(pl) if full else [(x["id"], x["name"]) for x in get(f"{B}/api/data/file-list?plan={pl}&level=2&type=quarter", True)["other_files"]["items"]]
         except Exception as e:
             print("  klaida", pl, e)
-            continue
-        todo += [(pl, str(i), n) for i, n in fl if str(i) not in have and quarter(n)]
-    pend = [r for r in R if not r["assets_eur"] and r["first_seen"] != TODAY]
+            return pl, []
+    with ThreadPoolExecutor(4) as ex:
+        for pl, fl in list(ex.map(lst, plans)):
+            F += [{"plan_id": pl, "file_id": str(i), "name": n, "first_seen": TODAY} for i, n in fl if str(i) not in known and quarter(n)]
+            known |= {str(i) for i, _ in fl}
+    save(fp, FF, F, lambda r: (r["plan_id"], quarter(r["name"]), r["file_id"]))
+    todo = [(r["plan_id"], r["file_id"], r["name"]) for r in F if r["file_id"] not in have]
     todo.sort(key=lambda x: quarter(x[2]), reverse=True)
     todo = todo[:BUDGET]
     print(f"LV ataskaitos: {len(todo)} naujų failų (biudžetas {BUDGET}), planų {len(plans)}")

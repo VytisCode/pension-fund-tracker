@@ -102,6 +102,77 @@ def ee_funds():
     return out
 
 
+def lv_reports():
+    """LV plānų ketvirčio ataskaitos (tools/fetch_lv_reports.py): {plan_id: {quarter: eilutė}} ir {plan_id: (ketvirtis, [[pavadinimas, %], …])}."""
+    rp, hp = D / "lv_reports.csv", D / "lv_holdings.csv"
+    rep, top = defaultdict(dict), {}
+    if not rp.exists():
+        return rep, top
+    for r in csv.DictReader(rp.open(encoding="utf-8")):
+        o = rep[r["plan_id"]].get(r["quarter"])
+        if not o or (r["assets_eur"] and not o["assets_eur"]):
+            rep[r["plan_id"]][r["quarter"]] = r
+    for pl, qs in rep.items():                              # akivaizdžios skaitymo klaidos: vertė 2 kartus skiriasi nuo abiejų kaimynų
+        v = [(q, float(r["assets_eur"])) for q, r in sorted(qs.items()) if r["assets_eur"]]
+        for (_, a), (q, b), (_, c) in zip(v, v[1:], v[2:]):
+            if (b < a / 2 and b < c / 2) or (b > a * 2 and b > c * 2):
+                qs[q] = dict(qs[q], assets_eur="")
+    if hp.exists():
+        h = defaultdict(lambda: defaultdict(list))
+        for r in csv.DictReader(hp.open(encoding="utf-8")):
+            h[r["plan_id"]][r["quarter"]].append((int(r["rank"]), r["name"], float(r["weight"])))
+        for pl, qs in h.items():
+            q = max(qs)
+            top[pl] = (q, [[n, w] for _, n, w in sorted(qs[q])])
+    return rep, top
+
+
+def lv_totals(funds, rep):
+    """LV II pakopos turtas (mln. €) ketvirčio pabaigoje – visų planų ataskaitų suma. Ketvirtis rodomas tik tada, kai yra visų tuo
+    metu veikusių planų turtas (nepavykus perskaityti vienos ataskaitos – imama gretimo ketvirčio vertė, jų skaičius – „fill“);
+    kitaip suma būtų per maža."""
+    qs = sorted({q for p in rep.values() for q in p})
+    live = [f for f in funds if f["pl"] == "II"]
+    out = {"m": [], "na": [], "n": [], "fill": []}
+    for i, q in enumerate(qs):
+        qd = day(q)
+        tot, n, ok, fill = 0.0, 0, True, 0
+        for f in live:
+            pl = f["id"].split("-")[-1]
+            if f["pts"][0][0] > qd - 80 or f["pts"][-1][0] < qd - 100:      # planas tą ketvirtį dar neveikė arba jau uždarytas
+                continue
+            r = rep.get(pl, {}).get(q)
+            v = float(r["assets_eur"]) if r and r["assets_eur"] else None
+            for j in (i - 1, i + 1):                            # nepavykus perskaityti – gretimo ketvirčio vertė
+                if v is None and 0 <= j < len(qs):
+                    pr = rep.get(pl, {}).get(qs[j])
+                    v = float(pr["assets_eur"]) if pr and pr["assets_eur"] else None
+                    fill += v is not None
+            if v is None:
+                ok = False
+                break
+            tot += v; n += 1
+        if ok and n:
+            out["m"].append(q[:7]); out["na"].append(round(tot / 1e6, 1)); out["n"].append(n); out["fill"].append(fill)
+    return out
+
+
+def lv_lb(plan_sums):
+    """Latvijos rinka laike – Latvijas Banka grynieji aktyvai (mln. €, ketvirčio pabaiga; tools/fetch_lv_lb.py). „chk“ – patikra:
+    naujausio ketvirčio visų plānų ataskaitų suma ir banko suma (II pakopa)."""
+    by = defaultdict(dict)
+    for r in csv.DictReader((D / "baltic_lv_lb.csv").open(encoding="utf-8")):
+        by[r["pillar"]][r["quarter"]] = round(float(r["net_assets_k"]) / 1e3, 1)
+    out = {p: {"m": [q[:7] for q in sorted(v)], "na": [v[q] for q in sorted(v)]} for p, v in by.items()}
+    if plan_sums and "II" in out:
+        ps = dict(zip(plan_sums["m"], plan_sums["na"]))
+        both = [m for m in out["II"]["m"] if m in ps]
+        if both:
+            m = both[-1]
+            out["chk"] = [m, ps[m], out["II"]["na"][out["II"]["m"].index(m)]]
+    return out
+
+
 def lv_funds():
     plans = {}
     for r in csv.DictReader((D / "baltic_lv_plans.csv").open(encoding="utf-8")):
@@ -114,16 +185,22 @@ def lv_funds():
         ser[k].append((day(r["date"]), float(r["value"])))
         if r["avg"]:
             avg[k].append((day(r["date"]), float(r["avg"])))
+    rep, top = lv_reports()
     out = []
     for k, p in plans.items():
         if not ser.get(k):
             continue
+        last = rep.get(k[1], {})
+        lq = max((q for q, r in last.items() if r["assets_eur"]), default=None) if k[0] == "II" else None
         prov = p["provider"].lower()
         mgr = next((lab for key, lab in LV_PROV if key in prov), p["provider"])
         eq = fnum(p["stock_pct"])
         pts = sorted(ser[k])
         out.append({"id": f"LV-{k[0]}-{k[1]}", "c": "LV", "pl": k[0], "m": mgr, "n": p["name"].strip(), "isin": None,
-                    "fee": fnum(p["fee_fixed"]), "feeK": "fix", "eq": eq, "na": None, "inv": None,
+                    "fee": fnum(p["fee_fixed"]), "feeK": "fix", "eq": eq,
+                    "na": round(float(last[lq]["assets_eur"]) / 1e6, 1) if lq else None, "naQ": lq,
+                    "inv": int(last[lq]["participants"]) if lq and last[lq]["participants"] else None,
+                    "top": top[k[1]][1] if k[0] == "II" and k[1] in top else None, "topQ": top[k[1]][0] if k[0] == "II" and k[1] in top else None,
                     "start": date.fromordinal(date(1970, 1, 1).toordinal() + pts[0][0]).isoformat(),
                     "cg": None if eq is None else "e30" if eq <= 30 else "e75" if eq <= 75 else "e100",
                     "pass": p["management"] == "Pasīvs", "vol": vol3(pts), "pts": pts})
@@ -238,6 +315,12 @@ def build() -> dict:
             funds += f()
         except FileNotFoundError as e:
             print("baltic: nėra failo", e)
+    lvt = None
+    try:
+        lvt = lv_totals([f for f in funds if f["c"] == "LV"], lv_reports()[0])
+        lvt = lvt if lvt["m"] else None
+    except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
+        print("baltic: LV sumos nepavyko:", e)
     for f in funds:
         f["risk"] = risk_of(f["vol"])
         f["d"], f["v"] = enc(f.pop("pts"))
@@ -245,6 +328,12 @@ def build() -> dict:
         tot = {"EE": ee_totals()}
     except FileNotFoundError:
         tot = {}
+    try:
+        lv = lv_lb(lvt)
+        if lv:
+            tot["LV"] = lv
+    except FileNotFoundError:
+        pass
     try:
         rf = reform()
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio

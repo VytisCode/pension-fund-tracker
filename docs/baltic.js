@@ -8,7 +8,8 @@ addStrings({
   ovT: 'Lithuania, Latvia and Estonia', ovL: 'Pillar II and III pension funds of the three Baltic states in one place. Within a country funds are compared in that country’s groups; across countries only funds of similar risk are compared (clearly marked).',
   c: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia' }, pl: p => `Pillar ${p}`, both: 'Both pillars',
   kFunds: (a, b) => `Funds: <b>${a}</b> in pillar II, <b>${b}</b> in pillar III`, kNa: v => `Pillar II assets: <b>${v}</b>`, kInv: v => `Pillar II active investors: <b>${v}</b>`,
-  kNaLv: 'Assets and participants per plan are not published on manapensija.lv.', kFee: (v, k) => `Average fee: <b>${v}</b> (${k})`, kR: (v, n) => `Median 1-year return of high-risk pillar II funds: <b>${v}</b> (${n} funds)`,
+  kNaLv: 'Assets and participants per plan are not published on manapensija.lv.', kNaQ: q => `quarterly reports, ${q}`, mkT: c => `${c}: market over time`, lvN: c => `Net assets at quarter end, all plans of the pillar (Bank of Latvia statistics, table 325). Assets of each pillar II plan – from managers’ quarterly reports (manapensija.lv)${c ? `; check: on ${c[0]} the sum of all plan reports is ${num(c[1], 1)} m €, the Bank of Latvia total ${num(c[2], 1)} m € (difference ${pctPlain(Math.abs(c[1] / c[2] - 1) * 100, 2)})` : ''}.`,
+  topT: 'Largest investments', topL: 'The 10 largest investments of the selected funds, as published by the manager (Latvia – quarterly report; Lithuanian portfolios – on the “Portfolios” page).', topNone: 'None of the selected funds has a published top-10 list here yet (Latvian pillar II plans have it).', topQ: q => `As of ${q}`, topW: 'Share', kFee: (v, k) => `Average fee: <b>${v}</b> (${k})`, kR: (v, n) => `Median 1-year return of high-risk pillar II funds: <b>${v}</b> (${n} funds)`,
   feeK: { ter: 'ongoing charges, TER', fix: 'fixed part of the fee' }, feeLt: 'Lithuanian fees – on the “Reports” page',
   rkT: 'Similar risk across countries', rkN: 'Groups by 3-year annual volatility of unit value, the same calculation for every fund. Pillar II and III funds together. Median return of the group’s funds in each country; best fund below. 3, 5 and 10-year returns are annual.',
   rg: { r1: 'Low risk (volatility under 4%)', r2: 'Moderate (4–8%)', r3: 'Higher (8–12%)', r4: 'High (over 12%)' }, rgS: { r1: 'Low', r2: 'Moderate', r3: 'Higher', r4: 'High' }, rgNone: 'Too short history',
@@ -33,7 +34,8 @@ addStrings({
   ovT: 'Lietuva, Latvija ir Estija', ovL: 'Trijų Baltijos šalių II ir III pakopos pensijų fondai vienoje vietoje. Šalies viduje fondai lyginami tos šalies grupėse, o tarp šalių – tik panašios rizikos fondai (aiškiai pažymėta).',
   c: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija' }, pl: p => `${p} pakopa`, both: 'Abi pakopos',
   kFunds: (a, b) => `Fondų: <b>${a}</b> II pakopoje, <b>${b}</b> III pakopoje`, kNa: v => `II pakopos turtas: <b>${v}</b>`, kInv: v => `II pakopos aktyvių investuotojų: <b>${v}</b>`,
-  kNaLv: 'Plānų turto ir dalyvių skaičiaus manapensija.lv neskelbia.', kFee: (v, k) => `Vidutinis mokestis: <b>${v}</b> (${k})`, kR: (v, n) => `Didelės rizikos II pakopos fondų 1 metų grąžos mediana: <b>${v}</b> (${n} fondai)`,
+  kNaLv: 'Plānų turto ir dalyvių skaičiaus manapensija.lv neskelbia.', kNaQ: q => `ketvirčio ataskaitos, ${q}`, mkT: c => `${c}: rinka laike`, lvN: c => `Grynieji aktyvai ketvirčio pabaigoje, visi tos pakopos plānai (Latvijas Banka statistika, lentelė 325). Kiekvieno II pakopos plāno turtas – iš valdytojų ketvirčio ataskaitų (manapensija.lv)${c ? `; patikra: ${c[0]} visų plānų ataskaitų suma ${num(c[1], 1)} mln. €, Latvijas Banka – ${num(c[2], 1)} mln. € (skirtumas ${pctPlain(Math.abs(c[1] / c[2] - 1) * 100, 2)})` : ''}.`,
+  topT: 'Didžiausios investicijos', topL: 'Pasirinktų fondų 10 didžiausių investicijų, kaip jas skelbia valdytojas (Latvija – ketvirčio ataskaita; Lietuvos fondų portfeliai – puslapyje „Portfeliai ir turtas“).', topNone: 'Pasirinktiems fondams 10 didžiausių investicijų sąrašo čia dar nėra (jis yra Latvijos II pakopos plānams).', topQ: q => `Duomenys ${q}`, topW: 'Dalis', kFee: (v, k) => `Vidutinis mokestis: <b>${v}</b> (${k})`, kR: (v, n) => `Didelės rizikos II pakopos fondų 1 metų grąžos mediana: <b>${v}</b> (${n} fondai)`,
   feeK: { ter: 'einamosios išlaidos, TER', fix: 'pastovioji mokesčio dalis' }, feeLt: 'Lietuvos mokesčiai – puslapyje „Ataskaitos“',
   rkT: 'Panaši rizika skirtingose šalyse', rkN: 'Grupės pagal 3 metų metinį vieneto vertės svyravimą – visiems fondams skaičiuojama vienodai. II ir III pakopos fondai kartu. Kiekvienos šalies grupės fondų grąžos mediana; po ja – geriausias fondas. 3, 5 ir 10 metų grąžos – metinės.',
   rg: { r1: 'Maža rizika (svyravimas iki 4 %)', r2: 'Vidutinė (4–8 %)', r3: 'Didesnė (8–12 %)', r4: 'Didelė (daugiau nei 12 %)' }, rgS: { r1: 'Maža', r2: 'Vidutinė', r3: 'Didesnė', r4: 'Didelė' }, rgNone: 'Per trumpa istorija',
@@ -64,7 +66,7 @@ const MT = {
 <h3>Rizikos grupės</h3><p>Tarp šalių lyginami tik panašios rizikos fondai. Rizika – paskutinių 3 metų metinis vertės svyravimas: logaritminių vertės pokyčių (savaitės pabaigos; Latvijoje – grafiko taškų) standartinis nuokrypis × √(365 / vidutinis intervalas dienomis). Grupės: iki 4 %, 4–8 %, 8–12 %, daugiau nei 12 %. Fondams, turintiems mažiau nei 3 metų istoriją, grupė nenustatoma.</p>
 <h3>Šalių grupės</h3><p>Lietuvoje – LB gyvenimo ciklo grupės (pagal gimimo metus) ir turto išsaugojimo fondai. Latvijoje – pagal plane nurodytą akcijų dalį: iki 30 %, 31–75 %, daugiau nei 75 %. Estijoje oficialių grupių nėra, todėl naudojamos rizikos grupės.</p>
 <h3>Ką verta žinoti</h3><ul><li>Mokesčiai nevienodi: Estijoje nurodomos visos einamosios išlaidos (TER), Latvijoje – tik pastovioji mokesčio dalis (kintamoji dalis priklauso nuo rezultatų ir čia neįtraukta).</li>
-<li>Latvijos plānų turto ir dalyvių skaičiaus manapensija.lv neskelbia, todėl Latvijos rinkos dydžio čia nėra.</li>
+<li>Latvijos II pakopos plānų turtas ir 10 didžiausių investicijų imami iš valdytojų ketvirčio ataskaitų (PDF manapensija.lv), kurias svetainė perskaito automatiškai. Latvijos rinkos dydis laike – Latvijas Banka statistika (grynieji aktyvai ketvirčio pabaigoje, nuo 2022 m.); visų plānų ataskaitų suma su ja tikrinama (2026-06-30 skirtumas – 0,01 %). Dalyvių skaičius rodomas tik tų plānų, kurių ataskaitos tekste jis nurodytas. III pakopos plānų ataskaitų manapensija.lv neskelbia.</li>
 <li>Latvijos vertės – grafiko taškai, todėl paskutinė data gali būti kelias dienas senesnė nei Estijos ar Lietuvos.</li>
 <li>Uždaryti ar sujungti fondai pagal nutylėjimą nerodomi (galima įjungti skirtuke „Visi fondai“).</li></ul>`,
   en: `<h3>Sources</h3><ul>
@@ -76,7 +78,7 @@ const MT = {
 <h3>Risk groups</h3><p>Across countries only funds of similar risk are compared. Risk is the 3-year annual volatility of the value: standard deviation of log changes (week-end values; in Latvia – chart points) × √(365 / average interval in days). Groups: under 4%, 4–8%, 8–12%, over 12%. Funds with less than 3 years of history get no group.</p>
 <h3>Country groups</h3><p>Lithuania – Bank of Lithuania life-cycle groups (by year of birth) and asset preservation funds. Latvia – by the plan’s equity share: up to 30%, 31–75%, over 75%. Estonia has no official groups, so risk groups are used.</p>
 <h3>Good to know</h3><ul><li>Fees differ: Estonia shows total ongoing charges (TER), Latvia only the fixed part of the fee (the variable, performance-linked part is not included).</li>
-<li>manapensija.lv does not publish plan assets or participants, so Latvian market size is not shown.</li>
+<li>Latvian pillar II plan assets and the 10 largest investments come from managers’ quarterly reports (PDF on manapensija.lv), read automatically by this site. Latvian market size over time – Bank of Latvia statistics (net assets at quarter end, since 2022); the sum of all plan reports is checked against it (difference 0.01% on 30 June 2026). Participants are shown only where the report text states them. Pillar III plan reports are not published on manapensija.lv.</li>
 <li>Latvian values are chart points, so the last date may be a few days older than in Estonia or Lithuania.</li>
 <li>Closed or merged funds are hidden by default (can be switched on in “All funds”).</li></ul>`,
 };
@@ -113,7 +115,7 @@ const label = f => `${f.c} · ${f.n}`;
 const rgHtml = f => f.risk ? `<span class="rg ${f.risk}" title="${hEsc(T().rg[f.risk])}">${T().rgS[f.risk]}</span>` : `<span class="note">${T().rgNone}</span>`;
 
 /* ---------- Apžvalga ---------- */
-let RKH = 'y1', EEK = 'na';
+let RKH = 'y1', EEK = 'na', MKC = 'EE';
 function renderOv() {
   const t = T(), act = BX.filter(f => !f.closed);
   $('ovT').textContent = t.ovT; $('ovL').textContent = t.ovL;
@@ -121,8 +123,9 @@ function renderOv() {
     const fs = act.filter(f => f.c === c), ii = fs.filter(f => f.pl === 'II'), na = ii.reduce((s, f) => s + (f.na || 0), 0), inv = ii.reduce((s, f) => s + (f.inv || 0), 0);
     const fees = fs.filter(f => f.fee != null).map(f => f.fee), hr = ii.filter(f => f.risk === 'r4').map(f => ret(f, 'y1')).filter(x => x != null);
     return `<section class="card"><h3><span class="flag">${c}</span>${t.c[c]}</h3><p>${t.kFunds(ii.length, fs.length - ii.length)}</p>`
-      + (c === 'LV' ? `<p>${t.kNaLv}</p>` : `<p>${t.kNa(na >= 1000 ? `${num(na / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(na, 0)} ${lang === 'lt' ? 'mln. €' : 'm €'}`)}</p>`)
-      + (inv ? `<p>${t.kInv(num(inv, 0))}</p>` : '')
+      + (c === 'LV' && !na ? `<p>${t.kNaLv}</p>` : `<p>${t.kNa(na >= 1000 ? `${num(na / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(na, 0)} ${lang === 'lt' ? 'mln. €' : 'm €'}`)}</p>`)
+      + (c === 'LV' && na ? `<p class="note">${t.kNaQ(ii.map(f => f.naQ).filter(Boolean).sort().pop())}</p>` : '')
+      + (inv && c !== 'LV' ? `<p>${t.kInv(num(inv, 0))}</p>` : '')
       + (fees.length ? `<p>${t.kFee(pctPlain(fees.reduce((a, b) => a + b, 0) / fees.length), t.feeK[fs.find(f => f.fee != null).feeK])}</p>` : `<p>${t.feeLt}</p>`)
       + (hr.length ? `<p>${t.kR(pctPlain(median(hr)), hr.length)}</p>` : '') + '</section>';
   }).join('');
@@ -135,18 +138,21 @@ function renderOv() {
       const b = xs.reduce((a, x) => x.v > a.v ? x : a);
       return `<td class="n"><b>${fmtP(median(xs.map(x => x.v)))}</b> <small class="note">${t.nF(xs.length)}</small><br><small class="note">${hEsc(b.f.n)} ${fmtP(b.v)}</small></td>`;
     }).join('')}</tr>`).join('') + '</tbody>';
-  const E = (BALTIC.tot || {}).EE;
-  $('eeT').textContent = t.eeT; $('eeN').textContent = t.eeN;
-  $('eeSeg').innerHTML = ['na', 'inv'].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === EEK}">${t.eeSeg[k]}</button>`).join('');
+  const TOT = BALTIC.tot || {}, cs = ['EE', 'LV'].filter(c => TOT[c]);
+  if (!cs.includes(MKC)) MKC = cs[0] || 'EE';
+  const E = TOT[MKC], K = MKC === 'LV' ? 'na' : EEK;
+  $('eeT').textContent = t.mkT(t.c[MKC]); $('eeN').textContent = MKC === 'LV' ? t.lvN(E && E.chk) : t.eeN;
+  $('eeSeg').innerHTML = (cs.length > 1 ? cs.map(c => `<button type="button" data-mc="${c}" aria-pressed="${c === MKC}"><span class="flag">${c}</span> ${t.c[c]}</button>`).join('') + '<span style="width:12px"></span>' : '')
+    + (MKC === 'LV' ? ['na'] : ['na', 'inv']).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === K}">${t.eeSeg[k]}</button>`).join('');
   if (E) {
     const md = m => Math.round(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0) / DAY);
-    const ser = (EEK === 'inv' ? ['II'] : ['II', 'III']).filter(p => E[p]).map((p, i) => ({ provider: p, label: t.pl(p), color: PAL[i], points: E[p].m.map((m, j) => [md(m), E[p][EEK][j]]).filter(x => x[1] != null) }));
+    const ser = (K === 'inv' ? ['II'] : ['II', 'III']).filter(p => E[p]).map((p, i) => ({ provider: p, label: t.pl(p), color: PAL[i], points: E[p].m.map((m, j) => [md(m), E[p][K][j]]).filter(x => x[1] != null) }));
     const xs = ser.flatMap(s => s.points.map(p => p[0]));
     drawLineChart($('eeCh'), ser, Math.min(...xs), Math.max(...xs), { zero: true, axisUnit: '', fmt: v => num(v, 0) });
   }
 }
 $('rkSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; RKH = b.dataset.h; renderOv(); });
-$('eeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; EEK = b.dataset.k; renderOv(); });
+$('eeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.mc) MKC = b.dataset.mc; else EEK = b.dataset.k; renderOv(); });
 
 /* ---------- Visi fondai ---------- */
 const FS = { c: { LT: true, LV: true, EE: true }, pl: 'II', g: '', q: '', closed: false, sort: 'y1', dir: -1 };
@@ -191,7 +197,7 @@ function renderFd() {
       case 'vol': return `<td class="n">${f.vol == null ? t.none : pctPlain(f.vol)}</td>`;
       case 'fee': return `<td class="n" title="${f.feeK ? hEsc(t.feeK[f.feeK]) : ''}">${f.fee == null ? t.none : pctPlain(f.fee)}</td>`;
       case 'eq': return `<td class="n">${f.eq == null ? t.none : num(f.eq, 0) + pctSfx()}</td>`;
-      case 'na': return `<td class="n">${f.na == null ? t.none : num(f.na, 1)}</td>`; case 'inv': return `<td class="n">${f.inv == null ? t.none : num(f.inv, 0)}</td>`;
+      case 'na': return `<td class="n"${f.naQ ? ` title="${hEsc(t.kNaQ(f.naQ))}"` : ''}>${f.na == null ? t.none : num(f.na, 1)}</td>`; case 'inv': return `<td class="n">${f.inv == null ? t.none : num(f.inv, 0)}</td>`;
       case 'last': return `<td class="n" title="${hEsc(iso(f.first))} – ${hEsc(iso(f.last))}">${iso(f.last)}</td>`;
       default: return `<td class="n ${sgn(r[k])}">${fmtP(r[k])}</td>`;
     } };
@@ -238,6 +244,14 @@ function renderCmp() {
     + fs.map((f, i) => { const s = at(f, x0) || { d: f.first, v: f.V[0] }, e = at(f, x1) || { d: f.last, v: f.V[f.V.length - 1] }, tot = (e.v / s.v - 1) * 100, yrs = (e.d - s.d) / 365.25, ann = yrs >= 1 ? (Math.pow(e.v / s.v, 1 / yrs) - 1) * 100 : null;
       return `<tr><td class="nm"><i class="sw" style="background:${PAL[i % PAL.length]};display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px"></i><span class="flag">${f.c}</span> ${hEsc(f.n)} <small class="note">${f.pl} · ${hEsc(f.m)}</small></td><td class="n ${sgn(tot)}">${fmtP(tot)}</td><td class="n ${sgn(ann)}">${fmtP(ann)}</td><td class="n">${f.vol == null ? t.none : pctPlain(f.vol)}</td><td class="n">${f.fee == null ? t.none : pctPlain(f.fee)}</td><td>${rgHtml(f)}</td></tr>`; }).join('') + '</tbody>';
   $('cmN').textContent = t.cmFrom(iso(x0), iso(x1));
+  renderTop(fs);
+}
+function renderTop(fs) {                               // 10 didžiausių investicijų (LV II pakopa – iš ketvirčio ataskaitų)
+  const t = T(), xs = fs.filter(f => f.top && f.top.length);
+  $('topT').textContent = t.topT; $('topL').textContent = t.topL;
+  $('topG').innerHTML = xs.length ? xs.map(f => `<div class="topc"><h3><span class="flag">${f.c}</span> ${hEsc(f.n)}</h3><p class="note">${t.topQ(f.topQ)} · ${hEsc(f.m)}</p>`
+    + `<table class="bt"><tbody>${f.top.map((h, i) => `<tr><td class="n">${i + 1}.</td><td class="nm">${hEsc(h[0])}</td><td class="n">${num(h[1], h[1] < 10 ? 2 : 1)}${pctSfx()}</td></tr>`).join('')}</tbody></table></div>`).join('')
+    : `<p class="note">${t.topNone}</p>`;
 }
 $('cmBar').addEventListener('click', e => {
   const b = e.target.closest('[data-h]'); if (b) { CH = b.dataset.h; renderCmp(); return; }
