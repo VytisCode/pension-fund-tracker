@@ -47,7 +47,7 @@ const pctPlain = (x, p = 1) => (x < 0 ? '−' : '') + num(Math.abs(x), 2) + pctS
 const colorOf = id => `var(--s${DATA.providers.findIndex(p => p.id === id) + 1})`;
 const labelOf = id => DATA.providers.find(p => p.id === id).label;
 const CAT3 = { lt: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fondai', equity: 'Akcijų fondai' }, en: { bond: 'Bond funds', mixed: 'Mixed funds', equity: 'Equity funds' } };
-const groupLabel = g => g.id === 'turto' ? T().turto : (CAT3[lang] || CAT3.lt)[g.id] || g.id.replace('-', '–');
+const groupLabel = g => g.lbl ? g.lbl[lang] || g.lbl.lt : g.id === 'turto' ? T().turto : (CAT3[lang] || CAT3.lt)[g.id] || g.id.replace('-', '–');
 
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 
@@ -122,7 +122,7 @@ function renderHeader(active, onLang) {
   if (HOME_PAGES.includes(active)) document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab]; if (o && o !== active) { p.dataset.off = o; p.hidden = true; } });
   { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
     const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(`${o.dataset.off}.html${location.hash}`); }
-  if (TAB_GROUP[active] && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
+  if (tabGroupOf(active) && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
   h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
@@ -335,23 +335,48 @@ const HOME_PAGES = ['index', 'facts', 'managers'];
 const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
 /* Du puslapiai – viena skirtukų juosta: III pakopa (pillar3 + performance3) ir II pakopa (performance + overview „Grupių grafikai“).
    Kito puslapio skirtukai – paprastos nuorodos „puslapis.html#tab=…“; šoniniame meniu abu puslapiai – vienas punktas. */
-const PAGE_ALIAS = { performance3: 'pillar3', overview: 'performance' };
+const PAGE_ALIAS = { performance3: 'pillar3', overview: 'performance', baltic_lt: 'baltic', baltic_lt3: 'baltic', baltic_lv: 'baltic', baltic_lv3: 'baltic', baltic_ee: 'baltic', baltic_ee3: 'baltic' };
 const TG3 = [['pillar3', 'cat', 'Kategorijos', 'Categories'], ['pillar3', 'all', 'Visi fondai – rodikliai', 'All funds – key figures'], ['performance3', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance3', 'fund', 'Fondų palyginimas', 'Fund comparison'],
   ['performance3', 'risk', 'Rizika', 'Risk'], ['performance3', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['pillar3', 'rdd', 'Kilimas ir kritimas', 'Run-up and drawdown']];
 const TG2 = [['performance', 'market', 'Visa rinka', 'Whole market'], ['performance', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance', 'fund', 'Fondų palyginimas', 'Fund comparison'], ['performance', 'risk', 'Rizika', 'Risk'],
   ['performance', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['overview', '', 'Grupių grafikai', 'Group charts'], ['performance', 'ins', 'Rinkos įžvalgos', 'Market insights']];
 const TAB_GROUP = { pillar3: TG3, performance3: TG3, performance: TG2, overview: TG2 };
+/* Baltijos šalys (savininkas 2026-10-21: „kad latviai ir estai jaustų tą pačią kokybę, kokią matys Lietuvoje“): kiekviena šalis turi
+   tuos pačius skirtukus ta pačia tvarka. Dalis jų – baltic.html (šalis ir pakopa – #c=…&pl=…), dalis – „Rezultatų“ puslapio (perf.js)
+   kopijos su tos šalies duomenimis: baltic_lt(3).html, baltic_lv(3).html, baltic_ee(3).html (build_site.py). Viršuje – šalies juosta. */
+const BXM = { c: 'LT', pl: 'II' };
+const bxPage = (c, pl) => `baltic_${c.toLowerCase()}${pl === 'III' ? '3' : ''}`;
+function bxTabs(c, pl) {
+  const b = (k, lt, en) => ['baltic', k, lt, en, `c=${c}&pl=${pl}`];
+  if (c === 'X') return [b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
+  const pp = bxPage(c, pl), lt2 = c === 'LT' && pl === 'II';
+  return [b('ov', 'Apžvalga', 'Overview'), b('cr', 'Visa rinka', 'Whole market'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
+    b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
+    b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments')];
+}
+const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];
+function bxBar() {                        // šalies ir pakopos juosta (nuorodos): perjungus šalį lieka tas pats skirtukas
+  const nav = document.getElementById('snav'); if (!nav || !(document.body.dataset.page || '').startsWith('baltic')) return;
+  let el = document.getElementById('bxm');
+  if (!el) { el = document.createElement('div'); el.id = 'bxm'; el.className = 'bxm'; nav.insertBefore(el, nav.querySelector('.pnav')); }
+  const L = lang === 'lt', CN = { LT: L ? 'Lietuva' : 'Lithuania', LV: L ? 'Latvija' : 'Latvia', EE: L ? 'Estija' : 'Estonia' };
+  const href = (c, pl) => { const G = bxTabs(c, pl), cur = TAB_CUR, e = G.find(x => x[1] === cur) || G.find(x => x[1] === ({ rk: 'cr', hm: 'ym', cmp: 'fund', rf: 'ov', fund: 'cmp', ym: 'hm', sum: 'rk' })[cur]) || G[0];
+    return `${e[0]}.html#tab=${e[1]}${e[0] === 'baltic' ? `&c=${c}&pl=${pl}` : ''}`; };
+  el.innerHTML = `<div class="seg" role="group">${['LT', 'LV', 'EE', 'X'].map(c => `<a href="${href(c, BXM.pl)}" aria-pressed="${BXM.c === c}">${c === 'X' ? `<span class="ln">${L ? 'Šalių palyginimas' : 'Compare countries'}</span><span class="sn">${L ? 'Palyginimas' : 'Compare'}</span>` : `<span class="flag">${c}</span><span class="ln"> ${CN[c]}</span>`}</a>`).join('')}</div>`
+    + (BXM.c === 'X' ? '' : `<div class="seg" role="group">${['II', 'III'].map(p => `<a href="${href(BXM.c, p)}" aria-pressed="${BXM.pl === p}">${p} ${L ? 'pakopa' : 'pillar'}</a>`).join('')}</div>`);
+}
 function groupTabs(pn) {
-  const page = document.body.dataset.page, G = TAB_GROUP[page]; if (!G) return;
+  const page = document.body.dataset.page, G = tabGroupOf(page); if (!G) return;
   const own = [...pn.querySelectorAll('a')], L = lang === 'lt';
   const ownFor = k => own.find(a => paneOf(pnTarget(a.dataset.id)) === k);
-  const out = G.map(([p, k, lt, en]) => {
-    if (p !== page) { const a = document.createElement('a'); a.href = `${p}.html${k ? '#tab=' + k : ''}`; a.className = 'xt'; a.textContent = L ? lt : en; return a; }
+  const out = G.map(([p, k, lt, en, ex]) => {
+    if (p !== page) { const a = document.createElement('a'); a.href = `${p}.html${k ? '#tab=' + k : ''}${ex ? '&' + ex : ''}`; a.className = 'xt'; a.textContent = L ? lt : en; return a; }
     if (!k) { const a = document.createElement('a'); a.href = '#'; a.setAttribute('aria-current', 'true'); a.textContent = L ? lt : en; a.onclick = e => e.preventDefault(); return a; }
-    return ownFor(k);
+    const a = ownFor(k); if (a && page.startsWith('baltic')) a.textContent = L ? lt : en; return a;
   }).filter(Boolean);
-  own.forEach(a => { if (!out.includes(a)) out.push(a); });   // savas skirtukas, kurio nėra sąraše, nedingsta
+  if (!page.startsWith('baltic')) own.forEach(a => { if (!out.includes(a)) out.push(a); });   // savas skirtukas, kurio nėra sąraše, nedingsta
   pn.replaceChildren(...out); pn.classList.add('tabs');
+  bxBar();
 }
 const tabKey = () => 'tab:' + (document.body.dataset.page || location.pathname.split('/').pop());
 function tabStart() {
@@ -377,7 +402,7 @@ function showTab(k, user) {
   const prev = TAB_CUR; TAB_CUR = k;
   document.querySelectorAll('[data-tab]').forEach(p => { p.hidden = p.dataset.tab !== k; });
   document.body.dataset.ptab = k;
-  markTab();
+  markTab(); bxBar();
   if (user) { try { localStorage.setItem(tabKey(), k); } catch (e) {} }
   if (prev !== k) {
     window.dispatchEvent(new Event('resize'));           // grafikai perpiešiami pagal matomą plotį
@@ -862,6 +887,7 @@ function idxFunds() {
 let LONE = null;
 function loneDays() {
   if (LONE) return LONE;
+  if (typeof PLX !== 'undefined' && PLX.c !== 'LT') return (LONE = new Set());   // Baltijos fondai – vienos šalies duomenys, „vienišų“ dienų nėra
   const by = new Map(), first = {};
   (typeof DATA !== 'undefined' && DATA.groups ? DATA.groups : []).forEach(g => g.funds.forEach(f => {
     first[f.provider] = Math.min(first[f.provider] ?? Infinity, f.d[0]);
@@ -1323,8 +1349,10 @@ function kpiIII() {                      // III pakopa iš data3.js (Rezultatai 
 }
 /* III pakopos spalvos: bendrovės prekės ženklo atspalviai, kiekvienam fondui savas (kaip p3.js) */
 function p3Colors() {
-  const BR = { ARTEA: [230, 55, 40], GOINDEX: [178, 80, 38], LUMINOR: [276, 52, 52], SEB: [104, 70, 34], SWEDBANK: [22, 100, 54], ALLIANZ: [205, 75, 50] }, SH = [0, 14, -10, 24, -18, 7], seen = {};
-  DATA.providers.forEach((p, i) => { const [h, s, l] = BR[p.brand] || [0, 0, 45]; const k = seen[p.brand] = (seen[p.brand] ?? -1) + 1;
+  const BR = { ARTEA: [230, 55, 40], GOINDEX: [178, 80, 38], LUMINOR: [276, 52, 52], SEB: [104, 70, 34], SWEDBANK: [22, 100, 54], ALLIANZ: [205, 75, 50],
+    LHV: [210, 10, 30], TULEVA: [190, 70, 40], CITADELE: [350, 65, 45], INVL: [215, 70, 32], SIGNET: [40, 85, 42], INDEXO: [165, 55, 36], ABLV: [300, 40, 45], BLUEORANGE: [28, 85, 50] }, SH = [0, 14, -10, 24, -18, 7], seen = {};
+  const hue = b => { let x = 0; for (const ch of b || '') x = (x * 31 + ch.charCodeAt(0)) % 360; return [x, 55, 45]; };   // nežinomas valdytojas – pastovi spalva
+  DATA.providers.forEach((p, i) => { const [h, s, l] = BR[p.brand] || hue(p.brand); const k = seen[p.brand] = (seen[p.brand] ?? -1) + 1;
     document.documentElement.style.setProperty(`--s${i + 1}`, `hsl(${h} ${s}% ${Math.max(22, Math.min(74, l + SH[k % SH.length]))}%)`); });
 }
 function kpiII() {                       // II pakopa iš data.js („Rezultatai“, „Apžvalga“)

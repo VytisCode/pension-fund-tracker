@@ -597,3 +597,13 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 @media (max-width: 700px) { .sechero { height: 48px; margin: 0 0 8px; border-radius: 10px; padding: 0 14px; } .sechero span { font-size: 17px; } .sechero small { display: none; } }
 @media print { .sechero { display: none; } }
 @media (min-width: 701px) { .has-hero .crumb { display: none; } }   /* kompiuteryje skyrių jau rodo nuotraukų juosta */
+/* Baltijos šalys: šalies ir pakopos juosta virš skirtukų (common.js bxBar) */
+.bxm { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-top: 6px; }
+.bxm .seg a { color: var(--text-2); padding: 6px 12px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.bxm .seg a + a { border-left: 1px solid var(--line); }
+.bxm .seg a[aria-pressed="true"] { background: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.bxm .seg a[aria-pressed="true"] .flag { background: rgba(255,255,255,.22); color: inherit; }
+.bxm .seg a:hover:not([aria-pressed="true"]) { background: var(--hover); }
+.bxm .flag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; padding: 1px 5px; border-radius: 5px; background: var(--hover); }
+.bxm .sn { display: none; }
+@media (max-width: 560px) { .bxm .ln { display: none; } .bxm .sn { display: inline; } .bxm .seg a { padding: 6px 10px; } }

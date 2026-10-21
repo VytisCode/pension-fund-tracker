@@ -37,7 +37,10 @@ CHECKS = {
     "aum.html": [],
     "reports.html": [("#calTable tbody tr", 5)],
     "journey.html": [("#annTable tbody tr", 1)],
-    "baltic.html": [("#fTbl tbody tr", 10), ("#rkTbl tbody tr", 4)],
+    "baltic.html": [("#crTbl tbody tr", 10), ("#mgTbl tbody tr", 3)],
+    "baltic_ee.html": [("#tSum tbody tr", 3)],
+    "baltic_lv.html": [("#tSum tbody tr", 3)],
+    "baltic_ee3.html": [], "baltic_lv3.html": [], "baltic_lt.html": [], "baltic_lt3.html": [],
     "ops.html": [],
     "apie.html": [],
 }

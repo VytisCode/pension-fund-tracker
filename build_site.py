@@ -247,6 +247,7 @@ def build_baltic(ver: dict) -> None:
     import baltic
 
     payload = baltic.build()
+    perf = payload.pop("_perf", {})
     data_js = "const BALTIC=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_baltic.js").write_text(data_js, encoding="utf-8")
     for n in ("baltic.html", "baltic.js"):
@@ -258,13 +259,56 @@ def build_baltic(ver: dict) -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={v[n]}"').replace(f'href="{n}"', f'href="{n}?v={v[n]}"')
     (DOCS / "baltic.html").write_text(text, encoding="utf-8")
     print(f"docs/data_baltic.js: {len(data_js) / 1024:.0f} KB, fondų: {len(payload['funds'])}")
+    build_baltic_perf(ver, perf, payload.get("cpi") or {})
     # Latvijos ir Estijos fondai – ir viršutinėje paieškoje (auditas 2026-10-21): [„b“, pavadinimas, pakopa, šalis, nuoroda, žodžiai, valdytojas]
     from urllib.parse import quote
     sp = DOCS / "data_search.js"
     t = sp.read_text(encoding="utf-8"); idx = json.loads(t[t.index("=") + 1:].rstrip().rstrip(";"))
-    idx += [["b", f["n"], f["pl"], f["c"], f"baltic.html#tab=fd&bq={quote(f['n'])}", f"{f['m']} {f.get('isin') or ''} {'latvija latvia' if f['c'] == 'LV' else 'estija estonia'}", f["m"]]
+    idx += [["b", f["n"], f["pl"], f["c"], f"baltic.html#tab=cr&c={f['c']}&pl={f['pl']}&bq={quote(f['n'])}", f"{f['m']} {f.get('isin') or ''} {'latvija latvia' if f['c'] == 'LV' else 'estija estonia'}", f["m"]]
             for f in payload["funds"] if f["c"] in ("LV", "EE")]
     sp.write_text("var QIDX=" + json.dumps(idx, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+
+
+def build_baltic_perf(ver: dict, perf: dict, cpi: dict) -> None:
+    """Baltijos šalys – „Rezultatų“ puslapis (perf.js) kiekvienai šaliai ir pakopai (savininkas 2026-10-21: „tokios pačios lentelės
+    kaip polapyje Rezultatai“): baltic_lv(3).html, baltic_ee(3).html – su tos šalies duomenimis (baltic.py perf_data) ir infliacija
+    (Eurostat SVKI vietoj Lietuvos VKI); baltic_lt(3).html – Lietuvos puslapiai Baltijos skyriaus rėmuose."""
+    js = (DOCS / "data.js").read_text(encoding="utf-8"); lt = json.loads(js[js.index("=") + 1:].strip().rstrip(";"))
+    base = (DOCS / "performance.html").read_text(encoding="utf-8")
+    dec = ('DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));')
+    cn = {"LT": "Lietuva", "LV": "Latvija", "EE": "Estija"}
+    for (c, pl), d in perf.items():
+        name = f"baltic_{c.lower()}{'3' if pl == 'III' else ''}"
+        C = cpi.get(c)
+        months = {}
+        if C:
+            y, m = map(int, C["s"].split("-"))
+            for v in C["v"]:
+                if v is not None:
+                    months[f"{y:04d}-{m:02d}"] = v
+                m += 1
+                if m > 12:
+                    y, m = y + 1, 1
+        dj = ("const DATA=" + json.dumps({"generated": lt["generated"], "providers": d["providers"], "groups": d["groups"], "rf": lt.get("rf"), "rfm": lt.get("rfm")},
+                                         ensure_ascii=False, separators=(",", ":")) + ";\n" + ("const CPI=" + json.dumps(months, separators=(",", ":")) + ";\n" if months else ""))
+        fn = f"data_bx_{c.lower()}{pl.count('I')}.js"
+        (DOCS / fn).write_text(dj, encoding="utf-8")
+        h = hashlib.md5(dj.encode()).hexdigest()[:8]
+        plx = json.dumps({"c": c, "pl": pl, "page": name, "ppy": d["ppy"], "stale": d["stale"]})
+        fees = {f"{f['provider']}|{g['id']}": f["fee"] for g in d["groups"] for f in g["funds"] if f.get("fee") is not None}
+        t = base.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', f'<script src="{fn}?v={h}"></script><script>var PL3 = 1, PLX = {plx}; {dec}</script>')
+        t = t.replace(f'<script src="data_cpi.js?v={ver["data_cpi.js"]}"></script>', "")
+        t = t.replace(f'<script src="perf.js?v={ver["perf.js"]}"></script>', '<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, '
+                      + json.dumps(fees) + f'); }}</script><script src="perf.js?v={ver["perf.js"]}"></script>')
+        t = t.replace("<title>", f"<title>{cn[c]} · {pl} pakopa · ")
+        assert fn in t and "p3Colors" in t and "data_cpi.js" not in t
+        (DOCS / f"{name}.html").write_text(t, encoding="utf-8")
+    for pl, src in (("II", "performance.html"), ("III", "performance3.html")):     # Lietuva – tie patys duomenys kaip „Rezultatuose“
+        name = f"baltic_lt{'3' if pl == 'III' else ''}"
+        t = (DOCS / src).read_text(encoding="utf-8")
+        t = t.replace(f'<script src="perf.js?v={ver["perf.js"]}"></script>', f'<script>var PLX = {json.dumps({"c": "LT", "pl": pl, "page": name})};</script><script src="perf.js?v={ver["perf.js"]}"></script>', 1)
+        assert "PLX" in t
+        (DOCS / f"{name}.html").write_text(t, encoding="utf-8")
 
 
 def sources() -> list:

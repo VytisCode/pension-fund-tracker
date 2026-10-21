@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Baltijos šalys</title>
-<link rel="stylesheet" href="style.css?v=6afc46b1">
+<link rel="stylesheet" href="style.css?v=814c0c99">
 <style>
   .bx { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
   .bx > [data-tab] { min-width: 0; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
@@ -51,6 +51,13 @@
   .crt tr.med td { font-weight: 600; font-size: 12.5px; color: var(--text-2); } .crt td.nm small { margin-left: 4px; }
   @media (max-width: 700px) { .crt td.nm { min-width: 140px; font-size: 12px; } .crt td.nm small { display: none; } }
   .topg { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .ovg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 14px; } .ovg .card h3 { margin: 0 0 6px; font-size: 16px; display: flex; gap: 8px; align-items: center; } .ovg #kp1 .card p { margin: 6px 0; font-size: 14px; color: var(--text-2); } .ovg #kp1 .card b { color: var(--text); }
+  @media (max-width: 900px) { .ovg { grid-template-columns: 1fr; } }
+  #mtD summary { cursor: pointer; font-weight: 600; font-size: 15px; } #mtD[open] summary { margin-bottom: 8px; }
+  .shbar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 6px 0 10px; } .shbar span { display: block; min-width: 2px; }
+  .sel .chip i, .chip i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+  .crt tr.hl td { outline: 2px solid var(--accent); outline-offset: -2px; }
+  #mgBr ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; } #mgBr h3 { margin: 0; font-size: 15px; }
   .topc h3 { margin: 0 0 2px; font-size: 14px; } .topc .bt td.nm { min-width: 0; }
 </style>
 </head>
@@ -61,9 +68,9 @@
     <div data-tab="ov">
       <h2 class="sec" id="ovT"></h2>
       <p class="lead" id="ovL"></p>
-      <div class="kp" id="kp"></div>
-      <section class="card"><h2 id="rkT"></h2><p class="note" id="rkN"></p><div class="seg" id="rkSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="rkTbl"></table></div></section>
-      <section class="card"><h2 id="eeT"></h2><div class="seg" id="eeSeg" role="group"></div><div class="chart" id="eeCh"></div><p class="note" id="eeN"></p></section>
+      <div class="ovg"><div id="kp1"></div>
+        <section class="card"><h2 id="eeT"></h2><div class="seg" id="eeSeg" role="group"></div><div class="chart" id="eeCh"></div><p class="note" id="eeN"></p></section></div>
+      <section class="card"><h2 id="ldT"></h2><p class="note" id="ldN"></p><div class="seg" id="ldSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="ldTbl"></table></div></section>
     </div>
     <div data-tab="cr">
       <h2 class="sec" id="crT"></h2>
@@ -74,27 +81,40 @@
     <div data-tab="rs">
       <h2 class="sec" id="rsT"></h2>
       <p class="lead" id="rsL"></p>
-      <div class="bar flt" id="rsBar"></div>
+      <div class="bar flt" id="rsBar" hidden></div>
       <section class="card"><div class="scroll"><table class="bt crt" id="rsTbl"></table></div><p class="note" id="rsN"></p></section>
     </div>
-    <div data-tab="fd">
-      <h2 class="sec" id="fdT"></h2>
-      <p class="lead" id="fdL"></p>
-      <div class="bar flt" id="flt"></div>
-      <section class="card"><div class="scroll"><table class="bt" id="fTbl"></table></div><p class="note" id="fN"></p></section>
+    <div data-tab="mg">
+      <h2 class="sec" id="mgT"></h2>
+      <p class="lead" id="mgL"></p>
+      <section class="card"><div class="seg" id="mgSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="mgTbl"></table></div><p class="note" id="mgN"></p></section>
+      <section class="card"><h2 id="mgShT"></h2><div id="mgSh"></div></section>
+      <h2 class="sec" id="mgBrT" style="margin-top:6px"></h2>
+      <div class="topg" id="mgBr"></div>
     </div>
-    <div data-tab="cmp">
-      <h2 class="sec" id="cmT"></h2>
-      <p class="lead" id="cmL"></p>
-      <div class="bar flt" id="cmBar"></div>
-      <section class="card"><div class="sel" id="cmSel"></div><div class="chart" id="cmCh"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="cmTbl"></table></div><p class="note" id="cmN"></p></section>
-      <section class="card"><h2 id="topT"></h2><p class="note" id="topL"></p><div class="topg" id="topG"></div></section>
+    <div data-tab="top">
+      <h2 class="sec" id="topT"></h2>
+      <p class="lead" id="topL"></p>
+      <div class="topg" id="topG"></div>
+    </div>
+    <div data-tab="rk">
+      <h2 class="sec" id="xT"></h2>
+      <p class="lead" id="xL"></p>
+      <div class="kp" id="kp"></div>
+      <section class="card"><h2 id="rkT"></h2><p class="note" id="rkN"></p><div class="seg" id="rkSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="rkTbl"></table></div></section>
     </div>
     <div data-tab="hm">
       <h2 class="sec" id="hmT"></h2>
       <p class="lead" id="hmL"></p>
       <div class="bar flt" id="hmBar"></div>
       <section class="card"><div class="scroll hmw"><table class="bt hm" id="hmTbl"></table></div><p class="note" id="hmN"></p></section>
+    </div>
+    <div data-tab="cmp">
+      <h2 class="sec" id="cmT"></h2>
+      <p class="lead" id="cmL"></p>
+      <div class="bar flt" id="cmBar"></div>
+      <section class="card"><div class="sel" id="cmSel"></div><div class="chart" id="cmCh"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="cmTbl"></table></div><p class="note" id="cmN"></p></section>
+      <section class="card" id="cmTopS"><h2 id="cmTopT"></h2><p class="note" id="cmTopL"></p><div class="topg" id="cmTopG"></div></section>
     </div>
     <div data-tab="rf">
       <h2 class="sec" id="rfT"></h2>
@@ -103,17 +123,14 @@
       <section class="card"><h2 id="rfKT"></h2><div class="scroll"><table class="bt" id="rfK"></table></div><p class="note" id="rfN"></p></section>
       <section class="card"><h2 id="rfCT"></h2><div class="scroll"><table class="bt rfc" id="rfC"></table></div><p class="note" id="rfWhy"></p><p class="note" id="rfSrc"></p></section>
     </div>
-    <div data-tab="mt">
-      <h2 class="sec" id="mtT"></h2>
-      <section class="card mt" id="mtB"></section>
-    </div>
+    <details class="card mt" id="mtD"><summary id="mtT"></summary><div id="mtB"></div></details>
   </main>
   <footer id="foot"></footer>
 </div>
 <div id="actions"><button class="btn" type="button" id="xlBtn"></button></div>
 <script src="data.js?v=eeab911f"></script>
-<script src="common.js?v=2625c2bb"></script>
-<script src="data_baltic.js?v=c115aa17"></script>
-<script src="baltic.js?v=e040ba5b"></script>
+<script src="common.js?v=55dade98"></script>
+<script src="data_baltic.js?v=b625b5b2"></script>
+<script src="baltic.js?v=4871f983"></script>
 </body>
 </html>

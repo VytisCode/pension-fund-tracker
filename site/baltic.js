@@ -69,7 +69,8 @@ const MT = {
 <li>Latvijos II pakopos plānų turtas ir 10 didžiausių investicijų imami iš valdytojų ketvirčio ataskaitų (PDF manapensija.lv), kurias svetainė perskaito automatiškai. Latvijos rinkos dydis laike – Latvijas Banka statistika (grynieji aktyvai ketvirčio pabaigoje, nuo 2022 m.); visų plānų ataskaitų suma su ja tikrinama (2026-06-30 skirtumas – 0,01 %). Dalyvių skaičius rodomas tik tų plānų, kurių ataskaitos tekste jis nurodytas. III pakopos plānų ataskaitų manapensija.lv neskelbia.</li>
 <li>Estijos fondų 10 didžiausių investicijų – iš naujausios mėnesio investicijų ataskaitos pensionikeskus.ee (LHV, SEB, Luminor, Tuleva skelbia visą sąrašą – imamos 10 didžiausių pagal dalį grynųjų aktyvų; Swedbank – faktų lapo „Top 10“). Pinigai sąskaitose į sąrašą neįtraukiami.</li>
 <li>Latvijos vertės – grafiko taškai, todėl paskutinė data gali būti kelias dienas senesnė nei Estijos ar Lietuvos.</li>
-<li>Uždaryti ar sujungti fondai pagal nutylėjimą nerodomi (galima įjungti skirtuke „Visi fondai“).</li></ul>`,
+<li>Uždaryti ar sujungti fondai pagal nutylėjimą nerodomi (galima įjungti skirtuke „Rezultatai“ → „Fondo duomenys“).</li></ul>
+<h3>Reali grąža</h3><p>Reali grąža – vieneto vertės pokytis, atėmus tos šalies infliaciją: (1 + grąža) ÷ (1 + infliacija) − 1. Infliacija – Eurostat suderintas vartotojų kainų indeksas (SVKI, visos prekės ir paslaugos), kiekvienai šaliai savas. Naudojamas datos mėnesio indeksas; dienoms po paskutinio paskelbto mėnesio – paskutinis žinomas.</p>`,
   en: `<h3>Sources</h3><ul>
 <li><b>Estonia</b> – pensionikeskus.ee (Estonian Pension Centre): daily unit values, net assets of pillar II and III funds and active pillar II investors since 2002; ongoing charges (TER) and returns – daily statistics.</li>
 <li><b>Latvia</b> – manapensija.lv (national pension website): list of pillar II and III plans, manager, fixed part of the fee, equity share, management style and the plan value chart (index, 100 = plan start or 2003), points every 9–13 days.</li>
@@ -82,7 +83,8 @@ const MT = {
 <li>Latvian pillar II plan assets and the 10 largest investments come from managers’ quarterly reports (PDF on manapensija.lv), read automatically by this site. Latvian market size over time – Bank of Latvia statistics (net assets at quarter end, since 2022); the sum of all plan reports is checked against it (difference 0.01% on 30 June 2026). Participants are shown only where the report text states them. Pillar III plan reports are not published on manapensija.lv.</li>
 <li>Estonian funds’ 10 largest investments – from the latest monthly investment report on pensionikeskus.ee (LHV, SEB, Luminor, Tuleva publish the full list – the 10 largest by share of net assets are taken; Swedbank – the factsheet “Top 10”). Cash accounts are not included.</li>
 <li>Latvian values are chart points, so the last date may be a few days older than in Estonia or Lithuania.</li>
-<li>Closed or merged funds are hidden by default (can be switched on in “All funds”).</li></ul>`,
+<li>Closed or merged funds are hidden by default (can be switched on in “Results” → “Fund data”).</li></ul>
+<h3>Real return</h3><p>Real return is the change in unit value after the country’s inflation: (1 + return) ÷ (1 + inflation) − 1. Inflation – Eurostat harmonised index of consumer prices (HICP, all items), separate for each country. The index of the date’s month is used; for days after the last published month – the last known one.</p>`,
 };
 const $ = id => document.getElementById(id);
 const BX = BALTIC.funds;
@@ -116,23 +118,86 @@ function cgLabel(f) {
 const label = f => `${f.c} · ${f.n}`;
 const rgHtml = f => f.risk ? `<span class="rg ${f.risk}" title="${hEsc(T().rg[f.risk])}">${T().rgS[f.risk]}</span>` : `<span class="note">${T().rgNone}</span>`;
 
-/* ---------- Apžvalga ---------- */
-let RKH = 'ytd', EEK = 'na', MKC = 'EE';   // numatytasis laikotarpis – nuo metų pradžios, kaip Lietuvos puslapiuose
+/* ---------- Puslapio sandara (savininkas 2026-10-21: „labai sudėtinga orientuotis … viską reikia perkurti“). Viršuje vienas
+   pasirinkimas: Lietuva, Latvija, Estija arba Šalių palyginimas. Pasirinkus šalį – tie patys skirtukai ta pačia tvarka kaip Lietuvos
+   puslapiuose (Apžvalga, Rezultatai, Rizika, Metai, Fondų palyginimas, Didžiausios investicijos), todėl perjungus šalį lieka tas pats
+   vaizdas. Šalių palyginime – tik panašios rizikos fondai, laisvas palyginimas ir reformos. ---------- */
+addStrings({ bx: {
+  modes: { X: 'Compare countries' }, modesS: { X: 'Compare' },
+  tabs: { ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms' },
+  ovT: c => `${c}: overview`, ovL: { LT: 'Lithuanian pillar II and III funds in the same views as Latvian and Estonian ones. More about Lithuania – on the Results and Market facts pages.', LV: 'Latvian pillar II and III pension plans (manapensija.lv). Funds are compared within Latvian groups by equity share.', EE: 'Estonian pillar II and III pension funds (pensionikeskus.ee). Estonia has no official groups, so funds are compared within risk groups.' },
+  ldT: p => `Leaders of each group, ${p}`, ldN: 'Median return of the group and its best and weakest fund. 3, 5 and 10-year returns are annual.',
+  ldH: ['Group', 'Funds', 'Median', 'Best', 'Weakest'],
+  ltMk: 'Lithuanian market over time (assets, participants, managers’ shares) – on the <a href="facts.html#tab=mk">Market facts → Market over time</a> page.',
+  xT: 'Lithuania, Latvia and Estonia side by side', xL: 'Funds of different countries are compared only within the same risk group (3-year volatility, the same calculation for every fund).',
+  crL: 'Funds by their country group. Colour – the fund’s place in its group in that column (green – best, red – worst). Click a column to sort; tick funds to compare them in “Fund comparison”.',
+  view: { ret: 'Return', dat: 'Fund data' },
+  yrT: c => `${c}: calendar-year returns`, yrL: 'Each fund’s return in every calendar year, compared within its group. Colour – place in group that year. Click a year to sort.',
+  yrN: d => `* – year to date (to ${d}). Return from the last value of the previous year to the last value of the year; years in which a fund did not exist for the whole year are empty.`,
+  cmL: c => `Choose any ${c} funds. Values are rebased to 0% at the start of the period.`,
+  topT: c => `${c}: largest investments`, topL: { LV: 'The 10 largest investments of each Latvian pillar II plan, from the managers’ quarterly reports (manapensija.lv).', EE: 'The 10 largest investments of each Estonian fund, from the monthly investment reports (pensionikeskus.ee).' },
+  topLt: 'Full portfolios of Lithuanian funds – on the <a href="portfolios.html">Portfolios and assets</a> page.',
+  cmTop: 'Largest investments of the selected funds', closed: 'closed', fClosed: 'Show closed funds', mt: 'How it is calculated (methodology)' } }, { bx: {
+  modes: { X: 'Šalių palyginimas' }, modesS: { X: 'Palyginimas' },
+  tabs: { ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos' },
+  ovT: c => `${c}: apžvalga`, ovL: { LT: 'Lietuvos II ir III pakopos fondai tais pačiais vaizdais kaip Latvijos ir Estijos. Daugiau apie Lietuvą – puslapiuose „Rezultatai“ ir „Rinkos faktai“.', LV: 'Latvijos II ir III pakopos pensijų plānai (manapensija.lv). Fondai lyginami Latvijos grupėse pagal akcijų dalį.', EE: 'Estijos II ir III pakopos pensijų fondai (pensionikeskus.ee). Estijoje oficialių grupių nėra, todėl fondai lyginami rizikos grupėse.' },
+  ldT: p => `Grupių lyderiai, ${p}`, ldN: 'Grupės grąžos mediana, geriausias ir silpniausias fondas. 3, 5 ir 10 metų grąžos – metinės.',
+  ldH: ['Grupė', 'Fondų', 'Mediana', 'Geriausias', 'Silpniausias'],
+  ltMk: 'Lietuvos rinka laike (turtas, dalyviai, valdytojų dalys) – puslapyje <a href="facts.html#tab=mk">Rinkos faktai → Rinka laike</a>.',
+  xT: 'Lietuva, Latvija ir Estija greta', xL: 'Skirtingų šalių fondai lyginami tik tos pačios rizikos grupės viduje (3 metų svyravimas, visiems fondams skaičiuojamas vienodai).',
+  crL: 'Fondai pagal jų šalies grupes. Spalva – fondo vieta grupėje tame stulpelyje (žalia – geriausia, raudona – prasčiausia). Spauskite stulpelį, kad surikiuotumėte; pažymėkite fondus, kad palygintumėte skirtuke „Fondų palyginimas“.',
+  view: { ret: 'Grąža', dat: 'Fondo duomenys' },
+  yrT: c => `${c}: kalendorinių metų grąžos`, yrL: 'Kiekvieno fondo grąža kiekvienais kalendoriniais metais, lyginama jo grupėje. Spalva – vieta grupėje tais metais. Spauskite metus, kad surikiuotumėte.',
+  yrN: d => `* – nuo metų pradžios (iki ${d}). Grąža – nuo paskutinės praėjusių metų vertės iki paskutinės metų vertės; metai, kuriais fondas veikė ne visus metus, tušti.`,
+  cmL: c => `Pasirinkite bet kuriuos fondus (${c}). Vertės perskaičiuotos nuo 0 % laikotarpio pradžioje.`,
+  topT: c => `${c}: didžiausios investicijos`, topL: { LV: 'Kiekvieno Latvijos II pakopos plāno 10 didžiausių investicijų iš valdytojų ketvirčio ataskaitų (manapensija.lv).', EE: 'Kiekvieno Estijos fondo 10 didžiausių investicijų iš mėnesio investicijų ataskaitų (pensionikeskus.ee).' },
+  topLt: 'Visi Lietuvos fondų portfeliai – puslapyje <a href="portfolios.html">Portfeliai ir turtas</a>.',
+  cmTop: 'Pasirinktų fondų didžiausios investicijos', closed: 'uždarytas', fClosed: 'Rodyti uždarytus fondus', mt: 'Kaip skaičiuota (metodika)' } });
+const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'top'], X: ['rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
+const TMAP = { ov: 'rk', cr: 'rk', rs: 'rk', mg: 'rk', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov' };   // perjungus režimą – artimiausias skirtukas
+const TID = { ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT' };
+const modeTabs = () => CR.c === 'X' ? TABS.X : TABS.c;
+
+/* ---------- Apžvalga (šalis) ir „Panaši rizika“ (šalių palyginimas) ---------- */
+let RKH = 'ytd', EEK = 'na';   // numatytasis laikotarpis – nuo metų pradžios, kaip Lietuvos puslapiuose
+function countryCard(c, act) {
+  const t = T(), fs = act.filter(f => f.c === c), ii = fs.filter(f => f.pl === 'II'), na = ii.reduce((s, f) => s + (f.na || 0), 0), inv = ii.reduce((s, f) => s + (f.inv || 0), 0);
+  const fees = fs.filter(f => f.fee != null).map(f => f.fee), hr = ii.filter(f => f.risk === 'r4').map(f => ret(f, 'y1')).filter(x => x != null);
+  return `<section class="card"><h3><span class="flag">${c}</span>${t.c[c]}</h3><p>${t.kFunds(ii.length, fs.length - ii.length)}</p>`
+    + (c === 'LV' && !na ? `<p>${t.kNaLv}</p>` : `<p>${t.kNa(na >= 1000 ? `${num(na / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(na, 0)} ${lang === 'lt' ? 'mln. €' : 'm €'}`)}</p>`)
+    + (c === 'LV' && na ? `<p class="note">${t.kNaQ(ii.map(f => f.naQ).filter(Boolean).sort().pop())}</p>` : '')
+    + (inv && c !== 'LV' ? `<p>${t.kInv(num(inv, 0))}</p>` : '')
+    + (fees.length ? `<p>${t.kFee(pctPlain(fees.reduce((a, b) => a + b, 0) / fees.length), t.feeK[fs.find(f => f.fee != null).feeK])}</p>` : `<p>${t.feeLt}</p>`)
+    + (hr.length ? `<p>${t.kR(pctPlain(median(hr)), hr.length)}</p>` : '') + '</section>';
+}
+const hzSeg = (cur = RKH) => ['ytd', 'y1', 'y3', 'y5', 'y10'].map(h => `<button type="button" data-h="${h}" aria-pressed="${h === cur}">${T().hz[h]}</button>`).join('');
 function renderOv() {
+  const t = T(), b = t.bx, c = CR.c; if (c === 'X') return;
+  const act = BX.filter(f => !f.closed);
+  $('ovT').textContent = b.ovT(t.c[c]); $('ovL').textContent = b.ovL[c];
+  $('kp1').innerHTML = countryCard(c, act);
+  $('ldT').textContent = b.ldT(t.pl(CR.pl)); $('ldN').textContent = b.ldN; $('ldSeg').innerHTML = hzSeg();
+  const cell = x => x ? `${hEsc(x.f.n)} <small class="note">${hEsc(x.f.m)}</small><br><b class="${sgn(x.v)}">${fmtP(x.v)}</b>` : t.none;
+  $('ldTbl').innerHTML = `<thead><tr>${b.ldH.map((h, i) => `<th${i === 1 || i === 2 ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
+    + crGroups().map(g => { const xs = g.fs.map(f => ({ f, v: ret(f, RKH) })).filter(x => x.v != null).sort((a, b) => b.v - a.v);
+      return `<tr><td>${hEsc(g.name)}</td><td class="n">${g.fs.length}</td><td class="n ${sgn(median(xs.map(x => x.v)))}"><b>${xs.length ? fmtP(median(xs.map(x => x.v))) : t.none}</b></td><td class="nm">${cell(xs[0])}</td><td class="nm">${xs.length > 1 ? cell(xs[xs.length - 1]) : t.none}</td></tr>`; }).join('') + '</tbody>';
+  const E = (BALTIC.tot || {})[c], K = c === 'LV' ? 'na' : EEK;
+  $('eeT').textContent = t.mkT(t.c[c]);
+  if (!E) { $('eeSeg').innerHTML = ''; $('eeCh').innerHTML = `<p>${b.ltMk}</p>`; $('eeCh').style.minHeight = '0'; $('eeN').textContent = ''; return; }
+  $('eeCh').style.minHeight = '';
+  $('eeN').textContent = c === 'LV' ? t.lvN(E.chk) : t.eeN;
+  $('eeSeg').innerHTML = (c === 'LV' ? ['na'] : ['na', 'inv']).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === K}">${t.eeSeg[k]}</button>`).join('');
+  const md = m => Math.round(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0) / DAY);
+  const ser = (K === 'inv' ? ['II'] : ['II', 'III']).filter(p => E[p]).map((p, i) => ({ provider: p, label: t.pl(p), color: PAL[i], points: E[p].m.map((m, j) => [md(m), E[p][K][j]]).filter(x => x[1] != null) }));
+  const xs = ser.flatMap(s => s.points.map(p => p[0]));
+  $('eeCh').innerHTML = '';
+  drawLineChart($('eeCh'), ser, Math.min(...xs), Math.max(...xs), { zero: true, axisUnit: '', fmt: v => num(v, 0) });
+}
+function renderX() {
   const t = T(), act = BX.filter(f => !f.closed);
-  $('ovT').textContent = t.ovT; $('ovL').textContent = t.ovL;
-  $('kp').innerHTML = ['LT', 'LV', 'EE'].map(c => {
-    const fs = act.filter(f => f.c === c), ii = fs.filter(f => f.pl === 'II'), na = ii.reduce((s, f) => s + (f.na || 0), 0), inv = ii.reduce((s, f) => s + (f.inv || 0), 0);
-    const fees = fs.filter(f => f.fee != null).map(f => f.fee), hr = ii.filter(f => f.risk === 'r4').map(f => ret(f, 'y1')).filter(x => x != null);
-    return `<section class="card"><h3><span class="flag">${c}</span>${t.c[c]}</h3><p>${t.kFunds(ii.length, fs.length - ii.length)}</p>`
-      + (c === 'LV' && !na ? `<p>${t.kNaLv}</p>` : `<p>${t.kNa(na >= 1000 ? `${num(na / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(na, 0)} ${lang === 'lt' ? 'mln. €' : 'm €'}`)}</p>`)
-      + (c === 'LV' && na ? `<p class="note">${t.kNaQ(ii.map(f => f.naQ).filter(Boolean).sort().pop())}</p>` : '')
-      + (inv && c !== 'LV' ? `<p>${t.kInv(num(inv, 0))}</p>` : '')
-      + (fees.length ? `<p>${t.kFee(pctPlain(fees.reduce((a, b) => a + b, 0) / fees.length), t.feeK[fs.find(f => f.fee != null).feeK])}</p>` : `<p>${t.feeLt}</p>`)
-      + (hr.length ? `<p>${t.kR(pctPlain(median(hr)), hr.length)}</p>` : '') + '</section>';
-  }).join('');
-  $('rkT').textContent = t.rkT; $('rkN').textContent = t.rkN;
-  $('rkSeg').innerHTML = ['ytd', 'y1', 'y3', 'y5', 'y10'].map(h => `<button type="button" data-h="${h}" aria-pressed="${h === RKH}">${t.hz[h]}</button>`).join('');
+  $('xT').textContent = t.bx.xT; $('xL').textContent = t.bx.xL;
+  $('kp').innerHTML = ['LT', 'LV', 'EE'].map(c => countryCard(c, act)).join('');
+  $('rkT').textContent = t.rkT; $('rkN').textContent = t.rkN; $('rkSeg').innerHTML = hzSeg();
   $('rkTbl').innerHTML = `<thead><tr><th>${t.thRisk}</th>${['LT', 'LV', 'EE'].map(c => `<th class="n">${t.c[c]}</th>`).join('')}</tr></thead><tbody>`
     + ['r1', 'r2', 'r3', 'r4'].map(r => `<tr><td>${rgHtml({ risk: r })} ${hEsc(t.rg[r])}</td>${['LT', 'LV', 'EE'].map(c => {
       const xs = act.filter(f => f.c === c && f.risk === r).map(f => ({ f, v: ret(f, RKH) })).filter(x => x.v != null);
@@ -140,103 +205,34 @@ function renderOv() {
       const b = xs.reduce((a, x) => x.v > a.v ? x : a);
       return `<td class="n"><b>${fmtP(median(xs.map(x => x.v)))}</b> <small class="note">${t.nF(xs.length)}</small><br><small class="note">${hEsc(b.f.n)} ${fmtP(b.v)}</small></td>`;
     }).join('')}</tr>`).join('') + '</tbody>';
-  const TOT = BALTIC.tot || {}, cs = ['EE', 'LV'].filter(c => TOT[c]);
-  if (!cs.includes(MKC)) MKC = cs[0] || 'EE';
-  const E = TOT[MKC], K = MKC === 'LV' ? 'na' : EEK;
-  $('eeT').textContent = t.mkT(t.c[MKC]); $('eeN').textContent = MKC === 'LV' ? t.lvN(E && E.chk) : t.eeN;
-  $('eeSeg').innerHTML = (cs.length > 1 ? cs.map(c => `<button type="button" data-mc="${c}" aria-pressed="${c === MKC}"><span class="flag">${c}</span> ${t.c[c]}</button>`).join('') + '<span style="width:12px"></span>' : '')
-    + (MKC === 'LV' ? ['na'] : ['na', 'inv']).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === K}">${t.eeSeg[k]}</button>`).join('');
-  if (E) {
-    const md = m => Math.round(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0) / DAY);
-    const ser = (K === 'inv' ? ['II'] : ['II', 'III']).filter(p => E[p]).map((p, i) => ({ provider: p, label: t.pl(p), color: PAL[i], points: E[p].m.map((m, j) => [md(m), E[p][K][j]]).filter(x => x[1] != null) }));
-    const xs = ser.flatMap(s => s.points.map(p => p[0]));
-    drawLineChart($('eeCh'), ser, Math.min(...xs), Math.max(...xs), { zero: true, axisUnit: '', fmt: v => num(v, 0) });
-  }
 }
-$('rkSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; RKH = b.dataset.h; renderOv(); });
-$('eeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.mc) MKC = b.dataset.mc; else EEK = b.dataset.k; renderOv(); });
+['rkSeg', 'ldSeg'].forEach(id => $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; RKH = b.dataset.h; renderOv(); renderX(); }));
+$('eeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; EEK = b.dataset.k; renderOv(); });
 
-/* ---------- Visi fondai ---------- */
-const FS = { c: { LT: true, LV: true, EE: true }, pl: 'II', g: '', q: '', closed: false, sort: 'y1', dir: -1 };
-try { Object.assign(FS, JSON.parse(localStorage.getItem('bxF') || '{}')); } catch (e) {}
-let SEL = null;
-try { SEL = JSON.parse(localStorage.getItem('bxSel') || 'null'); } catch (e) {}
-const saveF = () => { try { localStorage.setItem('bxF', JSON.stringify(FS)); localStorage.setItem('bxSel', JSON.stringify(SEL)); } catch (e) {} };
-function defaults() {                           // kiekvienai šaliai – didžiausias didelės rizikos II pakopos fondas (LV – ilgiausios istorijos)
-  return ['LT', 'LV', 'EE'].map(c => BX.filter(f => f.c === c && f.pl === 'II' && !f.closed && f.risk === 'r4')
-    .sort((a, b) => (b.na || 0) - (a.na || 0) || a.first - b.first)[0]).filter(Boolean).map(f => f.id);
+/* ---------- Pasirinkti palyginimui fondai – atskirai kiekvienai šaliai ir šalių palyginimui ---------- */
+let SELM = {};
+try { SELM = JSON.parse(localStorage.getItem('bxSelM') || '{}') || {}; } catch (e) {}
+const saveF = () => { try { localStorage.setItem('bxSelM', JSON.stringify(SELM)); } catch (e) {} };
+function defaults(m) {                          // šalis – 3 didžiausi didelės rizikos II pakopos fondai; palyginimas – po didžiausią kiekvienos šalies
+  const top = c => BX.filter(f => f.c === c && f.pl === 'II' && !f.closed && f.risk === 'r4').sort((a, b) => (b.na || 0) - (a.na || 0) || a.first - b.first);
+  return (m === 'X' ? ['LT', 'LV', 'EE'].map(c => top(c)[0]) : top(m).slice(0, 3)).filter(Boolean).map(f => f.id);
 }
-if (!SEL) SEL = defaults();
-{ let q = null; try { q = new URLSearchParams(location.hash.slice(1)).get('bq'); } catch (e) {}   // paieškos nuoroda į fondą: „Visi fondai“ su užpildyta paieška
-  if (q) { const f = BX.find(x => x.n === q); Object.assign(FS, { q, g: '', closed: !!(f && f.closed), c: { LT: true, LV: true, EE: true }, pl: f ? f.pl : 'all' }); } }
-const COLS = ['cmp', 'c', 'pl', 'm', 'n', 'cg', 'risk', 'vol', 'y1', 'y3', 'y5', 'y10', 'max', 'fee', 'eq', 'na', 'inv', 'last'];
-const NUMC = new Set(['vol', 'y1', 'y3', 'y5', 'y10', 'max', 'fee', 'eq', 'na', 'inv', 'last']);
-function rows() {
-  const q = FS.q.trim().toLowerCase();
-  return BX.filter(f => FS.c[f.c] && (FS.pl === 'all' || f.pl === FS.pl) && (FS.closed || !f.closed)
-    && (!FS.g || (FS.g[0] === 'r' ? f.risk === FS.g : `${f.c}:${f.cg}` === FS.g))
-    && (!q || `${f.n} ${f.m}`.toLowerCase().includes(q)))
-    .map(f => ({ f, y1: ret(f, 'y1'), y3: ret(f, 'y3'), y5: ret(f, 'y5'), y10: ret(f, 'y10'), max: ret(f, 'max') }));
-}
-function sortVal(r, k) {
-  const f = r.f;
-  return { c: f.c, pl: f.pl, m: f.m, n: f.n, cg: cgLabel(f), risk: f.risk || 'r9', vol: f.vol, fee: f.fee, eq: f.eq, na: f.na, inv: f.inv, last: f.last, cmp: SEL.includes(f.id) ? 0 : 1 }[k] ?? r[k];
-}
-function renderFd() {
-  const t = T();
-  $('fdT').textContent = t.fdT; $('fdL').textContent = t.fdL;
-  const cgs = [...new Set(BX.filter(f => f.cg && f.pl === (FS.pl === 'all' ? f.pl : FS.pl)).map(f => `${f.c}:${f.cg}`))].sort();
-  $('flt').innerHTML = `<div class="chips">${['LT', 'LV', 'EE'].map(c => `<button type="button" class="chip" data-c="${c}" aria-pressed="${FS.c[c]}"><span class="flag">${c}</span>${t.c[c]}</button>`).join('')}</div>`
-    + `<div class="seg" role="group">${['II', 'III', 'all'].map(p => `<button type="button" data-pl="${p}" aria-pressed="${FS.pl === p}">${p === 'all' ? t.both : t.pl(p)}</button>`).join('')}</div>`
-    + `<select id="fG"><option value="">${t.fAll}</option><optgroup label="${hEsc(t.fRisk)}">${['r1', 'r2', 'r3', 'r4'].map(r => `<option value="${r}"${FS.g === r ? ' selected' : ''}>${hEsc(t.rg[r])}</option>`).join('')}</optgroup>`
-    + ['LT', 'LV'].map(c => { const o = cgs.filter(x => x.startsWith(c + ':')); return o.length ? `<optgroup label="${hEsc(t.fCg(t.c[c]))}">${o.map(x => { const f = BX.find(y => `${y.c}:${y.cg}` === x); return `<option value="${x}"${FS.g === x ? ' selected' : ''}>${hEsc(cgLabel(f))}</option>`; }).join('')}</optgroup>` : ''; }).join('') + '</select>'
-    + `<input type="search" id="fQ" placeholder="${hEsc(t.fQ)}" value="${hEsc(FS.q)}">`
-    + `<label class="field"><input type="checkbox" id="fC"${FS.closed ? ' checked' : ''}> ${t.fClosed}</label>`;
-  const rs = rows().sort((a, b) => { const x = sortVal(a, FS.sort), y = sortVal(b, FS.sort); if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (typeof x === 'string' ? x.localeCompare(y) : x - y) * FS.dir; });
-  const cell = (r, k) => { const f = r.f;
-    switch (k) {
-      case 'cmp': return `<td><input type="checkbox" data-id="${f.id}"${SEL.includes(f.id) ? ' checked' : ''} aria-label="${hEsc(t.cols.cmp)}"></td>`;
-      case 'c': return `<td><span class="flag">${f.c}</span></td>`; case 'pl': return `<td>${f.pl}</td>`; case 'm': return `<td>${hEsc(f.m)}</td>`;
-      case 'n': return `<td class="nm">${hEsc(f.n)}</td>`; case 'cg': return `<td>${hEsc(cgLabel(f))}</td>`; case 'risk': return `<td>${rgHtml(f)}</td>`;
-      case 'vol': return `<td class="n">${f.vol == null ? t.none : pctPlain(f.vol)}</td>`;
-      case 'fee': return `<td class="n" title="${f.feeK ? hEsc(t.feeK[f.feeK]) : ''}">${f.fee == null ? t.none : pctPlain(f.fee)}</td>`;
-      case 'eq': return `<td class="n">${f.eq == null ? t.none : num(f.eq, 0) + pctSfx()}</td>`;
-      case 'na': return `<td class="n"${f.naQ ? ` title="${hEsc(t.kNaQ(f.naQ))}"` : ''}>${f.na == null ? t.none : num(f.na, 1)}</td>`; case 'inv': return `<td class="n">${f.inv == null ? t.none : num(f.inv, 0)}</td>`;
-      case 'last': return `<td class="n" title="${hEsc(iso(f.first))} – ${hEsc(iso(f.last))}">${iso(f.last)}</td>`;
-      default: return `<td class="n ${sgn(r[k])}">${fmtP(r[k])}</td>`;
-    } };
-  $('fTbl').innerHTML = `<thead><tr>${COLS.map(k => `<th data-k="${k}"${NUMC.has(k) ? ' class="n"' : ''}${FS.sort === k ? ` aria-sort="${FS.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${t.cols[k]}</th>`).join('')}</tr></thead>`
-    + `<tbody>${rs.map(r => `<tr${SEL.includes(r.f.id) ? ' class="cmp"' : ''}>${COLS.map(k => cell(r, k)).join('')}</tr>`).join('')}</tbody>`;
-  $('fN').textContent = t.fN(rs.length);
-  $('fG').addEventListener('change', e => { FS.g = e.target.value; saveF(); renderFd(); });
-  $('fQ').addEventListener('input', e => { FS.q = e.target.value; saveF(); clearTimeout(renderFd.q); renderFd.q = setTimeout(() => { renderFd(); const i = $('fQ'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250); });
-  $('fC').addEventListener('change', e => { FS.closed = e.target.checked; saveF(); renderFd(); });
-}
-$('flt').addEventListener('click', e => {
-  const c = e.target.closest('[data-c]'), p = e.target.closest('[data-pl]');
-  if (c) { FS.c[c.dataset.c] = !FS.c[c.dataset.c]; if (!Object.values(FS.c).some(Boolean)) FS.c[c.dataset.c] = true; }
-  else if (p) { FS.pl = p.dataset.pl; if (FS.g && FS.g[0] !== 'r') FS.g = ''; }
-  else return;
-  saveF(); renderFd();
-});
-$('fTbl').addEventListener('click', e => {
-  const cb = e.target.closest('input[data-id]');
-  if (cb) { SEL = cb.checked ? [...SEL, cb.dataset.id].slice(-10) : SEL.filter(x => x !== cb.dataset.id); saveF(); renderFd(); renderCmp(); return; }
-  const th = e.target.closest('th[data-k]'); if (!th) return;
-  const k = th.dataset.k; FS.dir = FS.sort === k ? -FS.dir : (NUMC.has(k) ? -1 : 1); FS.sort = k; saveF(); renderFd();
-});
+const selOf = () => { const m = 'X'; if (!Array.isArray(SELM[m])) SELM[m] = defaults(m); return SELM[m]; };
+const setSel = a => { SELM.X = a.slice(-10); saveF(); };
+function toggleSel(id, on) { const s = selOf(); setSel(on ? (s.includes(id) ? s : [...s, id]) : s.filter(x => x !== id)); renderCmp(); }
 
-/* ---------- Palyginti ---------- */
+/* ---------- Fondų palyginimas ---------- */
 let CH = 'y5';
 function renderCmp() {
-  const t = T(), fs = SEL.map(id => BX.find(f => f.id === id)).filter(Boolean);
-  $('cmT').textContent = t.cmT; $('cmL').textContent = t.cmL;
+  const t = T(), X = true, SEL = selOf(), fs = SEL.map(id => BX.find(f => f.id === id)).filter(Boolean);
+  $('cmT').textContent = X ? t.cmT : t.bx.tabs.cmp; $('cmL').textContent = X ? t.cmL : t.bx.cmL(t.c[CR.c]);
   $('cmBar').innerHTML = `<div class="seg" role="group">${['y1', 'y3', 'y5', 'y10', 'max'].map(h => `<button type="button" data-h="${h}" aria-pressed="${h === CH}">${t.hz[h]}</button>`).join('')}</div>`
-    + `<input type="search" id="cmQ" list="cmList" placeholder="${hEsc(t.cmAdd)}"><datalist id="cmList">${BX.filter(f => !SEL.includes(f.id)).map(f => `<option value="${hEsc(`${f.c} · ${f.pl} · ${f.n}`)}">`).join('')}</datalist>`
+    + `<input type="search" id="cmQ" list="cmList" placeholder="${hEsc(t.cmAdd)}"><datalist id="cmList">${BX.filter(f => !SEL.includes(f.id) && (X || f.c === CR.c)).map(f => `<option value="${hEsc(`${f.c} · ${f.pl} · ${f.n}`)}">`).join('')}</datalist>`
     + `<button type="button" class="btn" id="cmDef">${t.cmDef}</button><button type="button" class="btn" id="cmClr">${t.cmClear}</button>`;
   $('cmSel').innerHTML = fs.map((f, i) => `<button type="button" class="chip" data-rm="${f.id}"><i style="background:${PAL[i % PAL.length]}"></i><span class="flag">${f.c}</span> ${hEsc(f.n)} <span class="x">×</span></button>`).join('');
-  $('cmQ').addEventListener('change', e => { const v = e.target.value, f = BX.find(x => `${x.c} · ${x.pl} · ${x.n}` === v); if (f && !SEL.includes(f.id)) { SEL = [...SEL, f.id].slice(-10); saveF(); renderCmp(); renderFd(); } });
-  if (!fs.length) { $('cmCh').innerHTML = `<p class="note">${t.cmNone}</p>`; $('cmTbl').innerHTML = ''; $('cmN').textContent = ''; return; }
+  $('cmQ').addEventListener('change', e => { const v = e.target.value, f = BX.find(x => `${x.c} · ${x.pl} · ${x.n}` === v); if (f) toggleSel(f.id, true); });
+  $('cmTopS').hidden = !X;
+  if (!fs.length) { $('cmCh').innerHTML = `<p class="note">${t.cmNone}</p>`; $('cmTbl').innerHTML = ''; $('cmN').textContent = ''; $('cmTopG').innerHTML = ''; return; }
   const x1 = Math.max(...fs.map(f => f.last)), minStart = Math.max(...fs.map(f => f.first));
   const x0 = CH === 'max' ? minStart : Math.max(minStart, x1 - Math.round(365.25 * +CH.slice(1)));
   const ser = fs.map((f, i) => { const s = at(f, x0) || { d: f.first, v: f.V[0] }; const pts = [[x0, 0]];
@@ -248,28 +244,34 @@ function renderCmp() {
     + fs.map((f, i) => { const s = at(f, x0) || { d: f.first, v: f.V[0] }, e = at(f, x1) || { d: f.last, v: f.V[f.V.length - 1] }, tot = (e.v / s.v - 1) * 100, yrs = (e.d - s.d) / 365.25, ann = yrs >= 1 ? (Math.pow(e.v / s.v, 1 / yrs) - 1) * 100 : null;
       return `<tr><td class="nm"><i class="sw" style="background:${PAL[i % PAL.length]};display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px"></i><span class="flag">${f.c}</span> ${hEsc(f.n)} <small class="note">${f.pl} · ${hEsc(f.m)}</small></td><td class="n ${sgn(tot)}">${fmtP(tot)}</td><td class="n ${sgn(ann)}">${fmtP(ann)}</td><td class="n">${f.vol == null ? t.none : pctPlain(f.vol)}</td><td class="n">${f.fee == null ? t.none : pctPlain(f.fee)}</td><td>${rgHtml(f)}</td></tr>`; }).join('') + '</tbody>';
   $('cmN').textContent = t.cmFrom(iso(x0), iso(x1));
-  renderTop(fs);
+  if (X) { $('cmTopT').textContent = t.bx.cmTop; $('cmTopL').textContent = t.topL; const xs = fs.filter(f => f.top && f.top.length); $('cmTopG').innerHTML = xs.length ? topCards(xs) : `<p class="note">${t.topNone}</p>`; }
 }
-function renderTop(fs) {                               // 10 didžiausių investicijų (LV II pakopa – iš ketvirčio ataskaitų)
-  const t = T(), xs = fs.filter(f => f.top && f.top.length);
-  $('topT').textContent = t.topT; $('topL').textContent = t.topL;
-  $('topG').innerHTML = xs.length ? xs.map(f => `<div class="topc"><h3><span class="flag">${f.c}</span> ${hEsc(f.n)}</h3><p class="note">${t.topQ(f.topQ)} · ${hEsc(f.m)}</p>`
-    + `<table class="bt"><tbody>${f.top.map((h, i) => `<tr><td class="n">${i + 1}.</td><td class="nm">${hEsc(h[0])}</td><td class="n">${num(h[1], Math.abs(h[1] * 10 - Math.round(h[1] * 10)) < 1e-9 ? 1 : 2)}${pctSfx()}</td></tr>`).join('')}</tbody></table></div>`).join('')
-    : `<p class="note">${t.topNone}</p>`;
+function topCards(fs) {                                // 10 didžiausių investicijų kortelės (LV II pakopa – ketvirčio ataskaitos, EE – mėnesio ataskaitos)
+  const t = T();
+  return fs.map(f => `<div class="topc"><h3><span class="flag">${f.c}</span> ${hEsc(f.n)}</h3><p class="note">${t.topQ(f.topQ)} · ${hEsc(f.m)}</p>`
+    + `<table class="bt"><tbody>${f.top.map((h, i) => `<tr><td class="n">${i + 1}.</td><td class="nm">${hEsc(h[0])}</td><td class="n">${num(h[1], Math.abs(h[1] * 10 - Math.round(h[1] * 10)) < 1e-9 ? 1 : 2)}${pctSfx()}</td></tr>`).join('')}</tbody></table></div>`).join('');
+}
+function renderTop() {
+  const t = T(), b = t.bx, c = CR.c; if (c === 'X') return;
+  $('topT').textContent = b.topT(t.c[c]);
+  if (c === 'LT') { $('topL').innerHTML = b.topLt; $('topG').innerHTML = ''; return; }
+  $('topL').textContent = b.topL[c];
+  const fs = crGroups().flatMap(g => g.fs.slice().sort((x, y) => (y.na || 0) - (x.na || 0))).filter(f => f.top && f.top.length);
+  $('topG').innerHTML = fs.length ? topCards(fs) : `<p class="note">${t.topNone}</p>`;
 }
 $('cmBar').addEventListener('click', e => {
   const b = e.target.closest('[data-h]'); if (b) { CH = b.dataset.h; renderCmp(); return; }
-  if (e.target.closest('#cmDef')) { SEL = defaults(); saveF(); renderCmp(); renderFd(); }
-  if (e.target.closest('#cmClr')) { SEL = []; saveF(); renderCmp(); renderFd(); }
+  if (e.target.closest('#cmDef')) { setSel(defaults('X')); renderCmp(); }
+  if (e.target.closest('#cmClr')) { setSel([]); renderCmp(); }
 });
-$('cmSel').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (!b) return; SEL = SEL.filter(x => x !== b.dataset.rm); saveF(); renderCmp(); renderFd(); });
+$('cmSel').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (!b) return; toggleSel(b.dataset.rm, false); });
 
 /* ---------- Metų grąžos: heatmap (savininkas 2026-10-21 pritarė „Baltijos fondų grąžų heatmap“). Viena eilutė – vienas fondas,
    stulpelis – kalendoriniai metai. Rodoma tik viena peer grupė vienu metu: rizikos grupė (visos šalys) arba šalies grupė. ---------- */
-addStrings({ hm: { t: 'Calendar-year returns', l: 'Each row is a fund, each column a calendar year. Only one peer group is shown at a time: a risk group (funds of similar risk from all three countries) or a country group. The colour shows the return, or the fund’s place in that year among the funds shown. Click a year to sort.',
+addStrings({ hm: { t: 'Calendar-year returns', l: 'Each row is a fund, each column a calendar year. Funds of similar risk from all three countries, one risk group at a time. The colour shows the return, or the fund’s place in that year among the funds shown. Click a year to sort.',
   ret: 'Return', rk: 'Place in group', ytd: y => `${y}*`, med: c => `Median – ${c}`, n: (n, d) => `${n} funds. * – year to date (${d}). Return from the last value of the previous year to the last value of the year; years in which a fund did not exist for the whole year are empty. Place: 1 = best return that year among the funds shown.`,
   none: 'No funds in this group.', fund: 'Fund', xl: 'Calendar-year returns', xlN: 'Return = year-end value ÷ previous year-end value − 1 (formulas). Year-end value – last known value on or before 31 December.' } },
-{ hm: { t: 'Kalendorinių metų grąžos', l: 'Viena eilutė – vienas fondas, stulpelis – kalendoriniai metai. Vienu metu rodoma tik viena palyginamų fondų grupė: rizikos grupė (panašios rizikos visų trijų šalių fondai) arba šalies grupė. Spalva rodo grąžą arba fondo vietą tais metais tarp rodomų fondų. Spauskite metus, kad surikiuotumėte.',
+{ hm: { t: 'Kalendorinių metų grąžos', l: 'Viena eilutė – vienas fondas, stulpelis – kalendoriniai metai. Panašios rizikos visų trijų šalių fondai, po vieną rizikos grupę. Spalva rodo grąžą arba fondo vietą tais metais tarp rodomų fondų. Spauskite metus, kad surikiuotumėte.',
   ret: 'Grąža', rk: 'Vieta grupėje', ytd: y => `${y}*`, med: c => `Mediana – ${c}`, n: (n, d) => `${n} ${ltN(n, 'fondas', 'fondai', 'fondų')}. * – nuo metų pradžios (iki ${d}). Grąža – nuo paskutinės praėjusių metų vertės iki paskutinės metų vertės; metai, kuriais fondas veikė ne visus metus, tušti. Vieta: 1 = geriausia tų metų grąža tarp rodomų fondų.`,
   none: 'Šioje grupėje fondų nėra.', fund: 'Fondas', xl: 'Metų grąžos', xlN: 'Grąža = metų pabaigos vertė ÷ praėjusių metų pabaigos vertė − 1 (formulės). Metų pabaigos vertė – paskutinė žinoma vertė gruodžio 31 d. ar anksčiau.' } });
 const HM = { c: { LT: true, LV: true, EE: true }, pl: 'II', g: 'r4', m: 'ret', s: null, closed: false };
@@ -295,12 +297,10 @@ function hmColor(v, k) {
 function renderHm() {
   const t = T(), h = t.hm;
   $('hmT').textContent = h.t; $('hmL').textContent = h.l;
-  const cgs = [...new Set(BX.filter(f => f.cg && (HM.pl === 'all' || f.pl === HM.pl)).map(f => `${f.c}:${f.cg}`))].sort();
-  if (HM.g[0] !== 'r' && !cgs.includes(HM.g)) HM.g = 'r4';
+  if (HM.g[0] !== 'r') HM.g = 'r4';                     // šalių palyginime – tik rizikos grupės (šalies grupės – šalies „Metai ir mėnesiai“)
   $('hmBar').innerHTML = `<div class="chips">${['LT', 'LV', 'EE'].map(c => `<button type="button" class="chip" data-c="${c}" aria-pressed="${HM.c[c]}"><span class="flag">${c}</span>${t.c[c]}</button>`).join('')}</div>`
     + `<div class="seg" role="group">${['II', 'III', 'all'].map(p => `<button type="button" data-pl="${p}" aria-pressed="${HM.pl === p}">${p === 'all' ? t.both : t.pl(p)}</button>`).join('')}</div>`
-    + `<select id="hmG"><optgroup label="${hEsc(t.fRisk)}">${['r1', 'r2', 'r3', 'r4'].map(r => `<option value="${r}"${HM.g === r ? ' selected' : ''}>${hEsc(t.rg[r])}</option>`).join('')}</optgroup>`
-    + ['LT', 'LV'].map(c => { const o = cgs.filter(x => x.startsWith(c + ':')); return o.length ? `<optgroup label="${hEsc(t.fCg(t.c[c]))}">${o.map(x => { const f = BX.find(y => `${y.c}:${y.cg}` === x); return `<option value="${x}"${HM.g === x ? ' selected' : ''}>${hEsc(cgLabel(f))}</option>`; }).join('')}</optgroup>` : ''; }).join('') + '</select>'
+    + `<select id="hmG">${['r1', 'r2', 'r3', 'r4'].map(r => `<option value="${r}"${HM.g === r ? ' selected' : ''}>${hEsc(t.rg[r])}</option>`).join('')}</select>`
     + `<div class="seg" role="group">${['ret', 'rk'].map(m => `<button type="button" data-m="${m}" aria-pressed="${HM.m === m}">${h[m]}</button>`).join('')}</div>`
     + `<label class="field"><input type="checkbox" id="hmC"${HM.closed ? ' checked' : ''}> ${t.fClosed}</label>`;
   const { R, ys } = hmData();
@@ -348,6 +348,7 @@ addStrings({ cr: {
   rs: { vol: 'Volatility 3 y', dd3: 'Largest fall 3 y', ddA: 'Largest fall, all history', sh: 'Sharpe 3 y', wy: 'Worst year' },
   mkN: (d, lv) => `* annual return. Returns are unit value changes (fees already deducted) up to ${d}.${lv ? ' Latvian values are chart points every 9–13 days, so a period may start or end a few days off.' : ''} Lithuanian history here starts in 2018–2019; longer results – on the Results page.`,
   rsN: r => `Volatility – 3-year annual standard deviation of weekly value changes. Largest fall – the deepest drop from a previous peak (3 years and whole history). Sharpe = (3-year annual return − average €STR, ${pctPlain(r)}) ÷ volatility. Worst year – lowest full calendar-year return. Colour – only for the 3-year fall and Sharpe (the other figures depend on how long the fund has existed).`,
+  rv: { nom: 'Nominal', real: 'Real (after inflation)' }, rvN: m => `Real return = (1 + return) ÷ (1 + inflation) − 1; inflation – the country’s HICP (Eurostat), last month ${m} (used for later days too).`,
   none: 'No funds.' } }, { cr: {
   mkT: c => `${c}: grąža ir vieta grupėje`, mkL: 'Tas pats vaizdas kiekvienai šaliai: fondai pagal jų šalies grupes, grąža keliais laikotarpiais. Spalva rodo fondo vietą jo grupėje tame stulpelyje (žalia – geriausia, raudona – prasčiausia). Spauskite stulpelį, kad surikiuotumėte.',
   rsT: c => `${c}: rizika`, rsL: 'Kiekvieno fondo svyravimas, didžiausias kritimas, grąža rizikos vienetui ir blogiausi kalendoriniai metai – lyginama jo grupėje. Spalva – vieta grupėje (žalia – geriau).',
@@ -356,8 +357,10 @@ addStrings({ cr: {
   rs: { vol: 'Svyravimas 3 m.', dd3: 'Didžiausias kritimas 3 m.', ddA: 'Didžiausias kritimas, visa istorija', sh: 'Sharpe 3 m.', wy: 'Blogiausi metai' },
   mkN: (d, lv) => `* metinė grąža. Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti) iki ${d}.${lv ? ' Latvijos vertės – grafiko taškai kas 9–13 dienų, todėl laikotarpis gali prasidėti ar baigtis keliomis dienomis kitaip.' : ''} Lietuvos istorija čia – nuo 2018–2019 m.; ilgesni rezultatai – puslapyje „Rezultatai“.`,
   rsN: r => `Svyravimas – 3 metų metinis savaitės vertės pokyčių standartinis nuokrypis. Didžiausias kritimas – giliausias nuosmukis nuo ankstesnės aukščiausios vertės (per 3 metus ir per visą istoriją). Sharpe = (3 metų metinė grąža − vidutinė €STR, ${pctPlain(r)}) ÷ svyravimas. Blogiausi metai – mažiausia viso kalendorinių metų grąža. Spalva – tik 3 metų kritimui ir Sharpe (kiti rodikliai priklauso nuo to, kiek laiko fondas veikia).`,
+  rv: { nom: 'Nominali', real: 'Reali (po infliacijos)' }, rvN: m => `Reali grąža = (1 + grąža) ÷ (1 + infliacija) − 1; infliacija – tos šalies SVKI (Eurostat), paskutinis mėnuo ${m} (vėlesnėms dienoms naudojamas jis).`,
   none: 'Fondų nėra.' } });
-const CR = { c: 'LT', pl: 'II', s: 'ytd', rs: 'sh' };
+const CR = { c: 'LT', pl: 'II', s: 'ytd', rs: 'sh', real: false, v: 'ret', ds: 'na', closed: false };
+let HL = null;                                          // paieškos nuoroda (#bq=) – paryškinamas fondas
 try { Object.assign(CR, JSON.parse(localStorage.getItem('bxC') || '{}')); } catch (e) {}
 const saveC = () => { try { localStorage.setItem('bxC', JSON.stringify(CR)); } catch (e) {} };
 const CRP = ['m1', 'm3', 'ytd', 'y1', 'y3', 'y5', 'y10'];
@@ -367,11 +370,30 @@ function rP(f, h) {                                     // grąža %: mėnesiai 
   const s = at(f, e.d - Math.round(30.44 * +h.slice(1))); if (!s || s.d >= e.d) return null;
   return (e.v / s.v - 1) * 100;
 }
+/* Reali grąža (auditas 2026-10-21): vieneto vertės pokytis, atėmus tos šalies infliaciją (Eurostat SVKI, BALTIC.cpi). Mėnesio indeksas –
+   mėnesio vidurkis, todėl naudojamas datos mėnuo; vėlesnėms nei paskutinis paskelbtas mėnuo dienoms – paskutinis žinomas. */
+const CPI = BALTIC.cpi || null;
+function cpiAt(c, d) {
+  const C = CPI && CPI[c]; if (!C) return null;
+  const [y0, m0] = C.s.split('-').map(Number), dt = new Date(d * DAY), i = (dt.getUTCFullYear() - y0) * 12 + dt.getUTCMonth() - (m0 - 1);
+  if (i < 0) return null;
+  for (let k = Math.min(i, C.v.length - 1); k >= 0; k--) if (C.v[k] != null) return C.v[k];
+  return null;
+}
+const cpiLast = c => { const C = CPI && CPI[c]; if (!C) return null; const [y0, m0] = C.s.split('-').map(Number), n = C.v.length - 1, m = m0 - 1 + n; return `${y0 + Math.floor(m / 12)}-${String(m % 12 + 1).padStart(2, '0')}`; };
+function rReal(f, h) {
+  const e = at(f, f.last); if (!e) return null;
+  const sd = h[0] === 'm' ? e.d - Math.round(30.44 * +h.slice(1)) : h === 'ytd' ? ytdStart(e.d) : e.d - Math.round(365.25 * +h.slice(1));
+  const s = at(f, sd); if (!s || s.d >= e.d) return null;
+  const a = cpiAt(f.c, s.d), b = cpiAt(f.c, e.d); if (!a || !b) return null;
+  const tot = (e.v / s.v) / (b / a), yrs = (e.d - s.d) / 365.25;
+  return (h[0] === 'y' && h !== 'y1' && yrs >= 1 ? Math.pow(tot, 1 / yrs) - 1 : tot - 1) * 100;
+}
 const gKey = f => f.cg || f.risk || 'zz';
 function gOrder(k) { return k === 'turto' ? '0' : k[0] === 'b' ? '1' + k : k[0] === 'e' ? '2' + k.slice(1).padStart(3, '0') : k[0] === 'r' ? '3' + k : '9'; }
 function gName(k, f) { const t = T(); return k === 'zz' ? t.rgNone : k[0] === 'r' && !f.cg ? t.rg[k] : cgLabel(f); }
-function crGroups() {                                   // [{k, name, fs:[f]}] pasirinktos šalies ir pakopos veikiantiems fondams
-  const fs = BX.filter(f => f.c === CR.c && f.pl === CR.pl && !f.closed), m = new Map();
+function crGroups(closed) {                             // [{k, name, fs:[f]}] pasirinktos šalies ir pakopos fondai (uždaryti – tik „Fondo duomenyse“)
+  const fs = BX.filter(f => f.c === CR.c && f.pl === CR.pl && (closed || !f.closed)), m = new Map();
   fs.forEach(f => { const k = gKey(f); if (!m.has(k)) m.set(k, []); m.get(k).push(f); });
   return [...m.entries()].sort((a, b) => gOrder(a[0]).localeCompare(gOrder(b[0]))).map(([k, fs]) => ({ k, name: gName(k, fs[0]), fs }));
 }
@@ -385,42 +407,53 @@ function ranks(vals, hi) {                              // vals: [v|null] → vi
   ix.forEach((x, j) => { r[x[1]] = j + 1; }); return [r, ix.length];
 }
 function crBar(id) {
-  const t = T();
-  $(id).innerHTML = `<div class="seg" role="group">${['LT', 'LV', 'EE'].map(c => `<button type="button" data-cc="${c}" aria-pressed="${CR.c === c}"><span class="flag">${c}</span> ${t.c[c]}</button>`).join('')}</div>`
-    + `<div class="seg" role="group">${['II', 'III'].map(p => `<button type="button" data-cp="${p}" aria-pressed="${CR.pl === p}">${t.pl(p)}</button>`).join('')}</div>`;
+  const t = T(), v = id === 'crBar' ? CR.v || 'ret' : 'ret';
+  $(id).innerHTML = (id === 'crBar' ? `<div class="seg" role="group">${['ret', 'dat'].map(k => `<button type="button" data-cv="${k}" aria-pressed="${k === v}">${t.bx.view[k]}</button>`).join('')}</div>` : '')
+    + (id === 'crBar' && v === 'ret' && CPI ? `<div class="seg" role="group">${['nom', 'real'].map(k => `<button type="button" data-cr="${k}" aria-pressed="${(k === 'real') === !!CR.real}">${t.cr.rv[k]}</button>`).join('')}</div>` : '')
+    + (id === 'crBar' && v === 'dat' ? `<label class="field"><input type="checkbox" id="crC"${CR.closed ? ' checked' : ''}> ${t.bx.fClosed}</label>` : '');
 }
 function crTable(el, G, cols, val, hi, fmt, sortK) {    // bendra lentelė: grupės antraštė, fondai su spalva pagal vietą, mediana
   const t = T(), c = t.cr;
-  let h = `<thead><tr><th>${c.fund}</th>${cols.map(k => `<th class="n" data-s="${k}"${sortK === k ? ' aria-sort="descending"' : ''}>${k in c.per ? c.per[k] : c.rs[k]}</th>`).join('')}</tr></thead><tbody>`;
+  let h = `<thead><tr><th>${c.fund}</th>${cols.map(k => `<th class="n" data-s="${k}"${sortK === k ? ' aria-sort="descending"' : ''}>${c.per[k] || c.rs[k] || t.cols[k] || k}</th>`).join('')}</tr></thead><tbody>`;
   G.forEach(g => {
     const V = g.fs.map(f => cols.map(k => val(f, k)));
     const R = cols.map((k, j) => hi[k] == null ? [[], 0] : ranks(V.map(v => v[j] == null ? null : (typeof v[j] === 'object' ? v[j].v : v[j])), hi[k]));
     const si = cols.indexOf(sortK), order = g.fs.map((f, i) => i).sort((a, b) => { const x = V[a][si], y = V[b][si], xv = x && typeof x === 'object' ? x.v : x, yv = y && typeof y === 'object' ? y.v : y; if (xv == null) return 1; if (yv == null) return -1; return hi[sortK] === false ? xv - yv : yv - xv; });
     h += `<tr class="gh"><td colspan="${cols.length + 1}">${hEsc(g.name)} <small class="note">${c.n(g.fs.length)}</small></td></tr>`;
     h += order.map(i => { const f = g.fs[i];
-      return `<tr><td class="nm">${hEsc(f.n)} <small class="note">${hEsc(f.m)}</small></td>${cols.map((k, j) => { const v = V[i][j], p = R[j][0][i];
+      return `<tr${f.id === HL ? ' class="hl" id="hlRow"' : ''}><td class="nm">${hEsc(f.n)} <small class="note">${hEsc(f.m)}${f.closed ? ` · ${t.bx.closed}` : ''}</small></td>${cols.map((k, j) => { const v = V[i][j], p = R[j][0][i];
         return `<td class="n" style="background:${rkColor(p, R[j][1])}"${p ? ` title="${p}/${R[j][1]}"` : ''}>${fmt(v, k)}</td>`; }).join('')}</tr>`; }).join('');
     if (g.fs.length > 2) h += `<tr class="med"><td class="nm">${c.med}</td>${cols.map((k, j) => { const xs = V.map(v => v[j]).filter(v => v != null).map(v => typeof v === 'object' ? v.v : v); return `<td class="n">${xs.length ? fmt(median(xs), k) : ''}</td>`; }).join('')}</tr>`;
   });
   el.innerHTML = h + '</tbody>';
 }
 function renderCr() {
-  const t = T(), c = t.cr, G = crGroups();
+  const t = T(), c = t.cr; if (CR.c === 'X') return;
+  const G = crGroups(), V = CR.v || 'ret';
   crBar('crBar'); crBar('rsBar');
-  $('crT').textContent = c.mkT(t.c[CR.c]); $('crL').textContent = c.mkL;
+  $('crT').textContent = c.mkT(t.c[CR.c]); $('crL').textContent = t.bx.crL;
   $('rsT').textContent = c.rsT(t.c[CR.c]); $('rsL').textContent = c.rsL;
   if (!G.length) { $('crTbl').innerHTML = ''; $('rsTbl').innerHTML = ''; $('crN').textContent = c.none; $('rsN').textContent = c.none; return; }
-  const cols = CRP.filter(h => G.some(g => g.fs.some(f => rP(f, h) != null)));
-  if (!cols.includes(CR.s)) CR.s = cols.includes('y1') ? 'y1' : cols[0];
-  const hiP = Object.fromEntries(cols.map(k => [k, true]));
-  crTable($('crTbl'), G, cols, rP, hiP, v => v == null ? '' : pctPlain(v), CR.s);
-  $('crN').textContent = c.mkN(iso(Math.max(...G.flatMap(g => g.fs.map(f => f.last)))), CR.c === 'LV');
+  if (V === 'dat') {                                   // fondo duomenys (buvęs skirtukas „Visi fondai“): rizika, mokestis, akcijos, turtas, dalyviai
+    const GD = crGroups(CR.closed), cols = ['risk', 'vol', 'fee', 'eq', 'na', 'inv', 'last'].filter(k => k === 'risk' || GD.some(g => g.fs.some(f => f[k] != null)));
+    if (!cols.includes(CR.ds)) CR.ds = cols.includes('na') ? 'na' : 'vol';
+    const val = (f, k) => k === 'risk' ? (f.vol == null ? null : { v: f.vol, h: rgHtml(f) }) : f[k];
+    crTable($('crTbl'), GD, cols, val, { fee: false }, (v, k) => v == null ? '' : k === 'risk' ? v.h : k === 'na' ? num(v, 1) : k === 'inv' ? num(v, 0) : k === 'eq' ? num(v, 0) + pctSfx() : k === 'last' ? iso(v) : pctPlain(v), CR.ds);
+    $('crN').textContent = t.fN(GD.reduce((s, g) => s + g.fs.length, 0));
+  } else {
+    const cols = CRP.filter(h => G.some(g => g.fs.some(f => rP(f, h) != null)));
+    if (!cols.includes(CR.s)) CR.s = cols.includes('ytd') ? 'ytd' : cols[0];
+    const hiP = Object.fromEntries(cols.map(k => [k, true]));
+    crTable($('crTbl'), G, cols, CR.real && CPI ? rReal : rP, hiP, v => v == null ? '' : pctPlain(v), CR.s);
+    $('crN').textContent = c.mkN(iso(Math.max(...G.flatMap(g => g.fs.map(f => f.last)))), CR.c === 'LV') + (CR.real && CPI ? ' ' + c.rvN(cpiLast(CR.c)) : '');
+  }
   const rf = bxRf(TOP - 1096, TOP);
   const R = new Map(G.flatMap(g => g.fs).map(f => [f.id, riskOf(f, rf)]));
-  const rc = ['vol', 'dd3', 'ddA', 'sh', 'wy'], hiR = { vol: null, dd3: true, ddA: null, sh: true, wy: null }   // istorijos ilgio priklausantys rodikliai nespalvinami (nesąžininga lyginti);
+  const rc = ['vol', 'dd3', 'ddA', 'sh', 'wy'], hiR = { vol: null, dd3: true, ddA: null, sh: true, wy: null };   // istorijos ilgio priklausantys rodikliai nespalvinami (nesąžininga lyginti)
   if (!['dd3', 'sh'].includes(CR.rs)) CR.rs = 'sh';
   crTable($('rsTbl'), G, rc, (f, k) => R.get(f.id)[k], hiR, (v, k) => v == null ? '' : k === 'sh' ? num(v, 2) : k === 'wy' && typeof v === 'object' ? `${pctPlain(v.v)} <small class="note">${v.y}</small>` : pctPlain(v), CR.rs);
   $('rsN').textContent = c.rsN(rf);
+  if (HL && $('hlRow') && TAB_CUR === 'cr') { const r = $('hlRow'); HL = null; setTimeout(() => r.scrollIntoView({ block: 'center' }), 80); }
 }
 function maxDD(f, from) {                               // didžiausias kritimas % nuo ankstesnės aukščiausios vertės (≤ 0)
   let pk = -Infinity, dd = 0, any = false;
@@ -439,13 +472,66 @@ function bxRf(a, b) {                                   // vidutinė €STR (kai
       const ov = Math.min(b, me) - Math.max(a, ms), v = H.v[(y - y0) * 12 + m - (m0 - 1)]; if (ov > 0 && v != null) { s += v * ov; n += ov; } m++; if (m > 11) { m = 0; y++; } } }
   return n >= (b - a) / 2 ? s / n : typeof DATA !== 'undefined' && DATA.rf ? DATA.rf.value : 2;
 }
-['crBar', 'rsBar'].forEach(id => $(id).addEventListener('click', e => { const a = e.target.closest('[data-cc]'), p = e.target.closest('[data-cp]'); if (a) CR.c = a.dataset.cc; else if (p) CR.pl = p.dataset.cp; else return; saveC(); renderCr(); }));
-$('crTbl').addEventListener('click', e => { const th = e.target.closest('th[data-s]'); if (th) { CR.s = th.dataset.s; saveC(); renderCr(); } });
+$('crBar').addEventListener('click', e => { const v = e.target.closest('[data-cv]'), r = e.target.closest('[data-cr]'); if (v) CR.v = v.dataset.cv; else if (r) CR.real = r.dataset.cr === 'real'; else return; saveC(); renderCr(); });
+$('crBar').addEventListener('change', e => { if (e.target.id === 'crC') { CR.closed = e.target.checked; saveC(); renderCr(); } });
+$('crTbl').addEventListener('click', e => { const th = e.target.closest('th[data-s]'); if (!th) return; if ((CR.v || 'ret') === 'dat') CR.ds = th.dataset.s; else CR.s = th.dataset.s; saveC(); renderCr(); });
 $('rsTbl').addEventListener('click', e => { const th = e.target.closest('th[data-s]'); if (th && ['dd3', 'sh'].includes(th.dataset.s)) { CR.rs = th.dataset.s; saveC(); renderCr(); } });
+
+/* ---------- Valdytojai (kaip Lietuvos „Valdytojai“): turtas ir rinkos dalis, dalyviai, fondų skaičius, turtu svertinė grąža,
+   kiek fondų geresnėje savo grupės pusėje ir kuo valdytojas gali pasigirti (geriausias fondas grupėje). Lyginama tik šalies viduje. ---------- */
+addStrings({ mg: {
+  t: c => `${c}: managers`, l: 'Managers of the selected country and pillar: size, market share and how their funds do compared with other funds of the same group.',
+  h: { m: 'Manager', n: 'Funds', na: 'Assets, € m', sh: 'Market share', inv: 'Participants', wr: 'Return (asset-weighted)', top: 'Funds in the better half of their group', fee: 'Average fee' },
+  shT: 'Market share by assets', brT: 'What each manager can be proud of', brNone: 'No fund is the best in its group in these periods.',
+  br: (g, f, h, v, n) => `Best in “${g}” over ${h}: ${f} (${v}, ${n} funds in the group).`,
+  n: (d, lv) => `Assets – latest known (${lv ? 'Latvia – managers’ quarterly reports' : 'daily data'}${d ? `, ${d}` : ''}). Asset-weighted return – average of the manager’s fund returns weighted by assets. Better half – the fund’s return is among the better half of its country group (only groups with at least 2 funds).`,
+  noNa: 'Assets of these plans are not published.' } }, { mg: {
+  t: c => `${c}: valdytojai`, l: 'Pasirinktos šalies ir pakopos valdytojai: dydis, rinkos dalis ir kaip jų fondams sekasi, palyginus su kitais tos pačios grupės fondais.',
+  h: { m: 'Valdytojas', n: 'Fondų', na: 'Turtas, mln. €', sh: 'Rinkos dalis', inv: 'Dalyviai', wr: 'Grąža (svertinė turtu)', top: 'Fondų geresnėje grupės pusėje', fee: 'Vidutinis mokestis' },
+  shT: 'Rinkos dalis pagal turtą', brT: 'Kuo gali pasigirti kiekvienas valdytojas', brNone: 'Nė vienas fondas šiais laikotarpiais nėra geriausias savo grupėje.',
+  br: (g, f, h, v, n) => `Geriausias grupėje „${g}“ per ${h}: ${f} (${v}, grupėje ${n} ${ltN(n, 'fondas', 'fondai', 'fondų')}).`,
+  n: (d, lv) => `Turtas – naujausias žinomas (${lv ? 'Latvija – valdytojų ketvirčio ataskaitos' : 'kasdieniai duomenys'}${d ? `, ${d}` : ''}). Svertinė grąža – valdytojo fondų grąžų vidurkis, sveriant turtu. Geresnė pusė – fondo grąža tarp geresnės pusės jo šalies grupės fondų (tik grupės, kuriose bent 2 fondai).`,
+  noNa: 'Šių plānų turtas neskelbiamas.' } });
+let MGH = 'ytd';
+const BRH = { ytd: { lt: 'šiuos metus', en: 'this year' }, y1: { lt: '1 metus', en: '1 year' }, y3: { lt: '3 metus', en: '3 years' }, y5: { lt: '5 metus', en: '5 years' } };
+function mgData() {
+  const G = crGroups(), fs = G.flatMap(g => g.fs), M = new Map(), pos = new Map();
+  fs.forEach(f => { if (!M.has(f.m)) M.set(f.m, []); M.get(f.m).push(f); });
+  G.forEach(g => { const xs = g.fs.map(f => ({ f, v: ret(f, MGH) })).filter(x => x.v != null).sort((a, b) => b.v - a.v); xs.forEach((x, i) => pos.set(x.f.id, [i + 1, xs.length])); });
+  const tot = fs.reduce((s, f) => s + (f.na || 0), 0);
+  const rows = [...M.entries()].map(([m, xs]) => {
+    const na = xs.reduce((s, f) => s + (f.na || 0), 0), w = xs.filter(f => f.na && ret(f, MGH) != null), wn = w.reduce((s, f) => s + f.na, 0);
+    const rk = xs.filter(f => pos.has(f.id) && pos.get(f.id)[1] > 1), fees = xs.filter(f => f.fee != null);
+    return { m, n: xs.length, na: na || null, sh: tot && na ? na / tot * 100 : null, inv: xs.reduce((s, f) => s + (f.inv || 0), 0) || null,
+      wr: wn ? w.reduce((s, f) => s + f.na * ret(f, MGH), 0) / wn : null, top: rk.length ? [rk.filter(f => pos.get(f.id)[0] <= pos.get(f.id)[1] / 2).length, rk.length] : null,
+      fee: fees.length ? fees.reduce((s, f) => s + f.fee, 0) / fees.length : null };
+  }).sort((a, b) => (b.na || 0) - (a.na || 0) || b.n - a.n || a.m.localeCompare(b.m));
+  const brag = new Map(rows.map(r => [r.m, []]));                  // geriausias fondas grupėje per kiekvieną laikotarpį
+  G.forEach(g => ['ytd', 'y1', 'y3', 'y5'].forEach(h => { const xs = g.fs.map(f => ({ f, v: ret(f, h) })).filter(x => x.v != null).sort((a, b) => b.v - a.v);
+    if (xs.length > 1) brag.get(xs[0].f.m).push({ g: g.name, f: xs[0].f.n, h, v: xs[0].v, n: xs.length }); }));
+  return { rows, tot, brag, d: fs.map(f => f.naQ).filter(Boolean).sort().pop() };
+}
+function renderMg() {
+  const t = T(), m = t.mg; if (CR.c === 'X') return;
+  const { rows, tot, brag, d } = mgData();
+  $('mgT').textContent = m.t(t.c[CR.c]); $('mgL').textContent = m.l; $('mgSeg').innerHTML = hzSeg(MGH);
+  const cols = ['m', 'n', 'na', 'sh', 'inv', 'wr', 'top', 'fee'].filter(k => k === 'm' || k === 'n' || k === 'top' || rows.some(r => r[k] != null));
+  const cell = (r, k) => { const v = r[k]; if (k === 'm') return `<td class="nm"><b>${hEsc(v)}</b></td>`; if (v == null) return `<td class="n">${t.none}</td>`;
+    return `<td class="n${k === 'wr' ? ' ' + sgn(v) : ''}">${k === 'na' ? num(v, 1) : k === 'inv' ? num(v, 0) : k === 'n' ? v : k === 'top' ? `${v[0]} / ${v[1]}` : pctPlain(v)}</td>`; };
+  $('mgTbl').innerHTML = `<thead><tr>${cols.map(k => `<th${k === 'm' ? '' : ' class="n"'}>${k === 'wr' ? `${m.h.wr}, ${t.hz[MGH].toLowerCase()}` : m.h[k]}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${cols.map(k => cell(r, k)).join('')}</tr>`).join('')}</tbody>`;
+  $('mgN').textContent = m.n(d, CR.c === 'LV');
+  $('mgShT').textContent = m.shT;
+  $('mgSh').innerHTML = tot ? `<div class="shbar">${rows.filter(r => r.na).map((r, i) => `<span style="width:${r.sh}%;background:${PAL[i % PAL.length]}" title="${hEsc(r.m)} ${pctPlain(r.sh)}"></span>`).join('')}</div>`
+    + `<div class="sel">${rows.filter(r => r.na).map((r, i) => `<span class="chip"><i style="background:${PAL[i % PAL.length]}"></i>${hEsc(r.m)} <b>${pctPlain(r.sh)}</b></span>`).join('')}</div>` : `<p class="note">${m.noNa}</p>`;
+  $('mgBrT').textContent = m.brT;
+  $('mgBr').innerHTML = rows.map(r => { const b = brag.get(r.m);
+    return `<section class="card"><h3>${hEsc(r.m)}</h3>${b.length ? `<ul>${b.slice(0, 6).map(x => `<li>${hEsc(m.br(x.g, x.f, BRH[x.h][lang] || BRH[x.h].lt, fmtP(x.v), x.n))}</li>`).join('')}${b.length > 6 ? `<li class="note">+${b.length - 6}</li>` : ''}</ul>` : `<p class="note">${m.brNone}</p>`}</section>`; }).join('');
+}
+$('mgSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MGH = b.dataset.h; renderMg(); });
 
 /* ---------- Excel: fondai ir vertės su formulėmis ---------- */
 async function excel() {
-  const t = T(), rs = rows(), wb = XL.book(), xd = d => ({ v: d + 25569, z: 'yyyy-mm-dd', s: 'in' }), xv = v => ({ v, z: '0.00000', s: 'in' });
+  const t = T(), rs = BX.filter(f => CR.c === 'X' || f.c === CR.c).map(f => ({ f })), wb = XL.book(), xd = d => ({ v: d + 25569, z: 'yyyy-mm-dd', s: 'in' }), xv = v => ({ v, z: '0.00000', s: 'in' });
   XL.sheet(wb, t.xlS, [[{ v: t.xlT, s: 'title' }], [{ v: t.srcLine, s: 'sub' }], [], t.xlH.map(h => ({ v: h, s: 'hdr' })),
     ...rs.map(({ f }) => [t.c[f.c], f.pl, f.m, f.n, cgLabel(f), f.risk ? t.rg[f.risk] : t.rgNone, f.vol, f.fee, f.feeK ? t.feeK[f.feeK] : '', f.eq, f.na, f.inv, xd(f.first)])],
     { cols: [10, 7, 12, 44, 22, 26, 10, 9, 24, 9, 11, 11, 12], freeze: { r: 4 } });
@@ -579,15 +665,32 @@ function rfSheet(wb) {                                  // Excel: abiejų šali�
 }
 
 function render() {
-  const t = T();
-  document.title = `${t.navBaltic} · ${t.siteTitle}`;
+  const t = T(), L = lang === 'lt';
+  BXM.c = CR.c; BXM.pl = CR.pl;
+  document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  renderOv(); renderCr(); renderFd(); renderCmp(); renderHm(); renderRf();
-  $('mtT').textContent = t.mtT; $('mtB').innerHTML = MT[lang];
+  if (CR.c === 'X') { renderX(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderTop(); }
+  $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
-  const L = lang === 'lt';   // skirtukai – kaip Lietuvos „Rezultatuose“ (auditas 2026-10-21)
-  addSubnav([{ id: 'ovT', label: L ? 'Apžvalga' : 'Overview' }, { id: 'crT', label: L ? 'Visa rinka' : 'Whole market' }, { id: 'rsT', label: L ? 'Rizika' : 'Risk' }, { id: 'cmT', label: L ? 'Fondų palyginimas' : 'Fund comparison' }, { id: 'hmT', label: L ? 'Metų grąžos' : 'Yearly returns' }, { id: 'fdT', label: t.fdT }, { id: 'rfT', label: lang === 'lt' ? 'Reformos' : 'Reforms' }, { id: 'mtT', label: t.mtT }]);
+  const ks = modeTabs();
+  document.querySelectorAll('main.bx > [data-tab]').forEach(p => { if (ks.includes(p.dataset.tab)) delete p.dataset.off; });
+  addSubnav(ks.map(k => ({ id: TID[k], label: t.bx.tabs[k] })));
+  if (!ks.includes(TAB_CUR)) showTab(TMAP[TAB_CUR] && ks.includes(TMAP[TAB_CUR]) ? TMAP[TAB_CUR] : ks[0], false);
+  else markTab();
+  bxBar();
+}
+function fromHash() {                                   // #c=LV&pl=III&tab=rs (šalies juosta, kitų puslapių nuorodos), #bq= – paieška
+  let q; try { q = new URLSearchParams(location.hash.slice(1)); } catch (e) { return; }
+  const c = q.get('c'), pl = q.get('pl'), k = q.get('tab'), bq = q.get('bq');
+  if (['LT', 'LV', 'EE', 'X'].includes(c)) CR.c = c;
+  else if (TABS.X.includes(k) && k !== 'cmp') CR.c = 'X';
+  else if (k === 'fd' && CR.c === 'X') CR.c = 'LT';
+  if (pl === 'II' || pl === 'III') CR.pl = pl;
+  if (bq) { const f = BX.find(x => x.n === bq && (!c || x.c === c)); if (f) { CR.c = f.c; CR.pl = f.pl; if (f.closed) { CR.v = 'dat'; CR.closed = true; } HL = f.id; } }
+  saveC();
+  return k === 'fd' || bq ? 'cr' : k;
 }
 renderHeader('baltic', render);
-render();
-addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { renderOv(); renderCmp(); renderRf(); }, 200); });
+{ const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, false); }
+addEventListener('hashchange', () => { const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, true); });
+addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else renderOv(); }, 200); });

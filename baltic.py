@@ -104,7 +104,7 @@ def ee_funds():
                     "na": round(float(lr["net_assets"]) / 1e6, 3) if lr.get("net_assets") else None,
                     "inv": int(lr["investors"]) if lr.get("investors") else None, "start": m["first"],
                     "top": [[n, w] for _, n, w in sorted(top[k][tq])] if tq else None, "topQ": tq,
-                    "cg": None, "vol": vol3(weekly(ser[k], 0)), "pts": pts})
+                    "cg": None, "vol": vol3(weekly(ser[k], 0)), "pts": pts, "full": sorted(ser[k])})
     return out
 
 
@@ -329,6 +329,9 @@ def build() -> dict:
         print("baltic: LV sumos nepavyko:", e)
     for f in funds:
         f["risk"] = risk_of(f["vol"])
+    perf = perf_data(funds)
+    for f in funds:
+        f.pop("full", None)
         f["d"], f["v"] = enc(f.pop("pts"))
     try:
         tot = {"EE": ee_totals()}
@@ -345,7 +348,83 @@ def build() -> dict:
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
         print("baltic: reformų palyginimas nepavyko:", e)
         rf = None
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf}
+    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "_perf": perf}
+
+
+PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],
+        "EE": [("zz", "Per trumpa istorija", "Too short history"), ("r1", "Maža rizika (svyravimas iki 4 %)", "Low risk (volatility under 4%)"), ("r2", "Vidutinė rizika (4–8 %)", "Moderate risk (4–8%)"),
+               ("r3", "Didesnė rizika (8–12 %)", "Higher risk (8–12%)"), ("r4", "Didelė rizika (daugiau nei 12 %)", "High risk (over 12%)")]}
+
+
+def perf_data(funds):
+    """Latvijos ir Estijos fondai tuo pačiu formatu kaip III pakopos data3.js – kad „Rezultatų“ puslapis (perf.js) veiktų ir jiems
+    (savininkas 2026-10-21: „kad latviai ir estai jaustų tą pačią kokybę, kokią matys Lietuvoje“). Grupės – šalies peer grupės:
+    LV – akcijų dalis, EE – rizikos grupė (3 m. svyravimas). Uždaryti fondai (paskutinė vertė > 45 d. senesnė) neįtraukiami.
+    {(šalis, pakopa): {"providers", "groups", "ppy", "stale"}}"""
+    out = {}
+    for c in ("LV", "EE"):
+        for pl in ("II", "III"):
+            fs = [f for f in funds if f["c"] == c and f["pl"] == pl]
+            if not fs:
+                continue
+            ser = {f["id"]: f.get("full") or f["pts"] for f in fs}
+            top = max(v[-1][0] for v in ser.values())
+            fs = [f for f in fs if ser[f["id"]][-1][0] > top - 45]
+            key = (lambda f: f["cg"] or "zz") if c == "LV" else (lambda f: f["risk"] or "zz")
+            provs, groups = [], []
+            for gid, lt, en in PGRP[c]:
+                gf = sorted([f for f in fs if key(f) == gid], key=lambda f: (f["m"], f["n"]))
+                if not gf:
+                    continue
+                rows = []
+                for f in gf:
+                    pid = f"f{len(provs)}"
+                    provs.append({"id": pid, "label": f["n"], "brand": re.sub(r"[^A-Z]", "", f["m"].upper()) or "X", "m": f["m"]})
+                    pts = ser[f["id"]]
+                    dd, v = enc(pts)
+                    rows.append({"provider": pid, "brand": provs[-1]["brand"], "name": f["n"], "code": f["id"], "risky": "0", "d0": dd[0], "dd": dd[1:], "v": v,
+                                 "assets": round(f["na"] * 1e6) if f.get("na") else None, "assetsDate": (day(f["naQ"]) if f.get("naQ") else pts[-1][0]) if f.get("na") else None,
+                                 "fee": f["fee"] if f.get("feeK") == "ter" else None})
+                groups.append({"id": gid, "lbl": {"lt": lt, "en": en}, "funds": rows})
+            last = max(ser[f["id"]][-1][0] for f in fs)
+            n3 = [len([p for p in ser[f["id"]] if p[0] > last - 1096]) / 3 for f in fs if ser[f["id"]][0][0] < last - 1096]
+            ppy = sorted(n3)[len(n3) // 2] if n3 else 252
+            out[(c, pl)] = {"providers": provs, "groups": groups, "ppy": round(ppy, 1), "stale": 20 if c == "LV" else 5}
+    return out
+
+
+def hicp():
+    """Eurostat SVKI (data/hicp.csv, tools/fetch_hicp.py) realiai grąžai: {šalis: {"u": bazė, "s": "YYYY-MM", "v": [indeksas…]}}.
+    Naudojama bazė, kurios duomenys naujausi, mėnesiai be tarpų; trūkstamas mėnuo – None."""
+    p = ROOT / "data" / "hicp.csv"
+    if not p.exists():
+        return None
+    rows = defaultdict(dict)
+    for r in csv.DictReader(p.open(encoding="utf-8")):
+        rows[(r["geo"], r["unit"])][r["month"]] = float(r["index"])
+    out = {}
+    for g in ("LT", "LV", "EE"):
+        us = [u for (gg, u) in rows if gg == g]
+        if not us:
+            continue
+        u = max(us, key=lambda u: (max(rows[(g, u)]), len(rows[(g, u)])))   # bazė su naujausiu mėnesiu (ir ilgiausia istorija)
+        m = dict(rows[(g, u)])
+        o = max((x for x in us if x != u), key=lambda x: (len(rows[(g, x)]), max(rows[(g, x)])), default=None)
+        if o:                                           # senesni mėnesiai – iš ilgiausios senos bazės, perskaičiuoti paskutinio bendro mėnesio santykiu
+            com = sorted(set(m) & set(rows[(g, o)]))
+            if com:
+                k = m[com[-1]] / rows[(g, o)][com[-1]]
+                for mm, x in rows[(g, o)].items():
+                    if mm < com[-1]:                    # iki sujungimo mėnesio – sena bazė (be šuolio ties sujungimu)
+                        m[mm] = round(x * k, 4)
+        ks = sorted(m)
+        y, mo = map(int, ks[0].split("-")); v = []
+        while f"{y:04d}-{mo:02d}" <= ks[-1]:
+            v.append(m.get(f"{y:04d}-{mo:02d}")); mo += 1
+            if mo > 12:
+                y, mo = y + 1, 1
+        out[g] = {"u": u, "s": ks[0], "v": v}
+    return out or None
 
 
 if __name__ == "__main__":

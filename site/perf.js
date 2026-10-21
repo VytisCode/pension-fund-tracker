@@ -1,7 +1,8 @@
 /* III pakopa (savininkas 2026-10-16: „tie patys įrankiai abiem pakopoms su jungikliu“): performance3.html – tas pats puslapis su data3.js
    (kiekvienas fondas – atskiras „tiekėjas“, grupės – LB kategorijos). Valdytojų lentelės (visa rinka, bendras reitingas) slepiamos:
    III pakopoje lyginami fondai tik savo kategorijoje, ne valdytojai. II ir III pakopos tarpusavyje nelyginamos. */
-const IS3 = typeof window.PL3 !== 'undefined', STKEY = IS3 ? 'perfState3' : 'perfState';
+const IS3 = typeof window.PL3 !== 'undefined', PX = typeof window.PLX !== 'undefined' ? window.PLX : null, STKEY = PX && PX.c !== 'LT' ? `perfStateX${PX.c}${PX.pl}` : IS3 ? 'perfState3' : 'perfState';
+if (PX) { BXM.c = PX.c; BXM.pl = PX.pl; }   // Baltijos šalys: tas pats puslapis kitos šalies fondams (build_site.py build_baltic)
 /* Rezultatų ir palyginimo puslapis. Priklauso nuo: data.js (DATA), events.js (EVENTS), common.js. */
 addStrings({
   idxLbl: 'Compare with',
@@ -267,7 +268,7 @@ function spanText(label, rngs) {                         // laikotarpio datos pe
   return T().capSpan(label, a, e);
 }
 const periodText = () => P.period === 'custom' ? `${P.from || '…'} → ${P.to || '…'}` : periodLabel(P.period);
-const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - 5;
+const isStale = (f, overallLast) => f.d[f.d.length - 1] < overallLast - (PX && PX.stale || 5);   // Latvijos taškai – kas 9–13 d.
 const ik = k => `<button type="button" class="info" data-k="${k}" aria-label="info">i</button>`;
 const th = (label, k, style = '') => `<th${style ? ` style="${style}"` : ''}>${label}${k ? ik(k) : ''}</th>`;
 
@@ -282,7 +283,7 @@ function riskStats(f, ia, ie) {            // svyravimas ir didžiausias kritima
     mdd = Math.min(mdd, f.v[i] / peak - 1);
   }
   const sd = r.length >= 20 ? stdev(r) : null;
-  return { vol: sd === null ? null : sd * Math.sqrt(252) * 100, mdd: mdd * 100 };
+  return { vol: sd === null ? null : sd * Math.sqrt(PX && PX.ppy || 252) * 100, mdd: mdd * 100 };   // ppy – taškų per metus (Latvijoje ~28)
 }
 function fundStats(f, rng) {
   if (isStale(f, rng.overallLast)) return null;
@@ -1423,7 +1424,7 @@ function labelControls() {
   $('btnAdv').innerHTML = T().advBtn;
   { const bm = $('btnMore'), card = $('chartCard'); bm.textContent = lang === 'lt' ? '⚙ Daugiau nustatymų' : '⚙ More settings';   // retai naudojami nustatymai suskleisti (savininkas 2026-10-16: „per daug painus“)
     bm.onclick = () => { const on = !card.classList.contains('more'); card.classList.toggle('more', on); bm.setAttribute('aria-pressed', on); }; }
-  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !IS3 || (x.id !== 'hMarket' && x.id !== 'insTitle')));   // vidinė navigacija (auditas #43)
+  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => !(IS3 || PX) || (x.id !== 'hMarket' && x.id !== 'insTitle')));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1452,7 +1453,11 @@ if (IS3) {   // III pakopa: valdytojų lentelių ir Sharpe matricos (grupės × 
   [$('hRisk'), $('c_riskMap'), $('riskMap') && $('riskMap').closest('.card')].forEach(e => { if (e) e.hidden = true; });
   addStrings({ thFund: 'Fund' }, { thFund: 'Fondas' });
 }
-renderHeader(IS3 ? 'performance3' : 'performance', () => { labelControls(); syncAll(); });
+if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – baltic.html (vienodai visoms šalims); Lietuvos įvykiai kitoms šalims netinka
+  ['hMarket', 'insTitle'].forEach(id => { const sm = $(id) && $(id).closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; } });
+  if (PX.c !== 'LT') { ['btnEvents', 'evInfo'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); P.events = false; }
+}
+renderHeader(PX ? PX.page : IS3 ? 'performance3' : 'performance', () => { labelControls(); syncAll(); });
 labelControls();
 $('from').value = P.from; $('to').value = P.to;
 syncAll();
