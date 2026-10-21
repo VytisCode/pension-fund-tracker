@@ -8,6 +8,7 @@ Naudojimas: python tools/fetch_hicp.py [aplankas]
 """
 import csv
 import json
+import re
 import sys
 import time
 import urllib.request
@@ -55,7 +56,7 @@ def main():
     if path.exists():
         for r in csv.DictReader(path.open(encoding="utf-8")):
             old[(r["month"], r["geo"], r["unit"])] = r
-    rows = [r for r in parse(get(URL)) if r[2] in ("I15", "I25")]
+    rows = [r for r in parse(get(URL)) if re.fullmatch(r"I\d\d(\d\d)?", r[2])]       # indeksai (I15, I25 ar I2025), ne pokyčiai
     add = 0
     for m, g, u, v in rows:
         if (m, g, u) not in old and 20 < v < 300:          # neįtikėtinos reikšmės praleidžiamos
