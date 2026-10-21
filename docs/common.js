@@ -144,7 +144,8 @@ function renderHeader(active, onLang) {
   h.after(nav);
   if (sec && SEC_IMG[sec.id]) {          // skyriaus nuotraukų juosta (auditas 2026-10-21: nuotraukos – orientacijai, ne dekoracijai)
     const st = document.createElement('div'); st.className = 'sechero'; st.style.backgroundImage = `url(img/sec-${SEC_IMG[sec.id]}.jpg)`;
-    st.innerHTML = '<span id="secName"></span>'; nav.before(st); document.body.classList.add('has-hero');
+    st.innerHTML = '<div class="shtx"><span id="secName"></span><p id="secDesc"></p></div>'; nav.before(st); document.body.classList.add('has-hero');
+    const bg = document.createElement('div'); bg.className = 'pagebg'; bg.style.backgroundImage = st.style.backgroundImage; document.body.prepend(bg);   // savininkas 2026-10-21: nuotraukos – ir fono dalis
   }
   const side = document.createElement('aside');
   side.className = 'side'; side.id = 'side';
@@ -175,6 +176,7 @@ function renderHeader(active, onLang) {
     document.getElementById('title').textContent = t.siteTitle;
     { const cp = PAGE_ALIAS[active] || active, cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
       const sh = document.getElementById('secName'); if (sh) sh.innerHTML = `${sn}${pn && pn !== sn && cs.pages.length > 1 ? ` <small>${pn}</small>` : ''}`;
+      const sd = document.getElementById('secDesc'); if (sd && cs) sd.textContent = t.secDesc[cs.id] || '';
       document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
     document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
@@ -330,7 +332,7 @@ const paneOn = el => { const p = el && el.closest('[data-tab]'); return p && !p.
 /* Meniu pertvarkymas (savininkas 2026-10-21 „Taip, pertvarkyti“). Pradžios (index.html) skirtukai išskirstyti į tris puslapius:
    facts.html ir managers.html – index.html kopijos (build_site.py), kiekviename rodomi tik savi skirtukai; kiti lieka DOM'e paslėpti
    (data-off = puslapis, kuriame jie rodomi), o nuoroda į juos (#go=, #tab=) nukreipia į tą puslapį – seni adresai veikia. */
-const SEC_IMG = { home: 'home', facts: 'facts', results: 'results', mgr: 'mgr', pf: 'pf', rep: 'rep', jr: 'jr' };   // site/img/sec-*.jpg – savininko sugeneruotos nuotraukos
+const SEC_IMG = { home: 'home', facts: 'facts', results: 'results', mgr: 'mgr', pf: 'pf', rep: 'rep', jr: 'jr', baltic: 'home' };   // Baltijos šalims – kol bus Vilniaus, Rygos ir Talino nuotraukos   // site/img/sec-*.jpg – savininko sugeneruotos nuotraukos
 const HOME_PAGES = ['index', 'facts', 'managers'];
 const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
 /* Du puslapiai – viena skirtukų juosta: III pakopa (pillar3 + performance3) ir II pakopa (performance + overview „Grupių grafikai“).
@@ -1702,11 +1704,13 @@ const SECTIONS = [
   { id: 'baltic', icon: 'baltic', pages: ['baltic'] },
 ];
 addStrings({
+  secDesc: { home: 'What is happening in the pension fund market today', facts: 'Key market figures with sources and Excel formulas', results: 'Returns, risk and comparison of pillar II and III funds within their groups', mgr: 'Managers’ market shares, funds and achievements', pf: 'Where the funds invest and how much they manage', rep: 'Managers’ reports, fees and KID scenarios', jr: 'How much you can save and what your pension may be', baltic: 'Pension funds of Lithuania, Latvia and Estonia in one place' },
   secNav: { home: 'Home', facts: 'Market facts', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', about: 'About', help: 'Help' },
   subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III', facts: 'Market facts', managers: 'Managers', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic states' },
   navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
   qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding', n: 'Article' }, qNews: q => `All articles with “${q}” →`, qHint: 'Tip: press / to search',
 }, {
+  secDesc: { home: 'Kas šiandien vyksta pensijų fondų rinkoje', facts: 'Svarbiausi rinkos skaičiai su šaltiniais ir Excel formulėmis', results: 'II ir III pakopos fondų grąža, rizika ir palyginimas grupėse', mgr: 'Valdytojų rinkos dalys, fondai ir pasiekimai', pf: 'Kur investuoja fondai ir kiek turto valdo', rep: 'Valdytojų ataskaitos, mokesčiai ir KID scenarijai', jr: 'Kiek galite sukaupti ir kokia gali būti pensija', baltic: 'Lietuvos, Latvijos ir Estijos pensijų fondai vienoje vietoje' },
   secNav: { home: 'Pradžia', facts: 'Rinkos faktai', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', about: 'Apie', help: 'Pagalba' },
   subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopa', facts: 'Rinkos faktai', managers: 'Valdytojai', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalys' },
   navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',

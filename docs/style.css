@@ -590,11 +590,16 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 }
 
 /* Skyriaus nuotraukų juosta (savininkas 2026-10-21: tikroviški vaizdai orientacijai): viena nuotrauka skyriui, tekstas kairėje */
-.sechero { position: relative; height: 72px; margin: 4px 0 12px; border-radius: 12px; overflow: hidden; background: var(--hover) center 58% / cover no-repeat; display: flex; align-items: center; padding: 0 22px; }
-.sechero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--surface) 0%, color-mix(in srgb, var(--surface) 75%, transparent) 30%, transparent 65%); }
-.sechero span { position: relative; font-family: "Source Serif 4", Georgia, serif; font-size: 22px; font-weight: 600; color: var(--text); }
-.sechero small { font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 500; color: var(--text-2); margin-left: 8px; }
-@media (max-width: 700px) { .sechero { height: 48px; margin: 0 0 8px; border-radius: 10px; padding: 0 14px; } .sechero span { font-size: 17px; } .sechero small { display: none; } }
+.sechero { position: relative; height: 190px; margin: 6px 0 14px; border-radius: 16px; overflow: hidden; background: var(--hover) center 55% / cover no-repeat; display: flex; align-items: center; padding: 0 32px; box-shadow: 0 6px 24px rgba(60, 40, 10, .12); }
+.sechero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--surface) 92%, transparent) 0%, color-mix(in srgb, var(--surface) 70%, transparent) 34%, transparent 66%); }
+.sechero .shtx { position: relative; max-width: 46%; }
+.sechero span { display: block; font-family: "Source Serif 4", Georgia, serif; font-size: 32px; font-weight: 600; line-height: 1.15; color: var(--text); }
+.sechero small { display: block; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; color: var(--accent); margin: 4px 0 0; }
+.sechero p { margin: 8px 0 0; font-size: 15px; line-height: 1.45; color: var(--text-2); }
+.pagebg { position: absolute; left: 0; right: 0; top: 0; height: 520px; z-index: -1; background: center 40% / cover no-repeat; opacity: .16; filter: blur(18px) saturate(1.1); pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 0%, transparent 100%); mask-image: linear-gradient(#000 0%, transparent 100%); }
+@media (max-width: 1000px) { .sechero { height: 150px; } .sechero span { font-size: 26px; } .sechero .shtx { max-width: 60%; } }
+@media (max-width: 700px) { .sechero { height: 110px; margin: 0 0 10px; border-radius: 12px; padding: 0 16px; } .sechero span { font-size: 20px; } .sechero small, .sechero p { display: none; } .sechero .shtx { max-width: 70%; } .pagebg { height: 300px; } }
 @media print { .sechero { display: none; } }
 @media (min-width: 701px) { .has-hero .crumb { display: none; } }   /* kompiuteryje skyrių jau rodo nuotraukų juosta */
 /* Baltijos šalys: šalies ir pakopos juosta virš skirtukų (common.js bxBar) */
