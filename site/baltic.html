@@ -39,6 +39,7 @@
   .mt p, .mt li { font-size: 14px; line-height: 1.55; }
   .mt h3 { margin: 16px 0 6px; font-size: 15px; }
   .chart { min-height: 260px; }
+  .rfc td { white-space: normal; vertical-align: top; min-width: 120px; } .rfc td.nm { min-width: 220px; }
 </style>
 </head>
 <body>
@@ -63,6 +64,13 @@
       <p class="lead" id="cmL"></p>
       <div class="bar flt" id="cmBar"></div>
       <section class="card"><div class="sel" id="cmSel"></div><div class="chart" id="cmCh"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="cmTbl"></table></div><p class="note" id="cmN"></p></section>
+    </div>
+    <div data-tab="rf">
+      <h2 class="sec" id="rfT"></h2>
+      <p class="lead" id="rfL"></p>
+      <section class="card"><p id="rfSay" style="font-size:15px;line-height:1.55;margin:0 0 10px"></p><div class="seg" id="rfSeg" role="group"></div><div class="chart" id="rfCh" style="margin-top:10px"></div></section>
+      <section class="card"><h2 id="rfKT"></h2><div class="scroll"><table class="bt" id="rfK"></table></div><p class="note" id="rfN"></p></section>
+      <section class="card"><h2 id="rfCT"></h2><div class="scroll"><table class="bt rfc" id="rfC"></table></div><p class="note" id="rfWhy"></p><p class="note" id="rfSrc"></p></section>
     </div>
     <div data-tab="mt">
       <h2 class="sec" id="mtT"></h2>

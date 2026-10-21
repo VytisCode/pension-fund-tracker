@@ -168,6 +168,69 @@ def ee_totals():
     return out
 
 
+def reform():
+    """II pakopos reformų palyginimas (savininkas 2026-10-21): Estija (išėjimas leidžiamas nuo 2021-01-01) ir Lietuva (nuo 2026-01-01).
+    Kiekvienai šaliai – mėnesio (EE) ar ketvirčio (LT, LB duomenys) pabaigos taškai: mėnesių skaičius nuo paskutinio mėnesio prieš
+    reformą (0), dalyviai, grynieji aktyvai (mln. €), sukauptas investicijų uždarbis ir sukauptas grynasis srautas (įmokos − išmokos −
+    išėjimai) nuo taško 0, mln. €. Srautas = turto pokytis − uždarbis; uždarbis = turtas ankstesnę dieną × vieneto vertės pokytis."""
+    out = {}
+    # Estija: kasdien pagal fondą
+    by = defaultdict(dict)
+    for r in csv.DictReader((D / "baltic_ee.csv").open(encoding="utf-8")):
+        if r["pillar"] == "II" and r["date"] >= "2018-12-01":
+            by[r["date"]][r["fund_id"]] = r
+    prev, mon = None, {}
+    for d in sorted(by):
+        rs = by[d]
+        g = 0.0
+        if prev:
+            for k, r in rs.items():
+                p = by[prev].get(k)
+                if p and r["nav"] and p["nav"] and p["net_assets"]:
+                    g += float(p["net_assets"]) * (float(r["nav"]) / float(p["nav"]) - 1)
+        m = mon.setdefault(d[:7], {"g": 0.0})
+        m["g"] += g
+        m["d"], m["na"], m["inv"] = d, sum(float(r["net_assets"]) for r in rs.values() if r["net_assets"]), sum(int(r["investors"]) for r in rs.values() if r["investors"])
+        prev = d
+    ms = sorted(mon)
+    if ms and ms[-1] >= date.today().isoformat()[:7]:
+        pass                                                         # einamasis mėnuo – iki paskutinės dienos
+    out["EE"] = series("2021-01", [(m, mon[m]["d"], mon[m]["inv"], mon[m]["na"] / 1e6, mon[m]["g"] / 1e6) for m in ms])
+    # Lietuva: LB ketvirčiai (dalyviai, aktyvai) + earnings.py ketvirčio uždarbis
+    import earnings
+    import market
+    mk = market.build()
+    eq = {q[0]: q[2] for q in earnings.build(mk)["II"]["q"]}
+    part, nav = defaultdict(float), defaultdict(float)
+    for r in csv.DictReader((D / "lb_results_history.csv").open(encoding="utf-8")):
+        if r["pillar"] == "II" and r["kind"] == "fund" and r["date"] >= "2018-12-31":
+            part[r["date"]] += float(r["participants"] or 0)
+            nav[r["date"]] += float(r["nav_meur"] or 0)
+    pts = []
+    for d in sorted(nav):
+        q = f"{d[:4]}-{(int(d[5:7]) - 1) // 3 + 1}"
+        pts.append((d[:7], d, part[d] or None, nav[d], eq.get(q)))
+    out["LT"] = series("2026-01", pts)
+    out["start"] = {"EE": "2021-01-01", "LT": "2026-01-01"}
+    return out
+
+
+def series(start, pts):
+    """[(mėnuo, data, dalyviai, turtas mln., uždarbis per laikotarpį mln.)] -> stulpeliai; o – mėnesiai nuo mėnesio prieš reformą."""
+    y0, m0 = int(start[:4]), int(start[5:7]) - 1
+    base = next((i for i, p in enumerate(pts) if p[0] >= f"{y0 if m0 else y0 - 1}-{m0 or 12:02d}"), None)
+    o, cg, cf, G, F = [], 0.0, 0.0, [], []
+    for i, (m, d, inv, na, g) in enumerate(pts):
+        o.append((int(m[:4]) - y0) * 12 + int(m[5:7]) - 1 - m0 + 1)
+        if base is not None and i > base:
+            gg = g or 0.0
+            cg += gg
+            cf += na - pts[i - 1][3] - gg
+        G.append(round(cg, 1)); F.append(round(cf, 1))
+    return {"o": o, "d": [p[1] for p in pts], "part": [int(p[2]) if p[2] else None for p in pts], "na": [round(p[3], 1) for p in pts],
+            "gain": G, "flow": F, "base": base}
+
+
 def build() -> dict:
     funds = []
     for f in (ee_funds, lv_funds, lt_funds):
@@ -182,7 +245,12 @@ def build() -> dict:
         tot = {"EE": ee_totals()}
     except FileNotFoundError:
         tot = {}
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot}
+    try:
+        rf = reform()
+    except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
+        print("baltic: reformų palyginimas nepavyko:", e)
+        rf = None
+    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf}
 
 
 if __name__ == "__main__":

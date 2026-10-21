@@ -258,6 +258,7 @@ async function excel() {
       if (!s) { row.push(null, null, null); return; }
       row.push(xd(s.d), xv(s.v), { f: y === 1 ? `E${r}/${cv}${r}-1` : `(E${r}/${cv}${r})^(365.25/(D${r}-${cd}${r}))-1`, z: '0.00%', s: 'calc', v: y === 1 ? e.v / s.v - 1 : Math.pow(e.v / s.v, 365.25 / (e.d - s.d)) - 1 }); });
     V.push(row); });
+  rfSheet(wb);
   XL.sheet(wb, t.xlV, V, { cols: [10, 7, 44, 12, 11, 12, 11, 10, 12, 11, 10, 12, 11, 10], freeze: { r: 4 } });
   const tmp = document.createElement('div'); tmp.innerHTML = MT[lang];
   XL.sheet(wb, t.xlM, [[{ v: t.mtT, s: 'title' }], ...[...tmp.querySelectorAll('h3, p, li')].map(n => [{ v: (n.tagName === 'LI' ? '• ' : '') + n.textContent, s: n.tagName === 'H3' ? 'b' : '' }])], { cols: [140] });
@@ -265,15 +266,130 @@ async function excel() {
 }
 $('xlBtn').addEventListener('click', () => excel().catch(e => console.error(e)));
 
+/* ---------- Reformos: Estija (2021) ir Lietuva (2026) (savininkas 2026-10-21: „kurioje šalyje pensijų reforma prarado daugiau turto ar
+   dalyvių … kaip tarp šalių skyrėsi reformos sąlygos“). Duomenys – BALTIC.rf (baltic.py reform()): EE – mėnesių pabaigos iš
+   pensionikeskus.ee kasdienių duomenų, LT – LB ketvirčių duomenys; 0 – paskutinis mėnuo prieš reformą. Grynasis srautas = turto
+   pokytis − investicijų uždarbis (įmokos − išmokos − išėjimai). Sąlygos – iš šaltinių, nurodytų lentelėje. */
+addStrings({ rf: {
+  t: 'Pension reforms: Estonia and Lithuania', l: 'Estonia allowed leaving the second pillar from 1 January 2021, Lithuania from 1 January 2026. How many participants and how much of the assets left, month by month from the start of each reform, and how the conditions differed.',
+  seg: { part: 'Participants', na: 'Assets', flow: 'Net outflow' }, ax: { part: '% of participants before the reform', na: '% of assets before the reform', flow: 'net flow since the reform, % of assets before' },
+  x: 'Months since the reform', lt: 'Lithuania (from 2026)', ee: 'Estonia (from 2021)',
+  kT: 'In numbers', kH: ['', 'Estonia', 'Lithuania'], same: m => `Estonia after the same ${m} months`,
+  rows: { start: 'Leaving allowed from', base: 'Before the reform', partB: 'Participants before the reform', naB: 'Assets before the reform, € m', partN: m => `Participants after ${m} months`, partC: m => `Change in participants after ${m} months`,
+    flowN: m => `Net outflow in ${m} months, € m`, flowS: m => `Net outflow in ${m} months, % of assets`, gainN: m => `Investment gain in ${m} months, € m`, naN: m => `Assets after ${m} months, € m`, now: 'Latest', partNow: 'Participants now', naNow: 'Assets now, € m' },
+  says: (lm, lp, lf, ef, ep, eP, eF, em) => `In ${lm} months of the reform Lithuania’s second pillar lost ${pctPlain(-lp, 0)} of participants, and a net ${pctPlain(-lf, 0)} of its assets left the funds. In Estonia after the same ${lm} months (the first payout round was in September 2021) a net ${pctPlain(-ef, 0)} of assets had left; the participant count fell by ${pctPlain(-ep, 0)} by January 2022 (it falls with a delay). Over ${em} months of its reform Estonia lost at most ${pctPlain(-eF, 0)} of assets in net terms and now has ${pctPlain(-eP, 0)} fewer participants than before.`,
+  cT: 'Conditions', cH: ['', 'Estonia', 'Lithuania'],
+  cond: [
+    ['Start', 'From 1 January 2021 joining and leaving the second pillar became optional for everyone (before, it was mandatory for those born in 1983 or later).', 'The reform came into force on 1 January 2026; the opt-out window runs from 1 January 2026 to 31 December 2027.'],
+    ['Is it a one-off?', 'No: leaving is a permanent option, applications are taken three times a year.', 'Full exit – only during the 2026–2027 window (for those who joined before the end of 2025).'],
+    ['What you get', 'All savings at once, as a lump sum.', 'Own contributions and the returns on them. Contributions paid by Sodra or the state budget go back to Sodra and become additional pension points.'],
+    ['Tax', '20% income tax on early withdrawal (22% according to a later LHV page).', 'The sources do not mention income tax on exit; a 3% deduction (to Sodra) applies to the one-time 25% withdrawal, and LRT mentions it for a full exit too.'],
+    ['Contributions after leaving', 'Stop; the 4% from social tax was paid out with the savings for those leaving in 2021–2022.', 'Contributions can also be paused for 12 months, any number of times, and resumed at any time.'],
+    ['Coming back', 'Not before 10 years.', 'No 10-year ban stated; Sodra reports people signing new contracts after exiting.'],
+    ['When the money is paid', 'About five months after the application period: applications to 31 March – paid in September 2021, later rounds in January and May.', 'Within 10 working days after the end of each quarter (April, July, October…).'],
+    ['Automatic enrolment', 'Not applicable – the pillar was mandatory for the younger generation.', 'Before the reform most participants were enrolled automatically; automatic enrolment was ended.'],
+    ['Officially reported', '149,260 applications in the first round, 12,236 in the second, 23,441 in the third (2021).', 'About 580,000 people (40%) withdrew all or part by April 2026; about €2.9 bn paid to those who left in full.'],
+  ],
+  why: 'Possible reasons why more left in Lithuania (our interpretation, not an official assessment): leaving is cheaper (Estonia charged 20% income tax and barred rejoining for 10 years); contributions paid by the state are not lost but go back to Sodra; many participants had been enrolled automatically and had small balances; and the window is limited in time, which pushes people to decide early.',
+  note: 'Participants: Estonia – active investors of pillar II funds (pensionikeskus.ee, the counter falls with a delay after payouts); Lithuania – Bank of Lithuania quarterly data (they differ from Sodra and LIPFA counts). Net flow = change in assets − investment gain, so market movements are excluded; it includes regular contributions.',
+  src: 'Sources', xl: 'Reforms' } }, { rf: {
+  t: 'Pensijų reformos: Estija ir Lietuva', l: 'Estija leido išeiti iš II pakopos nuo 2021 m. sausio 1 d., Lietuva – nuo 2026 m. sausio 1 d. Kiek dalyvių ir turto išėjo kiekvieną mėnesį nuo reformos pradžios ir kuo skyrėsi sąlygos.',
+  seg: { part: 'Dalyviai', na: 'Turtas', flow: 'Grynasis srautas' }, ax: { part: '% dalyvių prieš reformą', na: '% turto prieš reformą', flow: 'grynasis srautas nuo reformos, % turto prieš reformą' },
+  x: 'Mėnesiai nuo reformos', lt: 'Lietuva (nuo 2026 m.)', ee: 'Estija (nuo 2021 m.)',
+  kT: 'Skaičiais', kH: ['', 'Estija', 'Lietuva'], same: m => `Estija po tų pačių ${m} mėn.`,
+  rows: { start: 'Išeiti leidžiama nuo', base: 'Prieš reformą', partB: 'Dalyvių prieš reformą', naB: 'Turtas prieš reformą, mln. €', partN: m => `Dalyvių po ${m} mėn.`, partC: m => `Dalyvių pokytis po ${m} mėn.`,
+    flowN: m => `Grynasis srautas per ${m} mėn., mln. €`, flowS: m => `Grynasis srautas per ${m} mėn., % turto`, gainN: m => `Investicijų uždarbis per ${m} mėn., mln. €`, naN: m => `Turtas po ${m} mėn., mln. €`, now: 'Naujausi', partNow: 'Dalyvių dabar', naNow: 'Turtas dabar, mln. €' },
+  says: (lm, lp, lf, ef, ep, eP, eF, em) => `Per ${lm} reformos mėn. Lietuvos II pakopa neteko ${pctPlain(-lp, 0)} dalyvių, o iš fondų grynai išėjo ${pctPlain(-lf, 0)} turto. Estijoje po tų pačių ${lm} mėn. (pirmosios išmokos – 2021 m. rugsėjį) grynai buvo išėję ${pctPlain(-ef, 0)} turto, o dalyvių skaičius iki 2022 m. sausio sumažėjo ${pctPlain(-ep, 0)} (jis mažėja pavėluotai). Per ${em} reformos mėn. Estija daugiausia grynai neteko ${pctPlain(-eF, 0)} turto, o dalyvių dabar ${pctPlain(-eP, 0)} mažiau nei prieš reformą.`,
+  cT: 'Sąlygos', cH: ['', 'Estija', 'Lietuva'],
+  cond: [
+    ['Pradžia', 'Nuo 2021 m. sausio 1 d. stoti į II pakopą ir iš jos išeiti tapo savanoriška visiems (anksčiau privaloma gimusiems 1983 m. ir vėliau).', 'Reforma įsigaliojo 2026 m. sausio 1 d.; išėjimo langas – 2026 m. sausio 1 d. – 2027 m. gruodžio 31 d.'],
+    ['Ar vienkartinė galimybė?', 'Ne: išeiti galima nuolat, prašymai priimami tris kartus per metus.', 'Visiškas išėjimas – tik 2026–2027 m. lange (kaupti pradėjusiems iki 2025 m. pabaigos).'],
+    ['Ką gauna žmogus', 'Visas sukauptas lėšas iš karto.', 'Savo įmokas ir jų uždarbį. Sodros ar valstybės biudžeto įmokos grąžinamos Sodrai ir virsta papildomais pensijos taškais.'],
+    ['Mokesčiai', '20 % pajamų mokestis išsiimant anksčiau (vėlesniame LHV puslapyje – 22 %).', 'Šaltiniai pajamų mokesčio išeinant nemini; 3 % atskaitymas (Sodrai) taikomas vienkartiniam 25 % išsiėmimui, o LRT jį mini ir visiškam išėjimui.'],
+    ['Įmokos išėjus', 'Nutrūksta; 2021–2022 m. išėjusiems neišmokėtos 4 % socialinio mokesčio įmokos išmokėtos kartu su santaupomis.', 'Įmokas taip pat galima sustabdyti 12 mėn., neribotą kartų skaičių, ir bet kada atnaujinti.'],
+    ['Grįžimas', 'Ne anksčiau kaip po 10 metų.', '10 metų draudimo nenurodyta; Sodra skelbia, kad dalis išėjusių sudaro naujas sutartis.'],
+    ['Kada išmokama', 'Maždaug po 5 mėn. nuo prašymų laikotarpio pabaigos: prašymai iki kovo 31 d. – išmokėta 2021 m. rugsėjį, vėlesni etapai – sausį ir gegužę.', 'Per 10 darbo dienų po kiekvieno ketvirčio pabaigos (balandį, liepą, spalį…).'],
+    ['Automatinis įtraukimas', 'Netaikytas – jaunesniems II pakopa buvo privaloma.', 'Iki reformos dauguma dalyvių buvo įtraukti automatiškai; automatinis įtraukimas panaikintas.'],
+    ['Oficialiai skelbta', 'Pirmame etape 149 260 prašymų, antrame 12 236, trečiame 23 441 (2021 m.).', 'Iki 2026 m. balandžio apie 580 tūkst. žmonių (40 %) atsiėmė visas ar dalį lėšų; visiškai išėjusiems išmokėta apie 2,9 mlrd. €.'],
+  ],
+  why: 'Galimos priežastys, kodėl Lietuvoje išėjo daugiau (mūsų vertinimas, ne oficiali išvada): išeiti pigiau (Estijoje – 20 % pajamų mokestis ir 10 metų draudimas grįžti); valstybės sumokėtos įmokos neprarandamos, o grįžta į Sodrą; daug dalyvių buvo įtraukti automatiškai ir turėjo nedideles sumas; langas ribotas laike, todėl skatina apsispręsti greitai.',
+  note: 'Dalyviai: Estija – aktyvūs II pakopos fondų investuotojai (pensionikeskus.ee; skaičius po išmokų mažėja pavėluotai), Lietuva – Lietuvos banko ketvirčio duomenys (skiriasi nuo Sodros ir LIPFA skaičių). Grynasis srautas = turto pokytis − investicijų uždarbis, todėl rinkos svyravimai neįskaičiuoti; į jį įeina ir įprastos įmokos.',
+  src: 'Šaltiniai', xl: 'Reformos' } });
+const RF_SRC = [['ERR, 2021-03-29', 'https://news.err.ee/1608159100/17-percent-of-people-apply-to-leave-second-pillar-pension-fund'], ['ERR, 2021-08-01', 'https://news.err.ee/1608294564/around-160-000-people-leave-second-pension-pillar'],
+  ['ERR, 2021-12-03', 'https://news.err.ee/1608424322/more-than-23-000-people-apply-to-leave-pension-system-in-third-round'], ['LHV', 'https://www.lhv.ee/en/faq/pension'],
+  ['SADM (socmin.lrv.lt), 2025-06', 'https://socmin.lrv.lt/en/news/reform-approved-second-pillar-pension-scheme-to-become-more-attractive-and-flexible'], ['LRT, 2025-06-26', 'https://www.lrt.lt/en/news-in-english/19/2598158/lithuanian-mps-approve-pension-reform-allowing-opt-outs-and-withdrawals-from-private-funds'],
+  ['LRT, 2026-04-15', 'https://www.lrt.lt/en/news-in-english/19/2899157/about-40-of-lithuanians-withdraw-private-pension-savings-after-reform'], ['Artea', 'https://www.artea.lt/en/private/pension/second-pillar-pension/second-pillar-pension-reform']];
+let RFK = 'part';
+function rfAt(S, m) {                                   // paskutinis taškas, kurio mėnuo nuo reformos ≤ m
+  let i = -1; S.o.forEach((o, j) => { if (o <= m && j >= S.base) i = j; }); return i;
+}
+function rfStats() {
+  const R = BALTIC.rf, L = R.LT, E = R.EE, li = L.o.length - 1, lm = L.o[li], ei = rfAt(E, lm), en = E.o.length - 1;
+  const pc = (S, i) => (S.part[i] / S.part[S.base] - 1) * 100, fs = (S, i) => S.flow[i] / S.na[S.base] * 100;
+  return { L, E, li, lm, ei, en, pc, fs };
+}
+function renderRf() {
+  if (!BALTIC.rf || !$('rfT')) return;
+  const t = T().rf, s = rfStats(), { L, E, li, lm, ei, en, pc, fs } = s;
+  $('rfT').textContent = t.t; $('rfL').textContent = t.l;
+  const e13 = rfAt(E, 13);
+  $('rfSay').innerHTML = `${hEsc(t.says(lm, pc(L, li), fs(L, li), fs(E, ei), pc(E, e13), pc(E, en), Math.min(...E.flow.slice(E.base)) / E.na[E.base] * 100, E.o[en]))} <button type="button" class="btn" id="rfCp">${T().copy || (lang === 'lt' ? 'Kopijuoti' : 'Copy')}</button>`;
+  $('rfSeg').innerHTML = ['part', 'na', 'flow'].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === RFK}">${t.seg[k]}</button>`).join('');
+  rfChart($('rfCh'));
+  const n0 = v => v == null ? '–' : num(v, 0), m1 = v => v == null ? '–' : num(v, 1);
+  const r = (h, a, b) => `<tr><td>${hEsc(h)}</td><td class="n">${a}</td><td class="n">${b}</td></tr>`, R = t.rows;
+  $('rfK').innerHTML = `<thead><tr>${t.kH.map((h, i) => `<th${i ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
+    + r(R.start, BALTIC.rf.start.EE, BALTIC.rf.start.LT) + r(R.partB + ` (${E.d[E.base]} / ${L.d[L.base]})`, n0(E.part[E.base]), n0(L.part[L.base])) + r(R.naB, m1(E.na[E.base]), m1(L.na[L.base]))
+    + r(R.partN(lm), n0(E.part[ei]), n0(L.part[li])) + r(R.partC(lm), pctPlain(pc(E, ei), 1), pctPlain(pc(L, li), 1))
+    + r(R.flowN(lm), m1(E.flow[ei]), m1(L.flow[li])) + r(R.flowS(lm), pctPlain(fs(E, ei), 1), pctPlain(fs(L, li), 1))
+    + r(R.gainN(lm), m1(E.gain[ei]), m1(L.gain[li])) + r(R.naN(lm), m1(E.na[ei]), m1(L.na[li]))
+    + r(`${R.partNow} (${E.d[en]})`, n0(E.part[en]) + ` (${pctPlain(pc(E, en), 1)})`, '') + r(`${R.naNow} (${E.d[en]})`, m1(E.na[en]), '') + '</tbody>';
+  $('rfCT').textContent = t.cT; $('rfKT').textContent = t.kT;
+  $('rfC').innerHTML = `<thead><tr>${t.cH.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${t.cond.map(c => `<tr><td><b>${hEsc(c[0])}</b></td><td class="nm">${hEsc(c[1])}</td><td class="nm">${hEsc(c[2])}</td></tr>`).join('')}</tbody>`;
+  $('rfWhy').textContent = t.why; $('rfN').textContent = t.note;
+  $('rfSrc').innerHTML = `${t.src}: ` + RF_SRC.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${hEsc(n)}</a>`).join(', ');
+}
+function rfChart(el) {
+  const t = T().rf, R = BALTIC.rf, W = el.clientWidth || 600, H = Math.max(230, Math.min(320, W * 0.45)), m = { l: 46, r: 12, t: 12, b: 34 };
+  const ser = [['EE', t.ee, PAL[0]], ['LT', t.lt, PAL[1]]].map(([c, lab, col]) => { const S = R[c];
+    const pts = S.o.map((o, i) => [o, i < S.base ? null : RFK === 'part' ? (S.part[i] ? S.part[i] / S.part[S.base] * 100 : null) : RFK === 'na' ? S.na[i] / S.na[S.base] * 100 : S.flow[i] / S.na[S.base] * 100]).filter(p => p[1] != null && p[0] >= 0);
+    return { lab, col, pts }; });
+  const all = ser.flatMap(s => s.pts), x1 = Math.max(...all.map(p => p[0])), ys = all.map(p => p[1]);
+  let lo = Math.min(...ys, RFK === 'flow' ? 0 : 50), hi = Math.max(...ys, RFK === 'flow' ? 0 : 100); const pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+  const X = o => m.l + o / x1 * (W - m.l - m.r), Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${hEsc(t.ax[RFK])}">`;
+  niceTicks(lo, hi).forEach(v => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)" stroke-dasharray="2 3"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end" fill="var(--text-3)" font-size="11">${num(v, 0)}</text>`; });
+  niceTicks(0, x1, Math.max(3, Math.floor(W / 90))).forEach(o => { s += `<text x="${X(o)}" y="${H - 18}" text-anchor="middle" fill="var(--text-3)" font-size="11">${o}</text>`; });
+  s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 3}" text-anchor="middle" fill="var(--text-3)" font-size="11">${t.x}</text>`;
+  ser.forEach(r => { s += `<polyline fill="none" stroke="${r.col}" stroke-width="2.2" points="${r.pts.map(p => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}"/>`
+    + r.pts.map(p => `<circle cx="${X(p[0]).toFixed(1)}" cy="${Y(p[1]).toFixed(1)}" r="${r.pts.length < 20 ? 3.5 : 1.6}" fill="${r.col}"><title>${hEsc(r.lab)}, ${p[0]}: ${num(p[1], 1)} %</title></circle>`).join(''); });
+  el.innerHTML = s + '</svg>' + `<div class="sel">${ser.map(r => `<span class="chip"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${r.col};margin-right:6px"></span>${hEsc(r.lab)}</span>`).join('')}</div><p class="note">${hEsc(t.ax[RFK])}</p>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('#rfSeg button'); if (b) { RFK = b.dataset.k; renderRf(); return; }
+  const c = e.target.closest('#rfCp'); if (c) { const txt = $('rfSay').textContent.replace(c.textContent, '').trim() + ' ' + T().srcLine; navigator.clipboard && navigator.clipboard.writeText(txt).then(() => { const o = c.textContent; c.textContent = '✓'; setTimeout(() => { c.textContent = o; }, 1500); }); }
+});
+function rfSheet(wb) {                                  // Excel: abiejų šalių taškai ir pokyčiai – formulės
+  if (!BALTIC.rf) return;
+  const t = T().rf, L = lang === 'lt', rows = [[{ v: t.t, s: 'title' }], [{ v: t.note, s: 'note' }], [],
+    (L ? ['Šalis', 'Data', 'Mėn. nuo reformos', 'Dalyviai', 'Turtas, mln. €', 'Sukauptas uždarbis, mln. €', 'Sukauptas grynasis srautas, mln. €', 'Dalyviai, % prieš reformą', 'Turtas, % prieš reformą', 'Srautas, % turto prieš reformą']
+      : ['Country', 'Date', 'Months since reform', 'Participants', 'Assets, € m', 'Cumulative gain, € m', 'Cumulative net flow, € m', 'Participants, % of before', 'Assets, % of before', 'Flow, % of assets before']).map(h => ({ v: h, s: 'hdr' }))];
+  ['EE', 'LT'].forEach(c => { const S = BALTIC.rf[c], b0 = rows.length + 1 + S.base;
+    S.o.forEach((o, i) => { const n = rows.length + 1;
+      rows.push([c, S.d[i], o, { v: S.part[i], s: 'in' }, { v: S.na[i], s: 'in' }, { v: S.gain[i], s: 'in' }, { v: S.flow[i], s: 'in' },
+        i >= S.base && S.part[i] ? { f: `D${n}/D$${b0}`, v: S.part[i] / S.part[S.base], z: '0.0%' } : '', i >= S.base ? { f: `E${n}/E$${b0}`, v: S.na[i] / S.na[S.base], z: '0.0%' } : '', i >= S.base ? { f: `G${n}/E$${b0}`, v: S.flow[i] / S.na[S.base], z: '0.0%' } : '']); }); });
+  XL.sheet(wb, t.xl, rows, { cols: [8, 12, 10, 12, 12, 14, 16, 14, 14, 16], freeze: { r: 4 } });
+}
+
 function render() {
   const t = T();
   document.title = `${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  renderOv(); renderFd(); renderCmp();
+  renderOv(); renderFd(); renderCmp(); renderRf();
   $('mtT').textContent = t.mtT; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
-  addSubnav([{ id: 'ovT', label: lang === 'lt' ? 'Apžvalga' : 'Overview' }, { id: 'fdT', label: t.fdT }, { id: 'cmT', label: lang === 'lt' ? 'Palyginti' : 'Compare' }, { id: 'mtT', label: t.mtT }]);
+  addSubnav([{ id: 'ovT', label: lang === 'lt' ? 'Apžvalga' : 'Overview' }, { id: 'fdT', label: t.fdT }, { id: 'cmT', label: lang === 'lt' ? 'Palyginti' : 'Compare' }, { id: 'rfT', label: lang === 'lt' ? 'Reformos' : 'Reforms' }, { id: 'mtT', label: t.mtT }]);
 }
 renderHeader('baltic', render);
 render();
-addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { renderOv(); renderCmp(); }, 200); });
+addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { renderOv(); renderCmp(); renderRf(); }, 200); });
