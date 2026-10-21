@@ -110,7 +110,8 @@ def main() -> None:
         shutil.copyfile(SITE / name, DOCS / name)
     # Excel rašytuvas (site/xl.js) – pridedamas prie common.js, kad veiktų visuose puslapiuose be papildomo failo
     (DOCS / "common.js").write_text((SITE / "common.js").read_text(encoding="utf-8") + "\n" + (SITE / "xl.js").read_text(encoding="utf-8"), encoding="utf-8")
-    shutil.copytree(SITE / "fonts", DOCS / "fonts", dirs_exist_ok=True)   # šriftai su lietuviškomis raidėmis (Inter, Source Serif 4; OFL licencija)
+    shutil.copytree(SITE / "fonts", DOCS / "fonts", dirs_exist_ok=True)
+    shutil.copytree(SITE / "img", DOCS / "img", dirs_exist_ok=True)       # skyrių nuotraukos (savininko sugeneruotos, 2026-10-21)   # šriftai su lietuviškomis raidėmis (Inter, Source Serif 4; OFL licencija)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
     ver = {n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in assets}
     for page in ("index.html", "overview.html", "performance.html", "apie.html"):

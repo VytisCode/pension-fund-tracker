@@ -588,3 +588,12 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
   .crumb { font-family: "Source Serif 4", Georgia, serif; font-size: 17px; font-weight: 600; color: var(--text); text-overflow: ellipsis; }
   .crumb span::before { display: none; } .crumb span:first-child:not(:last-child) { display: none; } .crumb span:last-child { color: var(--text); }
 }
+
+/* Skyriaus nuotraukų juosta (savininkas 2026-10-21: tikroviški vaizdai orientacijai): viena nuotrauka skyriui, tekstas kairėje */
+.sechero { position: relative; height: 72px; margin: 4px 0 12px; border-radius: 12px; overflow: hidden; background: var(--hover) center 58% / cover no-repeat; display: flex; align-items: center; padding: 0 22px; }
+.sechero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--surface) 0%, color-mix(in srgb, var(--surface) 75%, transparent) 30%, transparent 65%); }
+.sechero span { position: relative; font-family: "Source Serif 4", Georgia, serif; font-size: 22px; font-weight: 600; color: var(--text); }
+.sechero small { font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 500; color: var(--text-2); margin-left: 8px; }
+@media (max-width: 700px) { .sechero { height: 48px; margin: 0 0 8px; border-radius: 10px; padding: 0 14px; } .sechero span { font-size: 17px; } .sechero small { display: none; } }
+@media print { .sechero { display: none; } }
+@media (min-width: 701px) { .has-hero .crumb { display: none; } }   /* kompiuteryje skyrių jau rodo nuotraukų juosta */

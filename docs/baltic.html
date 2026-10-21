@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Baltijos šalys</title>
-<link rel="stylesheet" href="style.css?v=934dc907">
+<link rel="stylesheet" href="style.css?v=6afc46b1">
 <style>
   .bx { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
   .bx > [data-tab] { min-width: 0; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
@@ -47,6 +47,9 @@
   .hm tr.med td { font-weight: 600; border-top: 2px solid var(--line); } .hm tr.med td.nm { font-size: 12.5px; }
   .hmw { max-height: 70vh; overflow: auto; }
   @media (max-width: 700px) { .hm td.nm { min-width: 130px; max-width: 150px; font-size: 12px; } .hm td.nm small { display: none; } }
+  .crt td.n { color: var(--text); } .crt th[data-s] { cursor: pointer; } .crt tr.gh td { font-weight: 600; padding-top: 14px; border-bottom: 2px solid var(--line); background: none; }
+  .crt tr.med td { font-weight: 600; font-size: 12.5px; color: var(--text-2); } .crt td.nm small { margin-left: 4px; }
+  @media (max-width: 700px) { .crt td.nm { min-width: 140px; font-size: 12px; } .crt td.nm small { display: none; } }
   .topg { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
   .topc h3 { margin: 0 0 2px; font-size: 14px; } .topc .bt td.nm { min-width: 0; }
 </style>
@@ -61,6 +64,18 @@
       <div class="kp" id="kp"></div>
       <section class="card"><h2 id="rkT"></h2><p class="note" id="rkN"></p><div class="seg" id="rkSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="rkTbl"></table></div></section>
       <section class="card"><h2 id="eeT"></h2><div class="seg" id="eeSeg" role="group"></div><div class="chart" id="eeCh"></div><p class="note" id="eeN"></p></section>
+    </div>
+    <div data-tab="cr">
+      <h2 class="sec" id="crT"></h2>
+      <p class="lead" id="crL"></p>
+      <div class="bar flt" id="crBar"></div>
+      <section class="card"><div class="scroll"><table class="bt crt" id="crTbl"></table></div><p class="note" id="crN"></p></section>
+    </div>
+    <div data-tab="rs">
+      <h2 class="sec" id="rsT"></h2>
+      <p class="lead" id="rsL"></p>
+      <div class="bar flt" id="rsBar"></div>
+      <section class="card"><div class="scroll"><table class="bt crt" id="rsTbl"></table></div><p class="note" id="rsN"></p></section>
     </div>
     <div data-tab="fd">
       <h2 class="sec" id="fdT"></h2>
@@ -97,8 +112,8 @@
 </div>
 <div id="actions"><button class="btn" type="button" id="xlBtn"></button></div>
 <script src="data.js?v=e56fa67b"></script>
-<script src="common.js?v=8e032c25"></script>
+<script src="common.js?v=4ba929ee"></script>
 <script src="data_baltic.js?v=9bb0959d"></script>
-<script src="baltic.js?v=b0dfc7b2"></script>
+<script src="baltic.js?v=2ab063a7"></script>
 </body>
 </html>

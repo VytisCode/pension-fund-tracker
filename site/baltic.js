@@ -62,7 +62,7 @@ const MT = {
 <li><b>Latvija</b> – manapensija.lv (nacionalinė pensijų svetainė): II ir III pakopos plānų sąrašas, valdytojas, pastovioji mokesčio dalis, akcijų dalis, valdymo būdas ir plano vertės grafikas (indeksas, 100 = plano pradžia arba 2003 m.), taškai kas 9–13 dienų.</li>
 <li><b>Lietuva</b> – tie patys duomenys kaip kituose šios svetainės puslapiuose: fondų valdytojų skelbiamos vieneto vertės (II ir III pakopa) ir grynieji aktyvai.</li></ul>
 <p>Duomenys atnaujinami automatiškai kiekvieną dieną. Istorija nekeičiama – kiekvieną kartą tik papildoma.</p>
-<h3>Grąža</h3><p>Grąža – vieneto vertės (Latvijoje – indekso) pokytis tarp dviejų datų; mokesčiai jau atskaityti. 3, 5, 10 metų ir „nuo pradžios“ grąžos – metinės: (1 + bendra grąža)<sup>365,25 / dienų skaičius</sup> − 1. Pradžios vertė – paskutinė žinoma vertė pradžios dieną ar prieš ją (Latvijoje – artimiausias ankstesnis taškas, ne senesnis kaip 16 d.).</p>
+<h3>Grąža</h3><p>Grąža – vieneto vertės (Latvijoje – indekso) pokytis tarp dviejų datų; mokesčiai jau atskaityti. 3, 5, 10 metų ir „nuo pradžios“ grąžos – metinės: (1 + bendra grąža)<sup>365,25 / dienų skaičius</sup> − 1. Pradžios vertė – paskutinė žinoma vertė pradžios dieną ar prieš ją (Latvijoje – artimiausias ankstesnis taškas, ne senesnis kaip 20 d.).</p>
 <h3>Rizikos grupės</h3><p>Tarp šalių lyginami tik panašios rizikos fondai. Rizika – paskutinių 3 metų metinis vertės svyravimas: logaritminių vertės pokyčių (savaitės pabaigos; Latvijoje – grafiko taškų) standartinis nuokrypis × √(365 / vidutinis intervalas dienomis). Grupės: iki 4 %, 4–8 %, 8–12 %, daugiau nei 12 %. Fondams, turintiems mažiau nei 3 metų istoriją, grupė nenustatoma.</p>
 <h3>Šalių grupės</h3><p>Lietuvoje – LB gyvenimo ciklo grupės (pagal gimimo metus) ir turto išsaugojimo fondai. Latvijoje – pagal plane nurodytą akcijų dalį: iki 30 %, 31–75 %, daugiau nei 75 %. Estijoje oficialių grupių nėra, todėl naudojamos rizikos grupės.</p>
 <h3>Ką verta žinoti</h3><ul><li>Mokesčiai nevienodi: Estijoje nurodomos visos einamosios išlaidos (TER), Latvijoje – tik pastovioji mokesčio dalis (kintamoji dalis priklauso nuo rezultatų ir čia neįtraukta).</li>
@@ -75,7 +75,7 @@ const MT = {
 <li><b>Latvia</b> – manapensija.lv (national pension website): list of pillar II and III plans, manager, fixed part of the fee, equity share, management style and the plan value chart (index, 100 = plan start or 2003), points every 9–13 days.</li>
 <li><b>Lithuania</b> – the same data as on the other pages of this site: unit values published by managers (pillars II and III) and net assets.</li></ul>
 <p>Data are updated automatically every day. History is never changed – only added to.</p>
-<h3>Return</h3><p>Return is the change in unit value (in Latvia – index) between two dates; fees are already deducted. 3, 5, 10-year and “since start” returns are annual: (1 + total return)<sup>365.25 / days</sup> − 1. The start value is the last known value on or before the start date (in Latvia – the nearest earlier point, at most 16 days older).</p>
+<h3>Return</h3><p>Return is the change in unit value (in Latvia – index) between two dates; fees are already deducted. 3, 5, 10-year and “since start” returns are annual: (1 + total return)<sup>365.25 / days</sup> − 1. The start value is the last known value on or before the start date (in Latvia – the nearest earlier point, at most 20 days older).</p>
 <h3>Risk groups</h3><p>Across countries only funds of similar risk are compared. Risk is the 3-year annual volatility of the value: standard deviation of log changes (week-end values; in Latvia – chart points) × √(365 / average interval in days). Groups: under 4%, 4–8%, 8–12%, over 12%. Funds with less than 3 years of history get no group.</p>
 <h3>Country groups</h3><p>Lithuania – Bank of Lithuania life-cycle groups (by year of birth) and asset preservation funds. Latvia – by the plan’s equity share: up to 30%, 31–75%, over 75%. Estonia has no official groups, so risk groups are used.</p>
 <h3>Good to know</h3><ul><li>Fees differ: Estonia shows total ongoing charges (TER), Latvia only the fixed part of the fee (the variable, performance-linked part is not included).</li>
@@ -89,7 +89,7 @@ const BX = BALTIC.funds;
 BX.forEach(f => { let s = 0; f.D = f.d.map(x => (s += x)); f.V = f.v; f.first = f.D[0]; f.last = f.D[f.D.length - 1]; });
 const TOP = Math.max(...BX.map(f => f.last));
 BX.forEach(f => { f.closed = f.last < TOP - 45; });
-const TOL = f => f.c === 'LV' ? 16 : 7;
+const TOL = f => f.c === 'LV' ? 20 : 7;   // LV taškai kas 9–18 d.
 const PAL = ['#2b8de0', '#ff7a2a', '#2f8f12', '#8a43c4', '#12b5b0', '#c9765a', '#2b3a93', '#d4a017', '#e0457b', '#5e9c76'];
 function at(f, x) {                                // paskutinė vertė dieną x ar anksčiau (ne senesnė nei TOL dienų)
   let lo = 0, hi = f.D.length - 1, k = -1;
@@ -335,6 +335,112 @@ function hmSheet(wb) {                                  // Excel: metų pabaigos
   XL.sheet(wb, h.xl, rows, { cols: [10, 7, 44, 14, ...ends.map(() => 11), ...ys.map(() => 8)], freeze: { r: 4, c: 3 } });
 }
 
+/* ---------- Šalies rezultatai: „Visa rinka“ ir „Rizika“ – tie patys vaizdai kaip Lietuvos „Rezultatų“ puslapyje, bet bet kuriai šaliai
+   (auditas 2026-10-21, savininkas: „bekurią šalį atsidarius, būtų galima pasilyginti tuos pačius rodiklius“). Fondai lyginami tik
+   savo šalies grupėje (LT – gimimo metai, LV – akcijų dalis, EE ir LT III pakopa – rizikos grupė); spalva – vieta grupėje stulpelyje. ---------- */
+addStrings({ cr: {
+  mkT: c => `${c}: return and place in group`, mkL: 'The same view for every country: funds by their country group, returns over several periods. The colour shows the fund’s place in its group in that column (green – best, red – worst). Click a column to sort.',
+  rsT: c => `${c}: risk`, rsL: 'Volatility, largest fall, return per unit of risk and the worst calendar year of each fund, compared within its group. Colour – place in group (green – better).',
+  per: { m1: '1 month', m3: '3 months', ytd: 'Year to date', y1: '1 year', y3: '3 years*', y5: '5 years*', y10: '10 years*' },
+  fund: 'Fund', med: 'Group median', n: n => `${n} funds`,
+  rs: { vol: 'Volatility 3 y', dd3: 'Largest fall 3 y', ddA: 'Largest fall, all history', sh: 'Sharpe 3 y', wy: 'Worst year' },
+  mkN: (d, lv) => `* annual return. Returns are unit value changes (fees already deducted) up to ${d}.${lv ? ' Latvian values are chart points every 9–13 days, so a period may start or end a few days off.' : ''} Lithuanian history here starts in 2018–2019; longer results – on the Results page.`,
+  rsN: r => `Volatility – 3-year annual standard deviation of weekly value changes. Largest fall – the deepest drop from a previous peak (3 years and whole history). Sharpe = (3-year annual return − average €STR, ${pctPlain(r)}) ÷ volatility. Worst year – lowest full calendar-year return. Colour – only for the 3-year fall and Sharpe (the other figures depend on how long the fund has existed).`,
+  none: 'No funds.' } }, { cr: {
+  mkT: c => `${c}: grąža ir vieta grupėje`, mkL: 'Tas pats vaizdas kiekvienai šaliai: fondai pagal jų šalies grupes, grąža keliais laikotarpiais. Spalva rodo fondo vietą jo grupėje tame stulpelyje (žalia – geriausia, raudona – prasčiausia). Spauskite stulpelį, kad surikiuotumėte.',
+  rsT: c => `${c}: rizika`, rsL: 'Kiekvieno fondo svyravimas, didžiausias kritimas, grąža rizikos vienetui ir blogiausi kalendoriniai metai – lyginama jo grupėje. Spalva – vieta grupėje (žalia – geriau).',
+  per: { m1: '1 mėn.', m3: '3 mėn.', ytd: 'Nuo metų pradžios', y1: '1 metai', y3: '3 metai*', y5: '5 metai*', y10: '10 metų*' },
+  fund: 'Fondas', med: 'Grupės mediana', n: n => `${n} ${ltN(n, 'fondas', 'fondai', 'fondų')}`,
+  rs: { vol: 'Svyravimas 3 m.', dd3: 'Didžiausias kritimas 3 m.', ddA: 'Didžiausias kritimas, visa istorija', sh: 'Sharpe 3 m.', wy: 'Blogiausi metai' },
+  mkN: (d, lv) => `* metinė grąža. Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti) iki ${d}.${lv ? ' Latvijos vertės – grafiko taškai kas 9–13 dienų, todėl laikotarpis gali prasidėti ar baigtis keliomis dienomis kitaip.' : ''} Lietuvos istorija čia – nuo 2018–2019 m.; ilgesni rezultatai – puslapyje „Rezultatai“.`,
+  rsN: r => `Svyravimas – 3 metų metinis savaitės vertės pokyčių standartinis nuokrypis. Didžiausias kritimas – giliausias nuosmukis nuo ankstesnės aukščiausios vertės (per 3 metus ir per visą istoriją). Sharpe = (3 metų metinė grąža − vidutinė €STR, ${pctPlain(r)}) ÷ svyravimas. Blogiausi metai – mažiausia viso kalendorinių metų grąža. Spalva – tik 3 metų kritimui ir Sharpe (kiti rodikliai priklauso nuo to, kiek laiko fondas veikia).`,
+  none: 'Fondų nėra.' } });
+const CR = { c: 'LT', pl: 'II', s: 'y1', rs: 'sh' };
+try { Object.assign(CR, JSON.parse(localStorage.getItem('bxC') || '{}')); } catch (e) {}
+const saveC = () => { try { localStorage.setItem('bxC', JSON.stringify(CR)); } catch (e) {} };
+const CRP = ['m1', 'm3', 'ytd', 'y1', 'y3', 'y5', 'y10'];
+function rP(f, h) {                                     // grąža %: mėnesiai ir metai iki 1 – bendra, ilgesni – metinė (kaip ret)
+  if (h[0] !== 'm') return ret(f, h);
+  const e = at(f, f.last); if (!e) return null;
+  const s = at(f, e.d - Math.round(30.44 * +h.slice(1))); if (!s || s.d >= e.d) return null;
+  return (e.v / s.v - 1) * 100;
+}
+const gKey = f => f.cg || f.risk || 'zz';
+function gOrder(k) { return k === 'turto' ? '0' : k[0] === 'b' ? '1' + k : k[0] === 'e' ? '2' + k.slice(1).padStart(3, '0') : k[0] === 'r' ? '3' + k : '9'; }
+function gName(k, f) { const t = T(); return k === 'zz' ? t.rgNone : k[0] === 'r' && !f.cg ? t.rg[k] : cgLabel(f); }
+function crGroups() {                                   // [{k, name, fs:[f]}] pasirinktos šalies ir pakopos veikiantiems fondams
+  const fs = BX.filter(f => f.c === CR.c && f.pl === CR.pl && !f.closed), m = new Map();
+  fs.forEach(f => { const k = gKey(f); if (!m.has(k)) m.set(k, []); m.get(k).push(f); });
+  return [...m.entries()].sort((a, b) => gOrder(a[0]).localeCompare(gOrder(b[0]))).map(([k, fs]) => ({ k, name: gName(k, fs[0]), fs }));
+}
+function rkColor(p, n) {                                // vieta grupėje → spalva (kaip Lietuvos lentelėse: žalia – geriausia)
+  if (!(n > 1) || p == null) return '';
+  const x = (p - 1) / (n - 1), a = Math.round(Math.abs(x - 0.5) * 2 * 55) + 8;
+  return `color-mix(in srgb, var(${x < 0.5 ? '--dpos' : '--dneg'}) ${a}%, transparent)`;
+}
+function ranks(vals, hi) {                              // vals: [v|null] → vietos (1 = geriausia), hi – didesnė geriau
+  const ix = vals.map((v, i) => [v, i]).filter(x => x[0] != null).sort((a, b) => hi ? b[0] - a[0] : a[0] - b[0]), r = vals.map(() => null);
+  ix.forEach((x, j) => { r[x[1]] = j + 1; }); return [r, ix.length];
+}
+function crBar(id) {
+  const t = T();
+  $(id).innerHTML = `<div class="seg" role="group">${['LT', 'LV', 'EE'].map(c => `<button type="button" data-cc="${c}" aria-pressed="${CR.c === c}"><span class="flag">${c}</span> ${t.c[c]}</button>`).join('')}</div>`
+    + `<div class="seg" role="group">${['II', 'III'].map(p => `<button type="button" data-cp="${p}" aria-pressed="${CR.pl === p}">${t.pl(p)}</button>`).join('')}</div>`;
+}
+function crTable(el, G, cols, val, hi, fmt, sortK) {    // bendra lentelė: grupės antraštė, fondai su spalva pagal vietą, mediana
+  const t = T(), c = t.cr;
+  let h = `<thead><tr><th>${c.fund}</th>${cols.map(k => `<th class="n" data-s="${k}"${sortK === k ? ' aria-sort="descending"' : ''}>${k in c.per ? c.per[k] : c.rs[k]}</th>`).join('')}</tr></thead><tbody>`;
+  G.forEach(g => {
+    const V = g.fs.map(f => cols.map(k => val(f, k)));
+    const R = cols.map((k, j) => hi[k] == null ? [[], 0] : ranks(V.map(v => v[j] == null ? null : (typeof v[j] === 'object' ? v[j].v : v[j])), hi[k]));
+    const si = cols.indexOf(sortK), order = g.fs.map((f, i) => i).sort((a, b) => { const x = V[a][si], y = V[b][si], xv = x && typeof x === 'object' ? x.v : x, yv = y && typeof y === 'object' ? y.v : y; if (xv == null) return 1; if (yv == null) return -1; return hi[sortK] === false ? xv - yv : yv - xv; });
+    h += `<tr class="gh"><td colspan="${cols.length + 1}">${hEsc(g.name)} <small class="note">${c.n(g.fs.length)}</small></td></tr>`;
+    h += order.map(i => { const f = g.fs[i];
+      return `<tr><td class="nm">${hEsc(f.n)} <small class="note">${hEsc(f.m)}</small></td>${cols.map((k, j) => { const v = V[i][j], p = R[j][0][i];
+        return `<td class="n" style="background:${rkColor(p, R[j][1])}"${p ? ` title="${p}/${R[j][1]}"` : ''}>${fmt(v, k)}</td>`; }).join('')}</tr>`; }).join('');
+    if (g.fs.length > 2) h += `<tr class="med"><td class="nm">${c.med}</td>${cols.map((k, j) => { const xs = V.map(v => v[j]).filter(v => v != null).map(v => typeof v === 'object' ? v.v : v); return `<td class="n">${xs.length ? fmt(median(xs), k) : ''}</td>`; }).join('')}</tr>`;
+  });
+  el.innerHTML = h + '</tbody>';
+}
+function renderCr() {
+  const t = T(), c = t.cr, G = crGroups();
+  crBar('crBar'); crBar('rsBar');
+  $('crT').textContent = c.mkT(t.c[CR.c]); $('crL').textContent = c.mkL;
+  $('rsT').textContent = c.rsT(t.c[CR.c]); $('rsL').textContent = c.rsL;
+  if (!G.length) { $('crTbl').innerHTML = ''; $('rsTbl').innerHTML = ''; $('crN').textContent = c.none; $('rsN').textContent = c.none; return; }
+  const cols = CRP.filter(h => G.some(g => g.fs.some(f => rP(f, h) != null)));
+  if (!cols.includes(CR.s)) CR.s = cols.includes('y1') ? 'y1' : cols[0];
+  const hiP = Object.fromEntries(cols.map(k => [k, true]));
+  crTable($('crTbl'), G, cols, rP, hiP, v => v == null ? '' : pctPlain(v), CR.s);
+  $('crN').textContent = c.mkN(iso(Math.max(...G.flatMap(g => g.fs.map(f => f.last)))), CR.c === 'LV');
+  const rf = bxRf(TOP - 1096, TOP);
+  const R = new Map(G.flatMap(g => g.fs).map(f => [f.id, riskOf(f, rf)]));
+  const rc = ['vol', 'dd3', 'ddA', 'sh', 'wy'], hiR = { vol: null, dd3: true, ddA: null, sh: true, wy: null }   // istorijos ilgio priklausantys rodikliai nespalvinami (nesąžininga lyginti);
+  if (!['dd3', 'sh'].includes(CR.rs)) CR.rs = 'sh';
+  crTable($('rsTbl'), G, rc, (f, k) => R.get(f.id)[k], hiR, (v, k) => v == null ? '' : k === 'sh' ? num(v, 2) : k === 'wy' && typeof v === 'object' ? `${pctPlain(v.v)} <small class="note">${v.y}</small>` : pctPlain(v), CR.rs);
+  $('rsN').textContent = c.rsN(rf);
+}
+function maxDD(f, from) {                               // didžiausias kritimas % nuo ankstesnės aukščiausios vertės (≤ 0)
+  let pk = -Infinity, dd = 0, any = false;
+  for (let i = 0; i < f.D.length; i++) { if (f.D[i] < from) continue; const v = f.V[i]; any = true; if (v > pk) pk = v; else dd = Math.min(dd, v / pk - 1); }
+  return any ? dd * 100 : null;
+}
+function riskOf(f, rf) {
+  const y3 = ret(f, 'y3'), cov = f.first <= f.last - 1090;
+  let wy = null; for (let y = 2003; y < CY; y++) { const v = yRet(f, y); if (v != null && (!wy || v < wy.v)) wy = { v, y }; }
+  return { vol: f.vol, dd3: cov ? maxDD(f, f.last - 1096) : null, ddA: maxDD(f, f.first), sh: y3 != null && f.vol ? (y3 - rf) / f.vol : null, wy };
+}
+function bxRf(a, b) {                                   // vidutinė €STR (kaip perf.js rfAvg): DATA.rfm mėnesių vidurkiai, svertiniai dienomis
+  const H = typeof DATA !== 'undefined' && DATA.rfm; let s = 0, n = 0;
+  if (H && H.v) { const [y0, m0] = H.start.split('-').map(Number), da = new Date(a * DAY); let y = da.getUTCFullYear(), m = da.getUTCMonth();
+    for (let k = 0; k < 1000; k++) { const ms = Date.UTC(y, m, 1) / DAY, me = Date.UTC(y, m + 1, 1) / DAY; if (ms >= b) break;
+      const ov = Math.min(b, me) - Math.max(a, ms), v = H.v[(y - y0) * 12 + m - (m0 - 1)]; if (ov > 0 && v != null) { s += v * ov; n += ov; } m++; if (m > 11) { m = 0; y++; } } }
+  return n >= (b - a) / 2 ? s / n : typeof DATA !== 'undefined' && DATA.rf ? DATA.rf.value : 2;
+}
+['crBar', 'rsBar'].forEach(id => $(id).addEventListener('click', e => { const a = e.target.closest('[data-cc]'), p = e.target.closest('[data-cp]'); if (a) CR.c = a.dataset.cc; else if (p) CR.pl = p.dataset.cp; else return; saveC(); renderCr(); }));
+$('crTbl').addEventListener('click', e => { const th = e.target.closest('th[data-s]'); if (th) { CR.s = th.dataset.s; saveC(); renderCr(); } });
+$('rsTbl').addEventListener('click', e => { const th = e.target.closest('th[data-s]'); if (th && ['dd3', 'sh'].includes(th.dataset.s)) { CR.rs = th.dataset.s; saveC(); renderCr(); } });
+
 /* ---------- Excel: fondai ir vertės su formulėmis ---------- */
 async function excel() {
   const t = T(), rs = rows(), wb = XL.book(), xd = d => ({ v: d + 25569, z: 'yyyy-mm-dd', s: 'in' }), xv = v => ({ v, z: '0.00000', s: 'in' });
@@ -474,10 +580,11 @@ function render() {
   const t = T();
   document.title = `${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  renderOv(); renderFd(); renderCmp(); renderHm(); renderRf();
+  renderOv(); renderCr(); renderFd(); renderCmp(); renderHm(); renderRf();
   $('mtT').textContent = t.mtT; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
-  addSubnav([{ id: 'ovT', label: lang === 'lt' ? 'Apžvalga' : 'Overview' }, { id: 'fdT', label: t.fdT }, { id: 'cmT', label: lang === 'lt' ? 'Palyginti' : 'Compare' }, { id: 'hmT', label: lang === 'lt' ? 'Metų grąžos' : 'Yearly returns' }, { id: 'rfT', label: lang === 'lt' ? 'Reformos' : 'Reforms' }, { id: 'mtT', label: t.mtT }]);
+  const L = lang === 'lt';   // skirtukai – kaip Lietuvos „Rezultatuose“ (auditas 2026-10-21)
+  addSubnav([{ id: 'ovT', label: L ? 'Apžvalga' : 'Overview' }, { id: 'crT', label: L ? 'Visa rinka' : 'Whole market' }, { id: 'rsT', label: L ? 'Rizika' : 'Risk' }, { id: 'cmT', label: L ? 'Fondų palyginimas' : 'Fund comparison' }, { id: 'hmT', label: L ? 'Metų grąžos' : 'Yearly returns' }, { id: 'fdT', label: t.fdT }, { id: 'rfT', label: lang === 'lt' ? 'Reformos' : 'Reforms' }, { id: 'mtT', label: t.mtT }]);
 }
 renderHeader('baltic', render);
 render();

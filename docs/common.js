@@ -119,7 +119,7 @@ function sideUI(side, scrim) {
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   document.body.dataset.page = active;
-  document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab]; if (o && o !== active) { p.dataset.off = o; p.hidden = true; } });
+  if (HOME_PAGES.includes(active)) document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab]; if (o && o !== active) { p.dataset.off = o; p.hidden = true; } });
   { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
     const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(`${o.dataset.off}.html${location.hash}`); }
   if (TAB_GROUP[active] && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
@@ -142,6 +142,10 @@ function renderHeader(active, onLang) {
   const subs = s => s.pages.filter(p => p !== 'ops' || active === 'ops');   // Duomenų kalendorius – įrankių meniu (kolegoms nereikalingas)
   nav.innerHTML = sec && sec.pages.length > 1 ? `<div class="subnav">${subs(sec).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '';
   h.after(nav);
+  if (sec && SEC_IMG[sec.id]) {          // skyriaus nuotraukų juosta (auditas 2026-10-21: nuotraukos – orientacijai, ne dekoracijai)
+    const st = document.createElement('div'); st.className = 'sechero'; st.style.backgroundImage = `url(img/sec-${SEC_IMG[sec.id]}.jpg)`;
+    st.innerHTML = '<span id="secName"></span>'; nav.before(st); document.body.classList.add('has-hero');
+  }
   const side = document.createElement('aside');
   side.className = 'side'; side.id = 'side';
   side.innerHTML = `<button class="side-tg" type="button" id="sideTg" aria-controls="side">${svgI(CHEV_L)}<span class="nl"></span></button>`
@@ -170,6 +174,7 @@ function renderHeader(active, onLang) {
     const t = T();
     document.getElementById('title').textContent = t.siteTitle;
     { const cp = PAGE_ALIAS[active] || active, cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
+      const sh = document.getElementById('secName'); if (sh) sh.innerHTML = `${sn}${pn && pn !== sn && cs.pages.length > 1 ? ` <small>${pn}</small>` : ''}`;
       document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
     document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
@@ -325,6 +330,8 @@ const paneOn = el => { const p = el && el.closest('[data-tab]'); return p && !p.
 /* Meniu pertvarkymas (savininkas 2026-10-21 „Taip, pertvarkyti“). Pradžios (index.html) skirtukai išskirstyti į tris puslapius:
    facts.html ir managers.html – index.html kopijos (build_site.py), kiekviename rodomi tik savi skirtukai; kiti lieka DOM'e paslėpti
    (data-off = puslapis, kuriame jie rodomi), o nuoroda į juos (#go=, #tab=) nukreipia į tą puslapį – seni adresai veikia. */
+const SEC_IMG = { home: 'home', facts: 'facts', results: 'results', mgr: 'mgr', pf: 'pf', rep: 'rep', jr: 'jr' };   // site/img/sec-*.jpg – savininko sugeneruotos nuotraukos
+const HOME_PAGES = ['index', 'facts', 'managers'];
 const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
 /* Du puslapiai – viena skirtukų juosta: III pakopa (pillar3 + performance3) ir II pakopa (performance + overview „Grupių grafikai“).
    Kito puslapio skirtukai – paprastos nuorodos „puslapis.html#tab=…“; šoniniame meniu abu puslapiai – vienas punktas. */
@@ -1812,6 +1819,7 @@ function goTo() {
   setTimeout(go, 400);
 }
 addEventListener('hashchange', goTo);
+addEventListener('hashchange', () => { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {} if (k && document.querySelector(`[data-tab="${k}"]`)) showTab(k, true); });
 
 /* Excel pagalbininkai: stulpelio raidė (0 → A), data (dienos nuo 1970 → Excel), formulė su apskaičiuota reikšme */
 const xlCol = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
