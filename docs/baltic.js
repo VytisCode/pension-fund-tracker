@@ -117,7 +117,7 @@ const label = f => `${f.c} · ${f.n}`;
 const rgHtml = f => f.risk ? `<span class="rg ${f.risk}" title="${hEsc(T().rg[f.risk])}">${T().rgS[f.risk]}</span>` : `<span class="note">${T().rgNone}</span>`;
 
 /* ---------- Apžvalga ---------- */
-let RKH = 'y1', EEK = 'na', MKC = 'EE';
+let RKH = 'ytd', EEK = 'na', MKC = 'EE';   // numatytasis laikotarpis – nuo metų pradžios, kaip Lietuvos puslapiuose
 function renderOv() {
   const t = T(), act = BX.filter(f => !f.closed);
   $('ovT').textContent = t.ovT; $('ovL').textContent = t.ovL;
@@ -132,7 +132,7 @@ function renderOv() {
       + (hr.length ? `<p>${t.kR(pctPlain(median(hr)), hr.length)}</p>` : '') + '</section>';
   }).join('');
   $('rkT').textContent = t.rkT; $('rkN').textContent = t.rkN;
-  $('rkSeg').innerHTML = ['y1', 'y3', 'y5', 'y10', 'ytd'].map(h => `<button type="button" data-h="${h}" aria-pressed="${h === RKH}">${t.hz[h]}</button>`).join('');
+  $('rkSeg').innerHTML = ['ytd', 'y1', 'y3', 'y5', 'y10'].map(h => `<button type="button" data-h="${h}" aria-pressed="${h === RKH}">${t.hz[h]}</button>`).join('');
   $('rkTbl').innerHTML = `<thead><tr><th>${t.thRisk}</th>${['LT', 'LV', 'EE'].map(c => `<th class="n">${t.c[c]}</th>`).join('')}</tr></thead><tbody>`
     + ['r1', 'r2', 'r3', 'r4'].map(r => `<tr><td>${rgHtml({ risk: r })} ${hEsc(t.rg[r])}</td>${['LT', 'LV', 'EE'].map(c => {
       const xs = act.filter(f => f.c === c && f.risk === r).map(f => ({ f, v: ret(f, RKH) })).filter(x => x.v != null);
@@ -357,7 +357,7 @@ addStrings({ cr: {
   mkN: (d, lv) => `* metinė grąža. Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti) iki ${d}.${lv ? ' Latvijos vertės – grafiko taškai kas 9–13 dienų, todėl laikotarpis gali prasidėti ar baigtis keliomis dienomis kitaip.' : ''} Lietuvos istorija čia – nuo 2018–2019 m.; ilgesni rezultatai – puslapyje „Rezultatai“.`,
   rsN: r => `Svyravimas – 3 metų metinis savaitės vertės pokyčių standartinis nuokrypis. Didžiausias kritimas – giliausias nuosmukis nuo ankstesnės aukščiausios vertės (per 3 metus ir per visą istoriją). Sharpe = (3 metų metinė grąža − vidutinė €STR, ${pctPlain(r)}) ÷ svyravimas. Blogiausi metai – mažiausia viso kalendorinių metų grąža. Spalva – tik 3 metų kritimui ir Sharpe (kiti rodikliai priklauso nuo to, kiek laiko fondas veikia).`,
   none: 'Fondų nėra.' } });
-const CR = { c: 'LT', pl: 'II', s: 'y1', rs: 'sh' };
+const CR = { c: 'LT', pl: 'II', s: 'ytd', rs: 'sh' };
 try { Object.assign(CR, JSON.parse(localStorage.getItem('bxC') || '{}')); } catch (e) {}
 const saveC = () => { try { localStorage.setItem('bxC', JSON.stringify(CR)); } catch (e) {} };
 const CRP = ['m1', 'm3', 'ytd', 'y1', 'y3', 'y5', 'y10'];
