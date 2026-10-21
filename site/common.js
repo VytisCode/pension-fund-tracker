@@ -154,7 +154,7 @@ function renderHeader(active, onLang) {
   pr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; document.documentElement.dataset.print = b.dataset.p; tmShow(false); setTimeout(() => window.print(), 50); });
   addEventListener('afterprint', () => { delete document.documentElement.dataset.print; });
   const ph = document.createElement('div'); ph.className = 'printhead'; h.prepend(ph);
-  const fillPh = () => { const t = T(); ph.innerHTML = `<b>${t.siteTitle} · ${t[navKey(active)]}</b> · ${typeof FRESH !== 'undefined' ? `${t.dataUntil} ${iso(FRESH.top)} · ` : ''}${t.printed} ${new Date().toISOString().slice(0, 10)} · ${t.printSrc}`; };
+  const fillPh = () => { const t = T(); ph.innerHTML = `<b>${t.siteTitle} · ${t[navKey(active)] || t.subNav[active] || ''}</b> · ${typeof FRESH !== 'undefined' ? `${t.dataUntil} ${iso(FRESH.top)} · ` : ''}${t.printed} ${new Date().toISOString().slice(0, 10)} · ${t.printSrc}`; };
   addEventListener('beforeprint', fillPh);
   const tmb = document.getElementById('tmBtn'), tmp = document.getElementById('tmPanel');
   const tmShow = on => { tmp.hidden = !on; tmb.setAttribute('aria-expanded', on); };
@@ -180,7 +180,7 @@ function renderHeader(active, onLang) {
       if (a.dataset.p === active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     const qb = document.getElementById('q'); qb.placeholder = t.qPh; qb.setAttribute('aria-label', t.qPh);
-    document.title = `${t[navKey(active)]} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
+    document.title = `${t[navKey(active)] || t.subNav[active] || ''} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
     pr.querySelector('[data-p=cozy]').textContent = '🖶 ' + t.printCozy; pr.querySelector('[data-p=plain]').textContent = '🖶 ' + t.printPlain;
     document.getElementById('dlBtn').textContent = '⬇ ' + t.dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
