@@ -7,7 +7,9 @@ name: Update fund data
 # Kiekvienas tiekėjas tikrinamas tik jei saugykloje dar nėra laukiamos dienos duomenų,
 # todėl kai viskas jau atnaujinta, paleidimas baigiasi per kelias sekundes.
 # GitHub tvarkaraštis nepatikimas, todėl darbą papildomai paleidžia išorinis Cloudflare „žadintuvas“
-# (infra/trigger-worker) per workflow_dispatch. Tokie paleidimai neišmetami.
+# per workflow_dispatch (~:15 ir :45, savininko GitHub raktas; jo kodas saugykloje nelaikomas).
+# Jei raktas baigtųsi – duomenys vis tiek renkami per šį tvarkaraštį, tik rečiau.
+# Actions v5/v6 – Node 24 (Node 20 versijas GitHub išjungia 2026 m.).
 # Ranka: Actions → "Update fund data" → Run workflow
 on:
   schedule:
@@ -42,10 +44,10 @@ jobs:
       CATCHUP: ${{ github.event.schedule == '37 4 * * 1-6' && 'true' || 'false' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
