@@ -491,7 +491,7 @@ function renderMarket() {
   const rows = DATA.groups.map(g => {
     const rng = rangeFor(g), vals = {}, ann = {};
     if (P.gx) {                                   // visi nuo Goindex fondo pradžios (arba nuo vėlesnės laikotarpio pradžios)
-      const gs = MK_ON ? (MK.gxm && MK.gxm !== 'common' ? mkStartOf(g, MK.gxm, rng) : mkStart(g, rng)) : (g.funds.find(f => f.provider === 'GOINDEX') || { d: [null] }).d[0];   // LV/EE – kai visi grupės valdytojai jau turi fondą
+      const gs = MK_ON ? (MK.gxD || {})[MK.gxm] ?? null : (g.funds.find(f => f.provider === 'GOINDEX') || { d: [null] }).d[0];   // LV/EE – kai visi grupės valdytojai jau turi fondą
       if (gs != null) { rng.anchor = Math.max(rng.anchor, gs); gxStarts.push(gs); }
     }
     g.rngM = rng;
@@ -1514,12 +1514,12 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
   if (PX.c !== 'LT') {                                  // „Visa rinka“: valdytojai × grupės (didžiausias valdytojo fondas grupėje)
     MK = mkBuild();
     document.body.classList.add('bxmk');
-    addStrings({ gxOff: 'Each fund from the period start', gxCommon: 'Common start of all the group’s managers', gxOf: m => `Since ${m} start`, gxLbl: 'Start:',
-      gxNoteC: d => `“Common start” is on: in each group every fund is measured from the date when all the group’s managers already had a fund (${d}) or from the period start, whichever is later, so all managers are compared over the same dates.`,
-      gxNoteM: (m, d) => `“Since ${m} start” is on: in each group every fund is measured from the start of ${m}’s first fund in that group (${d}) or from the period start, whichever is later. Funds that started later show “–”; groups without a ${m} fund are not changed.` },
-      { gxOff: 'Kiekvienas fondas nuo laikotarpio pradžios', gxCommon: 'Nuo bendros visų grupės valdytojų pradžios', gxOf: m => `Nuo ${m} pradžios`, gxLbl: 'Pradžia:',
-      gxNoteC: d => `Įjungta „Nuo bendros pradžios“: kiekvienoje grupėje visi fondai skaičiuojami nuo dienos, kai fondą jau turėjo visi tos grupės valdytojai (${d}), arba nuo laikotarpio pradžios, jei ji vėlesnė, todėl visi valdytojai lyginami per tas pačias datas.`,
-      gxNoteM: (m, d) => `Įjungta „Nuo ${m} pradžios“: kiekvienoje grupėje visi fondai skaičiuojami nuo ${m} pirmojo fondo toje grupėje pradžios (${d}) arba nuo laikotarpio pradžios, jei ji vėlesnė. Vėliau pradėję fondai rodomi „–“; grupės be ${m} fondo nesikeičia.` });
+    addStrings({ gxOff: 'Each fund from the period start', gxCommon: 'Common start of all managers', gxOf: m => `Since ${m} start`, gxLbl: 'Start:',
+      gxNoteC: d => `“Common start” is on: the whole table is measured from ${d} – the date by which every manager had a fund in each of its groups (or from the period start, if later).`,
+      gxNoteM: (m, d) => `“Since ${m} start” is on: the whole table is measured from ${d} – the date by which ${m} had a fund in every group where it has one (or from the period start, if later). Funds that started later show “–”.` },
+      { gxOff: 'Kiekvienas fondas nuo laikotarpio pradžios', gxCommon: 'Nuo bendros visų valdytojų pradžios', gxOf: m => `Nuo ${m} pradžios`, gxLbl: 'Pradžia:',
+      gxNoteC: d => `Įjungta „Nuo bendros pradžios“: visa lentelė skaičiuojama nuo ${d} – dienos, kai fondą jau turėjo visi valdytojai kiekvienoje savo grupėje (arba nuo laikotarpio pradžios, jei ji vėlesnė).`,
+      gxNoteM: (m, d) => `Įjungta „Nuo ${m} pradžios“: visa lentelė skaičiuojama nuo ${d} – dienos, kai ${m} jau turėjo fondą kiekvienoje grupėje, kurioje jį turi (arba nuo laikotarpio pradžios, jei ji vėlesnė). Vėliau pradėję fondai rodomi „–“.` });
     try { MK.gxm = localStorage.getItem(STKEY + 'gxm') || 'common'; } catch (e) { MK.gxm = 'common'; }
     const mName = id => { const r = MK.reps.find(p => p.id === id); return r ? r.m || r.label : ''; };
     const gxLabels = () => { [['lt'], ['en']].forEach(([l]) => { const S = I18N[l], m = mName(MK.gxm);
@@ -1528,11 +1528,12 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
     $('btnGx').before(gl); $('btnGx').style.display = 'none';
     $('gxSel').addEventListener('change', e => { const v = e.target.value; P.gx = v !== 'off'; if (P.gx) MK.gxm = v; try { localStorage.setItem(STKEY + 'gxm', MK.gxm); } catch (er) {} saveState(); renderMarket(); });
     MK.gxUi = () => { gxLabels(); $('gxLbl').textContent = T().gxLbl;
-      const R = { overallLast: LATEST }, span = xs => { xs = xs.filter(x => x != null); if (!xs.length) return null; const a = Math.min(...xs), b = Math.max(...xs); return { a, txt: a === b ? iso(a) : `${iso(a)}…${iso(b)}` }; };
-      const cm = span(DATA.groups.map(g => mkStart(g, R)));   // datos – kiekvienos grupės pradžia (skiriasi pagal grupę)
-      const ms = MK.reps.map(p => ({ p, s: span(DATA.groups.map(g => mkStartOf(g, p.id, R))) })).filter(x => x.s).sort((x, y) => x.s.a - y.s.a);   // nuo seniausio
-      $('gxSel').innerHTML = `<option value="off">${T().gxOff}</option><option value="common">${T().gxCommon}${cm ? ` (${cm.txt})` : ''}</option>`
-        + ms.map(({ p, s }) => `<option value="${p.id}">${T().gxOf(p.m || p.label)} (${s.txt})</option>`).join('');
+      const R = { overallLast: LATEST }, mx = xs => { xs = xs.filter(x => x != null); return xs.length ? Math.max(...xs) : null; };
+      // viena data visai lentelei (savininkas 2026-10-21: „kad visa lentelė būtų pagal vieną datą, kaip Lietuvoje“): vėliausia iš grupių pradžių
+      MK.gxD = { common: mx(DATA.groups.map(g => mkStart(g, R))) };
+      const ms = MK.reps.map(p => ({ p, d: (MK.gxD[p.id] = mx(DATA.groups.map(g => mkStartOf(g, p.id, R)))) })).filter(x => x.d != null).sort((x, y) => x.d - y.d);
+      $('gxSel').innerHTML = `<option value="off">${T().gxOff}</option><option value="common">${T().gxCommon}${MK.gxD.common != null ? ` (${iso(MK.gxD.common)})` : ''}</option>`
+        + ms.map(({ p, d }) => `<option value="${p.id}">${T().gxOf(p.m || p.label)} (${iso(d)})</option>`).join('');
       $('gxSel').value = P.gx ? MK.gxm : 'off'; };
     addStrings({ hMarket: 'Whole market: return and rank by group', mkAll: 'All manager’s funds', mkBig: 'Largest fund', mkXl: 'Excel with formulas – in the “Largest fund” view',
       mkNote: { all: 'Column = manager; cell = asset-weighted average return of all the manager’s active funds in the group (equal weights where assets are unknown), so the whole market is covered.', big: 'Column = manager; cell = the manager’s largest active fund in the group (by net assets).' } },
