@@ -159,6 +159,8 @@ a.btn { text-decoration: none; }
 .scroll { overflow-x: auto; }
 #tRet, #tRank { table-layout: fixed; min-width: 520px; }        /* vienodo pločio langeliai rinkos lentelėse */
 #tRet th:first-child, #tRet td:first-child, #tRank th:first-child, #tRank td:first-child { width: 92px; }
+.bxmk #tRet th:first-child, .bxmk #tRet td:first-child, .bxmk #tRank th:first-child, .bxmk #tRank td:first-child { width: 128px; }   /* LV/EE grupių pavadinimai ilgesni */
+.bxmk .mx td:first-child { white-space: normal; line-height: 1.25; }
 .mx th { overflow: hidden; text-overflow: ellipsis; }
 .mx .sw-top { display: block; width: 18px; height: 4px; border-radius: 2px; margin: 0 auto 4px; }
 .mx th, .mx td { text-align: center; }

@@ -1486,6 +1486,7 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
   }
   if (PX.c !== 'LT') {                                  // „Visa rinka“: valdytojai × grupės (didžiausias valdytojo fondas grupėje)
     MK = mkBuild();
+    document.body.classList.add('bxmk');
     $('btnGx').style.display = 'none';
     const nO = MK.reps.length - 1, wO = n => ({ 2: ['two', 'dviejų'], 3: ['three', 'trijų'], 4: ['four', 'keturių'], 5: ['five', 'penkių'], 6: ['six', 'šešių'] })[n] || [n, n];
     addStrings({ mrefNone: `each vs. median of the other ${wO(nO)[0]}` }, { mrefNone: `kiekvienas – su kitų ${wO(nO)[1]} mediana` });
