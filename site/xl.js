@@ -60,7 +60,10 @@ const XL = (() => {
         const ht = sh.o.heights && sh.o.heights[ri];
         return `<row r="${ri + 1}"${ht ? ` ht="${ht}" customHeight="1"` : ''}>${cells}</row>`;
       }).join('');
-      const fr = sh.o.freeze && (sh.o.freeze.r || sh.o.freeze.c) ? sh.o.freeze : null, pane = fr ? `<pane${fr.c ? ` xSplit="${fr.c}"` : ''}${fr.r ? ` ySplit="${fr.r}"` : ''} topLeftCell="${col(fr.c || 0)}${(fr.r || 0) + 1}" activePane="${fr.r && fr.c ? 'bottomRight' : fr.r ? 'bottomLeft' : 'topRight'}" state="frozen"/>` : '';
+      const fr = sh.o.freeze && (sh.o.freeze.r || sh.o.freeze.c) ? sh.o.freeze : null, pane = fr ? `<pane${fr.c ? ` xSplit="${fr.c}"` : ''}${fr.r ? ` ySplit="${fr.r}"` : ''} topLeftCell="${col(fr.c || 0)}${(fr.r || 0) + 1}" activePane="${fr.r && fr.c ? 'bottomRight' : fr.r ? 'bottomLeft' : 'topRight'}" state="frozen"/>`
+        // kiekvienam langui – savo žymėjimas, kaip rašo pats Excel; be jo Excel kopijuojant rašo „This action won't work on multiple selections“
+        + (fr.r && fr.c ? `<selection pane="topRight" activeCell="${col(fr.c)}1" sqref="${col(fr.c)}1"/><selection pane="bottomLeft" activeCell="A${fr.r + 1}" sqref="A${fr.r + 1}"/>` : '')
+        + `<selection pane="${fr.r && fr.c ? 'bottomRight' : fr.r ? 'bottomLeft' : 'topRight'}" activeCell="${col(fr.c || 0)}${(fr.r || 0) + 1}" sqref="${col(fr.c || 0)}${(fr.r || 0) + 1}"/>` : '<selection activeCell="A1" sqref="A1"/>';
       const cols = (sh.o.cols || []).map((w, i) => w ? `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>` : '').join('');
       const merges = (sh.o.merges || []);
       files[`xl/worksheets/sheet${si + 1}.xml`] = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -82,7 +85,7 @@ const XL = (() => {
       + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
       + `<cellXfs count="${xfs.length}">${xfs.join('')}</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
     files['xl/workbook.xml'] = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
-      + `<sheets>${wb.sheets.map((s, i) => `<sheet name="${esc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>`;
+      + '<bookViews><workbookView activeTab="0"/></bookViews>' + `<sheets>${wb.sheets.map((s, i) => `<sheet name="${esc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>`;
     files['xl/_rels/workbook.xml.rels'] = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
       + rels.join('') + `<Relationship Id="rId${nSh + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
     files['_rels/.rels'] = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
@@ -153,7 +156,7 @@ const XLSX_SHIM = {
       }));
       const cols = (ws['!cols'] || []).map(c => c && (c.wch || c.width) || 0);
       const fr = ws['!freeze'];
-      return { name, rows, o: { cols, freeze: fr ? { r: fr.ySplit || 0, c: fr.xSplit || 0 } : hdrRow >= 0 && src.length > 15 ? { r: hdrRow + 1 } : null, filter: ws['!autofilter'] && ws['!autofilter'].ref } };
+      return { name, rows, o: { cols, freeze: fr ? { r: fr.ySplit || 0, c: fr.xSplit || 0 } : fr === false ? null : hdrRow >= 0 && src.length > 15 ? { r: hdrRow + 1 } : null, filter: ws['!autofilter'] && ws['!autofilter'].ref } };
   }),
 };
 if (typeof window !== 'undefined' && !window.XLSX) window.XLSX = XLSX_SHIM;

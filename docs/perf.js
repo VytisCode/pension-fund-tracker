@@ -940,7 +940,7 @@ async function exportDay() {
       });
     });
     const wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{ wch: 40 }, { wch: 21.5 }, { wch: 21.5 }, { wch: 21.5 }];
+    ws['!cols'] = [{ wch: 40 }, { wch: 21.5 }, { wch: 21.5 }, { wch: 21.5 }]; ws['!freeze'] = false;   // kaip senajame faile – be užšaldytų eilučių
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, `pension_data_combined_${iso(eff)}.xlsx`);
   } catch (e) { alert(T().xlsxFail); }
