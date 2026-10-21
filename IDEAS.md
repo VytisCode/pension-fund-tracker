@@ -26,6 +26,8 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 - 2026-10-21 (auditas, Claude Doc „Dashboard auditas 2026-10-21“): meniu pertvarkyti – TAIP (Pradžios skirtukai → Pradžia / Rinkos faktai / Valdytojai, III pakopa ir II pakopa – viena skirtukų juosta per du puslapius; nieko netrinti, seni adresai nukreipia). Padaryta 2026-10-21.
 - 2026-10-21: nuotraukos – „abu būdai“: skyrių nuotraukas savininkas generuoja ChatGPT/Gemini pagal Claude promptus (7 skyriai), Baltijos miestų – Claude parenka nemokamos licencijos (Unsplash/Pexels) ir parodo prieš įdėdamas. Nuotraukos tik navigacijoje (Pradžios plytelės, skyriaus juosta, šalių kortelės), ne lentelėse ar grafikuose.
 
+- 2026-10-21 audito tęsinys (daryti pačiam): Baltijos miestų nuotraukos (Unsplash/Pexels iš sandbox blokuojami – siūlyta savininkui sugeneruoti 3 papildomas), vienodas numatytasis laikotarpis visur, reali grąža LT/LV/EE (Eurostat SVKI), Baltijos mėnesių grąžos, valdytojų rinkos dalys LV/EE.
+
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
 
 - Saugumas: 2026-10-12 į projekto dėžutę atėjo GitHub raktas atviru tekstu. Patarta jį atšaukti. Raktas nenaudotas.
