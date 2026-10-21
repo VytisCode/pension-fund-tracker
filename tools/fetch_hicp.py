@@ -19,6 +19,8 @@ args = [a for a in sys.argv[1:] if not a.startswith("--")]
 OUT = Path(args[0]) if args else Path(__file__).resolve().parent.parent / "data"
 URL = ("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx"
        "?format=JSON&lang=EN&coicop=CP00&geo=LT&geo=LV&geo=EE&sinceTimePeriod=2000-01")
+URL2 = ("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr"
+        "?format=JSON&lang=EN&geo=LT&geo=LV&geo=EE&sinceTimePeriod=2024-01")
 FIELDS = ["month", "geo", "unit", "index", "first_seen"]
 
 
@@ -33,8 +35,8 @@ def get(u):
     raise err
 
 
-def parse(j):
-    """JSON-stat 2.0 -> [(month, geo, unit, index)]"""
+def parse(j, total=False):
+    """JSON-stat 2.0 -> [(month, geo, unit, index)]; total – rinkinys be filtro: imama tik „visos prekės ir paslaugos“ (CP00 / TOTAL)"""
     ids, size = j["id"], j["size"]
     cat = {d: j["dimension"][d]["category"]["index"] for d in ids}
     inv = {d: {v: k for k, v in cat[d].items()} for d in ids}
@@ -44,6 +46,8 @@ def parse(j):
         for d, s in zip(reversed(ids), reversed(size)):
             pos[d] = inv[d][k % s]; k //= s
         if v is None or pos.get("unit", "").startswith("RCH"):
+            continue
+        if total and any(d.startswith("coicop") and pos[d] not in ("CP00", "TOTAL") for d in ids):
             continue
         out.append((pos["time"].replace("M", "-") if "M" in pos["time"] else pos["time"], pos["geo"], pos.get("unit", ""), float(v)))
     return out
@@ -56,7 +60,11 @@ def main():
     if path.exists():
         for r in csv.DictReader(path.open(encoding="utf-8")):
             old[(r["month"], r["geo"], r["unit"])] = r
-    rows = [r for r in parse(get(URL)) if re.fullmatch(r"I\d\d(\d\d)?", r[2])]       # indeksai (I15, I25 ar I2025), ne pokyčiai
+    rows = [r for r in parse(get(URL)) if re.fullmatch(r"I\d\d(\d\d)?", r[2])]       # indeksai (I15, I96 …), ne pokyčiai
+    try:                                                # nuo 2026 m. – naujas rinkinys (ECOICOP 2, 2025 = 100)
+        rows += [r for r in parse(get(URL2), total=True) if re.fullmatch(r"I\d\d(\d\d)?", r[2])]
+    except Exception as e:
+        print("naujas Eurostat rinkinys nepasiekiamas:", e)
     add = 0
     for m, g, u, v in rows:
         if (m, g, u) not in old and 20 < v < 300:          # neįtikėtinos reikšmės praleidžiamos
