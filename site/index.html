@@ -112,6 +112,14 @@
   .eubar select { max-width: min(320px, 100%); }
   ul.eusay { margin: 0 0 14px; padding-left: 18px; } ul.eusay li { margin: 6px 0; line-height: 1.5; } ul.eusay .btn { padding: 2px 8px; font-size: 12px; margin-left: 4px; }
   .eukp .kpi b { font-size: 19px; }
+  [data-tab="nw"].today { grid-template-columns: minmax(0, 1fr); } #nwBody, #nwBar { min-width: 0; }
+  .nwbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 10px; } .nwbar .chips { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+  .nwbar input[type="search"] { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px; flex: 1; min-width: 180px; max-width: 420px; }
+  .nwc { padding: 10px 0; border-bottom: 1px solid var(--line); } .nwc:last-of-type { border-bottom: 0; }
+  .nwc h3 { margin: 3px 0 4px; font-size: 15.5px; line-height: 1.35; } .nwc h3 a { color: var(--text); text-decoration: none; } .nwc h3 a:hover { text-decoration: underline; }
+  .nwc p { margin: 0 0 6px; font-size: 13.5px; color: var(--text-2); line-height: 1.5; } .nwc .tags { display: flex; flex-wrap: wrap; gap: 4px; } .nwc .tags .chip { font-size: 11.5px; padding: 1px 7px; }
+  .nwc .flag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: var(--hover); color: var(--text-2); }
+  #tdNews:empty { display: none; }
 </style>
 </head>
 <body>
@@ -125,7 +133,15 @@
     <section class="card says" data-src="nav"><h2 id="sayH"></h2><div id="say"></div></section>
     <section class="card" data-src="nav"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
     <section class="card tdmk" data-src="lbh"><h2 id="tdMkH"></h2><div class="meta" id="tdMkM"></div><div class="kpis" id="tdMkK"></div><ul id="tdMkL"></ul><p class="more" id="tdMkA"></p></section>
+    <section class="card" id="tdNews"></section>
     <section class="guide"><h2 id="guH"></h2><div class="gtiles" id="guT"></div><p class="note" id="guN"></p></section>
+  </div>
+
+  <div data-tab="nw" class="today">
+    <h2 class="sec" id="nwTitle"></h2>
+    <p class="lead" id="nwLead"></p>
+    <div id="nwBar"></div>
+    <div id="nwBody"></div>
   </div>
 
   <div data-tab="qf" class="today">
@@ -204,6 +220,8 @@
 <script src="data_mkt.js"></script>
 <script src="data_earn.js"></script>
 <script src="earn.js"></script>
+<script src="data_news.js"></script>
+<script src="news.js"></script>
 <script src="mkt.js"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra

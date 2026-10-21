@@ -1379,11 +1379,11 @@ function mkRender() {
   ['qfNote', 'mkNote', 'mgNote', 'fdNote', 'pvNote', 'p23Note'].forEach(id => { document.getElementById(id).textContent = t.noteLB; });
   document.getElementById('mkGainN').textContent = t.noteGain;
   ['qfBar', 'mkBar', 'mgBar'].forEach(id => { document.getElementById(id).innerHTML = mkBar(); });
-  renderFacts(); renderMf(); if (typeof renderEarn === 'function') renderEarn(); renderPv(); renderP23(); renderTime(); renderMgr(); renderMgrCards(); renderBrag(); renderFunds(); renderTd();
+  renderFacts(); renderMf(); if (typeof renderEarn === 'function') renderEarn(); if (typeof renderNews === 'function') renderNews(); renderPv(); renderP23(); renderTime(); renderMgr(); renderMgrCards(); renderBrag(); renderFunds(); renderTd();
   if (typeof srcLines === 'function') srcLines();
 }
 function mkTabs() {
-  const t = T(); addSubnav([['tdTitle', t.tdTitle], ['qfTitle', t.qfTitle], ['mfTitle', t.mf.title], ['euTitle', t.eu.title], ['pvTitle', t.pv.title], ['p23Title', t.p23.title], ['mkTitle', t.mkTitle], ['mgTitle', t.mgTitle], ['fdTitle', t.fdTitle]].map(([id, label]) => ({ id, label })));
+  const t = T(); addSubnav([['tdTitle', t.tdTitle], ['nwTitle', t.nw.title], ['qfTitle', t.qfTitle], ['mfTitle', t.mf.title], ['euTitle', t.eu.title], ['pvTitle', t.pv.title], ['p23Title', t.p23.title], ['mkTitle', t.mkTitle], ['mgTitle', t.mgTitle], ['fdTitle', t.fdTitle]].map(([id, label]) => ({ id, label })));
 }
 let mkRz; addEventListener('resize', () => { clearTimeout(mkRz); mkRz = setTimeout(() => { renderTime(); renderMgr(); }, 120); });
 

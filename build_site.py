@@ -719,8 +719,15 @@ def build_market() -> None:
     (DOCS / "data_mkt.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "mkt.js", DOCS / "mkt.js")
     shutil.copyfile(SITE / "earn.js", DOCS / "earn.js")
+    shutil.copyfile(SITE / "news.js", DOCS / "news.js")
+    news = []                           # naujienų archyvas (tools/fetch_news.py) – naujausi pirmi
+    if (ROOT / "data" / "news.csv").exists():
+        with (ROOT / "data" / "news.csv").open(encoding="utf-8") as fh:
+            news = [[r["date"], r["country"], r["source"], r["title"], r["summary"], r["url"], r["topics"]] for r in csv.DictReader(fh)]
+    news.sort(key=lambda r: r[0], reverse=True)
+    (DOCS / "data_news.js").write_text("const NEWS=" + json.dumps(news, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     text = (DOCS / "index.html").read_text(encoding="utf-8")
-    for n in ("data_mkt.js", "mkt.js", "data_earn.js", "earn.js"):
+    for n in ("data_mkt.js", "mkt.js", "data_earn.js", "earn.js", "data_news.js", "news.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]}"')
     (DOCS / "index.html").write_text(text, encoding="utf-8")
     print(f"docs/data_mkt.js: {len(data_js) / 1024:.0f} KB, II ketv.: {len(payload['II']['dates'])}, III ketv.: {len(payload['III']['dates'])}")
