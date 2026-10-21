@@ -103,7 +103,7 @@ def ee_rows():
         paths = [p] if p else []
     # istorija iki 2021 m. (senesnė metodika – įmonių apklausa): archyvas „Lepetatud_tabelid“, PA001 (iki 2022) ir PA11 (2000–2008)
     arch = "Lepetatud_tabelid/Majandus. Arhiiv/Palk ja toojeukulu. Arhiiv"
-    paths += [f"{arch}/PA001.PX", f"{arch}/PA11.PX"]
+    paths += [f"{arch}/PA011.PX", f"{arch}/PA003.PX", f"{arch}/PA001.PX", f"{arch}/PA11.PX"]
     for p in paths:
         try:
             cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: ("average monthly gross wages" in t or t.startswith("average gross wages")) and "hour" not in t and "change" not in t,
@@ -111,8 +111,14 @@ def ee_rows():
                                                  "economic activity": lambda t: t.startswith("total"), "tegevusala": lambda t: t.startswith("total"),
                                                  "section": lambda t: t.startswith("total")})
         except Exception as e:
-            print("EE", p, "nepavyko:", e); continue
+            print("EE", p, "nepavyko:", e)
+            with (OUT / "baltic_macro.log").open("a", encoding="utf-8") as lg:
+                lg.write(f"EE {p}: {e}\n")
+            continue
         print("EE darbo užmokestis:", p, meta.get("title"), len(data))
+        if OUT.name == "probe_out":                     # patikros paleidimas – kintamieji į žurnalą
+            with (OUT / "baltic_macro.log").open("a", encoding="utf-8") as lg:
+                lg.write(f"EE {p}: {meta.get('title')} rows={len(data)} vars={[(v['code'], v['valueTexts'][:4]) for v in meta['variables']]}\n")
         for r in data:
             k = dict(zip(cols, r["key"])); y = next((v for v in k.values() if re.fullmatch(r"\d{4}", v)), None)
             q = next((v for v in k.values() if v in ("I", "II", "III", "IV")), None)
