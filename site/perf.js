@@ -51,7 +51,7 @@ addStrings({
   thBestY: 'Best year', thWorstY: 'Worst year', thPosM: '% positive months',
   nAdv: 'For the selected period. Sharpe = (annualised return − risk-free rate) ÷ annualised volatility; default rate – average €STR over the same period. Higher Sharpe – more return for the same risk. Bold – best value in the group (volatility – lowest). Month date – on hover. Annualised figures are unreliable for periods shorter than a year.',
   notShown: l => `Not shown on the chart (started later than the period start): ${l}. Pick a shorter period to see them.`,
-  capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'start differs by group', endByGroup: 'end differs by group',
+  capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'start differs by group', capByRow: l => `${l}: each group’s period (from → to) is shown under its name`, endByGroup: 'end differs by group',
   capOv: (h, d) => `${h}; every period ends on its group’s latest date (up to ${d})`,
   capMetrics: (a, e) => `Period columns: ${a} → ${e}. “Since inception” columns: each fund’s first date → ${e}.`,
   capCal: (y0, y1, e) => `Calendar years ${y0}–${y1}; the last column is year to date (to ${e}).`,
@@ -138,7 +138,7 @@ addStrings({
   thBestY: 'Geriausi metai', thWorstY: 'Blogiausi metai', thPosM: '% teigiamų mėnesių',
   nAdv: 'Pasirinktam laikotarpiui. Sharpe = (metinė grąža − be rizikos palūkanų norma) ÷ metinis svyravimas; numatyta norma – vidutinė €STR per tą patį laikotarpį. Didesnis Sharpe – daugiau grąžos už tą pačią riziką. Paryškinta – geriausia reikšmė grupėje (svyravimo – mažiausia). Mėnesio data – užvedus pelę. Trumpesniems nei metų laikotarpiams metiniai skaičiai nepatikimi.',
   notShown: l => `Grafike nerodoma (pradėjo vėliau nei laikotarpio pradžia): ${l}. Pasirinkite trumpesnį laikotarpį, kad juos matytumėte.`,
-  capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'pradžia skiriasi pagal grupę', endByGroup: 'pabaiga skiriasi pagal grupę',
+  capSpan: (l, a, e) => `${l}: ${a} → ${e}`, byGroup: 'pradžia skiriasi pagal grupę', capByRow: l => `${l}: kiekvienos grupės laikotarpis (nuo → iki) nurodytas eilutėje po jos pavadinimu`, endByGroup: 'pabaiga skiriasi pagal grupę',
   capOv: (h, d) => `${h}; kiekvienas laikotarpis baigiasi savo grupės paskutine diena (iki ${d})`,
   capMetrics: (a, e) => `Laikotarpio stulpeliai: ${a} → ${e}. Stulpeliai „nuo įsteigimo“: kiekvieno fondo pirma diena → ${e}.`,
   capCal: (y0, y1, e) => `Kalendoriniai metai ${y0}–${y1}; paskutinis stulpelis – šie metai iki šiol (iki ${e}).`,
@@ -507,6 +507,8 @@ function renderMarket() {
     const { map, n } = rankOf(provs.map(p => ({ key: p.id, v: vals[p.id] })));
     return { g, vals, ann, med, rel, ranks: map, n };
   });
+  const dGrp = new Set(rows.map(r => `${r.g.rngM.anchor}-${r.g.rngM.end}`)).size > 1;   // datos skiriasi pagal grupę – rodomos prie kiekvienos eilutės
+  const gLbl = r => groupShort(r.g) + (dGrp ? `<small class="rd">${iso(r.g.rngM.anchor)} → ${iso(r.g.rngM.end)}</small>` : '');
   const avgOf = (fn) => meanOf(rows.map(fn));
   const avgRet = {}, avgRank = {}, avgAnn = {}, avgRel = {};
   provs.forEach(p => {
@@ -528,17 +530,17 @@ function renderMarket() {
   const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
   const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
   const rkCell = (v, rank, n, f) => v === null ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
-  const retBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => rkCell(r.vals[p.id], r.ranks.get(p.id), r.n, pc2)).join('')}${pmCell(r.med)}</tr>`).join('')
+  const retBody = rows.map(r => `<tr><td>${gLbl(r)}</td>${provs.map(p => rkCell(r.vals[p.id], r.ranks.get(p.id), r.n, pc2)).join('')}${pmCell(r.med)}</tr>`).join('')
     + gap(provs.length + 2) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgRet[p.id], arRank.map.get(p.id), arRank.n, pc2)).join('')}${pmCell(avgMed)}</tr>`
     + `<tr class="avg"><td title="${T().avgWt}">${T().avgW} <span class="info" aria-hidden="true">i</span></td>${provs.map(p => rkCell(avgW[p.id], awRank.map.get(p.id), awRank.n, pc2)).join('')}${na}</tr>`;
   const relKeys = ref ? [...peers.map(p => p.id), 'avg'] : provs.map(p => p.id);
-  const relBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${relKeys.map(k => relCell(r.rel[k])).join('')}</tr>`).join('')
+  const relBody = rows.map(r => `<tr><td>${gLbl(r)}</td>${relKeys.map(k => relCell(r.rel[k])).join('')}</tr>`).join('')
     + gap(relKeys.length + 1) + `<tr class="avg"><td>${T().avg}</td>${relKeys.map(k => relCell(avgRel[k])).join('')}</tr>`;
-  const rankBody = rows.map(r => `<tr><td>${groupShort(r.g)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : na; }).join('')}</tr>`).join('')
+  const rankBody = rows.map(r => `<tr><td>${gLbl(r)}</td>${provs.map(p => { const k = r.ranks.get(p.id); return k ? `<td class="${rkClass(k, r.n)}">${k}</td>` : na; }).join('')}</tr>`).join('')
     + gap(provs.length + 1) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgRank[p.id], akRank.map.get(p.id), akRank.n, v => num(v, 1))).join('')}</tr>`;
-  const annBody = rows.map(r => { const rk = rankOf(provs.map(p => ({ key: p.id, v: r.ann[p.id] }))); return `<tr><td>${groupShort(r.g)}</td>${provs.map(p => rkCell(r.ann[p.id], rk.map.get(p.id), rk.n, pc2)).join('')}</tr>`; }).join('')
+  const annBody = rows.map(r => { const rk = rankOf(provs.map(p => ({ key: p.id, v: r.ann[p.id] }))); return `<tr><td>${gLbl(r)}</td>${provs.map(p => rkCell(r.ann[p.id], rk.map.get(p.id), rk.n, pc2)).join('')}</tr>`; }).join('')
     + gap(provs.length + 1) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgAnn[p.id], aaRank.map.get(p.id), aaRank.n, pc2)).join('')}</tr>`;
-  const spanAll = spanText(periodText() + (P.gx ? ' · ' + T().gxBtn : ''), rows.map(r => r.g.rngM));
+  const spanAll = dGrp ? T().capByRow(periodText() + (P.gx ? ' · ' + T().gxBtn : '')) : spanText(periodText() + (P.gx ? ' · ' + T().gxBtn : ''), rows.map(r => r.g.rngM));
   $('btnGx').textContent = T().gxBtn; $('btnGx').setAttribute('aria-pressed', P.gx); $('btnMxl').textContent = '⤓ ' + T().mxl; $('btnMxl').title = T().mxlTip;
   const gxa = Math.min(...gxStarts), gxb = Math.max(...gxStarts);
   $('nGx').hidden = !P.gx; $('nGx').textContent = P.gx && gxStarts.length ? T().gxNote(gxa === gxb ? iso(gxa) : `${iso(gxa)}…${iso(gxb)}`) : '';
