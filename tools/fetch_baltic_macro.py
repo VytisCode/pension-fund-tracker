@@ -101,10 +101,15 @@ def ee_rows():
     if not paths:
         p = find(EE, "majandus/palk-ja-toojeukulu", test)
         paths = [p] if p else []
+    # istorija iki 2021 m. (senesnė metodika – įmonių apklausa): archyvas „Lepetatud_tabelid“, PA001 (iki 2022) ir PA11 (2000–2008)
+    arch = "Lepetatud_tabelid/Majandus. Arhiiv/Palk ja toojeukulu. Arhiiv"
+    paths += [f"{arch}/PA001.PX", f"{arch}/PA11.PX"]
     for p in paths:
         try:
-            cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: "average monthly gross wages" in t, "näitaja": lambda t: "average monthly gross wages" in t,
-                                                 "economic activity": lambda t: t.startswith("total"), "tegevusala": lambda t: t.startswith("total")})
+            cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: ("average monthly gross wages" in t or t.startswith("average gross wages")) and "hour" not in t and "change" not in t,
+                                                 "näitaja": lambda t: ("average monthly gross wages" in t or t.startswith("average gross wages")) and "hour" not in t and "change" not in t,
+                                                 "economic activity": lambda t: t.startswith("total"), "tegevusala": lambda t: t.startswith("total"),
+                                                 "section": lambda t: t.startswith("total")})
         except Exception as e:
             print("EE", p, "nepavyko:", e); continue
         print("EE darbo užmokestis:", p, meta.get("title"), len(data))
@@ -116,6 +121,8 @@ def ee_rows():
                 if m:
                     y, q = m.group(1), ["I", "II", "III", "IV"][int(m.group(2)) - 1]
             v = num(r["values"][0])
+            if v and y and int(y) < 2011 and v > 4000:     # kronos (iki 2011 m.) → eurai
+                v = v / 15.6466
             if y and q and v:
                 out.append(("EE", "wage_gross", f"{y}-Q{['I', 'II', 'III', 'IV'].index(q) + 1}", v))
     if not paths:
