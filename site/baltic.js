@@ -246,6 +246,79 @@ $('cmBar').addEventListener('click', e => {
 });
 $('cmSel').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (!b) return; SEL = SEL.filter(x => x !== b.dataset.rm); saveF(); renderCmp(); renderFd(); });
 
+/* ---------- Metų grąžos: heatmap (savininkas 2026-10-21 pritarė „Baltijos fondų grąžų heatmap“). Viena eilutė – vienas fondas,
+   stulpelis – kalendoriniai metai. Rodoma tik viena peer grupė vienu metu: rizikos grupė (visos šalys) arba šalies grupė. ---------- */
+addStrings({ hm: { t: 'Calendar-year returns', l: 'Each row is a fund, each column a calendar year. Only one peer group is shown at a time: a risk group (funds of similar risk from all three countries) or a country group. The colour shows the return, or the fund’s place in that year among the funds shown. Click a year to sort.',
+  ret: 'Return', rk: 'Place in group', ytd: y => `${y}*`, med: c => `Median – ${c}`, n: (n, d) => `${n} funds. * – year to date (${d}). Return from the last value of the previous year to the last value of the year; years in which a fund did not exist for the whole year are empty. Place: 1 = best return that year among the funds shown.`,
+  none: 'No funds in this group.', fund: 'Fund', xl: 'Calendar-year returns', xlN: 'Return = year-end value ÷ previous year-end value − 1 (formulas). Year-end value – last known value on or before 31 December.' } },
+{ hm: { t: 'Kalendorinių metų grąžos', l: 'Viena eilutė – vienas fondas, stulpelis – kalendoriniai metai. Vienu metu rodoma tik viena palyginamų fondų grupė: rizikos grupė (panašios rizikos visų trijų šalių fondai) arba šalies grupė. Spalva rodo grąžą arba fondo vietą tais metais tarp rodomų fondų. Spauskite metus, kad surikiuotumėte.',
+  ret: 'Grąža', rk: 'Vieta grupėje', ytd: y => `${y}*`, med: c => `Mediana – ${c}`, n: (n, d) => `${n} ${ltN(n, 'fondas', 'fondai', 'fondų')}. * – nuo metų pradžios (iki ${d}). Grąža – nuo paskutinės praėjusių metų vertės iki paskutinės metų vertės; metai, kuriais fondas veikė ne visus metus, tušti. Vieta: 1 = geriausia tų metų grąža tarp rodomų fondų.`,
+  none: 'Šioje grupėje fondų nėra.', fund: 'Fondas', xl: 'Metų grąžos', xlN: 'Grąža = metų pabaigos vertė ÷ praėjusių metų pabaigos vertė − 1 (formulės). Metų pabaigos vertė – paskutinė žinoma vertė gruodžio 31 d. ar anksčiau.' } });
+const HM = { c: { LT: true, LV: true, EE: true }, pl: 'II', g: 'r4', m: 'ret', s: null, closed: false };
+try { Object.assign(HM, JSON.parse(localStorage.getItem('bxH') || '{}')); } catch (e) {}
+const yEnd = y => Math.round(Date.UTC(y, 11, 31) / DAY);
+const CY = new Date(TOP * DAY).getUTCFullYear();
+function yRet(f, y) {                                   // kalendorinių metų grąža %, tik jei fondas veikė visus metus
+  const s = at(f, yEnd(y - 1)), e = y === CY ? at(f, f.last) : at(f, yEnd(y));
+  return s && e && e.d > s.d ? (e.v / s.v - 1) * 100 : null;
+}
+function hmData() {
+  const fs = BX.filter(f => HM.c[f.c] && (HM.pl === 'all' || f.pl === HM.pl) && (HM.closed || !f.closed)
+    && (HM.g[0] === 'r' ? f.risk === HM.g : `${f.c}:${f.cg}` === HM.g));
+  const R = fs.map(f => { const r = {}; for (let y = 2003; y <= CY; y++) { const v = yRet(f, y); if (v != null) r[y] = v; } return { f, r }; });
+  const ys = []; for (let y = 2003; y <= CY; y++) if (R.some(x => x.r[y] != null)) ys.push(y);
+  const rk = {}; ys.forEach(y => { const v = R.filter(x => x.r[y] != null).sort((a, b) => b.r[y] - a.r[y]); v.forEach((x, i) => { (x.k = x.k || {})[y] = [i + 1, v.length]; }); });
+  return { R, ys };
+}
+function hmColor(v, k) {
+  if (HM.m === 'rk') { if (!k) return ''; const p = k[1] > 1 ? (k[0] - 1) / (k[1] - 1) : 0.5, a = Math.round(Math.abs(p - 0.5) * 2 * 60); return `color-mix(in srgb, var(${p < 0.5 ? '--dpos' : '--dneg'}) ${a}%, transparent)`; }
+  const a = Math.round(Math.min(Math.abs(v) / 25, 1) * 62 + 6); return `color-mix(in srgb, var(${v < 0 ? '--dneg' : '--dpos'}) ${a}%, transparent)`;
+}
+function renderHm() {
+  const t = T(), h = t.hm;
+  $('hmT').textContent = h.t; $('hmL').textContent = h.l;
+  const cgs = [...new Set(BX.filter(f => f.cg && (HM.pl === 'all' || f.pl === HM.pl)).map(f => `${f.c}:${f.cg}`))].sort();
+  if (HM.g[0] !== 'r' && !cgs.includes(HM.g)) HM.g = 'r4';
+  $('hmBar').innerHTML = `<div class="chips">${['LT', 'LV', 'EE'].map(c => `<button type="button" class="chip" data-c="${c}" aria-pressed="${HM.c[c]}"><span class="flag">${c}</span>${t.c[c]}</button>`).join('')}</div>`
+    + `<div class="seg" role="group">${['II', 'III', 'all'].map(p => `<button type="button" data-pl="${p}" aria-pressed="${HM.pl === p}">${p === 'all' ? t.both : t.pl(p)}</button>`).join('')}</div>`
+    + `<select id="hmG"><optgroup label="${hEsc(t.fRisk)}">${['r1', 'r2', 'r3', 'r4'].map(r => `<option value="${r}"${HM.g === r ? ' selected' : ''}>${hEsc(t.rg[r])}</option>`).join('')}</optgroup>`
+    + ['LT', 'LV'].map(c => { const o = cgs.filter(x => x.startsWith(c + ':')); return o.length ? `<optgroup label="${hEsc(t.fCg(t.c[c]))}">${o.map(x => { const f = BX.find(y => `${y.c}:${y.cg}` === x); return `<option value="${x}"${HM.g === x ? ' selected' : ''}>${hEsc(cgLabel(f))}</option>`; }).join('')}</optgroup>` : ''; }).join('') + '</select>'
+    + `<div class="seg" role="group">${['ret', 'rk'].map(m => `<button type="button" data-m="${m}" aria-pressed="${HM.m === m}">${h[m]}</button>`).join('')}</div>`
+    + `<label class="field"><input type="checkbox" id="hmC"${HM.closed ? ' checked' : ''}> ${t.fClosed}</label>`;
+  const { R, ys } = hmData();
+  if (!R.length) { $('hmTbl').innerHTML = ''; $('hmN').textContent = h.none; return; }
+  const sy = ys.includes(HM.s) ? HM.s : ys.filter(y => y < CY).pop() || ys[ys.length - 1];
+  R.sort((a, b) => (b.r[sy] ?? -1e9) - (a.r[sy] ?? -1e9) || a.f.n.localeCompare(b.f.n));
+  const cell = (v, k) => v == null ? '<td></td>' : `<td class="n" style="background:${hmColor(v, k)}" title="${hEsc(fmtP(v))}${k ? ` · ${k[0]}/${k[1]}` : ''}">${HM.m === 'rk' && k ? k[0] : num(v, Math.abs(v) < 10 ? 1 : 0)}</td>`;
+  const cs = ['LT', 'LV', 'EE'].filter(c => R.some(x => x.f.c === c));
+  $('hmTbl').innerHTML = `<thead><tr><th>${h.fund}</th>${ys.map(y => `<th class="n" data-y="${y}"${y === sy ? ' aria-sort="descending"' : ''}>${y === CY ? h.ytd(y) : y}</th>`).join('')}</tr></thead><tbody>`
+    + R.map(x => `<tr><td class="nm"><span class="flag">${x.f.c}</span> ${hEsc(x.f.n)} <small class="note">${x.f.pl} · ${hEsc(x.f.m)}</small></td>${ys.map(y => cell(x.r[y], x.k && x.k[y])).join('')}</tr>`).join('')
+    + (HM.m === 'ret' ? cs.map(c => `<tr class="med"><td class="nm">${h.med(t.c[c])}</td>${ys.map(y => { const v = median(R.filter(x => x.f.c === c && x.r[y] != null).map(x => x.r[y])); return cell(v); }).join('')}</tr>`).join('') : '') + '</tbody>';
+  $('hmN').textContent = h.n(R.length, iso(TOP));
+  const w = $('hmTbl').parentElement; w.scrollLeft = w.scrollWidth;           // naujausi metai matomi iš karto (ypač telefone)
+}
+const saveH = () => { try { localStorage.setItem('bxH', JSON.stringify(HM)); } catch (e) {} };
+$('hmBar').addEventListener('click', e => {
+  const c = e.target.closest('[data-c]'), p = e.target.closest('[data-pl]'), m = e.target.closest('[data-m]');
+  if (c) { HM.c[c.dataset.c] = !HM.c[c.dataset.c]; if (!Object.values(HM.c).some(Boolean)) HM.c[c.dataset.c] = true; }
+  else if (p) HM.pl = p.dataset.pl; else if (m) HM.m = m.dataset.m; else return;
+  saveH(); renderHm();
+});
+$('hmBar').addEventListener('change', e => { if (e.target.id === 'hmG') HM.g = e.target.value; else if (e.target.id === 'hmC') HM.closed = e.target.checked; else return; saveH(); renderHm(); });
+$('hmTbl').addEventListener('click', e => { const th = e.target.closest('th[data-y]'); if (th) { HM.s = +th.dataset.y; saveH(); renderHm(); } });
+function hmSheet(wb) {                                  // Excel: metų pabaigos vertės ir grąžos – formulės
+  const t = T(), h = t.hm, { R, ys } = hmData(); if (!R.length) return;
+  const col = i => { let s = ''; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = (i - m - 1) / 26; } return s; };
+  const ends = [ys[0] - 1, ...ys], nv = ends.length, v0 = 4, r0 = v0 + nv;
+  const rows = [[{ v: `${h.xl}: ${HM.g[0] === 'r' ? t.rg[HM.g] : cgLabel(BX.find(f => `${f.c}:${f.cg}` === HM.g))}`, s: 'title' }], [{ v: h.xlN, s: 'note' }], [],
+    [...t.xlH.slice(0, 2), t.xlH[3], t.xlH[2], ...ends.map(y => ({ v: y === CY ? iso(TOP) : `${y}-12-31`, s: 'hdr' })), ...ys.map(y => ({ v: y === CY ? h.ytd(y) : String(y), s: 'hdr' }))].map(x => typeof x === 'string' ? { v: x, s: 'hdr' } : x)];
+  R.forEach((x, i) => { const n = i + 5, f = x.f;
+    const vals = ends.map(y => { const p = y === CY ? at(f, f.last) : at(f, yEnd(y)); return p && p.d >= f.first ? p : null; });
+    rows.push([t.c[f.c], f.pl, f.n, f.m, ...vals.map(p => p ? { v: p.v, z: '0.00000', s: 'in' } : null),
+      ...ys.map((y, j) => x.r[y] == null ? null : { f: `${col(v0 + j + 1)}${n}/${col(v0 + j)}${n}-1`, z: '0.00%', s: 'calc', v: x.r[y] / 100 })]); });
+  XL.sheet(wb, h.xl, rows, { cols: [10, 7, 44, 14, ...ends.map(() => 11), ...ys.map(() => 8)], freeze: { r: 4, c: 3 } });
+}
+
 /* ---------- Excel: fondai ir vertės su formulėmis ---------- */
 async function excel() {
   const t = T(), rs = rows(), wb = XL.book(), xd = d => ({ v: d + 25569, z: 'yyyy-mm-dd', s: 'in' }), xv = v => ({ v, z: '0.00000', s: 'in' });
@@ -258,7 +331,7 @@ async function excel() {
       if (!s) { row.push(null, null, null); return; }
       row.push(xd(s.d), xv(s.v), { f: y === 1 ? `E${r}/${cv}${r}-1` : `(E${r}/${cv}${r})^(365.25/(D${r}-${cd}${r}))-1`, z: '0.00%', s: 'calc', v: y === 1 ? e.v / s.v - 1 : Math.pow(e.v / s.v, 365.25 / (e.d - s.d)) - 1 }); });
     V.push(row); });
-  rfSheet(wb);
+  hmSheet(wb); rfSheet(wb);
   XL.sheet(wb, t.xlV, V, { cols: [10, 7, 44, 12, 11, 12, 11, 10, 12, 11, 10, 12, 11, 10], freeze: { r: 4 } });
   const tmp = document.createElement('div'); tmp.innerHTML = MT[lang];
   XL.sheet(wb, t.xlM, [[{ v: t.mtT, s: 'title' }], ...[...tmp.querySelectorAll('h3, p, li')].map(n => [{ v: (n.tagName === 'LI' ? '• ' : '') + n.textContent, s: n.tagName === 'H3' ? 'b' : '' }])], { cols: [140] });
@@ -385,10 +458,10 @@ function render() {
   const t = T();
   document.title = `${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  renderOv(); renderFd(); renderCmp(); renderRf();
+  renderOv(); renderFd(); renderCmp(); renderHm(); renderRf();
   $('mtT').textContent = t.mtT; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
-  addSubnav([{ id: 'ovT', label: lang === 'lt' ? 'Apžvalga' : 'Overview' }, { id: 'fdT', label: t.fdT }, { id: 'cmT', label: lang === 'lt' ? 'Palyginti' : 'Compare' }, { id: 'rfT', label: lang === 'lt' ? 'Reformos' : 'Reforms' }, { id: 'mtT', label: t.mtT }]);
+  addSubnav([{ id: 'ovT', label: lang === 'lt' ? 'Apžvalga' : 'Overview' }, { id: 'fdT', label: t.fdT }, { id: 'cmT', label: lang === 'lt' ? 'Palyginti' : 'Compare' }, { id: 'hmT', label: lang === 'lt' ? 'Metų grąžos' : 'Yearly returns' }, { id: 'rfT', label: lang === 'lt' ? 'Reformos' : 'Reforms' }, { id: 'mtT', label: t.mtT }]);
 }
 renderHeader('baltic', render);
 render();
