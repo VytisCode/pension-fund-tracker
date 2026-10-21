@@ -237,7 +237,7 @@
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
    Valdytojo metų grąža = jo 7 gyvenimo ciklo fondų grąžų vidurkis (kaip „Rezultatų“ lentelės eilutė „Vidurkis“);
    papildomai – svertinis pagal fondų paskutinius grynuosius aktyvus (eilutė „Svertinis pagal aktyvus“). */
-if (location.hash.length > 1 && !/^#(go|nwq)=/.test(location.hash)) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“ (#go= – paieškos nuorodos į Pradžios skirtukus)
+if (location.hash.length > 1 && !/^#(go|nwq|tab)=/.test(location.hash)) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“ (#go= – paieškos nuorodos į Pradžios skirtukus)
 addStrings({
   refL: 'Reference manager:', refNone: 'not chosen', refNote: 'Without a choice, each manager is compared with the median of the others.',
   per: { d: 'Day', w: 'Week', mtd: 'Month', qtd: 'Quarter', ytd: 'Year' }, perN: (a, b) => `${a} → ${b}`, perTip: { d: 'Change over the last data day', w: 'Last 7 days', mtd: 'Since the end of the previous month', qtd: 'Since the end of the previous quarter', ytd: 'Since 31 December' },
@@ -254,11 +254,13 @@ addStrings({
   s3: (p, v) => `Among asset-preservation funds ${p} leads (${v}).`,
   bn: 'bn €', mn: 'm €',
   guH: 'What you will find', guN: 'Tips: the search box (key /) finds a fund, holding or table; every table and chart has buttons to copy an image (e.g. to Teams or a slide) and download Excel with the calculations; pages are split into tabs under the menu.',
-  gu: [['performance.html', 'Results', 'Whole-market returns and ranks by age group, fund comparison chart, risk, calendar years. Pillars II and III.'],
-    ['manager.html', 'Managers & funds', 'One manager’s summary or one fund’s card: return vs group, fees, assets, portfolio, benchmark.'],
+  gu: [['facts.html', 'Market facts', 'Bank of Lithuania quarterly facts, monthly facts, facts for the public, earnings in euros, pillar II vs III, the market over time, funds by group.'],
+    ['performance.html', 'Results', 'Whole-market returns and ranks by age group, fund comparison chart, risk, calendar years. Pillars II and III.'],
+    ['managers.html', 'Managers & funds', 'Manager insights and market shares; one manager’s summary or one fund’s card: return vs group, fees, assets, portfolio, benchmark.'],
     ['portfolios.html', 'Portfolios & assets', 'What changed in portfolios this quarter, what makes managers stand out, buys and sells, fund assets and reform payouts.'],
     ['reports.html', 'Reports', 'Manager report tables: returns since 2019, monthly returns, KPIs, half-year tables, KID scenarios.'],
     ['journey.html', 'Retirement path', 'A model participant from the first contribution, future scenarios, fee impact and “Which fund to choose?”.'],
+    ['baltic.html', 'Baltic states', 'Lithuanian, Latvian and Estonian pension funds side by side: returns, risk, fees, assets, reforms.'],
     ['apie.html', 'Methodology & sources', 'Where the data come from, how it is calculated, known limitations.']],
   foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the simple average of its life-cycle funds (the asset-weighted version is in the summary). For information only, not investment advice.',
 }, {
@@ -277,11 +279,13 @@ addStrings({
   s3: (p, v) => `Tarp turto išsaugojimo fondų pirmauja ${p} (${v}).`,
   bn: 'mlrd. €', mn: 'mln. €',
   guH: 'Ką rasite svetainėje', guN: 'Patarimai: paieškos laukelyje (klavišas /) rasite fondą, investiciją ar lentelę; prie kiekvienos lentelės ir grafiko – mygtukai nukopijuoti paveikslėlį (pvz. į Teams ar skaidrę) ir atsisiųsti Excel su skaičiavimais; puslapiai suskirstyti į skirtukus po meniu.',
-  gu: [['performance.html', 'Rezultatai', 'Visos rinkos grąža ir vietos pagal amžiaus grupes, fondų palyginimas grafike, rizika, kalendoriniai metai. II ir III pakopa.'],
-    ['manager.html', 'Valdytojai ir fondai', 'Vieno valdytojo suvestinė arba vieno fondo kortelė: grąža prieš grupę, mokesčiai, turtas, portfelis, lyginamasis indeksas.'],
+  gu: [['facts.html', 'Rinkos faktai', 'Lietuvos banko ketvirčio faktai, mėnesio faktai, faktai visuomenei, uždarbis eurais, II ir III pakopa, rinka laike, fondai pagal grupes.'],
+    ['performance.html', 'Rezultatai', 'Visos rinkos grąža ir vietos pagal amžiaus grupes, fondų palyginimas grafike, rizika, kalendoriniai metai. II ir III pakopa.'],
+    ['managers.html', 'Valdytojai ir fondai', 'Valdytojų įžvalgos ir rinkos dalys; vieno valdytojo suvestinė arba vieno fondo kortelė: grąža prieš grupę, mokesčiai, turtas, portfelis, lyginamasis indeksas.'],
     ['portfolios.html', 'Portfeliai ir turtas', 'Kas pasikeitė portfeliuose per ketvirtį, kuo išsiskiria valdytojai, pirkimai ir pardavimai, fondų turtas ir reformos išmokos.'],
     ['reports.html', 'Ataskaitos', 'Valdytojo ataskaitų lentelės: grąža nuo 2019 m., mėnesių grąža, rezultatų rodikliai, pusmečio lentelės, KID scenarijai.'],
     ['journey.html', 'Kelias į pensiją', 'Modelinio dalyvio kaupimas nuo pirmos įmokos, ateities scenarijai, mokesčių poveikis ir „Kurį fondą rinktis?“.'],
+    ['baltic.html', 'Baltijos šalys', 'Lietuvos, Latvijos ir Estijos pensijų fondai greta: grąža, rizika, mokesčiai, turtas, reformos.'],
     ['apie.html', 'Metodika ir šaltiniai', 'Iš kur duomenys, kaip skaičiuojama, žinomi apribojimai.']],
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo gyvenimo ciklo fondų vidurkis (svertinis pagal turtą – santraukoje). Informacinė medžiaga, ne investavimo rekomendacija.',
 });

@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Pensijų fondų sekimas</title>
+<link rel="stylesheet" href="style.css?v=a997ec9e">
+<style>
+  .today { display: grid; gap: 14px; }
+  .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
+  .refrow select { font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+  .big { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1000px) { .big { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .big { grid-template-columns: 1fr; } }
+  .bk { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .bk.hl { border-color: var(--accent); }
+  .bk .l { color: var(--text-3); font-size: 12px; }
+  .bk .v { font-size: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .bk .s { color: var(--text-2); font-size: 13px; }
+  .bk .more { margin-top: auto; padding-top: 6px; font-size: 13px; }
+  .mb { display: grid; grid-template-columns: 74px 1fr 64px; gap: 2px 6px; align-items: center; font-size: 12px; margin-top: 6px; }
+  .mb .t { height: 8px; position: relative; }
+  .mb .t i { position: absolute; top: 0; height: 8px; border-radius: 2px; }
+  .mb .t::before { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px solid var(--axis); }
+  .mb .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .says p { margin: 0 0 6px; }
+  .says p:last-child { margin: 0; }
+  .glist { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .glist td, .glist th { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+  .glist td.n, .glist th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .guide h2 { margin: 6px 0 10px; }
+  .gtiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 900px) { .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } } @media (max-width: 560px) { .gtiles { grid-template-columns: 1fr; } }
+  .gtile { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; color: var(--text); text-decoration: none; }
+  .gtile:hover { border-color: var(--accent); } .gtile b { display: block; font-size: 15px; margin-bottom: 4px; } .gtile span { color: var(--text-2); font-size: 13px; line-height: 1.45; }
+  .glist i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+  h2.sec { margin: 6px 0 0; font-size: 19px; }
+  p.lead { color: var(--text-2); font-size: 13.5px; margin: 0; max-width: 920px; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .fact { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: var(--card); }
+  .fact.hl { border-color: var(--accent); }
+  .fact .fh { color: var(--text-3); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  .fact p { margin: 0; font-size: 14.5px; line-height: 1.45; }
+  .fact small { color: var(--text-3); font-size: 11.5px; line-height: 1.4; }
+  .fact .btn { align-self: flex-start; margin-top: auto; }
+  .factbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+  .factbar { gap: 8px; flex-wrap: wrap; }
+  .fact .fbtn { display: flex; gap: 6px; margin-top: auto; }
+  .fact .fbtn .btn { margin-top: 0; }
+  .fact.mi ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.45; display: grid; gap: 4px; }
+  .fact .fh .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .tdmk .kpis { margin-bottom: 8px; }
+  #p23Bar .seg { display: none; }
+  .fact .fmore summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+  .fact .fmore[open] { margin-bottom: 4px; }
+  .fact .fmore .fch { margin-top: 4px; min-height: 0; }
+  .fact .fctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0 4px; font-size: 13px; }
+  .fact .fct { font-size: 15px; margin: 8px 0 0; padding: 2px 4px; border-radius: 4px; outline: none; }
+  .fact .fct:hover, .fact .fct:focus { background: var(--line); }
+  .fact .fleg .chip { cursor: pointer; font: inherit; }
+  .fact .fleg .chip.off { opacity: .4; text-decoration: line-through; }
+  .fact .fmore .fnum { font-size: 12.5px; margin-top: 6px; }
+  .fact .fsub { margin-top: 6px; font-size: 13px; }
+  .fact .fsub summary { cursor: pointer; }
+  .fact .fmore .fnum td.l { white-space: normal; }
+  .facts > .fact:has(.fmore[open]) { grid-column: 1 / -1; }
+  .ftool { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; margin: 0 0 10px; }
+  .ftool .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ftool .chip { cursor: pointer; font: inherit; font-size: 13px; }
+  .ftool .chip[aria-pressed="false"] { opacity: 1; color: var(--text); }
+  .ftool .chip.hotc[aria-pressed="false"] { background: #fff1cc; color: #8a5a00; border-color: #e7c66b; }
+  @media (max-width: 640px) { .ftool .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; width: 100%; } .ftool .chip { flex: none; } .factbar { justify-content: flex-start; } .factbar .btn { font-size: 12.5px; padding: 4px 9px; } }
+  .ftool .chip em { font-style: normal; color: var(--text-3); margin-left: 2px; }
+  .ftool .chip[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .ftool .chip[aria-pressed="true"] em { color: inherit; opacity: .8; }
+  .fact .ftop { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; }
+  .fact .ftp { color: var(--text-3); font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; }
+  .fact .fhot { font-size: 11.5px; font-weight: 600; color: #8a5a00; background: #fff1cc; border-radius: 999px; padding: 1px 8px; cursor: help; }
+  .fact.hot { border-color: #e7c66b; }
+  .facts .fact > .fh { color: var(--text); font-size: 15.5px; font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .fact .fmini svg { display: block; width: 100%; height: 52px; }
+  .fact .fmini span { display: block; color: var(--text-3); font-size: 11px; margin-top: 2px; }
+  .fact p b { font-weight: 650; }
+  .fact .fsrc summary { cursor: pointer; color: var(--text-3); font-size: 12px; }
+  .facts.flist { grid-template-columns: 1fr; gap: 6px; }
+  .facts.flist > .fact { padding: 8px 12px; gap: 3px; }
+  .facts.flist > .fact .fmini, .facts.flist > .fact .fsrc, .facts.flist > .fact .ftp { display: none; }
+  .facts.flist > .fact:not(:has(.fmore[open])) .fbtn { display: none; }
+  .facts.flist > .fact > .fh { font-size: 14px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fact .fhot { color: #ffd77a; background: #4a3a10; } :root:not([data-theme="light"]) .fact.hot { border-color: #7a6320; } }
+  :root[data-theme="dark"] .fact .fhot { color: #ffd77a; background: #4a3a10; } :root[data-theme="dark"] .fact.hot { border-color: #7a6320; }
+  .fact .fxt { display: flex; gap: 10px; align-items: flex-start; background: var(--hover); border-radius: 8px; padding: 8px 10px; margin: 6px 0 2px; }
+  .fact .fxt p { margin: 0; flex: 1; font-size: 14.5px; line-height: 1.5; color: var(--text); }
+  .fact .fctl .chips { flex-basis: 100%; }
+  .fact .xtab { margin-top: 6px; font-size: 12.5px; }
+  .tdmk ul { margin: 6px 0 8px; padding-left: 18px; line-height: 1.45; }
+  table.at { font-size: 13px; }
+  table.at th { white-space: normal; vertical-align: bottom; }
+  table.at td, table.at th { text-align: right; font-variant-numeric: tabular-nums; }
+  table.at td.l, table.at th.l { text-align: left; }
+  table.at tr.tot td { border-top: 2px solid var(--line); font-weight: 700; }
+  table.at tr.hl td, table.at tr.cur td { background: var(--hover); font-weight: 600; }
+  table.at .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+  .up { color: var(--s5); } .down { color: #d0453f; }
+  h3.gh { font-size: 15px; margin: 16px 0 6px; } h3.gh:first-child { margin-top: 0; }
+  #mkSeg, #mgSeg { margin-bottom: 8px; }
+  .eubar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 10px; }
+  [data-tab="eu"].today { grid-template-columns: minmax(0, 1fr); } #euBody, #euBar { min-width: 0; }
+  .eubar .seg { max-width: 100%; overflow-x: auto; } .eubar .field { min-width: 0; max-width: 100%; }
+  .eubar select { max-width: min(320px, 100%); }
+  ul.eusay { margin: 0 0 14px; padding-left: 18px; } ul.eusay li { margin: 6px 0; line-height: 1.5; } ul.eusay .btn { padding: 2px 8px; font-size: 12px; margin-left: 4px; }
+  .eukp .kpi b { font-size: 19px; }
+  [data-tab="nw"].today { grid-template-columns: minmax(0, 1fr); } #nwBody, #nwBar { min-width: 0; }
+  .nwbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 10px; } .nwbar .chips { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+  .nwbar input[type="search"] { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13px; flex: 1; min-width: 180px; max-width: 420px; }
+  .nwc { padding: 10px 0; border-bottom: 1px solid var(--line); } .nwc:last-of-type { border-bottom: 0; }
+  .nwc h3 { margin: 3px 0 4px; font-size: 15.5px; line-height: 1.35; } .nwc h3 a { color: var(--text); text-decoration: none; } .nwc h3 a:hover { text-decoration: underline; }
+  .nwc p { margin: 0 0 6px; font-size: 13.5px; color: var(--text-2); line-height: 1.5; } .nwc .tags { display: flex; flex-wrap: wrap; gap: 4px; } .nwc .tags .chip { font-size: 11.5px; padding: 1px 7px; }
+  .nwc .flag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: var(--hover); color: var(--text-2); }
+  .nwins { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; } .nwi { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+  .nwi p { margin: 0; font-size: 14px; line-height: 1.5; } .nwi .btn { padding: 2px 9px; font-size: 12px; margin-right: 6px; }
+  .nwtl svg { width: 100%; height: auto; display: block; } .nwep:hover { stroke: var(--text); stroke-width: 2; }
+  .nwwave { margin-top: 10px; border-top: 2px solid var(--line); padding-top: 8px; } .nwwave .hd { font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; } .nwwave .btn { padding: 2px 9px; font-size: 12px; }
+  .nwmxw { overflow-x: auto; max-width: 100%; } table.nwmx { border-collapse: collapse; font-size: 12.5px; } .nwmx th, .nwmx td { padding: 4px 7px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; } .nwmx tbody th { text-align: left; font-weight: 500; }
+  .nwmx tbody tr { cursor: pointer; } .nwmx tbody tr:hover th, .nwmx tr.on th { color: var(--accent, #2b8de0); text-decoration: underline; }
+  .nwc .tags .chip.ac { border-style: dashed; } .nwc mark { background: color-mix(in srgb, #f0b429 35%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+  .nwbar .sep { width: 1px; background: var(--line); margin: 0 4px; } .nwd { font-size: 12.5px; color: var(--text-2); } .nwd input { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 6px; padding: 3px 6px; }
+  .nwst { font-size: 12.5px !important; } .nwi.chg { border-color: #c9765a; } .nwtone { font-size: 11px; font-weight: 600; margin-left: 4px; } .nwtone.p { color: #2f8f5b; } .nwtone.n { color: #c0503a; } h3.sub { font-size: 13.5px; font-weight: 600; color: var(--text-2); margin: 4px 0; }
+  #tdNews:empty { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top"></header>
+  <main>
+  <div data-tab="td" class="today">
+    <h2 class="sec" id="tdTitle"></h2>
+    <div class="refrow"><div class="seg" id="per" role="group"></div><span class="note" id="perN"></span><span style="flex:1"></span><label for="ref" id="refL"></label><select id="ref"></select><span class="note" id="refN"></span></div>
+    <div class="big" id="big"></div>
+    <section class="card says" data-src="nav"><h2 id="sayH"></h2><div id="say"></div></section>
+    <section class="card" data-src="nav"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
+    <section class="card tdmk" data-src="lbh"><h2 id="tdMkH"></h2><div class="meta" id="tdMkM"></div><div class="kpis" id="tdMkK"></div><ul id="tdMkL"></ul><p class="more" id="tdMkA"></p></section>
+    <section class="card" id="tdNews"></section>
+    <section class="guide"><h2 id="guH"></h2><div class="gtiles" id="guT"></div><p class="note" id="guN"></p></section>
+  </div>
+
+  <div data-tab="nw" class="today">
+    <h2 class="sec" id="nwTitle"></h2>
+    <p class="lead" id="nwLead"></p>
+    <div id="nwBar"></div>
+    <div id="nwBody"></div>
+  </div>
+
+  <div data-tab="qf" class="today">
+    <h2 class="sec" id="qfTitle"></h2>
+    <p class="lead" id="qfLead"></p>
+    <div id="qfBar"></div>
+    <div class="kpis" id="qfKpis"></div>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" id="qfAll" data-all="qfCards"></button><button type="button" class="btn xl" id="qfXl" data-xall="qfCards"></button><button type="button" class="btn" id="qfRev"></button></div><div class="facts" id="qfCards"></div></section>
+    <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="qfTable"></table></div><p class="note" id="qfNote"></p></section>
+  </div>
+
+  <div data-tab="mf" class="today">
+    <h2 class="sec" id="mfTitle"></h2>
+    <p class="lead" id="mfLead"></p>
+    <div id="mfBar"></div>
+    <section class="card" data-src="nav"><div class="factbar"><button type="button" class="btn" data-all="mfCards" id="mfAll"></button><button type="button" class="btn xl" data-xall="mfCards" id="mfXl"></button></div><div class="facts" id="mfCards"></div><p class="note" id="mfNote"></p></section>
+  </div>
+
+  <div data-tab="eu" class="today">
+    <h2 class="sec" id="euTitle"></h2>
+    <p class="lead" id="euLead"></p>
+    <div id="euBar"></div>
+    <div id="euBody" data-src="nav"></div>
+  </div>
+
+  <div data-tab="pv" class="today">
+    <h2 class="sec" id="pvTitle"></h2>
+    <p class="lead" id="pvLead"></p>
+    <div id="pvBar"></div>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" data-all="pvCards" id="pvAll"></button><button type="button" class="btn xl" data-xall="pvCards" id="pvXl"></button></div><div class="facts" id="pvCards"></div><p class="note" id="pvNote"></p></section>
+  </div>
+
+  <div data-tab="p23" class="today">
+    <h2 class="sec" id="p23Title"></h2>
+    <p class="lead" id="p23Lead"></p>
+    <div id="p23Bar"></div>
+    <section class="card" data-src="lbh"><div class="factbar"><button type="button" class="btn" data-all="p23Cards" id="p23All"></button><button type="button" class="btn xl" data-xall="p23Cards" id="p23Xl"></button></div><div class="facts" id="p23Cards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between"><h2 id="p23MiTitle" style="margin:0"></h2><button type="button" class="btn xl" data-xall="p23Mgr" id="p23MXl"></button></div><div class="facts" id="p23Mgr"></div><p class="note" id="p23Note"></p></section>
+  </div>
+
+  <div data-tab="mk" class="today">
+    <h2 class="sec" id="mkTitle"></h2>
+    <p class="lead" id="mkLead"></p>
+    <div id="mkBar"></div>
+    <section class="card" data-src="lbh"><div class="seg" id="mkSeg" role="group"></div><div class="chart" id="mkChart"></div>
+      <div class="scroll" style="margin-top:10px"><table class="at" id="mkTable"></table></div><p class="note" id="mkGainN"></p><p class="note" id="mkNote"></p></section>
+    <h2 class="sec" id="gpTitle"></h2>
+    <p class="lead" id="gpLead"></p>
+    <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="gpTable"></table></div></section>
+  </div>
+
+  <div data-tab="mg" class="today">
+    <h2 class="sec" id="mgTitle"></h2>
+    <p class="lead" id="mgLead"></p>
+    <div id="mgBar"></div>
+    <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="mgT"></table></div><p class="note" id="mgNote"></p></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="miTitle" style="margin:0 0 4px"></h2><p class="meta" id="miLead" style="margin:0"></p></div><button type="button" class="btn xl" id="miXl" data-xall="miCards"></button></div><div class="facts" id="miCards"></div></section>
+    <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="brTitle" style="margin:0 0 4px"></h2><p class="meta" id="brLead" style="margin:0"></p></div><button type="button" class="btn xl" id="brXl" data-xall="brCards"></button></div><div class="facts" id="brCards"></div><p class="note" id="brNote"></p></section>
+    <section class="card" data-src="lbh"><h2 id="mgChart"></h2><div class="seg" id="mgSeg" role="group"></div><div class="chart" id="mgChartBox"></div><div class="legend chips" id="mgLegend" style="margin-top:6px"></div></section>
+  </div>
+
+  <div data-tab="fd" class="today">
+    <h2 class="sec" id="fdTitle"></h2>
+    <p class="lead" id="fdLead"></p>
+    <div id="fdBar"></div>
+    <section class="card" data-src="lbh"><div id="fdTables"></div><p class="note" id="fdNote"></p></section>
+  </div>
+  </main>
+  <footer id="foot"></footer>
+</div>
+<script src="data.js?v=e56fa67b"></script>
+<script src="common.js?v=aedddf28"></script>
+<script src="data_cpi.js?v=870ec578"></script>
+<script src="data_journey.js"></script>
+<script src="data_rep.js?v=c9af6c3d"></script>
+<script src="data_mkt.js?v=8c3b65a2"></script>
+<script src="data_earn.js?v=e97d1164"></script>
+<script src="earn.js?v=128cc993"></script>
+<script src="data_news.js?v=2b7401be"></script>
+<script src="news.js?v=407ff8cc"></script>
+<script src="mkt.js?v=f617faa9"></script>
+<script>
+/* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
+   (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
+   Valdytojo metų grąža = jo 7 gyvenimo ciklo fondų grąžų vidurkis (kaip „Rezultatų“ lentelės eilutė „Vidurkis“);
+   papildomai – svertinis pagal fondų paskutinius grynuosius aktyvus (eilutė „Svertinis pagal aktyvus“). */
+if (location.hash.length > 1 && !/^#(go|nwq|tab)=/.test(location.hash)) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“ (#go= – paieškos nuorodos į Pradžios skirtukus)
+addStrings({
+  refL: 'Reference manager:', refNone: 'not chosen', refNote: 'Without a choice, each manager is compared with the median of the others.',
+  per: { d: 'Day', w: 'Week', mtd: 'Month', qtd: 'Quarter', ytd: 'Year' }, perN: (a, b) => `${a} → ${b}`, perTip: { d: 'Change over the last data day', w: 'Last 7 days', mtd: 'Since the end of the previous month', qtd: 'Since the end of the previous quarter', ytd: 'Since 31 December' },
+  kLead: p => `Leader · ${p}`, kLeadS: (w, v) => `last: ${w} ${v}`, kWeek: p => `Average life-cycle fund · ${p}`, kWeekS: (b, w) => `weighted by assets: best ${b}, weakest ${w}`,
+  kAum: 'II pillar assets', kAumS: (n, d) => `${n} funds · ${d}`, kRef: m => `${m} · ${T().per[PER]}`, kRefS: (k, n, d) => `place ${k} of ${n} · ${d} pp vs. the median of the others`,
+  kGap: 'Largest gap in a group', kGapS: (g, a, b) => `${g}: ${a} vs. ${b}`, more: 'More →',
+  sayH: 'In brief', gH: p => `Life-cycle groups · ${p}`, gM: (a, d) => `Return from ${a} to ${d}; the leader and the last fund in each group.`,
+  thG: 'Group', thLead: 'Leader', thLast: 'Last', thGap: 'Gap, pp', thRef: r => r,
+  s1: (l, lv, w, wv) => `${PERS().lead} ${l} has done best: on average ${lv} across the 7 life-cycle groups; ${w} has done worst (${wv}).`,
+  s1w: (l, lv, w, wv) => `Weighted by fund assets (larger funds count more), ${l} leads with ${lv}; ${w} is last (${wv}).`,
+  s2: (v, up) => `${PERS().lead} the average life-cycle fund ${up ? 'rose' : 'fell'} ${v}.`,
+  lead: { d: 'Over the last day', w: 'Over the past week', mtd: 'Since the start of the month', qtd: 'Since the start of the quarter', ytd: 'Since the start of the year' },
+  s3r: (r, d, k, n) => `${r} is ${d >= 0 ? 'ahead of' : 'behind'} the median of the other managers by ${num(Math.abs(d), 2)} pp in this period and ranks ${k} of ${n}.`,
+  s3: (p, v) => `Among asset-preservation funds ${p} leads (${v}).`,
+  bn: 'bn €', mn: 'm €',
+  guH: 'What you will find', guN: 'Tips: the search box (key /) finds a fund, holding or table; every table and chart has buttons to copy an image (e.g. to Teams or a slide) and download Excel with the calculations; pages are split into tabs under the menu.',
+  gu: [['facts.html', 'Market facts', 'Bank of Lithuania quarterly facts, monthly facts, facts for the public, earnings in euros, pillar II vs III, the market over time, funds by group.'],
+    ['performance.html', 'Results', 'Whole-market returns and ranks by age group, fund comparison chart, risk, calendar years. Pillars II and III.'],
+    ['managers.html', 'Managers & funds', 'Manager insights and market shares; one manager’s summary or one fund’s card: return vs group, fees, assets, portfolio, benchmark.'],
+    ['portfolios.html', 'Portfolios & assets', 'What changed in portfolios this quarter, what makes managers stand out, buys and sells, fund assets and reform payouts.'],
+    ['reports.html', 'Reports', 'Manager report tables: returns since 2019, monthly returns, KPIs, half-year tables, KID scenarios.'],
+    ['journey.html', 'Retirement path', 'A model participant from the first contribution, future scenarios, fee impact and “Which fund to choose?”.'],
+    ['baltic.html', 'Baltic states', 'Lithuanian, Latvian and Estonian pension funds side by side: returns, risk, fees, assets, reforms.'],
+    ['apie.html', 'Methodology & sources', 'Where the data come from, how it is calculated, known limitations.']],
+  foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the simple average of its life-cycle funds (the asset-weighted version is in the summary). For information only, not investment advice.',
+}, {
+  refL: 'Lyginamasis valdytojas:', refNone: 'nepasirinktas', refNote: 'Nepasirinkus kiekvienas valdytojas lyginamas su kitų mediana.',
+  per: { d: 'Diena', w: 'Savaitė', mtd: 'Mėnuo', qtd: 'Ketvirtis', ytd: 'Metai' }, perN: (a, b) => `${a} → ${b}`, perTip: { d: 'Pokytis per paskutinę duomenų dieną', w: 'Paskutinės 7 dienos', mtd: 'Nuo praėjusio mėnesio pabaigos', qtd: 'Nuo praėjusio ketvirčio pabaigos', ytd: 'Nuo gruodžio 31 d.' },
+  kLead: p => `Lyderis · ${p}`, kLeadS: (w, v) => `paskutinis: ${w} ${v}`, kWeek: p => `Vidutinis gyvenimo ciklo fondas · ${p}`, kWeekS: (b, w) => `pagal turtą: geriausiai ${b}, silpniausiai ${w}`,
+  kAum: 'II pakopos turtas', kAumS: (n, d) => `${n} fondai · ${d}`, kRef: m => `${m} · ${T().per[PER]}`, kRefS: (k, n, d) => `${k} vieta iš ${n} · ${d} p. p. nuo kitų medianos`,
+  kGap: 'Didžiausias skirtumas grupėje', kGapS: (g, a, b) => `${g}: ${a} ir ${b}`, more: 'Plačiau →',
+  sayH: 'Trumpai', gH: p => `Gyvenimo ciklo grupės · ${p}`, gM: (a, d) => `Grąža nuo ${a} iki ${d}; kiekvienos grupės lyderis ir paskutinis fondas.`,
+  thG: 'Grupė', thLead: 'Lyderis', thLast: 'Paskutinis', thGap: 'Skirtumas, p. p.', thRef: r => r,
+  s1: (l, lv, w, wv) => `${PERS().lead} geriausiai sekasi ${l}: vidutiniškai ${lv} per 7 gyvenimo ciklo grupes; silpniausiai – ${w} (${wv}).`,
+  s1w: (l, lv, w, wv) => `Pasvėrus pagal fondų turtą (didesni fondai sveria daugiau), pirmauja ${l} (${lv}), paskutinis – ${w} (${wv}).`,
+  s2: (v, up) => `${PERS().lead} vidutinis gyvenimo ciklo fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`,
+  lead: { d: 'Per paskutinę dieną', w: 'Per savaitę', mtd: 'Nuo mėnesio pradžios', qtd: 'Nuo ketvirčio pradžios', ytd: 'Nuo metų pradžios' },
+  s3r: (r, d, k, n) => `${r} per šį laikotarpį ${d >= 0 ? 'lenkia' : 'atsilieka nuo'} kitų valdytojų medianos ${num(Math.abs(d), 2)} p. p. ir yra ${k} vietoje iš ${n}.`,
+  s3: (p, v) => `Tarp turto išsaugojimo fondų pirmauja ${p} (${v}).`,
+  bn: 'mlrd. €', mn: 'mln. €',
+  guH: 'Ką rasite svetainėje', guN: 'Patarimai: paieškos laukelyje (klavišas /) rasite fondą, investiciją ar lentelę; prie kiekvienos lentelės ir grafiko – mygtukai nukopijuoti paveikslėlį (pvz. į Teams ar skaidrę) ir atsisiųsti Excel su skaičiavimais; puslapiai suskirstyti į skirtukus po meniu.',
+  gu: [['facts.html', 'Rinkos faktai', 'Lietuvos banko ketvirčio faktai, mėnesio faktai, faktai visuomenei, uždarbis eurais, II ir III pakopa, rinka laike, fondai pagal grupes.'],
+    ['performance.html', 'Rezultatai', 'Visos rinkos grąža ir vietos pagal amžiaus grupes, fondų palyginimas grafike, rizika, kalendoriniai metai. II ir III pakopa.'],
+    ['managers.html', 'Valdytojai ir fondai', 'Valdytojų įžvalgos ir rinkos dalys; vieno valdytojo suvestinė arba vieno fondo kortelė: grąža prieš grupę, mokesčiai, turtas, portfelis, lyginamasis indeksas.'],
+    ['portfolios.html', 'Portfeliai ir turtas', 'Kas pasikeitė portfeliuose per ketvirtį, kuo išsiskiria valdytojai, pirkimai ir pardavimai, fondų turtas ir reformos išmokos.'],
+    ['reports.html', 'Ataskaitos', 'Valdytojo ataskaitų lentelės: grąža nuo 2019 m., mėnesių grąža, rezultatų rodikliai, pusmečio lentelės, KID scenarijai.'],
+    ['journey.html', 'Kelias į pensiją', 'Modelinio dalyvio kaupimas nuo pirmos įmokos, ateities scenarijai, mokesčių poveikis ir „Kurį fondą rinktis?“.'],
+    ['baltic.html', 'Baltijos šalys', 'Lietuvos, Latvijos ir Estijos pensijų fondai greta: grąža, rizika, mokesčiai, turtas, reformos.'],
+    ['apie.html', 'Metodika ir šaltiniai', 'Iš kur duomenys, kaip skaičiuojama, žinomi apribojimai.']],
+  foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo gyvenimo ciklo fondų vidurkis (svertinis pagal turtą – santraukoje). Informacinė medžiaga, ne investavimo rekomendacija.',
+});
+const meanOf = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
+const medianOf = xs => { const a = xs.filter(x => x != null).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
+const LC = DATA.groups.filter(g => g.id !== 'turto'), TURTO = DATA.groups.find(g => g.id === 'turto');
+const PROVS = DATA.providers.map(p => p.id);
+let REF = '', PER = 'ytd';
+try { const p = localStorage.getItem('homePer'); if (['d', 'w', 'mtd', 'qtd', 'ytd'].includes(p)) PER = p; } catch (e) {}
+const PERS = () => ({ lead: T().lead[PER] });
+/* laikotarpio pradžia (savininkas 2026-10-16: Pradžia su Diena / Savaitė / Mėnuo / Ketvirtis / Metai): paskutinė duomenų diena prieš pabaigą,
+   7 d., praėjusio mėnesio / ketvirčio / metų pabaiga */
+function anchorOf(per, end) { const e = new Date(end * DAY), y = e.getUTCFullYear(), m = e.getUTCMonth();
+  return per === 'd' ? end - 1 : per === 'w' ? end - 7 : per === 'mtd' ? Math.round(Date.UTC(y, m, 0) / DAY) : per === 'qtd' ? Math.round(Date.UTC(y, m - m % 3, 0) / DAY) : Math.round(Date.UTC(y - 1, 11, 31) / DAY); }
+try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); if (PROVS.includes(s.mref)) REF = s.mref; } catch (e) {}
+function saveRef() { try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); s.mref = REF; localStorage.setItem('perfState', JSON.stringify(s)); } catch (e) {} }
+
+function groupRets(g, per) {            // {provider: grąža %} grupėje; neatnaujinti (>5 d.) fondai – null
+  const { end, overallLast } = groupEnd(g);
+  const anchor = anchorOf(per, end);
+  const out = {};
+  g.funds.forEach(f => { const s = f.d[f.d.length - 1] >= overallLast - 5 ? seriesOf(f, anchor, end) : null; out[f.provider] = s ? s.ret : null; });
+  return { out, end, anchor };
+}
+function compute() {
+  const ytd = LC.map(g => ({ g, ...groupRets(g, PER) })), wk = ytd;
+  const wMean = (p, rows = ytd) => { let s = 0, w = 0; rows.forEach(r => { const v = r.out[p], f = r.g.funds.find(x => x.provider === p); if (v != null && f && f.assets > 0) { s += v * f.assets; w += f.assets; } }); return w > 0 ? s / w : null; };
+  const mgr = PROVS.map(p => ({ id: p, ytd: meanOf(ytd.map(r => r.out[p])), ytdW: wMean(p), wk: wMean(p) })).filter(m => m.ytd != null);
+  const byYW = mgr.filter(m => m.ytdW != null).sort((a, b) => b.ytdW - a.ytdW);
+  const byY = [...mgr].sort((a, b) => b.ytd - a.ytd), byW = [...mgr].filter(m => m.wk != null).sort((a, b) => b.wk - a.wk);
+  const end = Math.max(...ytd.map(r => r.end));
+  const groups = ytd.map(r => { const xs = Object.entries(r.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); return { g: r.g, xs, gap: xs.length > 1 ? xs[0][1] - xs[xs.length - 1][1] : null, out: r.out }; });
+  const allW = wk.flatMap(r => Object.values(r.out)).filter(v => v != null);
+  const live = DATA.groups.flatMap(g => g.funds).filter(f => f.assets && f.assetsDate >= end - 10);
+  const tu = TURTO ? Object.entries(groupRets(TURTO, PER).out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]) : [];
+  return { anchor: Math.min(...ytd.map(r => r.anchor)), mgr, byY, byYW, byW, end, groups, wAvg: meanOf(allW), aum: live.reduce((s, f) => s + f.assets, 0), nAum: live.length, aumD: Math.max(...live.map(f => f.assetsDate)), tu };
+}
+function bars(list, key) {              // mažos horizontalios juostos: nulis per vidurį
+  const m = Math.max(...list.map(x => Math.abs(x[key])), 0.01);
+  return `<div class="mb">${list.map(x => { const w = Math.abs(x[key]) / m * 50; return `<span>${labelOf(x.id)}</span><span class="t"><i style="background:${colorOf(x.id)};width:${w}%;left:${x[key] >= 0 ? 50 : 50 - w}%"></i></span><span class="n">${pct(x[key])}</span>`; }).join('')}</div>`;
+}
+const money = v => v >= 1e9 ? `${num(v / 1e9, 2)} ${T().bn}` : `${num(v / 1e6, 1)} ${T().mn}`;
+function render() {
+  const t = T(), c = compute(), $ = id => document.getElementById(id);
+  const sel = $('ref');
+  sel.innerHTML = `<option value="">${t.refNone}</option>` + c.byY.map(m => `<option value="${m.id}">${labelOf(m.id)}</option>`).join(''); sel.value = REF;
+  $('refL').textContent = t.refL; $('refN').textContent = REF ? '' : t.refNote;
+  const P = t.per[PER];
+  $('per').innerHTML = Object.keys(t.per).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === PER}" title="${t.perTip[k]}">${t.per[k]}</button>`).join('');
+  $('perN').textContent = t.perN(iso(c.anchor), iso(c.end));
+  const L = c.byY[0], W = c.byY[c.byY.length - 1], B = c.byW[0], Wk = c.byW[c.byW.length - 1];
+  const card = (l, v, s, extra = '', href = 'performance.html', hl = false) => `<div class="bk${hl ? ' hl' : ''}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span>${extra}<a class="more" href="${href}">${t.more}</a></div>`;
+  let h = card(t.kLead(P), `${labelOf(L.id)} ${pct(L.ytd)}`, t.kLeadS(labelOf(W.id), pct(W.ytd)), bars(c.byY, 'ytd'));
+  h += card(t.kWeek(P), c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(labelOf(B.id), labelOf(Wk.id)) : '', bars(c.byW, 'wk'));
+  h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), '', 'aum.html');
+  const R = REF && c.mgr.find(m => m.id === REF);
+  if (R) {
+    const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd));
+    h += card(t.kRef(labelOf(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true);
+  } else {
+    const G = c.groups.filter(g => g.gap != null).sort((a, b) => b.gap - a.gap)[0];
+    h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '');
+  }
+  $('big').innerHTML = h;
+  $('sayH').textContent = t.sayH;
+  const s = [t.s1(labelOf(L.id), pct(L.ytd), labelOf(W.id), pct(W.ytd))];
+  if (c.byYW.length > 1) { const a = c.byYW[0], b = c.byYW[c.byYW.length - 1]; s.push(t.s1w(labelOf(a.id), pct(a.ytdW), labelOf(b.id), pct(b.ytdW))); }
+  if (c.wAvg != null) s.push(t.s2(pctPlain(Math.abs(c.wAvg)), c.wAvg >= 0));
+  if (DATA.mkt && DATA.mkt.all) {           // visos rinkos indeksas, svertinis pagal turtą (kaip Estijos EPI)
+    const x = DATA.mkt.all, d = [x.d0]; x.dd.forEach(v => d.push(d[d.length - 1] + v)); const f = { d, v: x.v }, ia = lastOnOrBefore(f, c.anchor), ie = lastOnOrBefore(f, c.end);
+    if (ia >= 0 && ie > ia) { const r = (f.v[ie] / f.v[ia] - 1) * 100; s.push(lang === 'lt' ? `Visos rinkos indeksas (visi gyvenimo ciklo fondai, svertinis pagal turtą): <b>${pct(r)}</b>.` : `Whole-market index (all life-cycle funds, asset-weighted): <b>${pct(r)}</b>.`); }
+  }
+  if (R) { const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd)); s.push(t.s3r(labelOf(R.id), d, k, c.byY.length)); }
+  else if (c.tu.length) s.push(t.s3(labelOf(c.tu[0][0]), pct(c.tu[0][1])));
+  $('say').innerHTML = s.map(x => `<p>${x}</p>`).join('');
+  $('gH').textContent = t.gH(P); $('gM').textContent = t.gM(iso(c.anchor), iso(c.end)); $('gMore').textContent = t.more;
+  const sw = id => `<i style="background:${colorOf(id)}"></i>`;
+  $('gT').innerHTML = `<thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th>${R ? `<th class="n">${labelOf(REF)}</th>` : ''}</tr></thead><tbody>`
+    + [...c.groups].reverse().map(g => { const a = g.xs[0], b = g.xs[g.xs.length - 1]; return `<tr><td>${groupLabel(g.g)}</td><td>${sw(a[0])}${labelOf(a[0])}</td><td class="n">${pct(a[1])}</td><td>${sw(b[0])}${labelOf(b[0])}</td><td class="n">${pct(b[1])}</td><td class="n">${num(g.gap, 2)}</td>${R ? `<td class="n">${g.out[REF] == null ? '–' : pct(g.out[REF])}</td>` : ''}</tr>`; }).join('') + '</tbody>';
+  cardify($('gT'));
+  $('guH').textContent = t.guH; $('guN').textContent = t.guN;
+  $('guT').innerHTML = t.gu.map(([h, n, d]) => `<a class="gtile" href="${h}"><b>${n} →</b><span>${d}</span></a>`).join('');
+  $('foot').textContent = t.foot;
+}
+document.getElementById('per').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; PER = b.dataset.k; try { localStorage.setItem('homePer', PER); } catch (x) {} render(); });
+document.getElementById('ref').addEventListener('change', e => { REF = e.target.value; saveRef(); render(); });
+/* Excel su skaičiavimais (auditui): visų fondų grąža grupėse – formulės; lyderis, paskutinis ir skirtumas – MAX / MIN / INDEX(MATCH) */
+XLB.set('gT', async () => {
+  const L = lang === 'lt', t = T(), c = compute(), provs = PROVS.filter(p => c.groups.some(g => g.out[p] != null)), hdrRow = 3;
+  const rows = [...c.groups].reverse().map(g => {
+    const { end } = groupEnd(g.g), anchor = anchorOf(PER, end), vs = provs.map(p => g.out[p] == null ? null : g.out[p] / 100), ok = vs.filter(v => v != null);
+    const mx = ok.length ? Math.max(...ok) : null, mn = ok.length ? Math.min(...ok) : null, nm = v => v == null ? '' : labelOf(provs[vs.indexOf(v)]);
+    const rng = (r, a, b) => `${a}${r}:${b}${r}`, hd = (a, b) => `$${a}$${hdrRow}:$${b}$${hdrRow}`;
+    return { label: groupLabel(g.g), cells: provs.map(p => { if (g.out[p] == null) return null; const f = g.g.funds.find(x => x.provider === p), s = seriesOf(f, anchor, end);
+        return s ? { f, name: `${groupLabel(g.g)} · ${labelOf(p)}`, ia: s.ia, ie: s.ie, col: labelOf(p) } : null; }),
+      extra: ok.length < 2 ? [] : [(r, a, b) => ({ f: `INDEX(${hd(a, b)},MATCH(MAX(${rng(r, a, b)}),${rng(r, a, b)},0))`, v: nm(mx) }), (r, a, b) => xlF(`MAX(${rng(r, a, b)})`, mx, '0.00%'),
+        (r, a, b) => ({ f: `INDEX(${hd(a, b)},MATCH(MIN(${rng(r, a, b)}),${rng(r, a, b)},0))`, v: nm(mn) }), (r, a, b) => xlF(`MIN(${rng(r, a, b)})`, mn, '0.00%'),
+        (r, a, b) => xlF(`(MAX(${rng(r, a, b)})-MIN(${rng(r, a, b)}))*100`, (mx - mn) * 100, '0.00')] };
+  });
+  return pairBook({ title: t.gH(t.per[PER]), cap: document.getElementById('gM').textContent, rowHdr: t.thG, cols: provs.map(labelOf), rows,
+    extraCols: [t.thLead, L ? 'Lyderio grąža' : 'Leader return', t.thLast, L ? 'Paskutinio grąža' : 'Last return', t.thGap],
+    meth: [[L ? 'Laikotarpis' : 'Period', L ? 'Pradžia – paskutinė vertė prieš laikotarpį (dieną, savaitę, mėnesį, ketvirtį ar metus atgal nuo grupės paskutinės dienos); fondai, neatnaujinę duomenų > 5 d., neįtraukiami.' : 'Start – last value before the period (a day, week, month, quarter or year back from the group’s latest day); funds more than 5 days behind are excluded.'],
+      [L ? 'Lyderis ir paskutinis' : 'Leader and last', L ? 'MAX ir MIN eilutėje; pavadinimas – INDEX(MATCH) iš antraštės; skirtumas – (MAX − MIN) × 100, procentiniais punktais.' : 'MAX and MIN of the row; name – INDEX(MATCH) from the header; gap – (MAX − MIN) × 100, percentage points.']] });
+});
+renderHeader('facts', () => { render(); mkRender(); mkTabs(); });
+render(); mkRender(); mkTabs();
+</script>
+</body>
+</html>

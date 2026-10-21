@@ -23,6 +23,9 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 
 - 2026-10-14: „Mokesčių poveikis“ – tik „Kelias į pensiją“ (iš Rezultatų išimta); turto vaizde rodyti ir rinkos dalį, ir ketvirčio pokytį (%); KID scenarijai – „Ataskaitų“ apačioje.
 
+- 2026-10-21 (auditas, Claude Doc „Dashboard auditas 2026-10-21“): meniu pertvarkyti – TAIP (Pradžios skirtukai → Pradžia / Rinkos faktai / Valdytojai, III pakopa ir II pakopa – viena skirtukų juosta per du puslapius; nieko netrinti, seni adresai nukreipia). Padaryta 2026-10-21.
+- 2026-10-21: nuotraukos – „abu būdai“: skyrių nuotraukas savininkas generuoja ChatGPT/Gemini pagal Claude promptus (7 skyriai), Baltijos miestų – Claude parenka nemokamos licencijos (Unsplash/Pexels) ir parodo prieš įdėdamas. Nuotraukos tik navigacijoje (Pradžios plytelės, skyriaus juosta, šalių kortelės), ne lentelėse ar grafikuose.
+
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
 
 - Saugumas: 2026-10-12 į projekto dėžutę atėjo GitHub raktas atviru tekstu. Patarta jį atšaukti. Raktas nenaudotas.

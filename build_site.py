@@ -140,6 +140,18 @@ def main() -> None:
         v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]
         text = text.replace(f'src="{n}"', f'src="{n}?v={v}"').replace(f'href="{n}"', f'href="{n}?v={v}"')
     (DOCS / "ops.html").write_text(text, encoding="utf-8")
+    build_home_split()
+
+
+def build_home_split() -> None:
+    """Meniu pertvarkymas (savininkas 2026-10-21): Pradžios skirtukai rodomi trijuose puslapiuose – index.html (Šiandien, Naujienos),
+    facts.html (Rinkos faktai) ir managers.html (Valdytojai). Abu nauji – galutinio index.html kopijos su kitu puslapio vardu;
+    kurie skirtukai kur rodomi – site/common.js TAB_HOME."""
+    ix = (DOCS / "index.html").read_text(encoding="utf-8")
+    for page in ("facts", "managers"):
+        t = ix.replace("renderHeader('index',", f"renderHeader('{page}',")
+        assert t != ix
+        (DOCS / f"{page}.html").write_text(t, encoding="utf-8")
 
 
 

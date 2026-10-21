@@ -8,7 +8,7 @@ const I18N = {
   en: {
     refresh: 'Refresh data', refreshTip: 'Opens the data update on GitHub. Tap “Run workflow”, then the green “Run workflow” button. The site updates about 5 minutes later (only the owner can start it).',
     siteTitle: 'Pension funds', monShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], naTip: 'No value: the fund did not exist yet in that period, or the data is not published', theme: 'Theme', period: 'Period', locale: 'en-GB',
-    navIndex: 'Market today', printCozy: 'Print / PDF (as on screen)', printPlain: 'Print / PDF (white, for presentations)', printed: 'printed', printSrc: 'sources and methodology – page “About”', navApie: 'About', navManager: 'Manager & fund', navReview: 'Monthly review', srcPfx: 'Source:', srcMeth: 'Methodology →', srcT: { lbh: 'Bank of Lithuania quarterly pension fund results', nav: 'managers’ unit values', aum: 'managers’ net assets', p3: 'managers’ III pillar values', pf: 'Bank of Lithuania portfolio reports', rep: 'unit values, benchmarks, Bank of Lithuania results report', idx: 'MSCI, S&P, ECB', journey: 'Sodra, State Data Agency, laws', kid: 'SEB KIDs and KID calculation files, SEB unit values, Bloomberg (SOLEBLS EUR), Regulation 2017/653' }, navOverview: 'Overview', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
+    navIndex: 'Market today', printCozy: 'Print / PDF (as on screen)', printPlain: 'Print / PDF (white, for presentations)', printed: 'printed', printSrc: 'sources and methodology – page “About”', navApie: 'About', navManager: 'Manager & fund', navReview: 'Monthly review', srcPfx: 'Source:', srcMeth: 'Methodology →', srcT: { lbh: 'Bank of Lithuania quarterly pension fund results', nav: 'managers’ unit values', aum: 'managers’ net assets', p3: 'managers’ III pillar values', pf: 'Bank of Lithuania portfolio reports', rep: 'unit values, benchmarks, Bank of Lithuania results report', idx: 'MSCI, S&P, ECB', journey: 'Sodra, State Data Agency, laws', kid: 'SEB KIDs and KID calculation files, SEB unit values, Bloomberg (SOLEBLS EUR), Regulation 2017/653' }, navOverview: 'Group charts', navPerformance: 'Performance & peers', navPillar3: 'Pillar III', navPortfolios: 'Portfolios', navAum: 'Assets (AUM)', navReports: 'Reports', navJourney: 'Retirement journey',
     thProvider: 'Manager', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
@@ -22,7 +22,7 @@ const I18N = {
   lt: {
     refresh: 'Atnaujinti duomenis', refreshTip: 'Atidaro duomenų atnaujinimą GitHub’e. Paspausk „Run workflow“, tada žalią „Run workflow“ mygtuką. Svetainė atsinaujins maždaug po 5 minučių (paleisti gali tik savininkas).',
     siteTitle: 'Pensijų fondai', monShort: ['saus.', 'vas.', 'kov.', 'bal.', 'geg.', 'birž.', 'liep.', 'rugp.', 'rugs.', 'spal.', 'lapkr.', 'gruod.'], naTip: 'Reikšmės nėra: fondas tuo laikotarpiu dar neveikė arba duomenys neskelbti', theme: 'Tema', period: 'Laikotarpis', locale: 'lt-LT',
-    navIndex: 'Rinka šiandien', printCozy: 'Spausdinti / PDF (kaip ekrane)', printPlain: 'Spausdinti / PDF (baltas, prezentacijoms)', printed: 'atspausdinta', printSrc: 'šaltiniai ir metodika – puslapis „Apie“', navApie: 'Apie', navManager: 'Valdytojas ir fondas', navReview: 'Mėnesio apžvalga', srcPfx: 'Šaltinis:', srcMeth: 'Metodika →', srcT: { lbh: 'Lietuvos banko ketvirčio pensijų fondų veiklos rezultatai', nav: 'valdytojų vieneto vertės', aum: 'valdytojų grynieji aktyvai', p3: 'valdytojų III pakopos vertės', pf: 'Lietuvos banko portfelių ataskaitos', rep: 'vieneto vertės, lyginamieji indeksai, LB rezultatų ataskaita', idx: 'MSCI, S&P, ECB', journey: 'Sodra, Valstybės duomenų agentūra, įstatymai', kid: 'SEB PID ir PID skaičiavimo failai, SEB vieneto vertės, Bloomberg (SOLEBLS EUR), Reglamentas 2017/653' }, navOverview: 'Apžvalga', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
+    navIndex: 'Rinka šiandien', printCozy: 'Spausdinti / PDF (kaip ekrane)', printPlain: 'Spausdinti / PDF (baltas, prezentacijoms)', printed: 'atspausdinta', printSrc: 'šaltiniai ir metodika – puslapis „Apie“', navApie: 'Apie', navManager: 'Valdytojas ir fondas', navReview: 'Mėnesio apžvalga', srcPfx: 'Šaltinis:', srcMeth: 'Metodika →', srcT: { lbh: 'Lietuvos banko ketvirčio pensijų fondų veiklos rezultatai', nav: 'valdytojų vieneto vertės', aum: 'valdytojų grynieji aktyvai', p3: 'valdytojų III pakopos vertės', pf: 'Lietuvos banko portfelių ataskaitos', rep: 'vieneto vertės, lyginamieji indeksai, LB rezultatų ataskaita', idx: 'MSCI, S&P, ECB', journey: 'Sodra, Valstybės duomenų agentūra, įstatymai', kid: 'SEB PID ir PID skaičiavimo failai, SEB vieneto vertės, Bloomberg (SOLEBLS EUR), Reglamentas 2017/653' }, navOverview: 'Grupių grafikai', navPerformance: 'Rezultatai ir palyginimas', navPillar3: 'III pakopa', navPortfolios: 'Portfeliai', navAum: 'Turtas (AUM)', navReports: 'Ataskaitos', navJourney: 'Kelias į pensiją',
     thProvider: 'Valdytojas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
@@ -74,6 +74,7 @@ const NAV_ICONS = {
   portfolios: '<path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
   reports: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   journey: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+  facts: '<path d="M4 4h16v16H4z"/><path d="M8 16v-4M12 16V8M16 16v-6"/>',
   baltic: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9s1.3-6.3 3.8-9z"/>',
 };
 const NAV_PAGES = ['index', 'review', 'ops', 'performance', 'performance3', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'baltic', 'apie'];
@@ -118,6 +119,10 @@ function sideUI(side, scrim) {
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   document.body.dataset.page = active;
+  document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab]; if (o && o !== active) { p.dataset.off = o; p.hidden = true; } });
+  { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
+    const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(`${o.dataset.off}.html${location.hash}`); }
+  if (TAB_GROUP[active] && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
   h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1></a>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
@@ -132,7 +137,8 @@ function renderHeader(active, onLang) {
      planšetėje ir telefone – ištraukiamas mygtuku ☰. Viršuje lieka lipni juosta su skyriaus puslapiais ir skirtukais. */
   const nav = document.createElement('nav');
   nav.className = 'snav'; nav.id = 'snav';
-  const sec = SECTIONS.find(s => s.pages.includes(active));
+  const cur = PAGE_ALIAS[active] || active;
+  const sec = SECTIONS.find(s => s.pages.includes(cur));
   const subs = s => s.pages.filter(p => p !== 'ops' || active === 'ops');   // Duomenų kalendorius – įrankių meniu (kolegoms nereikalingas)
   nav.innerHTML = sec && sec.pages.length > 1 ? `<div class="subnav">${subs(sec).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '';
   h.after(nav);
@@ -177,7 +183,7 @@ function renderHeader(active, onLang) {
     });
     document.querySelectorAll('.subnav a, .side-sub a').forEach(a => {
       a.textContent = t.subNav[a.dataset.p];
-      if (a.dataset.p === active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      if (a.dataset.p === (PAGE_ALIAS[active] || active)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     const qb = document.getElementById('q'); qb.placeholder = t.qPh; qb.setAttribute('aria-label', t.qPh);
     document.title = `${t[navKey(active)] || t.subNav[active] || ''} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
@@ -302,7 +308,8 @@ function addSubnav(items) {
     pn.addEventListener('scroll', () => scrollEdges(pn), { passive: true });
     let q = 0; addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(() => { q = 0; pnSpy(); }); }, { passive: true });
   }
-  pn.innerHTML = items.filter(x => !hasTabs() || paneOf(document.getElementById(x.id))).map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
+  pn.innerHTML = items.filter(x => !hasTabs() || paneOn(document.getElementById(x.id))).map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
+  groupTabs(pn);
   pn.classList.toggle('tabs', hasTabs());
   if (hasTabs()) { if (!TAB_CUR) showTab(tabStart(), false); else markTab(); } else pnSpy();
   scrollEdges(pn);
@@ -312,15 +319,42 @@ function addSubnav(items) {
 let TAB_CUR = null;
 const hasTabs = () => !!document.querySelector('main [data-tab], .wrap > [data-tab]');
 const paneOf = el => { const p = el && el.closest('[data-tab]'); return p ? p.dataset.tab : null; };
+const paneOn = el => { const p = el && el.closest('[data-tab]'); return p && !p.dataset.off ? p.dataset.tab : null; };
+/* Meniu pertvarkymas (savininkas 2026-10-21 „Taip, pertvarkyti“). Pradžios (index.html) skirtukai išskirstyti į tris puslapius:
+   facts.html ir managers.html – index.html kopijos (build_site.py), kiekviename rodomi tik savi skirtukai; kiti lieka DOM'e paslėpti
+   (data-off = puslapis, kuriame jie rodomi), o nuoroda į juos (#go=, #tab=) nukreipia į tą puslapį – seni adresai veikia. */
+const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
+/* Du puslapiai – viena skirtukų juosta: III pakopa (pillar3 + performance3) ir II pakopa (performance + overview „Grupių grafikai“).
+   Kito puslapio skirtukai – paprastos nuorodos „puslapis.html#tab=…“; šoniniame meniu abu puslapiai – vienas punktas. */
+const PAGE_ALIAS = { performance3: 'pillar3', overview: 'performance' };
+const TG3 = [['pillar3', 'cat', 'Kategorijos', 'Categories'], ['pillar3', 'all', 'Visi fondai – rodikliai', 'All funds – key figures'], ['performance3', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance3', 'fund', 'Fondų palyginimas', 'Fund comparison'],
+  ['performance3', 'risk', 'Rizika', 'Risk'], ['performance3', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['pillar3', 'rdd', 'Kilimas ir kritimas', 'Run-up and drawdown']];
+const TG2 = [['performance', 'market', 'Visa rinka', 'Whole market'], ['performance', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance', 'fund', 'Fondų palyginimas', 'Fund comparison'], ['performance', 'risk', 'Rizika', 'Risk'],
+  ['performance', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['overview', '', 'Grupių grafikai', 'Group charts'], ['performance', 'ins', 'Rinkos įžvalgos', 'Market insights']];
+const TAB_GROUP = { pillar3: TG3, performance3: TG3, performance: TG2, overview: TG2 };
+function groupTabs(pn) {
+  const page = document.body.dataset.page, G = TAB_GROUP[page]; if (!G) return;
+  const own = [...pn.querySelectorAll('a')], L = lang === 'lt';
+  const ownFor = k => own.find(a => paneOf(pnTarget(a.dataset.id)) === k);
+  const out = G.map(([p, k, lt, en]) => {
+    if (p !== page) { const a = document.createElement('a'); a.href = `${p}.html${k ? '#tab=' + k : ''}`; a.className = 'xt'; a.textContent = L ? lt : en; return a; }
+    if (!k) { const a = document.createElement('a'); a.href = '#'; a.setAttribute('aria-current', 'true'); a.textContent = L ? lt : en; a.onclick = e => e.preventDefault(); return a; }
+    return ownFor(k);
+  }).filter(Boolean);
+  own.forEach(a => { if (!out.includes(a)) out.push(a); });   // savas skirtukas, kurio nėra sąraše, nedingsta
+  pn.replaceChildren(...out); pn.classList.add('tabs');
+}
 const tabKey = () => 'tab:' + (document.body.dataset.page || location.pathname.split('/').pop());
 function tabStart() {
-  const panes = [...document.querySelectorAll('[data-tab]')].map(p => p.dataset.tab);
-  let k = null; try { k = localStorage.getItem(tabKey()); } catch (e) {}
+  const panes = [...document.querySelectorAll('[data-tab]')].filter(p => !p.dataset.off).map(p => p.dataset.tab);
+  let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
+  if (panes.includes(k)) return k;
+  try { k = localStorage.getItem(tabKey()); } catch (e) {}
   return panes.includes(k) ? k : panes[0];
 }
 function markTab() {
   const pn = document.querySelector('#snav .pnav'); if (!pn) return;
-  pn.querySelectorAll('a').forEach(a => { const on = paneOf(pnTarget(a.dataset.id)) === TAB_CUR; if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+  pn.querySelectorAll('a[data-id]').forEach(a => { const on = paneOf(pnTarget(a.dataset.id)) === TAB_CUR; if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
 }
 function openPane(id) {                   // atidaro skirtuką su elementu ir nuslenka prie jo
   const el = document.getElementById(id); if (!el) return;
@@ -329,6 +363,8 @@ function openPane(id) {                   // atidaro skirtuką su elementu ir nu
 }
 function showTab(k, user) {
   if (!k) return;
+  const off = document.querySelector(`[data-tab="${k}"][data-off]`);
+  if (off) { location.href = `${off.dataset.off}.html` + (/[#&]go=/.test(location.hash) ? location.hash : `#tab=${k}`); return; }
   const prev = TAB_CUR; TAB_CUR = k;
   document.querySelectorAll('[data-tab]').forEach(p => { p.hidden = p.dataset.tab !== k; });
   document.body.dataset.ptab = k;
@@ -342,7 +378,7 @@ function showTab(k, user) {
 }
 const pnTarget = id => { const h = document.getElementById(id); if (!h) return null; const c = h.previousElementSibling; return c && c.classList.contains('concl') ? c : h; };
 function pnSpy() {
-  const pn = document.querySelector('#snav .pnav'); if (!pn) return;
+  const pn = document.querySelector('#snav .pnav'); if (!pn || pn.classList.contains('tabs')) return;
   const stick = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick')) || 0;
   let cur = null;
   pn.querySelectorAll('a').forEach(a => { const el = pnTarget(a.dataset.id); if (el && el.offsetParent && el.getBoundingClientRect().top <= stick + 60) cur = a; });
@@ -1620,21 +1656,22 @@ if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() 
    ir ką gausi paspaudęs), su tekstu – rezultatai. Nuoroda „puslapis#go=…“ nuveda tiesiai prie lentelės ar grafiko. */
 const SECTIONS = [
   { id: 'home', icon: 'index', pages: ['index', 'review', 'ops'] },
-  { id: 'results', icon: 'performance', pages: ['performance', 'performance3', 'pillar3', 'overview'] },
-  { id: 'mgr', icon: 'manager', pages: ['manager'] },
+  { id: 'facts', icon: 'facts', pages: ['facts'] },
+  { id: 'results', icon: 'performance', pages: ['performance', 'pillar3'] },
+  { id: 'mgr', icon: 'manager', pages: ['managers', 'manager'] },
   { id: 'pf', icon: 'portfolios', pages: ['portfolios', 'aum'] },
   { id: 'rep', icon: 'reports', pages: ['reports'] },
   { id: 'jr', icon: 'journey', pages: ['journey'] },
   { id: 'baltic', icon: 'baltic', pages: ['baltic'] },
 ];
 addStrings({
-  secNav: { home: 'Home', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', about: 'About', help: 'Help' },
-  subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III categories', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic states' },
+  secNav: { home: 'Home', facts: 'Market facts', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', about: 'About', help: 'Help' },
+  subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III', facts: 'Market facts', managers: 'Managers', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic states' },
   navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
   qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding', n: 'Article' }, qNews: q => `All articles with “${q}” →`, qHint: 'Tip: press / to search',
 }, {
-  secNav: { home: 'Pradžia', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', about: 'Apie', help: 'Pagalba' },
-  subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopos kategorijos', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalys' },
+  secNav: { home: 'Pradžia', facts: 'Rinkos faktai', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', about: 'Apie', help: 'Pagalba' },
+  subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopa', facts: 'Rinkos faktai', managers: 'Valdytojai', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalys' },
   navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',
   qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija', n: 'Straipsnis' }, qNews: q => `Visi straipsniai su „${q}“ →`, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
 });
