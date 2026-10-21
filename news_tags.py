@@ -10,7 +10,7 @@ import re
 ACTORS = [
     # Lietuva – institucijos
     ("sodra", "inst", "LT", r"\bsodr", "Sodra", "Sodra"),
-    ("sadm", "inst", "LT", r"socialinės apsaugos ir darbo minist|\bSADM\b|socialinės apsaugos minist", "Socialinės apsaugos ir darbo ministerija", "Ministry of Social Security and Labour"),
+    ("sadm", "inst", "LT", r"socialinės apsaugos ir darbo minist|(?-i:\bSADM\b)|socialinės apsaugos minist", "Socialinės apsaugos ir darbo ministerija", "Ministry of Social Security and Labour"),
     ("finmin", "inst", "LT", r"finansų minist", "Finansų ministerija", "Ministry of Finance (LT)"),
     ("seimas", "inst", "LT", r"\bseim", "Seimas", "Seimas (parliament)"),
     ("lrv", "inst", "LT", r"vyriausyb|premjer|ministr\w* pirminink", "Vyriausybė", "Government (LT)"),
@@ -18,15 +18,15 @@ ACTORS = [
     ("lb", "inst", "LT", r"lietuvos bank|centrin\w* bank", "Lietuvos bankas", "Bank of Lithuania"),
     ("kt", "inst", "LT", r"konstitucin\w* teism", "Konstitucinis Teismas", "Constitutional Court (LT)"),
     # Lietuva – organizacijos
-    ("lipfa", "org", "LT", r"\bLIPFA\b|investicinių ir pensijų fondų asociacij", "LIPFA", "LIPFA (fund association)"),
+    ("lipfa", "org", "LT", r"(?-i:\bLIPFA\b)|investicinių ir pensijų fondų asociacij", "LIPFA", "LIPFA (fund association)"),
     ("unions", "org", "LT", r"profsąjung", "Profesinės sąjungos", "Trade unions (LT)"),
-    ("biz", "org", "LT", r"pramonininkų konfederacij|\bLPK\b|verslo konfederacij|darbdavių konfederacij|investuotojų asociacij", "Verslo organizacijos", "Business associations (LT)"),
+    ("biz", "org", "LT", r"pramonininkų konfederacij|(?-i:\bLPK\b)|verslo konfederacij|darbdavių konfederacij|investuotojų asociacij", "Verslo organizacijos", "Business associations (LT)"),
     ("seniors", "org", "LT", r"pensininkų (sąjung|partij|organizac)|senjorų", "Pensininkų organizacijos", "Pensioner organisations"),
     # Lietuva – partijos
-    ("lsdp", "party", "LT", r"socialdemokrat|\bLSDP\b", "Socialdemokratai (LSDP)", "Social Democrats (LSDP)"),
-    ("tslkd", "party", "LT", r"konservator|\bTS-LKD\b|tėvynės sąjung", "Konservatoriai (TS-LKD)", "Conservatives (TS-LKD)"),
+    ("lsdp", "party", "LT", r"socialdemokrat|(?-i:\bLSDP\b)", "Socialdemokratai (LSDP)", "Social Democrats (LSDP)"),
+    ("tslkd", "party", "LT", r"konservator|(?-i:\bTS-LKD\b)|tėvynės sąjung", "Konservatoriai (TS-LKD)", "Conservatives (TS-LKD)"),
     ("ls", "party", "LT", r"liberalų sąjūd|\bliberal(ai|ų|ams)\b", "Liberalų sąjūdis", "Liberal Movement"),
-    ("lvzs", "party", "LT", r"valstieč|\bLVŽS\b|žaliųjų sąjung", "Valstiečiai (LVŽS)", "Farmers and Greens (LVŽS)"),
+    ("lvzs", "party", "LT", r"valstieč|(?-i:\bLVŽS\b)|žaliųjų sąjung", "Valstiečiai (LVŽS)", "Farmers and Greens (LVŽS)"),
     ("na", "party", "LT", r"nemuno auš", "Nemuno aušra", "Dawn of Nemunas"),
     ("dvl", "party", "LT", r"vardan lietuvos|\bdemokrat(ai|ų|ams)\b", "Demokratai „Vardan Lietuvos“", "Democrats “For Lithuania”"),
     ("lp", "party", "LT", r"laisvės partij|laisviet", "Laisvės partija", "Freedom Party"),
@@ -50,32 +50,32 @@ ACTORS = [
     ("riigikohus", "inst", "EE", r"riigikoh|õiguskantsl", "Riigikohus, kancleris", "Supreme Court, Chancellor (EE)"),
     ("reform", "party", "EE", r"reformierak", "Reformų partija (EE)", "Reform Party (EE)"),
     ("isamaa", "party", "EE", r"\bisamaa", "Isamaa (EE)", "Isamaa (EE)"),
-    ("ekre", "party", "EE", r"\bEKRE\b|konservatiivne rahvaerakond", "EKRE (EE)", "EKRE (EE)"),
+    ("ekre", "party", "EE", r"(?-i:\bEKRE\b)|konservatiivne rahvaerakond", "EKRE (EE)", "EKRE (EE)"),
     ("kesk", "party", "EE", r"keskerak", "Centro partija (EE)", "Centre Party (EE)"),
-    ("sde", "party", "EE", r"sotsiaaldemokraa|\bSDE\b", "Socialdemokratai (EE)", "Social Democrats (EE)"),
+    ("sde", "party", "EE", r"sotsiaaldemokraa|(?-i:\bSDE\b)", "Socialdemokratai (EE)", "Social Democrats (EE)"),
     ("e200", "party", "EE", r"eesti 200", "Eesti 200", "Eesti 200"),
     # Latvija
     ("saeima", "inst", "LV", r"saeim", "Saeima (LV parlamentas)", "Saeima (parliament)"),
     ("lv_gov", "inst", "LV", r"valdīb|ministru prezident|premjer", "Latvijos vyriausybė", "Government (LV)"),
     ("lv_lm", "inst", "LV", r"labklājības minist", "Latvijos gerovės ministerija", "Ministry of Welfare (LV)"),
     ("lv_fm", "inst", "LV", r"finanšu minist", "Latvijos finansų ministerija", "Ministry of Finance (LV)"),
-    ("vsaa", "inst", "LV", r"\bVSAA\b|sociālās apdrošināšanas aģentūr", "VSAA (LV Sodra)", "VSAA (social insurance)"),
+    ("vsaa", "inst", "LV", r"(?-i:\bVSAA\b)|sociālās apdrošināšanas aģentūr", "VSAA (LV Sodra)", "VSAA (social insurance)"),
     ("lvbank", "inst", "LV", r"latvijas bank", "Latvijas Banka", "Bank of Latvia"),
     ("fna", "org", "LV", r"finanšu nozares asociācij", "Finanšu nozares asociācija", "Finance Latvia Association"),
-    ("jv", "party", "LV", r"jaunā vienotība|jaunās vienotības|\bJV\b", "Jaunā Vienotība (LV)", "New Unity (LV)"),
-    ("zzs", "party", "LV", r"\bZZS\b|zaļo un zemnieku", "ZZS (LV)", "Greens and Farmers (LV)"),
+    ("jv", "party", "LV", r"jaunā vienotība|jaunās vienotības|(?-i:\bJV\b)", "Jaunā Vienotība (LV)", "New Unity (LV)"),
+    ("zzs", "party", "LV", r"(?-i:\bZZS\b)|zaļo un zemnieku", "ZZS (LV)", "Greens and Farmers (LV)"),
     ("lv_na", "party", "LV", r"nacionālā apvienība|nacionālās apvienības", "Nacionālā apvienība (LV)", "National Alliance (LV)"),
     ("prog", "party", "LV", r"progresīv", "Progresīvie (LV)", "Progressives (LV)"),
-    ("lpv", "party", "LV", r"latvija pirmajā vietā|\bLPV\b", "Latvija pirmajā vietā", "Latvia First"),
+    ("lpv", "party", "LV", r"latvija pirmajā vietā|(?-i:\bLPV\b)", "Latvija pirmajā vietā", "Latvia First"),
     # fondų valdytojai (visos šalys)
-    ("SEB", "mgr", "", r"\bSEB\b", "SEB", "SEB"), ("Swedbank", "mgr", "", r"\bswedbank", "Swedbank", "Swedbank"),
+    ("SEB", "mgr", "", r"(?-i:\bSEB\b)", "SEB", "SEB"), ("Swedbank", "mgr", "", r"\bswedbank", "Swedbank", "Swedbank"),
     ("Luminor", "mgr", "", r"\bluminor", "Luminor", "Luminor"), ("Allianz", "mgr", "", r"\ballianz", "Allianz", "Allianz"),
     ("Artea", "mgr", "", r"\bartea", "Artea", "Artea"), ("Goindex", "mgr", "", r"\bgoindex", "Goindex", "Goindex"),
-    ("INVL", "mgr", "", r"\bINVL\b", "INVL", "INVL"), ("LHV", "mgr", "", r"\bLHV\b", "LHV", "LHV"),
+    ("INVL", "mgr", "", r"(?-i:\bINVL\b)", "INVL", "INVL"), ("LHV", "mgr", "", r"(?-i:\bLHV\b)", "LHV", "LHV"),
     ("Tuleva", "mgr", "", r"\btuleva", "Tuleva", "Tuleva"), ("Citadele", "mgr", "", r"\bcitadel", "Citadele", "Citadele"),
-    ("Indexo", "mgr", "", r"\bindexo", "Indexo", "Indexo"), ("CBL", "mgr", "", r"\bCBL\b", "CBL", "CBL"),
+    ("Indexo", "mgr", "", r"\bindexo", "Indexo", "Indexo"), ("CBL", "mgr", "", r"(?-i:\bCBL\b)", "CBL", "CBL"),
 ]
-_RX = [(a[0], a[2], re.compile(a[3], re.I if a[0] not in ("lb", "SEB", "INVL", "LHV", "CBL", "jv", "lpv", "ekre", "sde", "ZZS") else 0)) for a in ACTORS]
+_RX = [(a[0], a[2], re.compile(a[3], re.I)) for a in ACTORS]          # santrumpos – (?-i:…), skiria didžiąsias raides
 SOURCE_ACTOR = {"LIPFA": "lipfa", "Finansų ministerija": "finmin", "Vyriausybė": "lrv", "SADM": "sadm", "Riigikogu": "riigikogu", "Tuleva": "Tuleva", "Seimas": "seimas"}
 
 

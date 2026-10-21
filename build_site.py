@@ -3,6 +3,7 @@
 Sugeneruoja statinę svetainę (docs/) iš data/nav_history.csv ir site/ failų (puslapiai + bendras kodas); duomenys – docs/data.js.
 Paleidžiama po kiekvieno duomenų atnaujinimo (žr. .github/workflows/update.yml).
 """
+import news_tags
 import csv
 import json
 import re
@@ -666,7 +667,7 @@ def pf_iii_categories() -> None:
 def build_search_index() -> None:
     """Paieškos rodyklė (docs/data_search.js, kraunama tik atidarius paiešką): visi fondai (II ir III pakopa) ir visos
     naujausio ketvirčio portfelių investicijos – kad paieška rastų „Amundi“, „Gold“, ISIN ar fondo pavadinimą.
-    Įrašas: fondui [„f“, pavadinimas, pakopa, grupė / kategorija, nuoroda, žodžiai]; investicijai [„s“, pavadinimas, rūšis, valdytojai,
+    Įrašas: straipsniui [„n“, antraštė, data, šalis, nuoroda, leidinys, žodžiai]; fondui [„f“, pavadinimas, pakopa, grupė / kategorija, nuoroda, žodžiai]; investicijai [„s“, pavadinimas, rūšis, valdytojai,
     didžiausia dalis fonde %, nuoroda, žodžiai] – tekstas abiem kalbomis sudaromas svetainėje (common.js)."""
     def load(name, var):
         t = (DOCS / name).read_text(encoding="utf-8")
@@ -700,6 +701,12 @@ def build_search_index() -> None:
         theme = a[7] if a else ""
         kw = " ".join(filter(None, [isin, s[0] if full else "", "gold auksas" if theme == "gold" else theme, types.get(s[1], ""), s[2]]))
         out.append(["s", full or name, s[1], sorted(h["p"]), round(h["w"], 1), f"portfolios.html#pos={si}", kw])
+    nf = ROOT / "data" / "news.csv"                 # naujienų straipsniai (savininkas 2026-10-21: paieška turi rasti ir straipsnius)
+    if nf.exists():
+        with nf.open(encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                au = r.get("article_url") or ""
+                out.append(["n", r["title"], r["date"], r["country"], au if au.startswith("http") else r["url"], r["source"], (r["summary"] or "")[:160] + " " + r["topics"].replace(";", " ")])
     (DOCS / "data_search.js").write_text("var QIDX=" + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     print(f"docs/data_search.js: {len(out)} įrašų")
 
@@ -723,9 +730,16 @@ def build_market() -> None:
     news = []                           # naujienų archyvas (tools/fetch_news.py) – naujausi pirmi
     if (ROOT / "data" / "news.csv").exists():
         with (ROOT / "data" / "news.csv").open(encoding="utf-8") as fh:
-            news = [[r["date"], r["country"], r["source"], r["title"], r["summary"], r["url"], r["topics"]] for r in csv.DictReader(fh)]
+            news = [[r["date"], r["country"], r["source"], r["title"], r["summary"], r.get("article_url") if (r.get("article_url") or "").startswith("http") else r["url"],
+                     r["topics"], news_tags.actors(r["title"], r["summary"], r["country"], r["source"])] for r in csv.DictReader(fh)]
     news.sort(key=lambda r: r[0], reverse=True)
-    (DOCS / "data_news.js").write_text("const NEWS=" + json.dumps(news, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    seimas = []                         # Seimo darbotvarkių pensijų klausimai (tools/fetch_seimas.py)
+    if (ROOT / "data" / "seimas.csv").exists():
+        with (ROOT / "data" / "seimas.csv").open(encoding="utf-8") as fh:
+            seimas = [[r["date"], r["title"], r["stage"], r["project"], r["category"], r["doc_url"], r["speakers"]] for r in csv.DictReader(fh)]
+    (DOCS / "data_news.js").write_text("const NEWS=" + json.dumps(news, ensure_ascii=False, separators=(",", ":")) + ";\nconst NEWS_ACT="
+                                        + json.dumps(news_tags.table(), ensure_ascii=False, separators=(",", ":")) + ";\nconst SEIMAS="
+                                        + json.dumps(seimas, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     text = (DOCS / "index.html").read_text(encoding="utf-8")
     for n in ("data_mkt.js", "mkt.js", "data_earn.js", "earn.js", "data_news.js", "news.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]}"')

@@ -119,6 +119,15 @@
   .nwc h3 { margin: 3px 0 4px; font-size: 15.5px; line-height: 1.35; } .nwc h3 a { color: var(--text); text-decoration: none; } .nwc h3 a:hover { text-decoration: underline; }
   .nwc p { margin: 0 0 6px; font-size: 13.5px; color: var(--text-2); line-height: 1.5; } .nwc .tags { display: flex; flex-wrap: wrap; gap: 4px; } .nwc .tags .chip { font-size: 11.5px; padding: 1px 7px; }
   .nwc .flag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: var(--hover); color: var(--text-2); }
+  .nwins { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; } .nwi { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+  .nwi p { margin: 0; font-size: 14px; line-height: 1.5; } .nwi .btn { padding: 2px 9px; font-size: 12px; margin-right: 6px; }
+  .nwtl svg { width: 100%; height: auto; display: block; } .nwep:hover { stroke: var(--text); stroke-width: 2; }
+  .nwwave { margin-top: 10px; border-top: 2px solid var(--line); padding-top: 8px; } .nwwave .hd { font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; } .nwwave .btn { padding: 2px 9px; font-size: 12px; }
+  .nwmxw { overflow-x: auto; max-width: 100%; } table.nwmx { border-collapse: collapse; font-size: 12.5px; } .nwmx th, .nwmx td { padding: 4px 7px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; } .nwmx tbody th { text-align: left; font-weight: 500; }
+  .nwmx tbody tr { cursor: pointer; } .nwmx tbody tr:hover th, .nwmx tr.on th { color: var(--accent, #2b8de0); text-decoration: underline; }
+  .nwc .tags .chip.ac { border-style: dashed; } .nwc mark { background: color-mix(in srgb, #f0b429 35%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+  .nwbar .sep { width: 1px; background: var(--line); margin: 0 4px; } .nwd { font-size: 12.5px; color: var(--text-2); } .nwd input { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 6px; padding: 3px 6px; }
+  .nwst { font-size: 12.5px !important; } h3.sub { font-size: 13.5px; font-weight: 600; color: var(--text-2); margin: 4px 0; }
   #tdNews:empty { display: none; }
 </style>
 </head>
@@ -228,7 +237,7 @@
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
    Valdytojo metų grąža = jo 7 gyvenimo ciklo fondų grąžų vidurkis (kaip „Rezultatų“ lentelės eilutė „Vidurkis“);
    papildomai – svertinis pagal fondų paskutinius grynuosius aktyvus (eilutė „Svertinis pagal aktyvus“). */
-if (location.hash.length > 1) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“
+if (location.hash.length > 1 && !/^#(go|nwq)=/.test(location.hash)) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“ (#go= – paieškos nuorodos į Pradžios skirtukus)
 addStrings({
   refL: 'Reference manager:', refNone: 'not chosen', refNote: 'Without a choice, each manager is compared with the median of the others.',
   per: { d: 'Day', w: 'Week', mtd: 'Month', qtd: 'Quarter', ytd: 'Year' }, perN: (a, b) => `${a} → ${b}`, perTip: { d: 'Change over the last data day', w: 'Last 7 days', mtd: 'Since the end of the previous month', qtd: 'Since the end of the previous quarter', ytd: 'Since 31 December' },

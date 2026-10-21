@@ -138,13 +138,20 @@ jobs:
       - name: Pension news
         if: always()
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 7
         run: python -u tools/fetch_news.py
+
+      # Ką svarsto Seimas: posėdžių darbotvarkių pensijų klausimai (atviri LRS duomenys) -> data/seimas.csv (tik papildoma)
+      - name: Seimas agenda
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python -u tools/fetch_seimas.py
 
       - name: Build website (only if data changed)
         if: always()
         run: |
-          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv data/lb_results_history.csv data/baltic_ee.csv data/baltic_lv_index.csv data/baltic_lv_plans.csv data/news.csv \
+          if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv data/lb_results_history.csv data/baltic_ee.csv data/baltic_lv_index.csv data/baltic_lv_plans.csv data/news.csv data/seimas.csv \
              && [ -z "$(git status --porcelain -- imports/lb_results imports/lb_portfolios imports/lb_fees)" ]; then
             echo "Duomenys nepasikeitė – svetainės nekeičiame."
           else
@@ -217,6 +224,7 @@ jobs:
           if [ -f data/lb_results_history.csv ]; then git add data/lb_results_history.csv; fi
           git add data/baltic_*.csv 2>/dev/null || true
           git add data/news.csv 2>/dev/null || true
+          git add data/seimas.csv 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Nėra pakeitimų."
           else

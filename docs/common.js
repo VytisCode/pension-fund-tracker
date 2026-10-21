@@ -1631,12 +1631,12 @@ addStrings({
   secNav: { home: 'Home', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', about: 'About', help: 'Help' },
   subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III categories', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic states' },
   navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
-  qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding' }, qHint: 'Tip: press / to search',
+  qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding', n: 'Article' }, qNews: q => `All articles with “${q}” →`, qHint: 'Tip: press / to search',
 }, {
   secNav: { home: 'Pradžia', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', about: 'Apie', help: 'Pagalba' },
   subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopos kategorijos', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalys' },
   navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',
-  qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija' }, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
+  qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija', n: 'Straipsnis' }, qNews: q => `Visi straipsniai su „${q}“ →`, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
 });
 // [skyrius, puslapis, go (id arba antraštės pradžia), rūšis, Excel, LT pavadinimas, LT – ką pamatysi, EN pavadinimas, EN aprašymas, papildomi žodžiai]
 const CATALOG = [
@@ -1706,7 +1706,8 @@ function catalogItems() {
   if (typeof QIDX !== 'undefined') {           // fondai ir naujausio ketvirčio investicijos (data_search.js)
     const cat = { bond: L ? 'obligacijų' : 'bond', mixed: L ? 'mišraus investavimo' : 'mixed', equity: L ? 'akcijų' : 'equity' }, ty = { e: L ? 'Akcija' : 'Stock', b: L ? 'Obligacija' : 'Bond', f: L ? 'Fondas / ETF' : 'Fund / ETF' };
     QIDX.forEach(r => {
-      if (r[0] === 'f') out.push({ s: 'mgr', url: r[4], k: 'f', xl: true, t: r[1], d: r[2] === 'II' ? (L ? `II pakopos fondas · grupė ${r[3]}` : `Pillar II fund · group ${r[3]}`) : (L ? `III pakopos ${cat[r[3]] || ''} fondas` : `Pillar III ${cat[r[3]] || ''} fund`), kw: r[5], sub: true });
+      if (r[0] === 'n') out.push({ s: 'home', url: r[4], k: 'n', xl: false, t: r[1], d: `${r[2]} · ${r[3]} · ${r[5]}`, kw: r[6], sub: true, news: true, ext: true, date: r[2] });
+      else if (r[0] === 'f') out.push({ s: 'mgr', url: r[4], k: 'f', xl: true, t: r[1], d: r[2] === 'II' ? (L ? `II pakopos fondas · grupė ${r[3]}` : `Pillar II fund · group ${r[3]}`) : (L ? `III pakopos ${cat[r[3]] || ''} fondas` : `Pillar III ${cat[r[3]] || ''} fund`), kw: r[5], sub: true });
       else out.push({ s: 'pf', url: r[5], k: 's', xl: false, t: r[1], d: `${ty[r[2]] || ''} · ${L ? 'laiko' : 'held by'}: ${r[3].join(', ')} · ${L ? 'iki' : 'up to'} ${num(r[4], 1)} % ${L ? 'fondo' : 'of a fund'}`, kw: r[6], sub: true, sec: true });
     });
   }
@@ -1719,20 +1720,21 @@ function qSearch(q) {
     const tt = qNorm(it.t), hay = qNorm(`${it.t} ${it.d} ${it.kw} ${T_.secNav[it.s] || ''}`);
     if (!toks.every(x => hay.includes(x))) return null;
     const ws = tt.split(' ');
-    let sc = toks.reduce((a, x) => a + (ws.includes(x) ? 3 : 0) + (tt.startsWith(x) ? 6 : ws.some(w => w.startsWith(x)) ? 4 : tt.includes(x) ? 3 : 1), 0) - (it.term ? 1.5 : 0) - (it.sec ? 2 : it.sub ? 1 : 0);
+    let sc = toks.reduce((a, x) => a + (ws.includes(x) ? 3 : 0) + (tt.startsWith(x) ? 6 : ws.some(w => w.startsWith(x)) ? 4 : tt.includes(x) ? 3 : 1), 0) - (it.term ? 1.5 : 0) - (it.news ? 2.5 : it.sec ? 2 : it.sub ? 1 : 0) + (it.news ? (it.date > '2026' ? 0.4 : 0) : 0);
     return { it, sc };
-  }).filter(Boolean).sort((a, b) => b.sc - a.sc).filter((x, i, a) => !x.it.sec || a.slice(0, i).filter(y => y.it.sec).length < 8).slice(0, 14).map(x => x.it);
+  }).filter(Boolean).sort((a, b) => b.sc - a.sc).filter((x, i, a) => (!x.it.sec || a.slice(0, i).filter(y => y.it.sec).length < 8) && (!x.it.news || a.slice(0, i).filter(y => y.it.news).length < 5)).slice(0, 16).map(x => x.it);
 }
 function searchUI() {
   const box = document.getElementById('q'), pn = document.getElementById('qPanel'); if (!box) return;
   let cat = (SECTIONS.find(s => s.pages.includes(document.body.dataset.page)) || SECTIONS[1]).id, sel = 0, list = [];
   const kind = it => `<span class="qk">${T().qKind[it.k] || ''}</span>${it.xl ? '<span class="qx">Excel</span>' : ''}`;
-  const row = (it, i) => `<a class="qi${i === sel ? ' on' : ''}" href="${it.url}" data-i="${i}"><span class="qt">${hEsc(it.t)} ${kind(it)}</span><span class="qd">${hEsc(it.d)}</span><span class="qs">${hEsc(T().secNav[it.s] || '')}</span></a>`;
+  const row = (it, i) => `<a class="qi${i === sel ? ' on' : ''}" href="${hEsc(it.url)}" data-i="${i}"${it.ext ? ' target="_blank" rel="noopener noreferrer"' : ''}><span class="qt">${hEsc(it.t)} ${kind(it)}</span><span class="qd">${hEsc(it.d)}</span><span class="qs">${hEsc(T().secNav[it.s] || '')}</span></a>`;
   const draw = () => {
     const t = T(), q = box.value.trim();
     if (q) {
       list = qSearch(q);
-      pn.innerHTML = `<div class="qres"><div class="qh">${hEsc(t.qFound(q))}</div>${list.length ? list.map(row).join('') : `<p class="qnone">${t.qNone}</p>`}</div>`;
+      const nws = list.some(x => x.news) ? `<a class="qi qmore" href="index.html#go=nwTitle&nwq=${encodeURIComponent(q)}"><span class="qt">${hEsc(t.qNews(q))}</span></a>` : '';
+      pn.innerHTML = `<div class="qres"><div class="qh">${hEsc(t.qFound(q))}</div>${list.length ? list.map(row).join('') + nws : `<p class="qnone">${t.qNone}</p>`}</div>`;
     } else {
       const all = catalogItems().filter(x => !x.term && !x.sub), secs = [...SECTIONS.map(s => s.id), 'help'];
       list = all.filter(x => x.s === cat);
@@ -1750,7 +1752,7 @@ function searchUI() {
   box.addEventListener('keydown', e => {
     if (e.key === 'Escape') { box.blur(); show(false); }
     else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, Math.min(list.length - 1, sel + (e.key === 'ArrowDown' ? 1 : -1))); draw(); }
-    else if (e.key === 'Enter' && list[sel]) { location.href = list[sel].url; show(false); }
+    else if (e.key === 'Enter' && list[sel]) { if (list[sel].ext) open(list[sel].url, '_blank', 'noopener'); else location.href = list[sel].url; show(false); }
   });
   document.addEventListener('click', e => { if (!e.target.closest('.srch')) show(false); });
   document.addEventListener('keydown', e => { if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); box.focus(); } });
