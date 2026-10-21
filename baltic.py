@@ -86,10 +86,15 @@ def ee_funds():
         if r["nav"]:
             ser[k].append((day(r["date"]), float(r["nav"])))
         last[k] = r
+    top = defaultdict(lambda: defaultdict(list))              # 10 didžiausių investicijų (tools/fetch_ee_reports.py), naujausias mėnuo
+    if (D / "ee_holdings.csv").exists():
+        for r in csv.DictReader((D / "ee_holdings.csv").open(encoding="utf-8")):
+            top[(r["pillar"], r["fund_id"])][r["date"]].append((int(r["rank"]), r["name"], float(r["weight"])))
     out = []
     for k, m in meta.items():
         if not ser.get(k):
             continue
+        tq = max(top[k]) if top.get(k) else None
         s = snap.get((k[0], m["fund"].strip()), {})
         pts = weekly(ser[k])
         mgr = next((p for p in EE_PROV if m["fund"].lower().startswith(p.lower())), m["fund"].split()[0])
@@ -98,6 +103,7 @@ def ee_funds():
                     "fee": fnum(s.get("ter")), "feeK": "ter", "eq": None,
                     "na": round(float(lr["net_assets"]) / 1e6, 3) if lr.get("net_assets") else None,
                     "inv": int(lr["investors"]) if lr.get("investors") else None, "start": m["first"],
+                    "top": [[n, w] for _, n, w in sorted(top[k][tq])] if tq else None, "topQ": tq,
                     "cg": None, "vol": vol3(weekly(ser[k], 0)), "pts": pts})
     return out
 
