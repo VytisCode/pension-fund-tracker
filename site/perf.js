@@ -378,22 +378,37 @@ function mkBuild() {
   const last = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1])));
   const brandOf = id => DATA.providers.find(p => p.id === id), first = {}, reps = [];
   DATA.providers.forEach(p => { const k = p.m || p.brand; if (!first[k]) { first[k] = p; reps.push(p); } });
-  const groups = DATA.groups.map(g => {
+  const keyOf = f => { const pr = brandOf(f.provider); return pr.m || pr.brand; };
+  const big = DATA.groups.map(g => {                    // „Didžiausias fondas“: vienas valdytojo fondas grupėje
     const pick = {};
-    g.funds.forEach(f => { const pr = brandOf(f.provider), k = pr.m || pr.brand, alive = !isStale(f, last), sc = (alive ? 1e15 : 0) + (f.assets || 0);
+    g.funds.forEach(f => { const k = keyOf(f), alive = !isStale(f, last), sc = (alive ? 1e15 : 0) + (f.assets || 0);
       if (!pick[k] || sc > pick[k].sc) pick[k] = { f, sc }; });
     return { ...g, funds: Object.entries(pick).map(([k, x]) => ({ ...x.f, provider: first[k].id })) };
   });
-  return { reps: reps.filter(p => groups.some(g => g.funds.some(f => f.provider === p.id))), groups };
+  const all = DATA.groups.map(g => {                    // „Visi fondai“: visi valdytojo fondai grupėje (retOf – svertinis vidurkis pagal turtą)
+    const by = {};
+    g.funds.forEach(f => { (by[keyOf(f)] = by[keyOf(f)] || []).push(f); });
+    return { ...g, funds: Object.entries(by).flatMap(([k, fs]) => {
+      const live = fs.filter(f => !isStale(f, last)), tot = live.reduce((s, f) => s + (f.assets || 0), 0);
+      return fs.slice().sort((a, b) => a.d[0] - b.d[0]).map((f, i) => ({ ...f, provider: first[k].id, _a: f.assets, assets: i ? f.assets : tot || f.assets })); }) };
+  });
+  return { reps: reps.filter(p => big.some(g => g.funds.some(f => f.provider === p.id))), big, all, mode: (() => { try { return localStorage.getItem('bxMkMode') || 'all'; } catch (e) { return 'all'; } })() };
 }
 function mkSwap(on) {                                 // valdytojų vaizdas: grupės ir stulpelių pavadinimai
-  if (on) { MK.G = DATA.groups; MK.L = MK.reps.map(p => p.label); DATA.groups = MK.groups; MK.reps.forEach(p => { p.label = p.m || p.label; }); }
+  if (on) { MK.G = DATA.groups; MK.L = MK.reps.map(p => p.label); DATA.groups = MK.mode === 'all' ? MK.all : MK.big; MK.reps.forEach(p => { p.label = p.m || p.label; }); }
   else { DATA.groups = MK.G; MK.reps.forEach((p, i) => { p.label = MK.L[i]; }); }
   MK_ON = on;
 }
 function withMk(fn) { if (!MK || MK_ON) return fn(); mkSwap(true); try { return fn(); } finally { mkSwap(false); } }
 async function withMkA(fn) { if (!MK || MK_ON) return fn(); mkSwap(true); try { return await fn(); } finally { mkSwap(false); } }
-const retOf = (g, pid, rng) => { const f = g.funds.find(x => x.provider === pid); if (!f || isStale(f, rng.overallLast)) return null; const s = seriesOf(f, rng.anchor, rng.end); return s ? s.ret : null; };
+const retOf = (g, pid, rng) => {
+  if (MK_ON && MK.mode === 'all') {                     // LV/EE „Visi fondai“: valdytojo veikiančių fondų grąžų vidurkis, svoriai – grynieji aktyvai (jų nėra – lygūs)
+    const xs = g.funds.filter(x => x.provider === pid && !isStale(x, rng.overallLast)).map(x => { const s = seriesOf(x, rng.anchor, rng.end); return s ? [s.ret, x._a] : null; }).filter(Boolean);
+    if (!xs.length) return null;
+    const w = xs.every(x => x[1] > 0) ? xs.map(x => x[1]) : xs.map(() => 1), W = w.reduce((a, b) => a + b, 0);
+    return xs.reduce((a, x, i) => a + x[0] * w[i], 0) / W;
+  }
+  const f = g.funds.find(x => x.provider === pid); if (!f || isStale(f, rng.overallLast)) return null; const s = seriesOf(f, rng.anchor, rng.end); return s ? s.ret : null; };
 const fmtP = (v, p = 1) => pct(v, p);
 
 /* ---------- 0. automatinė santrauka ---------- */
@@ -559,7 +574,8 @@ function renderOverall() {
   DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, top2: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
-    if (n < 3 || (P.ovCommon && n < DATA.providers.length)) return;
+    const all = MK_ON ? marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).length : DATA.providers.length;   // LV/EE – visi tos grupės valdytojai
+    if (n < 3 || (P.ovCommon && n < all)) return;
     map.forEach((rank, id) => { const s = st[id]; s.cmp++; s.rs += rank; if (rank === 1) s.first++; if (rank <= 2) s.top2++; });
   }));
   const list = DATA.providers.filter(p => st[p.id].cmp).map(p => ({ id: p.id, ...st[p.id], avg: st[p.id].rs / st[p.id].cmp })).sort((a, b) => a.avg - b.avg);
@@ -1490,13 +1506,23 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
     $('btnGx').style.display = 'none';
     const nO = MK.reps.length - 1, wO = n => ({ 2: ['two', 'dviejų'], 3: ['three', 'trijų'], 4: ['four', 'keturių'], 5: ['five', 'penkių'], 6: ['six', 'šešių'] })[n] || [n, n];
     addStrings({ mrefNone: `each vs. median of the other ${wO(nO)[0]}` }, { mrefNone: `kiekvienas – su kitų ${wO(nO)[1]} mediana` });
-    addStrings({ hMarket: 'Whole market: return and rank by group', mkNote: 'Column = manager; where a manager has several funds in a group, its largest active fund (by net assets) is shown.' },
-      { hMarket: 'Visa rinka: grąža ir vieta pagal grupes', mkNote: 'Stulpelis – valdytojas; kai valdytojas grupėje turi kelis fondus, rodomas didžiausias veikiantis (pagal grynuosius aktyvus).' });
+    addStrings({ hMarket: 'Whole market: return and rank by group', mkAll: 'All manager’s funds', mkBig: 'Largest fund', mkXl: 'Excel with formulas – in the “Largest fund” view',
+      mkNote: { all: 'Column = manager; cell = asset-weighted average return of all the manager’s active funds in the group (equal weights where assets are unknown), so the whole market is covered.', big: 'Column = manager; cell = the manager’s largest active fund in the group (by net assets).' } },
+      { hMarket: 'Visa rinka: grąža ir vieta pagal grupes', mkAll: 'Visi valdytojo fondai', mkBig: 'Didžiausias fondas', mkXl: 'Excel su formulėmis – „Didžiausias fondas“ vaizde',
+      mkNote: { all: 'Stulpelis – valdytojas; langelis – visų jo veikiančių fondų grupėje grąžų vidurkis, svertinis pagal grynuosius aktyvus (kur turto duomenų nėra – lygūs svoriai). Taip lentelėse matoma visa rinka.', big: 'Stulpelis – valdytojas; langelis – jo didžiausias veikiantis fondas grupėje (pagal grynuosius aktyvus).' } });
+    addStrings({ ovCommonOn: 'Only where all the group’s managers take part', ovCommonNote: 'Younger funds take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all the group’s managers take part” keeps just the comparisons in which every manager with a fund in that group has a result for the period.' },
+      { ovCommonOn: 'Tik kur dalyvauja visi grupės valdytojai', ovCommonNote: 'Jaunesni fondai dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi grupės valdytojai“ palieka tik tuos palyginimus, kuriuose rezultatą tam laikotarpiui turi kiekvienas valdytojas, turintis fondą toje grupėje.' });
+    const seg = document.createElement('div'); seg.className = 'seg'; seg.id = 'mkMode'; seg.setAttribute('role', 'group');
+    seg.innerHTML = '<button type="button" data-v="all"></button><button type="button" data-v="big"></button>';
+    $('btnGx').before(seg);
+    seg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MK.mode = b.dataset.v; try { localStorage.setItem('bxMkMode', MK.mode); } catch (er) {} renderMarket(); });
     const rm = renderMarket, ro = renderOverall, xm = exportMarketXlsx, ox = XLB.get('tOv');
-    renderMarket = () => withMk(() => { rm(); $('nMarket').textContent += ' ' + T().mkNote; });
+    renderMarket = () => withMk(() => { rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode];
+      $('mkMode').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === 'all' ? T().mkAll : T().mkBig; b.setAttribute('aria-pressed', String(b.dataset.v === MK.mode)); });
+      const xb = $('btnMxl'); xb.disabled = MK.mode === 'all'; if (MK.mode === 'all') xb.title = T().mkXl; });
     renderOverall = () => withMk(ro);
     exportMarketXlsx = () => withMkA(xm);
-    if (ox) XLB.set('tOv', () => withMkA(ox));
+    if (ox) XLB.set('tOv', async () => MK.mode === 'all' ? null : withMkA(ox));   // „Visi fondai“ – Excel tik su lentelės reikšmėmis
   }
   if (PX.c !== 'LT') { ['btnEvents', 'evInfo'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); P.events = false; }
 }

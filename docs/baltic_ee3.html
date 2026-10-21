@@ -129,13 +129,13 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data_bx_ee3.js?v=b8794305"></script><script>var PL3 = 1, PLX = {"c": "EE", "pl": "III", "page": "baltic_ee3", "ppy": 251.7, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_ee3.js?v=cd0bfe94"></script><script>var PL3 = 1, PLX = {"c": "EE", "pl": "III", "page": "baltic_ee3", "ppy": 251.7, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="data_idx.js?v=87f2e19d"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
 
 <script src="events.js?v=37e94529"></script>
 <script src="common.js?v=a467dfad"></script>
-<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {"f0|zz": 0.38, "f1|r1": 1.05, "f2|r2": 1.21, "f3|r2": 1.18, "f4|r2": 0.95, "f5|r2": 0.29, "f6|r2": 1.05, "f7|r3": 1.16, "f8|r3": 1.27, "f9|r3": 0.29, "f10|r4": 0.32, "f11|r4": 0.39, "f12|r4": 0.29, "f13|r4": 1.15, "f14|r4": 0.29, "f15|r4": 0.28}); }</script><script src="perf.js?v=65c089cf"></script>
+<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {"f0|zz": 0.38, "f1|r1": 1.05, "f2|r2": 1.21, "f3|r2": 1.18, "f4|r2": 0.95, "f5|r2": 0.29, "f6|r2": 1.05, "f7|r3": 1.16, "f8|r3": 1.27, "f9|r3": 0.29, "f10|r4": 0.32, "f11|r4": 0.39, "f12|r4": 0.29, "f13|r4": 1.15, "f14|r4": 0.29, "f15|r4": 0.28}); }</script><script src="perf.js?v=36ddf652"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');
