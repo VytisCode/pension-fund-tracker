@@ -709,11 +709,18 @@ def build_market() -> None:
     import market
 
     payload = market.build()
+    try:                                # „Uždarbis eurais“ (earnings.py); klaida neturi sustabdyti Pradžios puslapio
+        import earnings
+        (DOCS / "data_earn.js").write_text("const EARN=" + json.dumps(earnings.build(payload), ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    except Exception as e:
+        print("earnings: nepavyko:", e)
+        (DOCS / "data_earn.js").write_text("const EARN=null;\n", encoding="utf-8")
     data_js = "const MKT=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_mkt.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "mkt.js", DOCS / "mkt.js")
+    shutil.copyfile(SITE / "earn.js", DOCS / "earn.js")
     text = (DOCS / "index.html").read_text(encoding="utf-8")
-    for n in ("data_mkt.js", "mkt.js"):
+    for n in ("data_mkt.js", "mkt.js", "data_earn.js", "earn.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]}"')
     (DOCS / "index.html").write_text(text, encoding="utf-8")
     print(f"docs/data_mkt.js: {len(data_js) / 1024:.0f} KB, II ketv.: {len(payload['II']['dates'])}, III ketv.: {len(payload['III']['dates'])}")

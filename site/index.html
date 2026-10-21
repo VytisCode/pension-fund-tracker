@@ -106,6 +106,12 @@
   .up { color: var(--s5); } .down { color: #d0453f; }
   h3.gh { font-size: 15px; margin: 16px 0 6px; } h3.gh:first-child { margin-top: 0; }
   #mkSeg, #mgSeg { margin-bottom: 8px; }
+  .eubar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 10px; }
+  [data-tab="eu"].today { grid-template-columns: minmax(0, 1fr); } #euBody, #euBar { min-width: 0; }
+  .eubar .seg { max-width: 100%; overflow-x: auto; } .eubar .field { min-width: 0; max-width: 100%; }
+  .eubar select { max-width: min(320px, 100%); }
+  ul.eusay { margin: 0 0 14px; padding-left: 18px; } ul.eusay li { margin: 6px 0; line-height: 1.5; } ul.eusay .btn { padding: 2px 8px; font-size: 12px; margin-left: 4px; }
+  .eukp .kpi b { font-size: 19px; }
 </style>
 </head>
 <body>
@@ -136,6 +142,13 @@
     <p class="lead" id="mfLead"></p>
     <div id="mfBar"></div>
     <section class="card" data-src="nav"><div class="factbar"><button type="button" class="btn" data-all="mfCards" id="mfAll"></button><button type="button" class="btn xl" data-xall="mfCards" id="mfXl"></button></div><div class="facts" id="mfCards"></div><p class="note" id="mfNote"></p></section>
+  </div>
+
+  <div data-tab="eu" class="today">
+    <h2 class="sec" id="euTitle"></h2>
+    <p class="lead" id="euLead"></p>
+    <div id="euBar"></div>
+    <div id="euBody" data-src="nav"></div>
   </div>
 
   <div data-tab="pv" class="today">
@@ -189,6 +202,8 @@
 <script src="data_journey.js"></script>
 <script src="data_rep.js"></script>
 <script src="data_mkt.js"></script>
+<script src="data_earn.js"></script>
+<script src="earn.js"></script>
 <script src="mkt.js"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
