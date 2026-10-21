@@ -355,7 +355,8 @@ function bxTabs(c, pl) {
   const mk = c === 'LT' && pl === 'III' ? [] : [[pp, 'market', 'Visa rinka', 'Whole market']];   // LT III – valdytojų lentelių nėra
   return [b('ov', 'Apžvalga', 'Overview'), ...mk, b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
-    b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : [])];
+    b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : []),
+    ...(pl === 'II' && c !== 'LV' ? [['baltic', 'rf', 'Reformos: EE ir LT', 'Reforms: EE and LT', 'c=X&pl=II']] : [])];   // reformų palyginimas – „Šalių palyginime“, nuoroda ir iš LT/EE (savininkas 2026-10-21 ieškojo)
 }
 const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];
 function bxBar() {                        // šalies ir pakopos juosta (nuorodos): perjungus šalį lieka tas pats skirtukas
@@ -373,7 +374,8 @@ function groupTabs(pn) {
   const own = [...pn.querySelectorAll('a')], L = lang === 'lt';
   const ownFor = k => own.find(a => paneOf(pnTarget(a.dataset.id)) === k);
   const out = G.map(([p, k, lt, en, ex]) => {
-    if (p !== page) { const a = document.createElement('a'); a.href = `${p}.html${k ? '#tab=' + k : ''}${ex ? '&' + ex : ''}`; a.className = 'xt'; a.textContent = L ? lt : en; return a; }
+    // p === page su c=X – nuoroda į „Šalių palyginimą“ tame pačiame puslapyje
+    if (p !== page || (ex && ex.startsWith('c=X') && BXM.c !== 'X')) { const a = document.createElement('a'); a.href = `${p}.html${k ? '#tab=' + k : ''}${ex ? '&' + ex : ''}`; a.className = 'xt'; a.textContent = L ? lt : en; return a; }
     if (!k) { const a = document.createElement('a'); a.href = '#'; a.setAttribute('aria-current', 'true'); a.textContent = L ? lt : en; a.onclick = e => e.preventDefault(); return a; }
     const a = ownFor(k); if (a && page.startsWith('baltic')) a.textContent = L ? lt : en; return a;
   }).filter(Boolean);
