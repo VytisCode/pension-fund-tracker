@@ -1526,7 +1526,11 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
     $('btnGx').before(gl); $('btnGx').style.display = 'none';
     $('gxSel').addEventListener('change', e => { const v = e.target.value; P.gx = v !== 'off'; if (P.gx) MK.gxm = v; try { localStorage.setItem(STKEY + 'gxm', MK.gxm); } catch (er) {} saveState(); renderMarket(); });
     MK.gxUi = () => { gxLabels(); $('gxLbl').textContent = T().gxLbl;
-      $('gxSel').innerHTML = `<option value="off">${T().gxOff}</option><option value="common">${T().gxCommon}</option>` + MK.reps.map(p => `<option value="${p.id}">${T().gxOf(p.m || p.label)}</option>`).join('');
+      const R = { overallLast: LATEST }, span = xs => { xs = xs.filter(x => x != null); if (!xs.length) return null; const a = Math.min(...xs), b = Math.max(...xs); return { a, txt: a === b ? iso(a) : `${iso(a)}…${iso(b)}` }; };
+      const cm = span(DATA.groups.map(g => mkStart(g, R)));   // datos – kiekvienos grupės pradžia (skiriasi pagal grupę)
+      const ms = MK.reps.map(p => ({ p, s: span(DATA.groups.map(g => mkStartOf(g, p.id, R))) })).filter(x => x.s).sort((x, y) => x.s.a - y.s.a);   // nuo seniausio
+      $('gxSel').innerHTML = `<option value="off">${T().gxOff}</option><option value="common">${T().gxCommon}${cm ? ` (${cm.txt})` : ''}</option>`
+        + ms.map(({ p, s }) => `<option value="${p.id}">${T().gxOf(p.m || p.label)} (${s.txt})</option>`).join('');
       $('gxSel').value = P.gx ? MK.gxm : 'off'; };
     addStrings({ hMarket: 'Whole market: return and rank by group', mkAll: 'All manager’s funds', mkBig: 'Largest fund', mkXl: 'Excel with formulas – in the “Largest fund” view',
       mkNote: { all: 'Column = manager; cell = asset-weighted average return of all the manager’s active funds in the group (equal weights where assets are unknown), so the whole market is covered.', big: 'Column = manager; cell = the manager’s largest active fund in the group (by net assets).' } },
