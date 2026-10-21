@@ -65,7 +65,7 @@ def query(url, pick):
     sel = []
     for v in meta["variables"]:
         name = v["text"].lower()
-        if v.get("time") or name in ("year", "time period", "quarter", "aasta", "kvartal") or v["code"].upper() in ("TIME", "AASTA", "KVARTAL"):
+        if v.get("time") or name in ("year", "time period", "reference period", "quarter", "aasta", "kvartal") or v["code"].upper() in ("TIME", "AASTA", "KVARTAL", "VAATLUSPERIOOD"):
             vals = v["values"]
         else:
             f = next((fn for k, fn in pick.items() if k in name), None)
