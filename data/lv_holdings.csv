@@ -1,4 +1,830 @@
 plan_id,quarter,rank,name,weight
+002,2008-09-30,1,05.06.2009.,7.49
+002,2008-09-30,2,15.04.2013.,4.04
+002,2008-09-30,3,BlueBay Investment Grade obligāciju fonds,3.89
+002,2008-09-30,4,07.08.2009.,3.53
+002,2008-09-30,5,21.05.2010.,3.49
+002,2008-09-30,6,21.05.2010.,3.43
+002,2008-09-30,7,15.02.2011.,3.09
+002,2008-09-30,8,10.12.2008.,3.07
+002,2008-09-30,9,16.03.2010.,2.67
+002,2008-09-30,10,27.05.2010.,2.66
+003,2008-09-30,1,GAM Global akciju fonds,4.45
+003,2008-09-30,2,SSGA ASV akciju fonds,4.23
+003,2008-09-30,3,Skagen Global akciju fonds,4.22
+003,2008-09-30,4,SSGA Eiropas akciju fonds,3.89
+003,2008-09-30,5,State Street MSCI Eiropas akciju fonds,3.43
+003,2008-09-30,6,SSGA Japānas akciju fonds,3.4
+003,2008-09-30,7,T. Rowe Price Global akciju fonds,3.1
+003,2008-09-30,8,GAM Star-Worldwide akciju fonds,3.05
+003,2008-09-30,9,Wellington attīstības tirgu akciju fonds,2.86
+003,2008-09-30,10,Skagen Kon-Tiki akciju fonds,2.6
+004,2008-09-30,1,Depozīti SEB Bankā,9.6
+004,2008-09-30,2,Depozīti DnB Bankā,9.3
+004,2008-09-30,3,Depozīti Nordea,9.2
+004,2008-09-30,4,Depozīti Swedbankā,8.8
+004,2008-09-30,5,Depozīti LHZB,5.0
+004,2008-09-30,6,Depozīti Danske Bankā,4.4
+004,2008-09-30,7,Lyxor DJ Eurostox 50 ETF,2.5
+004,2008-09-30,8,SGAM CAC 40 ETF,2.3
+005,2008-09-30,1,Depozīti DnB Nord Bankā,9.4
+005,2008-09-30,2,Depozīti SEB Bankā,9.4
+005,2008-09-30,3,Depozīti Swedbankā,9.4
+005,2008-09-30,4,Depozīti Nordea,9.1
+005,2008-09-30,5,Depozīti Danske Bankā,5.0
+005,2008-09-30,6,Depozīti LHZB,4.5
+005,2008-09-30,7,Lyxor DJ Eurostoxx 50 ETF,3.2
+005,2008-09-30,8,iShares S&P 500 ETF,3.0
+012,2008-09-30,1,rmiĦnoguldījums AKB Baltikums,5.98
+012,2008-09-30,2,rmiĦnoguldījums Latvijas Krājbankā,5.94
+012,2008-09-30,3,B obligācijas 27.10.2008,5.05
+012,2008-09-30,4,rmiĦnoguldījums DnB Nord,4.5
+012,2008-09-30,5,parādzīmes 09.01.2009,3.86
+012,2008-09-30,6,rmiĦnoguldījums LHZB,3.56
+012,2008-09-30,7,bAcademFinance eiroobligācijas 21.05.2010,2.6
+012,2008-09-30,8,Finance eiroobligācijas 16.09.2009,2.49
+012,2008-09-30,9,rmiĦnoguldījums SEB Banka,2.43
+012,2008-09-30,10,rmiĦnoguldījums LHZB,2.4
+021,2008-09-30,1,05.06.2009,7.1
+021,2008-09-30,2,09.01.2009,6.1
+021,2008-09-30,3,Termiņnoguldījums NORDEA bankā,4.6
+021,2008-09-30,4,15.02.2011,4.3
+021,2008-09-30,5,Termiņnoguldījums Krājbankā,3.9
+021,2008-09-30,6,Termiņnoguldījums SEB Unibankā,3.6
+021,2008-09-30,7,Termiņnoguldījums LHZB,3.3
+021,2008-09-30,8,Deutsche Bank (London Br.) obligācijas,3.3
+021,2008-09-30,9,Termiņnoguldījums Krājbankā,3.2
+021,2008-09-30,10,Termiņnoguldījums Parex bankā,3.1
+002,2008-12-31,1,04.09.2009.,7.19
+002,2008-12-31,2,05.06.2009.,5.83
+002,2008-12-31,3,BlueBay Investment Grade obligāciju fonds,4.21
+002,2008-12-31,4,13.11.2009.,4.15
+002,2008-12-31,5,29.05.2009.,3.83
+002,2008-12-31,6,06.02.2009.,3.74
+002,2008-12-31,7,15.02.2011.,3.16
+002,2008-12-31,8,21.05.2010.,3.14
+002,2008-12-31,9,20.03.2009.,2.94
+002,2008-12-31,10,19.06.2009.,2.88
+003,2008-12-31,1,SSGA Eiropas akciju fonds,4.68
+003,2008-12-31,2,GAM Star-Worldwide akciju fonds,4.67
+003,2008-12-31,3,GAM Global akciju fonds,4.6
+003,2008-12-31,4,SSGA ASV akciju fonds,4.08
+003,2008-12-31,5,Skagen Global akciju fonds,4.02
+003,2008-12-31,6,SSGA Japānas akciju fonds,3.75
+003,2008-12-31,7,BlueBay Investment Grade obligāciju fonds,3.62
+003,2008-12-31,8,Wellington attīstības tirgu akciju fonds,3.56
+003,2008-12-31,9,Skagen Kon-Tiki akciju fonds,2.98
+003,2008-12-31,10,Aviva Morley Austrumeiropas akciju fonds,2.77
+004,2008-12-31,1,Depozīti Nordea bankā,9.5
+004,2008-12-31,2,Depozīti DnB Nord bankā,7.7
+004,2008-12-31,3,Depozīti Danske bankā,7.5
+004,2008-12-31,4,Depozīti Swedbankā,7.3
+004,2008-12-31,5,Depozīti SEB bankā,7.3
+004,2008-12-31,6,LR 12 mēn 18/Dec/2009,4.4
+004,2008-12-31,7,Depozīti LHZB,2.5
+004,2008-12-31,8,SEB Asset Selection Fund,2.8
+008,2008-12-31,1,LVL,5.21
+008,2008-12-31,2,Zviedrijas valdības vērtspapīri 28/01/09 5%,3.89
+008,2008-12-31,3,LVL,3.87
+008,2008-12-31,4,LVL,3.72
+008,2008-12-31,5,LVL,3.58
+008,2008-12-31,6,12/07/09 3.5%,3.28
+008,2008-12-31,7,LVL,2.94
+008,2008-12-31,8,LVL,2.85
+008,2008-12-31,9,LVL,2.79
+008,2008-12-31,10,LVL,2.78
+012,2008-12-31,1,2009,9.38
+012,2008-12-31,2,nske Banka,5.7
+012,2008-12-31,3,13.03.2009,5.46
+012,2008-12-31,4,gācijas 13.03.2009,4.59
+012,2008-12-31,5,rdea,4.57
+012,2008-12-31,6,B Nord,4.08
+012,2008-12-31,7,gācijas 08.06.2011,3.81
+012,2008-12-31,8,2009,3.5
+012,2008-12-31,9,ācijas 22.03.2010,3.49
+012,2008-12-31,10,ācijas 15.10.2009,3.3
+021,2008-12-31,1,05.06.2009,5.7
+021,2008-12-31,2,Termiņnoguldījums Danske bankā,5.4
+021,2008-12-31,3,08.05.2009,5.3
+021,2008-12-31,4,09.01.2009,5.0
+021,2008-12-31,5,04.09.2009,4.7
+021,2008-12-31,6,Termiņnoguldījums NORDEA bankā,3.8
+021,2008-12-31,7,15.02.2011,3.5
+021,2008-12-31,8,06.11.2009,3.4
+021,2008-12-31,9,03.04.2009,3.0
+021,2008-12-31,10,Termiņnoguldījums SEB bankā,3.0
+026,2008-12-31,1,s 8.250% 30.06.2011,5.46
+026,2008-12-31,2,īts LBB 19.05.2009,4.27
+026,2008-12-31,3,7.000% 21.05.2010,3.73
+026,2008-12-31,4,NORD 07.08.2009,3.13
+026,2008-12-31,5,Nordea 23.03.2009,2.97
+026,2008-12-31,6,īts LKB 22.12.2010,2.97
+026,2008-12-31,7,11.000% 19.06.2009,2.83
+026,2008-12-31,8,6.825% 16.09.2009,2.72
+026,2008-12-31,9,īts SEB 06.07.2009,2.59
+026,2008-12-31,10,Nordea 28.04.2010,2.57
+004,2009-03-31,1,Depozīti Danske bankā,8.6
+004,2009-03-31,2,Depozīti Nordea,8.5
+004,2009-03-31,3,Depozīti Swedbankā,7.5
+004,2009-03-31,4,Depozīti SEB bankā,7.5
+004,2009-03-31,5,Depozīti GE Money bankā,6.5
+004,2009-03-31,6,Depozīti DnB Nord Bankā,6.2
+004,2009-03-31,7,LR 12 mēn 18/12/2009,4.0
+004,2009-03-31,8,Depozīti LHZB,3.5
+005,2009-03-31,1,Depozīti SEB bankā,8.3
+005,2009-03-31,2,Depozīti Danske Bankā,8.2
+005,2009-03-31,3,Depozīti Swedbankā,8.1
+005,2009-03-31,4,Depozīti Nordea,7.8
+005,2009-03-31,5,Depozīti GE Money Bankā,5.7
+005,2009-03-31,6,Depozīti DnB Nord bankā,5.6
+005,2009-03-31,7,LR 12 mēn 18/Dec/2009,4.9
+005,2009-03-31,8,Depozīti LHZB,4.8
+008,2009-03-31,1,LVL,4.6
+008,2009-03-31,2,Bank of Ireland 28/09/10 2.95%,3.91
+008,2009-03-31,3,Somijas valdības vērtspapīri 04/07/19 4.375%,3.56
+008,2009-03-31,4,LVL,3.39
+008,2009-03-31,5,Depozīts Parex 24/02/10,3.28
+008,2009-03-31,6,Dexia Bank 23/03/11 2.6%,3.26
+008,2009-03-31,7,LVL,3.01
+008,2009-03-31,8,Francijas valdības vērtspapīri 12/07/09 3.5%,2.83
+008,2009-03-31,9,Slovēnijas valdības vērtspapīri 24/03/10 6%,2.7
+008,2009-03-31,10,Lietuvas valdības vērtspapīri 05/03/13 4.5%,2.66
+012,2009-03-31,1,2009,8.88
+012,2009-03-31,2,B Banka,4.81
+012,2009-03-31,3,gācijas,4.49
+012,2009-03-31,4,rdea,4.29
+012,2009-03-31,5,ācijas 12.03.2010,3.88
+012,2009-03-31,6,B Nord,3.82
+012,2009-03-31,7,igācijas 22.03.2010,3.8
+012,2009-03-31,8,gācijas,3.67
+012,2009-03-31,9,ācijas 22.03.2010,3.08
+012,2009-03-31,10,ācijas 15.10.2009,3.06
+021,2009-03-31,1,05.06.2009,5.0
+021,2009-03-31,2,Termiņnoguldījums LHZB,4.7
+021,2009-03-31,3,Termiņnoguldījums Danske bankā,4.6
+021,2009-03-31,4,08.05.2009,4.6
+021,2009-03-31,5,04.09.2009,4.1
+021,2009-03-31,6,Termiņnoguldījums DnB NORD Bankā,3.6
+021,2009-03-31,7,15.01.2010,3.4
+021,2009-03-31,8,Termiņnoguldījums NORDEA bankā,3.3
+021,2009-03-31,9,06.11.2009,3.0
+021,2009-03-31,10,15.02.2011,2.9
+025,2009-03-31,1,"k 8,250% 30.06.2011",6.02
+025,2009-03-31,2,"BR 4,000% 04.01.2037",5.37
+025,2009-03-31,3,zīts LHZB 02.06.2009,5.03
+025,2009-03-31,4,"e 7,125% 21.12.2009",3.69
+025,2009-03-31,5,pozīts SEB 22.04.2009,3.62
+025,2009-03-31,6,"nk 9,750% 14.02.2011",3.27
+025,2009-03-31,7,"7,000% 21.05.2010",3.11
+025,2009-03-31,8,"eft 5,381% 27.06.2012",3.02
+025,2009-03-31,9,"jas 4,250% 02.04.2014",3.0
+025,2009-03-31,10,ts Nordea 19.05.2011,2.89
+026,2009-03-31,1,"ft 5,381% 27.06.2012",4.85
+026,2009-03-31,2,"R 4,000% 04.01.2037",4.81
+026,2009-03-31,3,"8,250% 30.06.2011",4.0
+026,2009-03-31,4,"7,125% 21.12.2009",3.2
+026,2009-03-31,5,ozīts LBB 19.05.2009,3.09
+026,2009-03-31,6,"k 9,750% 14.02.2011",2.96
+026,2009-03-31,7,"8,300% 16.11.2011",2.95
+026,2009-03-31,8,"7,000% 21.05.2010",2.9
+026,2009-03-31,9,NORD 07.08.2009,2.26
+026,2009-03-31,10,"s 7,000% 21.08.2009",2.18
+027,2009-03-31,1,Prasības uz pieprasījumu,74.3
+027,2009-03-31,2,Termiņnoguldījums AS Swedbank,11.92
+027,2009-03-31,3,Termiņnoguldījums AS Swedbank,8.32
+027,2009-03-31,4,Termiņnoguldījums AS Swedbank,5.46
+028,2009-03-31,1,Prasības uz pieprasījumu,78.63
+028,2009-03-31,2,Termiņnoguldījums AS Swedbank,9.98
+028,2009-03-31,3,Termiņnoguldījums AS Swedbank,6.35
+028,2009-03-31,4,Termiņnoguldījums AS Swedbank,5.04
+004,2009-06-30,1,Nordea,9.1
+004,2009-06-30,2,Danske Banka,9.1
+004,2009-06-30,3,GE Money Banka,9.0
+004,2009-06-30,4,SEB banka,8.8
+004,2009-06-30,5,Swedbanka,6.4
+004,2009-06-30,6,DNB Nord Banka,4.6
+004,2009-06-30,7,LR 12 mēn. 14/May/2010,4.0
+004,2009-06-30,8,LR 12 mēn. 18/Dec/2009,3.7
+012,2009-06-30,1,nske Banka,5.31
+012,2009-06-30,2,B Banka,4.73
+012,2009-06-30,3,gācijas,4.56
+012,2009-06-30,4,rdea,4.28
+012,2009-06-30,5,gācijas 22.06.2014,4.09
+012,2009-06-30,6,igācijas 02.07.2010,3.81
+012,2009-06-30,7,B Nord,3.8
+012,2009-06-30,8,ācijas 12.03.2010,3.79
+012,2009-06-30,9,gācijas,3.5
+012,2009-06-30,10,ācijas 22.03.2010,3.04
+021,2009-06-30,1,Termiņnoguldījums LHZB,4.3
+021,2009-06-30,2,Termiņnoguldījums Danske bankā,4.3
+021,2009-06-30,3,Termiņnoguldījums Swedbank,3.7
+021,2009-06-30,4,04.09.2009.,3.7
+021,2009-06-30,5,Termiņnoguldījums Danske bankā,3.3
+021,2009-06-30,6,Termiņnoguldījums DnB NORD Bankā,3.2
+021,2009-06-30,7,Termiņnoguldījums DnB NORD Bankā,3.0
+021,2009-06-30,8,15.01.2010.,3.0
+021,2009-06-30,9,Termiņnoguldījums NORDEA bankā,3.0
+021,2009-06-30,10,Termiņnoguldījums SEB bankā,2.8
+025,2009-06-30,1,ke Banka 13.07.2009,6.47
+025,2009-06-30,2,k 8.250% 30.06.2011,6.03
+025,2009-06-30,3,BR 4.000% 04.01.2037,4.96
+025,2009-06-30,4,m 7.125% 21.12.2009,4.0
+025,2009-06-30,5,nk 9.750% 14.02.2011,3.51
+025,2009-06-30,6,7.000% 21.05.2010,3.01
+025,2009-06-30,7,ts Nordea 19.05.2011,2.85
+025,2009-06-30,8,jas 4.250% 02.04.2014,2.81
+025,2009-06-30,9,eft 5.381% 27.06.2012,2.81
+025,2009-06-30,10,ozīts LKB 28.05.2010,2.71
+026,2009-06-30,1,ke Banka 19.05.2010,3.94
+026,2009-06-30,2,pozīts LBB 20.05.2010,3.94
+026,2009-06-30,3,eft 5.381% 27.06.2012,3.82
+026,2009-06-30,4,BR 4.000% 04.01.2037,3.76
+026,2009-06-30,5,ts Nordea 26.10.2009,3.57
+026,2009-06-30,6,ke Banka 13.07.2009,3.4
+026,2009-06-30,7,k 8.250% 30.06.2011,3.39
+026,2009-06-30,8,ozīts LKB 08.04.2010,3.15
+026,2009-06-30,9,e 7.125% 21.12.2009,2.9
+026,2009-06-30,10,nk 9.750% 14.02.2011,2.68
+027,2009-06-30,1,Prasības uz pieprasījumu,43.32
+027,2009-06-30,2,A/S Swedbank,9.78
+027,2009-06-30,3,A/S Danske Bank,9.78
+027,2009-06-30,4,Nordea Bank Finland Plc. Latvijas filiāle,9.25
+027,2009-06-30,5,A/S DnB NORD Banka,7.09
+027,2009-06-30,6,VAS Latvijas Hipotēku un zemes banka,7.07
+027,2009-06-30,7,A/S SEB banka,6.99
+027,2009-06-30,8,A/S GE Money Bank,6.72
+028,2009-06-30,1,Prasības uz pieprasījumu,39.84
+028,2009-06-30,2,A/S Danske Bank,9.79
+028,2009-06-30,3,A/S Swedbank,9.77
+028,2009-06-30,4,Nordea Bank Finland Plc. Latvijas filiāle,9.22
+028,2009-06-30,5,A/S DnB NORD Banka,7.9
+028,2009-06-30,6,VAS Latvijas Hipotēku un zemes banka,7.89
+028,2009-06-30,7,A/S SEB banka,7.88
+028,2009-06-30,8,A/S GE Money Bank,7.71
+004,2009-09-30,1,SEB banka,9.1
+004,2009-09-30,2,GE Money Banka,8.8
+004,2009-09-30,3,Danske Banka,8.8
+004,2009-09-30,4,Swedbanka,8.7
+004,2009-09-30,5,Nordea,6.7
+004,2009-09-30,6,DnB Nord Banka,4.2
+004,2009-09-30,7,LR 12 mēn. 14/May/2010,3.8
+004,2009-09-30,8,LR 12 mēn. 18/Dec/2009,3.6
+012,2009-09-30,1,etuvas valsts obligācijas 22.06.2014,9.12
+012,2009-09-30,2,rmiņnoguldījums Danske Banka,5.56
+012,2009-09-30,3,rmiņnoguldījums SEB Banka,4.89
+012,2009-09-30,4,Z Capital eiroobligācijas,4.49
+012,2009-09-30,5,cijas valsts obligācijas 12.03.2010,3.89
+012,2009-09-30,6,mānijas valsts obligācijas 02.07.2010,3.78
+012,2009-09-30,7,B eiroobligācijas,3.75
+012,2009-09-30,8,Z Finance eiroobligācijas,3.68
+012,2009-09-30,9,rmiņnoguldījums LHZB,3.16
+012,2009-09-30,10,lijas valsts obligācijas 22.03.2010,3.15
+021,2009-09-30,1,Termiņnoguldījums LHZB,3.9
+021,2009-09-30,2,Termiņnoguldījums Danske bankā,3.8
+021,2009-09-30,3,Termiņnoguldījums Swedbank,3.4
+021,2009-09-30,4,Termiņnoguldījums SEB bankā,3.3
+021,2009-09-30,5,Termiņnoguldījums Danske bankā,3.1
+021,2009-09-30,6,Termiņnoguldījums DnB NORD Bankā,2.9
+021,2009-09-30,7,Termiņnoguldījums UniCredit,2.8
+021,2009-09-30,8,15.01.2010,2.7
+021,2009-09-30,9,Termiņnoguldījums SEB bankā,2.6
+021,2009-09-30,10,Termiņnoguldījums NORDEA bankā,2.5
+025,2009-09-30,1,4.000% 04.01.2037,4.98
+025,2009-09-30,2,s 14.550% 03.09.2010,4.32
+025,2009-09-30,3,ey Bank 27.07.2012,4.2
+025,2009-09-30,4,8.250% 30.06.2011,3.56
+025,2009-09-30,5,k 9.750% 14.02.2011,3.03
+025,2009-09-30,6,ey Bank 20.01.2010,2.95
+025,2009-09-30,7,s Nordea 19.05.2011,2.75
+025,2009-09-30,8,as 4.250% 02.04.2014,2.7
+025,2009-09-30,9,zīts LKB 28.05.2010,2.64
+025,2009-09-30,10,zīts LKB 08.04.2010,2.62
+026,2009-09-30,1,s 14.550% 03.09.2010,7.47
+026,2009-09-30,2,Money 27.07.2012,4.1
+026,2009-09-30,3,ke Banka 19.05.2010,3.7
+026,2009-09-30,4,zīts LBB 20.05.2010,3.69
+026,2009-09-30,5,4.000% 04.01.2037,3.63
+026,2009-09-30,6,Nordea 26.10.2009,3.34
+026,2009-09-30,7,zīts LKB 08.04.2010,2.94
+026,2009-09-30,8,Money 20.01.2010,2.84
+026,2009-09-30,9,t 5.381% 27.06.2012,2.59
+026,2009-09-30,10,s 14.300% 10.09.2010,2.58
+027,2009-09-30,1,Prasības uz pieprasījumu,32.38
+027,2009-09-30,2,A/S DnB NORD Banka,9.36
+027,2009-09-30,3,A/S GE Money Bank,8.76
+027,2009-09-30,4,VAS Latvijas Hipotēku un zemes banka,8.3
+027,2009-09-30,5,A/S Swedbank,8.15
+027,2009-09-30,6,A/S SEB banka,7.99
+027,2009-09-30,7,A/S Danske Bank,7.38
+027,2009-09-30,8,Nordea Bank Finland Plc. Latvijas filiāle,6.47
+027,2009-09-30,9,iShares € Corporate Bond,3.71
+028,2009-09-30,1,Prasības uz pieprasījumu,18.91
+028,2009-09-30,2,A/S DnB NORD Banka,9.26
+028,2009-09-30,3,A/S GE Money Bank,9.25
+028,2009-09-30,4,A/S SEB banka k,9.24
+028,2009-09-30,5,A/S Swedbank,8.83
+028,2009-09-30,6,VAS Latvijas Hipotēku un zemes banka,8.12
+028,2009-09-30,7,A/S Danske Bank,7.59
+028,2009-09-30,8,Nordea Bank Finland Plc. Latvijas filiāle,6.81
+028,2009-09-30,9,db x-trackers MSCI Europe TRN Index ETF,3.64
+028,2009-09-30,10,db x-trackers MSCI USA TRN Index ETF,3.6
+004,2009-12-31,1,Swedbanka,8.6
+004,2009-12-31,2,SEB banka,8.5
+004,2009-12-31,3,DnB Nord banka,8.5
+004,2009-12-31,4,GE Money bank,8.1
+004,2009-12-31,5,Danske Banka,7.6
+004,2009-12-31,6,Nordea,4.4
+004,2009-12-31,7,SEB Key Hedge fund,3.8
+004,2009-12-31,8,LR 12 mēn. 14/May/2010,3.8
+005,2009-12-31,1,Swedbanka,8.9
+005,2009-12-31,2,GE Money banka,8.7
+005,2009-12-31,3,SEB Banka,8.5
+005,2009-12-31,4,DNB Nord Banka,8.2
+005,2009-12-31,5,Danske Banka,5.0
+005,2009-12-31,6,Nordea,5.0
+005,2009-12-31,7,SEB Asset Selection Fund,3.8
+005,2009-12-31,8,db x-trackers MSCI World,3.7
+008,2009-12-31,1,LVL,3.7
+008,2009-12-31,2,LVL,3.68
+008,2009-12-31,3,PIMCO Global Investment Grade Fund,3.53
+008,2009-12-31,4,LVL,3.51
+008,2009-12-31,5,LVL,3.49
+008,2009-12-31,6,LVL,3.46
+008,2009-12-31,7,LVL,3.46
+008,2009-12-31,8,LVL,3.42
+008,2009-12-31,9,LVL,3.39
+008,2009-12-31,10,LVL,3.33
+012,2009-12-31,1,etuvas valsts obligācijas 22.06.2014,9.69
+012,2009-12-31,2,rmiņnoguldījums Latvijas Krājbanka,8.81
+012,2009-12-31,3,mānijas valsts obligācijas 02.07.2010,6.11
+012,2009-12-31,4,rmiņnoguldījums Danske Banka,5.95
+012,2009-12-31,5,nijas valsts obligācijas 15.10.2010,5.35
+012,2009-12-31,6,B Nord Bankas parādzīmes,4.81
+012,2009-12-31,7,Z Capital eiroobligācijas,4.7
+012,2009-12-31,8,cijas valsts obligācijas 12.03.2010,4.03
+012,2009-12-31,9,Z Finance eiroobligācijas,3.85
+012,2009-12-31,10,B eiroobligācijas,3.74
+021,2009-12-31,1,Termiņnoguldījums Swedbank,3.6
+021,2009-12-31,2,07.12.2010,3.6
+021,2009-12-31,3,Termiņnoguldījums Swedbank,3.6
+021,2009-12-31,4,Termiņnoguldījums LHZB,3.5
+021,2009-12-31,5,01.04.2010,3.5
+021,2009-12-31,6,Termiņnoguldījums LHZB,3.3
+021,2009-12-31,7,Termiņnoguldījums SEB bankā,3.0
+021,2009-12-31,8,Termiņnoguldījums DnB NORD Bankā,2.9
+021,2009-12-31,9,Termiņnoguldījums DnB NORD Bankā,2.7
+021,2009-12-31,10,17.12.2010,2.6
+025,2009-12-31,1,8.250% 30.06.2011,5.27
+025,2009-12-31,2,4.000% 04.01.2037,4.57
+025,2009-12-31,3,s 14.550% 03.09.2010,4.18
+025,2009-12-31,4,Money 27.07.2012,4.07
+025,2009-12-31,5,7.000% 21.05.2010,3.43
+025,2009-12-31,6,Money 20.01.2010,2.86
+025,2009-12-31,7,t 5.381% 27.06.2012,2.67
+025,2009-12-31,8,Nordea 19.05.2011,2.62
+025,2009-12-31,9,as 4.250% 02.04.2014,2.56
+025,2009-12-31,10,zīts LKB 28.05.2010,2.54
+026,2009-12-31,1,s 14.550% 03.09.2010,7.26
+026,2009-12-31,2,E Money 27.07.2012,4.0
+026,2009-12-31,3,ke Banka 19.05.2010,3.58
+026,2009-12-31,4,zīts LBB 20.05.2010,3.57
+026,2009-12-31,5,t 5.381% 27.06.2012,3.47
+026,2009-12-31,6,4.000 % 04.01.2037,3.35
+026,2009-12-31,7,8.250% 30.06.2011,2.87
+026,2009-12-31,8,zīts LKB 08.04.2010,2.84
+026,2009-12-31,9,E Money 20.01.2010,2.77
+026,2009-12-31,10,"9,000% 06.07.2010",2.67
+027,2009-12-31,1,A/S GE Money Bank,9.78
+027,2009-12-31,2,A/S UniCredit Bank,9.74
+027,2009-12-31,3,A/S Swedbank,9.72
+027,2009-12-31,4,VAS Latvijas Hipotēku un zemes banka,9.21
+027,2009-12-31,5,A/S SEB banka,7.91
+027,2009-12-31,6,A/S DnB NORD banka,7.71
+027,2009-12-31,7,Nordea Bank Finland Plc. Latvijas filiāle,6.91
+027,2009-12-31,8,A/S Danske Bank,5.39
+027,2009-12-31,9,Nordea 1 - Corporate Bond Fund BI-EUR,3.7
+027,2009-12-31,10,Nordea 1 - Euro Bond Fund BP-EUR,3.66
+028,2009-12-31,1,A/S Swedbank,9.94
+028,2009-12-31,2,A/S UniCredit Bank,9.73
+028,2009-12-31,3,A/S GE Money Bank,9.72
+028,2009-12-31,4,Nordea Bank Finland Plc. Latvijas filiāle bank,6.82
+028,2009-12-31,5,A/S SEB banka,4.94
+028,2009-12-31,6,VAS Latvijas Hipotēku un zemes banka,4.38
+028,2009-12-31,7,iShares DJ EURO STOXX 50 DE,3.75
+028,2009-12-31,8,Nordea 1 - Global Stable Equity Fund BI-EUR,3.66
+028,2009-12-31,9,A/S Danske Bank,3.59
+028,2009-12-31,10,XMEA GY ( MSCI EM EMEA Trn),3.59
+004,2010-03-31,1,SEB banka,8.5
+004,2010-03-31,2,Swedbanka,8.3
+004,2010-03-31,3,DnB Nord banka,5.3
+004,2010-03-31,4,LHZB,5.2
+004,2010-03-31,5,Danske Banka Schroders Emerging,5.0
+004,2010-03-31,6,Europe Debt Fund,4.0
+004,2010-03-31,7,GE Money Bank,3.9
+004,2010-03-31,8,SEB Eastern Europe Bond Fund,3.5
+005,2010-03-31,1,SEB Banka,9.6
+005,2010-03-31,2,Swedbanka,8.5
+005,2010-03-31,3,DNB Nord Banka,5.6
+005,2010-03-31,4,GE Money Bank Schroders Emerging Europe,4.5
+005,2010-03-31,5,Debt Fund,4.1
+005,2010-03-31,6,SEB Key Hedge Fund,3.6
+005,2010-03-31,7,BlueBay Investment Grade Fund Schroders Corporate Bond,3.5
+005,2010-03-31,8,Fund Europe Debt Fund,3.5
+008,2010-03-31,1,Latvijas valsts,6.0
+008,2010-03-31,2,Latvijas valsts,5.5
+008,2010-03-31,3,Pimco Global Investment Grade Bond Fund,3.58
+008,2010-03-31,4,LVL,3.54
+008,2010-03-31,5,LVL,3.49
+008,2010-03-31,6,LVL,3.36
+008,2010-03-31,7,LVL,3.34
+008,2010-03-31,8,LVL,3.32
+008,2010-03-31,9,LVL,3.26
+008,2010-03-31,10,LVL,3.18
+021,2010-03-31,1,26.02.2012,7.1
+021,2010-03-31,2,Termiņnoguldījums Parex bankā,4.1
+021,2010-03-31,3,07.12.2010,3.5
+021,2010-03-31,4,Termiņnoguldījums Swedbank,3.5
+021,2010-03-31,5,Termiņnoguldījums Swedbanksab,3.5
+021,2010-03-31,6,Termiņnoguldījums LHZB,3.4
+021,2010-03-31,7,01.04.2010,3.3
+021,2010-03-31,8,Termiņnoguldījums LHZB,3.1
+021,2010-03-31,9,Termiņnoguldījums DnB NORD,2.8
+021,2010-03-31,10,Termiņnoguldījums LHZB,2.8
+025,2010-03-31,1,"8,250% 30.06.2011",5.16
+025,2010-03-31,2,"4,000% 04.01.2037",4.38
+025,2010-03-31,3,"s 14,550% 03.09.2010",4.07
+025,2010-03-31,4,E Money 27.07.2012,3.97
+025,2010-03-31,5,"7,000% 21.05.2010",3.69
+025,2010-03-31,6,E Money 22.01.2013,3.25
+025,2010-03-31,7,ier Fl% 15.11.2013,3.19
+025,2010-03-31,8,"9,000% 06.07.2010",3.15
+025,2010-03-31,9,"t 5,381% 27.06.2012",2.6
+025,2010-03-31,10,ts Nordea 19.05.2011,2.52
+026,2010-03-31,1,"s 14,550% 03.09.2010",7.77
+026,2010-03-31,2,E Money 27.07.2012,4.29
+026,2010-03-31,3,e Banka 19.05.2010,3.82
+026,2010-03-31,4,ozīts LBB 20.05.2010,3.8
+026,2010-03-31,5,"9,000% 06.07.2010",3.79
+026,2010-03-31,6,"ft 5,381% 27.06.2012",3.7
+026,2010-03-31,7,"R 4,000% 04.01.2037",3.52
+026,2010-03-31,8,E Money 22.01.2013,3.51
+026,2010-03-31,9,"8,250% 30.06.2011",3.09
+026,2010-03-31,10,"k 7,000% 21.05.2010",3.01
+027,2010-03-31,1,Prasību uz pieprasījumu uzskaites vērtība,9.67
+027,2010-03-31,2,VAS Latvijas Hipotēku un zemes banka,9.38
+027,2010-03-31,3,A/S GE Money Bank,9.0
+027,2010-03-31,4,A/S Danske Bank filiāle Latvijā,7.5
+027,2010-03-31,5,A/S Swedbank,7.49
+027,2010-03-31,6,A/S DnB NORD banka,6.82
+027,2010-03-31,7,iShares € Corporate Bond,4.18
+027,2010-03-31,8,A/S UniCredit Bank,4.12
+027,2010-03-31,9,Nordea 1 - European High Yield Bond Fund BI-EUR,4.12
+027,2010-03-31,10,Nordea 1 - Corporate Bond Fund BI-EUR,3.93
+028,2010-03-31,1,A/S GE Money Bank a,9.26
+028,2010-03-31,2,VAS Latvijas Hipotēku un zemes banka,9.22
+028,2010-03-31,3,A/S DnB NORD banka,9.05
+028,2010-03-31,4,A/S Swedbank ank,7.79
+028,2010-03-31,5,A/S Danske Bank filiāle Latvijā ris,6.61
+028,2010-03-31,6,A/S UniCredit Bank,5.36
+028,2010-03-31,7,Prasību uz pieprasījumu uzskaites vērtība,5.18
+028,2010-03-31,8,iShares DJ EURO STOXX 50 DE,3.88
+028,2010-03-31,9,Nordea 1 - Global Stable Equity Fund BI-EUR,3.88
+028,2010-03-31,10,db x-trackers MSCI EM EMEA TRN Index ETF,3.49
+004,2010-06-30,1,Swedbanka,9.6
+004,2010-06-30,2,SEB banka,8.9
+004,2010-06-30,3,LHZB,8.9
+004,2010-06-30,4,DNB Nord banka,4.5
+004,2010-06-30,5,LR 5.875% 23/Apr/2013 Schroder ISF Emerging Europe,3.9
+004,2010-06-30,6,Debt Fund,3.8
+004,2010-06-30,7,GE Money Bank,3.8
+004,2010-06-30,8,SEB Key Hedge (IC) Avots: SEB Wealth Management * Avots: www.manapensija.lv,3.8
+005,2010-06-30,1,SEB banka,9.4
+005,2010-06-30,2,Swedbanka,8.6
+005,2010-06-30,3,LHZB,6.7
+005,2010-06-30,4,GE Money Bank,4.6
+005,2010-06-30,5,Lyxor MSCI World ETF,4.3
+005,2010-06-30,6,ComStage MSCI World TRN ETF Schroder ISF Emerging,4.2
+005,2010-06-30,7,Europe Debt Fund JB Absolute Return Bond,4.1
+005,2010-06-30,8,Fund Plus Avots: SEB Wealth Management * Avots: www.manapensija.lv,4.0
+021,2010-06-30,1,23.04.2013.,8.2
+021,2010-06-30,2,26.02.2012.,6.6
+021,2010-06-30,3,Termiņnoguldījums Parex bankā,3.9
+021,2010-06-30,4,15.04.2011.,3.7
+021,2010-06-30,5,Termiņnoguldījums DnB NORD Bankā,3.7
+021,2010-06-30,6,DnB NORD Mērķa fonds,3.3
+021,2010-06-30,7,07.12.2010.,3.3
+021,2010-06-30,8,Termiņnoguldījums Swedbank,3.3
+021,2010-06-30,9,Termiņnoguldījums Swedbank,3.3
+021,2010-06-30,10,Termiņnoguldījums LHZB,3.2
+025,2010-06-30,1,50 % 30.06.2011,4.9
+025,2010-06-30,2,000 % 04.01.2037,4.45
+025,2010-06-30,3,.550 % 03.09.2010,3.85
+025,2010-06-30,4,ank 27.07.2012,3.75
+025,2010-06-30,5,00 % 06.07.2010,3.23
+025,2010-06-30,6,ank 22.01.2013,3.06
+025,2010-06-30,7,0 % 16.11.2011,2.79
+025,2010-06-30,8,75 % 20.04.2017,2.44
+025,2010-06-30,9,Banka 28.05.2011,2.37
+025,2010-06-30,10,ts Nordea 19.05.2011,2.35
+026,2010-06-30,1,4.550 % 03.09.2010,7.92
+026,2010-06-30,2,Bank 27.07.2012,4.36
+026,2010-06-30,3,000 % 06.07.2010,3.91
+026,2010-06-30,4,.000 % 04.01.2037,3.85
+026,2010-06-30,5,00 % 16.11.2011,3.56
+026,2010-06-30,6,Bank 22.01.2013,3.55
+026,2010-06-30,7,5.381 % 27.06.2012,3.53
+026,2010-06-30,8,250 % 30.06.2011,3.16
+026,2010-06-30,9,4.300 % 10.09.2010,2.73
+026,2010-06-30,10,75 % 20.04.2017,2.63
+027,2010-06-30,1,Termiņnoguldījums A/S Danske Bank,5.93
+027,2010-06-30,2,Termiņnoguldījums A/S Swedbank,5.01
+027,2010-06-30,3,Termiņnoguldījums A/S DnB NORD,4.19
+027,2010-06-30,4,XEMB GY EM. MARKET LIGUID EUROBOND I,3.99
+004,2010-09-30,1,Latvijas Republika,60.9
+004,2010-09-30,2,Luksemburga,30.9
+004,2010-09-30,3,Igaunija,3.4
+004,2010-09-30,4,Vācija,1.5
+004,2010-09-30,5,Īrija,1.0
+004,2010-09-30,6,Lielbritānija,0.9
+004,2010-09-30,7,Lietuva,0.3
+004,2010-09-30,8,Polija,0.1
+005,2010-09-30,1,SEB banka,8.7
+005,2010-09-30,2,Swedbanka,8.6
+005,2010-09-30,3,LHZB,8.2
+005,2010-09-30,4,GE Money Bank Schroder ISF Emerging Europe Debt Fund,4.7
+005,2010-09-30,5,ComStage MSCI World TRN ETF Julius Baer Absolute Return,4.2
+005,2010-09-30,6,Bond Fund,4.0
+005,2010-09-30,7,SEB Key Hedge Avots: SEB Wealth Management * Avots: www.manapensija.lv,3.9
+021,2010-09-30,1,23.04.2013,8.7
+021,2010-09-30,2,26.02.2012,6.3
+021,2010-09-30,3,03.09.2015,4.7
+021,2010-09-30,4,03.02.2011,3.7
+021,2010-09-30,5,15.04.2011,3.5
+021,2010-09-30,6,Termiņnoguldījums DnB NORD Bankā 29.06.2011,3.4
+021,2010-09-30,7,07.12.2010,3.1
+021,2010-09-30,8,28.12.2010,3.1
+021,2010-09-30,9,19.08.2011,3.1
+021,2010-09-30,10,31.01.2011,3.0
+027,2010-09-30,1,Termiņnoguldījums A/S Swedbank,9.7
+027,2010-09-30,2,Termiņnoguldījums A/S DnB NORD,9.61
+027,2010-09-30,3,Nordea 1 - European High Yield Bond Fund BI-EUR,9.93
+027,2010-09-30,4,iShares Barclays Euro Corporate Bond 1-5,3.86
+027,2010-09-30,5,iShares Barclays Euro Corporate Bond ex-Financials 1-5,3.85
+027,2010-09-30,6,Ishares III plc - Ishares Barclays Euro Corp Fund,3.85
+027,2010-09-30,7,iShares Barclays Euro Corporate Bond ex-financials,3.83
+027,2010-09-30,8,XEMB GY EM. MARKET LIGUID EUROBOND I,3.82
+027,2010-09-30,9,Lyxor ETF Euro Corporate Bond .,3.82
+027,2010-09-30,10,iShares € Aggregate Bond ETF,3.67
+002,2010-12-31,1,27.05.2011,8.0
+002,2010-12-31,2,26.02.2012,4.0
+002,2010-12-31,3,11.11.2011,3.8
+002,2010-12-31,4,03.09.2015,3.6
+002,2010-12-31,5,LVL,3.2
+002,2010-12-31,6,LVL,3.2
+002,2010-12-31,7,LVL,3.0
+002,2010-12-31,8,LVL,2.5
+002,2010-12-31,9,07.08.2017,2.2
+002,2010-12-31,10,LVL,2.1
+003,2010-12-31,1,Morgan Stanley Eiropas akciju fonds,4.0
+003,2010-12-31,2,GAM Star ASV akciju fonds,3.4
+003,2010-12-31,3,SSGA Eiropas akciju fonds,3.2
+003,2010-12-31,4,2018.03.05,3.0
+003,2010-12-31,5,Lyxor Austrumeiropas akciju fonds,3.0
+003,2010-12-31,6,SPDR MSCI Europe akciju fonds,2.9
+003,2010-12-31,7,MSCI USA Source akciju fonds,2.6
+003,2010-12-31,8,2013.04.23,2.6
+003,2010-12-31,9,SSGA ASV akciju fonds,2.4
+003,2010-12-31,10,Aviva Morley Invest Euro conv. akciju fonds,2.3
+004,2010-12-31,1,LHZB,9.23
+004,2010-12-31,2,SEB banka,9.16
+004,2010-12-31,3,Swedbanka,8.98
+004,2010-12-31,4,LR 5.875% 23/Apr/2013,5.4
+004,2010-12-31,5,GE Money Bank,4.24
+004,2010-12-31,6,SEB Key Hedge (IC),3.49
+004,2010-12-31,7,LR 5.625% 03/Sep/2015,3.31
+004,2010-12-31,8,LR 6% 26/Feb/2012,2.21
+009,2010-12-31,1,PIMCO Total Return Bond Fund,4.51
+009,2010-12-31,2,Citadele Banka 5.63% 05/05/2011,4.0
+009,2010-12-31,3,LVL,3.74
+009,2010-12-31,4,Barclays Bank 0.00% 31/05/2018,3.09
+009,2010-12-31,5,LVL,2.94
+009,2010-12-31,6,Latvijas valsts 4.25% 02/04/2014,2.87
+009,2010-12-31,7,Lietuvas valsts 4.95% 22/09/2017,2.72
+009,2010-12-31,8,Pareto Equity Edge Fund,2.36
+009,2010-12-31,9,DWS Deutschland Fund,2.32
+009,2010-12-31,10,Pareto Kreditt Fund,2.22
+021,2010-12-31,1,03.09.2015.,9.6
+021,2010-12-31,2,23.04.2013.,8.5
+021,2010-12-31,3,26.02.2012.,5.9
+021,2010-12-31,4,08.11.2012.,3.6
+021,2010-12-31,5,03.02.2011.,3.5
+021,2010-12-31,6,15.04.2011.,3.3
+021,2010-12-31,7,Termiņnoguldījums DnB NORD Bankā 29.06.2011.,3.2
+021,2010-12-31,8,02.04.2014.,3.0
+021,2010-12-31,9,27.12.2012.,2.9
+021,2010-12-31,10,19.08.2011.,2.9
+025,2010-12-31,1,VTB Bank,8.25
+025,2010-12-31,2,MDM bank,8.3
+025,2010-12-31,3,Bombardier,7.25
+026,2010-12-31,1,Depozīts GE Money 27.07.2012,4.7
+026,2010-12-31,2,Gazprom 8.125% 04.02.2015,4.2
+026,2010-12-31,3,MDM bank 8.300% 16.11.2011,4.11
+026,2010-12-31,4,JSC Transneft 5.381% 27.06.2012,3.78
+026,2010-12-31,5,Depozīts GE Money 22.01.2013,3.77
+026,2010-12-31,6,Lithuania 9.375% 22.06.2014,3.52
+026,2010-12-31,7,MOL Hungarian Oil & Gas 5.875% 20.04.2017,3.47
+026,2010-12-31,8,VTB Bank 8.250% 30.06.2011,3.18
+026,2010-12-31,9,Depozīts GE Money 13.08.2012,2.81
+026,2010-12-31,10,Depozīts LBB 28.05.2011,2.64
+028,2010-12-31,1,Termiņnoguldījumi AS UNICREDIT BANK,8.25
+028,2010-12-31,2,XMUS GY (MSCI TRN USA),4.19
+028,2010-12-31,3,Termiņnoguldījumi A/S DnB NORD,3.87
+028,2010-12-31,4,iShares Markit iBoxx Euro High Yield,3.66
+002,2011-03-31,1,05.03.2018,7.3
+002,2011-03-31,2,03.06.2011,4.8
+002,2011-03-31,3,04.02.2021,4.5
+002,2011-03-31,4,16.12.2011,4.4
+002,2011-03-31,5,26.02.2012,3.8
+002,2011-03-31,6,11.11.2011,3.8
+002,2011-03-31,7,03.09.2015,3.7
+002,2011-03-31,8,LVL,3.2
+002,2011-03-31,9,LVL,3.2
+002,2011-03-31,10,LVL,3.0
+003,2011-03-31,1,02.04.2014,6.1
+003,2011-03-31,2,Morgan Stanley - Eiropas akciju fonds,3.9
+003,2011-03-31,3,GAM - Star ASV akciju fonds,3.9
+003,2011-03-31,4,05.03.2018,3.7
+003,2011-03-31,5,MSCI USA Source fonds,3.7
+003,2011-03-31,6,SSGA Europe Index akciju fonds,3.2
+003,2011-03-31,7,SSGA US Index akciju fonds,2.9
+003,2011-03-31,8,DB X-Trackers MSCI World akciju fonds,2.8
+003,2011-03-31,9,SPDR MSCI Europe akciju fonds,2.7
+003,2011-03-31,10,23.04.2013,2.7
+004,2011-03-31,1,Swedbanka,8.3
+004,2011-03-31,2,SEB banka,8.23
+004,2011-03-31,3,LR 5.875% 23/Apr/2013,5.3
+004,2011-03-31,4,LHZB,4.78
+004,2011-03-31,5,SEB Key Hedge Fund (IC),3.4
+004,2011-03-31,6,LR 6.625% 04/Feb/2021,3.3
+004,2011-03-31,7,LR 5.625% 03/Sep/2015,3.2
+004,2011-03-31,8,SEB Eastern Europe Bond Fund,3.0
+004,2011-03-31,9,db x-trackers MSCI World ETF,2.4
+005,2011-03-31,1,SEB banka,8.63
+005,2011-03-31,2,LHZB,7.6
+005,2011-03-31,3,Swedbanka,7.33
+005,2011-03-31,4,db x-trackers MSCI World ETF,4.7
+005,2011-03-31,5,SEB Key Hedge Fund,3.9
+005,2011-03-31,6,Comstage MSCI World ETF,3.1
+005,2011-03-31,7,LR 5.875% 23/Apr/2013,3.1
+005,2011-03-31,8,Schroders Emerging Europe Debt Fund,3.0
+021,2011-03-31,1,03.09.2015,8.6
+021,2011-03-31,2,23.04.2013,7.7
+021,2011-03-31,3,04.02.2021,6.3
+021,2011-03-31,4,26.02.2012,5.0
+021,2011-03-31,5,02.04.2014,4.4
+021,2011-03-31,6,08.11.2012,3.3
+021,2011-03-31,7,03.02.2012,3.2
+021,2011-03-31,8,Carlson Fund- Scandinavia,3.0
+021,2011-03-31,9,24.02.2012,2.9
+021,2011-03-31,10,15.04.2011,2.9
+025,2011-03-31,1,Lithuania 9.375% 22.06.2014,5.55
+025,2011-03-31,2,Gazprom 8.125% 04.02.2015,4.81
+025,2011-03-31,3,VTB Bank 8.250% 30.06.2011,4.75
+025,2011-03-31,4,MDM 8.300% 16.11.2011,4.1
+025,2011-03-31,5,Depozīts GE Money 27.07.2012.,3.85
+025,2011-03-31,6,MOL Hungarian Oil & Gas 5.875% 20.04.2017,3.28
+025,2011-03-31,7,Depozīts GE Money 22.01.2013,3.07
+025,2011-03-31,8,Bombardier 7.25% 15.11.2016,2.48
+025,2011-03-31,9,Montenegro 7.875% 14.09.2015,2.43
+025,2011-03-31,10,Slovenia 4.125% 26.01.2020,2.39
+026,2011-03-31,1,Lithuania 9.375% 22.06.2014,6.14
+026,2011-03-31,2,Depozīts GE Money 27.07.2012,5.58
+026,2011-03-31,3,Gazprom 8.125% 04.02.2015,5.1
+026,2011-03-31,4,MDM 8.300% 16.11.2011.,4.92
+026,2011-03-31,5,Transneft 5.381% 27.06.2012,4.49
+026,2011-03-31,6,Depozīts GE Money 22.01.2013,4.45
+026,2011-03-31,7,VTB Bank 8.250% 30.06.2011,3.82
+026,2011-03-31,8,MOL Hungarian Oil & Gas 5.875% 20.04.2017,3.39
+026,2011-03-31,9,Depozīts GE Money 13.08.2012,3.34
+026,2011-03-31,10,Depozīts LBB 28.05.2011,3.1
+027,2011-03-31,1,Termiņnoguldījums AS UNICREDIT BANK,6.75
+027,2011-03-31,2,Termiņnoguldījums AS GE MONEY BANK,6.07
+027,2011-03-31,3,Evli Ruble Debt,3.96
+027,2011-03-31,4,XEMB GY EM. MARKET LIGUID EUROBOND I,3.91
+027,2011-03-31,5,Evli Euro Liquidity,3.81
+027,2011-03-31,6,Nordea 1 - European High Yield Bond Fund BI-EUR,3.73
+027,2011-03-31,7,iShares Markit iBoxx Euro High Yield,3.63
+027,2011-03-31,8,iShares Barclays Euro Corp Bond ex-Fin 1-5,3.44
+027,2011-03-31,9,iShares Barclays Euro Corporate Bond 1-5,3.43
+027,2011-03-31,10,Lyxor ETF Euro Corporate Bond,3.41
+028,2011-03-31,1,Termiņnoguldījumi AS UNICREDIT BANK,7.1
+028,2011-03-31,2,Termiņnoguldījums AS DnB NORD BANK,4.73
+028,2011-03-31,3,Nordea 1 - European High Yield Bond Fund BI-EUR,3.93
+028,2011-03-31,4,XMUS GY (MSCI TRN USA),3.8
+028,2011-03-31,5,iShares S&P 500 ETF,3.62
+028,2011-03-31,6,Evli Ruble Debt,3.47
+028,2011-03-31,7,Evli Euro Liquidity,3.34
+028,2011-03-31,8,iShares Markit iBoxx Euro High Yield,3.33
+028,2011-03-31,9,XMEA GY ( MSCI EM EMEA Trn),3.23
+028,2011-03-31,10,Ishares III plc - Ishares Barclays Euro Corp,3.1
+002,2011-06-30,1,Latvijas valdības obligācijas 140402,12.3
+002,2011-06-30,2,Latvijas valdības obligācijas 180305,7.4
+002,2011-06-30,3,LVL,5.0
+002,2011-06-30,4,LVL,4.4
+002,2011-06-30,5,LVL,4.3
+002,2011-06-30,6,LVL,3.8
+002,2011-06-30,7,LVL,3.2
+002,2011-06-30,8,LVL,3.1
+002,2011-06-30,9,LVL,3.0
+002,2011-06-30,10,LVL,2.9
+003,2011-06-30,1,LR obligācijas 140402,9.7
+003,2011-06-30,2,Morgan Stanley - Eiropas akciju fonds,3.9
+003,2011-06-30,3,LR obligācijas 180305,3.8
+003,2011-06-30,4,GAM - Star ASV akciju fonds,3.7
+003,2011-06-30,5,SSGA Europe Index akciju fonds,3.2
+003,2011-06-30,6,SSGA US Index akciju fonds,2.8
+003,2011-06-30,7,DB X-Trackers MSCI World akciju fonds,2.8
+003,2011-06-30,8,LVL,2.5
+003,2011-06-30,9,XACT OMXS30 akciju fonds,2.5
+003,2011-06-30,10,Termiņdepozīts DnB Nord,2.4
+005,2011-06-30,1,SEB banka,8.8
+005,2011-06-30,2,Swedbanka,7.4
+005,2011-06-30,3,db x-trackers MSCI World TRN,4.7
+005,2011-06-30,4,LHZB,4.4
+005,2011-06-30,5,SEB Key Hedge Fund,3.9
+005,2011-06-30,6,ComStage MSCI World TRN ETF,3.1
+005,2011-06-30,7,LR 5.875% 23/Apr/2013,3.0
+005,2011-06-30,8,Schroder Emerging Europe Debt,2.9
+008,2011-06-30,1,LVL,5.34
+008,2011-06-30,2,Pimco Total Return Bond Fund,4.02
+008,2011-06-30,3,LVL,3.59
+008,2011-06-30,4,Latvijas valsts 5.50% 05/03/2018,3.15
+008,2011-06-30,5,Latvijas valsts 4.25% 02/04/2014,3.08
+008,2011-06-30,6,LVL,2.87
+008,2011-06-30,7,LVL,2.78
+008,2011-06-30,8,LVL,2.73
+008,2011-06-30,9,LVL,2.57
+008,2011-06-30,10,UDS,2.48
+012,2011-06-30,1,Latvia 6.625% 04.02.2021,9.51
+012,2011-06-30,2,Depozīts Latvijas Krājbanka 06.10.2011,3.31
+012,2011-06-30,3,Depozīts Latvijas Krājbanka 29.10.2011,3.3
+012,2011-06-30,4,Depozīts Latvijas Hipotēku un Zemes Banka 09.12.2011,3.3
+012,2011-06-30,5,Lithuania 9.375% 22.06.2014,2.78
+012,2011-06-30,6,MDM bank 8.3% 16.11.2011.,2.76
+012,2011-06-30,7,DBR 6% 20.06.2016,2.71
+012,2011-06-30,8,VEB 3.75% 17.02.2016,2.55
+012,2011-06-30,9,Alcatel-Lucent 8.50% 15.01.2016,2.54
+012,2011-06-30,10,MOL Hungarian Oil & Gas 5.875% 20.04.2017,2.11
+021,2011-06-30,1,03.09.2015.,8.3
+021,2011-06-30,2,23.04.2013.,7.0
+021,2011-06-30,3,26.02.2012.,4.8
+021,2011-06-30,4,04.02.2021.,4.1
+021,2011-06-30,5,02.04.2014.,4.1
+021,2011-06-30,6,08.11.2012.,3.1
+021,2011-06-30,7,03.02.2012.,3.1
+021,2011-06-30,8,24.02.2012.,2.8
+021,2011-06-30,9,28.02.2013.,2.6
+021,2011-06-30,10,Carlson Fund-Scandinavia,2.6
+025,2011-06-30,1,Gazprom 8.125% 04.02.2015,6.06
+025,2011-06-30,2,Lithuania 9.375% 22.06.2014,5.27
+025,2011-06-30,3,MDM Bank 8.3% 16.11.2011.,4.26
+025,2011-06-30,4,Depozīts GE Money 27.07.2012,4.0
+025,2011-06-30,5,Depozīts GE Money 22.01.2013,3.18
+025,2011-06-30,6,MOL Hungarian Oil & Gas 5.875% 20.04.2017,3.17
+025,2011-06-30,7,DAX ETF,3.01
+025,2011-06-30,8,Montenegro 7.875% 14.09.2015,2.49
+025,2011-06-30,9,Bombardier 7.25% 15.11.2016,2.46
+025,2011-06-30,10,Slovenia 4.125% 26.01.2020,2.43
+026,2011-06-30,1,Gazprom 8.125% 04.02.2015,5.93
+026,2011-06-30,2,Lithuania 9.375% 22.06.2014,5.73
+026,2011-06-30,3,Depozīts GE Money 27.07.2012,5.7
+026,2011-06-30,4,Depozīts GE Money 22.01.2013,4.52
+026,2011-06-30,5,JSC Transneft 5.381% 27.06.2012,4.33
+026,2011-06-30,6,MDM Bank 8.3% 16.11.2011.,4.16
+026,2011-06-30,7,Depozīts GE Money 13.08.2012,3.41
+026,2011-06-30,8,MOL Hungarian Oil & Gas 5.875% 20.04.2017,3.23
+026,2011-06-30,9,Depozīts Eesti Krediidipank 31.08.2011,3.11
+026,2011-06-30,10,DAX ETF,3.04
+027,2011-06-30,1,ensions Latvia,8.79
+027,2011-06-30,2,Termiņnoguldījums AS GE Money Bank,5.71
+027,2011-06-30,3,XEMB GY EM. Market Liguid Eurobond I,3.87
+027,2011-06-30,4,Evli Ruble Debt,3.78
+027,2011-06-30,5,Nordea 1 Global High Yield Bond fund,3.69
+027,2011-06-30,6,Evli Euro Liquidity,3.6
+027,2011-06-30,7,Nordea 1 - European High Yield Bond Fund BI-,3.49
+027,2011-06-30,8,iShares Markit iBoxx Euro High Yield,3.43
+027,2011-06-30,9,Lyxor ETF Euro Corporate Bond,3.26
+027,2011-06-30,10,iShares Barclays Euro Corp Bond ex-Fin 1-5,3.23
+028,2011-06-30,1,ensions Latvia,9.06
+028,2011-06-30,2,Anne Leino,3.64
+028,2011-06-30,3,XMUS GY (MSCI TRN USA),3.41
+028,2011-06-30,4,Evli Ruble Debt,3.28
+028,2011-06-30,5,iShares S&P 500 ETF,3.24
+028,2011-06-30,6,Evli Euro Liquidity,3.13
+028,2011-06-30,7,iShares Markit iBoxx Euro High Yield,3.1
+028,2011-06-30,8,XEMB GY EM. Market Liguid Eurobond I,2.9
+028,2011-06-30,9,Ishares III plc - Ishares Barclays Euro Corp,2.87
+028,2011-06-30,10,ishares - iShares EURO Corporate Bond,2.86
 002,2011-09-30,1,Latvijas valdības obligācijas 140402,12.6
 002,2011-09-30,2,Latvijas valdības obligācijas 180305,9.3
 002,2011-09-30,3,Lietuvas valdības obligācijas 140622,9.2
