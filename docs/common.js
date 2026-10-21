@@ -123,7 +123,7 @@ function renderHeader(active, onLang) {
   { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
     const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(`${o.dataset.off}.html${location.hash}`); }
   if (TAB_GROUP[active] && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
-  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1></a>
+  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
@@ -169,6 +169,8 @@ function renderHeader(active, onLang) {
     el.lang = lang;
     const t = T();
     document.getElementById('title').textContent = t.siteTitle;
+    { const cp = PAGE_ALIAS[active] || active, cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
+      document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
     document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
     const lb = document.getElementById('lang');

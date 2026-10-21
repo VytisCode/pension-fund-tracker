@@ -577,3 +577,14 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 .state.st-error { border-style: solid; border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
 .state.st-error svg { color: var(--warn); }
 .chart > .state { position: absolute; inset: 40px auto auto 50%; transform: translateX(-50%); width: min(520px, calc(100% - 32px)); margin: 0; }
+
+/* „Jūs esate čia“ (auditas 2026-10-21): kompiuteryje – šalia pavadinimo, telefone – vietoj jo (pavadinimas vis tiek nukerpamas) */
+.crumb { display: inline-flex; align-items: baseline; gap: 6px; color: var(--text-3); font-size: 15px; white-space: nowrap; overflow: hidden; min-width: 0; }
+.crumb:empty { display: none; }
+.crumb span::before { content: '›'; margin-right: 6px; color: var(--text-3); }
+.crumb span:last-child { color: var(--text-2); }
+@media (max-width: 700px) {
+  .brand:has(.crumb:not(:empty)) h1 { display: none; }
+  .crumb { font-family: "Source Serif 4", Georgia, serif; font-size: 17px; font-weight: 600; color: var(--text); text-overflow: ellipsis; }
+  .crumb span::before { display: none; } .crumb span:first-child:not(:last-child) { display: none; } .crumb span:last-child { color: var(--text); }
+}
