@@ -86,23 +86,39 @@ def num(x):
 
 def ee_rows():
     out = []
-    test = lambda t: t.upper().startswith("PA001") or ("GROSS WAGES" in t.upper() and "QUARTER" in t.upper() and not any(x in t.upper() for x in ("ACTIVITY", "COUNTY", "SEX", "OCCUPATION")))
-    p = None
-    for root in ("sotsiaalelu/palk-ja-toojeukulu", "sotsiaalelu", "majandus"):   # palgad Statistikaameti medyje – „Sotsiaalelu“ skyriuje
-        p = find(EE, root, test)
-        if p:
-            break
-    if p:
-        cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: "average monthly gross wages" in t, "näitaja": lambda t: "average monthly gross wages" in t,
-                                             "economic activity": lambda t: t.startswith("total"), "tegevusala": lambda t: t.startswith("total")})
-        print("EE darbo užmokestis:", p, meta.get("title"))
+    # Statistikaamet: majandus/palk-ja-toojeukulu/palk/luhiajastatistika – ketvirčių lentelės (EMTAK 2008 nuo 2008 m., senesnės – EMTAK 2003)
+    test = lambda t: "MONTHLY GROSS WAGES" in t.upper() and "QUARTER" in t.upper() and not any(x in t.upper() for x in ("COUNTY", "SEX", "OCCUPATION", "OWNER", "SIZE", "CHANGE"))
+    base = "majandus/palk-ja-toojeukulu/palk/luhiajastatistika"
+    paths = []
+    try:
+        for it in http(f"{EE}/{base}"):
+            if it.get("type") == "t" and test(it.get("text", "")):
+                paths.append(f"{base}/{it['id']}")
+            elif it.get("type") == "l":
+                paths += [f"{base}/{it['id']}/{x['id']}" for x in http(f"{EE}/{base}/{it['id']}") if x.get("type") == "t" and test(x.get("text", ""))]
+    except Exception as e:
+        print("EE atlyginimų sąrašas nepasiekiamas:", e)
+    if not paths:
+        p = find(EE, "majandus/palk-ja-toojeukulu", test)
+        paths = [p] if p else []
+    for p in paths:
+        try:
+            cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: "average monthly gross wages" in t, "näitaja": lambda t: "average monthly gross wages" in t,
+                                                 "economic activity": lambda t: t.startswith("total"), "tegevusala": lambda t: t.startswith("total")})
+        except Exception as e:
+            print("EE", p, "nepavyko:", e); continue
+        print("EE darbo užmokestis:", p, meta.get("title"), len(data))
         for r in data:
-            k = dict(zip(cols, r["key"])); y = next((v for c, v in k.items() if re.fullmatch(r"\d{4}", v)), None)
+            k = dict(zip(cols, r["key"])); y = next((v for v in k.values() if re.fullmatch(r"\d{4}", v)), None)
             q = next((v for v in k.values() if v in ("I", "II", "III", "IV")), None)
+            if not q:                                   # kai kuriose lentelėse laikas – „2024Q1“ / „2024K1“
+                m = next((re.fullmatch(r"(\d{4})\s*[QK]([1-4])", v) for v in k.values() if re.fullmatch(r"(\d{4})\s*[QK]([1-4])", v)), None)
+                if m:
+                    y, q = m.group(1), ["I", "II", "III", "IV"][int(m.group(2)) - 1]
             v = num(r["values"][0])
             if y and q and v:
                 out.append(("EE", "wage_gross", f"{y}-Q{['I', 'II', 'III', 'IV'].index(q) + 1}", v))
-    else:
+    if not paths:
         print("EE darbo užmokesčio lentelė nerasta")
     cols, data, meta = query(f"{EE}/sotsiaalelu/sotsiaalne-kaitse/sotsiaalkindlustus/pensionikindlustus/SK153.PX",
                              {"type of pension": lambda t: "old-age" in t})
