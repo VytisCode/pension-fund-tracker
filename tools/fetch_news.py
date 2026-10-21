@@ -189,21 +189,25 @@ def save(old):
 
 def enrich(old, budget):
     """Tušti laukai: article_url (tikras adresas; „-“ – nepavyko) ir summary (straipsnio aprašas). Naujausi pirmi, iki `budget` sekundžių."""
+    from concurrent.futures import ThreadPoolExecutor
     t0, n, ok = time.time(), 0, 0
-    for r in sorted(old.values(), key=lambda r: r["date"], reverse=True):
+    todo = [r for r in sorted(old.values(), key=lambda r: r["date"], reverse=True) if not r.get("article_url")]
+
+    def one(r):
+        u = r["url"] if "news.google.com" not in r["url"] else decode(r["url"])
+        d = describe(u) if u and not r["summary"] else ""
+        time.sleep(0.5)
+        return r, u, d
+    for i in range(0, len(todo), 9):                       # po 9, 3 lygiagrečiai; laiko biudžetas tikrinamas tarp grupių
         if time.time() - t0 > budget:
             break
-        if r.get("article_url"):
-            continue
-        u = r["url"] if "news.google.com" not in r["url"] else decode(r["url"])
-        n += 1
-        r["article_url"] = u or "-"
-        if u and not r["summary"]:
-            d = describe(u)
-            if d and norm(d) != norm(r["title"]):
-                r["summary"] = d; ok += 1
-                r["topics"] = topics(r["title"] + " " + d)
-        time.sleep(0.8)
+        with ThreadPoolExecutor(3) as ex:
+            for r, u, d in ex.map(one, todo[i:i + 9]):
+                n += 1
+                r["article_url"] = u or "-"
+                if d and norm(d) != norm(r["title"]):
+                    r["summary"] = d; ok += 1
+                    r["topics"] = topics(r["title"] + " " + d)
     left = sum(1 for r in old.values() if not r.get("article_url"))
     print(f"aprašai: bandyta {n}, papildyta {ok}, liko nebandytų {left}")
 

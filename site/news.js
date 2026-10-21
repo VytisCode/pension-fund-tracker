@@ -21,7 +21,7 @@ addStrings({ nw: {
     fade: (tp, w, d0, d1, n) => `“${tp}” has gone quiet for ${w} weeks (last wave ${d0} – ${d1}, ${n} articles).`,
     big: (tp, d0, d1, n, w, h) => `Biggest earlier media wave: “${tp}” ${d0} – ${d1}: ${n} articles over ${w} weeks (peak: “${h}”).`,
     act: l => `Most mentioned in 30 days: ${l}.`, newAct: (a, n) => `New voice in the debate: ${a} (${n} mentions in 30 days, none in the year before).`,
-    seim: (n, d, h, s) => `${n} pension-related items on the Seimas agenda in 60 days; latest ${d}: ${h}${s ? ` (${s.toLowerCase()})` : ''}.`,
+    seim: (n, d, h, s) => `Seimas agenda in 60 days: ${n} drafts on pensions and pension accumulation; latest ${d}: ${h}${s ? ` (${s.toLowerCase()})` : ''}.`,
     cty: (lt, ee, lv) => `In 30 days: ${lt} articles in Lithuania, ${ee} in Estonia, ${lv} in Latvia.`, none: 'Too few articles for insights in this choice.' },
   tlT: 'Timeline of topics', tlL: 'Each row is a topic; shading – articles per week, bars – “waves” (weeks with articles, gaps of up to 3 weeks). Click a wave to see when it started, peaked and ended and which articles it consisted of.',
   wave: (tp, d0, d1, w, n) => `“${tp}”: ${d0} – ${d1} · ${w} wk. · ${n} articles`, peak: (d, n) => `Peak: week of ${d} (${n})`, close: 'Close',
@@ -29,7 +29,7 @@ addStrings({ nw: {
   grp: { '': 'All', inst: 'Institutions', party: 'Parties', org: 'Organisations', person: 'Commentators', mgr: 'Managers' },
   acSel: a => `${a}: statements over time (oldest first)`, acNone: 'Nobody mentioned in this choice.', mentions: 'mentions',
   seT: 'What the Seimas is considering', seL: 'Seimas agenda items on pensions, pension accumulation, annuities, the Sodra budget and personal income tax – with the stage (submission, consideration, adoption) and a link to the draft. Source: open data of the Office of the Seimas (CC BY 4.0), daily.',
-  seC: { '': 'All', kaupimas: 'Pension accumulation', pensijos: 'Pensions', sodra: 'Sodra budget, insurance', gpm: 'Income tax' }, seNone: 'No items on the agenda for this choice.', listT: 'All articles',
+  seC: { '': 'All', kaupimas: 'Pension accumulation', pensijos: 'Pensions', sodra: 'Sodra budget, insurance', gpm: 'Income tax' }, seNone: 'No items on the agenda for this choice.', seLane: c => `Seimas agenda${c && c !== 'All' ? ' – ' + c.toLowerCase() : ''} (items per week)`, listT: 'All articles',
   note: 'Sources: Google News search (the article’s own address and description are taken from the article page) and RSS feeds of LRT, 15min, Lrytas, the Ministry of Social Security and Labour, the Ministry of Finance, the Government, LIPFA, ERR, Postimees, Äripäev, Riigikogu, Tuleva, LSM, Dienas Bizness, Diena and TVNET. Articles are selected by keywords (pension funds, pillar II/III, sammas, līmenis…), so a few unrelated ones may slip in. Facebook posts cannot be collected automatically – only when the media quote them. The archive is only added to.',
   xh: ['Date', 'Country', 'Outlet', 'Headline', 'Description', 'Link', 'Topics', 'Actors (ids)'], shW: 'Waves', shA: 'Actors', shS: 'Seimas',
   xw: ['Topic', 'Start', 'End', 'Weeks', 'Articles', 'Peak week', 'Articles in peak week', 'Peak headline'], xs: ['Date', 'Agenda item', 'Stage', 'Draft', 'Category', 'Link', 'Speakers'] } }, { nw: {
@@ -47,7 +47,7 @@ addStrings({ nw: {
     fade: (tp, w, d0, d1, n) => `Apie „${tp}“ nerašoma jau ${w} sav. (paskutinė banga ${d0} – ${d1}, ${n} straipsn.).`,
     big: (tp, d0, d1, n, w, h) => `Didžiausia ankstesnė žiniasklaidos banga – „${tp}“ ${d0} – ${d1}: ${n} straipsn. per ${w} sav. (pikas: „${h}“).`,
     act: l => `Per 30 d. dažniausiai minimi: ${l}.`, newAct: (a, n) => `Naujas balsas diskusijoje: ${a} (${n} paminėj. per 30 d., per ankstesnius metus – nė vieno).`,
-    seim: (n, d, h, s) => `Per 60 d. Seimo darbotvarkėje – ${n} su pensijomis susiję klausimai; naujausias ${d}: ${h}${s ? ` (${s.toLowerCase()})` : ''}.`,
+    seim: (n, d, h, s) => `Per 60 d. Seimo darbotvarkėje – pensijų ir jų kaupimo projektų: ${n}; naujausias ${d}: ${h}${s ? ` (${s.toLowerCase()})` : ''}.`,
     cty: (lt, ee, lv) => `Per 30 d.: Lietuvoje ${lt} straipsn., Estijoje ${ee}, Latvijoje ${lv}.`, none: 'Šiam pasirinkimui straipsnių per mažai įžvalgoms.' },
   tlT: 'Temų laiko juosta', tlL: 'Kiekviena eilutė – tema; atspalvis – straipsniai per savaitę, juostos – „bangos“ (savaitės su straipsniais, kai tarpas ne ilgesnis nei 3 savaitės). Paspaudus bangą matyti, kada ji prasidėjo, kada buvo pikas, kada baigėsi ir iš kokių straipsnių susidėjo.',
   wave: (tp, d0, d1, w, n) => `„${tp}“: ${d0} – ${d1} · ${w} sav. · ${n} straipsn.`, peak: (d, n) => `Pikas: savaitė nuo ${d} (${n})`, close: 'Uždaryti',
@@ -55,12 +55,12 @@ addStrings({ nw: {
   grp: { '': 'Visi', inst: 'Institucijos', party: 'Partijos', org: 'Organizacijos', person: 'Komentatoriai', mgr: 'Valdytojai' },
   acSel: a => `${a}: pasisakymai laiko tvarka (seniausi pirmi)`, acNone: 'Šiam pasirinkimui veikėjų nepaminėta.', mentions: 'paminėj.',
   seT: 'Ką svarsto Seimas', seL: 'Seimo posėdžių darbotvarkės klausimai apie pensijas, pensijų kaupimą, anuitetus, Sodros biudžetą ir GPM – su stadija (pateikimas, svarstymas, priėmimas) ir nuoroda į projektą. Šaltinis – Seimo kanceliarijos atviri duomenys (CC BY 4.0), kasdien.',
-  seC: { '': 'Visi', kaupimas: 'Pensijų kaupimas', pensijos: 'Pensijos', sodra: 'Sodros biudžetas, draudimas', gpm: 'GPM' }, seNone: 'Šiam pasirinkimui darbotvarkėje klausimų nėra.', listT: 'Visi straipsniai',
+  seC: { '': 'Visi', kaupimas: 'Pensijų kaupimas', pensijos: 'Pensijos', sodra: 'Sodros biudžetas, draudimas', gpm: 'GPM' }, seNone: 'Šiam pasirinkimui darbotvarkėje klausimų nėra.', seLane: c => `Seimo darbotvarkė${c && c !== 'Visi' ? ' – ' + c.toLowerCase() : ''} (klausimai per savaitę)`, listT: 'Visi straipsniai',
   note: 'Šaltiniai: Google News paieška (straipsnio adresas ir aprašas paimami iš paties straipsnio puslapio) ir LRT, 15min, Lrytas, Socialinės apsaugos ir darbo ministerijos, Finansų ministerijos, Vyriausybės, LIPFA, ERR, Postimees, Äripäev, Riigikogu, Tuleva, LSM, Dienas Bizness, Diena ir TVNET RSS srautai. Straipsniai atrenkami pagal raktažodžius (pensijų fondai, II/III pakopa, sammas, līmenis…), todėl gali pasitaikyti nesusijusių. Facebook įrašų automatiškai surinkti negalima – tik kai juos cituoja žiniasklaida. Archyvas tik papildomas.',
   xh: ['Data', 'Šalis', 'Leidinys', 'Antraštė', 'Aprašas', 'Nuoroda', 'Temos', 'Veikėjai (id)'], shW: 'Bangos', shA: 'Veikėjai', shS: 'Seimas',
   xw: ['Tema', 'Pradžia', 'Pabaiga', 'Savaitės', 'Straipsniai', 'Piko savaitė', 'Straipsniai piko savaitę', 'Piko antraštė'], xs: ['Data', 'Darbotvarkės klausimas', 'Stadija', 'Projektas', 'Kategorija', 'Nuoroda', 'Pranešėjai'] } });
 
-const NWS = { c: '', t: '', q: '', n: 30, p: '', from: '', to: '', a: '', g: '', w: null, sc: '', sn: 12 };
+const NWS = { c: '', t: '', q: '', n: 30, p: '', from: '', to: '', a: '', g: '', w: null, sc: 'kaupimas', sn: 12 };
 const NW_TOPICS = ['reform', 'tax', 'state', 'returns', 'fees', 'payout', 'politics'];
 const NW_CUE = /\b(siūl\w*|ragin\w*|kritik\w*|nepritar\w*|pritar\w*|prieš|atmet\w*|palaik\w*|perspėj\w*|reikalauj\w*|žad\w*|pažad\w*|griežtai|ierosin\w*|aicin\w*|kritiz\w*|atbalst\w*|iebilst\w*|noraid\w*|brīdin\w*|ettepanek\w*|kriti\w*|toeta\w*|vastu|hoiat\w*|nõua\w*|propos\w*|urg\w*|critici\w*|support\w*|oppos\w*|against|warn\w*|reject\w*)/giu;
 const nwTopic = k => T().nw.t[k] || k;
@@ -131,7 +131,7 @@ function nwInsights() {
   const nu = Object.entries(ac).filter(([a, n]) => n >= 2 && !acPrev[a] && !isMgr(a)).sort((a, b) => b[1] - a[1])[0];
   if (nu && all.some(r => dayOf(r[0]) < now - 300)) out.push({ s: I.newAct(nwActName(nu[0]), nu[1]), go: { a: nu[0], p: '30' } });
   if (typeof SEIMAS !== 'undefined' && SEIMAS.length && (!NWS.c || NWS.c === 'LT')) {
-    const s60 = SEIMAS.filter(r => dayOf(r[0]) > now - 60), pj = new Set(s60.map(r => r[3] || r[1]));
+    const s60 = SEIMAS.filter(r => dayOf(r[0]) > now - 60 && (r[4] === 'kaupimas' || r[4] === 'pensijos')), pj = new Set(s60.map(r => r[3] || r[1]));
     if (s60.length) out.push({ s: I.seim(pj.size, s60[0][0], s60[0][1], s60[0][2]), seim: 1 });
   }
   if (!NWS.c) { const c = k => r30.filter(r => r[1] === k).length; out.push({ s: I.cty(c('LT'), c('EE'), c('LV')), go: { p: '30' } }); }
@@ -168,7 +168,8 @@ function nwTimeline() {
   if (!rows.length) { document.getElementById('nwTlC').innerHTML = `<p class="note">${t.none}</p>`; return; }
   const W = nwWaves(rows), [r0, r1] = nwRange();
   const w0 = nwWeek(Math.max(r0, dayOf(rows[rows.length - 1][0]))), w1 = nwWeek(Math.min(r1, nwNow())), n = Math.max(1, w1 - w0 + 1);
-  const box = document.getElementById('nwTlC'), Wd = box.clientWidth || 640, m = { l: 6, r: 6 }, lh = 40, H = NW_TOPICS.length * lh + 22, X = w => m.l + (w - w0) / n * (Wd - m.l - m.r), bw = Math.max(1, (Wd - m.l - m.r) / n);
+  const seL = typeof SEIMAS !== 'undefined' && SEIMAS.length && (!NWS.c || NWS.c === 'LT'), nL = NW_TOPICS.length + (seL ? 1 : 0);
+  const box = document.getElementById('nwTlC'), Wd = box.clientWidth || 640, m = { l: 6, r: 6 }, lh = 40, H = nL * lh + 22, X = w => m.l + (w - w0) / n * (Wd - m.l - m.r), bw = Math.max(1, (Wd - m.l - m.r) / n);
   let s = `<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="${hEsc(t.tlT)}">`;
   NW_TOPICS.forEach((tp, i) => {
     const y = i * lh, wk = W[tp].wk, hi = Math.max(1, ...Object.values(wk).map(a => a.length)), sel = NWS.t === tp;
@@ -178,6 +179,12 @@ function nwTimeline() {
     W[tp].ep.forEach((e, j) => { if (e.w1 < w0 || e.w0 > w1) return; const a = Math.max(e.w0, w0), b = Math.min(e.w1, w1), on = NWS.w && NWS.w.tp === tp && NWS.w.w0 === e.w0;
       s += `<rect class="nwep" data-nwep="${tp}:${j}" x="${X(a)}" y="${y + 15}" width="${Math.max(3, X(b) - X(a) + bw)}" height="20" fill="transparent" stroke="${on ? 'var(--text)' : 'var(--text-2)'}" stroke-width="${on ? 2 : 1}" rx="4" style="cursor:pointer"><title>${hEsc(t.wave(nwTopic(tp), ...nwSpan(e), e.w1 - e.w0 + 1, e.n))}</title></rect>`; });
   });
+  if (seL) {                                                    // valdžios dėmesys: Seimo darbotvarkės klausimai per savaitę (pasirinkta kategorija)
+    const y = NW_TOPICS.length * lh, wk = {}; SEIMAS.forEach(r => { if (NWS.sc && r[4] !== NWS.sc) return; const w = nwWeek(dayOf(r[0])); wk[w] = (wk[w] || 0) + 1; });
+    const hi = Math.max(1, ...Object.values(wk));
+    s += `<text x="${m.l}" y="${y + 12}" font-size="12" fill="var(--text-2)" font-weight="500">${hEsc(t.seLane(t.seC[NWS.sc] || ''))}</text><rect x="${m.l}" y="${y + 17}" width="${Wd - m.l - m.r}" height="16" fill="var(--hover)" rx="3"/>`;
+    Object.entries(wk).forEach(([w, n]) => { w = +w; if (w < w0 || w > w1) return; s += `<rect x="${X(w)}" y="${y + 17}" width="${bw}" height="16" fill="#c9765a" opacity="${(0.25 + 0.75 * n / hi).toFixed(2)}"><title>${iso(nwWeekDay(w))}: ${n}</title></rect>`; });
+  }
   const y0 = new Date(nwWeekDay(w0) * DAY).getUTCFullYear(), y1 = new Date(nwWeekDay(w1) * DAY).getUTCFullYear(), long = y1 - y0 >= 2; let lastX = -1e9;
   for (let w = w0; w <= w1; w++) { const d = iso(nwWeekDay(w)), prev = iso(nwWeekDay(w - 1)); const lab = long ? (d.slice(0, 4) !== prev.slice(0, 4) ? d.slice(0, 4) : '') : (d.slice(5, 7) !== prev.slice(5, 7) ? `${T().monShort[+d.slice(5, 7) - 1]}${d.slice(5, 7) === '01' ? ' ' + d.slice(0, 4) : ''}` : '');
     if (lab && X(w) - lastX > 44) { s += `<text x="${X(w)}" y="${H - 4}" font-size="11" fill="var(--text-3)">${lab}</text><line x1="${X(w)}" x2="${X(w)}" y1="14" y2="${H - 16}" stroke="var(--grid)" stroke-dasharray="2 3"/>`; lastX = X(w); } }
