@@ -62,38 +62,59 @@ def big(s):
     return float(re.sub(r"[ ,. ]", "", s))
 
 
+NUM1 = r"\d{1,3}(?:[ ,.\u00a0]\d{3})+"                    # ir mažesnės sumos (888 186) – tik po turto etikete
+
+
+def split2(x):
+    """„84 518 129 100 116 001“ – dvi sumos, sulipusios vienu tarpu: padalijama ten, kur abi dalys artimiausios viena kitai."""
+    g = re.split(r"[ ,.\u00a0]", x)
+    if len(g) < 5:
+        return [x]
+    best = min(range(2, len(g) - 1), key=lambda k: abs(float("".join(g[:k])) / float("".join(g[k:])) - 1) if g[k][0] != "0" else 9e9)
+    return [" ".join(g[:best]), " ".join(g[best:])]
+
+
 def after(ln, m):
     """Skaičiai iškart po etiketės: tik segmentai (atskirti ≥2 tarpais) be raidžių, iki pirmo segmento su raidėmis."""
     out = []
-    for seg in re.split(r"\s{2,}", ln[m.end():]):
+    for seg in re.split(r"\s{2,}|\t", ln[m.end():]):
         seg = re.sub(r"\(?EUR\)?", "", seg).strip(" :,")
-        if not seg:
+        if not seg or seg == "-":
             continue
         if re.search(r"[A-Za-zĀ-ž]", seg):
             break
-        out.append(seg)
-    return out
+        out += split2(seg) if re.fullmatch(NUM1, seg) else [seg]
+    return [x for x in out if re.fullmatch(NUM1, x) and big(x) >= 10000]
 
 
 def assets(t):
     """Plano turtas ketvirčio pabaigoje (EUR). Dvi reikšmės po etikete – ankstesnio ir šio ketvirčio pabaiga, imama antroji."""
     L = t.splitlines()
     for i, ln in enumerate(L):
-        m = re.search(r"Līdzekļu apjoms(?: \(EUR\))?|Līdzekļu vērtība, EUR|Aktīvu vērtība, EUR|Neto aktīvi(?!,)|ceturkšņa beigās(?: EUR)?", ln)
+        m = re.search(r"Līdzekļu apjoms(?: \(EUR\))?|Līdzekļu vērtība, EUR|Aktīvu vērtība, EUR|Neto aktīvi(?!,)|ceturkšņa beigās(?: EUR)?|Pārskata perioda beigās", ln)
         if m:
-            ns = [x for x in after(ln, m) if re.fullmatch(NUM, x)]
-            if not ns and "beigās" in m.group(0) and i + 1 < len(L):
-                ns = re.findall(NUM, L[i + 1][:110])[:1]
-            if ns:
-                return big(ns[1] if len(ns) > 1 else ns[0])
-        if re.search(r"Plāna aktīvu vērtība", ln[:110]):                # SEB: „Pārskata perioda beigās 309,651,758 EUR“
-            for k in range(i + 1, min(i + 4, len(L))):
-                if "beigās" in L[k]:
-                    ns = re.findall(NUM, L[k][:110])
+            ns = after(ln, m)
+            if not ns and "ceturkšņa beigās" in m.group(0) and i + 1 < len(L):
+                ns = [x for x in re.findall(NUM1, L[i + 1][:110]) if big(x) >= 10000][:1]
+            if not ns and m.group(0) == "Neto aktīvi" and not re.search(r"\d", ln):      # INDEXO 2024–2025: vertės žemiau, pirmoji – ketvirčio pabaiga
+                for k in range(i + 1, min(i + 9, len(L))):
+                    ns = re.findall(NUM, L[k])
                     if ns:
                         return big(ns[0])
-    m = re.search(r"neto aktīvi sasniedza (" + NUM + ")", t)
-    return big(m.group(1)) if m else None
+            if ns:
+                return big(ns[1] if len(ns) > 1 else ns[0])
+        if re.search(r"Plāna aktīvu vērtība", ln):                       # SEB: „Pārskata perioda beigās 309,651,758 EUR“ (iki 10 eilučių žemiau)
+            for k in range(i + 1, min(i + 10, len(L))):
+                if "beigās" in L[k]:
+                    ns = re.findall(NUM, L[k])
+                    if ns:
+                        return big(ns[0])
+    s1 = re.sub(r"\s+", " ", t)
+    m = re.search(r"neto aktīvi sasniedza (" + NUM + ")", s1)
+    if m:
+        return big(m.group(1))
+    m = re.search(r"neto aktīvu vērtība [^;]{0,60}?sasniedza (\d+(?:,\d+)?) milj", s1)          # Luminor 2019–2021: „sasniedza 138,4 milj. eiro“
+    return float(m.group(1).replace(",", ".")) * 1e6 if m else None
 
 
 def unit(t):
@@ -108,7 +129,7 @@ def unit(t):
 
 def participants(t):
     s = re.sub(r"\s+", " ", t)
-    m = re.search(r"dalībnieku skaits[^.]{0,80}?līdz (\d+(?:[.,]\d+)?) (tūkst)", s) or re.search(r"(\d{1,3}(?: \d{3})+) (?:pensiju 2\. līmeņa )?dalībniek", s)
+    m = re.search(r"dalībnieku skaits[^.]{0,80}?līdz (\d+(?:[.,]\d+)?) (tūkst)", s) or re.search(r"(\d{1,3}(?: \d{3})+) (?:pensiju 2\. līmeņa )?dalībniek", s) or re.search(r"dalībnieku skaits bija (\d{1,3}(?: \d{3})+)", s)
     if not m:
         return None
     v = float(m.group(1).replace(",", ".").replace(" ", ""))
@@ -116,37 +137,68 @@ def participants(t):
 
 
 STOP = re.compile(r"Ģeogrāf|Portfeļa|Plāna ieguldījumu struktūra|Sadalījums pa|Aktīvu (veidu|klašu)|Atdeves|Valūtu|Nozaru|Plāna pārvaldīšanas|Ienesīgums", re.I)
-HROW = re.compile(r"^(.*?\S)\s+(\d{1,2}[.,] ?\d{1,2}) ?%")
+PCTF = re.compile(r"(\d{1,2}[.,] ?\d{1,2}) ?%")
+
+
+def holdings1(t, back, tol, cont_ok):
+    """10 didžiausių investicijų. Pavadinimas – tekstas nuo antraštės stulpelio; dalis – procentas tame pačiame stulpelyje kaip
+    pirmosios investicijos (kitų stulpelių procentai – geografija, grąžos – praleidžiami); eilutė be procento, prasidedanti
+    pavadinimų stulpelyje, – ankstesnio pavadinimo tęsinys. Sąrašas atmetamas, jei dalys ne mažėjančios ar jų suma > 100 %."""
+    L = t.splitlines()
+    st = next((i for i, ln in enumerate(L) if re.search(r"(10 )?[Ll]ielākie (plāna )?ieguldījumi", ln)), None)
+    if st is None:
+        return []
+    hc = re.search(r"(10 )?[Ll]ielākie (plāna )?ieguldījumi", L[st]).start()
+    out, pc, cont, pend, split = [], None, False, "", False
+    for ln in L[st + 1: st + 45]:
+        if STOP.search(ln[max(0, hc - 5): hc + 45]):
+            break
+        lo = max(0, hc - back)
+        hit = None
+        for m in PCTF.finditer(ln):
+            if pc is not None and abs(m.start() - pc) > tol:          # kito stulpelio procentai (geografija, grąžos)
+                continue
+            pre = re.sub(r"\s+(EUR|USD|SEK|GBP|JPY|CHF|NOK|DKK|PLN)$", "", ln[lo:m.start()].rstrip())
+            nm = re.split(r"\s{2,}", pre.strip())[-1].strip() if pre.strip() else ""
+            if not nm and pend:                                     # INDEXO: pavadinimas eilute aukščiau, procentas atskirai
+                nm, split = pend, True
+            if len(nm) >= 3 and not re.search(r"mēneš|Svārst|Sharpe|Sortino|Value|īpatsvar|skaits|atlīdzīb|izmaks", nm, re.I):
+                hit = (nm, m)
+            break
+        if hit:
+            pc = hit[1].start() if pc is None else pc
+            out.append([hit[0], float(re.sub(r"\s", "", hit[1].group(1)).replace(",", "."))]); cont, pend = not split, ""
+            if len(out) >= 10:
+                break
+            continue
+        x = ln[lo:]
+        ind = len(x) - len(x.lstrip())
+        first = re.split(r"\s{2,}", x.strip())[0] if x.strip() else ""
+        if first and not PCTF.search(first) and len(first) < 70:
+            pend = first if not (cont and out) or split else pend
+        if cont_ok and cont and out and first and ind <= back + 3 and len(first) < 40 and not PCTF.search(first) and not re.search(r"\(EUR\)|Fonda|īpatsvars", first):
+            out[-1][0] += " " + first
+        elif not x.strip() and pc is None:
+            continue
+    w = [x[1] for x in out]
+    if not out or sum(w) > 100.5 or sum(w) < 15 or any(b > a + 0.6 for a, b in zip(w, w[1:])):
+        return []
+    return [(re.sub(r"\s+", " ", n).strip(), v) for n, v in out]
+
+
+LATV = re.compile(r"\b(var|āna|un|politika|ieguldījumu|dzīvescikla|gadā|līdz|tiek|plāna|izņemot)\b|ās,", re.I)
 
 
 def holdings(t):
-    """10 didžiausių investicijų. Imama sritis nuo antraštės stulpelio į dešinę; pavadinimas – paskutinis segmentas prieš pirmą
-    procentą (valiutos kodas praleidžiamas); trumpa eilutė be procento – ankstesnio pavadinimo tęsinys."""
-    L = t.splitlines()
-    st = next((i for i, ln in enumerate(L) if re.search(r"(10 )?[Ll]ielākie ieguldījumi", ln)), None)
-    if st is None:
-        return []
-    hc = re.search(r"(10 )?[Ll]ielākie ieguldījumi", L[st]).start()
-    out, cont = [], False
-    for ln in L[st + 1: st + 40]:
-        reg = ln[max(0, hc - 12):]
-        if STOP.search(ln[max(0, hc - 5): hc + 45]):
-            break
-        m = HROW.match(reg.strip())
-        if m:
-            pre = re.sub(r"\s+(EUR|USD|SEK|GBP|JPY|CHF|NOK|DKK|PLN)$", "", m.group(1).strip())
-            nm = re.split(r"\s{2,}", pre)[-1].strip()
-            if len(nm) >= 3 and not re.search(r"mēneš|Svārst|Sharpe|Sortino|Value|īpatsvar|skaits", nm, re.I):
-                out.append([nm, float(re.sub(r"\s", "", m.group(2)).replace(",", "."))]); cont = True
-                if len(out) >= 10:
-                    break
-                continue
-        x = reg.strip()
-        if cont and out and x and len(x) < 40 and not re.search(r"\d ?%", x) and len(ln) - len(ln.lstrip()) >= hc - 12:
-            out[-1][0] += " " + re.split(r"\s{2,}", x)[0]
-        cont = bool(x) and cont
-    w = [x[1] for x in out]
-    return [tuple(x) for x in out] if out and sum(w) <= 100.5 else []
+    """Valdytojų maketai skiriasi, todėl bandomi keli nustatymai ir imamas geriausias sąrašas: daugiau eilučių, pavadinimai be
+    lietuviško/latviško aprašo teksto ir ne ilgesni nei 75 simboliai."""
+    best, bs = [], 0
+    for cfg in ((12, 10, True), (30, 35, True), (30, 60, False), (12, 60, False), (45, 35, True), (12, 999, False), (12, 999, True)):
+        h = holdings1(t, *cfg)
+        sc = sum(1 - 0.8 * bool(LATV.search(n)) - 0.8 * (len(n) > 75) for n, _ in h)
+        if sc > bs + 0.01:
+            best, bs = h, sc
+    return best
 
 
 def parse(pdf):
