@@ -103,7 +103,7 @@ def ee_rows():
         paths = [p] if p else []
     # istorija iki 2021 m. (senesnė metodika – įmonių apklausa): archyvas „Lepetatud_tabelid“, PA001 (iki 2022) ir PA11 (2000–2008)
     arch = "Lepetatud_tabelid/Majandus. Arhiiv/Palk ja toojeukulu. Arhiiv"
-    paths += [f"{arch}/PA011.PX", f"{arch}/PA003.PX", f"{arch}/PA001.PX", f"{arch}/PA11.PX"]
+    paths += [f"{arch}/PA011.PX", f"{arch}/PA001.PX", f"{arch}/PA11.PX"]   # PA003 netinka – tik viešasis sektorius (sluoksnis „Kiht“)
     for p in paths:
         try:
             cols, data, meta = query(f"{EE}/{p}", {"indicator": lambda t: ("average monthly gross wages" in t or t.startswith("average gross wages")) and "hour" not in t and "change" not in t,
