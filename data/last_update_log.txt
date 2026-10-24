@@ -1,11 +1,4 @@
- Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-08 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-09 – praleista
-ARTEA: gauta 96 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: jau atnaujinta iki 2026-10-22
-
-III pakopa – Vilnius: 2026-10-23 14:16, laukiama diena: 2026-10-22
-ARTEA: gauta 22988 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
+ 22988 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
 GOINDEX: jau atnaujinta iki 2026-10-22
 
 Vilnius: 2026-10-23 14:16, laukiama diena: 2026-10-22
@@ -257,4 +250,15 @@ GOINDEX: jau atnaujinta iki 2026-10-22
 III pakopa – Vilnius: 2026-10-23 16:15, laukiama diena: 2026-10-22
 ARTEA: gauta 22993 eil., nauja/pakeista 5; viskas iki 2026-10-22
 GOINDEX: jau atnaujinta iki 2026-10-22
+
+Vilnius: 2026-10-24 12:04, laukiama diena: 2026-10-22
+SEB: jau atnaujinta iki 2026-10-22
+SWEDBANK: jau atnaujinta iki 2026-10-22
+LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-22
+GOINDEX: jau atnaujinta iki 2026-10-22
+
+III pakopa – Vilnius: 2026-10-24 12:04, laukiama diena: 2026-10-22
+SEB: jau atnaujinta iki 2026-10-22
+SWEDBANK: jau atnaujinta iki 2026-10-22
+LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-10-22
 
