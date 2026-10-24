@@ -14,7 +14,7 @@ addStrings({
   kis: { 1: 'bond fund', 2: 'mixed fund', 3: 'equity fund', 4: 'money market fund', 5: 'real estate fund', 6: 'hedge fund', 7: 'other fund (private equity etc.)' },
   thMgr: 'Manager', thFund: 'Fund', thPos: 'Position', thAct: 'Change', thTrade: 'Traded (est.)', thValue: 'Value at end', thW0: 'Weight before',
   thW1: 'Weight after', thDw: 'Change, pp', thType: 'Type', thCty: 'Country', thW: 'Weight', thDq: 'Units change',
-  thQ: 'Quarter', thUnits: 'Units', nFunds: n => `${n} fund${n === 1 ? '' : 's'}`,
+  thQ: 'Quarter', phCur: 'Quarter shown in the table on the left', phPrev: 'Previous quarter – changes are measured against it', thUnits: 'Units', nFunds: n => `${n} fund${n === 1 ? '' : 's'}`,
   more: n => `Show ${n} more`, noRows: 'No changes match the filters.',
   tcNote: q => `Weight = share of the manager’s (or fund’s) portfolio in the selected pillar. “New” = not held at the end of the previous quarter, “Sold out” = no longer held; “Matured” = the bond reached its maturity date by the quarter end (not sold – the issuer repaid it). Cash, deposits and derivatives have no units, so they are not listed here – see the fund portfolio below. Data: Bank of Lithuania, quarterly pension fund portfolio reports (${q}).`,
   altTitle: 'Alternative investments',
@@ -44,7 +44,7 @@ addStrings({
   kis: { 1: 'obligacijų fondas', 2: 'mišrus fondas', 3: 'akcijų fondas', 4: 'pinigų rinkos fondas', 5: 'nekilnojamo turto fondas', 6: 'rizikos draudimo fondas', 7: 'kitas fondas (privataus kapitalo ir pan.)' },
   thMgr: 'Valdytojas', thFund: 'Fondas', thPos: 'Pozicija', thAct: 'Pokytis', thTrade: 'Sandorių suma (įvert.)', thValue: 'Vertė pabaigoje', thW0: 'Svoris prieš',
   thW1: 'Svoris po', thDw: 'Pokytis, p. p.', thType: 'Tipas', thCty: 'Šalis', thW: 'Svoris', thDq: 'Vienetų pokytis',
-  thQ: 'Ketvirtis', thUnits: 'Vienetai', nFunds: n => `${n} fond${n === 1 ? 'as' : n < 10 ? 'ai' : 'ų'}`,
+  thQ: 'Ketvirtis', phCur: 'Šis ketvirtis rodomas kairėje lentelėje', phPrev: 'Ankstesnis ketvirtis – su juo lyginami pokyčiai', thUnits: 'Vienetai', nFunds: n => `${n} fond${n === 1 ? 'as' : n < 10 ? 'ai' : 'ų'}`,
   more: n => `Rodyti dar ${n}`, noRows: 'Pagal pasirinktus filtrus pokyčių nėra.',
   tcNote: q => `Svoris = dalis valdytojo (ar fondo) portfelio pasirinktoje pakopoje. „Nauja“ = ankstesnio ketvirčio pabaigoje nebuvo, „Pardavė visą“ = nebeliko; „Išpirkta“ = obligacijos išpirkimo data sukako iki ketvirčio pabaigos (fondas jos nepardavė – emitentas grąžino pinigus). Pinigai, indėliai ir išvestinės priemonės neturi vienetų, todėl čia nerodomi – žr. fondo portfelį žemiau. Duomenys: Lietuvos bankas, ketvirtinės pensijų fondų portfelių ataskaitos (${q}).`,
   altTitle: 'Alternatyvios investicijos',
@@ -227,7 +227,7 @@ function attrChips(s, qi) {
 
 /* Būsena (išsaugoma naršyklėje) */
 const ST = Object.assign({ q: NQ - 1, pl: 'II', mgr: 'all', lv: 'mgr', type: 'all', act: 'all', sort: 'eur', fund: 'SWD-89/95', fq: NQ - 1, ft: 'all', pos: null, fsort: 'w' },
-  (() => { try { return JSON.parse(localStorage.getItem('pfstate')) || {}; } catch (e) { return {}; } })());
+  (() => { try { const o = JSON.parse(localStorage.getItem('pfstate')) || {}; delete o.q; delete o.fq; return o; } catch (e) { return {}; } })());   // ketvirtis neišsaugomas: puslapis visada atsidaro su naujausiu
 if (!(ST.q >= 1 && ST.q < NQ)) ST.q = NQ - 1;
 if (!fundBy[ST.fund]) ST.fund = FUNDS[0].c;
 if (!(ST.fq >= 0 && ST.fq < NQ) || !fundBy[ST.fund].q[ST.fq]) ST.fq = fundBy[ST.fund].last;
@@ -424,8 +424,10 @@ function renderFund() {
   renderFund.last = { f, all, qi: ST.fq };
   const list = all.slice(0, fcLimit);
   const tb = document.getElementById('fcTable');
+  // pokyčių stulpeliuose aiškiai parodoma, kurie ketvirčiai lyginami (kitaip atrodo, lyg tai būtų naujausias ketvirtis)
+  const qVs = ST.fq > first ? `<br><small class="pfsub" style="font-weight:400;white-space:nowrap">${qShort(ST.fq - 1)} → ${qShort(ST.fq)}</small>` : '';
   tb.innerHTML = `<thead><tr><th class="l">#</th><th class="l">${T().thPos}</th>
-    <th>${T().thValue}</th><th>${T().thW}</th><th>${T().thDw}</th><th>${T().thDq}</th><th class="l">${T().thAct}</th></tr></thead><tbody>`
+    <th>${T().thValue}</th><th>${T().thW}</th><th>${T().thDw}${qVs}</th><th>${T().thDq}${qVs}</th><th class="l">${T().thAct}</th></tr></thead><tbody>`
     + list.map((r, i) => `<tr data-si="${r.si}" class="${r.exit ? 'exit' : ''}${r.si === ST.pos ? ' sel' : ''}"><td class="l pfsub">${r.exit ? '' : i + 1}</td>
       <td class="nm">${esc(posLabel(r.s))}<br><small>${esc(posSub(r.s))}</small>${attrChips(r.s, r.exit ? ST.fq - 1 : ST.fq)}</td>
       <td>${r.exit ? '–' : eur(r.v)}</td><td>${wFmt(r.w)}</td>
@@ -492,7 +494,7 @@ function renderPosition() {
   document.getElementById('phNote').innerHTML = peers.length ? `<span class="legend">${series.map(r => `<span${r.provider === f.p ? ' style="font-weight:700;color:var(--text)"' : ''}><i style="background:${colorOf(r.provider)}"></i>${esc(labelOf(r.provider))}</span>`).join('')}</span>${T().phPeers}` : '';
   // ketvirčių lentelė (naujausi viršuje): vienetai, vertė, svoris
   const hist = [];
-  for (let i = f.last; i >= 0; i--) if (f.q[i] && f.q[i].has(ST.pos)) { const x = f.q[i].get(ST.pos); hist.push(`<tr><td>${qLabel(i)}</td><td>${x && x.u != null ? num(x.u, x.u % 1 ? 2 : 0) : '–'}</td><td>${x ? eur(x.v) : '–'}</td><td>${x ? wFmt(x.v / f.tot[i] * 100) : '–'}</td></tr>`); }
+  for (let i = f.last; i >= 0; i--) if (f.q[i] && f.q[i].has(ST.pos)) { const x = f.q[i].get(ST.pos); hist.push(`<tr${i === ST.fq ? ' class="cur" title="' + T().phCur + '"' : i === ST.fq - 1 ? ' class="prev" title="' + T().phPrev + '"' : ''}><td>${qLabel(i)}${i === ST.fq ? ' ◂' : ''}</td><td>${x && x.u != null ? num(x.u, x.u % 1 ? 2 : 0) : '–'}</td><td>${x ? eur(x.v) : '–'}</td><td>${x ? wFmt(x.v / f.tot[i] * 100) : '–'}</td></tr>`); }
   document.getElementById('phTable').innerHTML = `<thead><tr><th>${T().thQ}</th><th>${T().thUnits}</th><th>${T().thValue}</th><th>${T().thW}</th></tr></thead><tbody>${hist.join('')}</tbody>`;
 }
 
