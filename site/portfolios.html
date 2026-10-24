@@ -29,7 +29,7 @@
   .up { color: var(--s5); font-weight: 600; } .down { color: #d0453f; font-weight: 600; }
   .pfgrid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: start; }
   @media (max-width: 1100px) { .pfgrid { grid-template-columns: 1fr; } }
-  .pfside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; }   /* dešinė dalis slenkama atskirai */
+  .pfside { position: sticky; top: var(--pftop, 10px); }   /* aukšta dešinė dalis slenka kartu su puslapiu iki savo apačios (pf.js sideTop) */
   @media (max-width: 1100px) { .pfside { position: static; } }
   .comp { display: flex; height: 14px; border-radius: 4px; overflow: hidden; margin: 6px 0 6px; background: var(--grid); }
   .comp span { display: block; height: 100%; }
@@ -47,6 +47,7 @@
   table.altt td.pfsub { white-space: normal; min-width: 180px; font-size: 11.5px; }
   table.altt tr.sep td { background: var(--surface); font-weight: 600; text-align: left; cursor: default; }
   .hist td { font-size: 12.5px; }
+  .histbox table.hist { width: 100%; } .hist th { white-space: normal; vertical-align: bottom; } .hist th, .hist td { padding-left: 6px; padding-right: 6px; }
   .hist tr.cur td { font-weight: 650; background: color-mix(in srgb, var(--accent, #2e7d32) 14%, transparent); }
   .hist tr.prev td { background: color-mix(in srgb, var(--accent, #2e7d32) 6%, transparent); }
   .tags { display: flex; flex-wrap: wrap; gap: 3px 4px; margin-top: 3px; }
@@ -151,7 +152,7 @@
       <div class="meta" id="phMeta"></div>
       <div class="chart" id="phChart"></div>
       <p class="note" id="phNote"></p>
-      <div class="scroll"><table class="hist" id="phTable"></table></div>
+      <div class="histbox"><table class="hist" id="phTable"></table></div>
     </aside>
   </div>
   </div>

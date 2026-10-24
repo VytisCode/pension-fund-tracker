@@ -471,6 +471,12 @@ function weightSeries(f, si) {
   for (let i = first; i <= f.last; i++) if (f.q[i]) { const x = f.q[i].get(si); pts.push([QDAY[i], x ? x.v / f.tot[i] * 100 : 0]); }
   return pts;
 }
+/* Dešinė dalis lipni, bet jei aukštesnė už langą – prilimpa apačia, kad visa būtų matoma be vidinės slinkties */
+function sideTop() {
+  const el = document.getElementById('fcSide'); if (!el) return;
+  el.style.setProperty('--pftop', Math.min(10, innerHeight - el.offsetHeight - 10) + 'px');
+}
+addEventListener('resize', () => sideTop());
 let posCtl = null;
 function renderPosition() {
   const f = fundBy[ST.fund], el = document.getElementById('phChart');
@@ -504,6 +510,7 @@ function renderPosition() {
     hist.push(`<tr${i === ST.fq ? ' class="cur" title="' + T().phCur + '"' : i === ST.fq - 1 ? ' class="prev" title="' + T().phPrev + '"' : ''}><td>${qLabel(i)}${i === ST.fq ? ' ◂' : ''}</td><td>${x.u != null ? num(x.u, x.u % 1 ? 2 : 0) : '–'}${du}</td><td>${eur(x.v)}</td><td>${wFmt(w)}${dw}</td></tr>`);
   }
   document.getElementById('phTable').innerHTML = `<thead><tr><th>${T().thQ}</th><th>${T().thUnits}</th><th>${T().thValue}</th><th>${T().thW}</th></tr></thead><tbody>${hist.join('')}</tbody>`;
+  sideTop();
 }
 
 /* ---------- 3. alternatyvios investicijos ---------- */
