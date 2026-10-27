@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="ie9 no-js"  lang="lt" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema#"><![endif]-->
+<!--[if gt IE 9]><!--><html class="no-js"  lang="lt" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema#"><!--<![endif]-->
+<head>
+  <link rel="profile" href="http://www.w3.org/1999/xhtml/vocab" />
+  <!-- Page basics
+  ========================================-->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="author" content="DNB">
+   <!-- Mobile specifics
+  ========================================-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="shortcut icon" href="https://luminor.lt/sites/all/themes/dnb_theme/favicon.ico" type="image/vnd.microsoft.icon" />
+<link href="https://luminor.lt/sites/all/themes/dnb_theme/images/apple-touch-icon.png" rel="apple-touch-icon-precomposed" />
+<link href="https://luminor.lt/sites/all/themes/dnb_theme/images/apple-touch-icon-76x76.png" rel="apple-touch-icon-precomposed" sizes="76x76" />
+<link href="https://luminor.lt/sites/all/themes/dnb_theme/images/apple-touch-icon-120x120.png" rel="apple-touch-icon-precomposed" sizes="120x120" />
+<link href="https://luminor.lt/sites/all/themes/dnb_theme/images/apple-touch-icon-152x152.png" rel="apple-touch-icon-precomposed" sizes="152x152" />
+<link href="https://luminor.lt/en/pension-funds" rel="alternate" hreflang="en" />
+<link href="https://luminor.lt/lt/pensiju-fondai" rel="alternate" hreflang="lt" />
+<meta name="description" content="Susipažink su pensijų fondų sąrašu čia." />
+<script type="text/javascript" src="/sites/default/files/scripts/DLRepository.js"></script><!-- OneTrust Cookies Consent Notice start for luminor.lt -->
+<script>
+	// Define dataLayer and the gtag function.
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	// Default all specified storage types to 'granted' as placeholders
+	// Determine actual values based on business requirements
+	gtag('consent', 'default', {
+	  'ad_storage': 'denied',
+	  'analytics_storage': 'denied',
+	  'functionality_storage': 'denied',
+	  'personalization_storage': 'denied',
+	  'security_storage': 'denied',
+	  'ad_user_data': 'denied',
+	  'ad_personalization': 'denied'
+	});
+</script>
+<script type="text/javascript" src="https://cdn.cookielaw.org/consent/2bd9e548-a3c7-4901-809d-0cc5323cfde3/OtAutoBlock.js" ></script>
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="2bd9e548-a3c7-4901-809d-0cc5323cfde3" ></script>
+<script type="text/javascript">
+function OptanonWrapper() {
+  if (typeof OptanonWrapperCount == "undefined") {
+    otGetInitialGrps();
+  }
+  otDeleteCookie(otIniGrps);
+  function otGetInitialGrps() {
+    OptanonWrapperCount = "";
+    otIniGrps = OnetrustActiveGroups;
+  }
+  function otDeleteCookie(iniOptGrpId) {
+    var otDomainGrps = JSON.parse(
+      JSON.stringify(Optanon.GetDomainData().Groups)
+    );
+    var otDeletedGrpIds = otGetInactiveId(iniOptGrpId, OnetrustActiveGroups);
+    if (otDeletedGrpIds.length != 0 && otDomainGrps.length != 0) {
+      otDomainGrps.forEach(group => {
+        if (group["CustomGroupId"] !== "" && otDeletedGrpIds.includes(group["CustomGroupId"])) {
+          group.Cookies.forEach(cookie => eraseCookie(cookie["Name"]));
+        }
+        if (group["Hosts"].length !== 0) {
+          group.Hosts.forEach(host => {
+            if (otDeletedGrpIds.includes(host["HostId"]) && host.Cookies.length !== 0) {
+              host.Cookies.forEach(cookie => eraseCookie(cookie["Name"]));
+            }
+          })
+        }
+      });
+    }
+    otGetInitialGrps();
+  }
+  function otGetInactiveId(customIniId, otActiveGrp) {
+    var customIniId = customIniId.split(",").filter(Boolean);
+    var otActiveGrp = otActiveGrp.split(",").filter(Boolean);
+    return customIniId.filter(id => otActiveGrp.indexOf(id) === -1);
+  }
+  function getAllCookiesNames() {
+    const cookieNames = document.cookie.split(';').reduce((cookies, cookie) => {
+      const [name] = cookie.split('=').map(c => c.trim());
+      cookies.push(name);
+      return cookies;
+    }, []);
+    return cookieNames;
+  }
+  function eraseCookie(name) {
+    var groupName = name.toLowerCase().includes('xxxx') ? name.substring(0, name.toLowerCase().indexOf('x')) : name;
+    var cookieNames = getAllCookiesNames();
+    var domainName = window.location.hostname.includes('www.') ? window.location.hostname.replace('www.', '.') : '.' + window.location.hostname;
+    if (cookieNames.includes(groupName)) {
+      document.cookie = name + '=; Max-Age=-99999999; Path=/;Domain=' + domainName;
+    }
+    else {
+      cookieNames.forEach(cookie => {
+        if (cookie.indexOf(groupName) > -1) {
+          if (cookie != 'OptanonAlertBoxClosed' && cookie != 'OptanonConsent') {
+            document.cookie = cookie + '=; Max-Age=-99999999; Path=/;Domain=' + domainName;
+          }
+        }
+      })
+    }
+  }
+}
+</script>
+<!-- OneTrust Cookies Consent Notice end for luminor.lt --><link rel="canonical" href="https://luminor.lt/lt/pensiju-fondai" />
+<link rel="shortlink" href="https://luminor.lt/lt/node/9449" />
+<meta property="article:published_time" content="2016-04-12T14:41:42+03:00" />
+<meta property="article:modified_time" content="2024-11-25T13:03:14+02:00" />
+  <title>Pensijų fondai | Luminor</title>
+  <link type="text/css" rel="stylesheet" href="https://luminor.lt/sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://luminor.lt/sites/default/files/css/css_iP0Kb2HEOjpDfqrlbaZSCbFLwsjFOpITgXwhEAySc2E.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://luminor.lt/sites/default/files/css/css_UetHAR0J5K_UadpLALzrR6uJ2Hu-Dzs31yhShIbK3LU.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://luminor.lt/sites/default/files/css/css_YyjEx-oZi217f-CuvBF86p0gr94nm0mJN1HMgo4uxwc.css" media="all" />
+  <!-- Google visualization library load -->
+  <script src="https://www.google.com/jsapi"></script>
+    <script >google.load("visualization", "1", { packages: ["table", "corechart"] });</script>
+  <script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_DdXIKt68jGany_F78Mxy_6Rv5aLF94bA6_npMbGnkV4.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.migrateMute=true;jQuery.migrateTrace=false;
+//--><!]]>
+</script>
+<script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_bj8aLgXkuGq1Ao0IA5u3fJcg2JYAiq9U-UtBRf0goSc.js"></script>
+<script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_NaWnmLRn_oLakq5a60IFTfYZm_LJr7QZfBZkBPCRDXY.js"></script>
+<script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_etZwTxSROcIdFT1Gsf9NSbRYXNCXWOhwLC0TpByEJbo.js"></script>
+<script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_T659zZtskB0EuAWFCewS3dfSH7s7BKOMMS-EYKU2P7M.js"></script>
+<script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_qfcwT79Dpkc0oBnrNX5njTiLoZxx5RPVR2yS-jB8xEY.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"lt\/","setHasJsCookie":0,"ajaxPageState":{"theme":"dnb_theme","theme_token":"bczv7KvxuT9BU2YJWbrYGqnhW0WdSUD84C1ig5L_nQU","jquery_version":"2.2","jquery_version_token":"F9NMYNan1uxlnERv2hE2ePZzPpdhq9788-kO1qrzAsM","js":{"sites\/all\/modules\/custom\/simple_cookie_compliance\/js\/simple_cookie_compliance.js":1,"sites\/all\/modules\/custom\/clientside_validation\/clientside_validation.ie8.js":1,"sites\/all\/modules\/custom\/clientside_validation\/clientside_validation.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/jquery\/2.2\/jquery.min.js":1,"0":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/jquery-migrate\/1\/jquery-migrate.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/contrib\/jquery_update\/js\/jquery_browser.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/ui\/external\/jquery.cookie.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/jquery.form\/4\/jquery.form.min.js":1,"misc\/form-single-submit.js":1,"misc\/ajax.js":1,"sites\/all\/modules\/contrib\/jquery_update\/js\/jquery_update.js":1,"sites\/all\/modules\/contrib\/entityreference\/js\/entityreference.js":1,"sites\/all\/modules\/contrib\/webform_steps\/webform_steps.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_validator.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_ajax_throbber.js":1,"public:\/\/languages\/lt_9t1WqHe3hfmL0N7zyNd2NRu64z8hmGChemP5eOAKq8M.js":1,"misc\/tableheader.js":1,"misc\/progress.js":1,"sites\/all\/modules\/custom\/dnb_smart_banner\/js\/dnb_smart_banner.js":1,"sites\/all\/libraries\/bower_components\/svg4everybody\/svg4everybody.min.js":1,"sites\/all\/libraries\/bower_components\/isotope\/isotope.pkgd.js":1,"sites\/all\/libraries\/bower_components\/imagesloaded\/imagesloaded.pkgd.js":1,"sites\/all\/themes\/dnb_theme\/scripts\/jquery.matchHeight-min.js":1,"sites\/all\/themes\/dnb_theme\/scripts\/moment.min.js":1,"sites\/all\/themes\/dnb_theme\/scripts\/pikaday.js":1,"sites\/all\/modules\/custom\/clientside_validation\/jquery-validate\/jquery.validate.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_toolbar.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_views.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_slider.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_accordion.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_special_offers.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_reload.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_iframe.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_expandable.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_wysiwyg.js":1,"sites\/all\/modules\/custom\/dnb_core\/js\/dnb_core_file.js":1,"sites\/all\/themes\/dnb_theme\/scripts\/main.pkgd.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"sites\/all\/modules\/contrib\/office_hours\/office_hours.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/contrib\/views\/css\/views.css":1,"sites\/all\/modules\/contrib\/ckeditor\/css\/ckeditor.css":1,"sites\/all\/modules\/contrib\/ctools\/css\/ctools.css":1,"sites\/all\/modules\/contrib\/panels\/css\/panels.css":1,"sites\/all\/modules\/custom\/simple_cookie_compliance\/css\/simple_cookie_compliance.css":1,"sites\/all\/modules\/custom\/dnb_smart_banner\/css\/dnb_smart_banner.css":1,"public:\/\/honeypot\/honeypot.css":1,"sites\/all\/themes\/dnb_theme\/css\/main.css":1,"sites\/all\/themes\/dnb_theme\/css\/style.css":1}},"simpleCookieComplience":{"tagManagerEvent":"cookie_compliance","tagManagerVariableName":"cookie_compliance","tagManagerVariableValue":"1"},"ajax":{"edit-agree":{"callback":"cookie_compliance_agree_form_submit","progress":{"type":"none"},"wrapper":"cookie-compliance","event":"mousedown","keypress":true,"prevent":"click","url":"\/lt\/system\/ajax","submit":{"_triggering_element_name":"op","_triggering_element_value":"Sutinku"}}},"urlIsAjaxTrusted":{"\/lt\/system\/ajax":true,"\/lt\/pensiju-fondai":true},"dnbSmartBanner":{"modulePath":"sites\/all\/modules\/custom\/dnb_smart_banner","app_link_cookie_expiration":"10","customer_selection_cookie_expiration":"365"},"clientsideValidation":{"forms":{"search-api-page-search-form-content-lt":{"errorPlacement":1,"general":{"errorClass":"error","wrapper":"li","validateTabs":0,"scrollTo":1,"scrollSpeed":"1000","disableHtml5Validation":1,"validateOnBlur":"1","validateOnBlurAlways":"0","validateOnKeyUp":"0","validateBeforeAjax":"0","validateOnSubmit":"1","showMessages":"0","errorElement":"label"},"rules":{"keys_2":{"maxlength":128,"messages":{"maxlength":"Laukelio keys_2 ilgis neturi b\u016bti didesnis negu 128"}},"url":{"maxlength":128,"messages":{"maxlength":"Laukelio Leave this field blank ilgis neturi b\u016bti didesnis negu 128"}}}}},"general":{"usexregxp":0,"months":{"Sausis":1,"Jan":1,"Vasaris":2,"Feb":2,"Kovas":3,"Mar":3,"Balandis":4,"Apr":4,"Gegu\u017e\u0117":5,"Bir\u017eelis":6,"Jun":6,"Liepa":7,"Jul":7,"Rugpj\u016btis":8,"Aug":8,"Rugs\u0117jis":9,"Sep":9,"Spalis":10,"Oct":10,"Lapkritis":11,"Nov":11,"Gruodis":12,"Dec":12}},"groups":{"search-api-page-search-form-content-lt":{}}}});
+//--><!]]>
+</script>
+  <!-- Datalayer Page Load -->
+  <script type="text/javascript" >
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({"event":"customPageLoad","productName":"pension","applicationPage":"none","thankYouPage":"FALSE","formID":"FALSE","funnelStep":"FALSE","country":"lt","language":"lt"});
+    </script>  <!-- Additional Scripts -->
+  </head>
+<body id="body" class="html not-front not-logged-in no-sidebars page-node page-node- page-node-9449 node-type-content i18n-lt lt" >
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NCRGKJM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script type="text/javascript" >(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0];var j=d.createElement(s);var dl=l!='dataLayer'?'&l='+l:'';j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;j.type='text/javascript';j.async=true;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NCRGKJM');</script>
+<!-- End Google Tag Manager -->
+  <nav id="skip-link" aria-label="Pereiti į pagrindinį turinį">
+    <span>Pereiti į pagrindinį turinį</span>
+    <a href="#main-content" class="element-invisible element-focusable">Pereiti į pagrindinį turinį</a>
+  </nav>
+  
+<div id="cookie-compliance" class="notification notification--cookie cookie-compliance clearfix">
+  <div class="l-wrap">
+    <div class="notification__inner">
+      <p class="notification__text">
+                  Mes naudojame <a href="/lt/slapukai">slapukus</a> siekdami pagerinti jūsų naršymo patirtį. Sutikite ir pasidalinkite slapukais su mumis!
+              </p>
+              <form novalidate="novalidate" action="/lt/pensiju-fondai" method="post" id="simple-cookie-compliance-dismiss-form" accept-charset="UTF-8"><div><div class="notification__action"><input class="notification__button form-submit button button--solid" type="submit" id="edit-agree" name="op" value="Sutinku" /></div><input type="hidden" name="form_build_id" value="form-xLoCJ6VxAS1oFJIApZLcNoxyBR-L2Dl9iQ4EOyB8lcw" />
+<input type="hidden" name="form_id" value="simple_cookie_compliance_dismiss_form" />
+</div></form>          </div> <!--/inner-->
+  </div> <!--/l-wrap-->
+</div>
+<!--/notification-->  <!-- Legacy browser notification
+ ========================================-->
+
+<!--[if lt IE 9]>
+  <p class="legacy-browser">You are using an <b>outdated</b> browser. Please <a href="http://outdatedbrowser.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<!-- Global header
+========================================-->
+
+<header class="header" aria-label="Antraštė">
+  <div class="header__base">
+    <div class="l-wrap clearfix">
+      <a class="logo" href="/lt">
+        <img class="logo__image" src="/sites/all/themes/dnb_theme/images/luminor-logo.svg" alt="Luminor Logo">
+      </a>
+      <ul class="mobile-menu" role="navigation" aria-label="Pagrindinis meniu">
+                  <li class="mobile-menu__item mobile-menu__hide--small">
+            <a href="#" data-toggle-body="is-fixed" data-open-toggle="online-bank-mobile" class="button" role="button">Interneto bankas</a>
+          </li>
+                <li class="mobile-menu__item"><a href="#" data-open-close-toggle="search" class="menu__icon" aria-label="Ieškoti" aria-expanded="false" role="button">
+            <svg class="icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-search"></use></svg>
+          </a></li>
+        <li class="mobile-menu__item"><a href="#" class="menu__icon menu-contacts" data-header-toggle="is-show-contacts" aria-expanded="false" aria-label="Kontaktai" role="button">
+            <svg class="icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-phone"></use></svg>
+          </a></li>
+        <li class="mobile-menu__item"><a href="#" data-toggle-body="is-fixed" data-open-toggle="menu" class="menu__toggle menu__icon" aria-expanded="false" aria-label="Svetainės meniu" role="button">
+            <svg class="icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-menu"></use></svg>
+          </a></li>
+      </ul>
+      <nav id="menu" class="menu clearfix" aria-label="Pagrindinis meniu">
+        <div class="menu__mobile-wrapper">
+          <a href="#" data-toggle-body="is-fixed" data-close-toggle="menu" class="close-toggle menu__mobile-close" aria-label="Uždaryti meniu" role="button">
+            <svg class="close-toggle__icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg>
+          </a>
+          <ul class="lang-menu lang-menu-main" aria-label="Pasirinkti kalbą">
+                          <li class="lang-menu__item">
+                <a class="link--secondary" href="https://luminor.lt/en/pension-funds">EN</a>
+              </li>
+                        </ul>
+          <ul class="menu__list menu__list--left clearfix"><li class="menu__item"><a  href="#" data-sub-menu-toggle="sub-menu-0" aria-expanded="false" role="button" class="menu__link">Kasdienai</a><div id="sub-menu-0" class="sub-menu menu-private-menu"><div class="l-wrap clearfix"><h2 class="sub-menu__title">Kasdienai</h2><a href="#" class="close-toggle sub-menu__close hide--large" data-sub-menu-toggle="sub-menu-0" aria-label="Uždaryti meniu" role="button"><svg class="close-toggle__icon" width="36" height="36"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg></a><!--/close-toggle--><ul class="sub-menu__list"><li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/tapk-klientu">Tapk klientu</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/mokejimo-korteles-ir-paslaugu-krepseliai">Mokėjimo kortelės ir paslaugų krepšeliai</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/luminor-vaikams">„Luminor“ vaikams</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/jaunimui">„Luminor“ jaunimui</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/interneto-bankas">Interneto bankas</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/mobilusis-bankas">Mobilusis bankas</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/mokejimai">Mokėjimai</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/draudimas">Draudimas</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/smart-id">„Smart-ID“</a></li>
+</ul><ul class="sub-menu__list"><li class="sub-menu__item"><a  target="_blank" class="link--secondary" href="https://pliusuklubas.lt/">„Luminor“ Pliusų klubas</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/skaiciuokles">Skaičiuoklės</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/klientai-apie-mus">Klientai apie mus</a></li>
+</ul></div></div></li>
+<li class="menu__item"><a  href="#" data-sub-menu-toggle="sub-menu-1" aria-expanded="false" role="button" class="menu__link">Taupymas, investavimas </a><div id="sub-menu-1" class="sub-menu menu-private-menu"><div class="l-wrap clearfix"><h2 class="sub-menu__title">Taupymas, investavimas </h2><a href="#" class="close-toggle sub-menu__close hide--large" data-sub-menu-toggle="sub-menu-1" aria-label="Uždaryti meniu" role="button"><svg class="close-toggle__icon" width="36" height="36"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg></a><!--/close-toggle--><ul class="sub-menu__list"><li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/terminuotasis-indelis">Terminuotasis indėlis</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/indeliu-palukanu-normos-privatiems-klientams">Indėlių palūkanų normos</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/taupomoji-saskaita">Taupomoji sąskaita</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/investor">„Luminor Investor“</a></li>
+</ul><ul class="sub-menu__list"><li class="sub-menu__item"><a  class="link--secondary" href="/lt/augink-savo-turta">Augink savo turtą</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/pensija">Pensija</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/ii-pakopos-pensiju-reforma">Pensijų reforma</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/investicijos">Investavimas</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/investicine-saskaita">Investicinė sąskaita</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/emisijos">Platinamos emisijos</a></li>
+</ul></div></div></li>
+<li class="menu__item"><a  href="#" data-sub-menu-toggle="sub-menu-2" aria-expanded="false" role="button" class="menu__link">Paskolos</a><div id="sub-menu-2" class="sub-menu menu-private-menu"><div class="l-wrap clearfix"><h2 class="sub-menu__title">Paskolos</h2><a href="#" class="close-toggle sub-menu__close hide--large" data-sub-menu-toggle="sub-menu-2" aria-label="Uždaryti meniu" role="button"><svg class="close-toggle__icon" width="36" height="36"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg></a><!--/close-toggle--><ul class="sub-menu__list"><li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/busto-paskola">Būsto paskola</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/busto-paskolos-refinansavimas">Būsto paskolos refinansavimas</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/issirink-busta">Nekilnojamojo turto partnerių pasiūlymai</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/paskola-idejoms">Paskola idėjoms</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/paskola-zemes-sklypui">Paskola žemės sklypui</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/paskola-nekilnojamajam-turtui-uzsienyje-isigyti">Paskola nekilnojamajam turtui užsienyje įsigyti</a></li>
+</ul><ul class="sub-menu__list"><li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/vartojimo-paskola">Vartojimo paskola</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/paskola-namams-atnaujinti">Paskola namams atnaujinti</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/paskola-namu-energiniam-efektyvumui">Paskola namų energiniam efektyvumui</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/vartojimo-paskola-turtui-isigyti">Vartojimo paskola turtui įsigyti</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/paskola-automobiliui">Paskola automobiliui</a></li>
+<li class="sub-menu__item"><a  class="link--secondary" href="/lt/privatiems/auto-lizingas">Automobilių lizingas</a></li>
+</ul></div></div></li>
+<li class="menu__item"><a  class="menu__link menu__link--business" href="/lt/verslui">Verslui</a></li>
+</ul>          <ul class="menu__list menu__list--right clearfix">
+            <li class="menu__item menu__hide--large">
+                              <a  class="button" href="https://ib.luminor.lt/login.aspx?NoRedirect=1&amp;SetLanguage=LIT" target="_blank">Interneto bankas</a>
+                <div id="online-bank-desktop" class="sub-menu">
+                  <div class="l-wrap clearfix">
+                    <h2 class="sub-menu__title" aria-hidden="true">Interneto bankas</h2>
+                    <a class="close-toggle sub-menu__close hide--large" data-sub-menu-toggle="online-bank-desktop">
+                      <svg class="close-toggle__icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg>
+                    </a><!--/close-toggle-->
+                    <ul class="sub-menu__list">
+                                                                                                    <li class="sub-menu__item">
+                              <a class="link--secondary" target="_blank" href="https://ib.luminor.lt/login.aspx?NoRedirect=1&SetLanguage=LIT">„Luminor“ Interneto bankas</a>
+                            </li>
+                                                                                            </ul>
+                  </div>
+                </div>
+                          </li>
+            <li class="menu__item menu__hide--large"><a href="#" data-open-close-toggle="search" class="menu__icon menu-search" aria-label="Ieškoti" aria-expanded="false" role="button">
+                <svg class="icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-search"></use></svg>
+              </a></li>
+            <li class="menu__item menu__hide--large"><a href="#" class="menu__icon menu-contacts" data-header-toggle="is-show-contacts" aria-expanded="false" aria-label="Kontaktai" role="button">
+                <svg class="icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-phone"></use></svg>
+              </a></li>
+            <li class="menu__item">
+              <a href="#" class="menu__icon menu__hide--large" data-toggle-body="is-fixed" data-open-toggle="meta-menu" aria-expanded="false" aria-label="Svetainės meniu" role="button">
+                <svg class="icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-menu"></use></svg>
+              </a>
+              <div id="meta-menu" class="meta-menu">
+                <div class="l-wrap">
+                  <a href="#" class="close-toggle meta-menu__close" data-toggle-body="is-fixed" data-close-toggle="meta-menu" aria-label="Uždaryti svetainės meniu" role="button">
+                    <svg class="close-toggle__icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg>
+                  </a>
+                  <ul class="lang-menu lang-menu-meta" aria-label="Pasirinkti kalbą">
+                                          <li class="lang-menu__item">
+                        <a class="link--secondary" href="https://luminor.lt/en/pension-funds">EN</a>
+                      </li>
+                                      </ul>
+                  <ul class="meta-menu__list"><li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/privatiems/tapk-klientu">Tapk klientu</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="#" data-meta-sub-menu="meta-sub-menu-353" aria-expanded="false" role="button">Apie mus</a><ul id="meta-sub-menu-353" class="meta-menu__sub-menu"><li class="meta-menu__sub-item"><a  class="link--light" href="/lt/luminor-istorija">„Luminor“ istorija</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="/lt/valdymas">Valdymas ir Valdyba</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="/lt/klientu-asmens-duomenu-tvarkymas">Asmens duomenų tvarkymas</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="/lt/pinigu-plovimo-prevencija-ir-tarptautines-sankcijos">Pinigų plovimo prevencija ir tarptautinės sankcijos</a></li>
+<li class="meta-menu__sub-item"><a  target="_blank" class="link--light" href="https://luminor.ee/combating-money-laundering-and-terrorism-financing#for-financial-institutions">Informacija finansinėms institucijoms</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="/lt/finansines-ataskaitos">Finansinės ataskaitos</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="/lt/ekonomikos-apzvalgos">Ekonomikos apžvalgos</a></li>
+<li class="meta-menu__sub-item"><a  target="_blank" class="link--light" href="https://luminor.ee/investors">Investuotojams</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="/lt/tvarumas">Tvarumas</a></li>
+</ul></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/luminor-naujienos">Naujienos</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="#" data-meta-sub-menu="meta-sub-menu-21061" aria-expanded="false" role="button">Interneto bankas</a><ul id="meta-sub-menu-21061" class="meta-menu__sub-menu"><li class="meta-menu__sub-item"><a  target="_blank" class="link--light" href="https://ib.luminor.lt/login.aspx?NoRedirect=1&amp;amp;SetLanguage=LIT">„Luminor“ Interneto bankas</a></li>
+<li class="meta-menu__sub-item"><a  target="_blank" class="link--light" href="https://www.bridge.luminorgroup.com/login?language=lt">Luminor Bridge</a></li>
+</ul></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/banko-tinklas">Banko tinklas ir bankomatai</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="#" data-meta-sub-menu="meta-sub-menu-356" aria-expanded="false" role="button">Kainynas</a><ul id="meta-sub-menu-356" class="meta-menu__sub-menu"><li class="meta-menu__sub-item"><a  class="link--light" href="https://luminor.lt/lt/privatiems/kainynas">Privatiems klientams</a></li>
+<li class="meta-menu__sub-item"><a  class="link--light" href="https://luminor.lt/lt/verslui/kainynas">Verslo klientams</a></li>
+</ul></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/paslaugu-teikimo-salygos">Paslaugų teikimo sąlygos</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/privatiems/pensija">Pensija</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/valiutu-kursai">Valiutų kursai</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/privacioji-bankininkyste">Privačioji bankininkystė</a></li>
+<li class="meta-menu__item"><a  class="meta-menu__link" href="/lt/skundu-ir-atsiliepimu-tvarkymas">Skundai ir atsiliepimai</a></li>
+<li class="meta-menu__item"><a  target="_blank" class="meta-menu__link" href="https://luminorbank.teamtailor.com/">Karjera</a></li>
+<li class="meta-menu__item"><a  target="_blank" class="meta-menu__link" href="https://developer.luminoropenbanking.com/">Open Banking</a></li>
+</ul>                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div id="overlay" class="sub-menu__overlay"></div>      </nav>
+              <nav id="online-bank-mobile" class="menu clearfix menu__show--large" role="dialog" aria-modal="true">
+          <div class="menu__mobile-wrapper">
+            <a href="#" data-toggle-body="is-fixed" data-close-toggle="online-bank-mobile" class="close-toggle menu__mobile-close" aria-label="Close online bank menu">
+              <svg class="close-toggle__icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg>
+            </a>
+            <ul class="menu__list clearfix">
+                                                                    <li class="menu__item">
+                      <a class="menu__link" target="_blank" href="https://ib.luminor.lt/login.aspx?NoRedirect=1&SetLanguage=LIT">„Luminor“ Interneto bankas</a>
+                    </li>
+                                                            </ul>
+          </div>
+        </nav>
+          </div>
+  </div>
+  <div id="contacts" class="top-bar top-bar--top" role="dialog" aria-modal="true">
+    <div class="l-wrap">
+      <div class="top-bar__item top-bar__item--right"><svg class="icon top-bar__icon" height="36" width="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-location" xmlns:xlink="http://www.w3.org/1999/xlink"></use></svg> <a class="link--light" href="/lt/banko-tinklas">Banko tinklas</a></div>
+
+<div class="top-bar__item top-bar__item--right"><svg class="icon top-bar__icon" height="24" width="24"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-forward" xmlns:xlink="http://www.w3.org/1999/xlink"></use></svg> <a class="link--light" href="/lt/kontaktai">Kontaktai</a></div>
+
+<div class="top-bar__item top-bar__item--right"><svg class="icon top-bar__icon" height="24" width="24"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-forward" xmlns:xlink="http://www.w3.org/1999/xlink"></use></svg>&nbsp;<a class="link--light" href="/lt/duk">Pagalba klientams</a></div>
+      <a href="#" class="close-toggle top-bar__close" data-header-toggle="is-show-contacts" aria-label="Uždaryti kontaktų meniu" role="button">
+        <svg class="close-toggle__icon" width="36" height="36">
+        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use>
+        </svg>
+      </a>
+    </div>
+  </div>
+      <div id="search" class="top-bar top-bar--bottom" role="dialog" aria-modal="true">
+      <div class="l-wrap">
+        <div class="search">
+          <form novalidate="novalidate" action="/lt/pensiju-fondai" method="post" id="search-api-page-search-form-content-lt" accept-charset="UTF-8"><div><div class=""> <input class="search__field input--no-label form-text" autocomplete="off" placeholder="Ieškoti" type="text" id="edit-keys-2" name="keys_2" value="" size="60" maxlength="128" />
+</div><input type="hidden" name="searchformid" value="2" />
+<input class="button button--light search__button form-submit button button--solid" type="submit" id="edit-submit-2" name="op" value="Ieškoti" /><input type="hidden" name="form_build_id" value="form--IBnbAtYLFkVuh5wBzx_dvi03LNj_CDtrLmbgGE2HzE" />
+<input type="hidden" name="form_id" value="search_api_page_search_form_content_lt" />
+<div class="url-textfield"><div class=" sizer-large  input-group form-item">  <label class="component-label" for="edit-url" aria-label="Leave this field blank">Leave this field blank</label>
+ <input autocomplete="off" class="input form-text" type="text" id="edit-url" name="url" value="" size="20" maxlength="128" />
+</div></div></div></form>          <a href="#" data-close-toggle="search" class="close-toggle search__close" aria-label="Uždaryti paieškos langą" role="button">
+            <svg class="close-toggle__icon" width="36" height="36"><use xlink:href="/sites/all/themes/dnb_theme/images/icon-sprite.svg#icon-close"></use></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+<!-- Index conent sections
+========================================-->
+
+
+
+<main id="main-content" tabindex="-1" aria-label="Pagrindinis puslapio turinys">
+  <h1 class="visually-hidden-eaai" aria-hidden="false">Pensijų fondai | Luminor</h1>
+    
+      
+    <div class="l-wrap">
+  <div class="l-header">  
+    <div id='fieldable-panels-pane-4543'><ul class="breadcrumbs" vocab="http://schema.org/" typeof="BreadcrumbList"><li class="breadcrumbs__item"><a href="/lt" class="breadcrumbs__link"><span>Pradžia</span></a></li><li class="breadcrumbs__item" property="itemListElement" typeof="ListItem"><a href="/lt/pensiju-fondai" class="breadcrumbs__link active" property="item" typeof="WebPage"><span property="name">Pensijų fondai</span></a><meta property="position" content="1"></li></ul></div><div id='fieldable-panels-pane-4544'>
+            <h1 class="no-margin" aria-hidden="true">Pensijų fondai</h1>  
+    </div>  </div>    
+  <div class="l-content">  
+    <div id='fieldable-panels-pane-71827'><div class="s-panel s-panel--visual"><div><h4 id="funds-table-label" class="f-left" aria-hidden="true">Pensijų fondai</h4><span class="f-right">Vieneto verčių data: 2026-10-23</span><div class="clearfix"></div></div><table aria-describedby="funds-table-label">
+ <thead><tr><th scope="col">Fondas</th><th scope="col">Apskaitos vieneto vertė</th><th scope="col">Pokytis per dieną, %</th><th scope="col">Grynųjų aktyvų vertė</th> </tr></thead>
+<tbody>
+ <tr><td  colspan="4"  data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div>Antros pakopos pensijų fondai</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=15">Luminor 1961-1967 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>1.5632 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.05%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>70 059 906 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=16">Luminor 1968-1974 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>2.0820 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.06%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>86 402 370 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=17">Luminor 1975-1981 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>2.3319 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.06%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>101 010 690 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=18">Luminor 1982-1988 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>2.3330 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.06%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>95 106 373 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=19">Luminor 1989-1995 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>2.3512 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.05%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>47 365 377 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=20">Luminor 1996-2002 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>2.3600 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.06%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>17 292 153 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=23">Luminor 2003-2009 tikslinės grupės pensijų fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>1.2182 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.05%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>3 718 581 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=21">Luminor pensijų turto išsaugojimo fondas</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>1.1604 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>0.00%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>13 377 640 EUR</div>
+    </td> </tr>
+ <tr><td  colspan="4"  data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div>Trečios pakopos pensijų fondai</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=7">Luminor ateitis 16–50</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>0.8553 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.06%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>29 578 630 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=1">Luminor ateitis 50–58</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>0.6902 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.09%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>67 806 124 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=8">Luminor ateitis 58+</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>0.3004 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.07%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>8 917 008 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=22">Luminor tvari ateitis index</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>1.5623 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.12%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>8 598 323 EUR</div>
+    </td> </tr>
+ <tr><td   data-label="Fondas">
+      <div class='mobile-only' style='display: none'>Fondas</div>
+      <div><a href="/lt/pensiju-fondu-forma?fund=24">Luminor ateitis akcijų index</a></div>
+    </td><td   data-label="Apskaitos vieneto vertė">
+      <div class='mobile-only' style='display: none'>Apskaitos vieneto vertė</div>
+      <div>1.1424 EUR</div>
+    </td><td   data-label="Pokytis per dieną, %">
+      <div class='mobile-only' style='display: none'>Pokytis per dieną, %</div>
+      <div>-0.04%</div>
+    </td><td   data-label="Grynųjų aktyvų vertė">
+      <div class='mobile-only' style='display: none'>Grynųjų aktyvų vertė</div>
+      <div>1 958 530 EUR</div>
+    </td> </tr>
+</tbody>
+</table>
+
+</div></div>  </div>    
+</div>
+  
+  
+</main>
+<!-- Modals
+========================================-->
+
+<!-- Global footer
+========================================-->
+<footer class="l-footer" aria-label="Poraštė">
+  <div class="l-wrap">
+    <div class="footer-nav">
+      <ul class="footer-nav__list"><li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/privacioji-bankininkyste">Privačioji bankininkystė</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/paslaugu-teikimo-salygos">Paslaugų teikimo sąlygos</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/kontaktai">Kontaktai</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/duk">Dažniausiai užduodami klausimai</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/privatiems/skaiciuokles">Skaičiuoklės</a></li>
+<li class="footer-nav__item" side="left"><a  target="_blank" class="footer-nav__link" href="https://luminor.lt/lt/privatiems/kainynas">Kainynas privatiems</a></li>
+<li class="footer-nav__item" side="left"><a  target="_blank" class="footer-nav__link" href="https://luminor.lt/lt/verslui/kainynas">Kainynas verslui</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/sukciavimo-prevencija">Sukčiavimo prevencija</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/skundu-ir-atsiliepimu-tvarkymas">Skundai ir atsiliepimai</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/buk-atviras">Būk atviras, nebijok pasisakyti</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/rinkodaros-sutikimai">Rinkodaros sutikimai</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/del-paveldeto-turto">Dėl paveldėto turto</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/luminor-generalinio-direktoriaus-ir-stebetoju-tarybos-pirmininko-pranesimas">Elgesio kodeksas</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/tvarumas">ASV įsipareigojimai ir pažanga </a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/prieinamumas">Prieinamumas</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/slapukai">Slapukai</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/svarbi-informacija-jav-klientams">Svarbu JAV klientams</a></li>
+<li class="footer-nav__item" side="left"><a  class="footer-nav__link" href="/lt/pinigu-plovimo-prevencija-ir-tarptautines-sankcijos">Pinigų plovimo prevencija, tarptautinės sankcijos</a></li>
+</ul>    </div>
+    <hr>
+        <p class="copyright">Informacija telefonu: <a href="tel:+37052393444">+370&nbsp;5&nbsp;239&nbsp;3444</a><br />
+„Luminor“ klientų aptarnavimo centro darbo laikas:<br />
+Privatiems klientams: I‑V 8:00‑20:00, VI 9:00‑16:00<br />
+Verslo klientams: I‑V 8:00‑17:00<br />
+Kortelių blokavimas 24/7/365<br />
+<br />
+Skambučiai apmokestinami pagal jūsų ryšio operatoriaus taikomą tarifą arba mokėjimo planą.<br />
+<br />
+© 2026. Luminor Bank AS</p>
+  </div>
+</footer>
+<!-- Loading
+  ========================================-->
+<div class="loading ">
+  <svg class="loading__spinner" width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <circle cx="32" cy="32" r="30" stroke-dasharray="64, 100" stroke="#481335" stroke-width="2" fill="none" fill-rule="evenodd"></circle>
+  </svg>
+</div>
+<script >svg4everybody();</script>
+  <script type="text/javascript">
+    (function(w, d, x, id){
+        s=d.createElement('script');
+        s.src='https://lum-prd-lt.my.connect.aws/connectwidget/static/amazon-connect-chat-interface-client.js';
+        s.async=1;
+        s.id=id;
+        d.getElementsByTagName('head')[0].appendChild(s);
+        w[x] =  w[x] || function() { (w[x].ac = w[x].ac || []).push(arguments) };
+    })(window, document, 'amazon_connect', 'a59d6d16-5135-46eb-b020-4a068c02418d');
+    amazon_connect('styles', { iconType: 'CHAT', openChat: { color: '#ffffff', backgroundColor: '#212126' }, closeChat: { color: '#ffffff', backgroundColor: '#212126'}, headerConfig: { headerMessage: 'Sveiki atvykę į Luminor', headerColorHex: '#212126'}, logoConfig: { sourceUrl: ''} });
+
+
+    amazon_connect('customizationObject', {
+        transcript: {
+            hideDisplayNames: false,
+            eventNames: {
+                customer: "Klientas",
+                agent: "Agentas",
+                supervisor: "Prižiūrėtojas"
+            },
+            eventMessages: {
+                participantJoined: "{name} prisijungė prie pokalbio.",
+                participantLeft: "{name} paliko pokalbį.",
+                chatEnded: "Pokalbis baigėsi!",
+                participantDisconnect: "",
+                participantIdle: "",
+                participantReturned: ""
+            }
+        },
+        endChat: {
+            enableConfirmationDialog: true,
+            confirmationDialogText: {
+                title: "Baigti pokalbį",
+                message: "Ar tikrai norite baigti pokalbį?",
+                confirmButtonText: "Baigti pokalbį",
+                cancelButtonText: "Atšaukti"
+            }
+        }
+    });
+
+    amazon_connect('snippetId', 'QVFJREFIZ3JjM0V2VVBOckdYcW1jeFRyRHU0N1IwL0hXQXhoMlF6RE5FSm4wc01nUUFIWUZkUGxzSnVtcXo5c1Ruc0lxRzg2QUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNRkZVK2VOT3FId3hGRCtsVEFnRVFnQ3MvNklKK3FHbjZNSW9RSnpxaXpFUndTMkFJOGxqVnNTYU0rRE1nRUJYdUhlYTFFMGJNTUZqUkVmcG86OlhkZVVHYklLMVVPVDZTbXcyODh5ZWh4djZmeGQ5azRsTnJ5TGZWSGFBMFplTWYxTUM1R1NXdXNZWEJtSDRIUDExV3pseFh2ZCtWcXhENmVBU0QxUGcwRHJtSytJWXNkaldFYlU1UThHRHZuSk82M1luZ1BDd3dqWW1uNGtmZHZsS3ExQmwwNGRVQTZqemt5SU0vTjFrQk9SU1Jrb2dWOD0=');
+    amazon_connect('supportedMessagingContentTypes', [ 'text/plain', 'text/markdown', 'application/vnd.amazonaws.connect.message.interactive', 'application/vnd.amazonaws.connect.message.interactive.response' ]);
+    amazon_connect('viewConfig', '{\"arn\":\"arn:aws:connect:eu-central-1:894883387019:instance/063f2389-ad0a-4582-9060-3f76abeb71bb/view/c5c27bce-ea96-4e60-8978-492354817a9e:$LATEST\",\"id\":\"c5c27bce-ea96-4e60-8978-492354817a9e\",\"content\":{\"actions\":[],\"inputSchema\":{\"type\":\"object\",\"properties\":{},\"required\":[],\"$defs\":{\"ViewCondition\":{\"$id\":\"/view/condition\",\"type\":\"object\",\"patternProperties\":{\"^(MoreThan|LessThan|NotEqual|Equal|Include)$\":{\"type\":\"object\",\"properties\":{\"ElementByKey\":{\"type\":\"string\"},\"ElementByValue\":{\"anyOf\":[{\"type\":\"number\"},{\"type\":\"string\"}]}},\"additionalProperties\":false},\"^(AndConditions|OrConditions)$\":{\"type\":\"array\",\"items\":{\"$ref\":\"/view/condition\"}}},\"additionalProperties\":false}}},\"template\":{\"Head\":{\"Configuration\":{\"Layout\":{\"Columns\":[12]}},\"Integrations\":[],\"Title\":\"ChatOpeningLTView\"},\"Body\":[{\"_id\":\"Form_1\",\"Type\":\"Form\",\"Props\":{},\"Content\":[{\"_id\":\"TextBox_1759731070368\",\"Type\":\"TextBox\",\"Props\":{\"Variant\":\"div\",\"TextAlign\":\"left\",\"FontWeight\":\"normal\",\"FontSize\":\"heading-s\"},\"Content\":[\"Sveiki! 4 iš 5 klientų randa atsakymus šiomis temomis:\"]},{\"_id\":\"Link_1761638860614\",\"Type\":\"Link\",\"Props\":{\"Type\":\"external\",\"Url\":\"https://www.luminor.lt/lt/privatiems/saskaitos-dazniausiai-uzduodami-klausimai\",\"AutoOpen\":false},\"Content\":[\"Banko saskaita\"]},{\"_id\":\"Link_1761638862025\",\"Type\":\"Link\",\"Props\":{\"Type\":\"external\",\"Url\":\"https://www.luminor.lt/lt/mokejimo-korteles-duk\",\"AutoOpen\":false},\"Content\":[\"Mokėjimo kortelės\"]},{\"_id\":\"Link_1759731268835\",\"Type\":\"Link\",\"Props\":{\"Type\":\"external\",\"Url\":\"https://www.luminor.lt/lt/smart-id-duk\",\"AutoOpen\":false},\"Content\":[\"Smart ID\"]},{\"_id\":\"Link_1759731266861\",\"Type\":\"Link\",\"Props\":{\"Type\":\"external\",\"Url\":\"https://www.luminor.lt/lt/privatiems/busto-paskola-dazniausiai-uzduodami-klausimai\",\"AutoOpen\":false},\"Content\":[\"Būsto paskola\"]},{\"_id\":\"Link_1759731229849\",\"Type\":\"Link\",\"Props\":{\"Type\":\"external\",\"Url\":\"https://www.luminor.lt/lt/privatiems/skaiciuokles\",\"AutoOpen\":false},\"Content\":[\"Kitos paskolos\"]},{\"_id\":\"TextBox_1757834927177\",\"Type\":\"TextBox\",\"Props\":{\"Variant\":\"div\",\"TextAlign\":\"left\",\"FontWeight\":\"normal\",\"FontSize\":\"heading-s\"},\"Content\":[\"Jeigu neradote atsakymo, prašome įvesti savo vardą ir pradėsime pokalbį, kurio metu galėsime suteikti bendros informacijos.\"]},{\"_id\":\"FormInput_1757834909821\",\"Type\":\"FormInput\",\"Props\":{\"Label\":\"Vardas\",\"Name\":\"input-1\",\"DefaultValue\":\"\",\"InputType\":\"text\",\"Required\":false,\"HelperText\":\"\",\"ValidationPattern\":\"\"},\"Content\":[]},{\"_id\":\"ConnectAction_1759918000927\",\"Type\":\"ConnectAction\",\"Props\":{\"ConnectActionType\":\"StartChatContact\",\"Label\":\"Pradėti pokalbį\",\"StartTaskContactProps\":{\"ContactFlowId\":\"\",\"TaskFields\":{\"Name\":\"\",\"References\":{}},\"Attributes\":[{\"Key\":\"\",\"Value\":\"\"}]},\"StartEmailContactProps\":{\"DestinationEmailAddress\":\"\",\"ContactFlowId\":\"\",\"EmailFields\":{\"CustomerDisplayName\":\"\",\"CustomerEmailAddress\":\"\",\"Subject\":\"\",\"Body\":\"\"},\"Attributes\":[{\"Key\":\"\",\"Value\":\"\"}]},\"StartChatContactProps\":{\"ContactFlowId\":\"arn:aws:connect:eu-central-1:894883387019:instance/063f2389-ad0a-4582-9060-3f76abeb71bb/contact-flow/20a1551c-f270-43f1-ba85-cc83fd4b770e\",\"ChatFields\":{\"CustomerDisplayName\":{\"_linkedFormOutputName\":\"input-1\"},\"InitialMessage\":\"\"},\"Attributes\":[{\"Key\":\"Name\",\"Value\":{\"_linkedFormOutputName\":\"input-1\"}}]}},\"Content\":[\"Connect Action Button\"]}]}]}},\"name\":\"ChatOpeningLTView\",\"status\":\"PUBLISHED\",\"type\":\"CUSTOMER_MANAGED\",\"viewContentSha256\":\"23ebc3c7a8d929f65a60a698c6747a5aa0004a96fe6568f5b84940be9dec39f8\"}');
+</script><style>
+#cookie-compliance{display:none !important;}
+</style><script type="text/javascript" src="https://luminor.lt/sites/default/files/js/js_8uZPShS_QVHz9sqtt2r0QMnJwrJ1mfDE0hFxoWD3NmA.js"></script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+{
+ "table_proxy": {
+  "date": "2026-10-23",
+  "label": [
+   "Vieneto verčių data: 2026-10-23"
+  ],
+  "rows": [
+   {
+    "Fund name": "Luminor 1961-1967 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "1.5632 EUR",
+    "Grynieji aktyvai": "70 059 906 EUR"
+   },
+   {
+    "Fund name": "Luminor 1968-1974 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "2.0820 EUR",
+    "Grynieji aktyvai": "86 402 370 EUR"
+   },
+   {
+    "Fund name": "Luminor 1975-1981 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "2.3319 EUR",
+    "Grynieji aktyvai": "101 010 690 EUR"
+   },
+   {
+    "Fund name": "Luminor 1982-1988 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "2.3330 EUR",
+    "Grynieji aktyvai": "95 106 373 EUR"
+   },
+   {
+    "Fund name": "Luminor 1989-1995 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "2.3512 EUR",
+    "Grynieji aktyvai": "47 365 377 EUR"
+   },
+   {
+    "Fund name": "Luminor 1996-2002 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "2.3600 EUR",
+    "Grynieji aktyvai": "17 292 153 EUR"
+   },
+   {
+    "Fund name": "Luminor 2003-2009 tikslinės grupės pensijų fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "1.2182 EUR",
+    "Grynieji aktyvai": "3 718 581 EUR"
+   },
+   {
+    "Fund name": "Luminor pensijų turto išsaugojimo fondas",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "1.1604 EUR",
+    "Grynieji aktyvai": "13 377 640 EUR"
+   },
+   {
+    "Fund name": "Luminor ateitis 16–50",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "0.8553 EUR",
+    "Grynieji aktyvai": "29 578 630 EUR"
+   },
+   {
+    "Fund name": "Luminor ateitis 50–58",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "0.6902 EUR",
+    "Grynieji aktyvai": "67 806 124 EUR"
+   },
+   {
+    "Fund name": "Luminor ateitis 58+",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "0.3004 EUR",
+    "Grynieji aktyvai": "8 917 008 EUR"
+   },
+   {
+    "Fund name": "Luminor tvari ateitis index",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "1.5623 EUR",
+    "Grynieji aktyvai": "8 598 323 EUR"
+   },
+   {
+    "Fund name": "Luminor ateitis akcijų index",
+    "Data": "2026-10-23",
+    "Vieneto vertė": "1.1424 EUR",
+    "Grynieji aktyvai": "1 958 530 EUR"
+   }
+  ]
+ },
+ "fund15_proxy": {
+  "name": "Luminor 1961-1967 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA2",
+   "name_alias_lt": "Luminor 1961-1967 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 5.397416959999999,
+   "index_value": 558.3830179199999,
+   "nav": 241902844.95603198,
+   "unit_price_change_1d": "-0.05000000",
+   "unit_price_change_3m": "-0.71000000",
+   "unit_price_change_6m": "1.12000000",
+   "unit_price_change_ytd": "2.98000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "1.56320000",
+   "index_value_r": "161.71890000",
+   "nav_eur": "70059906.44000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "5.4237",
+    "value_eur": "1.5708",
+    "percent": "31.3598",
+    "index_percent": "31.7169",
+    "index_percent_r": "31.7169"
+   },
+   "2026-10-19": {
+    "value_ltl": "5.4185",
+    "value_eur": "1.5693",
+    "percent": "31.2343",
+    "index_percent": "31.5999",
+    "index_percent_r": "31.5999"
+   },
+   "2026-10-20": {
+    "value_ltl": "5.4133",
+    "value_eur": "1.5678",
+    "percent": "31.1089",
+    "index_percent": "31.6096",
+    "index_percent_r": "31.6096"
+   },
+   "2026-10-21": {
+    "value_ltl": "5.4199",
+    "value_eur": "1.5697",
+    "percent": "31.2678",
+    "index_percent": "31.7877",
+    "index_percent_r": "31.7877"
+   },
+   "2026-10-22": {
+    "value_ltl": "5.4002",
+    "value_eur": "1.5640",
+    "percent": "30.7911",
+    "index_percent": "31.4366",
+    "index_percent_r": "31.4366"
+   },
+   "2026-10-23": {
+    "value_ltl": "5.3974",
+    "value_eur": "1.5632",
+    "percent": "30.7242",
+    "index_percent": "31.1417",
+    "index_percent_r": "31.1417"
+   }
+  }
+ },
+ "fund16_proxy": {
+  "name": "Luminor 1968-1974 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA3",
+   "name_alias_lt": "Luminor 1968-1974 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 7.188729599999999,
+   "index_value": 754.1488364799999,
+   "nav": 298330103.20505595,
+   "unit_price_change_1d": "-0.06000000",
+   "unit_price_change_3m": "1.13000000",
+   "unit_price_change_6m": "5.16000000",
+   "unit_price_change_ytd": "9.19000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "2.08200000",
+   "index_value_r": "218.41660000",
+   "nav_eur": "86402370.02000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "7.2312",
+    "value_eur": "2.0943",
+    "percent": "51.0385",
+    "index_percent": "52.4795",
+    "index_percent_r": "52.4795"
+   },
+   "2026-10-19": {
+    "value_ltl": "7.2326",
+    "value_eur": "2.0947",
+    "percent": "51.0674",
+    "index_percent": "52.6998",
+    "index_percent_r": "52.6998"
+   },
+   "2026-10-20": {
+    "value_ltl": "7.2222",
+    "value_eur": "2.0917",
+    "percent": "50.8510",
+    "index_percent": "52.5485",
+    "index_percent_r": "52.5485"
+   },
+   "2026-10-21": {
+    "value_ltl": "7.2440",
+    "value_eur": "2.0980",
+    "percent": "51.3054",
+    "index_percent": "53.2819",
+    "index_percent_r": "53.2819"
+   },
+   "2026-10-22": {
+    "value_ltl": "7.1932",
+    "value_eur": "2.0833",
+    "percent": "50.2452",
+    "index_percent": "52.2792",
+    "index_percent_r": "52.2792"
+   },
+   "2026-10-23": {
+    "value_ltl": "7.1887",
+    "value_eur": "2.0820",
+    "percent": "50.1514",
+    "index_percent": "51.8044",
+    "index_percent_r": "51.8044"
+   }
+  }
+ },
+ "fund17_proxy": {
+  "name": "Luminor 1975-1981 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA4",
+   "name_alias_lt": "Luminor 1975-1981 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 8.05158432,
+   "index_value": 870.3013737599999,
+   "nav": 348769709.845024,
+   "unit_price_change_1d": "-0.06000000",
+   "unit_price_change_3m": "3.10000000",
+   "unit_price_change_6m": "9.31000000",
+   "unit_price_change_ytd": "15.70000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "2.33190000",
+   "index_value_r": "252.05670000",
+   "nav_eur": "101010689.83000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "8.1079",
+    "value_eur": "2.3482",
+    "percent": "67.7885",
+    "index_percent": "72.1813",
+    "index_percent_r": "72.1813"
+   },
+   "2026-10-19": {
+    "value_ltl": "8.1220",
+    "value_eur": "2.3523",
+    "percent": "68.0815",
+    "index_percent": "72.8316",
+    "index_percent_r": "72.8316"
+   },
+   "2026-10-20": {
+    "value_ltl": "8.1051",
+    "value_eur": "2.3474",
+    "percent": "67.7313",
+    "index_percent": "72.4805",
+    "index_percent_r": "72.4805"
+   },
+   "2026-10-21": {
+    "value_ltl": "8.1472",
+    "value_eur": "2.3596",
+    "percent": "68.6031",
+    "index_percent": "73.8994",
+    "index_percent_r": "73.8994"
+   },
+   "2026-10-22": {
+    "value_ltl": "8.0561",
+    "value_eur": "2.3332",
+    "percent": "66.7167",
+    "index_percent": "72.0856",
+    "index_percent_r": "72.0856"
+   },
+   "2026-10-23": {
+    "value_ltl": "8.0516",
+    "value_eur": "2.3319",
+    "percent": "66.6238",
+    "index_percent": "71.3981",
+    "index_percent_r": "71.3981"
+   }
+  }
+ },
+ "fund18_proxy": {
+  "name": "Luminor 1982-1988 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA5",
+   "name_alias_lt": "Luminor 1982-1988 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 8.055382400000001,
+   "index_value": 870.3013737599999,
+   "nav": 328383285.03967994,
+   "unit_price_change_1d": "-0.06000000",
+   "unit_price_change_3m": "3.11000000",
+   "unit_price_change_6m": "9.22000000",
+   "unit_price_change_ytd": "15.89000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "2.33300000",
+   "index_value_r": "252.05670000",
+   "nav_eur": "95106373.09999999",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "8.1127",
+    "value_eur": "2.3496",
+    "percent": "68.2371",
+    "index_percent": "72.1813",
+    "index_percent_r": "72.1813"
+   },
+   "2026-10-19": {
+    "value_ltl": "8.1272",
+    "value_eur": "2.3538",
+    "percent": "68.5379",
+    "index_percent": "72.8316",
+    "index_percent_r": "72.8316"
+   },
+   "2026-10-20": {
+    "value_ltl": "8.1099",
+    "value_eur": "2.3488",
+    "percent": "68.1799",
+    "index_percent": "72.4805",
+    "index_percent_r": "72.4805"
+   },
+   "2026-10-21": {
+    "value_ltl": "8.1528",
+    "value_eur": "2.3612",
+    "percent": "69.0677",
+    "index_percent": "73.8994",
+    "index_percent_r": "73.8994"
+   },
+   "2026-10-22": {
+    "value_ltl": "8.0602",
+    "value_eur": "2.3344",
+    "percent": "67.1488",
+    "index_percent": "72.0856",
+    "index_percent_r": "72.0856"
+   },
+   "2026-10-23": {
+    "value_ltl": "8.0554",
+    "value_eur": "2.3330",
+    "percent": "67.0485",
+    "index_percent": "71.3981",
+    "index_percent_r": "71.3981"
+   }
+  }
+ },
+ "fund19_proxy": {
+  "name": "Luminor 1989-1995 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA6",
+   "name_alias_lt": "Luminor 1989-1995 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 8.11822336,
+   "index_value": 870.3013737599999,
+   "nav": 163543173.394848,
+   "unit_price_change_1d": "-0.05000000",
+   "unit_price_change_3m": "3.24000000",
+   "unit_price_change_6m": "9.26000000",
+   "unit_price_change_ytd": "16.44000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "2.35120000",
+   "index_value_r": "252.05670000",
+   "nav_eur": "47365376.91000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "8.1748",
+    "value_eur": "2.3676",
+    "percent": "68.7767",
+    "index_percent": "72.1813",
+    "index_percent_r": "72.1813"
+   },
+   "2026-10-19": {
+    "value_ltl": "8.1904",
+    "value_eur": "2.3721",
+    "percent": "69.0975",
+    "index_percent": "72.8316",
+    "index_percent_r": "72.8316"
+   },
+   "2026-10-20": {
+    "value_ltl": "8.1738",
+    "value_eur": "2.3673",
+    "percent": "68.7553",
+    "index_percent": "72.4805",
+    "index_percent_r": "72.4805"
+   },
+   "2026-10-21": {
+    "value_ltl": "8.2163",
+    "value_eur": "2.3796",
+    "percent": "69.6322",
+    "index_percent": "73.8994",
+    "index_percent_r": "73.8994"
+   },
+   "2026-10-22": {
+    "value_ltl": "8.1220",
+    "value_eur": "2.3523",
+    "percent": "67.6861",
+    "index_percent": "72.0856",
+    "index_percent_r": "72.0856"
+   },
+   "2026-10-23": {
+    "value_ltl": "8.1182",
+    "value_eur": "2.3512",
+    "percent": "67.6076",
+    "index_percent": "71.3981",
+    "index_percent_r": "71.3981"
+   }
+  }
+ },
+ "fund20_proxy": {
+  "name": "Luminor 1996-2002 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA7",
+   "name_alias_lt": "Luminor 1996-2002 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 8.148608,
+   "index_value": 870.3013737599999,
+   "nav": 59706346.223680004,
+   "unit_price_change_1d": "-0.06000000",
+   "unit_price_change_3m": "2.99000000",
+   "unit_price_change_6m": "9.15000000",
+   "unit_price_change_ytd": "16.64000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "2.36000000",
+   "index_value_r": "252.05670000",
+   "nav_eur": "17292153.10000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "8.2087",
+    "value_eur": "2.3774",
+    "percent": "68.6219",
+    "index_percent": "72.1813",
+    "index_percent_r": "72.1813"
+   },
+   "2026-10-19": {
+    "value_ltl": "8.2242",
+    "value_eur": "2.3819",
+    "percent": "68.9411",
+    "index_percent": "72.8316",
+    "index_percent_r": "72.8316"
+   },
+   "2026-10-20": {
+    "value_ltl": "8.2077",
+    "value_eur": "2.3771",
+    "percent": "68.6006",
+    "index_percent": "72.4805",
+    "index_percent_r": "72.4805"
+   },
+   "2026-10-21": {
+    "value_ltl": "8.2508",
+    "value_eur": "2.3896",
+    "percent": "69.4872",
+    "index_percent": "73.8994",
+    "index_percent_r": "73.8994"
+   },
+   "2026-10-22": {
+    "value_ltl": "8.1531",
+    "value_eur": "2.3613",
+    "percent": "67.4800",
+    "index_percent": "72.0856",
+    "index_percent_r": "72.0856"
+   },
+   "2026-10-23": {
+    "value_ltl": "8.1486",
+    "value_eur": "2.3600",
+    "percent": "67.3878",
+    "index_percent": "71.3981",
+    "index_percent_r": "71.3981"
+   }
+  }
+ },
+ "fund23_proxy": {
+  "name": "Luminor 2003-2009 tikslinės grupės pensijų fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA9",
+   "name_alias_lt": "Luminor 2003-2009 tikslinės grupės pensijų fondas",
+   "type": "pension",
+   "unit_price": 4.206200959999999,
+   "index_value": 435.53860896,
+   "nav": 12839517.547168,
+   "unit_price_change_1d": "-0.05000000",
+   "unit_price_change_3m": "3.16000000",
+   "unit_price_change_6m": "9.42000000",
+   "unit_price_change_ytd": "15.35000000",
+   "datetime": "1735768800",
+   "unit_price_eur": "1.21820000",
+   "index_value_r": "126.14070000",
+   "nav_eur": "3718581.31000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "4.2373",
+    "value_eur": "1.2272",
+    "percent": "22.7200",
+    "index_percent": "26.7169",
+    "index_percent_r": "26.7169"
+   },
+   "2026-10-19": {
+    "value_ltl": "4.2476",
+    "value_eur": "1.2302",
+    "percent": "23.0200",
+    "index_percent": "27.1955",
+    "index_percent_r": "27.1955"
+   },
+   "2026-10-20": {
+    "value_ltl": "4.2387",
+    "value_eur": "1.2276",
+    "percent": "22.7600",
+    "index_percent": "26.9372",
+    "index_percent_r": "26.9372"
+   },
+   "2026-10-21": {
+    "value_ltl": "4.2601",
+    "value_eur": "1.2338",
+    "percent": "23.3800",
+    "index_percent": "27.9815",
+    "index_percent_r": "27.9815"
+   },
+   "2026-10-22": {
+    "value_ltl": "4.2083",
+    "value_eur": "1.2188",
+    "percent": "21.8800",
+    "index_percent": "26.6466",
+    "index_percent_r": "26.6466"
+   },
+   "2026-10-23": {
+    "value_ltl": "4.2062",
+    "value_eur": "1.2182",
+    "percent": "21.8200",
+    "index_percent": "26.1407",
+    "index_percent_r": "26.1407"
+   }
+  }
+ },
+ "fund21_proxy": {
+  "name": "Luminor pensijų turto išsaugojimo fondas",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "2PFA8",
+   "name_alias_lt": "Luminor pensijų turto išsaugojimo fondas",
+   "type": "pension",
+   "unit_price": 4.00662912,
+   "index_value": 413.89335103999997,
+   "nav": 46190315.322944,
+   "unit_price_change_1d": "0.00000000",
+   "unit_price_change_3m": "-0.45000000",
+   "unit_price_change_6m": "0.59000000",
+   "unit_price_change_ytd": "1.58000000",
+   "datetime": "1546380000",
+   "unit_price_eur": "1.16040000",
+   "index_value_r": "119.87180000",
+   "nav_eur": "13377639.98000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "4.0177",
+    "value_eur": "1.1636",
+    "percent": "16.9330",
+    "index_percent": "18.2600",
+    "index_percent_r": "18.2600"
+   },
+   "2026-10-19": {
+    "value_ltl": "4.0108",
+    "value_eur": "1.1616",
+    "percent": "16.7320",
+    "index_percent": "18.0833",
+    "index_percent_r": "18.0833"
+   },
+   "2026-10-20": {
+    "value_ltl": "4.0139",
+    "value_eur": "1.1625",
+    "percent": "16.8224",
+    "index_percent": "18.1351",
+    "index_percent_r": "18.1351"
+   },
+   "2026-10-21": {
+    "value_ltl": "4.0139",
+    "value_eur": "1.1625",
+    "percent": "16.8224",
+    "index_percent": "18.1286",
+    "index_percent_r": "18.1286"
+   },
+   "2026-10-22": {
+    "value_ltl": "4.0066",
+    "value_eur": "1.1604",
+    "percent": "16.6114",
+    "index_percent": "17.9348",
+    "index_percent_r": "17.9348"
+   },
+   "2026-10-23": {
+    "value_ltl": "4.0066",
+    "value_eur": "1.1604",
+    "percent": "16.6114",
+    "index_percent": "17.8292",
+    "index_percent_r": "17.8292"
+   }
+  }
+ },
+ "fund24_proxy": {
+  "name": "Luminor ateitis akcijų index",
+  "rates": {
+   "start_unit_price": 3.4528,
+   "name": "3PFA13",
+   "name_alias_lt": "Luminor ateitis akcijų index",
+   "type": "pension",
+   "unit_price": 3.94447872,
+   "index_value": 394.74792032,
+   "nav": 6762410.692128,
+   "unit_price_change_1d": "-0.04000000",
+   "unit_price_change_3m": "3.39000000",
+   "unit_price_change_6m": "9.94000000",
+   "unit_price_change_ytd": "0.00000000",
+   "datetime": "1768946400",
+   "unit_price_eur": "1.14240000",
+   "index_value_r": "114.32690000",
+   "nav_eur": "1958529.51000000",
+   "start_unit_price_eur": "1.00000000"
+  },
+  "hist_last": {
+   "2026-10-16": {
+    "value_ltl": "3.9724",
+    "value_eur": "1.1505",
+    "percent": "15.0500",
+    "index_percent": "14.8532",
+    "index_percent_r": "14.8532"
+   },
+   "2026-10-19": {
+    "value_ltl": "3.9804",
+    "value_eur": "1.1528",
+    "percent": "15.2800",
+    "index_percent": "15.3118",
+    "index_percent_r": "15.3118"
+   },
+   "2026-10-20": {
+    "value_ltl": "3.9718",
+    "value_eur": "1.1503",
+    "percent": "15.0300",
+    "index_percent": "15.0639",
+    "index_percent_r": "15.0639"
+   },
+   "2026-10-21": {
+    "value_ltl": "3.9939",
+    "value_eur": "1.1567",
+    "percent": "15.6700",
+    "index_percent": "16.0478",
+    "index_percent_r": "16.0478"
+   },
+   "2026-10-22": {
+    "value_ltl": "3.9462",
+    "value_eur": "1.1429",
+    "percent": "14.2900",
+    "index_percent": "14.7963",
+    "index_percent_r": "14.7963"
+   },
+   "2026-10-23": {
+    "value_ltl": "3.9445",
+    "value_eur": "1.1424",
+    "percent": "14.2400",
+    "index_percent": "14.3269",
+    "index_percent_r": "14.3269"
+   }
+  }
+ },
+ "table_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund15_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund16_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund17_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund18_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund19_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund20_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund23_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund21_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ },
+ "fund24_direct": {
+  "error": "Cloudflare challenge page returned by curl (direct)"
+ }
+}
