@@ -344,7 +344,7 @@ def fetch_luminor() -> list:
     if not html:
         raise RuntimeError("Luminor lentelė nepasiekiama: " + " | ".join(errors[-3:]))
     rows = []
-    for rec in scraper.parse_rows_from_table_html(html):
+    for rec in scraper.fill_from_fund_pages(scraper.parse_rows_from_table_html(html)):
         fund = fund_for(rec["Fund name"])
         if fund and PROVIDER_OF[fund] == "LUMINOR":
             rows.append(row(u.iso_date(rec["Data"]), fund, u.number(rec["Vieneto vertė"]), u.number(rec["Grynieji aktyvai"])))
@@ -424,9 +424,20 @@ def run(providers: dict, browser: bool) -> None:
         if browser and u.attempts_today(state, state_key) >= u.max_attempts(state_key):
             log.append(f"{provider}: pasiektas dienos bandymų limitas")
             continue
+        if browser and u.too_soon(state, state_key):
+            log.append(f"{provider}: kitas bandymas vėliau (tarpas {u.LUMINOR_MIN_GAP_MIN} min.)")
+            continue
         attempted = True
         if browser:
             u.add_attempt(state, state_key)
+        if provider == "LUMINOR":   # pirma trūkstama diena – kad skaitytuvas užpildytų tarpus
+            last = {}
+            for (day, fund), r in existing.items():
+                if fund in miss:
+                    last[fund] = max(last.get(fund, ""), day)
+            if last:
+                since = min(last.values())
+                os.environ["LUMINOR_HISTORY_FROM"] = (date.fromisoformat(since) + timedelta(days=1)).isoformat()
         try:
             rows = fetch()
         except Exception as exc:  # noqa: BLE001
@@ -467,7 +478,8 @@ def main() -> int:
     if command == "needs-browser":
         existing, expected, state = load(), u.expected_date(), u.load_state()
         need = [p for p in BROWSER if missing(existing, p, expected)
-                and u.attempts_today(state, "P3_" + p) < u.max_attempts("P3_" + p)]
+                and u.attempts_today(state, "P3_" + p) < u.max_attempts("P3_" + p)
+                and not u.too_soon(state, "P3_" + p)]
         if sum(1 for k in existing if k[1] == "Luminor ateitis akcijų index") < 60:
             need.append("LUMINOR-index")
         print("III pakopai reikia naršyklės:", ", ".join(need) or "niekam")

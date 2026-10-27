@@ -84,6 +84,9 @@ class LuminorPensionsScraper(BaseScraper):
         return []
 
     def build_url(self, base_url: str, fund_id: str) -> str:
+        if getattr(self, "_history_from", ""):
+            return (f"{base_url}?fund_type=pension&fund={fund_id}&currency=eur&period=custom"
+                    f"&from={self._history_from}&to=2030-12-31")
         return f"{base_url}?fund_type=pension&currency=eur&period=3year&fund={fund_id}"
 
     def build_table_url(self, base_url: str) -> str:
@@ -638,6 +641,7 @@ class LuminorPensionsScraper(BaseScraper):
             fund_name = self._extract_fund_name(fund_cell)
             if not fund_name or fund_name in EXCLUDED_FUNDS:
                 continue
+            id_match = re.search(r"pensiju-fondu-forma\?fund=(\d+)", fund_cell)
 
             unit_value_text = self._extract_visible_td_value(unit_cell)
             assets_text = self._extract_visible_td_value(assets_cell)
@@ -651,10 +655,56 @@ class LuminorPensionsScraper(BaseScraper):
                     "Data": table_date or None,
                     "Vieneto vertė": unit_value_text,
                     "Grynieji aktyvai": assets_text,
+                    "fund_id": id_match.group(1) if id_match else "",
                 }
             )
 
         return rows
+
+    def fill_from_fund_pages(self, rows: list) -> list:
+        """Lentelė rodo tik vieną (paskutinę) dieną. Jei tarp mūsų paskutinės ir lentelės dienos yra
+        tarpas arba lentelė dar rodo jau turimą dieną (2026-10-26 lentelė visą dieną rodė 10-22, nors
+        fondų puslapiuose jau buvo 10-23), trūkstamas dienas imame iš fondų puslapių istorijos.
+        LUMINOR_HISTORY_FROM – pirma trūkstama diena (nustato update.py / pillar3.py)."""
+        since = os.getenv("LUMINOR_HISTORY_FROM", "").strip()
+        table_date = next((r["Data"] for r in rows if r.get("Data")), "")
+        if not since or table_date == since:
+            return rows
+        print(f"Lentelės data {table_date or '?'}, trūksta nuo {since} – tikrinami fondų puslapiai")
+        have = {(r["Fund name"], r.get("Data")) for r in rows}
+        extra = []
+        self._history_from = since
+        try:
+            for rec in rows:
+                fund_id = rec.get("fund_id")
+                if not fund_id:
+                    continue
+                payload = {}
+                for use_proxy in (True, False):
+                    try:
+                        payload = self.fetch_payload_via_curl(fund_id, use_proxy=use_proxy)
+                    except Exception as exc:  # noqa: BLE001
+                        print(f"Fondo {fund_id} puslapis nepasiekiamas ({'proxy' if use_proxy else 'tiesiogiai'}): {exc}")
+                    if payload:
+                        break
+                hist = payload.get("fundRatesHistory") or {}
+                rates = payload.get("fundRates") or {}
+                days = sorted(d for d in hist if re.match(r"^\d{4}-\d{2}-\d{2}$", str(d)) and d >= since)
+                for day in days:
+                    val = hist[day]
+                    if isinstance(val, dict):
+                        val = val.get("value_eur") or val.get("unit_price_eur")
+                    if not val or (rec["Fund name"], day) in have:
+                        continue
+                    assets = None
+                    if day == days[-1] and str(rates.get("unit_price_eur", "")).rstrip("0") == str(val).rstrip("0"):
+                        assets = rates.get("nav_eur")       # paskutinės dienos grynieji aktyvai
+                    extra.append({"Fund name": rec["Fund name"], "Data": day, "Vieneto vertė": val,
+                                  "Grynieji aktyvai": assets, "fund_id": fund_id})
+        finally:
+            self._history_from = ""
+        print(f"Iš fondų puslapių papildyta {len(extra)} eil.")
+        return rows + extra
 
     def fetch_html_via_browser_navigation(self, fund_id: str, use_proxy: bool = True) -> str:
         if use_proxy and not self.playwright_proxy_is_supported():
@@ -809,7 +859,7 @@ class LuminorPensionsScraper(BaseScraper):
                         print(f"Table attempt {attempt_name} returned no parsable rows")
                         continue
 
-                    rows = parsed_rows
+                    rows = self.fill_from_fund_pages(parsed_rows)
                     if not used_proxy:
                         proxy_bypass_ids = LUMINOR_II_FUND_IDS.copy()
                     print(f"Parsed {len(rows)} funds from pensiju-fondai table ({attempt_name})")

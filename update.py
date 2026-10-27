@@ -40,6 +40,7 @@ MAX_BROWSER_ATTEMPTS = int(os.getenv("MAX_BROWSER_ATTEMPTS", "5"))
 # SEB, Swedbank, Goindex nemokami: griežtas limitas tik Luminor (proxy). Kitaip rankiniai
 # paleidimai ryte suvalgo bandymus ir vėliau paskelbtos SEB vertės nebeparsiunčiamos.
 MAX_FREE_ATTEMPTS = int(os.getenv("MAX_FREE_ATTEMPTS", "20"))
+LUMINOR_MIN_GAP_MIN = int(os.getenv("LUMINOR_MIN_GAP_MIN", "75"))  # tarpas tarp Luminor bandymų, min.
 MAX_DAILY_JUMP = 0.12  # didesnis vienos dienos pokytis laikomas klaida ir praleidžiamas
 LOOKBACK_DAYS = 30  # fondas laikomas „aktyviu", jei turi duomenų per paskutines 30 d.
 
@@ -215,6 +216,18 @@ def attempts_today(state: dict, provider: str) -> int:
 def add_attempt(state: dict, provider: str) -> None:
     day = state.setdefault(today_vilnius().isoformat(), {})
     day[provider] = day.get(provider, 0) + 1
+    now = datetime.now(TZ)
+    day[provider + "@"] = now.hour * 60 + now.minute       # paskutinio bandymo laikas (min. nuo vidurnakčio)
+
+
+def too_soon(state: dict, provider: str) -> bool:
+    """Luminor bandymų nedaug (mokamas proxy), todėl išdėstome juos per dieną: 2026-10-26 visi 5 bandymai
+    buvo išnaudoti iki 15 val., o Luminor penktadienio vertes paskelbė vėliau."""
+    if "LUMINOR" not in provider:
+        return False
+    last = state.get(today_vilnius().isoformat(), {}).get(provider + "@")
+    now = datetime.now(TZ)
+    return last is not None and now.hour * 60 + now.minute - last < LUMINOR_MIN_GAP_MIN
 
 
 # --------------------------------------------------------------------------- įrašymas
@@ -408,10 +421,17 @@ def run_group(providers: list, fetchers: dict) -> int:
         if is_browser and attempts_today(state, provider) >= max_attempts(provider):
             log.append(f"{provider}: pasiektas dienos bandymų limitas ({max_attempts(provider)})")
             continue
+        if is_browser and too_soon(state, provider):
+            log.append(f"{provider}: kitas bandymas vėliau (tarpas {LUMINOR_MIN_GAP_MIN} min.)")
+            continue
         attempted = True
         try:
             if is_browser:
                 add_attempt(state, provider)
+                if provider == "LUMINOR":   # pirma trūkstama diena – kad skaitytuvas užpildytų tarpus
+                    last = active_funds(existing, provider, expected)
+                    since = min(last[f] for f in missing)
+                    os.environ["LUMINOR_HISTORY_FROM"] = (date.fromisoformat(since) + timedelta(days=1)).isoformat()
                 rows = run_browser_script(provider, log)
             else:
                 rows = fetchers[provider]()
@@ -443,7 +463,8 @@ def main() -> int:
     if command == "needs-browser":
         state = load_state()
         needed = [p for p in BROWSER_SCRIPTS
-                  if missing_funds(existing, p, expected) and attempts_today(state, p) < max_attempts(p)]
+                  if missing_funds(existing, p, expected) and attempts_today(state, p) < max_attempts(p)
+                  and not too_soon(state, p)]
         print("Reikia naršyklės:", ", ".join(needed) or "niekam")
         target = os.getenv("GITHUB_OUTPUT")
         if target:
