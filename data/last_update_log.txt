@@ -205,7 +205,7 @@ SEB: jau atnaujinta iki 2026-10-26
 SWEDBANK: jau atnaujinta iki 2026-10-26
 LUMINOR: gauta 5 eil., nauja/pakeista 0; dar trūksta: Luminor ateitis 58+, Luminor ateitis 50–58, Luminor ateitis 16–50, Luminor tvari ateitis index, Luminor ateitis akcijų index
 
-Vilnius: 2026-10-27 14:15, laukiama diena: 2026-10-26
+Vilnius: 2026-10-27 14:22, laukiama diena: 2026-10-26
   ! Artea pensija 2003-2009: netinkama data 2026-10-09 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-12 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-13 – praleista
@@ -250,7 +250,7 @@ ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-10-26
 ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 GOINDEX: jau atnaujinta iki 2026-10-26
 
-III pakopa – Vilnius: 2026-10-27 14:15, laukiama diena: 2026-10-26
+III pakopa – Vilnius: 2026-10-27 14:23, laukiama diena: 2026-10-26
 ARTEA: gauta 23003 eil., nauja/pakeista 5; viskas iki 2026-10-26
 GOINDEX: jau atnaujinta iki 2026-10-26
 
