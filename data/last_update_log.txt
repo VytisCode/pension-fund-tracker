@@ -1,15 +1,4 @@
- fondų
-ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-26
-
-III pakopa – Vilnius: 2026-10-27 12:00, laukiama diena: 2026-10-26
-ARTEA: gauta 22998 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
-GOINDEX: gauta 2 eil., nauja/pakeista 2; viskas iki 2026-10-26
-
-Vilnius: 2026-10-27 12:01, laukiama diena: 2026-10-26
-SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-SWEDBANK: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-26
-LUMINOR: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+UMINOR: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 GOINDEX: jau atnaujinta iki 2026-10-26
 
 III pakopa – Vilnius: 2026-10-27 12:03, laukiama diena: 2026-10-26
@@ -256,4 +245,20 @@ Vilnius: 2026-10-27 14:45, laukiama diena: 2026-10-26
 ARTEA: jau atnaujinta iki 2026-10-26
 ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 GOINDEX: jau atnaujinta iki 2026-10-26
+
+Vilnius: 2026-10-27 15:15, laukiama diena: 2026-10-26
+ARTEA: jau atnaujinta iki 2026-10-26
+ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-10-26
+GOINDEX: jau atnaujinta iki 2026-10-26
+
+Vilnius: 2026-10-27 15:16, laukiama diena: 2026-10-26
+SEB: jau atnaujinta iki 2026-10-26
+SWEDBANK: jau atnaujinta iki 2026-10-26
+LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-26
+GOINDEX: jau atnaujinta iki 2026-10-26
+
+III pakopa – Vilnius: 2026-10-27 15:16, laukiama diena: 2026-10-26
+SEB: jau atnaujinta iki 2026-10-26
+SWEDBANK: jau atnaujinta iki 2026-10-26
+LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-10-26
 
