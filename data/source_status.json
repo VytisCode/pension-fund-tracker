@@ -9,11 +9,7 @@
   "ok": "2026-10-28"
  },
  "idx.EURUSD": {
-  "err": "2026-10-28",
-  "kind": "network",
-  "msg": "TimeoutError: The read operation timed out",
-  "ok": "2026-10-28",
-  "since": "2026-10-28"
+  "ok": "2026-10-28"
  },
  "idx.EUR_GOV7Y": {
   "ok": "2026-10-28"
@@ -25,11 +21,7 @@
   "ok": "2026-10-28"
  },
  "idx.SP500": {
-  "err": "2026-10-28",
-  "kind": "other",
-  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
-  "ok": "2026-10-28",
-  "since": "2026-10-28"
+  "ok": "2026-10-28"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
