@@ -1,18 +1,4 @@
-ed and stable
-      - element is visible, enabled and stable
-      
-SEB SEB pensija 58+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
-Call log:
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      
-
-Vilnius: 2026-10-28 13:15, laukiama diena: 2026-10-27
-  ! Artea pensija 2003-2009: netinkama data 2026-10-12 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-13 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-14 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-15 – praleista
+15 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-16 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-12 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-13 – praleista
@@ -306,4 +292,20 @@ Vilnius: 2026-10-29 14:15, laukiama diena: 2026-10-28
 ARTEA: jau atnaujinta iki 2026-10-28
 ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 GOINDEX: jau atnaujinta iki 2026-10-28
+
+Vilnius: 2026-10-29 14:45, laukiama diena: 2026-10-28
+ARTEA: jau atnaujinta iki 2026-10-28
+ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-10-28
+GOINDEX: jau atnaujinta iki 2026-10-28
+
+Vilnius: 2026-10-29 14:46, laukiama diena: 2026-10-28
+SEB: jau atnaujinta iki 2026-10-28
+SWEDBANK: jau atnaujinta iki 2026-10-28
+LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-28
+GOINDEX: jau atnaujinta iki 2026-10-28
+
+III pakopa – Vilnius: 2026-10-29 14:46, laukiama diena: 2026-10-28
+SEB: jau atnaujinta iki 2026-10-28
+SWEDBANK: jau atnaujinta iki 2026-10-28
+LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-10-28
 
