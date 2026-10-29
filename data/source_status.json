@@ -15,18 +15,10 @@
   "ok": "2026-10-29"
  },
  "idx.MSCI_ACWI": {
-  "err": "2026-10-29",
-  "kind": "network",
-  "msg": "TimeoutError: The read operation timed out",
-  "ok": "2026-10-29",
-  "since": "2026-10-29"
+  "ok": "2026-10-29"
  },
  "idx.MSCI_WORLD": {
-  "err": "2026-10-29",
-  "kind": "network",
-  "msg": "TimeoutError: The read operation timed out",
-  "ok": "2026-10-29",
-  "since": "2026-10-29"
+  "ok": "2026-10-29"
  },
  "idx.SP500": {
   "ok": "2026-10-29"
