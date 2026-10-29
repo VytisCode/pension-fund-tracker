@@ -297,3 +297,8 @@ ts,src,ev,dd,n,msg
 2026-10-29T11:33,p3.ARTEA,new,2026-10-28,5,
 2026-10-29T11:33,p3.SWEDBANK,new,2026-10-28,6,
 2026-10-29T11:33,idx.EUR_GOV7Y,fail,,,network: TimeoutError: The read operation timed out
+2026-10-29T11:58,nav.GOINDEX,new,2026-10-28,8,
+2026-10-29T11:58,nav.SEB,new,2026-10-28,8,
+2026-10-29T11:58,p3.GOINDEX,new,2026-10-28,2,
+2026-10-29T11:58,p3.SEB,new,2026-10-28,4,
+2026-10-29T11:58,idx.EUR_GOV7Y,ok,,,vėl veikia

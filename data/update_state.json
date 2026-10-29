@@ -1,17 +1,17 @@
 {
  "2026-10-29": {
-  "GOINDEX": 1,
-  "GOINDEX@": 801,
+  "GOINDEX": 2,
+  "GOINDEX@": 827,
   "LUMINOR": 1,
   "LUMINOR@": 800,
   "P3_LUMINOR": 1,
   "P3_LUMINOR@": 803,
-  "P3_SEB": 1,
-  "P3_SEB@": 801,
+  "P3_SEB": 2,
+  "P3_SEB@": 827,
   "P3_SWEDBANK": 1,
   "P3_SWEDBANK@": 803,
-  "SEB": 1,
-  "SEB@": 799,
+  "SEB": 2,
+  "SEB@": 826,
   "SWEDBANK": 1,
   "SWEDBANK@": 799
  }
