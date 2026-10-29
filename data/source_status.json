@@ -12,7 +12,11 @@
   "ok": "2026-10-29"
  },
  "idx.EUR_GOV7Y": {
-  "ok": "2026-10-29"
+  "err": "2026-10-29",
+  "kind": "network",
+  "msg": "TimeoutError: The read operation timed out",
+  "ok": "2026-10-28",
+  "since": "2026-10-29"
  },
  "idx.MSCI_ACWI": {
   "ok": "2026-10-29"
