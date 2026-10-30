@@ -12,7 +12,11 @@
   "ok": "2026-10-30"
  },
  "idx.EUR_GOV7Y": {
-  "ok": "2026-10-30"
+  "err": "2026-10-30",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "ok": "2026-10-30",
+  "since": "2026-10-30"
  },
  "idx.MSCI_ACWI": {
   "ok": "2026-10-30"
