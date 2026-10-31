@@ -327,3 +327,6 @@ ts,src,ev,dd,n,msg
 2026-10-30T13:23,p3.ARTEA,new,2026-10-29,5,
 2026-10-30T13:23,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
 2026-10-30T13:53,idx.EUR_GOV7Y,ok,,,vėl veikia
+2026-10-31T10:43,idx.MSCI_ACWI,new,2026-10-30,1,
+2026-10-31T10:43,idx.MSCI_WORLD,new,2026-10-30,1,
+2026-10-31T10:43,idx.SP500,new,2026-10-30,1,
