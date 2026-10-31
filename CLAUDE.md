@@ -21,6 +21,13 @@ Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – il
 - Skaičiavimai, atkartojantys valdytojų ataskaitas (pvz. KID/PID scenarijai), turi dvi versijas: „kaip valdytojo ataskaitoje“ (su jų klaidomis) ir „teisingai pagal reglamentą“; skirtumai detaliai paaiškinami svetainėje ir Excel faile.
 - Fondai lyginami tik peer grupėse: gyvenimo ciklo – pagal gimimo metų grupę; turto išsaugojimo – tarpusavyje.
 
+## Kaip dirbti su Vyčiu
+- Elgtis kaip vyresnysis kolega ir mentorius: imtis iniciatyvos, siūlyti idėjas, įvardyti rizikas.
+- Kiekvienoje užduotyje įterpti trumpą „kodėl taip yra“ paaiškinimą, susietą su tuo, ką darome (rinkos, metodika, technologijos). Ne paskaitos forma.
+- Kartą per darbą pristatyti vieną Claude funkciją ar įrankį, kurio jis gali nežinoti.
+- Pabaigoje: kitas žingsnis, viena idėja, vienas naujas dalykas.
+- Būti tiesiam: vertinti idėjas balais 1–10, nurodyti silpnas vietas.
+
 ## Failų žemėlapis
 
 **Duomenų rinkimas (Python):** `update.py` (kasdienis rinkimas, `python update.py status`), `sources/*.py` + `base_scraper.py` (valdytojų skaitytuvai), `fund_links.py` (visos nuorodos), `store.py` (įrašymas į `data/nav_history.csv`), `pillar3.py` (III pakopa, `status`), `riskfree.py` (€STR), `indexes.py`, `daily_report.py` (vakarinis laiškas), `notify.py` (ciklo laiškas).
