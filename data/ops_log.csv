@@ -338,3 +338,7 @@ ts,src,ev,dd,n,msg
 2026-11-02T12:56,idx.MSCI_ACWI,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
 2026-11-02T12:56,idx.MSCI_WORLD,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
 2026-11-02T12:56,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-02T13:22,idx.EURUSD,ok,,,vėl veikia
+2026-11-02T13:22,idx.MSCI_ACWI,ok,,,vėl veikia
+2026-11-02T13:22,idx.MSCI_WORLD,ok,,,vėl veikia
+2026-11-02T13:22,idx.SP500,ok,,,vėl veikia
