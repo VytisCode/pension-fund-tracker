@@ -9,19 +9,35 @@
   "ok": "2026-11-02"
  },
  "idx.EURUSD": {
-  "ok": "2026-11-02"
+  "err": "2026-11-02",
+  "kind": "network",
+  "msg": "TimeoutError: The read operation timed out",
+  "ok": "2026-11-02",
+  "since": "2026-11-02"
  },
  "idx.EUR_GOV7Y": {
   "ok": "2026-11-02"
  },
  "idx.MSCI_ACWI": {
-  "ok": "2026-11-02"
+  "err": "2026-11-02",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 500: Internal Server Error",
+  "ok": "2026-11-02",
+  "since": "2026-11-02"
  },
  "idx.MSCI_WORLD": {
-  "ok": "2026-11-02"
+  "err": "2026-11-02",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 500: Internal Server Error",
+  "ok": "2026-11-02",
+  "since": "2026-11-02"
  },
  "idx.SP500": {
-  "ok": "2026-11-02"
+  "err": "2026-11-02",
+  "kind": "other",
+  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
+  "ok": "2026-11-02",
+  "since": "2026-11-02"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",

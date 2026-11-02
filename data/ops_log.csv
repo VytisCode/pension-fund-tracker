@@ -334,3 +334,7 @@ ts,src,ev,dd,n,msg
 2026-11-02T11:26,idx.EUR_GOV7Y,new,2026-10-30,1,
 2026-11-02T11:26,eonia,fail,,,network: TimeoutError: The read operation timed out
 2026-11-02T12:26,eonia,ok,,,vėl veikia
+2026-11-02T12:56,idx.EURUSD,fail,,,network: TimeoutError: The read operation timed out
+2026-11-02T12:56,idx.MSCI_ACWI,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
+2026-11-02T12:56,idx.MSCI_WORLD,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
+2026-11-02T12:56,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
