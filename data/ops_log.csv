@@ -333,3 +333,4 @@ ts,src,ev,dd,n,msg
 2026-11-02T11:26,estr,new,2026-10-30,1,
 2026-11-02T11:26,idx.EUR_GOV7Y,new,2026-10-30,1,
 2026-11-02T11:26,eonia,fail,,,network: TimeoutError: The read operation timed out
+2026-11-02T12:26,eonia,ok,,,vėl veikia
