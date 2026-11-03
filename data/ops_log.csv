@@ -373,3 +373,6 @@ ts,src,ev,dd,n,msg
 2026-11-03T14:28,eonia,ok,,,vėl veikia
 2026-11-03T14:28,estr,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
 2026-11-03T14:28,idx.EUR_GOV7Y,ok,,,vėl veikia
+2026-11-03T14:59,cpi,ok,,,vėl veikia
+2026-11-03T14:59,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-03T14:59,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
