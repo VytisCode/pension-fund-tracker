@@ -360,3 +360,6 @@ ts,src,ev,dd,n,msg
 2026-11-03T12:43,p3.GOINDEX,new,2026-10-30,2,
 2026-11-03T12:43,estr,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
 2026-11-03T12:43,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-03T13:00,nav.LUMINOR,new,2026-10-30,8,
+2026-11-03T13:00,p3.LUMINOR,new,2026-10-30,5,
+2026-11-03T13:00,estr,ok,,,vėl veikia
