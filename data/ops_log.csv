@@ -363,3 +363,6 @@ ts,src,ev,dd,n,msg
 2026-11-03T13:00,nav.LUMINOR,new,2026-10-30,8,
 2026-11-03T13:00,p3.LUMINOR,new,2026-10-30,5,
 2026-11-03T13:00,estr,ok,,,vėl veikia
+2026-11-03T13:31,nav.ALLIANZ,new,2026-10-30,8,
+2026-11-03T13:31,eonia,fail,,,network: TimeoutError: The read operation timed out
+2026-11-03T13:31,idx.EUR_GOV7Y,ok,,,vėl veikia
