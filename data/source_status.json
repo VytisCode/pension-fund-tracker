@@ -1,62 +1,66 @@
 {
  "cpi": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "eonia": {
-  "ok": "2026-11-02"
+  "err": "2026-11-03",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 500: Internal Server Error",
+  "ok": "2026-11-02",
+  "since": "2026-11-03"
  },
  "estr": {
-  "err": "2026-11-02",
+  "err": "2026-11-03",
   "kind": "network",
-  "msg": "TimeoutError: The read operation timed out",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
   "ok": "2026-11-02",
   "since": "2026-11-02"
  },
  "idx.EURUSD": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "idx.EUR_GOV7Y": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "idx.MSCI_ACWI": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "idx.MSCI_WORLD": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "idx.SP500": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "lb": {
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "nav.ALLIANZ": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "nav.ARTEA": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "nav.GOINDEX": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "nav.LUMINOR": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "nav.SEB": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "nav.SWEDBANK": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "proxy": {
-  "ok": "2026-10-30"
+  "ok": "2026-11-03"
  },
  "site": {
   "detail": "22 puslapiai",
-  "ok": "2026-11-02"
+  "ok": "2026-11-03"
  }
 }

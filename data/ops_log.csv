@@ -343,3 +343,11 @@ ts,src,ev,dd,n,msg
 2026-11-02T13:22,idx.MSCI_WORLD,ok,,,vėl veikia
 2026-11-02T13:22,idx.SP500,ok,,,vėl veikia
 2026-11-02T20:51,estr,fail,,,network: TimeoutError: The read operation timed out
+2026-11-03T11:33,idx.EUR_GOV7Y,new,2026-11-02,1,
+2026-11-03T11:33,idx.MSCI_ACWI,new,2026-11-02,1,
+2026-11-03T11:33,idx.MSCI_WORLD,new,2026-11-02,1,
+2026-11-03T11:33,idx.SP500,new,2026-11-02,1,
+2026-11-03T11:33,nav.SWEDBANK,new,2026-10-30,8,
+2026-11-03T11:33,p3.SWEDBANK,new,2026-10-30,6,
+2026-11-03T11:33,eonia,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
+2026-11-03T11:33,estr,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
