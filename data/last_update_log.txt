@@ -1,30 +1,4 @@
-nkama data 2026-10-15 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-14 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-14 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-16 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-14 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-15 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-16 – praleista
-ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-10-29
-ALLIANZ: jau atnaujinta iki 2026-10-29
-GOINDEX: jau atnaujinta iki 2026-10-29
-
-III pakopa – Vilnius: 2026-10-30 15:16, laukiama diena: 2026-10-29
-ARTEA: gauta 23018 eil., nauja/pakeista 5; viskas iki 2026-10-29
-GOINDEX: jau atnaujinta iki 2026-10-29
-
-Vilnius: 2026-11-03 13:16, laukiama diena: 2026-10-30
-  ! Artea pensija 2003-2009: netinkama data 2026-10-14 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-14 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-16 – praleista
+61-1967: netinkama data 2026-10-16 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-19 – praleista
   ! Artea pensija 1968-1974: netinkama data 2026-10-14 – praleista
   ! Artea pensija 1968-1974: netinkama data 2026-10-15 – praleista
@@ -297,6 +271,42 @@ LUMINOR: jau atnaujinta iki 2026-10-30
 GOINDEX: jau atnaujinta iki 2026-10-30
 
 III pakopa – Vilnius: 2026-11-03 15:47, laukiama diena: 2026-10-30
+SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+SWEDBANK: jau atnaujinta iki 2026-10-30
+LUMINOR: jau atnaujinta iki 2026-10-30
+SEB: fondų puslapių nuorodos rastos 0: –
+SEB SEB index. Klimato ateitis: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
+Call log:
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      
+SEB SEB pensija 18+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
+Call log:
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      
+SEB SEB pensija 50+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
+Call log:
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      
+SEB SEB pensija 58+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
+Call log:
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      
+
+Vilnius: 2026-11-03 16:16, laukiama diena: 2026-10-30
+SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+SWEDBANK: jau atnaujinta iki 2026-10-30
+LUMINOR: jau atnaujinta iki 2026-10-30
+GOINDEX: jau atnaujinta iki 2026-10-30
+
+III pakopa – Vilnius: 2026-11-03 16:17, laukiama diena: 2026-10-30
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-10-30
 LUMINOR: jau atnaujinta iki 2026-10-30

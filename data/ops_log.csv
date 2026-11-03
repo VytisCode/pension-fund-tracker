@@ -369,3 +369,7 @@ ts,src,ev,dd,n,msg
 2026-11-03T13:56,idx.EURUSD,ok,,,vėl veikia
 2026-11-03T13:56,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
 2026-11-03T13:56,idx.SP500,ok,,,vėl veikia
+2026-11-03T14:28,cpi,fail,,,network: HTTPError: HTTP Error 500:
+2026-11-03T14:28,eonia,ok,,,vėl veikia
+2026-11-03T14:28,estr,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-03T14:28,idx.EUR_GOV7Y,ok,,,vėl veikia
