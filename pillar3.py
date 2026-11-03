@@ -201,8 +201,30 @@ def parse_seb_csv(text: str, fund: str) -> list:
     return out
 
 
+def parse_seb_ltdata(html: str, fund: str) -> list:
+    """SEB fondo puslapio (FUND_DETAILS) JS kintamasis ltdata: pirma serija – fondas ["YYYYMMDD", vieneto vertė,
+    grynieji aktyvai], antra (jei yra) – lyginamasis indeksas ["YYYYMMDD", reikšmė]. Tas pats turinys kaip CSV."""
+    series = re.findall(r'isin:\s*"[^"]*",\s*name:\s*"([^"]*)",\s*data:\s*\[(.*?)\]\s*\}', html, re.S)
+    if not series:
+        return []
+    pts = lambda body: re.findall(r'\["(\d{8})",\s*([-\d.eE]+)(?:,\s*([-\d.eE]+))?\]', body)
+    bench = {}
+    for name, body in series[1:]:
+        if "lyginamasis" in name.lower():
+            bench = {d: float(v) for d, v, _ in pts(body)}
+            break
+    out = []
+    for d, unit, assets in pts(series[0][1]):
+        unit = float(unit)
+        if unit <= 0:
+            continue
+        a = float(assets) if assets else None
+        out.append(row(f"{d[:4]}-{d[4:6]}-{d[6:]}", fund, unit, a if a and a > 1000 else None, bench.get(d)))
+    return out
+
+
 def fetch_seb_history(page, links: dict) -> list:
-    """Kiekvieno SEB III pakopos fondo puslapyje (FUND_DETAILS) atsisiunčia CSV „Istorinės fondo vieneto vertės“
+    """Kiekvieno SEB III pakopos fondo puslapyje (FUND_DETAILS) perskaito „Istorinės fondo vieneto vertės“ duomenis (ltdata)
     ir grąžina eilutes tik tuščiam lyginamajam indeksui užpildyti (esamos vieneto vertės neperrašomos)
     ir trūkstamoms dienoms. Lyginamasis indeksas reikalingas KID scenarijams (kid_scenarios.py)."""
     existing = load()
@@ -211,22 +233,12 @@ def fetch_seb_history(page, links: dict) -> list:
         try:
             page.goto(urllib.parse.urljoin(fund_links.SEB_BASE, href), wait_until="domcontentloaded", timeout=90000)
             page.wait_for_timeout(2000)
-            link = page.query_selector("a:has-text('Istorinės fondo vieneto vertės')") or page.query_selector("a:has-text('Istorinės')")
-            if not link:
-                DIAG.append(f"SEB {fund}: nerasta nuoroda „Istorinės fondo vieneto vertės“")
+            # Mygtukas „Istorinės fondo vieneto vertės“ CSV kuria naršyklėje (download_csv()) iš puslapyje įdėto
+            # JS kintamojo ltdata – tad duomenis skaitome tiesiai iš HTML, be atsisiuntimo.
+            recs = parse_seb_ltdata(page.content(), fund)
+            if not recs:
+                DIAG.append(f"SEB {fund}: puslapyje nerasta istorijos duomenų (ltdata)")
                 continue
-            target = link.get_attribute("href") or ""
-            text = ""
-            if target and not target.startswith(("#", "javascript")):
-                resp = page.request.get(urllib.parse.urljoin(page.url, target), timeout=90000)
-                raw = resp.body()
-                text = raw.decode("utf-8-sig", errors="replace") if b"\xc4" in raw or raw[:3] == b"\xef\xbb\xbf" else raw.decode("cp1257", errors="replace")
-            if not re.search(r"\d{4}[-.]\d{2}[-.]\d{2}", text):
-                with page.expect_download(timeout=60000) as dl:
-                    link.click()
-                raw = Path(dl.value.path()).read_bytes()
-                text = raw.decode("utf-8-sig", errors="replace") if raw[:3] == b"\xef\xbb\xbf" else raw.decode("cp1257", errors="replace")
-            recs = parse_seb_csv(text, fund)
             filled = 0
             for r in recs:
                 old = existing.get((r["date"], fund))
