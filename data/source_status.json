@@ -3,18 +3,10 @@
   "ok": "2026-11-03"
  },
  "eonia": {
-  "err": "2026-11-03",
-  "kind": "network",
-  "msg": "HTTPError: HTTP Error 500: Internal Server Error",
-  "ok": "2026-11-02",
-  "since": "2026-11-03"
+  "ok": "2026-11-03"
  },
  "estr": {
-  "err": "2026-11-03",
-  "kind": "network",
-  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
-  "ok": "2026-11-02",
-  "since": "2026-11-02"
+  "ok": "2026-11-03"
  },
  "idx.EURUSD": {
   "ok": "2026-11-03"

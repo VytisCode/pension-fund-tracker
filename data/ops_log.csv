@@ -351,3 +351,8 @@ ts,src,ev,dd,n,msg
 2026-11-03T11:33,p3.SWEDBANK,new,2026-10-30,6,
 2026-11-03T11:33,eonia,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
 2026-11-03T11:33,estr,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-03T12:00,estr,new,2026-11-02,1,
+2026-11-03T12:00,nav.ARTEA,new,2026-10-30,8,
+2026-11-03T12:00,p3.ARTEA,new,2026-10-30,5,
+2026-11-03T12:00,eonia,ok,,,vėl veikia
+2026-11-03T12:00,estr,ok,,,vėl veikia
