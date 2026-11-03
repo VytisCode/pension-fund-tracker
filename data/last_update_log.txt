@@ -1,4 +1,5 @@
-ja 2003-2009: netinkama data 2026-10-14 – praleista
+-2009: netinkama data 2026-10-13 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-14 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-15 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-16 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-13 – praleista
@@ -252,22 +253,22 @@ Call log:
       - element is visible, enabled and stable
       
 
-Vilnius: 2026-11-03 14:16, laukiama diena: 2026-10-30
+Vilnius: 2026-11-03 14:28, laukiama diena: 2026-10-30
 ARTEA: jau atnaujinta iki 2026-10-30
 ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+GOINDEX: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-10-30
 
-III pakopa – Vilnius: 2026-11-03 14:16, laukiama diena: 2026-10-30
+III pakopa – Vilnius: 2026-11-03 14:29, laukiama diena: 2026-10-30
 ARTEA: jau atnaujinta iki 2026-10-30
-GOINDEX: gauta 2 eil., nauja/pakeista 0; dar trūksta: Goindex subalansuotas, Goindex pasaulio akcijų
+GOINDEX: gauta 2 eil., nauja/pakeista 2; viskas iki 2026-10-30
 
-Vilnius: 2026-11-03 14:17, laukiama diena: 2026-10-30
+Vilnius: 2026-11-03 14:29, laukiama diena: 2026-10-30
 SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 SWEDBANK: jau atnaujinta iki 2026-10-30
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
-GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+GOINDEX: jau atnaujinta iki 2026-10-30
 
-III pakopa – Vilnius: 2026-11-03 14:17, laukiama diena: 2026-10-30
+III pakopa – Vilnius: 2026-11-03 14:30, laukiama diena: 2026-10-30
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-10-30
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
