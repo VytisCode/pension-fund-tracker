@@ -13,14 +13,14 @@
   "ok": "2026-11-03"
  },
  "idx.EURUSD": {
-  "err": "2026-11-03",
-  "kind": "network",
-  "msg": "TimeoutError: The read operation timed out",
-  "ok": "2026-11-03",
-  "since": "2026-11-03"
+  "ok": "2026-11-03"
  },
  "idx.EUR_GOV7Y": {
-  "ok": "2026-11-03"
+  "err": "2026-11-03",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "ok": "2026-11-03",
+  "since": "2026-11-03"
  },
  "idx.MSCI_ACWI": {
   "ok": "2026-11-03"
@@ -29,11 +29,7 @@
   "ok": "2026-11-03"
  },
  "idx.SP500": {
-  "err": "2026-11-03",
-  "kind": "other",
-  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
-  "ok": "2026-11-03",
-  "since": "2026-11-03"
+  "ok": "2026-11-03"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
