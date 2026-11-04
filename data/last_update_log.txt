@@ -1,41 +1,4 @@
-0-30
-GOINDEX: jau atnaujinta iki 2026-10-30
-
-III pakopa – Vilnius: 2026-11-03 17:47, laukiama diena: 2026-10-30
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
-SWEDBANK: jau atnaujinta iki 2026-10-30
-LUMINOR: jau atnaujinta iki 2026-10-30
-SEB: fondų puslapių nuorodos rastos 0: –
-SEB SEB index. Klimato ateitis: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
-Call log:
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      
-SEB SEB pensija 18+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
-Call log:
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      
-SEB SEB pensija 50+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
-Call log:
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      
-SEB SEB pensija 58+: istorijos CSV klaida – ElementHandle.click: Timeout 30000ms exceeded.
-Call log:
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      
-
-Vilnius: 2026-11-03 18:16, laukiama diena: 2026-10-30
-SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-SWEDBANK: jau atnaujinta iki 2026-10-30
-LUMINOR: jau atnaujinta iki 2026-10-30
-GOINDEX: jau atnaujinta iki 2026-10-30
+ atnaujinta iki 2026-10-30
 
 III pakopa – Vilnius: 2026-11-03 18:17, laukiama diena: 2026-10-30
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
@@ -252,6 +215,31 @@ LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
 GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 
 III pakopa – Vilnius: 2026-11-04 13:48, laukiama diena: 2026-11-03
+SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+SWEDBANK: jau atnaujinta iki 2026-11-03
+LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
+SEB: fondų puslapių nuorodos rastos 0: –
+SEB SEB index. Klimato ateitis: istorijos CSV 1281 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 18+: istorijos CSV 5764 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 50+: istorijos CSV 1732 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 58+: istorijos CSV 5743 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+
+Vilnius: 2026-11-04 14:16, laukiama diena: 2026-11-03
+ARTEA: klaida – HTTP Error 503: Service Unavailable
+ALLIANZ: gauta 24 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+
+III pakopa – Vilnius: 2026-11-04 14:16, laukiama diena: 2026-11-03
+ARTEA: gauta 23023 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
+GOINDEX: gauta 2 eil., nauja/pakeista 0; dar trūksta: Goindex subalansuotas, Goindex pasaulio akcijų
+
+Vilnius: 2026-11-04 14:17, laukiama diena: 2026-11-03
+SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+SWEDBANK: jau atnaujinta iki 2026-11-03
+LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
+GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+
+III pakopa – Vilnius: 2026-11-04 14:18, laukiama diena: 2026-11-03
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-11-03
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
