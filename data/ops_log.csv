@@ -390,3 +390,6 @@ ts,src,ev,dd,n,msg
 2026-11-04T11:29,nav.SWEDBANK,new,2026-11-03,8,
 2026-11-04T11:29,p3.SWEDBANK,new,2026-11-03,6,
 2026-11-04T12:27,nav.ARTEA,fail,,,network: HTTPError: HTTP Error 503: Service Unavailable
+2026-11-04T12:38,nav.SEB,new,2026-10-30,8,
+2026-11-04T12:38,p3.SEB,new,2026-11-03,8,
+2026-11-04T12:38,nav.ARTEA,ok,,,vėl veikia
