@@ -41585,7 +41585,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-27,SEB,SEB index. Klimato ateitis,1.5025,27570159,167.9864
 2026-10-28,SEB,SEB index. Klimato ateitis,1.5033,27607856,168.6672
 2026-10-29,SEB,SEB index. Klimato ateitis,1.4968,27501357,167.8318
-2026-10-30,SEB,SEB index. Klimato ateitis,1.4768,,
+2026-10-30,SEB,SEB index. Klimato ateitis,1.4768,27164427,165.3728
 2026-11-02,SEB,SEB index. Klimato ateitis,1.4768,27164427,165.3728
 2026-11-03,SEB,SEB index. Klimato ateitis,1.4713,27283009,164.4448
 2004-10-27,SEB,SEB pensija 18+,0.2896,,
@@ -47330,7 +47330,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-27,SEB,SEB pensija 18+,1.2039,112266167,113.7049
 2026-10-28,SEB,SEB pensija 18+,1.2078,112687653,114.2468
 2026-10-29,SEB,SEB pensija 18+,1.2046,112402556,113.6253
-2026-10-30,SEB,SEB pensija 18+,1.1841,,
+2026-10-30,SEB,SEB pensija 18+,1.1841,110527773,111.741
 2026-11-02,SEB,SEB pensija 18+,1.1841,110527773,111.741
 2026-11-03,SEB,SEB pensija 18+,1.1787,110320969,111.1399
 2020-04-10,SEB,SEB pensija 50+,1.0,,100.0
@@ -49043,7 +49043,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-27,SEB,SEB pensija 50+,1.5927,14081284,172.4432
 2026-10-28,SEB,SEB pensija 50+,1.5953,14126681,172.8532
 2026-10-29,SEB,SEB pensija 50+,1.5932,14134601,172.5757
-2026-10-30,SEB,SEB pensija 50+,1.579,,
+2026-10-30,SEB,SEB pensija 50+,1.579,14012145,171.1002
 2026-11-02,SEB,SEB pensija 50+,1.579,14012145,171.1002
 2026-11-03,SEB,SEB pensija 50+,1.5756,14030505,170.7094
 2004-10-27,SEB,SEB pensija 58+,0.2896,,
@@ -54788,7 +54788,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-27,SEB,SEB pensija 58+,0.4388,12235729,36.7491
 2026-10-28,SEB,SEB pensija 58+,0.4391,12251088,36.7467
 2026-10-29,SEB,SEB pensija 58+,0.4395,12283942,36.8213
-2026-10-30,SEB,SEB pensija 58+,0.4393,,
+2026-10-30,SEB,SEB pensija 58+,0.4393,12301542,36.7878
 2026-11-02,SEB,SEB pensija 58+,0.4393,12301542,36.7878
 2026-11-03,SEB,SEB pensija 58+,0.4394,12327696,36.8162
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,
@@ -55941,6 +55941,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank Pensijos fondas 18+,1.5158,,
 2026-10-30,SWEDBANK,Swedbank Pensijos fondas 18+,1.4927,,
 2026-11-03,SWEDBANK,Swedbank Pensijos fondas 18+,1.4851,,
+2026-11-04,SWEDBANK,Swedbank Pensijos fondas 18+,1.5103,,
 2019-12-02,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.0,,
 2019-12-03,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),0.9991,,
 2019-12-04,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),0.9989,,
@@ -57681,6 +57682,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.9117,,
 2026-10-30,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.8829,,
 2026-11-03,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.8731,,
+2026-11-04,SWEDBANK,Swedbank Pensijos fondas 18+ (apriboto nutraukimo),1.9052,,
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 50+,1.0,,
 2022-04-08,SWEDBANK,Swedbank Pensijos fondas 50+,1.0,,
 2022-04-11,SWEDBANK,Swedbank Pensijos fondas 50+,1.0,,
@@ -58831,6 +58833,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank Pensijos fondas 50+,1.2514,,
 2026-10-30,SWEDBANK,Swedbank Pensijos fondas 50+,1.2412,,
 2026-11-03,SWEDBANK,Swedbank Pensijos fondas 50+,1.2388,,
+2026-11-04,SWEDBANK,Swedbank Pensijos fondas 50+,1.2515,,
 2019-12-02,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.0,,
 2019-12-03,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),0.9976,,
 2019-12-04,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),0.9951,,
@@ -60571,6 +60574,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3287,,
 2026-10-30,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3189,,
 2026-11-03,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3179,,
+2026-11-04,SWEDBANK,Swedbank Pensijos fondas 50+ (apriboto nutraukimo),1.3289,,
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 60+,1.0,,
 2022-04-08,SWEDBANK,Swedbank Pensijos fondas 60+,1.0,,
 2022-04-11,SWEDBANK,Swedbank Pensijos fondas 60+,1.0,,
@@ -61721,6 +61725,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank Pensijos fondas 60+,1.1383,,
 2026-10-30,SWEDBANK,Swedbank Pensijos fondas 60+,1.1337,,
 2026-11-03,SWEDBANK,Swedbank Pensijos fondas 60+,1.1339,,
+2026-11-04,SWEDBANK,Swedbank Pensijos fondas 60+,1.1399,,
 2019-12-02,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0,,
 2019-12-03,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),0.9933,,
 2019-12-04,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),0.9851,,
@@ -63461,3 +63466,4 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0913,,
 2026-10-30,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0869,,
 2026-11-03,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0875,,
+2026-11-04,SWEDBANK,Swedbank Pensijos fondas 60+ (apriboto nutraukimo),1.0937,,

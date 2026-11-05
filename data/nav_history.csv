@@ -30884,7 +30884,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-28,GOINDEX,Goindex pensija 1968-1974,1.6284,33210667.2,
 2026-10-29,GOINDEX,Goindex pensija 1968-1974,1.6255,33146986.63,
 2026-10-30,GOINDEX,Goindex pensija 1968-1974,1.6037,32696400.41,
-2026-11-03,GOINDEX,Goindex pensija 1968-1974,1.5960999999999999,32542960.11,
+2026-11-03,GOINDEX,Goindex pensija 1968-1974,1.5961,32542960.11,
 2022-08-22,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
@@ -31941,7 +31941,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-28,GOINDEX,Goindex pensija 1975-1981,1.655,51212041.93,
 2026-10-29,GOINDEX,Goindex pensija 1975-1981,1.6514,51149526.05,
 2026-10-30,GOINDEX,Goindex pensija 1975-1981,1.6268,50418555.75,
-2026-11-03,GOINDEX,Goindex pensija 1975-1981,1.6181999999999999,50152598.76,
+2026-11-03,GOINDEX,Goindex pensija 1975-1981,1.6182,50152598.76,
 2022-08-22,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
@@ -32998,7 +32998,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-28,GOINDEX,Goindex pensija 1982-1988,1.6627,54265983.72,
 2026-10-29,GOINDEX,Goindex pensija 1982-1988,1.659,54145511.86,
 2026-10-30,GOINDEX,Goindex pensija 1982-1988,1.6343,53355597.25,
-2026-11-03,GOINDEX,Goindex pensija 1982-1988,1.6257000000000001,53074294.73,
+2026-11-03,GOINDEX,Goindex pensija 1982-1988,1.6257,53074294.73,
 2022-08-22,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
@@ -34055,7 +34055,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-28,GOINDEX,Goindex pensija 1989-1995,1.6532,42411428.69,
 2026-10-29,GOINDEX,Goindex pensija 1989-1995,1.6495,42311876.13,
 2026-10-30,GOINDEX,Goindex pensija 1989-1995,1.6249,41678549.69,
-2026-11-03,GOINDEX,Goindex pensija 1989-1995,1.6162999999999998,41454264.67,
+2026-11-03,GOINDEX,Goindex pensija 1989-1995,1.6163,41454264.67,
 2022-08-22,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
@@ -67675,6 +67675,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 1961-1967,1.5394,298476308.18,
 2026-10-30,SWEDBANK,Swedbank pensija 1961-1967,1.533,297061193.44,
 2026-11-03,SWEDBANK,Swedbank pensija 1961-1967,1.5325,296746285.46,
+2026-11-04,SWEDBANK,Swedbank pensija 1961-1967,1.5412,298033055.16,
 2018-12-31,SWEDBANK,Swedbank pensija 1968-1974,0.9692,,
 2019-01-02,SWEDBANK,Swedbank pensija 1968-1974,0.9706,,
 2019-01-03,SWEDBANK,Swedbank pensija 1968-1974,0.9582,,
@@ -69648,6 +69649,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 1968-1974,2.0074,369353658.01,
 2026-10-30,SWEDBANK,Swedbank pensija 1968-1974,1.9928,366642538.11,
 2026-11-03,SWEDBANK,Swedbank pensija 1968-1974,1.9878,365714083.54,
+2026-11-04,SWEDBANK,Swedbank pensija 1968-1974,2.0066,369123191.28,
 2018-12-31,SWEDBANK,Swedbank pensija 1975-1981,0.966,,
 2019-01-02,SWEDBANK,Swedbank pensija 1975-1981,0.9674,,
 2019-01-03,SWEDBANK,Swedbank pensija 1975-1981,0.955,,
@@ -71621,6 +71623,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 1975-1981,2.2763,404607655.36,
 2026-10-30,SWEDBANK,Swedbank pensija 1975-1981,2.2476,399476034.12,
 2026-11-03,SWEDBANK,Swedbank pensija 1975-1981,2.2374,397675574.3,
+2026-11-04,SWEDBANK,Swedbank pensija 1975-1981,2.2701,403473973.64,
 2018-12-31,SWEDBANK,Swedbank pensija 1982-1988,0.9685,,
 2019-01-02,SWEDBANK,Swedbank pensija 1982-1988,0.9699,,
 2019-01-03,SWEDBANK,Swedbank pensija 1982-1988,0.9575,,
@@ -73594,6 +73597,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 1982-1988,2.2729,332767661.48,
 2026-10-30,SWEDBANK,Swedbank pensija 1982-1988,2.2444,328547556.83,
 2026-11-03,SWEDBANK,Swedbank pensija 1982-1988,2.2338,326969783.71,
+2026-11-04,SWEDBANK,Swedbank pensija 1982-1988,2.2685,332019560.21,
 2018-12-31,SWEDBANK,Swedbank pensija 1989-1995,0.9697,,
 2019-01-02,SWEDBANK,Swedbank pensija 1989-1995,0.971,,
 2019-01-03,SWEDBANK,Swedbank pensija 1989-1995,0.9585,,
@@ -75567,6 +75571,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 1989-1995,2.2523,216852174.61,
 2026-10-30,SWEDBANK,Swedbank pensija 1989-1995,2.2245,214156343.48,
 2026-11-03,SWEDBANK,Swedbank pensija 1989-1995,2.2142,213155502.12,
+2026-11-04,SWEDBANK,Swedbank pensija 1989-1995,2.2483,216461001.63,
 2018-12-31,SWEDBANK,Swedbank pensija 1996-2002,0.9779,,
 2019-01-02,SWEDBANK,Swedbank pensija 1996-2002,0.9792,,
 2019-01-03,SWEDBANK,Swedbank pensija 1996-2002,0.9666,,
@@ -77540,6 +77545,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 1996-2002,2.2318,66374155.62,
 2026-10-30,SWEDBANK,Swedbank pensija 1996-2002,2.203,65529585.89,
 2026-11-03,SWEDBANK,Swedbank pensija 1996-2002,2.1929,65248864.66,
+2026-11-04,SWEDBANK,Swedbank pensija 1996-2002,2.2266,66239301.85,
 2024-12-31,SWEDBANK,Swedbank pensija 2003-2009,1.0,,
 2025-01-02,SWEDBANK,Swedbank pensija 2003-2009,1.0,,
 2025-01-03,SWEDBANK,Swedbank pensija 2003-2009,1.0066,,
@@ -78004,6 +78010,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank pensija 2003-2009,1.1936,4030218.91,
 2026-10-30,SWEDBANK,Swedbank pensija 2003-2009,1.1753,3968673.76,
 2026-11-03,SWEDBANK,Swedbank pensija 2003-2009,1.1704,3952188.69,
+2026-11-04,SWEDBANK,Swedbank pensija 2003-2009,1.1869,4002132.4,
 2019-01-01,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.0,,
 2019-01-02,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.0,,
 2019-01-03,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.0,,
@@ -79977,3 +79984,4 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-10-29,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.1917,56096997.21,
 2026-10-30,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.1885,55937564.15,
 2026-11-03,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.1885,55867549.48,
+2026-11-04,SWEDBANK,Swedbank turto išsaugojimo pensijų fondas,1.195,56123248.67,
