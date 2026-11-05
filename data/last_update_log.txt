@@ -1,81 +1,4 @@
-nsija 1982-1988: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-23 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-15 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-16 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-19 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-20 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-21 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-22 – praleista
-  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-23 – praleista
-ARTEA: gauta 96 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-ALLIANZ: gauta 24 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-
-III pakopa – Vilnius: 2026-11-04 14:46, laukiama diena: 2026-11-03
-ARTEA: gauta 23023 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
-GOINDEX: gauta 2 eil., nauja/pakeista 0; dar trūksta: Goindex subalansuotas, Goindex pasaulio akcijų
-
-Vilnius: 2026-11-04 14:47, laukiama diena: 2026-11-03
-SEB: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-03
-SWEDBANK: jau atnaujinta iki 2026-11-03
-LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-03
-GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-
-III pakopa – Vilnius: 2026-11-04 14:48, laukiama diena: 2026-11-03
-SEB: jau atnaujinta iki 2026-11-03
-SWEDBANK: jau atnaujinta iki 2026-11-03
-LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-11-03
-
-Vilnius: 2026-11-04 15:16, laukiama diena: 2026-11-03
-  ! Artea pensija 2003-2009: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1968-1974: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1975-1981: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-15 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-16 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-19 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-20 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-21 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-22 – praleista
+982-1988: netinkama data 2026-10-22 – praleista
   ! Artea pensija 1982-1988: netinkama data 2026-10-23 – praleista
   ! Artea pensija 1989-1995: netinkama data 2026-10-15 – praleista
   ! Artea pensija 1989-1995: netinkama data 2026-10-16 – praleista
@@ -235,4 +158,77 @@ SEB SEB index. Klimato ateitis: istorijos CSV 1262 eil., tušti laukai (indeksas
 SEB SEB pensija 18+: istorijos CSV 5745 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 50+: istorijos CSV 1713 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 58+: istorijos CSV 5745 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+
+Vilnius: 2026-11-05 13:46, laukiama diena: 2026-11-04
+  ! Artea pensija 2003-2009: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-23 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-23 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-23 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-23 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-23 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-23 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-16 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-19 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-20 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-21 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-22 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-23 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-16 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-19 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-20 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-21 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-22 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-23 – praleista
+ARTEA: gauta 96 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+ALLIANZ: gauta 24 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+GOINDEX: klaida – HTTP Error 520: <none>
+
+III pakopa – Vilnius: 2026-11-05 13:46, laukiama diena: 2026-11-04
+ARTEA: gauta 23028 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
+GOINDEX: gauta 2 eil., nauja/pakeista 0; dar trūksta: Goindex subalansuotas, Goindex pasaulio akcijų
+
+Vilnius: 2026-11-05 13:47, laukiama diena: 2026-11-04
+SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+SWEDBANK: jau atnaujinta iki 2026-11-04
+LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
+GOINDEX: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-04
+
+III pakopa – Vilnius: 2026-11-05 13:47, laukiama diena: 2026-11-04
+SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+SWEDBANK: jau atnaujinta iki 2026-11-04
+LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
+SEB: fondų puslapių nuorodos rastos 0: –
+SEB SEB index. Klimato ateitis: istorijos CSV 1262 eil., tušti laukai (indeksas, aktyvai) papildyti 0 d.
+SEB SEB pensija 18+: istorijos CSV 5745 eil., tušti laukai (indeksas, aktyvai) papildyti 0 d.
+SEB SEB pensija 50+: istorijos CSV 1713 eil., tušti laukai (indeksas, aktyvai) papildyti 0 d.
+SEB SEB pensija 58+: istorijos CSV 5745 eil., tušti laukai (indeksas, aktyvai) papildyti 0 d.
 
