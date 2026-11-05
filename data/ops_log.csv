@@ -450,3 +450,6 @@ ts,src,ev,dd,n,msg
 2026-11-05T16:22,idx.SP500,ok,,,vėl veikia
 2026-11-05T16:53,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 500: Internal Server Error
 2026-11-05T16:53,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-05T18:48,idx.EURUSD,ok,,,vėl veikia
+2026-11-05T18:48,idx.EUR_GOV7Y,ok,,,vėl veikia
+2026-11-05T18:48,idx.SP500,ok,,,vėl veikia
