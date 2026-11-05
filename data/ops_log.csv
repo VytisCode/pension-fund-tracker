@@ -430,3 +430,8 @@ ts,src,ev,dd,n,msg
 2026-11-05T12:26,idx.EUR_GOV7Y,ok,,,vėl veikia
 2026-11-05T13:04,nav.LUMINOR,new,2026-11-04,8,
 2026-11-05T13:04,p3.LUMINOR,new,2026-11-04,5,
+2026-11-05T13:28,nav.ALLIANZ,new,2026-11-04,8,
+2026-11-05T13:28,nav.SEB,new,2026-11-04,8,
+2026-11-05T13:28,p3.SEB,new,2026-11-04,4,
+2026-11-05T13:28,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-05T13:28,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
