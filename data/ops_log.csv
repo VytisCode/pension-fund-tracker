@@ -443,3 +443,5 @@ ts,src,ev,dd,n,msg
 2026-11-05T14:53,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
 2026-11-05T15:23,idx.EURUSD,ok,,,vėl veikia
 2026-11-05T15:23,idx.SP500,ok,,,vėl veikia
+2026-11-05T15:53,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-05T15:53,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso

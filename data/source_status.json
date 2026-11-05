@@ -9,7 +9,11 @@
   "ok": "2026-11-05"
  },
  "idx.EURUSD": {
-  "ok": "2026-11-05"
+  "err": "2026-11-05",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "ok": "2026-11-05",
+  "since": "2026-11-05"
  },
  "idx.EUR_GOV7Y": {
   "ok": "2026-11-05"
@@ -21,7 +25,11 @@
   "ok": "2026-11-05"
  },
  "idx.SP500": {
-  "ok": "2026-11-05"
+  "err": "2026-11-05",
+  "kind": "other",
+  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
+  "ok": "2026-11-05",
+  "since": "2026-11-05"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
