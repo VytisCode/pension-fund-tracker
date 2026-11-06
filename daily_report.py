@@ -231,11 +231,14 @@ def build() -> tuple:
         head, daily, extra = "", [f"(Rinkos santraukos šiandien paruošti nepavyko: {e!r})"], []
     ok = not missing and not missing3
     tag = " · portfeliai" if new_pf else " · ketvirčio apžvalga" if new_quarter else " · mėnesio apžvalga" if new_month else ""
-    subject = f"Pensijų fondai: {head or today}{tag}" + ("" if ok else " · trūksta duomenų")
-    body = ["Labas vakaras,", ""] + daily + [""]
-    body += ["Iš jūsų šiandien nieko nereikia." if not actions else "Reikia jūsų:"] + [f"  • {a}" for a in actions]
-    body.append("Duomenys surinkti visi." if ok else
-                "Dar trūksta: " + ", ".join(missing + [f"{m} (III pakopa)" for m in missing3]) + ". Dažniausiai pasitaiso savaime kitą rytą.")
+    # Svarbiausia – temoje ir pirmoje eilutėje (savininkas skaito laikrodyje, laiško neatidarydamas)
+    status = ("✅ Iš jūsų nieko nereikia" if not actions else "⚠ Reikia jūsų veiksmo") + (" · duomenys visi" if ok else " · trūksta duomenų")
+    subject = f"{status} · {head or today}{tag}"
+    body = [("Iš jūsų šiandien nieko nereikia. " if not actions else "Reikia jūsų veiksmo (žr. žemiau). ")
+            + ("Duomenys surinkti visi." if ok else "Dar trūksta: " + ", ".join(missing + [f"{m} (III pakopa)" for m in missing3]) + " – dažniausiai pasitaiso savaime kitą rytą."),
+            "", "Labas vakaras,", ""] + daily
+    if actions:
+        body += ["", "Reikia jūsų:"] + [f"  • {a}" for a in actions]
     body += extra
     if not ok or src or stale or ideas:                  # techninės detalės – tik kai kažkas negerai
         body += ["", "── Detalės ──"]
