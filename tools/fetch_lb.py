@@ -4,7 +4,7 @@ Nauji Lietuvos banko pensijų fondų failai -> imports/lb_* (savininko sprendima
 
 Kartą per dieną peržiūrimi LB puslapiai (PAGES) ir jų nuorodos į failus:
 - II pakopos rezultatai (2_pakopa_rezultatai_YYYYMMDD*.xlsx) -> imports/lb_results/2-pakopa-rezultatai-YYYYMMDD.xlsx;
-- fondų portfeliai (*portfeli*YYYYMMDD*.xlsx) -> imports/lb_portfolios/pf-portfeliai-YYYYMMDD.xlsx, tada portfolios.py;
+- fondų portfeliai (PF_Portfeliai_YYYYMMDD.xlsx, anksčiau pf-portfeliai-…; žr. NAMES) -> imports/lb_portfolios/pf-portfeliai-YYYYMMDD.xlsx, tada portfolios.py;
 - II pakopos mokesčiai (pf-ii-mokesciai-YYYY-MM-DD.xls) ir III pakopos (PF_III_mokesciai_YYYY-MM-DD.xlsx) -> imports/lb_fees/,
   tada import_lb_fees.py.
 Visi kiti tų puslapių Excel failai (III pakopos rezultatai, II pakopos IRR, lyginamieji indeksai ir kt.) kaupiami originaliais
@@ -95,12 +95,23 @@ def get(url: str) -> bytes:
     return w["page"].content().encode("utf-8")
 
 
+def unwrap(url: str) -> str:
+    """LB puslapiuose failų nuorodos dažnai būna .../media/force_download/?url=%2Fuploads%2F...xlsx – grąžinamas tiesioginis
+    failo adresas (be šito tokios nuorodos būdavo praleidžiamos)."""
+    if "force_download" in url:
+        q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query).get("url")
+        if q:
+            return urllib.parse.urljoin("https://www.lb.lt/", q[0])
+    return url
+
+
 def links(page: str, text: str):
     for h in re.findall(r'href="([^"]+)"', text):
-        yield urllib.parse.urljoin(page, html.unescape(h))
+        yield unwrap(urllib.parse.urljoin(page, html.unescape(h)))
 
 
 def classify(url: str):
+    url = unwrap(url)
     if "force_download" in url:
         return None
     name = urllib.parse.unquote(urllib.parse.urlparse(url).path.rsplit("/", 1)[-1]).lower()
@@ -124,40 +135,81 @@ def is_excel(url: str) -> bool:
 B = "https://www.lb.lt/uploads/documents/files/musu-veikla/finansu-rinkos-dalyviu-prieziura/finansu-sektoriai/pensiju-fondai/"
 
 
-def guess():
-    """Kai LB puslapiai nepasiekiami – bandomi tiesioginiai naujų ketvirčių failų adresai (įprasti LB failų vardai).
+# Galimi failų vardai (LB vardus keičia: 2026 m. II ketv. – pf-portfeliai-20260630.xlsx, III ketv. – PF_Portfeliai_20260930.xlsx).
+# Serveris skiria didžiąsias raides, todėl bandomi keli rašybos variantai ir LB kartais pridedamos galūnės.
+NAMES = {
+    "lbr": ["2_pakopa_rezultatai_{d}", "II_pakopa_rezultatai_{d}", "2-pakopa-rezultatai-{d}"],
+    "pf": ["PF_Portfeliai_{d}", "pf-portfeliai-{d}", "pf_portfeliai_{d}", "PF_portfeliai_{d}", "PF-Portfeliai-{d}",
+           "Pf_portfeliai_{d}", "PF_Portfeliai_{y}-{m}-{dd}", "pf-portfeliai-{y}-{m}-{dd}"],
+}
+SUFFIXES = ("", "_", "__", "_1", "__1", "_0", "_2", "_3")
+# Per kiek dienų po ketvirčio pabaigos failas paprastai jau būna (rezultatai ~2 sav., portfeliai ~5 sav.);
+# jei iki tol nerastas – vakariniame laiške ir svetainėje rodomas įspėjimas (greičiausiai LB pakeitė failo vardą).
+DUE_DAYS = {"lbr": 40, "pf": 60}
+
+
+def qends(after: str, until: str):
+    """Ketvirčių pabaigos (YYYYMMDD) po datos `after` iki `until` imtinai."""
+    y, q = int(after[:4]), (int(after[4:6]) - 1) // 3 + 1
+    while True:
+        y, q = (y + 1, 1) if q == 4 else (y, q + 1)
+        d = f"{y}{3 * q:02d}{31 if q in (1, 4) else 30}"
+        if d > until:
+            return
+        yield d
+
+
+def probe(stems):
+    """Bando tiesioginius LB failų adresus; grąžina pirmą, kuris yra tikras .xlsx failas."""
+    for stem in stems:
+        for x in SUFFIXES:
+            url = B + stem + x + ".xlsx"
+            try:
+                body = get(url)
+            except Exception:
+                continue
+            if body.startswith(MAGIC[".xlsx"]):
+                return url
+    return None
+
+
+def guess(kinds=None):
+    """LB puslapiai GitHub serveriams grąžina 403, todėl bandomi tiesioginiai naujų ketvirčių failų adresai (žinomi LB vardai).
     Kiekvienai rūšiai – iki 4 ketvirčių po jos naujausio turimo failo (portfeliai LB paskelbiami iki mėnesio vėliau nei rezultatai)."""
     found, other = {}, {}
     today = datetime.now(timezone.utc).strftime("%Y%m%d")
     arch = lambda pre: max((re.sub(r"\D", "", p.name[len(pre):])[:8] for p in ARCH.glob(pre + "*.xlsx")), default="")
-    specs = [("lbr", local_latest("lbr"), "2_pakopa_rezultatai_{d}.xlsx"), ("pf", local_latest("pf"), "pf-portfeliai-{d}.xlsx"),
-             (None, arch("3_pakopa_rezultatai_") or local_latest("lbr"), "3_pakopa_rezultatai_{d}.xlsx"),
-             (None, arch("IRR_") or "20260630", "IRR_{y}-{m}-{dd}.xlsx")]
-    for kind, have, pat in specs:
-        y, q = int(have[:4]), (int(have[4:6]) - 1) // 3 + 1
-        for _ in range(4):
-            y, q = (y + 1, 1) if q == 4 else (y, q + 1)
-            d = f"{y}{3 * q:02d}{31 if q in (1, 4) else 30}"
-            if d > today:
-                break
-            name = pat.format(d=d, y=d[:4], m=d[4:6], dd=d[6:])
-            stem = name[:-5]                  # LB kartais prideda galūnę: pf-portfeliai-20260331_.xlsx, 2_pakopa_rezultatai_20260630_3.xlsx
-            urls = [B + stem + x + ".xlsx" for x in ("", "_", "__", "_1", "__1", "_2", "_3")] + ["https://www.lb.lt/uploads/documents/files/" + name]
-            for url in urls:
-                try:
-                    body = get(url)
-                except Exception:
-                    continue
-                if body.startswith(MAGIC[".xlsx"]):
-                    print(f"  rasta tiesiogiai: {url}")
-                    if kind:
-                        found[kind] = (d, url)
-                    else:
-                        other[arch_name(url)] = url
-                    break
+    specs = [(k, local_latest(k), NAMES[k]) for k in ("lbr", "pf") if kinds is None or k in kinds]
+    if kinds is None:
+        specs += [(None, arch("3_pakopa_rezultatai_") or local_latest("lbr"), ["3_pakopa_rezultatai_{d}", "III_pakopa_rezultatai_{d}"]),
+                  (None, arch("IRR_") or "20260630", ["IRR_{y}-{m}-{dd}", "IRR_{d}"])]
+    for kind, have, pats in specs:
+        for d in list(qends(have, today))[:4]:
+            stems = [p.format(d=d, y=d[:4], m=d[4:6], dd=d[6:]) for p in pats]
+            url = probe(stems)
+            if url:
+                print(f"  rasta tiesiogiai: {url}")
+                if kind:
+                    found[kind] = (d, url)
+                else:
+                    other[arch_name(url)] = url
             else:
-                print(f"  {name}: dar nepaskelbta arba kitas vardas")
+                print(f"  {stems[0]}.xlsx: dar nepaskelbta arba kitas vardas")
     return found, other
+
+
+def overdue() -> list:
+    """Ketvirčiai, kurių failo jau seniai turėjome rasti, bet neturime (įspėjimui)."""
+    now = datetime.now(timezone.utc)
+    out = []
+    for kind, days in DUE_DAYS.items():
+        until = (now - timedelta(days=days)).strftime("%Y%m%d")
+        miss = list(qends(local_latest(kind), until))
+        if miss:
+            what = {"lbr": "II pakopos rezultatų", "pf": "fondų portfelių"}[kind]
+            out.append(f"LB {what} failas už {miss[-1][:4]}-{miss[-1][4:6]}-{miss[-1][6:]} nerastas praėjus {days} d. "
+                       f"po ketvirčio pabaigos – galbūt LB pakeitė failo vardą (tools/fetch_lb.py NAMES)")
+    return out
 
 
 def scan():
@@ -293,13 +345,18 @@ def fee_counts():
         return out
 
 
-def _status(ok: bool, msg: str = "") -> None:
+def _status() -> None:
+    """Būsena „lb“ (vakarinis laiškas, svetainės pranešimai): klaida tik tada, kai laukiamo ketvirčio failo vis dar nėra.
+    LB puslapių 403 – ne klaida (įprasta GitHub serveriams), o nauji failai pasirodo tik kartą per ketvirtį."""
     try:
+        late = overdue()
+        for m in late:
+            print("  ĮSPĖJIMAS: " + m)
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
         import source_status
-        source_status.ok("lb") if ok else source_status.fail("lb", msg, "network")
-    except Exception:
-        pass
+        source_status.fail("lb", "; ".join(late), "format") if late else source_status.ok("lb")
+    except Exception as e:
+        print(f"  būsenos įrašas nepavyko: {e}")
 
 
 def main():
@@ -315,15 +372,22 @@ def main():
     if not found and not other:
         print("LB puslapiai nepasiekiami – bandomi tiesioginiai failų adresai:")
         found, other = guess()
+    else:   # puslapiai pasiekiami, bet kai kurių rūšių nuorodų nerasta (pvz. kitas vardas) – tos rūšys ieškomos tiesiogiai
+        miss = [k for k in NAMES if k not in found or found[k][0] <= local_latest(k)]
+        if miss:
+            print(f"Tiesioginiai adresai ({', '.join(miss)}):")
+            g, _ = guess(miss)
+            for k, v in g.items():
+                if v[0] > found.get(k, ("", ""))[0]:
+                    found[k] = v
     if not found and not other:
-        print("LB puslapiai nepasiekiami arba be failų nuorodų – bus bandoma kito paleidimo metu.")
+        print("Naujų LB failų nerasta – bus bandoma kito paleidimo metu.")
         # LB puslapiai GitHub serveriams grąžina 403 (įprasta), o tiesioginiais adresais naujų failų dar nėra –
-        # tai ne gedimas: LB naują ketvirtį paskelbia ~3 mėn. po jo pabaigos (vėlavimą paaiškina svetainės pranešimai)
-        _status(True)
+        # tai dažniausiai ne gedimas; jei laukiamo ketvirčio failo per DUE_DAYS nėra – _status() įspėja
+        _status()
         state["fail"] = {"date": today, "n": (fail.get("n", 0) if fail.get("date") == today else 0) + 1}
         STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         return
-    _status(True)
     state.pop("fail", None)
     state["checked"] = today
     state.setdefault("files", {})
@@ -369,6 +433,7 @@ def main():
             state["files"][kind] = {"date": d, "url": url, "at": today}
     archive(other)
     history()
+    _status()
     STATE.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
