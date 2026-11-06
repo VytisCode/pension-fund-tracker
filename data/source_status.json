@@ -1,10 +1,6 @@
 {
  "cpi": {
-  "err": "2026-11-06",
-  "kind": "network",
-  "msg": "HTTPError: HTTP Error 500:",
-  "ok": "2026-11-06",
-  "since": "2026-11-06"
+  "ok": "2026-11-06"
  },
  "eonia": {
   "ok": "2026-11-06"
