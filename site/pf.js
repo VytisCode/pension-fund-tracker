@@ -574,7 +574,51 @@ function ltHist(f, qi) {
     const a = yr != null ? val(yr, k) : null, b = val(qi, k), dd = a != null && b != null ? b - a : null;
     return `<tr><td class="l">${esc(n)}</td>${qs.map(i => `<td>${fmt(val(i, k), k)}</td>`).join('')}<td class="${dd > 0.05 ? 'up' : dd < -0.05 ? 'down' : ''}">${dd == null ? '–' : pp(dd) + (k === 'bd_dur' ? '' : ' p. p.')}</td></tr>`;
   }).join('');
-  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table>`;
+  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><div class="scroll"><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+/* „Pjūviai“ (savininkas 2026-11-06): pasirinktas matmuo – visi grupės fondai vienoje lentelėje, rikiuojama paspaudus stulpelį */
+let sliceSort = null;
+function renderSlice(funds, qi) {
+  const box = document.getElementById('pgSlice'); if (!box) return;
+  const L = lang === 'lt', t = LTT();
+  const withLt = funds.filter(f => ltOf(f, qi));
+  if (!withLt.length) { box.hidden = true; return; }
+  box.hidden = false;
+  const dims = {
+    mix: [L ? 'Turto struktūra, % portfelio' : 'Asset mix, % of portfolio', [['mix_eq', t.eq], ['mix_bd', t.bd], ['mix_cash', L ? 'Pinigai' : 'Cash'], ['mix_alt', L ? 'Alternatyvios' : 'Alternatives'], ['mix_oth', L ? 'Kita (auksas ir kt.)' : 'Other (gold etc.)']]],
+    sec: [t.sec, LT_SEC.map(k => ['sec_' + k, t.s[k]])],
+    reg: [t.reg, LT_REG.map(k => ['reg_' + k, t.r[k]]).concat([['em', t.em]])],
+    bd: [L ? 'Obligacijų rizika' : 'Bond risk', [['bd_dur', t.dur + (L ? ', m.' : ', yrs')], ['bd_cq', L ? 'Kredito kokybė (1 = AAA … 4 = BBB)' : 'Credit quality (1 = AAA … 4 = BBB)'], ['bd_hy', L ? 'Žemiau BBB, % oblig. fondų' : 'Below BBB, % of bond funds'], ['bd_direct', L ? 'Tiesioginės obligacijos, % obligacijų' : 'Direct bonds, % of bonds']]],
+    co: [L ? 'Bendrovė pro fondus, % portfelio' : 'Company through funds, % of portfolio', []] };
+  const dim = dims[ST.pgs] ? ST.pgs : 'sec';
+  const val = (f, k) => { const d = ltOf(f, qi); if (!d) return null; if (k === 'em') return d.mix_eq ? ltEm(d) : null;
+    if (k.startsWith('co|')) { const x = (d.top || []).find(c => c[0] === k.slice(3)); return x ? x[1] : (d.top && d.top.length ? 0 : null); } return d[k] ?? null; };
+  let cols = dims[dim][1];
+  const allCo = [...new Set(withLt.flatMap(f => (ltOf(f, qi).top || []).map(c => c[0])))].sort((a, b) => a.localeCompare(b));
+  if (dim === 'co') {
+    const want = (ST.pgc || '').toLowerCase();
+    const hit = want ? allCo.filter(c => c.toLowerCase().includes(want)).slice(0, 8) : [];
+    cols = (hit.length ? hit : ['NVIDIA', 'Microsoft', 'Apple', 'Amazon.com', 'Alphabet'].filter(c => allCo.includes(c))).map(c => ['co|' + c, c]);
+  }
+  cols = cols.filter(([k]) => withLt.some(f => (val(f, k) || 0) > 0.05));
+  let rows = withLt.map(f => ({ f, v: cols.map(([k]) => val(f, k)) }));
+  if (sliceSort && sliceSort.dim === dim && sliceSort.i < cols.length) rows.sort((a, b) => ((b.v[sliceSort.i] ?? -1e9) - (a.v[sliceSort.i] ?? -1e9)) * sliceSort.dir);
+  const mx = cols.map((_, i) => Math.max(...rows.map(r => r.v[i] || 0)) || 1);
+  const isPct = k => !['bd_dur', 'bd_cq'].includes(k);
+  const cell = (v, i, k) => v == null ? '<td class="pfsub">–</td>' : `<td style="background:color-mix(in srgb, var(--accent) ${Math.round(Math.min(1, v / mx[i]) * 28)}%, transparent)">${num(v, k === 'bd_cq' ? 1 : v < 1 && isPct(k) ? 2 : 1)}${isPct(k) ? pctSfx() : ''}</td>`;
+  const btn = (k, n) => `<button type="button" class="btn${k === dim ? ' on' : ''}" data-dim="${k}">${n}</button>`;
+  box.innerHTML = `<h3 class="lk" style="margin:0 0 6px">${L ? 'Pjūviai: visa grupė vienoje lentelėje' : 'Slices: the whole group in one table'}</h3>`
+    + `<div class="sliceBar">${btn('mix', L ? 'Turto struktūra' : 'Asset mix')}${btn('sec', L ? 'Sektoriai' : 'Sectors')}${btn('reg', L ? 'Regionai' : 'Regions')}${btn('bd', L ? 'Obligacijos' : 'Bonds')}${btn('co', L ? 'Bendrovė' : 'Company')}`
+    + (dim === 'co' ? ` <input id="sliceCo" list="sliceCoL" placeholder="${L ? 'pvz. Nvidia, ASML, Novo' : 'e.g. Nvidia, ASML, Novo'}" value="${esc(ST.pgc || '')}" style="min-width:220px"><datalist id="sliceCoL">${allCo.map(c => `<option value="${esc(c)}">`).join('')}</datalist>` : '') + '</div>'
+    + `<div class="meta">${dims[dim][0]} · ${qLabel(qi)} · ${L ? 'paspauskite stulpelį – surikiuosite' : 'click a column to sort'}</div>`
+    + `<div class="scroll"><table class="pft sliceT"><thead><tr><th class="l">${L ? 'Fondas' : 'Fund'}</th>${cols.map(([k, n], i) => `<th data-i="${i}" style="cursor:pointer">${esc(n)}${sliceSort && sliceSort.dim === dim && sliceSort.i === i ? (sliceSort.dir > 0 ? ' ▾' : ' ▴') : ''}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map(r => `<tr><td class="l">${esc(fundNameP(r.f))}</td>${r.v.map((v, i) => cell(v, i, cols[i][0])).join('')}</tr>`).join('') + '</tbody></table></div>'
+    + `<p class="note">${dim === 'co' ? (L ? 'Bendrovės dalis – iš kiekvieno fondo 50 didžiausių bendrovių pro ETF ir tiesiogiai; 0 – nepatenka į 50 didžiausių. Bendrovių duomenys – tik naujausiam ketvirčiui.' : 'Company share from each fund’s 50 largest companies through ETFs and directly; 0 – not among the 50 largest. Company data – latest quarter only.')
+      : (L ? 'Skaičiuojama pro ETF ir fondus (Morningstar) kartu su tiesiogiai turimais vertybiniais popieriais. Sektoriai ir regionai – % akcijų dalies.' : 'Computed through ETFs and funds (Morningstar) together with directly held securities. Sectors and regions – % of the equity part.')}</p>`;
+  box.querySelectorAll('[data-dim]').forEach(b => b.onclick = () => { ST.pgs = b.dataset.dim; sliceSort = null; save(); renderSlice(funds, qi); });
+  box.querySelectorAll('th[data-i]').forEach(th => th.onclick = () => { const i = +th.dataset.i; sliceSort = { dim, i, dir: sliceSort && sliceSort.dim === dim && sliceSort.i === i ? -sliceSort.dir : 1 }; renderSlice(funds, qi); });
+  const inp = box.querySelector('#sliceCo');
+  if (inp) inp.onchange = () => { ST.pgc = inp.value.trim(); save(); renderSlice(funds, qi); };
 }
 /* Paspaudus bendrovę „Didžiausios bendrovės pro fondus“ – jos dalis visuose tos pačios grupės fonduose (ir ketvirčių pokytis, kai bus > 1 ketv.) */
 let ltCur = null;
@@ -590,9 +634,9 @@ function ltCompany(co) {
   const chg = r => { if (qs.length < 2) return ''; const a = r.c.at(-2), b = r.c.at(-1); if (!a || !b || a.v == null || b.v == null) return '<td>–</td>';
     const d = b.v - a.v; return `<td class="${d > 0 ? 'up' : d < 0 ? 'down' : ''}">${pp(d)} p. p.</td>`; };
   box.innerHTML = `<div class="ltCoBox"><div class="meta"><b>${esc(co)}</b> – ${t.coPeers} <button type="button" class="btn" style="float:right;padding:0 8px" onclick="document.getElementById('ltCo').innerHTML=''">×</button></div>`
-    + `<table class="pft ltTop"><thead><tr><th class="l">${t.coFund}</th>${qs.map(i => `<th>${qLabel(i)}</th>`).join('')}${qs.length > 1 ? `<th>${t.coChg}</th>` : ''}</tr></thead><tbody>`
+    + `<div class="scroll"><table class="pft ltTop"><thead><tr><th class="l">${t.coFund}</th>${qs.map(i => `<th>${qLabel(i)}</th>`).join('')}${qs.length > 1 ? `<th>${t.coChg}</th>` : ''}</tr></thead><tbody>`
     + rows.map(r => `<tr${r.g === f ? ' style="font-weight:700"' : ''}><td class="l">${esc(fundNameP(r.g))}</td>${r.c.map(x => `<td>${cell(x)}</td>`).join('')}${chg(r)}</tr>`).join('')
-    + `</tbody></table><p class="note">${t.coNote(qs.length)}</p></div>`;
+    + `</tbody></table></div><p class="note">${t.coNote(qs.length)}</p></div>`;
   box.scrollIntoView({ block: 'nearest' });
 }
 document.addEventListener('click', e => { const tr = e.target.closest && e.target.closest('tr.ltRow'); if (tr) ltCompany(tr.dataset.co); });
@@ -803,6 +847,7 @@ function renderPeers() {
   }));
   document.getElementById('pgNote').textContent = T().pgNote;
   const xb = document.getElementById('pgXls'); xb.textContent = '⤓ ' + (lang === 'lt' ? 'Excel su formulėmis' : 'Excel with formulas'); xb.onclick = () => pgXls().catch(err => alert('Excel: ' + err));
+  renderSlice(funds, qi);
 }
 
 /* ---------- grupės palyginimo Excel su formulėmis (auditas #53) ----------

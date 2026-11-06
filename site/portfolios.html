@@ -83,7 +83,7 @@
   .ovpick select { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
   .ovsel { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; }
   .ovsel .chip button { border: 0; background: none; cursor: pointer; color: var(--text-3); font-size: 14px; padding: 0 0 0 4px; }
-  .ltTop { margin-top: 4px; } .ltRow { cursor: pointer; } .etfBtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font: inherit; font-size: 12px; } .etfRow > td { background: color-mix(in srgb, var(--accent) 5%, transparent); } .etfBox { padding: 6px 4px 10px; max-width: 720px; text-align: left; white-space: normal; } .etfBox .ltTop td:last-child { text-align: right; } .tags .tagLink { font-size: 12px; margin-left: 4px; white-space: nowrap; } .ltRow:hover td { background: color-mix(in srgb, var(--accent) 10%, transparent); } .ltCoBox { margin-top: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; } .ltMore summary { cursor: pointer; color: var(--accent); font-size: 13px; margin-top: 6px; } .ltTop td { padding: 3px 8px; font-size: 13px; } .ltbar { display: inline-block; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 6px; background: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .ltTop { margin-top: 4px; } .ltRow { cursor: pointer; } .sliceBar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; } .sliceBar .btn.on { background: var(--accent); color: #fff; border-color: var(--accent); } .sliceT td, .sliceT th { white-space: nowrap; font-size: 13px; } .etfBtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font: inherit; font-size: 12px; } .etfRow > td { background: color-mix(in srgb, var(--accent) 5%, transparent); } .etfBox { padding: 6px 4px 10px; max-width: min(720px, 80vw); text-align: left; white-space: normal; } .etfBox .ltTop td:last-child { text-align: right; } .tags .tagLink { font-size: 12px; margin-left: 4px; white-space: nowrap; } .ltRow:hover td { background: color-mix(in srgb, var(--accent) 10%, transparent); } .ltCoBox { margin-top: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; } .ltMore summary { cursor: pointer; color: var(--accent); font-size: 13px; margin-top: 6px; } .ltTop td { padding: 3px 8px; font-size: 13px; } .ltbar { display: inline-block; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 6px; background: color-mix(in srgb, var(--accent) 55%, transparent); }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 900px; }
 </style>
 </head>
@@ -126,6 +126,7 @@
   <p class="lead" id="pgLead"></p>
   <div class="bar pfbar" id="pgBar"></div>
   <section class="card" data-src="pf"><div class="scroll"><table class="pft altt pgt" id="pgTable"></table></div><p class="note" id="pgNote"></p><div class="tools"><button class="btn xls" type="button" id="pgXls"></button></div></section>
+  <section class="card" id="pgSlice" data-src="pf" hidden></section>
 
   </div>
   <div data-tab="sm">
