@@ -31,7 +31,7 @@ const NODES = [
     'pagal poreikį', 'as needed', '', 'Kai duomenų negalima gauti automatiškai (sena istorija, PDF ataskaitos), savininkas juos įkelia, o Claude vieną kartą importuoja. Istoriniai duomenys niekada neperrašomi – tik papildomi tušti laukai.', 'When data can’t be fetched automatically (old history, PDF reports) the owner uploads it and Claude imports it once. History is never overwritten – only empty fields are filled.'],
 
   ['c_nav', 1, 'code', 'II', 'II pakopos rinkikliai', 'update.py + sources/*.py; naršyklė SEB, Swedbank, Luminor', 'Pillar II collectors', 'update.py + sources/*.py; browser for SEB, Swedbank, Luminor',
-    'darbo dienomis kas 30 min. 13–19 val.', 'weekdays every 30 min 13–19h', 'update.py, sources/, store.py', 'Kiekvienam valdytojui – savas skaitytuvas. Kur svetainė be API, naudojama automatinė naršyklė (Playwright); Luminor – per tarpinį serverį. Nauja reikšmė įrašoma tik jei ji šviežia ir įtikėtina.', 'One reader per manager. Where there is no API an automated browser (Playwright) is used; Luminor goes through a proxy. A value is stored only if fresh and plausible.'],
+    'darbo dienomis kas 30 min. 13–19 val.', 'weekdays every 30 min 13–19h', 'update.py, sources/, store.py', 'Kiekvienam valdytojui – savas skaitytuvas. Kur svetainė be API, naudojama automatinė naršyklė (Playwright); Luminor – per mokamą tarpinį serverį (proxy, ~10 € už 3 mėn.), nes jo svetainė blokuoja serverių užklausas. Nauja reikšmė įrašoma tik jei ji šviežia ir įtikėtina.', 'One reader per manager. Where there is no API an automated browser (Playwright) is used; Luminor goes through a paid proxy (~€10 per 3 months) because its site blocks server requests. A value is stored only if fresh and plausible.'],
   ['c_p3', 1, 'code', 'III', 'III pakopos rinkikliai', 'pillar3.py: 22 fondai, API ir naršyklė', 'Pillar III collectors', 'pillar3.py: 22 funds, API and browser',
     'kartu su II pakopa', 'together with pillar II', 'pillar3.py', 'Tas pats principas kaip II pakopai: lengvi šaltiniai per API, sunkesni – per naršyklę.', 'Same approach as pillar II: light sources via API, harder ones via browser.'],
   ['c_lb', 1, 'code', 'II III pf', 'LB failų parsisiuntimas', 'tools/fetch_lb.py, lb_history.py, portfolios.py', 'BoL file download', 'tools/fetch_lb.py, lb_history.py, portfolios.py',
@@ -70,7 +70,7 @@ const NODES = [
   ['o_rep', 4, 'out', 'II III', 'Ataskaitos ir Kelias į pensiją', 'KID scenarijai, pusmečio lentelės, skaičiuoklės', 'Reports & retirement path', 'KID scenarios, half-year tables, calculators', '', '', 'reports, journey', 'Valdytojų ataskaitų patikra (dvi versijos: kaip valdytojo ir pagal reglamentą) ir asmeninės pensijos skaičiavimai.', 'Checks of manager reports (two versions: as published and per regulation) and personal pension calculations.'],
   ['o_bx', 4, 'out', 'bx', 'Baltijos šalys', 'LT, LV, EE tais pačiais skirtukais', 'Baltic states', 'LT, LV, EE with the same tabs', '', '', 'baltic', 'Kiekviena šalis ir pakopa – tie patys vaizdai; šalių palyginimas tik panašios rizikos fondų.', 'Each country and pillar gets the same views; cross-country only for similar-risk funds.'],
   ['o_nw', 4, 'out', 'nw', 'Naujienos', 'Įžvalgos, temų banga, Seimas', 'News', 'Insights, topic waves, Seimas', '', '', 'index#tab=nw', 'Kas ir kada kalba apie pensijas.', 'Who talks about pensions and when.'],
-  ['o_mail', 4, 'out', 'ops II III', 'Vakarinis laiškas', 'daily_report.py: kas atnaujinta, kas sugedo, ką daryti', 'Evening e-mail', 'daily_report.py: what updated, what broke, what to do', 'kasdien vakare', 'every evening', 'daily_report.py', 'Vienas trumpas laiškas savininkui: duomenų būklė, svetainės patikra ir, jei reikia, aiškūs žingsniai, ką padaryti.', 'One short e-mail to the owner: data status, site check and, if needed, clear steps to take.'],
+  ['o_mail', 4, 'out', 'ops II III nw', 'Vakarinis laiškas', 'Ar reikia veiksmo, rinka per dieną, naujienos, būklė', 'Evening e-mail', 'Action needed?, market today, news, status', 'kasdien vakare', 'every evening', 'daily_report.py', 'Vienas laiškas savininkui (daily_report.py + report_market.py): pirmoje eilutėje – ar reikia jūsų veiksmo; toliau II ir III pakopos dienos ir metų pokytis, vietų pokyčiai, neįprasti judesiai, naujienos, Seimas, laukiami duomenys; penktadienį – savaitė, mėnesio pradžioje – mėnuo; techninė būklė – viena eilutė, kai viskas gerai.', 'One e-mail to the owner: first line – is action needed; then pillar II and III daily and YTD moves, rank changes, unusual moves, news, Parliament, expected data; weekly on Fridays, monthly at month start; status in one line when all is fine.'],
   ['o_ops', 4, 'out', 'ops', 'Duomenų kalendorius', 'Kas atkeliavo ir ko laukiama', 'Data calendar', 'What arrived and what is due', '', '', 'ops', 'Kiekvieno šaltinio įvykiai kalendoriuje ir laukiamos datos.', 'Each source’s events on a calendar and expected dates.'],
 ];
 const EDGES = [
@@ -80,7 +80,7 @@ const EDGES = [
   ['d_nav', 'b_build'], ['d_p3', 'b_build'], ['d_lb', 'b_build'], ['d_pf', 'b_build'], ['d_mac', 'b_build'], ['d_bx', 'b_build'], ['d_nw', 'b_build'], ['d_ops', 'b_build'],
   ['b_build', 'b_test'], ['b_dev', 'b_build'],
   ['b_build', 'o_lt'], ['b_build', 'o_pf'], ['b_build', 'o_rep'], ['b_build', 'o_bx'], ['b_build', 'o_nw'], ['b_build', 'o_ops'],
-  ['b_test', 'o_mail'], ['d_ops', 'o_mail'],
+  ['b_test', 'o_mail'], ['d_ops', 'o_mail'], ['d_nav', 'o_mail'], ['d_p3', 'o_mail'], ['d_nw', 'o_mail'],
 ];
 // pristatymo režimas: žingsniai po vieną giją
 const STORY = [
@@ -111,7 +111,7 @@ function render() {
   $('lead').textContent = t('Šis puslapis parodo, kaip veikia visas įrankis: iš kur ateina kiekvienas skaičius, kas jį surenka ir apdoroja, kur dirba kodas be dirbtinio intelekto, kur – Claude (AI), o kur reikia žmogaus. Tinka pristatymui: spauskite korteles arba „Toliau“.',
     'This page shows how the whole tool works: where each number comes from, who collects and processes it, where code runs without AI, where Claude (AI) helps and where a human is needed. Made for presentations: click cards or “Next”.');
   const nSrc = NODES.filter(n => n[1] === 0).length, nCode = NODES.filter(n => n[2] === 'code' && n[1] === 1).length;
-  $('kpis').innerHTML = [[nSrc, t('šaltinių grupių', 'source groups')], [nCode, t('automatinių rinkiklių', 'automatic collectors')], ['0 €', t('AI kaštų kasdieniame darbe', 'AI cost in daily work')], ['~12×', t('paleidimų per darbo dieną', 'runs per business day')]]
+  $('kpis').innerHTML = [[nSrc, t('šaltinių grupių', 'source groups')], [nCode, t('automatinių rinkiklių', 'automatic collectors')], ['~3,3 €', t('per mėn. proxy + Claude Pro prenumerata', 'a month for the proxy + Claude Pro subscription')], ['~12×', t('paleidimų per darbo dieną', 'runs per business day')]]
     .map(([v, s]) => `<div class="k"><b>${v}</b><span>${s}</span></div>`).join('');
   $('hFlow').textContent = t('Duomenų gijos', 'Data threads');
   $('threads').innerHTML = `<span class="lbl">${t('Gija:', 'Thread:')}</span>` + [['', t('Visos', 'All')], ...THREADS.map(([k, a, b]) => [k, l ? a : b])]
@@ -180,10 +180,10 @@ function renderAi() {
   $('hAi').textContent = l ? 'Kur dirba AI, o kur – ne' : 'Where AI works and where it does not';
   const box = (k, h, xs) => `<div class="card k-${k}" style="border-left:4px solid var(--kc)"><h3><span class="dot" style="background:var(--kc)"></span>${h}</h3><ul>${xs.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
   $('ai').innerHTML = l
-    ? box('code', 'Kodas be AI – kasdien, savarankiškai', ['Visas duomenų rinkimas, tikrinimas ir saugojimas', 'Visi skaičiavimai: grąžos, rizika, vietos, faktai, Excel formulės', 'Svetainės generavimas, patikra ir vakarinis laiškas', 'Naujienų atranka (be AI santraukų)', 'Veikia ir be Claude – jokių AI mokesčių'])
-      + box('ai', 'Claude (AI) – kai reikia žmogaus lygio darbo', ['Naujų funkcijų kūrimas ir klaidų taisymas', 'Skaičiavimų sutikrinimas su LB ir valdytojų ataskaitomis', 'Ketvirtinė Morningstar „pro fondus“ procedūra', 'Vienkartiniai istorinių duomenų importai', 'Svetainės auditai ir pasiūlymai'])
-    : box('code', 'Code without AI – daily, on its own', ['All data collection, validation and storage', 'All calculations: returns, risk, ranks, facts, Excel formulas', 'Site build, checks and the evening e-mail', 'News selection (no AI summaries)', 'Runs without Claude – no AI fees'])
-      + box('ai', 'Claude (AI) – when human-level work is needed', ['Building features and fixing bugs', 'Checking calculations against BoL and manager reports', 'Quarterly Morningstar look-through procedure', 'One-off historical imports', 'Site audits and proposals']);
+    ? box('code', 'Kodas be AI – kasdien, savarankiškai', ['Visas duomenų rinkimas, tikrinimas ir saugojimas', 'Visi skaičiavimai: grąžos, rizika, vietos, faktai, Excel formulės', 'Svetainės generavimas, patikra ir vakarinis laiškas', 'Naujienų atranka (be AI santraukų)', 'Veikia ir be Claude – kasdienis darbas AI nenaudoja'])
+      + box('ai', 'Claude (AI) – kai reikia žmogaus lygio darbo (Claude Pro prenumerata)', ['Naujų funkcijų kūrimas ir klaidų taisymas', 'Skaičiavimų sutikrinimas su LB ir valdytojų ataskaitomis', 'Ketvirtinė Morningstar „pro fondus“ procedūra', 'Vienkartiniai istorinių duomenų importai', 'Svetainės auditai ir pasiūlymai'])
+    : box('code', 'Code without AI – daily, on its own', ['All data collection, validation and storage', 'All calculations: returns, risk, ranks, facts, Excel formulas', 'Site build, checks and the evening e-mail', 'News selection (no AI summaries)', 'Runs without Claude – daily work uses no AI'])
+      + box('ai', 'Claude (AI) – when human-level work is needed (Claude Pro subscription)', ['Building features and fixing bugs', 'Checking calculations against BoL and manager reports', 'Quarterly Morningstar look-through procedure', 'One-off historical imports', 'Site audits and proposals']);
 }
 renderHeader('how', render);
 render();

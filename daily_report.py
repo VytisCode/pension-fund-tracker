@@ -184,42 +184,75 @@ def source_lines() -> list:
 
 
 def build() -> tuple:
+    """Laiško tvarka (savininkas 2026-11-06 pasirinko „Rinka + veiksmai + naujienos“): 1) ar reikia jūsų veiksmo, 2) rinka,
+    3) naujienos, Seimas, kalendorius, 4) techninė būklė – viena eilutė, kai viskas gerai."""
     existing = store.load()
     expected = u.expected_date()
     today = f"{datetime.now(u.TZ):%Y-%m-%d}"
     lines2, missing = provider_lines(existing, expected)
+    lines3 = pillar3_lines()
+    missing3 = [x.split(":")[0].strip() for x in lines3 if "❌" in x]
     state = u.load_state().get(today, {})
-    subject = (f"Pensijų fondai {today}: " +
-               ("viskas atnaujinta" if not missing else "trūksta – " + ", ".join(missing)))
-    body = [f"Dienos ataskaita, {today}. Laukiama fondų vertė už {expected}.", "",
-            "II pakopa:"] + lines2
-    body += ["", "III pakopa:"] + pillar3_lines()
-    if state.get("LUMINOR"):
-        body += ["", f"Luminor bandymų šiandien: {state['LUMINOR']} iš {u.MAX_BROWSER_ATTEMPTS}."]
-    problems = todays_problems(today)
-    body += ["", "Klaidos ir pastabos šiandien:"] + (problems or ["  nėra"])
-    body += lb_new_lines(today)
+    try:
+        last_sent = json.loads(REPORT_STATE.read_text(encoding="utf-8")).get("last_sent", "")
+    except (OSError, ValueError):
+        last_sent = ""
+    actions, extra = [], []
     try:   # nauji portfelių fondai be požymių – renka Claude, savininkui reikia tik paprašyti
         import build_site
         am = build_site.attr_missing()
         if am["n"]:
-            body += ["", f"⚠ {am['n']} portfelių fondai ({am['q']}, {am['eur'] / 1e6:.1f} mln. €) be požymių (regionas, TER, SFDR)."
-                     " Parašykite Claude: „surink portfelių požymius“."]
+            actions.append(f"{am['n']} portfelių fondai ({am['q']}, {am['eur'] / 1e6:.1f} mln. €) be požymių (regionas, TER, SFDR)."
+                           " Parašykite Claude: „surink portfelių požymius“.")
         lt = build_site.ROOT / "data" / "lookthrough.csv"     # tikroji sudėtis pro fondus (Morningstar, MORNINGSTAR.md)
         if am["q"] and (not lt.exists() or f"\n{am['q']}," not in lt.read_text(encoding="utf-8")):
-            body += ["", f"⚠ {am['q']} ketvirčio „tikroji sudėtis pro fondus“ dar neapskaičiuota."
-                     " Parašykite Claude: „atnaujink Morningstar portfelių analizę“."]
+            actions.append(f"{am['q']} ketvirčio „tikroji sudėtis pro fondus“ dar neapskaičiuota. Parašykite Claude: „atnaujink Morningstar portfelių analizę“.")
         if int(today[5:7]) in (1, 4, 7, 10) and int(today[8:10]) <= 10:   # ETF sudėtys – tik naujausios, todėl renkamos iškart po ketvirčio pabaigos
-            body += ["", "ℹ Ketvirtis ką tik baigėsi. Parašykite Claude: „surink ETF sudėtis ketvirčio pabaigai“"
-                     " (Morningstar, kad didžiausios bendrovės atitiktų LB portfelių datą)."]
+            actions.append("Ketvirtis ką tik baigėsi. Parašykite Claude: „surink ETF sudėtis ketvirčio pabaigai“ (Morningstar).")
     except Exception:  # noqa: BLE001
         pass
-    body += source_lines()
+    src = source_lines()
+    if src:
+        actions.append("Neveikia šaltinis – žr. „Neveikiantys šaltiniai“ apačioje.")
+    if missing or missing3:
+        extra.append("Trūksta šiandienos duomenų: " + ", ".join(missing + [f"{m} (III)" for m in missing3])
+                     + ". Dažniausiai pasitaiso kitą rytą savaime; jei kartojasi 2 d. – parašykite Claude.")
+    stale = stale_section(today)
+    ideas = ideas_section()
+    if any("Klausimas jums" in x for x in ideas):
+        actions.append("Claude užduoda jums klausimą – žr. apačioje.")
+    if any("rankiniu būdu" in x for x in stale):
+        actions.append("Pasenę rankiniai duomenys – žr. „Pasenę duomenys“ apačioje.")
+
+    try:
+        import report_market
+        head = report_market.headline()
+        market = report_market.build(today, last_sent[:7] != today[:7])
+    except Exception as e:  # noqa: BLE001 – rinkos dalis neturi sustabdyti laiško
+        head, market = "", ["", f"(Rinkos santraukos paruošti nepavyko: {e!r})"]
+    ok = not missing and not missing3
+    subject = f"Pensijų fondai {today}: " + (f"{head} · " if head else "") + ("viskas atnaujinta" if ok else "trūksta – " + ", ".join(missing + missing3))
+    body = ["Ar reikia jūsų veiksmo: " + ("TAIP" if actions else "ne – viskas veikia savaime.")]
+    body += [f"  → {a}" for a in actions] + [f"  ℹ {x}" for x in extra]
+    body += market
+    body += lb_new_lines(today)
+    body += ["", "TECHNINĖ BŪKLĖ"]
+    if ok:
+        body.append(f"Duomenys už {expected}: II pakopa – visi {len(lines2)} valdytojai, III pakopa – visi {len(lines3)} atnaujinti ✅."
+                    + (f" Luminor bandymų: {state['LUMINOR']} iš {u.MAX_BROWSER_ATTEMPTS}." if state.get("LUMINOR") else ""))
+    else:
+        body += [f"Laukiama fondų vertė už {expected}.", "II pakopa:"] + lines2 + ["III pakopa:"] + lines3
+        problems = todays_problems(today)
+        warn = [p for p in problems if "netinkama data" in p]
+        body += ["Klaidos šiandien:"] + ([p for p in problems if "netinkama data" not in p] or ["  nėra"])
+        if warn:
+            body.append(f"  (+ {len(warn)} praleistų netinkamų datų įspėjimų – įprasta)")
+    body += src
     runs = runs_today(today)
     if runs:
-        body += ["", runs]
-    body += stale_section(today)
-    body += ideas_section()
+        body.append(runs)
+    body += stale
+    body += ideas
     body += ["", f"Svetainė: {SITE_URL}"]
     return subject, mask("\n".join(body))
 
