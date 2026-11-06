@@ -6,7 +6,8 @@ Kartą per dieną peržiūrimi LB puslapiai (PAGES) ir jų nuorodos į failus:
 - II pakopos rezultatai (2_pakopa_rezultatai_YYYYMMDD*.xlsx) -> imports/lb_results/2-pakopa-rezultatai-YYYYMMDD.xlsx;
 - fondų portfeliai (PF_Portfeliai_YYYYMMDD.xlsx, anksčiau pf-portfeliai-…; žr. NAMES) -> imports/lb_portfolios/pf-portfeliai-YYYYMMDD.xlsx, tada portfolios.py;
 - II pakopos mokesčiai (pf-ii-mokesciai-YYYY-MM-DD.xls) ir III pakopos (PF_III_mokesciai_YYYY-MM-DD.xlsx) -> imports/lb_fees/,
-  tada import_lb_fees.py.
+  tada import_lb_fees.py (data varde nežinoma – kasdien bandomos paskutinių 10 dienų datos, žr. dated());
+- pataisytos jau paskelbtų ketvirčių versijos (galūnė _ ir pan.) – žr. revisions().
 Visi kiti tų puslapių Excel failai (III pakopos rezultatai, II pakopos IRR, lyginamieji indeksai ir kt.) kaupiami originaliais
 vardais imports/lb_archive/ (savininko prašymas 2026-10-14 – parsisiųsti visą LB informaciją).
 Po to visada perskaičiuojama data/lb_results_history.csv (lb_history.py: dalyviai, turtas, grąžos nuo 2015 m.).
@@ -198,6 +199,110 @@ def guess(kinds=None):
     return found, other
 
 
+# Failai su nenuspėjama data varde (LB juos atnaujina rečiau nei kas ketvirtį): tikrinamos paskutinių DATED_DAYS dienų datos.
+# (rūšis arba None = tik į archyvą, katalogas, vardo šablonas, galūnės)
+FILES = "https://www.lb.lt/uploads/documents/files/"
+DATED = [("fee2", B, "pf-ii-mokesciai-{iso}", ".xls"), ("fee3", FILES, "PF_III_mokesciai_{iso}", ".xlsx"),
+         ("fee3", B, "PF_III_mokesciai_{iso}", ".xlsx"), (None, B, "PF_lyginamieji_{iso}", ".xlsx"),
+         (None, FILES, "PF_lyginamieji_{iso}", ".xlsx")]
+DATED_SFX = ("", "_1", "_", "_2")
+DATED_DAYS = 10
+
+
+def dated(state: dict):
+    """Mokesčių, lyginamųjų indeksų ir išlaidų rodiklių failai: kartą per dieną bandomos paskutinių DATED_DAYS dienų datos
+    (failo vardo data – LB sprendimo diena, ji nežinoma iš anksto). Išlaidų rodikliai – kartą per metus (islaidu-rodikliai-YYYY)."""
+    found, other = {}, {}
+    now = datetime.now(timezone.utc)
+    if state.get("dated") == now.strftime("%Y-%m-%d"):
+        return found, other
+    for i in range(DATED_DAYS):
+        iso = (now - timedelta(days=i)).strftime("%Y-%m-%d")
+        for kind, base, pat, ext in DATED:
+            if kind and kind in found:
+                continue
+            for x in DATED_SFX:
+                url = base + pat.format(iso=iso) + x + ext
+                try:
+                    body = get(url)
+                except Exception:
+                    continue
+                if body.startswith(MAGIC[ext]):
+                    print(f"  rasta tiesiogiai: {url}")
+                    if kind and iso.replace("-", "") > local_latest(kind):
+                        found[kind] = (iso.replace("-", ""), url)
+                    elif not kind:
+                        other[arch_name(url)] = url
+                    break
+    for y in (now.year - 1, now.year):   # metiniai išlaidų rodikliai (BAR/BIK)
+        for x in ("", "_1", "_2", "_3"):
+            name = f"islaidu-rodikliai-{y}{x}.xlsx"
+            if not (ARCH / name).exists():
+                try:
+                    if get(B + name).startswith(MAGIC[".xlsx"]):
+                        print(f"  rasta tiesiogiai: {B + name}")
+                        other[name] = B + name
+                except Exception:
+                    pass
+    state["dated"] = now.strftime("%Y-%m-%d")
+    return found, other
+
+
+def revisions(state: dict):
+    """LB kartais pataiso jau paskelbtą ketvirčio failą ir įkelia jį nauju vardu su galūne (pvz. 2_pakopa_rezultatai_20260930_.xlsx).
+    Turimam naujausiam ketvirčiui bandomos galūnės; jei randamas kitoks failas – rezultatai/portfeliai pakeičiami (senasis
+    lieka imports/lb_archive/), III pakopos pataisymas tiesiog įrašomas į archyvą (lb_history.py ima vėliausią vardą)."""
+    other = {}
+    if state.get("revisions") == datetime.now(timezone.utc).strftime("%Y-%m-%d"):
+        return other
+    for kind in ("lbr", "pf", None):
+        d = local_latest(kind or "lbr")
+        if not d:
+            continue
+        stems = NAMES[kind] if kind else ["3_pakopa_rezultatai_{d}"]
+        hits = []
+        for st in stems:
+            for x in SUFFIXES[1:]:
+                url = B + st.format(d=d, y=d[:4], m=d[4:6], dd=d[6:]) + x + ".xlsx"
+                try:
+                    body = get(url)
+                except Exception:
+                    continue
+                if body.startswith(MAGIC[".xlsx"]):
+                    hits.append((url, body))
+        if not hits:
+            continue
+        url, body = hits[-1]                          # vėliausia galūnė – naujausia LB versija
+        if kind is None:
+            other[arch_name(url)] = url
+            continue
+        _, folder, name, ext = KINDS[kind]
+        path = IMP / folder / (name.format(y=d[:4], m=d[4:6], d=d[6:]) + ext)
+        if path.read_bytes() == body or state.get("files", {}).get(kind, {}).get("url") == url:
+            continue
+        print(f"{kind}: LB pataisė {d} failą – {url}")
+        old = path.read_bytes()
+        ARCH.mkdir(parents=True, exist_ok=True)
+        (ARCH / f"senas_{path.name}").write_bytes(old)
+        path.write_bytes(body)
+        try:
+            err = process(kind, path)
+        except Exception as e:
+            err = f"{type(e).__name__}: {e}"
+        if err:
+            print(f"  pataisymas ATMESTAS: {err}")
+            path.write_bytes(old)
+            (ARCH / f"senas_{path.name}").unlink()
+            if kind == "pf":
+                subprocess.run(["git", "checkout", "--", "data/portfolios.csv"], cwd=ROOT)
+        else:
+            print(f"  pakeista pataisyta versija: {path.relative_to(ROOT)}")
+        state.setdefault("files", {})[kind] = {"date": d, "url": url, "at": str(datetime.now(timezone.utc).date())} | \
+            ({"error": err} if err else {})
+    state["revisions"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return other
+
+
 def overdue() -> list:
     """Ketvirčiai, kurių failo jau seniai turėjome rasti, bet neturime (įspėjimui)."""
     now = datetime.now(timezone.utc)
@@ -380,6 +485,14 @@ def main():
             for k, v in g.items():
                 if v[0] > found.get(k, ("", ""))[0]:
                     found[k] = v
+    print("Failai su data varde (mokesčiai, lyginamieji indeksai, išlaidų rodikliai):")
+    f2, o2 = dated(state)
+    for k, v in f2.items():
+        if v[0] > found.get(k, ("", ""))[0]:
+            found[k] = v
+    other.update(o2)
+    print("Pataisytos jau turimų ketvirčių versijos:")
+    other.update(revisions(state))
     if not found and not other:
         print("Naujų LB failų nerasta – bus bandoma kito paleidimo metu.")
         # LB puslapiai GitHub serveriams grąžina 403 (įprasta), o tiesioginiais adresais naujų failų dar nėra –
