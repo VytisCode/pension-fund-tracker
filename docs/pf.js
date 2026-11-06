@@ -584,7 +584,13 @@ function ltHist(f, qi) {
   }).join('');
   const note = L ? 'Paryškintos eilutės – turto klasės, kartu sudaro 100 % portfelio. Eilutės su ↳ – tos klasės vidus: akcijų sektoriai ir regionai skaičiuojami kaip % akcijų dalies (ne viso portfelio), obligacijų trukmė – metais.'
     : 'Bold rows are asset classes and add up to 100 % of the portfolio. Rows with ↳ show what is inside: equity sectors and regions as % of the equity part (not of the whole portfolio), bond duration in years.';
-  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><div class="scroll"><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table></div><p class="pfsub" style="font-size:12px;margin:4px 0 0">${note}</p>`;
+  // staigus pinigų + trumpų obligacijų šuolis 2026–2027 m. (II pakopos išėjimo langas) – tikėtinas likvidumas išmokoms, ne strategijos pokytis
+  const liq = i => { const d = ltOf(f, i); return d ? (d.mix_cash || 0) + (d.bd_dur != null && d.bd_dur < 1 ? d.mix_bd || 0 : 0) : 0; };
+  const jump = f.pl === 'II' ? qs.filter((i, n) => n > 0 && Q[i] >= '2026-01' && Q[i] <= '2027-12-31' && liq(i) - liq(qs[n - 1]) > 15) : [];
+  const liqNote = jump.length ? `<p class="pfsub" style="font-size:12px;margin:4px 0 0">⚑ ${jump.map(qShort).join(', ')}: ${L
+    ? 'pinigų ir trumpų obligacijų dalis staiga išaugo. Tikėtina, kad tai likvidumas II pakopos išmokoms (išėjimo langas 2026–2027 m.), o ne investavimo strategijos pokytis. Vėlesniame ketvirtyje fondo turtas paprastai sumažėja.'
+    : 'cash and short bonds jumped. Most likely liquidity for II-pillar withdrawals (opt-out window 2026–2027), not a change of investment strategy; fund assets usually fall in the following quarter.'}</p>` : '';
+  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><div class="scroll"><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table></div><p class="pfsub" style="font-size:12px;margin:4px 0 0">${note}</p>` + liqNote;
 }
 /* „Pjūviai“ (savininkas 2026-11-06): pasirinktas matmuo – visi grupės fondai vienoje lentelėje, rikiuojama paspaudus stulpelį */
 let sliceSort = null;
