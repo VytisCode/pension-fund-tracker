@@ -90,6 +90,8 @@ h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
   border: 1px solid var(--dneg); color: var(--text); font-size: 14px; background: color-mix(in srgb, var(--dneg) 8%, transparent); }
 .ntcbar span { flex: 1 1 260px; }
 .ntcbar button { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: inherit; cursor: pointer; }
+.ntcbar.nb-new { border-color: var(--dpos); background: color-mix(in srgb, var(--dpos) 9%, transparent); }
+.ntc.l-new { border-left-color: var(--dpos); }
 @media print { .ntcbar { display: none; } }
 @media print { .fresh .fr { cursor: auto; } }
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 22px; }

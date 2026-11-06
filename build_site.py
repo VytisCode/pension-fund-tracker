@@ -10,7 +10,7 @@ import json
 import re
 import hashlib
 import shutil
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -403,6 +403,15 @@ def build_fresh(groups: list, generated: str) -> None:
     payload["man"] = [{k: s.get(k) for k in ("id", "lt", "en", "how_lt", "how_en", "url", "next", "f_lt", "f_en")}
                       for s in inv if s["mode"] == "manual" and s.get("next") is not None and s["next"] <= today + 21]
     payload["urls"] = {s["id"]: s["url"] for s in inv if s.get("url")}
+    # Nauji Lietuvos banko failai per paskutines 21 d. (iš data/ops_log.csv) – svetainė rodo žalią juostą „LB paskelbė …“
+    try:
+        import csv as _csv
+        cut = (datetime.now(ZoneInfo("Europe/Vilnius")) - timedelta(days=21)).strftime("%Y-%m-%d")
+        payload["lbNew"] = [{k: r[k] for k in ("ts", "src", "dd", "msg")}
+                            for r in _csv.DictReader((ROOT / "data" / "ops_log.csv").open(encoding="utf-8"))
+                            if r["src"].startswith("lb.") and r["ev"] == "new" and r["ts"][:10] >= cut]
+    except Exception:
+        payload["lbNew"] = []
     (DOCS / "data_fresh.js").write_text("var FRESH=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     # visų šaltinių sąrašas puslapiui „Apie“ (sources_list.py)
     (DOCS / "data_src.js").write_text("const SRCINV=" + json.dumps(inv, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")

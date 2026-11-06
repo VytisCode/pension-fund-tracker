@@ -25,7 +25,7 @@ LOG = ROOT / "data" / "ops_log.csv"
 COLS = ["ts", "src", "ev", "dd", "n", "msg"]
 WATCH = ["data/nav_history.csv", "data/pillar3_history.csv", "data/indexes.csv", "imports/journey/cpi.csv",
          "imports/journey/pensions.csv", "imports/journey/wages.csv", "data/fees.csv", "data/risk_free.json"]
-LB_DIRS = {"imports/lb_portfolios": "lb.pf", "imports/lb_results": "lb.lbr", "imports/lb_fees": "lb.fee"}
+LB_DIRS = {"imports/lb_portfolios": "lb.pf", "imports/lb_results": "lb.lbr", "imports/lb_fees": "lb.fee", "imports/lb_archive": "lb.arch"}
 INDEXES = {"MSCI_WORLD", "MSCI_ACWI", "SP500", "EUR_GOV7Y"}
 
 
@@ -80,14 +80,18 @@ def events_from_diff(diff: str, ts: str) -> list:
     return out
 
 
-def lb_events(paths: list, ts: str) -> list:
-    """Nauji Lietuvos banko failai (imports/lb_*): failo vardo data = ataskaitos laikotarpio pabaiga."""
+def lb_events(paths: list, ts: str, revised=()) -> list:
+    """Nauji Lietuvos banko failai (imports/lb_*): failo vardo data = ataskaitos laikotarpio pabaiga.
+    revised – pakeisti (LB pataisyti) failai; jų msg prasideda „pataisyta: “. Svetainė rodo pranešimą apie naują failą."""
     out = []
-    for p in paths:
+    for p in list(paths) + list(revised):
+        if Path(p).name.startswith("senas_"):          # fetch_lb.py atsarginė senos versijos kopija
+            continue
         for d, src in LB_DIRS.items():
             if p.startswith(d + "/"):
                 m = re.search(r"(\d{4})-?(\d\d)-?(\d\d)", Path(p).name)
-                out.append({"ts": ts, "src": src, "ev": "new", "dd": f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else "", "n": 1, "msg": Path(p).name})
+                out.append({"ts": ts, "src": src, "ev": "new", "dd": f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else "", "n": 1,
+                            "msg": ("pataisyta: " if p in revised else "") + Path(p).name})
     return out
 
 
@@ -126,8 +130,10 @@ def load_json(text: str) -> dict:
 def live() -> None:
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M")
     rows = events_from_diff(git("diff", "-U0", "HEAD", "--", *WATCH), ts)
-    changed = [l[3:] for l in git("status", "--porcelain", "--untracked-files=all", "--", *LB_DIRS).splitlines() if l[:2].strip() in ("??", "A")]
-    rows += lb_events(changed, ts)
+    st = git("status", "--porcelain", "--untracked-files=all", "--", *LB_DIRS).splitlines()
+    changed = [l[3:] for l in st if l[:2].strip() in ("??", "A")]
+    revised = [l[3:] for l in st if l[:2].strip() == "M"]
+    rows += lb_events(changed, ts, revised)
     rows += status_events(load_json(git("show", "HEAD:data/source_status.json")),
                           load_json((ROOT / "data" / "source_status.json").read_text(encoding="utf-8")) if (ROOT / "data" / "source_status.json").exists() else {}, ts)
     append(rows)

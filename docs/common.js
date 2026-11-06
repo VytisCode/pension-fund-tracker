@@ -477,7 +477,11 @@ function srcHTML() {
    „Reikia veiksmo“ pranešimai rodomi juosta virš puslapio, kol vartotojas paspaudžia „Šiandien nerodyti“. */
 const NT = {
   lt: {
-    lvl: { info: 'Galima ignoruoti', wait: 'Laukiama – nieko daryti nereikia', act: 'Reikia veiksmo' },
+    lvl: { info: 'Galima ignoruoti', wait: 'Laukiama – nieko daryti nereikia', act: 'Reikia veiksmo', new: 'Nauji duomenys' },
+    lbNewT: (w, d) => `Lietuvos bankas paskelbė: ${w}${d ? ' (' + d + ')' : ''}`, lbNewRev: 'pataisyta versija',
+    lbNewK: { 'lb.pf': 'fondų portfeliai', 'lb.lbr': 'II pakopos rezultatai', 'lb.fee': 'mokesčiai', 'lb.arch': 'failas' },
+    lbNewWhat: f => `Automatiškai parsisiųstas naujas Lietuvos banko failas ${f}.`, lbNewImpact: 'Svetainės duomenys jau atnaujinti šiuo failu.',
+    lbNewTodo: 'Nieko – tik informacija. Paspaudus „Supratau“ šis pranešimas daugiau nerodomas.', barSeen: 'Supratau',
     what: 'Kas tai', why: 'Kodėl', impact: 'Ką įtakoja', todo: 'Ką daryti', open: 'Atidaryti šaltinį', hdr: 'Pranešimai',
     sum: (a, w) => [a ? `⚠ ${a} reikia veiksmo` : '', w ? `${w} laukiama` : ''].filter(Boolean).join(', '),
     barMore: 'Plačiau', barHide: 'Šiandien nerodyti', owner: 'Tai darbas svetainės prižiūrėtojui; kitiems lankytojams nieko daryti nereikia.',
@@ -521,7 +525,11 @@ const NT = {
     manDue: d => `Atnaujinti iki ${d}.`, manOver: d => `Turėjo būti atnaujinta iki ${d}.`, manImpact: 'Kol neatnaujinta, svetainė naudoja ankstesnes reikšmes.',
   },
   en: {
-    lvl: { info: 'Can be ignored', wait: 'Waiting – nothing to do', act: 'Action needed' },
+    lvl: { info: 'Can be ignored', wait: 'Waiting – nothing to do', act: 'Action needed', new: 'New data' },
+    lbNewT: (w, d) => `Bank of Lithuania published: ${w}${d ? ' (' + d + ')' : ''}`, lbNewRev: 'corrected version',
+    lbNewK: { 'lb.pf': 'fund portfolios', 'lb.lbr': 'II pillar results', 'lb.fee': 'fees', 'lb.arch': 'file' },
+    lbNewWhat: f => `A new Bank of Lithuania file ${f} was downloaded automatically.`, lbNewImpact: 'Site data are already updated with this file.',
+    lbNewTodo: 'Nothing – information only. Click “Got it” to stop showing this notice.', barSeen: 'Got it',
     what: 'What it is', why: 'Why', impact: 'What it affects', todo: 'What to do', open: 'Open the source', hdr: 'Notices',
     sum: (a, w) => [a ? `⚠ ${a} action needed` : '', w ? `${w} waiting` : ''].filter(Boolean).join(', '),
     barMore: 'Details', barHide: 'Hide for today', owner: 'This is a task for the site maintainer; other visitors need not do anything.',
@@ -610,18 +618,45 @@ function noticesList() {
     out.push({ id: `man-${m.id}`, lvl: over ? 'act' : 'info', title: n.manT(L ? m.lt : m.en), what: n.manWhat(L ? m.f_lt : m.f_en),
       why: over ? n.manOver(iso(m.next)) : n.manDue(iso(m.next)), impact: n.manImpact, todo: L ? m.how_lt : m.how_en, url: m.url, owner: true });
   });
-  const ord = { act: 0, wait: 1, info: 2 };
+  // 6. nauji Lietuvos banko failai (paskutinės 21 d.) – žalia juosta, kol paspaudžiama „Supratau“
+  (FRESH.lbNew || []).forEach(e => {
+    const rev = e.msg.startsWith('pataisyta: '), f = e.msg.replace('pataisyta: ', ''), arch = e.src === 'lb.arch';
+    const w = (arch ? lbArchName(f) : (n.lbNewK[e.src] || e.src) + (e.dd ? ' ' + e.dd : '')) + (rev ? ' – ' + n.lbNewRev : '');
+    out.push({ id: `lbn-${e.ts}-${f}`, lvl: 'new', title: n.lbNewT(w, e.ts.slice(0, 10)), what: n.lbNewWhat(f), impact: n.lbNewImpact, todo: n.lbNewTodo,
+      url: e.src === 'lb.pf' ? 'portfolios.html' : '' });
+  });
+  const ord = { act: 0, new: 1, wait: 2, info: 3 };
   return out.sort((a, b) => ord[a.lvl] - ord[b.lvl]);
 }
 function noticesHTML(list) {
   if (!list.length) return '';
-  const n = NTH(), ic = { act: '⚠', wait: '⏳', info: 'ℹ' };
+  const n = NTH(), ic = { act: '⚠', wait: '⏳', info: 'ℹ', new: '🆕' };
   return `<div class="ntc-list"><span class="fr-l">${n.hdr}</span>` + list.map(x => `<details class="ntc l-${x.lvl}" id="ntc-${hEsc(x.id)}"><summary><span class="ic">${ic[x.lvl]}</span><b>${hEsc(x.title)}</b> <span class="lv">${n.lvl[x.lvl]}</span></summary><dl>`
     + `<dt>${n.what}</dt><dd>${hEsc(x.what)}</dd>` + (x.why ? `<dt>${n.why}</dt><dd>${hEsc(x.why)}</dd>` : '')
     + `<dt>${n.impact}</dt><dd>${hEsc(x.impact)}</dd><dt>${n.todo}</dt><dd>${hEsc(x.todo)}${x.owner ? ` <span class="na">${n.owner}</span>` : ''}${x.url ? ` <a href="${hEsc(x.url)}" target="_blank" rel="noopener">${n.open} ↗</a>` : ''}</dd></dl></details>`).join('') + '</div>';
 }
 /* juosta virš puslapio: tik „reikia veiksmo“, kol nepaspausta „Šiandien nerodyti“ (atskirai kiekvienam pranešimui) */
+function lbArchName(f) {
+  const L = lang === 'lt', d = (f.match(/(\d{4})-?(\d\d)-?(\d\d)/) || []).slice(1).join('-');
+  const m = [[/^3_pakopa/i, 'III pakopos rezultatai', 'III pillar results'], [/^2_pakopa/i, 'II pakopos rezultatai', 'II pillar results'],
+    [/lyginamieji/i, 'lyginamieji indeksai', 'benchmarks'], [/irr/i, 'vidinė grąžos norma (VGN)', 'internal rate of return'],
+    [/islaidu/i, 'išlaidų rodikliai', 'cost ratios']].find(x => x[0].test(f));
+  return m ? (L ? m[1] : m[2]) + (d ? ' ' + d : (f.match(/\d{4}/) ? ' ' + f.match(/\d{4}/)[0] : '')) : f.replace(/\.xlsx?$/i, '');
+}
+function newBar(list) {
+  const n = NTH(); let seen = []; try { seen = JSON.parse(localStorage.getItem('ntcSeen') || '[]'); } catch (e) {}
+  const show = list.filter(x => x.lvl === 'new' && !seen.includes(x.id));
+  let bar = document.getElementById('ntcNew');
+  if (!show.length) { if (bar) bar.remove(); return; }
+  if (!bar) { bar = document.createElement('div'); bar.id = 'ntcNew'; bar.className = 'ntcbar nb-new'; bar.setAttribute('role', 'status'); const h = document.querySelector('header'); (h || document.body).after(bar); }
+  bar.innerHTML = `<span>🆕 ${show.map(x => x.url ? `<a href="${hEsc(x.url)}">${hEsc(x.title)}</a>` : hEsc(x.title)).join(' · ')}</span><button type="button" class="nb-hide">${n.barSeen}</button>`;
+  bar.querySelector('.nb-hide').onclick = () => {
+    try { const ids = list.filter(x => x.lvl === 'new').map(x => x.id); localStorage.setItem('ntcSeen', JSON.stringify([...seen.filter(i => ids.includes(i)), ...show.map(x => x.id)])); } catch (e) {}
+    bar.remove();
+  };
+}
 function noticeBar(list) {
+  newBar(list);
   const n = NTH(), key = 'ntcHide-' + new Date().toISOString().slice(0, 10);
   let hidden = []; try { hidden = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
   const show = list.filter(x => x.lvl === 'act' && !hidden.includes(x.id));

@@ -155,6 +155,17 @@ def stale_section(today: str) -> list:
         for f in late]
 
 
+def lb_new_lines(today: str) -> list:
+    """Šiandien parsisiųsti nauji Lietuvos banko failai (data/ops_log.csv, lb.*)."""
+    try:
+        import csv
+        with (Path(__file__).parent / "data" / "ops_log.csv").open(encoding="utf-8") as f:
+            rows = [r for r in csv.DictReader(f) if r["src"].startswith("lb.") and r["ev"] == "new" and r["ts"][:10] == today]
+    except Exception:  # noqa: BLE001
+        return []
+    return (["", "🆕 Lietuvos bankas paskelbė naujų failų (jau įkelta į svetainę):"] + [f"  • {r['msg']}" for r in rows]) if rows else []
+
+
 def source_lines() -> list:
     """Neveikiantys šaltiniai iš data/source_status.json (tie patys, kurie rodomi svetainės pranešimuose)."""
     try:
@@ -187,6 +198,7 @@ def build() -> tuple:
         body += ["", f"Luminor bandymų šiandien: {state['LUMINOR']} iš {u.MAX_BROWSER_ATTEMPTS}."]
     problems = todays_problems(today)
     body += ["", "Klaidos ir pastabos šiandien:"] + (problems or ["  nėra"])
+    body += lb_new_lines(today)
     body += source_lines()
     runs = runs_today(today)
     if runs:
