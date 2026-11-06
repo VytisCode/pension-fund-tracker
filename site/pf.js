@@ -90,8 +90,10 @@ const fundBy = Object.fromEntries(FUNDS.map(f => [f.c, f]));
 const posLabel = s => s.fn ? s.fn : s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
 const posSub = s => `${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin && (!s.co || s.fn) ? ' · ' + s.isin : ''}`;
 const typeLabel = s => { const l = s.alt ? T().alts[s.alt] : s.t === 'f' && s.kis ? (T().kis[s.kis] || T().types.f) : T().types[s.t]; return l[0].toUpperCase() + l.slice(1); };
-const fundNameP = f => { let n = fundName(f); if (/apriboto/.test(f.full || '') && !/apriboto/.test(n)) n += lang === 'lt' ? ' (apriboto nutraukimo)' : ' (restricted withdrawal)'; return n.toLowerCase().includes(String(f.p).toLowerCase()) ? n : `${f.p} ${n}`; };   // su valdytoju, kai pavadinime jo nėra (III pakopa)
-const fundName = f => f.g === 'turto' ? f.n.replace('turto išsaugojimo', lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : f.n;
+const fundName = f => { let n = f.g === 'turto' ? f.n.replace('turto išsaugojimo', lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : f.n;
+  if (/apriboto/.test(f.full || '') && !/apriboto/.test(n)) n += lang === 'lt' ? ' (apriboto nutraukimo)' : ' (restricted withdrawal)';   // Swedbank turi du „18+“ ir t. t.
+  return n; };
+const fundNameP = f => { const n = fundName(f); return n.toLowerCase().includes(String(f.p).toLowerCase()) || n.startsWith('INVL') ? n : `${f.p} ${n}`; };   // su valdytoju, kai pavadinime jo nėra (III pakopa)
 const sw = m => `<span class="sw" style="background:${colorOf(m)}"></span>`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 function eur(v) {
@@ -678,7 +680,7 @@ function renderAlt() {
       const sep = pl === 'II' && f.g !== lastG ? `<tr class="sep"><td colspan="${cols.length + 6}">${f.g === 'turto' ? T().turto : T().born + ' ' + f.g.replace('-', '–')}</td></tr>` : '';
       lastG = f.g;
       const a1 = altShare(f, q1), a0 = altShare(f, q0), mix = altMix(f, q1), mt = Object.values(mix).reduce((x, y) => x + y, 0);
-      return sep + `<tr data-c="${f.c}"><td class="l">${sw(f.p)}${esc(fundName(f))}</td>${cols.map(i => cell(altShare(f, i))).join('')}
+      return sep + `<tr data-c="${f.c}"><td class="l">${sw(f.p)}${esc(fundNameP(f))}</td>${cols.map(i => cell(altShare(f, i))).join('')}
         <td>${mt ? eur(mt) : '–'}</td>
         <td class="l pfsub">${Object.entries(mix).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${T().alts[k]} ${num(v / mt * 100, 2)}${pctSfx()}`).join(' · ')}</td>
         <td class="altgc ${a1 > a0 ? 'up' : a1 < a0 ? 'down' : ''}">${f.q[q0] ? `${pp(a1 - a0)}<br><small class="pfsub" style="font-weight:400">${num(a0, 1)} → ${num(a1, 1)} %</small>` : '–'}</td>
@@ -777,7 +779,7 @@ function renderPeers() {
   };
   const tb = document.getElementById('pgTable');
   tb.classList.add('pgT');
-  tb.innerHTML = `<thead><tr><th class="l"></th>${rows.map(r => `<th class="pgf" data-c="${r.f.c}" title="${L ? 'Atidaryti fondo portfelį' : 'Open the fund portfolio'}">${sw(r.f.p)}${esc(ST.pg === 'III' ? fundName(r.f) : r.f.p)}</th>`).join('')}</tr></thead><tbody>`
+  tb.innerHTML = `<thead><tr><th class="l"></th>${rows.map(r => `<th class="pgf" data-c="${r.f.c}" title="${L ? 'Atidaryti fondo portfelį' : 'Open the fund portfolio'}">${sw(r.f.p)}${esc(ST.pg === 'III' ? fundNameP(r.f) : r.f.p)}</th>`).join('')}</tr></thead><tbody>`
     + SECT.map(([h, ks]) => { const body = ks.map(rowHTML).join(''); return body ? `<tr class="pgs"><td colspan="${rows.length + 1}">${esc(h)}</td></tr>${body}` : ''; }).join('') + '</tbody>';
   tb.querySelectorAll('thead th[data-c]').forEach(th => th.addEventListener('click', () => {
     ST.fund = th.dataset.c; ST.fq = qi; ST.ft = 'all'; ST.pos = null; fcLimit = 40; save(); renderFund();
