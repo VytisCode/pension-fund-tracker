@@ -564,17 +564,27 @@ document.addEventListener('click', e => {
 function ltHist(f, qi) {
   const qs = []; for (let i = qi; i >= 0 && qs.length < 5; i--) if (ltOf(f, i)) qs.unshift(i);
   if (qs.length < 2) return '';
-  const L = lang === 'lt', t = LTT(), yr = qs.length >= 5 ? qs[0] : null;
-  const rows = [[t.eq, 'mix_eq'], [t.bd, 'mix_bd'], [t.s.technology + (L ? ', % akcijų' : ', % of equities'), 'sec_technology'],
-    [t.s.financial + (L ? ', % akcijų' : ', % of equities'), 'sec_financial'], [t.r.us + (L ? ', % akcijų' : ', % of equities'), 'reg_us'],
-    [t.em + (L ? ', % akcijų' : ', % of equities'), 'em'], [t.dur + (L ? ', m.' : ', yrs'), 'bd_dur']];
-  const val = (i, k) => { const d = ltOf(f, i); if (!d) return null; return k === 'em' ? (d.mix_eq ? ltEm(d) : null) : d[k] ?? null; };
-  const fmt = (v, k) => v == null ? '–' : num(v, 1) + (k === 'bd_dur' ? '' : pctSfx());
-  const body = rows.filter(([, k]) => qs.some(i => val(i, k) != null && (k !== 'mix_bd' || val(i, k) > 0.5))).map(([n, k]) => {
-    const a = yr != null ? val(yr, k) : null, b = val(qi, k), dd = a != null && b != null ? b - a : null;
-    return `<tr><td class="l">${esc(n)}</td>${qs.map(i => `<td>${fmt(val(i, k), k)}</td>`).join('')}<td class="${dd > 0.05 ? 'up' : dd < -0.05 ? 'down' : ''}">${dd == null ? '–' : pp(dd) + (k === 'bd_dur' ? '' : ' p. p.')}</td></tr>`;
+  const L = lang === 'lt', t = LTT(), yr = qs.length >= 5 ? qs[0] : null, ofEq = L ? '% akcijų' : '% of equities';
+  // struktūra: turto klasės sudaro 100 % portfelio; po akcijomis – akcijų vidus (% akcijų), po obligacijomis – trukmė
+  const rows = [[t.eq, 'mix_eq', 0], [`${t.s.technology}, ${ofEq}`, 'sec_technology', 1], [`${t.s.financial}, ${ofEq}`, 'sec_financial', 1],
+    [`${t.r.us}, ${ofEq}`, 'reg_us', 1], [`${t.em}, ${ofEq}`, 'em', 1],
+    [t.bd, 'mix_bd', 0], [t.dur + (L ? ', metai' : ', years'), 'bd_dur', 1],
+    [L ? 'Pinigai ir indėliai' : 'Cash and deposits', 'mix_cash', 0], [L ? 'Alternatyvios (privatus kapitalas, NT)' : 'Alternatives (private equity, real estate)', 'mix_alt', 0],
+    [L ? 'Kita (auksas ir pan.)' : 'Other (gold etc.)', 'mix_oth', 0], [L ? 'Iš viso' : 'Total', 'sum', 0]];
+  const val = (i, k) => { const d = ltOf(f, i); if (!d) return null;
+    if (k === 'sum') return ['mix_eq', 'mix_bd', 'mix_cash', 'mix_alt', 'mix_oth'].reduce((a, x) => a + (d[x] || 0), 0);
+    if (k === 'em') return d.mix_eq ? ltEm(d) : null;
+    if (k === 'bd_dur' && !(d.mix_bd > 0.5)) return null;
+    return d[k] ?? null; };
+  const fmt = (v, k) => v == null ? '–' : k === 'bd_dur' ? num(v, v < 0.95 ? 2 : 1) : num(v, 1) + pctSfx();
+  const body = rows.filter(([, k, lv]) => k === 'sum' || qs.some(i => { const v = val(i, k); return v != null && (lv || v > 0.05); })).map(([n, k, lv]) => {
+    const a = yr != null ? val(yr, k) : null, b = val(qi, k), dd = a != null && b != null && k !== 'sum' ? b - a : null;
+    const st = k === 'sum' ? ' style="font-weight:600;border-top:2px solid var(--line)"' : lv ? ' class="pfsub" style="font-size:12px"' : ' style="font-weight:600"';
+    return `<tr${st}><td class="l"${lv ? ' style="padding-left:22px"' : ''}>${lv ? '↳ ' : ''}${esc(n)}</td>${qs.map(i => `<td>${fmt(val(i, k), k)}</td>`).join('')}<td class="${dd > 0.05 ? 'up' : dd < -0.05 ? 'down' : ''}">${dd == null ? '' : pp(dd) + (k === 'bd_dur' ? '' : ' p. p.')}</td></tr>`;
   }).join('');
-  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><div class="scroll"><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table></div>`;
+  const note = L ? 'Paryškintos eilutės – turto klasės, kartu sudaro 100 % portfelio. Eilutės su ↳ – tos klasės vidus: akcijų sektoriai ir regionai skaičiuojami kaip % akcijų dalies (ne viso portfelio), obligacijų trukmė – metais.'
+    : 'Bold rows are asset classes and add up to 100 % of the portfolio. Rows with ↳ show what is inside: equity sectors and regions as % of the equity part (not of the whole portfolio), bond duration in years.';
+  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><div class="scroll"><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table></div><p class="pfsub" style="font-size:12px;margin:4px 0 0">${note}</p>`;
 }
 /* „Pjūviai“ (savininkas 2026-11-06): pasirinktas matmuo – visi grupės fondai vienoje lentelėje, rikiuojama paspaudus stulpelį */
 let sliceSort = null;
