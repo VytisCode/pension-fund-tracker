@@ -481,6 +481,10 @@ const NT = {
     lbNewT: (w, d) => `Lietuvos bankas paskelbė: ${w}${d ? ' (' + d + ')' : ''}`, lbNewRev: 'pataisyta versija',
     lbNewK: { 'lb.pf': 'fondų portfeliai', 'lb.lbr': 'II pakopos rezultatai', 'lb.fee': 'mokesčiai', 'lb.arch': 'failas' },
     lbNewWhat: f => `Automatiškai parsisiųstas naujas Lietuvos banko failas ${f}.`, lbNewImpact: 'Svetainės duomenys jau atnaujinti šiuo failu.',
+    attrT: (k, q) => `${k} portfelių fond${k === 1 ? 'as' : 'ai'} be požymių (${q})`,
+    attrWhat: e => `Naujausiame LB portfelių ketvirtyje yra fondų / ETF (iš viso ${e} mln. €), kuriems dar nesurinkti regionas, TER, SFDR ir kiti požymiai. Juos renka Claude iš fondų puslapių.`,
+    attrImpact: 'Portfelių skirtukuose „Požymiai“, regionų ir mokesčių suvestinėse šie fondai rodomi kaip „nežinoma“.',
+    attrTodo: 'Parašykite Claude: „surink portfelių požymius“.',
     lbNewTodo: 'Nieko – tik informacija. Paspaudus „Supratau“ šis pranešimas daugiau nerodomas.', barSeen: 'Supratau',
     what: 'Kas tai', why: 'Kodėl', impact: 'Ką įtakoja', todo: 'Ką daryti', open: 'Atidaryti šaltinį', hdr: 'Pranešimai',
     sum: (a, w) => [a ? `⚠ ${a} reikia veiksmo` : '', w ? `${w} laukiama` : ''].filter(Boolean).join(', '),
@@ -529,6 +533,10 @@ const NT = {
     lbNewT: (w, d) => `Bank of Lithuania published: ${w}${d ? ' (' + d + ')' : ''}`, lbNewRev: 'corrected version',
     lbNewK: { 'lb.pf': 'fund portfolios', 'lb.lbr': 'II pillar results', 'lb.fee': 'fees', 'lb.arch': 'file' },
     lbNewWhat: f => `A new Bank of Lithuania file ${f} was downloaded automatically.`, lbNewImpact: 'Site data are already updated with this file.',
+    attrT: (k, q) => `${k} portfolio fund${k === 1 ? '' : 's'} without attributes (${q})`,
+    attrWhat: e => `The latest Bank of Lithuania portfolio quarter has funds / ETFs (EUR ${e} m in total) whose region, TER, SFDR etc. are not yet collected. Claude collects them from fund pages.`,
+    attrImpact: 'Portfolio “Attributes” tabs and region / fee summaries show these funds as “unknown”.',
+    attrTodo: 'Write to Claude: “collect portfolio attributes”.',
     lbNewTodo: 'Nothing – information only. Click “Got it” to stop showing this notice.', barSeen: 'Got it',
     what: 'What it is', why: 'Why', impact: 'What it affects', todo: 'What to do', open: 'Open the source', hdr: 'Notices',
     sum: (a, w) => [a ? `⚠ ${a} action needed` : '', w ? `${w} waiting` : ''].filter(Boolean).join(', '),
@@ -625,6 +633,10 @@ function noticesList() {
     out.push({ id: `lbn-${e.ts}-${f}`, lvl: 'new', title: n.lbNewT(w, e.ts.slice(0, 10)), what: n.lbNewWhat(f), impact: n.lbNewImpact, todo: n.lbNewTodo,
       url: e.src === 'lb.pf' ? 'portfolios.html' : '' });
   });
+  // 7. nauji portfelių fondai be požymių (renka Claude – savininkui užtenka vienos žinutės)
+  const am = FRESH.attrMiss;
+  if (am && am.n) out.push({ id: `attr-${am.q}-${am.n}`, lvl: 'act', title: n.attrT(am.n, am.q), what: n.attrWhat((am.eur / 1e6).toFixed(1)),
+    impact: n.attrImpact, todo: n.attrTodo, owner: true });
   const ord = { act: 0, new: 1, wait: 2, info: 3 };
   return out.sort((a, b) => ord[a.lvl] - ord[b.lvl]);
 }

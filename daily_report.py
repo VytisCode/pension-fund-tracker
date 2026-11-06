@@ -199,6 +199,14 @@ def build() -> tuple:
     problems = todays_problems(today)
     body += ["", "Klaidos ir pastabos šiandien:"] + (problems or ["  nėra"])
     body += lb_new_lines(today)
+    try:   # nauji portfelių fondai be požymių – renka Claude, savininkui reikia tik paprašyti
+        import build_site
+        am = build_site.attr_missing()
+        if am["n"]:
+            body += ["", f"⚠ {am['n']} portfelių fondai ({am['q']}, {am['eur'] / 1e6:.1f} mln. €) be požymių (regionas, TER, SFDR)."
+                     " Parašykite Claude: „surink portfelių požymius“."]
+    except Exception:  # noqa: BLE001
+        pass
     body += source_lines()
     runs = runs_today(today)
     if runs:

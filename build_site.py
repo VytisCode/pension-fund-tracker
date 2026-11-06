@@ -403,6 +403,10 @@ def build_fresh(groups: list, generated: str) -> None:
     payload["man"] = [{k: s.get(k) for k in ("id", "lt", "en", "how_lt", "how_en", "url", "next", "f_lt", "f_en")}
                       for s in inv if s["mode"] == "manual" and s.get("next") is not None and s["next"] <= today + 21]
     payload["urls"] = {s["id"]: s["url"] for s in inv if s.get("url")}
+    try:
+        payload["attrMiss"] = attr_missing()
+    except Exception:
+        pass
     # Nauji Lietuvos banko failai per paskutines 21 d. (iš data/ops_log.csv) – svetainė rodo žalią juostą „LB paskelbė …“
     try:
         import csv as _csv
@@ -561,6 +565,56 @@ PF_TYPES = {"equity": "e", "bond": "b", "fund": "f", "cash": "c", "derivative": 
 COMPANY_NAME = re.compile(r"\b(S\.?A\.?|GmbH|Limited|Ltd|Management|Asset Management|Investors|S\.à r\.l\.|AG|plc|Inc)\b\.?\s*$", re.I)
 
 
+_ANORM = []
+
+
+def _anorm(s: str) -> str:
+    """Fondo vardas palyginimui: be diakritikų, skliaustų, klasių/serijų žymų (LB tą patį fondą kas ketvirtį vadina šiek tiek kitaip:
+    „KŪB“/„KUB“, „(Class A1)“/„(Class A)“, „B2 Series“)."""
+    import unicodedata
+    s = unicodedata.normalize("NFKD", s.replace("NOISIN:", "")).encode("ascii", "ignore").decode().lower()
+    s = re.sub(r"\(.*?\)", " ", s)
+    s = re.sub(r"\b(class|series|serija|klase)\b.*$|\b[a-c]\d?\s+series\b.*$", " ", s)
+    return re.sub(r"[^a-z0-9]+", " ", s).strip()
+
+
+def attr_missing(min_eur: float = 500_000) -> dict:
+    """Naujausio LB ketvirčio fondai / ETF be požymių (data/fund_attributes.csv) – priminimui svetainėje ir laiške.
+    Požymius (regionas, TER, SFDR …) renka Claude iš justETF / fondų puslapių – automatiškai be AI to padaryti nepavyksta."""
+    attrs = {r["isin"]: r for r in csv.DictReader((ROOT / "data" / "fund_attributes.csv").open(encoding="utf-8", newline=""))}
+    attr_index(attrs)
+    last, pos = "", {}
+    for r in csv.DictReader((ROOT / "data" / "portfolios.csv").open(encoding="utf-8", newline="")):
+        if r["type"] != "fund":
+            continue
+        if r["date"] > last:
+            last, pos = r["date"], {}
+        if r["date"] == last:
+            v = pos.setdefault(r["pos_id"], [0.0, set()])
+            v[0] += float(r["value"] or 0)
+            v[1].add(r["name"])
+    miss = [(v[0], p) for p, v in pos.items() if p not in attrs and not attr_alias(p, v[1], attrs) and v[0] >= min_eur]
+    return {"q": last, "n": len(miss), "eur": round(sum(m[0] for m in miss)), "ids": [p for _, p in sorted(miss, reverse=True)][:10]}
+
+
+def attr_index(attrs: dict) -> None:
+    _ANORM.clear()
+    for k, a in attrs.items():
+        for n in {_anorm(k) if k.startswith("NOISIN:") else "", _anorm(a.get("name") or "")}:
+            if len(n) >= 12:
+                _ANORM.append((n, a))
+
+
+def attr_alias(p: str, pnames, attrs: dict):
+    """Fondas be tikslaus požymių įrašo: imami to paties fondo (kito vardo varianto ar kitos klasės) požymiai, jei atitikmuo vienareikšmis."""
+    cands = {_anorm(p)} if p.startswith("NOISIN:") else set()
+    cands |= {_anorm(x) for x in pnames if x}
+    hit = {id(a): a for n, a in _ANORM for c in cands if len(c) >= 12 and (c.startswith(n) or n.startswith(c))}
+    a = next(iter(hit.values())) if len(hit) == 1 else None
+    # ETF klasės skiriasi mokesčiu ir valiutos apdraudimu – vardo atitikmuo tinka tik privatiems / uždariems fondams
+    return a if a and (p.startswith("NOISIN:") or a["asset_class"] in ("private_equity", "real_estate")) else None
+
+
 def best_name(names, kind):
     """Iš kelių to paties ISIN pavadinimų (skirtingi valdytojai rašo skirtingai) parenkamas aiškiausias."""
     def score(item):
@@ -628,6 +682,7 @@ def build_portfolios(ver: dict) -> None:
     # fondų ir ETF aprašai (data/fund_attributes.csv, surinkta iš fondų puslapių ir justETF): pilnas pavadinimas ir požymiai
     attr_path = ROOT / "data" / "fund_attributes.csv"
     attrs = {r["isin"]: r for r in csv.DictReader(attr_path.open(encoding="utf-8", newline=""))} if attr_path.exists() else {}
+    attr_index(attrs)
     # obligacijų sąlygos (data/security_terms.csv, ESMA FIRDS) – pajamingumui ir trukmei (žr. bonds.py)
     import bonds
     terms = bonds.load_terms()
@@ -638,7 +693,7 @@ def build_portfolios(ver: dict) -> None:
         kind, country, cur, kis = meta[p]
         name = best_name(names[p], kind)
         co = kind == "fund" and bool(COMPANY_NAME.search(name))           # ataskaitoje nurodyta tik valdymo bendrovė
-        a = attrs.get(p) if kind == "fund" else None
+        a = (attrs.get(p) or attr_alias(p, names[p], attrs)) if kind == "fund" else None
         full = (a or {}).get("name") or (figi.get(p, "") if co else "")   # pilnas oficialus pavadinimas
         ter = (a or {}).get("ter_pct", "")
         secs.append([name, PF_TYPES[kind], country, cur, kis,
