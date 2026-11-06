@@ -463,7 +463,57 @@ function renderLook(f, qi) {
       + k(T().lkDur, L.md == null ? '–' : num(L.md, 1), L.frn > 0.05 ? T().lkFrn(share(L.frn, L.bw)) : '')
       + k(T().lkYrs, L.yrs == null ? '–' : `${num(L.yrs, 1)} ${T().yrs}`) + '</div>' : '')
     + `<p class="note">${T().lkNote}${L.bw > 0.5 ? ' ' + T().bondNote : ''}</p>`;
+  el.insertAdjacentHTML('beforeend', ltBlock(f, qi));
   el.querySelectorAll('.lkreg [data-r]').forEach(x => x.addEventListener('click', () => { ST.fr = ST.fr === x.dataset.r ? 'all' : x.dataset.r; fcLimit = 40; save(); renderFund(); }));
+}
+/* ---------- Tikroji sudėtis „pro fondus“ (Morningstar, tools/ms_lookthrough.py → data/lookthrough.csv) ----------
+   Kas ketvirtį: ETF / fondų vidus (sektoriai, regionai, didžiausios bendrovės, obligacijų trukmė ir kredito kokybė)
+   × pozicijos vertė + tiesiogiai turimos akcijos ir obligacijos. Rodomi tik mūsų apskaičiuoti suvestiniai rodikliai. */
+const LT_SEC = ['technology', 'financial', 'healthcare', 'industrials', 'consumer_cyclical', 'communication', 'consumer_defensive', 'energy', 'basic_materials', 'utilities', 'real_estate'];
+const LT_REG = ['us', 'canada', 'eurozone', 'uk', 'europe_ex_euro', 'japan', 'australasia', 'asia_dev', 'asia_em', 'latam', 'europe_em', 'africa_me'];
+const LT_COL = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)', 'var(--s5)', 'var(--s6)', '#8e7cc3', '#d0453f', '#c9a227', '#4fa3a5', 'var(--axis)', 'var(--grid)'];
+const LT_EM = ['asia_em', 'latam', 'europe_em', 'africa_me'];
+const LT_TXT = {
+  lt: { title: 'Tikroji sudėtis pro fondus', mix: 'Turto struktūra pro fondus, % portfelio', eq: 'Akcijos', bd: 'Obligacijos', cash: 'Pinigai', alt: 'Alternatyvios', oth: 'Kita (auksas, išvestinės)',
+    sec: 'Akcijų sektoriai, % akcijų', reg: 'Akcijų regionai, % akcijų', top: 'Didžiausios bendrovės per visus ETF ir tiesiogiai, % portfelio', top10: '10 didžiausių bendrovių', em: 'Besivystančios rinkos',
+    dur: 'Obligacijų trukmė', cq: 'Obligacijų fondų kredito kokybė', hy: 'Žemesnio nei BBB reitingo fondai', yrs: 'm.', ofBd: 'obligacijų fondų dalies',
+    s: { technology: 'Technologijos', financial: 'Finansai', healthcare: 'Sveikatos apsauga', industrials: 'Pramonė', consumer_cyclical: 'Cikliškas vartojimas', communication: 'Ryšių paslaugos', consumer_defensive: 'Būtinasis vartojimas', energy: 'Energetika', basic_materials: 'Žaliavos', utilities: 'Komunalinės paslaugos', real_estate: 'Nekilnojamasis turtas' },
+    r: { us: 'JAV', canada: 'Kanada', eurozone: 'Euro zona', uk: 'D. Britanija', europe_ex_euro: 'Kita Vakarų Europa', japan: 'Japonija', australasia: 'Australija, N. Zelandija', asia_dev: 'Išsivysčiusi Azija', asia_em: 'Besivystanti Azija', latam: 'Lotynų Amerika', europe_em: 'Besivystanti Europa', africa_me: 'Afrika, Art. Rytai' },
+    note: (d, c) => `Skaičiuojama „pro fondus“: kiekvieno ETF ar fondo sudėtis (Morningstar, ${d}) padauginta iš jo vertės pensijų fonde ir sudėta su tiesiogiai turimomis akcijomis ir obligacijomis. Morningstar duomenis turi ${c} kotiruojamų fondų vertės; privataus kapitalo ir NT fondai – pagal aprašą („Alternatyvios“). Sektoriai ir regionai – ketvirčio pabaigos; didžiausios bendrovės – iš iki 100 didžiausių kiekvieno ETF pozicijų pagal naujausią paskelbtą sudėtį (smulkios bendrovės neįtraukiamos). Sintetiniams (swap) ETF bendrovės imamos iš to paties ar artimiausio indekso fizinio ETF. Trukmė – tiesioginių obligacijų (mūsų skaičiavimas) ir obligacijų fondų (Morningstar) svertinė. Kredito kokybė – tik obligacijų fondų vidutinė (AAA = 1 … žemiau B = 7), tiesioginių obligacijų reitingų neturime. Rodomi tik mūsų suvestiniai rodikliai, ne Morningstar reitingai.` },
+  en: { title: 'True exposure through funds', mix: 'Asset mix through funds, % of portfolio', eq: 'Equities', bd: 'Bonds', cash: 'Cash', alt: 'Alternatives', oth: 'Other (gold, derivatives)',
+    sec: 'Equity sectors, % of equities', reg: 'Equity regions, % of equities', top: 'Largest companies through all ETFs and directly, % of portfolio', top10: 'Top-10 companies', em: 'Emerging markets',
+    dur: 'Bond duration', cq: 'Bond funds’ credit quality', hy: 'Funds rated below BBB', yrs: 'y', ofBd: 'of bond-fund holdings',
+    s: { technology: 'Technology', financial: 'Financials', healthcare: 'Healthcare', industrials: 'Industrials', consumer_cyclical: 'Consumer cyclical', communication: 'Communication', consumer_defensive: 'Consumer defensive', energy: 'Energy', basic_materials: 'Basic materials', utilities: 'Utilities', real_estate: 'Real estate' },
+    r: { us: 'US', canada: 'Canada', eurozone: 'Eurozone', uk: 'UK', europe_ex_euro: 'Other W. Europe', japan: 'Japan', australasia: 'Australasia', asia_dev: 'Developed Asia', asia_em: 'Emerging Asia', latam: 'Latin America', europe_em: 'Emerging Europe', africa_me: 'Africa, Middle East' },
+    note: (d, c) => `Computed through the funds: each ETF’s or fund’s contents (Morningstar, ${d}) times its value in the pension fund, plus directly held shares and bonds. Morningstar data covers ${c} of the listed funds’ value; private equity and real-estate funds by description (“Alternatives”). Sectors and regions at the quarter end; largest companies from up to the 100 largest holdings of each ETF in its latest published portfolio (small names left out). For synthetic (swap) ETFs companies come from a physical ETF on the same or closest index. Duration – weighted over direct bonds (our calculation) and bond funds (Morningstar). Credit quality – bond funds’ average only (AAA = 1 … below B = 7); we have no ratings for direct bonds. Only our aggregates are shown, not Morningstar ratings.` }
+};
+const LTT = () => LT_TXT[lang] || LT_TXT.lt;
+const ltOf = (f, qi) => (PF.lt && PF.lt[Q[qi]] || {})[f.c] || null;
+const cqLetter = x => x == null ? '–' : ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', '<B'][Math.min(6, Math.max(0, Math.round(x) - 1))];
+const ltEm = d => LT_EM.reduce((a, k) => a + (d['reg_' + k] || 0), 0);
+function ltBar(d, keys, pre, names) {
+  const ks = keys.filter(k => d[pre + k] > 0.05);
+  return `<div class="comp">${ks.map((k, i) => `<span style="width:${d[pre + k]}%;background:${LT_COL[i % LT_COL.length]}" title="${esc(names[k])} ${num(d[pre + k], 1)} %"></span>`).join('')}</div>`
+    + `<div class="complg">${ks.map((k, i) => `<span><i style="background:${LT_COL[i % LT_COL.length]}"></i>${esc(names[k])} <b>${num(d[pre + k], 1)}${pctSfx()}</b></span>`).join('')}</div>`;
+}
+function ltBlock(f, qi) {
+  const d = ltOf(f, qi); if (!d) return '';
+  const t = LTT(), k = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  const p1 = v => v == null ? '–' : num(v, 1) + pctSfx();
+  const mixK = ['eq', 'bd', 'cash', 'alt', 'oth'], mixN = Object.fromEntries(mixK.map(x => [x, t[x]]));
+  let h = `<h3 class="lk" style="margin-top:18px">${t.title}</h3><div class="kpis lkk">`
+    + k(t.eq, p1(d.mix_eq)) + k(t.bd, p1(d.mix_bd)) + k(t.top10, p1(d.top10)) + k(t.em, d.mix_eq ? p1(ltEm(d)) : '–', d.mix_eq ? (lang === 'lt' ? '% akcijų' : '% of equities') : '')
+    + k(t.dur, d.bd_dur == null ? '–' : `${num(d.bd_dur, 1)} ${t.yrs}`) + k(t.cq, cqLetter(d.bd_cq), d.bd_hy != null ? `${t.hy}: ${num(d.bd_hy, 0)} % ${t.ofBd}` : '') + '</div>';
+  h += `<div class="meta">${t.mix}</div>` + ltBar(d, mixK, 'mix_', mixN);
+  if (d.mix_eq > 0.5 && d.cov_sec) h += `<div class="meta" style="margin-top:10px">${t.sec}</div>` + ltBar(d, LT_SEC, 'sec_', t.s);
+  if (d.mix_eq > 0.5 && d.cov_reg) h += `<div class="meta" style="margin-top:10px">${t.reg}</div>` + ltBar(d, LT_REG, 'reg_', t.r);
+  if (d.top && d.top.length) {
+    const mx = d.top[0][1];
+    h += `<div class="meta" style="margin-top:10px">${t.top}</div><table class="pft ltTop"><tbody>${d.top.slice(0, 10).map(([n, v], i) =>
+      `<tr><td class="l">${i + 1}. ${esc(n)}</td><td style="width:45%"><span class="ltbar" style="width:${Math.round(v / mx * 70)}%"></span> ${num(v, 2)}${pctSfx()}</td></tr>`).join('')}</tbody></table>`;
+  }
+  const dt = qLabel(qi);
+  return h + `<p class="note">${t.note(dt, d.cov_fund != null ? num(d.cov_fund, 0) + ' %' : '–')}</p>`;
 }
 /* Pozicijos istorija: svoris kiekvieno ketvirčio pabaigoje šiame fonde ir kitų valdytojų tos pačios grupės fonduose */
 function weightSeries(f, si) {
@@ -589,6 +639,12 @@ function peerRow(f, qi) {
   const r = { f, emUnk: L.emUnk, eq: L.b.eq || 0, bd: L.b.bd || 0, alt: L.b.alt || 0, cash: L.b.cash || 0, idx: L.idx, ter: L.ter, em: L.em, emW: L.emW, gold: L.gold, sfdr: L.sfdr, ytm: L.bw > 0.5 ? L.ytm : null, md: L.bw > 0.5 ? L.md : null };
   r.liq = r.cash + L.sb; r.eqX = r.liq < 95 ? r.eq / (100 - r.liq) * 100 : null;   // likvidumo rezervas ir strategija be jo (žr. REFORM)
   PG_REG.forEach(k => { r['r_' + k] = L.reg[k] || 0; });
+  const d = ltOf(f, qi);                                   // tikroji sudėtis pro fondus (Morningstar), jei tam ketvirčiui surinkta
+  if (d) {
+    Object.assign(r, { lt_eq: d.mix_eq, lt_top10: d.top10, lt_us: d.mix_eq ? d.reg_us : null, lt_em: d.mix_eq ? ltEm(d) : null, lt_tech: d.sec_technology, lt_fin: d.sec_financial,
+      lt_hc: d.sec_healthcare, lt_ind: d.sec_industrials, lt_dur: d.bd_dur, lt_cq: d.bd_cq, lt_hy: d.bd_hy });
+    (d.top || []).forEach(([n, v]) => { r['c_' + n] = v; });
+  }
   return r;
 }
 function renderPeers() {
@@ -629,10 +685,22 @@ function renderPeers() {
     [L ? 'Investavimo būdas ir kaina' : 'How it invests and what it costs', ['idx', 'ter', 'gold', 'sfdr']],
     [L ? 'Obligacijos' : 'Bonds', ['ytm', 'md']],
     [T().thReg, cols.slice(PG_COLS.length).map(([k]) => k)]];
-  const lab = k => k.startsWith('r_') ? T().reg[k.slice(2)] : T()[(PG_COLS.find(c => c[0] === k) || [])[1]] || k;
-  const unit = k => k === 'md' ? (L ? ' m.' : ' y') : '';
-  const fmtV = (k, v) => num(v, k === 'ter' || k === 'ytm' ? 2 : 1) + (k === 'ter' || k === 'ytm' ? pctSfx() : '');
-  const lowBest = k => k === 'ter';            // mažesnis – geriau (pigiau)
+  if (rows.some(r => r.lt_eq != null)) {                   // tikroji sudėtis pro fondus + didžiausios bendrovės (5 didžiausios kiekviename fonde)
+    const comp = [...new Set(rows.flatMap(r => Object.keys(r).filter(k => k.startsWith('c_')).sort((a, b) => r[b] - r[a]).slice(0, 5)))]
+      .sort((a, b) => rows.reduce((s, r) => s + (r[b] || 0), 0) - rows.reduce((s, r) => s + (r[a] || 0), 0));
+    SECT.push([L ? 'Tikroji sudėtis pro fondus (Morningstar)' : 'True exposure through funds (Morningstar)', ['lt_eq', 'lt_top10', 'lt_us', 'lt_em', 'lt_tech', 'lt_fin', 'lt_hc', 'lt_ind', 'lt_dur', 'lt_cq', 'lt_hy']],
+      [L ? 'Didžiausios bendrovės pro fondus, % portfelio' : 'Largest companies through funds, % of portfolio', comp]);
+  }
+  const LTL = L ? { lt_eq: 'Akcijos pro fondus', lt_top10: '10 didžiausių bendrovių', lt_us: 'JAV, % akcijų', lt_em: 'Besivyst. rinkos, % akcijų', lt_tech: 'Technologijos, % akcijų', lt_fin: 'Finansai, % akcijų',
+      lt_hc: 'Sveikatos apsauga, % akcijų', lt_ind: 'Pramonė, % akcijų', lt_dur: 'Visų obligacijų trukmė', lt_cq: 'Oblig. fondų kredito kokybė (1 = AAA, 4 = BBB)', lt_hy: 'Žemiau BBB, % oblig. fondų' }
+    : { lt_eq: 'Equities through funds', lt_top10: 'Top-10 companies', lt_us: 'US, % of equities', lt_em: 'Emerging, % of equities', lt_tech: 'Technology, % of equities', lt_fin: 'Financials, % of equities',
+      lt_hc: 'Healthcare, % of equities', lt_ind: 'Industrials, % of equities', lt_dur: 'All bonds’ duration', lt_cq: 'Bond funds’ credit quality (1 = AAA, 4 = BBB)', lt_hy: 'Below BBB, % of bond funds' };
+  Object.assign(DESC, L ? { lt_eq: 'Akcijos ETF ir fondų viduje + tiesiogiai turimos', lt_top10: '10 didžiausių bendrovių suma per visus ETF ir tiesiogiai', lt_dur: 'Tiesioginių obligacijų ir obligacijų fondų svertinė trukmė, metai', lt_cq: 'Obligacijų fondų vidutinė kredito kokybė: 1 = AAA, 2 = AA, 3 = A, 4 = BBB, 5 = BB', lt_hy: 'Obligacijų fondų, kurių vidutinis reitingas žemesnis nei BBB, dalis' }
+    : { lt_eq: 'Equities inside ETFs and funds + held directly', lt_top10: 'Sum of the 10 largest companies through all ETFs and directly', lt_dur: 'Weighted duration of direct bonds and bond funds, years', lt_cq: 'Bond funds’ average credit quality: 1 = AAA, 2 = AA, 3 = A, 4 = BBB, 5 = BB', lt_hy: 'Share of bond funds with average rating below BBB' });
+  const lab = k => k.startsWith('c_') ? k.slice(2) : LTL[k] ? LTL[k] : k.startsWith('r_') ? T().reg[k.slice(2)] : T()[(PG_COLS.find(c => c[0] === k) || [])[1]] || k;
+  const unit = k => k === 'md' || k === 'lt_dur' ? (L ? ' m.' : ' y') : '';
+  const fmtV = (k, v) => num(v, k === 'ter' || k === 'ytm' || k.startsWith('c_') ? 2 : 1) + (k === 'ter' || k === 'ytm' ? pctSfx() : '');
+  const lowBest = k => k === 'ter' || k === 'lt_cq';            // mažesnis – geriau (pigiau)
   const rowHTML = k => {
     const vs = rows.map(r => r[k]), ok = vs.filter(v => v != null), hi = ok.length ? Math.max(...ok) : 0, lo = ok.length ? Math.min(...ok) : 0;
     if (!ok.length || hi === 0 && k !== 'ter') return '';

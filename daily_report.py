@@ -205,6 +205,10 @@ def build() -> tuple:
         if am["n"]:
             body += ["", f"⚠ {am['n']} portfelių fondai ({am['q']}, {am['eur'] / 1e6:.1f} mln. €) be požymių (regionas, TER, SFDR)."
                      " Parašykite Claude: „surink portfelių požymius“."]
+        lt = build_site.ROOT / "data" / "lookthrough.csv"     # tikroji sudėtis pro fondus (Morningstar, MORNINGSTAR.md)
+        if am["q"] and (not lt.exists() or f"\n{am['q']}," not in lt.read_text(encoding="utf-8")):
+            body += ["", f"⚠ {am['q']} ketvirčio „tikroji sudėtis pro fondus“ dar neapskaičiuota."
+                     " Parašykite Claude: „atnaujink Morningstar portfelių analizę“."]
     except Exception:  # noqa: BLE001
         pass
     body += source_lines()

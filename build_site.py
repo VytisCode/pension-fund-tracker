@@ -727,7 +727,17 @@ def build_portfolios(ver: dict) -> None:
     for f in sorted(funds.values(), key=lambda f: (f["pl"], f["p"], f["c"])):
         label, group = pf_fund_label(f["c"], f["p"], f["pl"], f["name"])
         out.append({"c": f["c"], "n": label, "full": f["name"], "p": f["p"], "pl": f["pl"], "g": group, "r": f["r"]})
-    payload = {"quarters": quarters, "secs": secs, "funds": out, "bm": bm}
+    # tikroji sudėtis „pro fondus“ (tools/ms_lookthrough.py, Morningstar – kas ketvirtį Claude sesijoje): lt[ketvirtis][fondas] = {rodiklis: reikšmė, top: [[bendrovė, %]]}
+    lt = {}
+    lt_path = ROOT / "data" / "lookthrough.csv"
+    if lt_path.exists():
+        for r in csv.DictReader(lt_path.open(encoding="utf-8", newline="")):
+            d = lt.setdefault(r["date"], {}).setdefault(r["fund_code"], {})
+            if r["metric"].startswith("top|"):
+                d.setdefault("top", []).append([r["metric"][4:], float(r["value"])])
+            else:
+                d[r["metric"]] = float(r["value"])
+    payload = {"quarters": quarters, "secs": secs, "funds": out, "bm": bm, "lt": lt}
     data_js = "const PF=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_pf.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "portfolios.html", DOCS / "portfolios.html")
