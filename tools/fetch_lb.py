@@ -207,6 +207,7 @@ DATED = [("fee2", B, "pf-ii-mokesciai-{iso}", ".xls"), ("fee3", FILES, "PF_III_m
          (None, FILES, "PF_lyginamieji_{iso}", ".xlsx")]
 DATED_SFX = ("", "_1", "_", "_2")
 DATED_DAYS = 10
+KNOWN = ["PF_lyginamieji_2026-01-21_1.xlsx", "IRR_2026-06-30.xlsx", "20181230_irr_galutinis.xlsx"]
 
 
 def dated(state: dict):
@@ -244,6 +245,9 @@ def dated(state: dict):
                         other[name] = B + name
                 except Exception:
                     pass
+    for name in KNOWN:                  # savininko atsiųstos nuorodos (2026-11-06) – jei dar neturime archyve
+        if not (ARCH / name).exists():
+            other[name] = B + name
     state["dated"] = now.strftime("%Y-%m-%d")
     return found, other
 
