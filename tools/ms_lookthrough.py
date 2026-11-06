@@ -204,9 +204,10 @@ def main() -> None:
                 out += [("sec_" + k, round(sec[k] / eq_sec * 100, 2)) for k in SECTORS]
             if eq_reg:
                 out += [("reg_" + k, round(reg[k] / eq_reg * 100, 2)) for k in REGIONS]
-            top = sorted(comp.items(), key=lambda kv: -kv[1])
-            out += [("top10", pct(sum(x for _, x in top[:10]))), ("cov_top", round(min(eq_named, eq_all) / eq_all * 100, 1))]
-            out += [("top|" + k, pct(x)) for k, x in top[:50] if x > 0]
+            top = sorted(comp.items(), key=lambda kv: -kv[1]) if hold else []   # ankstesni ketvirčiai – ETF sudėčių nėra (Morningstar duoda tik naujausias)
+            if top:
+                out += [("top10", pct(sum(x for _, x in top[:10]))), ("cov_top", round(min(eq_named, eq_all) / eq_all * 100, 1))]
+                out += [("top|" + k, pct(x)) for k, x in top[:50] if x > 0]
         if bd_all:
             out += [("bd_dur", round(bd_dur_s / bd_dur_w, 2) if bd_dur_w else ""), ("cov_dur", round(bd_dur_w / bd_all * 100, 1)),
                     ("bd_direct", round(bd_direct / bd_all * 100, 1))]
@@ -223,7 +224,7 @@ def main() -> None:
     with OUT.open("w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["date", "fund_code", "metric", "value"])
-        w.writerows(sorted(old) + rows)
+        w.writerows(sorted(old + [[str(x) for x in r] for r in rows], key=lambda r: (r[0], r[1])))
     print(f"{qd}: {int(stats['funds'])} pensijų fondai, fondų/ETF vertės su Morningstar profiliu "
           f"{stats['fund_cov'] / stats['fund_v'] * 100:.1f} % → {OUT.relative_to(ROOT)} ({len(rows)} eilučių)")
 

@@ -523,7 +523,7 @@ function ltBlock(f, qi) {
     h += `<div class="meta" style="margin-top:10px">${t.top} <span class="pfsub">· ${t.coHint}</span></div>` + tr(d.top.slice(0, 10), 0);
     if (d.top.length > 10) h += `<details class="ltMore"><summary>${t.more(d.top.length)}</summary>` + tr(d.top.slice(10), 10) + `<p class="note">${t.moreNote}</p></details>`;
   }
-  h += '<div id="ltCo"></div>';
+  h += '<div id="ltCo"></div>' + ltHist(f, qi);
   const dt = qLabel(qi);
   return h + `<p class="note">${t.note(dt, d.cov_fund != null ? num(d.cov_fund, 0) + ' %' : '–')}</p>`
     + `<details class="ltMore ltCite"><summary>${t.citeBtn}</summary><p class="meta" style="user-select:all">${esc(t.cite(dt))}</p>`
@@ -560,6 +560,22 @@ document.addEventListener('click', e => {
   tr.insertAdjacentHTML('afterend', `<tr class="etfRow"><td></td><td colspan="${tr.cells.length - 1}"><div class="etfBox">${etfHTML(d)}</div></td></tr>`);
   b.textContent = b.textContent.replace('▾', '▴');
 }, true);
+/* Kaip keitėsi tikroji sudėtis: paskutiniai 5 ketvirčiai + pokytis per metus (Morningstar profiliai turi istoriją, sudėtys – ne) */
+function ltHist(f, qi) {
+  const qs = []; for (let i = qi; i >= 0 && qs.length < 5; i--) if (ltOf(f, i)) qs.unshift(i);
+  if (qs.length < 2) return '';
+  const L = lang === 'lt', t = LTT(), yr = qs.length >= 5 ? qs[0] : null;
+  const rows = [[t.eq, 'mix_eq'], [t.bd, 'mix_bd'], [t.s.technology + (L ? ', % akcijų' : ', % of equities'), 'sec_technology'],
+    [t.s.financial + (L ? ', % akcijų' : ', % of equities'), 'sec_financial'], [t.r.us + (L ? ', % akcijų' : ', % of equities'), 'reg_us'],
+    [t.em + (L ? ', % akcijų' : ', % of equities'), 'em'], [t.dur + (L ? ', m.' : ', yrs'), 'bd_dur']];
+  const val = (i, k) => { const d = ltOf(f, i); if (!d) return null; return k === 'em' ? (d.mix_eq ? ltEm(d) : null) : d[k] ?? null; };
+  const fmt = (v, k) => v == null ? '–' : num(v, 1) + (k === 'bd_dur' ? '' : pctSfx());
+  const body = rows.filter(([, k]) => qs.some(i => val(i, k) != null && (k !== 'mix_bd' || val(i, k) > 0.5))).map(([n, k]) => {
+    const a = yr != null ? val(yr, k) : null, b = val(qi, k), dd = a != null && b != null ? b - a : null;
+    return `<tr><td class="l">${esc(n)}</td>${qs.map(i => `<td>${fmt(val(i, k), k)}</td>`).join('')}<td class="${dd > 0.05 ? 'up' : dd < -0.05 ? 'down' : ''}">${dd == null ? '–' : pp(dd) + (k === 'bd_dur' ? '' : ' p. p.')}</td></tr>`;
+  }).join('');
+  return `<div class="meta" style="margin-top:12px">${L ? 'Kaip keitėsi tikroji sudėtis' : 'How the true exposure changed'}</div><table class="pft ltTop"><thead><tr><th class="l"></th>${qs.map(i => `<th>${qShort(i)}</th>`).join('')}<th>${L ? 'Per metus' : '1-year change'}</th></tr></thead><tbody>${body}</tbody></table>`;
+}
 /* Paspaudus bendrovę „Didžiausios bendrovės pro fondus“ – jos dalis visuose tos pačios grupės fonduose (ir ketvirčių pokytis, kai bus > 1 ketv.) */
 let ltCur = null;
 function ltCompany(co) {

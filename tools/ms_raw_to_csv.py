@@ -38,11 +38,17 @@ def main() -> None:
     proxy = {r["ms_id"]: r for r in csv.DictReader((src / "proxy.csv").open(encoding="utf-8"))} if (src / "proxy.csv").exists() else {}
 
     vals = {}                                  # ms_id → datapoint → (data, reikšmė)
+    first = {}                                 # ankstyviausia reikšmė – akcijų sektoriui, jei iki --date nieko nėra (sektorius beveik nekinta)
     for fn in glob.glob(str(src / "data-*.json")):
         for mid, r in json.load(open(fn, encoding="utf-8"))["result"].items():
             row = vals.setdefault(mid, {})
             for v in r.get("values", []):
                 pts = v.get("timeSeriesData") or ([{"date": a.date, "value": v["value"]}] if "value" in v else [])
+                if pts:
+                    e = min(pts, key=lambda p: p["date"])
+                    fr = first.setdefault(mid, {})
+                    if v["datapointId"] not in fr or e["date"] < fr[v["datapointId"]][0]:
+                        fr[v["datapointId"]] = (e["date"], e["value"])
                 pts = [p for p in pts if p["date"] <= a.date]
                 if pts:
                     last = max(pts, key=lambda p: p["date"])
@@ -80,7 +86,7 @@ def main() -> None:
         for r in ids:
             if r["kind"] != "stock":
                 continue
-            v = {k: float(x[1]) for k, x in vals.get(r["ms_id"], {}).items() if k in SEC}
+            v = {k: float(x[1]) for k, x in (vals.get(r["ms_id"]) or first.get(r["ms_id"], {})).items() if k in SEC}
             top = max(v, key=v.get) if v and max(v.values()) > 50 else None
             w.writerow([r["isin"], r["ms_id"], SEC[top] if top else "", r.get("name", "")])
     print(f"{out}: profiliai {sum(1 for r in ids if r['kind'] == 'fund')}, sudėtys {len(hold)}, akcijos {sum(1 for r in ids if r['kind'] == 'stock')}")

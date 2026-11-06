@@ -50,4 +50,7 @@ Jį automatiškai rašo `tools/ms_lookthrough.py`.
   aukso fondų ne akcijų dalis – „Kita“.
 - Kredito kokybė – tik obligacijų fondų vidutinė; tiesioginių obligacijų reitingų neturime. Trukmė – tiesioginių
   (`bonds.py`) ir fondų (Morningstar) svertinė.
-- Ankstesni ketvirčiai: profiliai turi istoriją (galima atgaline data), sudėtys – tik naujausios.
+- Ankstesni ketvirčiai: profiliai turi istoriją (galima atgaline data), sudėtys – tik naujausios. 2026-11-06 atgal užpildyta
+  2024-09-30 … 2026-06-30 (tik profiliai, be bendrovių): žali failai `/mnt/project-files/morningstar/hist/src/` (vienos dienos langas –
+  `start_date = end_date = ketvirčio pabaiga`, po ~50 fondų į užklausą; ilgesnis langas grąžina dienines eilutes ir užklausa lūžta).
+  `ms_lookthrough.py` be sudėčių nerašo `top*` rodiklių.

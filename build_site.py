@@ -763,8 +763,8 @@ def build_portfolios(ver: dict) -> None:
     ep = ROOT / "data" / "etf_profiles.csv"
     if ep.exists():
         for r in csv.DictReader(ep.open(encoding="utf-8", newline="")):
-            d = {k: (float(v) if k not in ("as_of", "hold_as_of", "proxy", "credit_quality", "top10") else v) for k, v in r.items()
-                 if v and k not in ("date", "isin")}
+            d = {k: (round(float(v), 1) if k not in ("as_of", "hold_as_of", "proxy", "credit_quality", "top10") else v) for k, v in r.items()
+                 if v and k not in ("date", "isin") and (k in ("equity", "bond", "cash") or not k[:4] in ("sec_", "reg_") or float(v) >= 0.05)}
             d["top"] = json.loads(d.pop("top10", "[]") or "[]")
             etf.setdefault(r["date"], {})[r["isin"]] = d
     payload = {"quarters": quarters, "secs": secs, "funds": out, "bm": bm, "lt": lt, "etf": etf}
