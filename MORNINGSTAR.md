@@ -12,6 +12,11 @@ kategorijų ar žvaigždučių svetainėje nerodome.
 
 ## Žingsniai
 
+0. **Per 10 dienų po ketvirčio pabaigos** (vakarinis laiškas primena: „surink ETF sudėtis ketvirčio pabaigai“): Morningstar duoda
+   tik naujausias sudėtis, todėl 4 žingsnį atlikti iškart, praėjusio ketvirčio ETF sąrašu (`src/ids.csv`), ir išsaugoti į naujo
+   ketvirčio `src/holdings-*.json`. Kai LB portfeliai pasirodys (~1–2 mėn.), tik naujiems ETF sudėtis rinkti tada.
+   2026-09-30 sudėtys surinktos 2026-11-04 (dauguma ETF – lapkričio 3–5 d.), t. y. ~5 sav. vėliau nei portfeliai.
+
 1. **Pozicijų sąrašas** naujam ketvirčiui `Q` (pvz. 2026-12-31): fondai / ETF su `kis_type` 1, 3, 4 ir visos tiesioginės akcijos
    iš `data/portfolios.csv`. Ankstesnio ketvirčio `src/ids.csv` jau turi daugumos ISIN → Morningstar ID; ieškoti tik naujų.
 2. **ID:** `morningstar-id-lookup-tool` po ~30 ISIN; fondams imti pirmą `F0…` ID, akcijoms – pirmą `0P…`.

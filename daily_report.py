@@ -209,6 +209,9 @@ def build() -> tuple:
         if am["q"] and (not lt.exists() or f"\n{am['q']}," not in lt.read_text(encoding="utf-8")):
             body += ["", f"⚠ {am['q']} ketvirčio „tikroji sudėtis pro fondus“ dar neapskaičiuota."
                      " Parašykite Claude: „atnaujink Morningstar portfelių analizę“."]
+        if int(today[5:7]) in (1, 4, 7, 10) and int(today[8:10]) <= 10:   # ETF sudėtys – tik naujausios, todėl renkamos iškart po ketvirčio pabaigos
+            body += ["", "ℹ Ketvirtis ką tik baigėsi. Parašykite Claude: „surink ETF sudėtis ketvirčio pabaigai“"
+                     " (Morningstar, kad didžiausios bendrovės atitiktų LB portfelių datą)."]
     except Exception:  # noqa: BLE001
         pass
     body += source_lines()
