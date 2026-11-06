@@ -9,6 +9,9 @@ regionus, didžiausias bendroves ir obligacijų riziką, reikia ETF vidaus.
 **Licencija:** žali Morningstar duomenys laikomi tik PRIVAČIAME projekto aplanke `/mnt/project-files/morningstar/<ketvirtis>/`.
 Viešoje repozitorijoje – tik mūsų apskaičiuoti suvestiniai rodikliai (`data/lookthrough.csv`). Morningstar reitingų,
 kategorijų ar žvaigždučių svetainėje nerodome.
+Išimtis (savininkas patvirtino 2026-11-06, kad prieiga leidžia viešinti): kiekvieno ETF / fondo profilis – `data/etf_profiles.csv`
+(struktūra, sektoriai, regionai, trukmė, kredito kokybė, 10 didžiausių pozicijų), rodomas „Fondo portfelis“ → „Fondo vidus ▾“ su „© Morningstar, Inc.“.
+Jį automatiškai rašo `tools/ms_lookthrough.py`.
 
 ## Žingsniai
 

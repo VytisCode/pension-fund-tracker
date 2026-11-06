@@ -758,7 +758,16 @@ def build_portfolios(ver: dict) -> None:
                 d.setdefault("top", []).append([r["metric"][4:], float(r["value"])])
             else:
                 d[r["metric"]] = float(r["value"])
-    payload = {"quarters": quarters, "secs": secs, "funds": out, "bm": bm, "lt": lt}
+    # kiekvieno ETF / fondo profilis (Morningstar, data/etf_profiles.csv): etf[ketvirtis][isin] = {rodiklis: reikšmė, top: [[pavadinimas, %]]}
+    etf = {}
+    ep = ROOT / "data" / "etf_profiles.csv"
+    if ep.exists():
+        for r in csv.DictReader(ep.open(encoding="utf-8", newline="")):
+            d = {k: (float(v) if k not in ("as_of", "hold_as_of", "proxy", "credit_quality", "top10") else v) for k, v in r.items()
+                 if v and k not in ("date", "isin")}
+            d["top"] = json.loads(d.pop("top10", "[]") or "[]")
+            etf.setdefault(r["date"], {})[r["isin"]] = d
+    payload = {"quarters": quarters, "secs": secs, "funds": out, "bm": bm, "lt": lt, "etf": etf}
     data_js = "const PF=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_pf.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "portfolios.html", DOCS / "portfolios.html")

@@ -26,6 +26,7 @@ Rezultatas:  data/lookthrough.csv (date, fund_code, metric, value) – to ketvir
 """
 import argparse
 import csv
+import json
 import re
 import sys
 from collections import defaultdict
@@ -215,6 +216,7 @@ def main() -> None:
         rows += [(qd, code, m, v) for m, v in out if v != ""]
         stats["funds"] += 1; stats["fund_v"] += fund_v; stats["fund_cov"] += fund_cov
 
+    etf_profiles(qd, prof, hold)
     old = []
     if OUT.exists():
         old = [r for r in csv.reader(OUT.open(encoding="utf-8")) if r and r[0] != "date" and r[0] != qd]
@@ -224,6 +226,35 @@ def main() -> None:
         w.writerows(sorted(old) + rows)
     print(f"{qd}: {int(stats['funds'])} pensijų fondai, fondų/ETF vertės su Morningstar profiliu "
           f"{stats['fund_cov'] / stats['fund_v'] * 100:.1f} % → {OUT.relative_to(ROOT)} ({len(rows)} eilučių)")
+
+
+ETF_OUT = ROOT / "data" / "etf_profiles.csv"
+
+
+def etf_profiles(qd: str, prof: dict, hold: dict) -> None:
+    """Kiekvieno ETF / fondo profilis (savininkas 2026-11-06 patvirtino, kad Morningstar prieiga leidžia viešinti) →
+    data/etf_profiles.csv: struktūra, sektoriai, regionai, trukmė, kredito kokybė, 10 didžiausių pozicijų. Perrašomas tik ketvirtis qd."""
+    name_of = {r["ms_id"]: r.get("name", "") for r in prof.values()}
+    cols = ["equity", "bond", "cash"] + ["sec_" + k for k in SECTORS] + ["reg_" + k for k in REGIONS] + ["duration", "credit_quality"]
+    rows = []
+    for isin, pr in sorted(prof.items()):
+        if f(pr.get("equity")) is None and not hold.get(pr.get("holdings_from") or pr["ms_id"]):
+            continue
+        hid = pr.get("holdings_from") or pr["ms_id"]
+        hs = sorted(hold.get(hid, []), key=lambda h: -(f(h["weight"]) or 0))[:10]
+        top = json.dumps([[h["holding_name"], round(f(h["weight"]) or 0, 2)] for h in hs], ensure_ascii=False)
+        px = "|".join(x for x in (name_of.get(pr.get("profile_from"), "") if pr.get("profile_from") else "",
+                                  name_of.get(pr.get("holdings_from"), "") if pr.get("holdings_from") else "") if x)
+        rows.append([qd, isin, pr.get("as_of", "")[:10], (hs[0]["as_of"][:10] if hs else ""), px]
+                    + [("%.2f" % f(pr.get(c))) if f(pr.get(c)) is not None else (pr.get(c) or "") for c in cols] + [top])
+    old = []
+    if ETF_OUT.exists():
+        old = [r for r in csv.reader(ETF_OUT.open(encoding="utf-8")) if r and r[0] != "date" and r[0] != qd]
+    with ETF_OUT.open("w", encoding="utf-8", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["date", "isin", "as_of", "hold_as_of", "proxy"] + cols + ["top10"])
+        w.writerows(sorted(old) + rows)
+    print(f"{qd}: ETF / fondų profiliai {len(rows)} → {ETF_OUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

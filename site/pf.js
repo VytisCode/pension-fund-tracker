@@ -90,6 +90,7 @@ const fundBy = Object.fromEntries(FUNDS.map(f => [f.c, f]));
 const posLabel = s => s.fn ? s.fn : s.co && s.isin ? `${s.name} · ${s.isin}` : s.name;
 const posSub = s => `${s.co && s.fn ? s.name + ' · ' : ''}${typeLabel(s)} · ${s.cty || '–'}${s.isin && (!s.co || s.fn) ? ' · ' + s.isin : ''}`;
 const typeLabel = s => { const l = s.alt ? T().alts[s.alt] : s.t === 'f' && s.kis ? (T().kis[s.kis] || T().types.f) : T().types[s.t]; return l[0].toUpperCase() + l.slice(1); };
+const fundNameP = f => { let n = fundName(f); if (/apriboto/.test(f.full || '') && !/apriboto/.test(n)) n += lang === 'lt' ? ' (apriboto nutraukimo)' : ' (restricted withdrawal)'; return n.toLowerCase().includes(String(f.p).toLowerCase()) ? n : `${f.p} ${n}`; };   // su valdytoju, kai pavadinime jo nėra (III pakopa)
 const fundName = f => f.g === 'turto' ? f.n.replace('turto išsaugojimo', lang === 'lt' ? 'turto išsaugojimo' : 'capital preservation') : f.n;
 const sw = m => `<span class="sw" style="background:${colorOf(m)}"></span>`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -222,7 +223,12 @@ function attrChips(s, qi) {
   if (a.sfdr) c.push('SFDR ' + a.sfdr);
   if (a.ter != null) c.push('TER ' + num(a.ter, 2) + pctSfx());
   if (a.hdg === 'yes') c.push(T().hedged);
-  return `<span class="tags">${c.map(x => `<span>${esc(x)}</span>`).join('')}</span>`;
+  // viešas nemokamas fondo profilis (sektoriai, šalys, didžiausios pozicijos) – Morningstar žalių duomenų patys neviešiname
+  const ep = etfOf(s, qi);
+  const urls = (a.src || '').split('|').map(x => x.trim()).filter(x => /^https?:/.test(x)), isEtf = s.isin && /\bET[FC]\b/i.test(s.name || '');
+  const prof = isEtf ? `https://www.justetf.com/en/etf-profile.html?isin=${encodeURIComponent(s.isin)}` : urls.find(x => /justetf/.test(x)) || urls[0] || '';
+  const pl = /justetf/.test(prof) ? (lang === 'lt' ? 'Fondo sudėtis' : 'Holdings') : (lang === 'lt' ? 'Fondo informacija' : 'Fund info');
+  return `<span class="tags">${c.map(x => `<span>${esc(x)}</span>`).join('')}${prof ? `<a class="tagLink" href="${esc(prof)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${lang === 'lt' ? 'Viešas fondo puslapis (sektoriai, šalys, didžiausios pozicijos)' : 'Public fund page (sectors, countries, top holdings)'}">${pl} ↗</a>` : ''}${ep ? `<button type="button" class="tagLink etfBtn" data-isin="${esc(s.isin)}" data-qi="${qi}">${lang === 'lt' ? 'Fondo vidus' : 'Inside the fund'} ▾</button>` : ''}</span>`;
 }
 
 /* Būsena (išsaugoma naršyklėje) */
@@ -521,6 +527,37 @@ function ltBlock(f, qi) {
     + `<details class="ltMore ltCite"><summary>${t.citeBtn}</summary><p class="meta" style="user-select:all">${esc(t.cite(dt))}</p>`
     + `<button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.previousElementSibling.textContent).catch(()=>{});this.textContent='${t.copied}'">${t.copy}</button></details>`;
 }
+/* Pozicijos (ETF / fondo) vidus – Morningstar profilis (savininkas patvirtino viešinimą 2026-11-06) */
+function etfOf(s, qi) {
+  if (!s || !s.isin || !PF.etf) return null;
+  for (let i = qi; i >= 0; i--) { const d = PF.etf[Q[i]]; if (d && d[s.isin]) return d[s.isin]; }
+  return null;
+}
+function etfHTML(d) {
+  const t = LTT(), L = lang === 'lt', p1 = v => v == null ? '–' : num(v, 1) + pctSfx();
+  const k = (l, v) => `<div class="kpi"><span>${l}</span><b>${v}</b></div>`;
+  let h = `<div class="kpis lkk">${k(t.eq, p1(d.equity))}${k(t.bd, p1(d.bond))}${k(L ? 'Pinigai' : 'Cash', p1(d.cash))}`
+    + (d.duration != null ? k(t.dur, `${num(d.duration, 1)} ${t.yrs}`) : '') + (d.credit_quality ? k(t.cq, esc(d.credit_quality)) : '') + '</div>';
+  const has = pre => Object.keys(d).some(x => x.startsWith(pre) && d[x] > 0.05);
+  if ((d.equity || 0) > 5 && has('sec_')) h += `<div class="meta">${t.sec}</div>` + ltBar(d, LT_SEC, 'sec_', t.s);
+  if ((d.equity || 0) > 5 && has('reg_')) h += `<div class="meta" style="margin-top:8px">${t.reg}</div>` + ltBar(d, LT_REG, 'reg_', t.r);
+  if (d.top && d.top.length) {
+    const mx = d.top[0][1] || 1;
+    h += `<div class="meta" style="margin-top:8px">${L ? '10 didžiausių pozicijų, % fondo' : 'Top-10 holdings, % of fund'}</div><table class="pft ltTop"><tbody>`
+      + d.top.map(([n, v], i) => `<tr><td class="l">${i + 1}. ${esc(n)}</td><td style="width:40%"><span class="ltbar" style="width:${Math.max(1, Math.round(v / mx * 70))}%"></span> ${num(v, 2)}${pctSfx()}</td></tr>`).join('') + '</tbody></table>';
+  }
+  const px = d.proxy ? (L ? ` Sintetinis arba be savų duomenų – rodomas analogas: ${d.proxy}.` : ` Synthetic or no own data – shown via a proxy: ${d.proxy}.`) : '';
+  return h + `<p class="pfsub" style="font-size:12px;margin:6px 0 0">${L ? 'Šaltinis' : 'Source'}: © Morningstar, Inc. ${L ? 'Struktūra' : 'Breakdown'} ${d.as_of || '–'}${d.hold_as_of ? (L ? ', pozicijos ' : ', holdings ') + d.hold_as_of : ''}.${px}</p>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.etfBtn'); if (!b) return;
+  e.stopPropagation(); e.preventDefault();
+  const tr = b.closest('tr'), nx = tr.nextElementSibling;
+  if (nx && nx.classList.contains('etfRow')) { nx.remove(); b.textContent = b.textContent.replace('▴', '▾'); return; }
+  const d = etfOf({ isin: b.dataset.isin }, +b.dataset.qi); if (!d) return;
+  tr.insertAdjacentHTML('afterend', `<tr class="etfRow"><td></td><td colspan="${tr.cells.length - 1}"><div class="etfBox">${etfHTML(d)}</div></td></tr>`);
+  b.textContent = b.textContent.replace('▾', '▴');
+}, true);
 /* Paspaudus bendrovę „Didžiausios bendrovės pro fondus“ – jos dalis visuose tos pačios grupės fonduose (ir ketvirčių pokytis, kai bus > 1 ketv.) */
 let ltCur = null;
 function ltCompany(co) {
@@ -536,7 +573,7 @@ function ltCompany(co) {
     const d = b.v - a.v; return `<td class="${d > 0 ? 'up' : d < 0 ? 'down' : ''}">${pp(d)} p. p.</td>`; };
   box.innerHTML = `<div class="ltCoBox"><div class="meta"><b>${esc(co)}</b> – ${t.coPeers} <button type="button" class="btn" style="float:right;padding:0 8px" onclick="document.getElementById('ltCo').innerHTML=''">×</button></div>`
     + `<table class="pft ltTop"><thead><tr><th class="l">${t.coFund}</th>${qs.map(i => `<th>${qLabel(i)}</th>`).join('')}${qs.length > 1 ? `<th>${t.coChg}</th>` : ''}</tr></thead><tbody>`
-    + rows.map(r => `<tr${r.g === f ? ' style="font-weight:700"' : ''}><td class="l">${esc(fundName(r.g))}</td>${r.c.map(x => `<td>${cell(x)}</td>`).join('')}${chg(r)}</tr>`).join('')
+    + rows.map(r => `<tr${r.g === f ? ' style="font-weight:700"' : ''}><td class="l">${esc(fundNameP(r.g))}</td>${r.c.map(x => `<td>${cell(x)}</td>`).join('')}${chg(r)}</tr>`).join('')
     + `</tbody></table><p class="note">${t.coNote(qs.length)}</p></div>`;
   box.scrollIntoView({ block: 'nearest' });
 }
