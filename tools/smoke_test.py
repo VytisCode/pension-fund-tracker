@@ -29,7 +29,7 @@ CHECKS = {
     "managers.html": [("#mgT tbody tr", 5)],
     "review.html": [],
     "performance.html": [("#tRet tbody tr", 8), ("#tOv tbody tr", 5)],
-    "performance3.html": [("#tSum tbody tr", 3)],
+    "performance3.html": [("#tSum tbody tr", 3), ("#tRet tbody tr", 3)],
     "pillar3.html": [("#all tbody tr", 10)],
     "overview.html": [],
     "manager.html": [],
@@ -42,6 +42,7 @@ CHECKS = {
     "baltic_lv.html": [("#tSum tbody tr", 3), ("#tRet tbody tr", 3)],
     "baltic_ee3.html": [], "baltic_lv3.html": [], "baltic_lt.html": [], "baltic_lt3.html": [],
     "ops.html": [],
+    "how.html": [(".nd", 25)],
     "apie.html": [],
 }
 

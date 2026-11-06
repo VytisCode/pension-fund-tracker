@@ -352,15 +352,15 @@ PRESET_IDS.forEach(id => {
 function sync() { pe.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === period)); labelPeriods(); }
 
 function renderAllParts() {
-  document.getElementById('sub').textContent = `${T().navPillar3} · ${T().dataUntil} ${iso(LATEST)} · ${T().updated} ${DATA.generated}`;
+  { const sb = document.getElementById('sub'); sb.textContent = ''; sb.hidden = true; }   // šviežumas – jau antraštėje (auditas 2026-11-06: buvo dvi eilutės)
   document.getElementById('foot').textContent = T().foot;
   renderCards(); renderAll();   // KPI eilutė nerodoma – kolegoms triukšmas
-  document.getElementById('rddTitle').textContent = T().rddTitle;
-  RDD = runupDrawdown(document.getElementById('rdd'), DATA.groups.filter(g => g.funds.length).map(g => ({ id: g.id, label: T().cat[g.id], funds: g.funds })), 'p3', 'equity');
+  // „Kilimas ir kritimas“ – tas pats grafikas kaip „Rizika“ skirtuke (performance3), todėl čia nebekartojamas (auditas 2026-11-06)
   const L = lang === 'lt';
-  addSubnav([['groups', L ? 'Kategorijos' : 'Categories'], ['allTitle', L ? 'Visi fondai – rodikliai' : 'All funds – key figures'], ['rddTitle', L ? 'Kilimas ir kritimas' : 'Run-up and drawdown']].map(([id, label]) => ({ id, label })));
+  addSubnav([['groups', L ? 'Kategorijų grafikai' : 'Category charts'], ['allTitle', L ? 'Visi fondai – rodikliai' : 'All funds – key figures']].map(([id, label]) => ({ id, label })));
 }
 let RDD = null;
+if (/(^|[#&])tab=rdd\b/.test(location.hash)) location.replace('performance3.html#tab=risk');   // senos nuorodos
 renderHeader('pillar3', () => { sync(); renderAllParts(); });
 sync(); renderAllParts();
 let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { cards.forEach(c => paintCard(c, c.hc.mr)); RDD && RDD.paint(); }, 120); });

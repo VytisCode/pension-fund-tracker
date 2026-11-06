@@ -184,7 +184,8 @@ const PERIOD_IDS = ['1d', '1w', '1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'
 const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 // amžiaus grupių tvarka visur vienoda: turto išsaugojimo, 1961–1967 … 2003–2009 (auditas #32)
-DATA.groups.sort((a, b) => (a.id === 'turto' ? '0' : a.id).localeCompare(b.id === 'turto' ? '0' : b.id));
+{ const R3 = { bond: '0', mixed: '1', equity: '2' };   // III pakopa – pagal riziką (obligacijų, mišraus, akcijų), kaip „Kategorijų grafikuose“
+  DATA.groups.sort((a, b) => (a.id === 'turto' ? '0' : R3[a.id] || a.id).localeCompare(b.id === 'turto' ? '0' : R3[b.id] || b.id)); }
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[DATA.groups.length - 1].id, provs: new Set(DATA.providers.map(p => p.id)),
   hmGroup: DATA.groups[DATA.groups.length - 1].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false, idx: new Set(['MSCI_ACWI', 'SP500']) };
 const $ = id => document.getElementById(id);
@@ -373,7 +374,7 @@ const marketProvs = () => MK_ON ? MK.reps : IS3 ? DATA.providers : MARKET_ORDER.
    todėl „Visos rinkos“ lentelėse stulpelis = valdytojas, langelis = jo didžiausias (pagal grynuosius aktyvus) veikiantis fondas toje grupėje.
    Lentelių kodas tas pats: kol jos piešiamos, DATA.groups laikinai pakeičiamos valdytojų vaizdu (withMk). */
 let MK = null, MK_ON = false;
-const MKT = PX ? !(PX.c === 'LT' && PX.pl === 'III') : !IS3;   // ar rodomas „Visos rinkos“ skirtukas
+const MKT = true;   // „Visa rinka“ – visur (2026-11-06: ir Lietuvos III pakopai, valdytojų vaizdu kaip LV/EE)
 function mkBuild() {
   const last = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1])));
   const brandOf = id => DATA.providers.find(p => p.id === id), first = {}, reps = [];
@@ -1496,11 +1497,10 @@ function syncAll() {
   syncCalSelects();
   $('btnEvents').setAttribute('aria-pressed', P.events);
   $('printMeta').textContent = `${T().siteTitle} · ${groupName(P.group)} · ${periodText()} · ${T().updated} ${DATA.generated}`;
-  renderSummary(); if (!IS3 || (PX && MKT)) renderMarket(); renderFunds(); fitSticky();
+  renderSummary(); renderMarket(); renderFunds(); fitSticky();
 }
 buildControls(); syncChips();
-if (IS3) {   // III pakopa: valdytojų lentelių ir Sharpe matricos (grupės × valdytojai) nėra – Sharpe yra „Papildomuose rodikliuose“
-  const sm = $('hMarket').closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; }
+if (IS3) {   // III pakopa: Sharpe matricos (grupės × valdytojai) nėra – Sharpe yra „Papildomuose rodikliuose“; „Visa rinka“ – valdytojų vaizdu (žr. žemiau)
   [$('hRisk'), $('c_riskMap'), $('riskMap') && $('riskMap').closest('.card')].forEach(e => { if (e) e.hidden = true; });
   addStrings({ thFund: 'Fund' }, { thFund: 'Fondas' });
 }
@@ -1511,7 +1511,14 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
     const fix = x => typeof x === 'string' ? x.replace(/amžiaus (grup)/g, '$1').replace(/Amžiaus grup/g, 'Grup').replace(/\bage (group)/g, '$1').replace(/\bAge group/g, 'Group') : x;
     ['lt', 'en'].forEach(l => Object.keys(I18N[l]).forEach(k => { const v = I18N[l][k]; I18N[l][k] = typeof v === 'function' ? (...a) => fix(v(...a)) : fix(v); }));
   }
-  if (PX.c !== 'LT') {                                  // „Visa rinka“: valdytojai × grupės (didžiausias valdytojo fondas grupėje)
+}
+if (IS3) {                                              // „Visa rinka“: valdytojai × grupės (LV/EE ir Lietuvos III pakopa – valdytojas grupėje turi kelis fondus)
+  if (!PX || PX.c === 'LT') DATA.providers.forEach(p => { p.m = p.m || labelOfMgr(p.brand); });   // Lietuvos III pakopa: stulpelis – valdytojas
+  if (!PX || PX.c === 'LT') {                          // III pakopos grupės – kategorijos, ne amžiaus grupės
+    const fix = x => typeof x === 'string' ? x.replace(/amžiaus grupėje/g, 'kategorijoje').replace(/amžiaus (grup)/g, '$1').replace(/Amžiaus grup/g, 'Grup').replace(/\bage (group)/g, '$1').replace(/\bAge group/g, 'Group') : x;
+    ['lt', 'en'].forEach(l => Object.keys(I18N[l]).forEach(k => { const v = I18N[l][k]; I18N[l][k] = typeof v === 'function' ? (...a) => fix(v(...a)) : fix(v); }));
+  }
+  {
     MK = mkBuild();
     document.body.classList.add('bxmk');
     addStrings({ gxOff: 'Each fund from the period start', gxCommon: 'Common start of all managers', gxOf: m => `Since ${m} start`, gxLbl: 'Start:',
@@ -1553,8 +1560,9 @@ if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – 
     exportMarketXlsx = () => withMkA(xm);
     if (ox) XLB.set('tOv', async () => MK.mode === 'all' ? null : withMkA(ox));   // „Visi fondai“ – Excel tik su lentelės reikšmėmis
   }
-  if (PX.c !== 'LT') { ['btnEvents', 'evInfo'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); P.events = false; }
+  if (!PX || PX.c === 'LT') addStrings({ hMarket: 'Whole market: return and rank by category' }, { hMarket: 'Visa rinka: grąža ir vieta pagal kategorijas' });
 }
+if (PX && PX.c !== 'LT') { ['btnEvents', 'evInfo'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); P.events = false; }
 renderHeader(PX ? PX.page : IS3 ? 'performance3' : 'performance', () => { labelControls(); syncAll(); });
 labelControls();
 $('from').value = P.from; $('to').value = P.to;

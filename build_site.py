@@ -136,6 +136,14 @@ def main() -> None:
         build_baltic(ver)
     except Exception as e:              # Baltijos šalių puslapis – papildomas; jo klaida neturi sustabdyti svetainės
         print("baltic: nepavyko:", e)
+    # „Kaip tai veikia“ (savininkas 2026-11-06): duomenų gijų schema – site/how.html + site/how.js
+    for n in ("how.html", "how.js"):
+        shutil.copyfile(SITE / n, DOCS / n)
+    text = (DOCS / "how.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "how.js"):
+        v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]
+        text = text.replace(f'src="{n}"', f'src="{n}?v={v}"').replace(f'href="{n}"', f'href="{n}?v={v}"')
+    (DOCS / "how.html").write_text(text, encoding="utf-8")
     text = (DOCS / "ops.html").read_text(encoding="utf-8")
     for n in ("style.css", "common.js", "data_ops.js", "ops.js"):
         v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]

@@ -64,6 +64,7 @@ function isOwner() {
 // Navigacijos ikonos (auditas #41): paprastos linijinės, spalva – kaip teksto
 const NAV_ICONS = {
   apie: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  how: '<circle cx="5" cy="6" r="2.5"/><circle cx="19" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.5 6h9M6.3 8.2l4.4 7.6M17.7 8.2l-4.4 7.6"/>',
   index: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',
   manager: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
   review: '<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M8 14h3M8 17h6"/>',
@@ -77,7 +78,7 @@ const NAV_ICONS = {
   facts: '<path d="M4 4h16v16H4z"/><path d="M8 16v-4M12 16V8M16 16v-6"/>',
   baltic: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9s1.3-6.3 3.8-9z"/>',
 };
-const NAV_PAGES = ['index', 'review', 'ops', 'performance', 'performance3', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'baltic', 'apie'];
+const NAV_PAGES = ['index', 'review', 'ops', 'performance', 'performance3', 'manager', 'overview', 'pillar3', 'aum', 'portfolios', 'reports', 'journey', 'baltic', 'how', 'apie'];
 const navKey = p => 'nav' + p[0].toUpperCase() + p.slice(1);
 const svgI = (body, s = 16) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
@@ -152,7 +153,7 @@ function renderHeader(active, onLang) {
   side.innerHTML = `<button class="side-tg" type="button" id="sideTg" aria-controls="side">${svgI(CHEV_L)}<span class="nl"></span></button>`
     + `<div class="nav">${SECTIONS.map(s => `<a href="${s.pages[0]}.html" data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`
       + (s === sec && s.pages.length > 1 ? `<div class="side-sub">${subs(s).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '')).join('')}`
-    + `<a href="apie.html" data-s="about" class="nav-about">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`;
+    + `<a href="how.html" data-s="how" class="nav-about">${svgI(NAV_ICONS.how)}<span class="nl"></span></a><a href="apie.html" data-s="about" class="nav-about nav-about2">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`;
   const scrim = document.createElement('div'); scrim.className = 'side-scrim'; scrim.hidden = true;
   document.body.prepend(side, scrim);
   sideUI(side, scrim);
@@ -174,7 +175,7 @@ function renderHeader(active, onLang) {
     el.lang = lang;
     const t = T();
     document.getElementById('title').textContent = t.siteTitle;
-    { const cp = PAGE_ALIAS[active] || active, cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
+    { const cp = PAGE_ALIAS[active] || active, cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : active === 'how' ? t.secNav.how : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
       const sh = document.getElementById('secName'); if (sh) sh.innerHTML = `${sn}${pn && pn !== sn && cs.pages.length > 1 ? ` <small>${pn}</small>` : ''}`;
       const sd = document.getElementById('secDesc'); if (sd && cs) sd.textContent = t.secDesc[cs.id] || '';
       document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
@@ -188,14 +189,16 @@ function renderHeader(active, onLang) {
     sideLabels();
     side.querySelectorAll('.nav a[data-s]').forEach(a => {
       a.querySelector('.nl').textContent = t.secNav[a.dataset.s]; a.title = t.secNav[a.dataset.s];
-      if ((sec && a.dataset.s === sec.id) || (active === 'apie' && a.dataset.s === 'about')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      if ((sec && a.dataset.s === sec.id) || (active === 'apie' && a.dataset.s === 'about') || (active === 'how' && a.dataset.s === 'how')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     document.querySelectorAll('.subnav a, .side-sub a').forEach(a => {
       a.textContent = t.subNav[a.dataset.p];
       if (a.dataset.p === (PAGE_ALIAS[active] || active)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     const qb = document.getElementById('q'); qb.placeholder = t.qPh; qb.setAttribute('aria-label', t.qPh);
-    document.title = `${t[navKey(active)] || t.subNav[active] || ''} · ${t.siteTitle}`;   // savas pavadinimas kiekvienam puslapiui (auditas #26)
+    { const bx = active.match(/^baltic_(lt|lv|ee)(3?)$/), cn = { lt: ['Lietuva', 'Lithuania'], lv: ['Latvija', 'Latvia'], ee: ['Estija', 'Estonia'] };   // Baltijos „Rezultatų“ kopijos – šalis ir pakopa (buvo tuščia)
+      const nm = bx ? `${cn[bx[1]][lang === 'lt' ? 0 : 1]} · ${bx[2] ? 'III' : 'II'} ${lang === 'lt' ? 'pakopa' : 'pillar'} · ${t.secNav.baltic}` : t[navKey(active)] || t.subNav[active] || t.subNav[PAGE_ALIAS[active]] || '';
+      document.title = `${nm} · ${t.siteTitle}`; }   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
     pr.querySelector('[data-p=cozy]').textContent = '🖶 ' + t.printCozy; pr.querySelector('[data-p=plain]').textContent = '🖶 ' + t.printPlain;
     document.getElementById('dlBtn').textContent = '⬇ ' + t.dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
@@ -337,9 +340,10 @@ const HOME_PAGES = ['index', 'facts', 'managers'];
 const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
 /* Du puslapiai – viena skirtukų juosta: III pakopa (pillar3 + performance3) ir II pakopa (performance + overview „Grupių grafikai“).
    Kito puslapio skirtukai – paprastos nuorodos „puslapis.html#tab=…“; šoniniame meniu abu puslapiai – vienas punktas. */
-const PAGE_ALIAS = { performance3: 'pillar3', overview: 'performance', baltic_lt: 'baltic', baltic_lt3: 'baltic', baltic_lv: 'baltic', baltic_lv3: 'baltic', baltic_ee: 'baltic', baltic_ee3: 'baltic' };
-const TG3 = [['pillar3', 'cat', 'Kategorijos', 'Categories'], ['pillar3', 'all', 'Visi fondai – rodikliai', 'All funds – key figures'], ['performance3', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance3', 'fund', 'Fondų palyginimas', 'Fund comparison'],
-  ['performance3', 'risk', 'Rizika', 'Risk'], ['performance3', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['pillar3', 'rdd', 'Kilimas ir kritimas', 'Run-up and drawdown']];
+const PAGE_ALIAS = { pillar3: 'performance3', overview: 'performance', baltic_lt: 'baltic', baltic_lt3: 'baltic', baltic_lv: 'baltic', baltic_lv3: 'baltic', baltic_ee: 'baltic', baltic_ee3: 'baltic' };
+const TG3 = [['performance3', 'market', 'Visa rinka', 'Whole market'], ['performance3', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance3', 'fund', 'Fondų palyginimas', 'Fund comparison'],
+  ['performance3', 'risk', 'Rizika', 'Risk'], ['performance3', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['pillar3', 'cat', 'Kategorijų grafikai', 'Category charts'], ['pillar3', 'all', 'Visi fondai – rodikliai', 'All funds – key figures']];
+/* II ir III pakopa – ta pati skirtukų tvarka (auditas 2026-11-06): Visa rinka, Lyderiai, Fondų palyginimas, Rizika, Metai ir mėnesiai, grupių grafikai, tada pakopos savitas */
 const TG2 = [['performance', 'market', 'Visa rinka', 'Whole market'], ['performance', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance', 'fund', 'Fondų palyginimas', 'Fund comparison'], ['performance', 'risk', 'Rizika', 'Risk'],
   ['performance', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['overview', '', 'Grupių grafikai', 'Group charts'], ['performance', 'ins', 'Rinkos įžvalgos', 'Market insights']];
 const TAB_GROUP = { pillar3: TG3, performance3: TG3, performance: TG2, overview: TG2 };
@@ -352,7 +356,7 @@ function bxTabs(c, pl) {
   const b = (k, lt, en) => ['baltic', k, lt, en, `c=${c}&pl=${pl}`];
   if (c === 'X') return [b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
   const pp = bxPage(c, pl), lt2 = c === 'LT' && pl === 'II';
-  const mk = c === 'LT' && pl === 'III' ? [] : [[pp, 'market', 'Visa rinka', 'Whole market']];   // LT III – valdytojų lentelių nėra
+  const mk = [[pp, 'market', 'Visa rinka', 'Whole market']];   // ir LT III – valdytojų vaizdu (2026-11-06)
   return [b('ov', 'Apžvalga', 'Overview'), ...mk, b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
     b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : []),
@@ -1762,7 +1766,7 @@ if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() 
 const SECTIONS = [
   { id: 'home', icon: 'index', pages: ['index', 'review', 'ops'] },
   { id: 'facts', icon: 'facts', pages: ['facts'] },
-  { id: 'results', icon: 'performance', pages: ['performance', 'pillar3'] },
+  { id: 'results', icon: 'performance', pages: ['performance', 'performance3'] },
   { id: 'mgr', icon: 'manager', pages: ['managers', 'manager'] },
   { id: 'pf', icon: 'portfolios', pages: ['portfolios', 'aum'] },
   { id: 'rep', icon: 'reports', pages: ['reports'] },
@@ -1771,13 +1775,13 @@ const SECTIONS = [
 ];
 addStrings({
   secDesc: { home: 'What is happening in the pension fund market today', facts: 'Key market figures with sources and Excel formulas', results: 'Returns, risk and comparison of pillar II and III funds within their groups', mgr: 'Managers’ market shares, funds and achievements', pf: 'Where the funds invest and how much they manage', rep: 'Managers’ reports, fees and KID scenarios', jr: 'How much you can save and what your pension may be', baltic: 'Pension funds of Lithuania, Latvia and Estonia in one place' },
-  secNav: { home: 'Home', facts: 'Market facts', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', about: 'About', help: 'Help' },
+  secNav: { home: 'Home', facts: 'Market facts', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', how: 'How it works', about: 'About', help: 'Help' },
   subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III', facts: 'Market facts', managers: 'Managers', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic states' },
   navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
   qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding', n: 'Article' }, qNews: q => `All articles with “${q}” →`, qHint: 'Tip: press / to search',
 }, {
   secDesc: { home: 'Kas šiandien vyksta pensijų fondų rinkoje', facts: 'Svarbiausi rinkos skaičiai su šaltiniais ir Excel formulėmis', results: 'II ir III pakopos fondų grąža, rizika ir palyginimas grupėse', mgr: 'Valdytojų rinkos dalys, fondai ir pasiekimai', pf: 'Kur investuoja fondai ir kiek turto valdo', rep: 'Valdytojų ataskaitos, mokesčiai ir KID scenarijai', jr: 'Kiek galite sukaupti ir kokia gali būti pensija', baltic: 'Lietuvos, Latvijos ir Estijos pensijų fondai vienoje vietoje' },
-  secNav: { home: 'Pradžia', facts: 'Rinkos faktai', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', about: 'Apie', help: 'Pagalba' },
+  secNav: { home: 'Pradžia', facts: 'Rinkos faktai', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', how: 'Kaip tai veikia', about: 'Apie', help: 'Pagalba' },
   subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopa', facts: 'Rinkos faktai', managers: 'Valdytojai', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalys' },
   navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',
   qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija', n: 'Straipsnis' }, qNews: q => `Visi straipsniai su „${q}“ →`, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
