@@ -69,7 +69,7 @@ def company(name: str) -> str:
     """Vienos bendrovės kelios akcijų klasės → vienas pavadinimas (Alphabet A + C)."""
     n = re.sub(r"\s+(Ordinary Shares\s*-?\s*)?Class [A-C]$", "", name.strip())
     n = re.sub(r"\s+(Registered Shares|Ordinary Shares)$", "", n)
-    n = re.sub(r"\s+(Inc|Corp|Co|Co Ltd|Ltd|PLC|SA|AG|NV|SE|ASA|AB|Abp)\.?$", "", n)
+    n = re.sub(r"(?<! and)(?<! &)\s+(Inc|Corp|Co|Co Ltd|Ltd|PLC|SA|AG|NV|SE|ASA|AB|Abp)\.?$", "", n)
     return n
 
 
@@ -205,7 +205,7 @@ def main() -> None:
                 out += [("reg_" + k, round(reg[k] / eq_reg * 100, 2)) for k in REGIONS]
             top = sorted(comp.items(), key=lambda kv: -kv[1])
             out += [("top10", pct(sum(x for _, x in top[:10]))), ("cov_top", round(min(eq_named, eq_all) / eq_all * 100, 1))]
-            out += [("top|" + k, pct(x)) for k, x in top[:15] if x > 0]
+            out += [("top|" + k, pct(x)) for k, x in top[:50] if x > 0]
         if bd_all:
             out += [("bd_dur", round(bd_dur_s / bd_dur_w, 2) if bd_dur_w else ""), ("cov_dur", round(bd_dur_w / bd_all * 100, 1)),
                     ("bd_direct", round(bd_direct / bd_all * 100, 1))]

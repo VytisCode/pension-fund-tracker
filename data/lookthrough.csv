@@ -47,7 +47,42 @@ date,fund_code,metric,value
 2026-09-30,AVI-03/09,top|Shell,0.718
 2026-09-30,AVI-03/09,top|Mastercard,0.677
 2026-09-30,AVI-03/09,top|Salesforce,0.654
-2026-09-30,AVI-03/09,top|Eli Lilly and,0.648
+2026-09-30,AVI-03/09,top|Eli Lilly and Co,0.648
+2026-09-30,AVI-03/09,top|Newmont,0.616
+2026-09-30,AVI-03/09,top|Visa,0.612
+2026-09-30,AVI-03/09,top|ASML Holding,0.595
+2026-09-30,AVI-03/09,top|Agnico Eagle Mines,0.536
+2026-09-30,AVI-03/09,top|JPMorgan Chase & Co,0.522
+2026-09-30,AVI-03/09,top|Micron Technology,0.519
+2026-09-30,AVI-03/09,top|Wells Fargo & Co,0.478
+2026-09-30,AVI-03/09,top|Arista Networks,0.465
+2026-09-30,AVI-03/09,top|Cisco Systems,0.441
+2026-09-30,AVI-03/09,top|Lam Research,0.427
+2026-09-30,AVI-03/09,top|Eldorado Gold,0.422
+2026-09-30,AVI-03/09,top|PDI Gold,0.419
+2026-09-30,AVI-03/09,top|Samsung Electronics,0.391
+2026-09-30,AVI-03/09,top|Anglogold Ashanti,0.377
+2026-09-30,AVI-03/09,top|Qualcomm,0.367
+2026-09-30,AVI-03/09,top|Johnson & Johnson,0.364
+2026-09-30,AVI-03/09,top|Tesla,0.354
+2026-09-30,AVI-03/09,top|Elevance Health,0.343
+2026-09-30,AVI-03/09,top|Coeur Mining,0.325
+2026-09-30,AVI-03/09,top|Northern Star Resources,0.323
+2026-09-30,AVI-03/09,top|Bristol-Myers Squibb,0.319
+2026-09-30,AVI-03/09,top|Coca-Cola,0.318
+2026-09-30,AVI-03/09,top|UnitedHealth Group,0.313
+2026-09-30,AVI-03/09,top|Mitsubishi UFJ Financial Group,0.312
+2026-09-30,AVI-03/09,top|Equinox Gold,0.309
+2026-09-30,AVI-03/09,top|AstraZeneca,0.308
+2026-09-30,AVI-03/09,top|Adobe,0.302
+2026-09-30,AVI-03/09,top|Morgan Stanley,0.302
+2026-09-30,AVI-03/09,top|Cardinal Health,0.301
+2026-09-30,AVI-03/09,top|Eversource Energy,0.291
+2026-09-30,AVI-03/09,top|Parker Hannifin,0.289
+2026-09-30,AVI-03/09,top|U.S. Bancorp,0.288
+2026-09-30,AVI-03/09,top|SAP,0.286
+2026-09-30,AVI-03/09,top|Booking Holdings,0.286
+2026-09-30,AVI-03/09,top|Target,0.276
 2026-09-30,AVI-61/67,tot_eur,158031609
 2026-09-30,AVI-61/67,cov_fund,100.0
 2026-09-30,AVI-61/67,mix_eq,21.968
@@ -97,6 +132,41 @@ date,fund_code,metric,value
 2026-09-30,AVI-61/67,top|Coeur Mining,0.292
 2026-09-30,AVI-61/67,top|Northern Star Resources,0.289
 2026-09-30,AVI-61/67,top|Equinox Gold,0.277
+2026-09-30,AVI-61/67,top|Broadcom,0.265
+2026-09-30,AVI-61/67,top|B2Gold,0.243
+2026-09-30,AVI-61/67,top|Torex Gold Resources,0.237
+2026-09-30,AVI-61/67,top|Alamos Gold,0.223
+2026-09-30,AVI-61/67,top|Iamgold,0.215
+2026-09-30,AVI-61/67,top|SSR Mining,0.199
+2026-09-30,AVI-61/67,top|Endeavour Mining,0.198
+2026-09-30,AVI-61/67,top|Advanced Micro Devices,0.183
+2026-09-30,AVI-61/67,top|Royal Gold,0.161
+2026-09-30,AVI-61/67,top|JPMorgan Chase & Co,0.158
+2026-09-30,AVI-61/67,top|Eli Lilly and Co,0.146
+2026-09-30,AVI-61/67,top|Franco-Nevada,0.14
+2026-09-30,AVI-61/67,top|ASML Holding,0.139
+2026-09-30,AVI-61/67,top|DPM Metals,0.134
+2026-09-30,AVI-61/67,top|Salesforce,0.133
+2026-09-30,AVI-61/67,top|Micron Technology,0.133
+2026-09-30,AVI-61/67,top|Bank of America,0.129
+2026-09-30,AVI-61/67,top|Shell,0.123
+2026-09-30,AVI-61/67,top|Johnson & Johnson,0.122
+2026-09-30,AVI-61/67,top|G Mining Ventures,0.12
+2026-09-30,AVI-61/67,top|OceanaGold,0.117
+2026-09-30,AVI-61/67,top|Visa,0.114
+2026-09-30,AVI-61/67,top|Harmony Gold Mining,0.11
+2026-09-30,AVI-61/67,top|St Barbara,0.108
+2026-09-30,AVI-61/67,top|Gold Fields,0.107
+2026-09-30,AVI-61/67,top|ExxonMobil Holdings,0.106
+2026-09-30,AVI-61/67,top|Westgold Resources,0.106
+2026-09-30,AVI-61/67,top|Tesla,0.105
+2026-09-30,AVI-61/67,top|Montage Gold,0.103
+2026-09-30,AVI-61/67,top|Arista Networks,0.103
+2026-09-30,AVI-61/67,top|Mastercard,0.101
+2026-09-30,AVI-61/67,top|Pan American Silver,0.099
+2026-09-30,AVI-61/67,top|Lam Research,0.098
+2026-09-30,AVI-61/67,top|Omai Gold Mines,0.097
+2026-09-30,AVI-61/67,top|Cisco Systems,0.096
 2026-09-30,AVI-61/67,bd_dur,2.93
 2026-09-30,AVI-61/67,cov_dur,86.6
 2026-09-30,AVI-61/67,bd_direct,33.8
@@ -145,13 +215,48 @@ date,fund_code,metric,value
 2026-09-30,AVI-68/74,top|Meta Platforms,0.663
 2026-09-30,AVI-68/74,top|Barrick Mining,0.65
 2026-09-30,AVI-68/74,top|Agnico Eagle Mines,0.586
-2026-09-30,AVI-68/74,top|Eli Lilly and,0.548
+2026-09-30,AVI-68/74,top|Eli Lilly and Co,0.548
 2026-09-30,AVI-68/74,top|Broadcom,0.538
 2026-09-30,AVI-68/74,top|Newmont,0.529
 2026-09-30,AVI-68/74,top|Micron Technology,0.522
 2026-09-30,AVI-68/74,top|Eldorado Gold,0.461
 2026-09-30,AVI-68/74,top|PDI Gold,0.458
 2026-09-30,AVI-68/74,top|ASML Holding,0.454
+2026-09-30,AVI-68/74,top|JPMorgan Chase & Co,0.421
+2026-09-30,AVI-68/74,top|Anglogold Ashanti,0.412
+2026-09-30,AVI-68/74,top|Advanced Micro Devices,0.375
+2026-09-30,AVI-68/74,top|Johnson & Johnson,0.368
+2026-09-30,AVI-68/74,top|Coeur Mining,0.356
+2026-09-30,AVI-68/74,top|Northern Star Resources,0.353
+2026-09-30,AVI-68/74,top|Equinox Gold,0.338
+2026-09-30,AVI-68/74,top|Bank of America,0.324
+2026-09-30,AVI-68/74,top|Salesforce,0.318
+2026-09-30,AVI-68/74,top|Mastercard,0.308
+2026-09-30,AVI-68/74,top|Visa,0.298
+2026-09-30,AVI-68/74,top|B2Gold,0.296
+2026-09-30,AVI-68/74,top|Torex Gold Resources,0.289
+2026-09-30,AVI-68/74,top|Cisco Systems,0.281
+2026-09-30,AVI-68/74,top|Shell,0.276
+2026-09-30,AVI-68/74,top|Lam Research,0.275
+2026-09-30,AVI-68/74,top|Alamos Gold,0.272
+2026-09-30,AVI-68/74,top|Iamgold,0.262
+2026-09-30,AVI-68/74,top|Tesla,0.258
+2026-09-30,AVI-68/74,top|SSR Mining,0.243
+2026-09-30,AVI-68/74,top|Endeavour Mining,0.241
+2026-09-30,AVI-68/74,top|UnitedHealth Group,0.239
+2026-09-30,AVI-68/74,top|Merck & Co,0.223
+2026-09-30,AVI-68/74,top|Bristol-Myers Squibb,0.222
+2026-09-30,AVI-68/74,top|Applied Materials,0.215
+2026-09-30,AVI-68/74,top|Adobe,0.21
+2026-09-30,AVI-68/74,top|Morgan Stanley,0.209
+2026-09-30,AVI-68/74,top|Royal Gold,0.197
+2026-09-30,AVI-68/74,top|Walmart,0.195
+2026-09-30,AVI-68/74,top|KLA,0.191
+2026-09-30,AVI-68/74,top|Roche Holding AG Ordinary Shares new,0.191
+2026-09-30,AVI-68/74,top|Caterpillar,0.191
+2026-09-30,AVI-68/74,top|Wells Fargo & Co,0.19
+2026-09-30,AVI-68/74,top|Elevance Health,0.184
+2026-09-30,AVI-68/74,top|AbbVie,0.184
 2026-09-30,AVI-68/74,bd_dur,2.48
 2026-09-30,AVI-68/74,cov_dur,100.0
 2026-09-30,AVI-68/74,bd_direct,10.2
@@ -199,14 +304,49 @@ date,fund_code,metric,value
 2026-09-30,AVI-75/81,top|Amazon.com,1.625
 2026-09-30,AVI-75/81,top|Meta Platforms,1.456
 2026-09-30,AVI-75/81,top|Broadcom,1.255
-2026-09-30,AVI-75/81,top|JPMorgan Chase &,0.828
+2026-09-30,AVI-75/81,top|JPMorgan Chase & Co,0.828
 2026-09-30,AVI-75/81,top|ASML Holding,0.757
 2026-09-30,AVI-75/81,top|Barrick Mining,0.636
 2026-09-30,AVI-75/81,top|Mastercard,0.616
-2026-09-30,AVI-75/81,top|Eli Lilly and,0.592
+2026-09-30,AVI-75/81,top|Eli Lilly and Co,0.592
 2026-09-30,AVI-75/81,top|Micron Technology,0.587
 2026-09-30,AVI-75/81,top|Agnico Eagle Mines,0.581
 2026-09-30,AVI-75/81,top|Advanced Micro Devices,0.567
+2026-09-30,AVI-75/81,top|Johnson & Johnson,0.563
+2026-09-30,AVI-75/81,top|Visa,0.513
+2026-09-30,AVI-75/81,top|Newmont,0.501
+2026-09-30,AVI-75/81,top|Eldorado Gold,0.457
+2026-09-30,AVI-75/81,top|PDI Gold,0.454
+2026-09-30,AVI-75/81,top|Salesforce,0.419
+2026-09-30,AVI-75/81,top|Anglogold Ashanti,0.408
+2026-09-30,AVI-75/81,top|Taiwan Semiconductor Manufacturing,0.407
+2026-09-30,AVI-75/81,top|Tesla,0.403
+2026-09-30,AVI-75/81,top|Lam Research,0.384
+2026-09-30,AVI-75/81,top|Bank of America,0.355
+2026-09-30,AVI-75/81,top|Coeur Mining,0.353
+2026-09-30,AVI-75/81,top|Northern Star Resources,0.35
+2026-09-30,AVI-75/81,top|Equinox Gold,0.335
+2026-09-30,AVI-75/81,top|Target,0.332
+2026-09-30,AVI-75/81,top|Arista Networks,0.326
+2026-09-30,AVI-75/81,top|Shell,0.324
+2026-09-30,AVI-75/81,top|UnitedHealth Group,0.322
+2026-09-30,AVI-75/81,top|Wells Fargo & Co,0.31
+2026-09-30,AVI-75/81,top|Cisco Systems,0.307
+2026-09-30,AVI-75/81,top|Mitsubishi UFJ Financial Group,0.305
+2026-09-30,AVI-75/81,top|Morgan Stanley,0.305
+2026-09-30,AVI-75/81,top|B2Gold,0.293
+2026-09-30,AVI-75/81,top|Roche Holding AG Ordinary Shares new,0.293
+2026-09-30,AVI-75/81,top|KLA,0.29
+2026-09-30,AVI-75/81,top|Bristol-Myers Squibb,0.289
+2026-09-30,AVI-75/81,top|ExxonMobil Holdings,0.287
+2026-09-30,AVI-75/81,top|Torex Gold Resources,0.286
+2026-09-30,AVI-75/81,top|Medtronic,0.278
+2026-09-30,AVI-75/81,top|Alamos Gold,0.269
+2026-09-30,AVI-75/81,top|Coca-Cola,0.264
+2026-09-30,AVI-75/81,top|Danaher,0.262
+2026-09-30,AVI-75/81,top|Iamgold,0.26
+2026-09-30,AVI-75/81,top|Monster Beverage,0.255
+2026-09-30,AVI-75/81,top|The Goldman Sachs Group,0.25
 2026-09-30,AVI-75/81,cov_dur,0.0
 2026-09-30,AVI-75/81,bd_direct,0.0
 2026-09-30,AVI-82/88,tot_eur,158822028
@@ -250,14 +390,49 @@ date,fund_code,metric,value
 2026-09-30,AVI-82/88,top|Meta Platforms,1.327
 2026-09-30,AVI-82/88,top|Amazon.com,1.256
 2026-09-30,AVI-82/88,top|Broadcom,1.103
-2026-09-30,AVI-82/88,top|Eli Lilly and,0.767
+2026-09-30,AVI-82/88,top|Eli Lilly and Co,0.767
 2026-09-30,AVI-82/88,top|ASML Holding,0.697
-2026-09-30,AVI-82/88,top|JPMorgan Chase &,0.695
+2026-09-30,AVI-82/88,top|JPMorgan Chase & Co,0.695
 2026-09-30,AVI-82/88,top|Micron Technology,0.687
 2026-09-30,AVI-82/88,top|Barrick Mining,0.643
 2026-09-30,AVI-82/88,top|Visa,0.613
 2026-09-30,AVI-82/88,top|Agnico Eagle Mines,0.59
 2026-09-30,AVI-82/88,top|Advanced Micro Devices,0.58
+2026-09-30,AVI-82/88,top|Newmont,0.541
+2026-09-30,AVI-82/88,top|Mastercard,0.485
+2026-09-30,AVI-82/88,top|Eldorado Gold,0.464
+2026-09-30,AVI-82/88,top|PDI Gold,0.461
+2026-09-30,AVI-82/88,top|Johnson & Johnson,0.458
+2026-09-30,AVI-82/88,top|Salesforce,0.457
+2026-09-30,AVI-82/88,top|Bank of America,0.419
+2026-09-30,AVI-82/88,top|Anglogold Ashanti,0.414
+2026-09-30,AVI-82/88,top|Lam Research,0.403
+2026-09-30,AVI-82/88,top|UnitedHealth Group,0.392
+2026-09-30,AVI-82/88,top|Arista Networks,0.377
+2026-09-30,AVI-82/88,top|Shell,0.371
+2026-09-30,AVI-82/88,top|Tesla,0.37
+2026-09-30,AVI-82/88,top|Cisco Systems,0.369
+2026-09-30,AVI-82/88,top|Morgan Stanley,0.367
+2026-09-30,AVI-82/88,top|Mitsubishi UFJ Financial Group,0.364
+2026-09-30,AVI-82/88,top|Coeur Mining,0.358
+2026-09-30,AVI-82/88,top|Coca-Cola,0.356
+2026-09-30,AVI-82/88,top|Northern Star Resources,0.355
+2026-09-30,AVI-82/88,top|Taiwan Semiconductor Manufacturing,0.345
+2026-09-30,AVI-82/88,top|Equinox Gold,0.34
+2026-09-30,AVI-82/88,top|KLA,0.333
+2026-09-30,AVI-82/88,top|AstraZeneca,0.319
+2026-09-30,AVI-82/88,top|SAP,0.314
+2026-09-30,AVI-82/88,top|Target,0.311
+2026-09-30,AVI-82/88,top|Medtronic,0.299
+2026-09-30,AVI-82/88,top|B2Gold,0.298
+2026-09-30,AVI-82/88,top|Walmart,0.292
+2026-09-30,AVI-82/88,top|Torex Gold Resources,0.291
+2026-09-30,AVI-82/88,top|Costco Wholesale,0.282
+2026-09-30,AVI-82/88,top|Wells Fargo & Co,0.278
+2026-09-30,AVI-82/88,top|Merck & Co,0.275
+2026-09-30,AVI-82/88,top|Alamos Gold,0.273
+2026-09-30,AVI-82/88,top|Bristol-Myers Squibb,0.272
+2026-09-30,AVI-82/88,top|AbbVie,0.269
 2026-09-30,AVI-82/88,cov_dur,0.0
 2026-09-30,AVI-82/88,bd_direct,0.0
 2026-09-30,AVI-89/95,tot_eur,85005174
@@ -301,14 +476,49 @@ date,fund_code,metric,value
 2026-09-30,AVI-89/95,top|Meta Platforms,1.296
 2026-09-30,AVI-89/95,top|Amazon.com,1.22
 2026-09-30,AVI-89/95,top|Broadcom,0.98
-2026-09-30,AVI-89/95,top|Eli Lilly and,0.84
+2026-09-30,AVI-89/95,top|Eli Lilly and Co,0.84
 2026-09-30,AVI-89/95,top|Advanced Micro Devices,0.794
 2026-09-30,AVI-89/95,top|Micron Technology,0.746
 2026-09-30,AVI-89/95,top|Barrick Mining,0.691
 2026-09-30,AVI-89/95,top|ASML Holding,0.689
-2026-09-30,AVI-89/95,top|JPMorgan Chase &,0.631
+2026-09-30,AVI-89/95,top|JPMorgan Chase & Co,0.631
 2026-09-30,AVI-89/95,top|Agnico Eagle Mines,0.615
 2026-09-30,AVI-89/95,top|Newmont,0.581
+2026-09-30,AVI-89/95,top|Mastercard,0.562
+2026-09-30,AVI-89/95,top|Visa,0.528
+2026-09-30,AVI-89/95,top|Lam Research,0.512
+2026-09-30,AVI-89/95,top|Eldorado Gold,0.484
+2026-09-30,AVI-89/95,top|Johnson & Johnson,0.483
+2026-09-30,AVI-89/95,top|PDI Gold,0.481
+2026-09-30,AVI-89/95,top|Bank of America,0.466
+2026-09-30,AVI-89/95,top|Salesforce,0.458
+2026-09-30,AVI-89/95,top|Anglogold Ashanti,0.432
+2026-09-30,AVI-89/95,top|Tesla,0.409
+2026-09-30,AVI-89/95,top|Shell,0.392
+2026-09-30,AVI-89/95,top|Cisco Systems,0.389
+2026-09-30,AVI-89/95,top|Arista Networks,0.385
+2026-09-30,AVI-89/95,top|Coeur Mining,0.373
+2026-09-30,AVI-89/95,top|Northern Star Resources,0.37
+2026-09-30,AVI-89/95,top|UnitedHealth Group,0.36
+2026-09-30,AVI-89/95,top|Equinox Gold,0.355
+2026-09-30,AVI-89/95,top|Taiwan Semiconductor Manufacturing,0.35
+2026-09-30,AVI-89/95,top|Morgan Stanley,0.323
+2026-09-30,AVI-89/95,top|Costco Wholesale,0.32
+2026-09-30,AVI-89/95,top|Palo Alto Networks,0.317
+2026-09-30,AVI-89/95,top|B2Gold,0.31
+2026-09-30,AVI-89/95,top|Bristol-Myers Squibb,0.307
+2026-09-30,AVI-89/95,top|Roche Holding AG Ordinary Shares new,0.306
+2026-09-30,AVI-89/95,top|Coca-Cola,0.305
+2026-09-30,AVI-89/95,top|Torex Gold Resources,0.303
+2026-09-30,AVI-89/95,top|Wells Fargo & Co,0.296
+2026-09-30,AVI-89/95,top|Walmart,0.295
+2026-09-30,AVI-89/95,top|Mitsubishi UFJ Financial Group,0.294
+2026-09-30,AVI-89/95,top|Merck & Co,0.286
+2026-09-30,AVI-89/95,top|Alamos Gold,0.285
+2026-09-30,AVI-89/95,top|AbbVie,0.276
+2026-09-30,AVI-89/95,top|Iamgold,0.275
+2026-09-30,AVI-89/95,top|Target,0.272
+2026-09-30,AVI-89/95,top|KLA,0.271
 2026-09-30,AVI-89/95,cov_dur,0.0
 2026-09-30,AVI-89/95,bd_direct,0.0
 2026-09-30,AVI-96/02,tot_eur,34041832
@@ -354,12 +564,47 @@ date,fund_code,metric,value
 2026-09-30,AVI-96/02,top|Broadcom,1.214
 2026-09-30,AVI-96/02,top|Advanced Micro Devices,0.951
 2026-09-30,AVI-96/02,top|Barrick Mining,0.711
-2026-09-30,AVI-96/02,top|JPMorgan Chase &,0.702
-2026-09-30,AVI-96/02,top|Eli Lilly and,0.678
+2026-09-30,AVI-96/02,top|JPMorgan Chase & Co,0.702
+2026-09-30,AVI-96/02,top|Eli Lilly and Co,0.678
 2026-09-30,AVI-96/02,top|Micron Technology,0.622
 2026-09-30,AVI-96/02,top|Agnico Eagle Mines,0.595
 2026-09-30,AVI-96/02,top|ASML Holding,0.592
 2026-09-30,AVI-96/02,top|Newmont,0.579
+2026-09-30,AVI-96/02,top|Lam Research,0.527
+2026-09-30,AVI-96/02,top|Salesforce,0.514
+2026-09-30,AVI-96/02,top|Bank of America,0.505
+2026-09-30,AVI-96/02,top|Shell,0.484
+2026-09-30,AVI-96/02,top|Eldorado Gold,0.468
+2026-09-30,AVI-96/02,top|Johnson & Johnson,0.467
+2026-09-30,AVI-96/02,top|PDI Gold,0.465
+2026-09-30,AVI-96/02,top|Mastercard,0.463
+2026-09-30,AVI-96/02,top|Arista Networks,0.427
+2026-09-30,AVI-96/02,top|Tesla,0.423
+2026-09-30,AVI-96/02,top|Anglogold Ashanti,0.418
+2026-09-30,AVI-96/02,top|Taiwan Semiconductor Manufacturing,0.411
+2026-09-30,AVI-96/02,top|Visa,0.385
+2026-09-30,AVI-96/02,top|Cisco Systems,0.369
+2026-09-30,AVI-96/02,top|Coeur Mining,0.361
+2026-09-30,AVI-96/02,top|Northern Star Resources,0.358
+2026-09-30,AVI-96/02,top|Equinox Gold,0.343
+2026-09-30,AVI-96/02,top|Bristol-Myers Squibb,0.312
+2026-09-30,AVI-96/02,top|Morgan Stanley,0.31
+2026-09-30,AVI-96/02,top|UnitedHealth Group,0.307
+2026-09-30,AVI-96/02,top|B2Gold,0.3
+2026-09-30,AVI-96/02,top|Palo Alto Networks,0.297
+2026-09-30,AVI-96/02,top|Torex Gold Resources,0.293
+2026-09-30,AVI-96/02,top|Mitsubishi UFJ Financial Group,0.293
+2026-09-30,AVI-96/02,top|Adobe,0.291
+2026-09-30,AVI-96/02,top|Roche Holding AG Ordinary Shares new,0.286
+2026-09-30,AVI-96/02,top|Marvell Technology,0.283
+2026-09-30,AVI-96/02,top|Target,0.279
+2026-09-30,AVI-96/02,top|Alamos Gold,0.276
+2026-09-30,AVI-96/02,top|Elevance Health,0.275
+2026-09-30,AVI-96/02,top|Wells Fargo & Co,0.272
+2026-09-30,AVI-96/02,top|Iamgold,0.266
+2026-09-30,AVI-96/02,top|KLA,0.257
+2026-09-30,AVI-96/02,top|Coca-Cola,0.25
+2026-09-30,AVI-96/02,top|Medtronic,0.247
 2026-09-30,AVI-96/02,cov_dur,0.0
 2026-09-30,AVI-96/02,bd_direct,0.0
 2026-09-30,AVI-TIPF,tot_eur,33224412
@@ -411,6 +656,41 @@ date,fund_code,metric,value
 2026-09-30,AVI-TIPF,top|Northern Star Resources,0.107
 2026-09-30,AVI-TIPF,top|Equinox Gold,0.103
 2026-09-30,AVI-TIPF,top|Amazon.com,0.097
+2026-09-30,AVI-TIPF,top|Broadcom,0.095
+2026-09-30,AVI-TIPF,top|B2Gold,0.09
+2026-09-30,AVI-TIPF,top|Torex Gold Resources,0.088
+2026-09-30,AVI-TIPF,top|Bank of America,0.086
+2026-09-30,AVI-TIPF,top|Alamos Gold,0.082
+2026-09-30,AVI-TIPF,top|Iamgold,0.08
+2026-09-30,AVI-TIPF,top|SSR Mining,0.074
+2026-09-30,AVI-TIPF,top|Endeavour Mining,0.073
+2026-09-30,AVI-TIPF,top|Lam Research,0.069
+2026-09-30,AVI-TIPF,top|Marvell Technology,0.066
+2026-09-30,AVI-TIPF,top|Salesforce,0.063
+2026-09-30,AVI-TIPF,top|Arista Networks,0.062
+2026-09-30,AVI-TIPF,top|Shell,0.06
+2026-09-30,AVI-TIPF,top|Royal Gold,0.06
+2026-09-30,AVI-TIPF,top|ASML Holding,0.058
+2026-09-30,AVI-TIPF,top|Apple,0.058
+2026-09-30,AVI-TIPF,top|Everpure,0.055
+2026-09-30,AVI-TIPF,top|Mastercard,0.054
+2026-09-30,AVI-TIPF,top|Franco-Nevada,0.052
+2026-09-30,AVI-TIPF,top|DPM Metals,0.05
+2026-09-30,AVI-TIPF,top|Samsung Electronics,0.049
+2026-09-30,AVI-TIPF,top|Palo Alto Networks,0.046
+2026-09-30,AVI-TIPF,top|Nokia Oyj,0.045
+2026-09-30,AVI-TIPF,top|G Mining Ventures,0.044
+2026-09-30,AVI-TIPF,top|Wells Fargo & Co,0.044
+2026-09-30,AVI-TIPF,top|ASML Holding NV ADR,0.044
+2026-09-30,AVI-TIPF,top|OceanaGold,0.043
+2026-09-30,AVI-TIPF,top|Ciena,0.043
+2026-09-30,AVI-TIPF,top|Qualcomm,0.043
+2026-09-30,AVI-TIPF,top|Taiwan Semiconductor Manufacturing Co Ltd ADR,0.042
+2026-09-30,AVI-TIPF,top|Repligen,0.041
+2026-09-30,AVI-TIPF,top|Harmony Gold Mining,0.041
+2026-09-30,AVI-TIPF,top|Entegris,0.04
+2026-09-30,AVI-TIPF,top|Cisco Systems,0.04
+2026-09-30,AVI-TIPF,top|Eli Lilly and Co,0.04
 2026-09-30,AVI-TIPF,bd_dur,3.04
 2026-09-30,AVI-TIPF,cov_dur,84.8
 2026-09-30,AVI-TIPF,bd_direct,47.5
@@ -460,12 +740,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-03/09,top|Broadcom,1.466
 2026-09-30,GOX-03/09,top|Meta Platforms,1.34
 2026-09-30,GOX-03/09,top|Tesla,1.071
-2026-09-30,GOX-03/09,top|Eli Lilly and,1.035
+2026-09-30,GOX-03/09,top|Eli Lilly and Co,1.035
 2026-09-30,GOX-03/09,top|Micron Technology,0.997
-2026-09-30,GOX-03/09,top|JPMorgan Chase &,0.868
+2026-09-30,GOX-03/09,top|JPMorgan Chase & Co,0.868
 2026-09-30,GOX-03/09,top|Advanced Micro Devices,0.824
 2026-09-30,GOX-03/09,top|Samsung Electronics,0.727
 2026-09-30,GOX-03/09,top|Berkshire Hathaway,0.722
+2026-09-30,GOX-03/09,top|ExxonMobil Holdings,0.671
+2026-09-30,GOX-03/09,top|Visa,0.635
+2026-09-30,GOX-03/09,top|Johnson & Johnson,0.613
+2026-09-30,GOX-03/09,top|ASML Holding,0.604
+2026-09-30,GOX-03/09,top|SK hynix,0.551
+2026-09-30,GOX-03/09,top|Walmart,0.495
+2026-09-30,GOX-03/09,top|AbbVie,0.479
+2026-09-30,GOX-03/09,top|Mastercard,0.473
+2026-09-30,GOX-03/09,top|Costco Wholesale,0.418
+2026-09-30,GOX-03/09,top|Cisco Systems,0.396
+2026-09-30,GOX-03/09,top|Palantir Technologies,0.364
+2026-09-30,GOX-03/09,top|Chevron,0.362
+2026-09-30,GOX-03/09,top|UnitedHealth Group,0.347
+2026-09-30,GOX-03/09,top|Intel,0.341
+2026-09-30,GOX-03/09,top|Applied Materials,0.339
+2026-09-30,GOX-03/09,top|Merck & Co,0.338
+2026-09-30,GOX-03/09,top|Lam Research,0.33
+2026-09-30,GOX-03/09,top|Bank of America,0.328
+2026-09-30,GOX-03/09,top|GE Aerospace,0.328
+2026-09-30,GOX-03/09,top|Caterpillar,0.317
+2026-09-30,GOX-03/09,top|Roche Holding AG Ordinary Shares new,0.315
+2026-09-30,GOX-03/09,top|Procter & Gamble,0.314
+2026-09-30,GOX-03/09,top|The Home Depot,0.311
+2026-09-30,GOX-03/09,top|Coca-Cola,0.306
+2026-09-30,GOX-03/09,top|Tencent Holdings,0.298
+2026-09-30,GOX-03/09,top|HSBC Holdings,0.292
+2026-09-30,GOX-03/09,top|Novartis,0.278
+2026-09-30,GOX-03/09,top|Palo Alto Networks,0.277
+2026-09-30,GOX-03/09,top|Philip Morris International,0.276
+2026-09-30,GOX-03/09,top|The Goldman Sachs Group,0.265
+2026-09-30,GOX-03/09,top|Netflix,0.265
+2026-09-30,GOX-03/09,top|Royal Bank of Canada,0.264
+2026-09-30,GOX-03/09,top|AstraZeneca,0.264
+2026-09-30,GOX-03/09,top|Shell,0.261
+2026-09-30,GOX-03/09,top|Texas Instruments,0.258
 2026-09-30,GOX-03/09,cov_dur,0.0
 2026-09-30,GOX-03/09,bd_direct,0.0
 2026-09-30,GOX-61/67,tot_eur,9896442
@@ -511,12 +826,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-61/67,top|Broadcom,0.303
 2026-09-30,GOX-61/67,top|Meta Platforms,0.277
 2026-09-30,GOX-61/67,top|Tesla,0.235
-2026-09-30,GOX-61/67,top|Eli Lilly and,0.234
+2026-09-30,GOX-61/67,top|Eli Lilly and Co,0.234
 2026-09-30,GOX-61/67,top|Micron Technology,0.205
-2026-09-30,GOX-61/67,top|JPMorgan Chase &,0.184
+2026-09-30,GOX-61/67,top|JPMorgan Chase & Co,0.184
 2026-09-30,GOX-61/67,top|Advanced Micro Devices,0.169
 2026-09-30,GOX-61/67,top|ExxonMobil Holdings,0.161
 2026-09-30,GOX-61/67,top|Berkshire Hathaway,0.157
+2026-09-30,GOX-61/67,top|Samsung Electronics,0.143
+2026-09-30,GOX-61/67,top|Visa,0.142
+2026-09-30,GOX-61/67,top|Johnson & Johnson,0.135
+2026-09-30,GOX-61/67,top|ASML Holding,0.124
+2026-09-30,GOX-61/67,top|Walmart,0.11
+2026-09-30,GOX-61/67,top|SK hynix,0.108
+2026-09-30,GOX-61/67,top|AbbVie,0.107
+2026-09-30,GOX-61/67,top|Mastercard,0.106
+2026-09-30,GOX-61/67,top|Costco Wholesale,0.091
+2026-09-30,GOX-61/67,top|Chevron,0.089
+2026-09-30,GOX-61/67,top|Cisco Systems,0.085
+2026-09-30,GOX-61/67,top|Palantir Technologies,0.084
+2026-09-30,GOX-61/67,top|Procter & Gamble,0.077
+2026-09-30,GOX-61/67,top|UnitedHealth Group,0.076
+2026-09-30,GOX-61/67,top|Merck & Co,0.075
+2026-09-30,GOX-61/67,top|Coca-Cola,0.074
+2026-09-30,GOX-61/67,top|Roche Holding AG Ordinary Shares new,0.071
+2026-09-30,GOX-61/67,top|Philip Morris International,0.067
+2026-09-30,GOX-61/67,top|Bank of America,0.067
+2026-09-30,GOX-61/67,top|The Home Depot,0.066
+2026-09-30,GOX-61/67,top|Shell,0.065
+2026-09-30,GOX-61/67,top|GE Aerospace,0.065
+2026-09-30,GOX-61/67,top|Applied Materials,0.063
+2026-09-30,GOX-61/67,top|Novartis,0.063
+2026-09-30,GOX-61/67,top|Lam Research,0.062
+2026-09-30,GOX-61/67,top|Palo Alto Networks,0.061
+2026-09-30,GOX-61/67,top|Intel,0.06
+2026-09-30,GOX-61/67,top|Caterpillar,0.059
+2026-09-30,GOX-61/67,top|HSBC Holdings,0.059
+2026-09-30,GOX-61/67,top|Tencent Holdings,0.059
+2026-09-30,GOX-61/67,top|Royal Bank of Canada,0.059
+2026-09-30,GOX-61/67,top|AstraZeneca,0.058
+2026-09-30,GOX-61/67,top|Texas Instruments,0.056
+2026-09-30,GOX-61/67,top|RTX,0.055
+2026-09-30,GOX-61/67,top|The Goldman Sachs Group,0.054
 2026-09-30,GOX-61/67,bd_dur,2.53
 2026-09-30,GOX-61/67,cov_dur,100.0
 2026-09-30,GOX-61/67,bd_direct,0.0
@@ -566,12 +916,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-68/74,top|Broadcom,1.329
 2026-09-30,GOX-68/74,top|Meta Platforms,1.22
 2026-09-30,GOX-68/74,top|Tesla,0.96
-2026-09-30,GOX-68/74,top|Eli Lilly and,0.923
+2026-09-30,GOX-68/74,top|Eli Lilly and Co,0.923
 2026-09-30,GOX-68/74,top|Micron Technology,0.916
-2026-09-30,GOX-68/74,top|JPMorgan Chase &,0.784
+2026-09-30,GOX-68/74,top|JPMorgan Chase & Co,0.784
 2026-09-30,GOX-68/74,top|Advanced Micro Devices,0.756
 2026-09-30,GOX-68/74,top|Samsung Electronics,0.66
 2026-09-30,GOX-68/74,top|Berkshire Hathaway,0.647
+2026-09-30,GOX-68/74,top|ExxonMobil Holdings,0.603
+2026-09-30,GOX-68/74,top|Visa,0.567
+2026-09-30,GOX-68/74,top|Johnson & Johnson,0.553
+2026-09-30,GOX-68/74,top|ASML Holding,0.552
+2026-09-30,GOX-68/74,top|SK hynix,0.499
+2026-09-30,GOX-68/74,top|Walmart,0.442
+2026-09-30,GOX-68/74,top|AbbVie,0.431
+2026-09-30,GOX-68/74,top|Mastercard,0.423
+2026-09-30,GOX-68/74,top|Costco Wholesale,0.375
+2026-09-30,GOX-68/74,top|Cisco Systems,0.359
+2026-09-30,GOX-68/74,top|Palantir Technologies,0.329
+2026-09-30,GOX-68/74,top|Intel,0.324
+2026-09-30,GOX-68/74,top|Chevron,0.322
+2026-09-30,GOX-68/74,top|Applied Materials,0.314
+2026-09-30,GOX-68/74,top|UnitedHealth Group,0.312
+2026-09-30,GOX-68/74,top|Lam Research,0.307
+2026-09-30,GOX-68/74,top|Merck & Co,0.305
+2026-09-30,GOX-68/74,top|Bank of America,0.299
+2026-09-30,GOX-68/74,top|GE Aerospace,0.296
+2026-09-30,GOX-68/74,top|Caterpillar,0.293
+2026-09-30,GOX-68/74,top|Roche Holding AG Ordinary Shares new,0.283
+2026-09-30,GOX-68/74,top|The Home Depot,0.278
+2026-09-30,GOX-68/74,top|Procter & Gamble,0.278
+2026-09-30,GOX-68/74,top|Coca-Cola,0.27
+2026-09-30,GOX-68/74,top|Tencent Holdings,0.27
+2026-09-30,GOX-68/74,top|HSBC Holdings,0.266
+2026-09-30,GOX-68/74,top|Palo Alto Networks,0.252
+2026-09-30,GOX-68/74,top|Novartis,0.25
+2026-09-30,GOX-68/74,top|Philip Morris International,0.245
+2026-09-30,GOX-68/74,top|The Goldman Sachs Group,0.241
+2026-09-30,GOX-68/74,top|Netflix,0.241
+2026-09-30,GOX-68/74,top|Royal Bank of Canada,0.238
+2026-09-30,GOX-68/74,top|AstraZeneca,0.237
+2026-09-30,GOX-68/74,top|Shell,0.232
+2026-09-30,GOX-68/74,top|Texas Instruments,0.231
 2026-09-30,GOX-68/74,bd_dur,2.8
 2026-09-30,GOX-68/74,cov_dur,100.0
 2026-09-30,GOX-68/74,bd_direct,0.0
@@ -621,12 +1006,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-75/81,top|Broadcom,1.475
 2026-09-30,GOX-75/81,top|Meta Platforms,1.359
 2026-09-30,GOX-75/81,top|Tesla,1.064
-2026-09-30,GOX-75/81,top|Eli Lilly and,1.024
+2026-09-30,GOX-75/81,top|Eli Lilly and Co,1.024
 2026-09-30,GOX-75/81,top|Micron Technology,1.016
-2026-09-30,GOX-75/81,top|JPMorgan Chase &,0.869
+2026-09-30,GOX-75/81,top|JPMorgan Chase & Co,0.869
 2026-09-30,GOX-75/81,top|Advanced Micro Devices,0.839
 2026-09-30,GOX-75/81,top|Samsung Electronics,0.731
 2026-09-30,GOX-75/81,top|Berkshire Hathaway,0.719
+2026-09-30,GOX-75/81,top|ExxonMobil Holdings,0.67
+2026-09-30,GOX-75/81,top|Visa,0.63
+2026-09-30,GOX-75/81,top|Johnson & Johnson,0.615
+2026-09-30,GOX-75/81,top|ASML Holding,0.613
+2026-09-30,GOX-75/81,top|SK hynix,0.552
+2026-09-30,GOX-75/81,top|Walmart,0.491
+2026-09-30,GOX-75/81,top|AbbVie,0.478
+2026-09-30,GOX-75/81,top|Mastercard,0.47
+2026-09-30,GOX-75/81,top|Costco Wholesale,0.417
+2026-09-30,GOX-75/81,top|Cisco Systems,0.398
+2026-09-30,GOX-75/81,top|Palantir Technologies,0.367
+2026-09-30,GOX-75/81,top|Chevron,0.36
+2026-09-30,GOX-75/81,top|Intel,0.359
+2026-09-30,GOX-75/81,top|Applied Materials,0.347
+2026-09-30,GOX-75/81,top|UnitedHealth Group,0.346
+2026-09-30,GOX-75/81,top|Merck & Co,0.339
+2026-09-30,GOX-75/81,top|Lam Research,0.339
+2026-09-30,GOX-75/81,top|Bank of America,0.331
+2026-09-30,GOX-75/81,top|GE Aerospace,0.328
+2026-09-30,GOX-75/81,top|Caterpillar,0.324
+2026-09-30,GOX-75/81,top|Roche Holding AG Ordinary Shares new,0.314
+2026-09-30,GOX-75/81,top|Procter & Gamble,0.313
+2026-09-30,GOX-75/81,top|The Home Depot,0.309
+2026-09-30,GOX-75/81,top|Coca-Cola,0.305
+2026-09-30,GOX-75/81,top|Tencent Holdings,0.299
+2026-09-30,GOX-75/81,top|HSBC Holdings,0.296
+2026-09-30,GOX-75/81,top|Palo Alto Networks,0.28
+2026-09-30,GOX-75/81,top|Novartis,0.277
+2026-09-30,GOX-75/81,top|Philip Morris International,0.276
+2026-09-30,GOX-75/81,top|Netflix,0.267
+2026-09-30,GOX-75/81,top|The Goldman Sachs Group,0.266
+2026-09-30,GOX-75/81,top|Royal Bank of Canada,0.265
+2026-09-30,GOX-75/81,top|AstraZeneca,0.263
+2026-09-30,GOX-75/81,top|Shell,0.26
+2026-09-30,GOX-75/81,top|Texas Instruments,0.257
 2026-09-30,GOX-75/81,cov_dur,0.0
 2026-09-30,GOX-75/81,bd_direct,0.0
 2026-09-30,GOX-82/88,tot_eur,57622807
@@ -672,12 +1092,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-82/88,top|Broadcom,1.478
 2026-09-30,GOX-82/88,top|Meta Platforms,1.355
 2026-09-30,GOX-82/88,top|Tesla,1.068
-2026-09-30,GOX-82/88,top|Eli Lilly and,1.025
+2026-09-30,GOX-82/88,top|Eli Lilly and Co,1.025
 2026-09-30,GOX-82/88,top|Micron Technology,1.018
-2026-09-30,GOX-82/88,top|JPMorgan Chase &,0.87
+2026-09-30,GOX-82/88,top|JPMorgan Chase & Co,0.87
 2026-09-30,GOX-82/88,top|Advanced Micro Devices,0.839
 2026-09-30,GOX-82/88,top|Samsung Electronics,0.726
 2026-09-30,GOX-82/88,top|Berkshire Hathaway,0.719
+2026-09-30,GOX-82/88,top|ExxonMobil Holdings,0.67
+2026-09-30,GOX-82/88,top|Visa,0.63
+2026-09-30,GOX-82/88,top|Johnson & Johnson,0.615
+2026-09-30,GOX-82/88,top|ASML Holding,0.614
+2026-09-30,GOX-82/88,top|SK hynix,0.549
+2026-09-30,GOX-82/88,top|Walmart,0.491
+2026-09-30,GOX-82/88,top|AbbVie,0.478
+2026-09-30,GOX-82/88,top|Mastercard,0.47
+2026-09-30,GOX-82/88,top|Costco Wholesale,0.417
+2026-09-30,GOX-82/88,top|Cisco Systems,0.399
+2026-09-30,GOX-82/88,top|Palantir Technologies,0.365
+2026-09-30,GOX-82/88,top|Intel,0.361
+2026-09-30,GOX-82/88,top|Chevron,0.356
+2026-09-30,GOX-82/88,top|Applied Materials,0.349
+2026-09-30,GOX-82/88,top|UnitedHealth Group,0.347
+2026-09-30,GOX-82/88,top|Lam Research,0.341
+2026-09-30,GOX-82/88,top|Merck & Co,0.339
+2026-09-30,GOX-82/88,top|Bank of America,0.332
+2026-09-30,GOX-82/88,top|GE Aerospace,0.329
+2026-09-30,GOX-82/88,top|Caterpillar,0.325
+2026-09-30,GOX-82/88,top|Roche Holding AG Ordinary Shares new,0.314
+2026-09-30,GOX-82/88,top|The Home Depot,0.31
+2026-09-30,GOX-82/88,top|Procter & Gamble,0.309
+2026-09-30,GOX-82/88,top|Coca-Cola,0.301
+2026-09-30,GOX-82/88,top|Tencent Holdings,0.297
+2026-09-30,GOX-82/88,top|HSBC Holdings,0.296
+2026-09-30,GOX-82/88,top|Palo Alto Networks,0.28
+2026-09-30,GOX-82/88,top|Novartis,0.277
+2026-09-30,GOX-82/88,top|Philip Morris International,0.272
+2026-09-30,GOX-82/88,top|Netflix,0.267
+2026-09-30,GOX-82/88,top|The Goldman Sachs Group,0.266
+2026-09-30,GOX-82/88,top|Royal Bank of Canada,0.265
+2026-09-30,GOX-82/88,top|AstraZeneca,0.263
+2026-09-30,GOX-82/88,top|Texas Instruments,0.257
+2026-09-30,GOX-82/88,top|Shell,0.257
 2026-09-30,GOX-82/88,cov_dur,0.0
 2026-09-30,GOX-82/88,bd_direct,0.0
 2026-09-30,GOX-89/95,tot_eur,45767021
@@ -723,12 +1178,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-89/95,top|Broadcom,1.485
 2026-09-30,GOX-89/95,top|Meta Platforms,1.351
 2026-09-30,GOX-89/95,top|Tesla,1.076
-2026-09-30,GOX-89/95,top|Eli Lilly and,1.03
+2026-09-30,GOX-89/95,top|Eli Lilly and Co,1.03
 2026-09-30,GOX-89/95,top|Micron Technology,1.024
-2026-09-30,GOX-89/95,top|JPMorgan Chase &,0.871
+2026-09-30,GOX-89/95,top|JPMorgan Chase & Co,0.871
 2026-09-30,GOX-89/95,top|Advanced Micro Devices,0.84
 2026-09-30,GOX-89/95,top|Samsung Electronics,0.724
 2026-09-30,GOX-89/95,top|Berkshire Hathaway,0.721
+2026-09-30,GOX-89/95,top|ExxonMobil Holdings,0.67
+2026-09-30,GOX-89/95,top|Visa,0.632
+2026-09-30,GOX-89/95,top|ASML Holding,0.618
+2026-09-30,GOX-89/95,top|Johnson & Johnson,0.616
+2026-09-30,GOX-89/95,top|SK hynix,0.547
+2026-09-30,GOX-89/95,top|Walmart,0.494
+2026-09-30,GOX-89/95,top|AbbVie,0.479
+2026-09-30,GOX-89/95,top|Mastercard,0.47
+2026-09-30,GOX-89/95,top|Costco Wholesale,0.419
+2026-09-30,GOX-89/95,top|Cisco Systems,0.401
+2026-09-30,GOX-89/95,top|Intel,0.363
+2026-09-30,GOX-89/95,top|Palantir Technologies,0.363
+2026-09-30,GOX-89/95,top|Applied Materials,0.354
+2026-09-30,GOX-89/95,top|Chevron,0.349
+2026-09-30,GOX-89/95,top|UnitedHealth Group,0.349
+2026-09-30,GOX-89/95,top|Lam Research,0.344
+2026-09-30,GOX-89/95,top|Merck & Co,0.339
+2026-09-30,GOX-89/95,top|Bank of America,0.333
+2026-09-30,GOX-89/95,top|GE Aerospace,0.331
+2026-09-30,GOX-89/95,top|Caterpillar,0.329
+2026-09-30,GOX-89/95,top|Roche Holding AG Ordinary Shares new,0.315
+2026-09-30,GOX-89/95,top|The Home Depot,0.312
+2026-09-30,GOX-89/95,top|Procter & Gamble,0.303
+2026-09-30,GOX-89/95,top|Tencent Holdings,0.296
+2026-09-30,GOX-89/95,top|HSBC Holdings,0.296
+2026-09-30,GOX-89/95,top|Coca-Cola,0.295
+2026-09-30,GOX-89/95,top|Palo Alto Networks,0.28
+2026-09-30,GOX-89/95,top|Novartis,0.278
+2026-09-30,GOX-89/95,top|Netflix,0.268
+2026-09-30,GOX-89/95,top|The Goldman Sachs Group,0.268
+2026-09-30,GOX-89/95,top|Philip Morris International,0.266
+2026-09-30,GOX-89/95,top|Royal Bank of Canada,0.266
+2026-09-30,GOX-89/95,top|AstraZeneca,0.265
+2026-09-30,GOX-89/95,top|Texas Instruments,0.259
+2026-09-30,GOX-89/95,top|Wells Fargo & Co,0.253
 2026-09-30,GOX-89/95,cov_dur,0.0
 2026-09-30,GOX-89/95,bd_direct,0.0
 2026-09-30,GOX-96/02,tot_eur,25426956
@@ -774,12 +1264,47 @@ date,fund_code,metric,value
 2026-09-30,GOX-96/02,top|Broadcom,1.489
 2026-09-30,GOX-96/02,top|Meta Platforms,1.345
 2026-09-30,GOX-96/02,top|Tesla,1.085
-2026-09-30,GOX-96/02,top|Eli Lilly and,1.039
+2026-09-30,GOX-96/02,top|Eli Lilly and Co,1.039
 2026-09-30,GOX-96/02,top|Micron Technology,1.021
-2026-09-30,GOX-96/02,top|JPMorgan Chase &,0.874
+2026-09-30,GOX-96/02,top|JPMorgan Chase & Co,0.874
 2026-09-30,GOX-96/02,top|Advanced Micro Devices,0.836
 2026-09-30,GOX-96/02,top|Samsung Electronics,0.725
 2026-09-30,GOX-96/02,top|Berkshire Hathaway,0.725
+2026-09-30,GOX-96/02,top|ExxonMobil Holdings,0.672
+2026-09-30,GOX-96/02,top|Visa,0.636
+2026-09-30,GOX-96/02,top|Johnson & Johnson,0.617
+2026-09-30,GOX-96/02,top|ASML Holding,0.617
+2026-09-30,GOX-96/02,top|SK hynix,0.548
+2026-09-30,GOX-96/02,top|Walmart,0.498
+2026-09-30,GOX-96/02,top|AbbVie,0.481
+2026-09-30,GOX-96/02,top|Mastercard,0.473
+2026-09-30,GOX-96/02,top|Costco Wholesale,0.421
+2026-09-30,GOX-96/02,top|Cisco Systems,0.402
+2026-09-30,GOX-96/02,top|Palantir Technologies,0.362
+2026-09-30,GOX-96/02,top|Intel,0.358
+2026-09-30,GOX-96/02,top|Applied Materials,0.354
+2026-09-30,GOX-96/02,top|UnitedHealth Group,0.351
+2026-09-30,GOX-96/02,top|Chevron,0.347
+2026-09-30,GOX-96/02,top|Lam Research,0.343
+2026-09-30,GOX-96/02,top|Merck & Co,0.339
+2026-09-30,GOX-96/02,top|Bank of America,0.333
+2026-09-30,GOX-96/02,top|GE Aerospace,0.333
+2026-09-30,GOX-96/02,top|Caterpillar,0.329
+2026-09-30,GOX-96/02,top|Roche Holding AG Ordinary Shares new,0.316
+2026-09-30,GOX-96/02,top|The Home Depot,0.315
+2026-09-30,GOX-96/02,top|Procter & Gamble,0.301
+2026-09-30,GOX-96/02,top|Tencent Holdings,0.297
+2026-09-30,GOX-96/02,top|HSBC Holdings,0.295
+2026-09-30,GOX-96/02,top|Coca-Cola,0.293
+2026-09-30,GOX-96/02,top|Novartis,0.28
+2026-09-30,GOX-96/02,top|Palo Alto Networks,0.279
+2026-09-30,GOX-96/02,top|The Goldman Sachs Group,0.268
+2026-09-30,GOX-96/02,top|Netflix,0.268
+2026-09-30,GOX-96/02,top|Royal Bank of Canada,0.267
+2026-09-30,GOX-96/02,top|AstraZeneca,0.266
+2026-09-30,GOX-96/02,top|Philip Morris International,0.265
+2026-09-30,GOX-96/02,top|Texas Instruments,0.26
+2026-09-30,GOX-96/02,top|Wells Fargo & Co,0.254
 2026-09-30,GOX-96/02,cov_dur,0.0
 2026-09-30,GOX-96/02,bd_direct,0.0
 2026-09-30,GOX-TIPF,tot_eur,1618433
@@ -839,11 +1364,46 @@ date,fund_code,metric,value
 2026-09-30,INV-03/09,top|Meta Platforms,1.246
 2026-09-30,INV-03/09,top|Samsung Electronics,0.992
 2026-09-30,INV-03/09,top|Tesla,0.92
-2026-09-30,INV-03/09,top|Eli Lilly and,0.91
+2026-09-30,INV-03/09,top|Eli Lilly and Co,0.91
 2026-09-30,INV-03/09,top|Micron Technology,0.882
-2026-09-30,INV-03/09,top|JPMorgan Chase &,0.791
+2026-09-30,INV-03/09,top|JPMorgan Chase & Co,0.791
 2026-09-30,INV-03/09,top|Advanced Micro Devices,0.786
 2026-09-30,INV-03/09,top|SK hynix,0.75
+2026-09-30,INV-03/09,top|Berkshire Hathaway,0.668
+2026-09-30,INV-03/09,top|Visa,0.612
+2026-09-30,INV-03/09,top|ExxonMobil Holdings,0.573
+2026-09-30,INV-03/09,top|Johnson & Johnson,0.568
+2026-09-30,INV-03/09,top|ASML Holding,0.531
+2026-09-30,INV-03/09,top|AbbVie,0.453
+2026-09-30,INV-03/09,top|Walmart,0.452
+2026-09-30,INV-03/09,top|Mastercard,0.44
+2026-09-30,INV-03/09,top|Costco Wholesale,0.382
+2026-09-30,INV-03/09,top|Cisco Systems,0.375
+2026-09-30,INV-03/09,top|Palantir Technologies,0.329
+2026-09-30,INV-03/09,top|Intel,0.328
+2026-09-30,INV-03/09,top|Merck & Co,0.318
+2026-09-30,INV-03/09,top|UnitedHealth Group,0.308
+2026-09-30,INV-03/09,top|Applied Materials,0.305
+2026-09-30,INV-03/09,top|Bank of America,0.298
+2026-09-30,INV-03/09,top|The Home Depot,0.297
+2026-09-30,INV-03/09,top|Lam Research,0.296
+2026-09-30,INV-03/09,top|Roche Holding AG Ordinary Shares new,0.293
+2026-09-30,INV-03/09,top|Caterpillar,0.283
+2026-09-30,INV-03/09,top|GE Aerospace,0.278
+2026-09-30,INV-03/09,top|Palo Alto Networks,0.269
+2026-09-30,INV-03/09,top|HSBC Holdings,0.267
+2026-09-30,INV-03/09,top|Novartis,0.264
+2026-09-30,INV-03/09,top|Royal Bank of Canada,0.26
+2026-09-30,INV-03/09,top|AstraZeneca,0.247
+2026-09-30,INV-03/09,top|The Goldman Sachs Group,0.246
+2026-09-30,INV-03/09,top|Netflix,0.245
+2026-09-30,INV-03/09,top|Texas Instruments,0.245
+2026-09-30,INV-03/09,top|Mitsubishi UFJ Financial Group,0.236
+2026-09-30,INV-03/09,top|Wells Fargo & Co,0.223
+2026-09-30,INV-03/09,top|Thermo Fisher Scientific,0.223
+2026-09-30,INV-03/09,top|GE Vernova,0.214
+2026-09-30,INV-03/09,top|MediaTek,0.213
+2026-09-30,INV-03/09,top|SAP,0.213
 2026-09-30,INV-03/09,bd_dur,0.39
 2026-09-30,INV-03/09,cov_dur,100.0
 2026-09-30,INV-03/09,bd_direct,0.0
@@ -895,10 +1455,45 @@ date,fund_code,metric,value
 2026-09-30,INV-61/67,top|Broadcom,0.144
 2026-09-30,INV-61/67,top|Meta Platforms,0.135
 2026-09-30,INV-61/67,top|Samsung Electronics,0.112
-2026-09-30,INV-61/67,top|Eli Lilly and,0.111
+2026-09-30,INV-61/67,top|Eli Lilly and Co,0.111
 2026-09-30,INV-61/67,top|Tesla,0.108
-2026-09-30,INV-61/67,top|JPMorgan Chase &,0.091
+2026-09-30,INV-61/67,top|JPMorgan Chase & Co,0.091
 2026-09-30,INV-61/67,top|Micron Technology,0.088
+2026-09-30,INV-61/67,top|SK hynix,0.085
+2026-09-30,INV-61/67,top|Berkshire Hathaway,0.08
+2026-09-30,INV-61/67,top|Advanced Micro Devices,0.078
+2026-09-30,INV-61/67,top|Visa,0.071
+2026-09-30,INV-61/67,top|ExxonMobil Holdings,0.069
+2026-09-30,INV-61/67,top|Johnson & Johnson,0.065
+2026-09-30,INV-61/67,top|ASML Holding,0.057
+2026-09-30,INV-61/67,top|Walmart,0.055
+2026-09-30,INV-61/67,top|Mastercard,0.054
+2026-09-30,INV-61/67,top|AbbVie,0.051
+2026-09-30,INV-61/67,top|Costco Wholesale,0.045
+2026-09-30,INV-61/67,top|Cisco Systems,0.04
+2026-09-30,INV-61/67,top|Palantir Technologies,0.036
+2026-09-30,INV-61/67,top|UnitedHealth Group,0.036
+2026-09-30,INV-61/67,top|Merck & Co,0.036
+2026-09-30,INV-61/67,top|The Home Depot,0.035
+2026-09-30,INV-61/67,top|GE Aerospace,0.033
+2026-09-30,INV-61/67,top|Roche Holding AG Ordinary Shares new,0.033
+2026-09-30,INV-61/67,top|Bank of America,0.033
+2026-09-30,INV-61/67,top|HSBC Holdings,0.029
+2026-09-30,INV-61/67,top|Novartis,0.029
+2026-09-30,INV-61/67,top|Royal Bank of Canada,0.029
+2026-09-30,INV-61/67,top|Applied Materials,0.029
+2026-09-30,INV-61/67,top|AstraZeneca,0.028
+2026-09-30,INV-61/67,top|Palo Alto Networks,0.028
+2026-09-30,INV-61/67,top|Texas Instruments,0.028
+2026-09-30,INV-61/67,top|Lam Research,0.027
+2026-09-30,INV-61/67,top|Netflix,0.027
+2026-09-30,INV-61/67,top|The Goldman Sachs Group,0.027
+2026-09-30,INV-61/67,top|Caterpillar,0.026
+2026-09-30,INV-61/67,top|Wells Fargo & Co,0.026
+2026-09-30,INV-61/67,top|Thermo Fisher Scientific,0.025
+2026-09-30,INV-61/67,top|Amgen,0.025
+2026-09-30,INV-61/67,top|Intel,0.025
+2026-09-30,INV-61/67,top|MediaTek,0.024
 2026-09-30,INV-61/67,bd_dur,5.31
 2026-09-30,INV-61/67,cov_dur,99.1
 2026-09-30,INV-61/67,bd_direct,86.4
@@ -952,8 +1547,43 @@ date,fund_code,metric,value
 2026-09-30,INV-68/74,top|Broadcom,0.356
 2026-09-30,INV-68/74,top|Meta Platforms,0.335
 2026-09-30,INV-68/74,top|Samsung Electronics,0.277
-2026-09-30,INV-68/74,top|Eli Lilly and,0.275
+2026-09-30,INV-68/74,top|Eli Lilly and Co,0.275
 2026-09-30,INV-68/74,top|Tesla,0.267
+2026-09-30,INV-68/74,top|JPMorgan Chase & Co,0.227
+2026-09-30,INV-68/74,top|Micron Technology,0.218
+2026-09-30,INV-68/74,top|SK hynix,0.21
+2026-09-30,INV-68/74,top|Berkshire Hathaway,0.198
+2026-09-30,INV-68/74,top|Advanced Micro Devices,0.193
+2026-09-30,INV-68/74,top|Visa,0.175
+2026-09-30,INV-68/74,top|ExxonMobil Holdings,0.17
+2026-09-30,INV-68/74,top|Johnson & Johnson,0.161
+2026-09-30,INV-68/74,top|ASML Holding,0.144
+2026-09-30,INV-68/74,top|Walmart,0.137
+2026-09-30,INV-68/74,top|Mastercard,0.133
+2026-09-30,INV-68/74,top|AbbVie,0.126
+2026-09-30,INV-68/74,top|Costco Wholesale,0.113
+2026-09-30,INV-68/74,top|Cisco Systems,0.099
+2026-09-30,INV-68/74,top|Palantir Technologies,0.091
+2026-09-30,INV-68/74,top|UnitedHealth Group,0.09
+2026-09-30,INV-68/74,top|Merck & Co,0.09
+2026-09-30,INV-68/74,top|The Home Depot,0.086
+2026-09-30,INV-68/74,top|Roche Holding AG Ordinary Shares new,0.084
+2026-09-30,INV-68/74,top|GE Aerospace,0.083
+2026-09-30,INV-68/74,top|Bank of America,0.081
+2026-09-30,INV-68/74,top|HSBC Holdings,0.075
+2026-09-30,INV-68/74,top|Novartis,0.074
+2026-09-30,INV-68/74,top|Royal Bank of Canada,0.071
+2026-09-30,INV-68/74,top|Applied Materials,0.071
+2026-09-30,INV-68/74,top|AstraZeneca,0.071
+2026-09-30,INV-68/74,top|Palo Alto Networks,0.069
+2026-09-30,INV-68/74,top|Texas Instruments,0.068
+2026-09-30,INV-68/74,top|Lam Research,0.067
+2026-09-30,INV-68/74,top|Netflix,0.067
+2026-09-30,INV-68/74,top|The Goldman Sachs Group,0.066
+2026-09-30,INV-68/74,top|Caterpillar,0.066
+2026-09-30,INV-68/74,top|Wells Fargo & Co,0.064
+2026-09-30,INV-68/74,top|Thermo Fisher Scientific,0.063
+2026-09-30,INV-68/74,top|Amgen,0.062
 2026-09-30,INV-68/74,bd_dur,5.4
 2026-09-30,INV-68/74,cov_dur,96.0
 2026-09-30,INV-68/74,bd_direct,78.1
@@ -1007,8 +1637,43 @@ date,fund_code,metric,value
 2026-09-30,INV-75/81,top|Broadcom,0.733
 2026-09-30,INV-75/81,top|Meta Platforms,0.69
 2026-09-30,INV-75/81,top|Samsung Electronics,0.567
-2026-09-30,INV-75/81,top|Eli Lilly and,0.566
+2026-09-30,INV-75/81,top|Eli Lilly and Co,0.566
 2026-09-30,INV-75/81,top|Tesla,0.549
+2026-09-30,INV-75/81,top|JPMorgan Chase & Co,0.467
+2026-09-30,INV-75/81,top|Micron Technology,0.448
+2026-09-30,INV-75/81,top|SK hynix,0.429
+2026-09-30,INV-75/81,top|Berkshire Hathaway,0.407
+2026-09-30,INV-75/81,top|Advanced Micro Devices,0.398
+2026-09-30,INV-75/81,top|Visa,0.361
+2026-09-30,INV-75/81,top|ExxonMobil Holdings,0.35
+2026-09-30,INV-75/81,top|Johnson & Johnson,0.332
+2026-09-30,INV-75/81,top|ASML Holding,0.298
+2026-09-30,INV-75/81,top|Walmart,0.281
+2026-09-30,INV-75/81,top|Mastercard,0.272
+2026-09-30,INV-75/81,top|AbbVie,0.26
+2026-09-30,INV-75/81,top|Costco Wholesale,0.232
+2026-09-30,INV-75/81,top|Cisco Systems,0.204
+2026-09-30,INV-75/81,top|Palantir Technologies,0.187
+2026-09-30,INV-75/81,top|UnitedHealth Group,0.185
+2026-09-30,INV-75/81,top|Merck & Co,0.185
+2026-09-30,INV-75/81,top|The Home Depot,0.177
+2026-09-30,INV-75/81,top|GE Aerospace,0.17
+2026-09-30,INV-75/81,top|Roche Holding AG Ordinary Shares new,0.17
+2026-09-30,INV-75/81,top|Bank of America,0.167
+2026-09-30,INV-75/81,top|Novartis,0.152
+2026-09-30,INV-75/81,top|HSBC Holdings,0.151
+2026-09-30,INV-75/81,top|Royal Bank of Canada,0.148
+2026-09-30,INV-75/81,top|Applied Materials,0.146
+2026-09-30,INV-75/81,top|AstraZeneca,0.143
+2026-09-30,INV-75/81,top|Palo Alto Networks,0.141
+2026-09-30,INV-75/81,top|Texas Instruments,0.141
+2026-09-30,INV-75/81,top|Lam Research,0.138
+2026-09-30,INV-75/81,top|Netflix,0.137
+2026-09-30,INV-75/81,top|The Goldman Sachs Group,0.136
+2026-09-30,INV-75/81,top|Caterpillar,0.136
+2026-09-30,INV-75/81,top|Vilkyskiu Pienine,0.133
+2026-09-30,INV-75/81,top|Mitsubishi UFJ Financial Group,0.133
+2026-09-30,INV-75/81,top|Wells Fargo & Co,0.132
 2026-09-30,INV-75/81,bd_dur,4.63
 2026-09-30,INV-75/81,cov_dur,79.5
 2026-09-30,INV-75/81,bd_direct,73.9
@@ -1062,8 +1727,43 @@ date,fund_code,metric,value
 2026-09-30,INV-82/88,top|Rokiskio Suris,0.864
 2026-09-30,INV-82/88,top|Meta Platforms,0.815
 2026-09-30,INV-82/88,top|Samsung Electronics,0.668
-2026-09-30,INV-82/88,top|Eli Lilly and,0.654
+2026-09-30,INV-82/88,top|Eli Lilly and Co,0.654
 2026-09-30,INV-82/88,top|Tesla,0.64
+2026-09-30,INV-82/88,top|JPMorgan Chase & Co,0.545
+2026-09-30,INV-82/88,top|Micron Technology,0.541
+2026-09-30,INV-82/88,top|SK hynix,0.505
+2026-09-30,INV-82/88,top|Advanced Micro Devices,0.483
+2026-09-30,INV-82/88,top|Berkshire Hathaway,0.473
+2026-09-30,INV-82/88,top|Visa,0.425
+2026-09-30,INV-82/88,top|ExxonMobil Holdings,0.403
+2026-09-30,INV-82/88,top|Johnson & Johnson,0.389
+2026-09-30,INV-82/88,top|ASML Holding,0.354
+2026-09-30,INV-82/88,top|Walmart,0.325
+2026-09-30,INV-82/88,top|Mastercard,0.315
+2026-09-30,INV-82/88,top|AbbVie,0.308
+2026-09-30,INV-82/88,top|Costco Wholesale,0.27
+2026-09-30,INV-82/88,top|Cisco Systems,0.244
+2026-09-30,INV-82/88,top|Palantir Technologies,0.219
+2026-09-30,INV-82/88,top|Merck & Co,0.217
+2026-09-30,INV-82/88,top|UnitedHealth Group,0.216
+2026-09-30,INV-82/88,top|The Home Depot,0.208
+2026-09-30,INV-82/88,top|Roche Holding AG Ordinary Shares new,0.203
+2026-09-30,INV-82/88,top|Bank of America,0.197
+2026-09-30,INV-82/88,top|GE Aerospace,0.196
+2026-09-30,INV-82/88,top|Novartis,0.181
+2026-09-30,INV-82/88,top|Applied Materials,0.18
+2026-09-30,INV-82/88,top|HSBC Holdings,0.18
+2026-09-30,INV-82/88,top|Royal Bank of Canada,0.175
+2026-09-30,INV-82/88,top|Lam Research,0.171
+2026-09-30,INV-82/88,top|Palo Alto Networks,0.17
+2026-09-30,INV-82/88,top|AstraZeneca,0.17
+2026-09-30,INV-82/88,top|Caterpillar,0.167
+2026-09-30,INV-82/88,top|Texas Instruments,0.167
+2026-09-30,INV-82/88,top|Intel,0.166
+2026-09-30,INV-82/88,top|Netflix,0.162
+2026-09-30,INV-82/88,top|The Goldman Sachs Group,0.162
+2026-09-30,INV-82/88,top|Mitsubishi UFJ Financial Group,0.158
+2026-09-30,INV-82/88,top|Wells Fargo & Co,0.154
 2026-09-30,INV-82/88,bd_dur,0.39
 2026-09-30,INV-82/88,cov_dur,42.9
 2026-09-30,INV-82/88,bd_direct,57.1
@@ -1117,8 +1817,43 @@ date,fund_code,metric,value
 2026-09-30,INV-89/95,top|Rokiskio Suris,0.82
 2026-09-30,INV-89/95,top|Meta Platforms,0.767
 2026-09-30,INV-89/95,top|Samsung Electronics,0.637
-2026-09-30,INV-89/95,top|Eli Lilly and,0.614
+2026-09-30,INV-89/95,top|Eli Lilly and Co,0.614
 2026-09-30,INV-89/95,top|Tesla,0.603
+2026-09-30,INV-89/95,top|Micron Technology,0.518
+2026-09-30,INV-89/95,top|JPMorgan Chase & Co,0.515
+2026-09-30,INV-89/95,top|SK hynix,0.481
+2026-09-30,INV-89/95,top|Advanced Micro Devices,0.47
+2026-09-30,INV-89/95,top|Berkshire Hathaway,0.445
+2026-09-30,INV-89/95,top|Visa,0.409
+2026-09-30,INV-89/95,top|ExxonMobil Holdings,0.372
+2026-09-30,INV-89/95,top|Johnson & Johnson,0.368
+2026-09-30,INV-89/95,top|ASML Holding,0.336
+2026-09-30,INV-89/95,top|Walmart,0.305
+2026-09-30,INV-89/95,top|AbbVie,0.297
+2026-09-30,INV-89/95,top|Mastercard,0.296
+2026-09-30,INV-89/95,top|Costco Wholesale,0.254
+2026-09-30,INV-89/95,top|Cisco Systems,0.236
+2026-09-30,INV-89/95,top|Palantir Technologies,0.206
+2026-09-30,INV-89/95,top|Merck & Co,0.205
+2026-09-30,INV-89/95,top|UnitedHealth Group,0.203
+2026-09-30,INV-89/95,top|The Home Depot,0.2
+2026-09-30,INV-89/95,top|Roche Holding AG Ordinary Shares new,0.192
+2026-09-30,INV-89/95,top|Bank of America,0.188
+2026-09-30,INV-89/95,top|GE Aerospace,0.181
+2026-09-30,INV-89/95,top|Applied Materials,0.176
+2026-09-30,INV-89/95,top|Novartis,0.171
+2026-09-30,INV-89/95,top|HSBC Holdings,0.17
+2026-09-30,INV-89/95,top|Lam Research,0.168
+2026-09-30,INV-89/95,top|Intel,0.167
+2026-09-30,INV-89/95,top|Royal Bank of Canada,0.167
+2026-09-30,INV-89/95,top|Palo Alto Networks,0.165
+2026-09-30,INV-89/95,top|Caterpillar,0.164
+2026-09-30,INV-89/95,top|AstraZeneca,0.161
+2026-09-30,INV-89/95,top|Texas Instruments,0.16
+2026-09-30,INV-89/95,top|The Goldman Sachs Group,0.157
+2026-09-30,INV-89/95,top|Netflix,0.154
+2026-09-30,INV-89/95,top|Mitsubishi UFJ Financial Group,0.151
+2026-09-30,INV-89/95,top|Wells Fargo & Co,0.145
 2026-09-30,INV-89/95,bd_dur,0.39
 2026-09-30,INV-89/95,cov_dur,40.6
 2026-09-30,INV-89/95,bd_direct,59.4
@@ -1171,9 +1906,44 @@ date,fund_code,metric,value
 2026-09-30,INV-96/02,top|Broadcom,0.874
 2026-09-30,INV-96/02,top|Meta Platforms,0.832
 2026-09-30,INV-96/02,top|Samsung Electronics,0.647
-2026-09-30,INV-96/02,top|Eli Lilly and,0.644
+2026-09-30,INV-96/02,top|Eli Lilly and Co,0.644
 2026-09-30,INV-96/02,top|Tesla,0.637
 2026-09-30,INV-96/02,top|Rokiskio Suris,0.579
+2026-09-30,INV-96/02,top|Micron Technology,0.558
+2026-09-30,INV-96/02,top|JPMorgan Chase & Co,0.543
+2026-09-30,INV-96/02,top|SK hynix,0.489
+2026-09-30,INV-96/02,top|Advanced Micro Devices,0.488
+2026-09-30,INV-96/02,top|Berkshire Hathaway,0.467
+2026-09-30,INV-96/02,top|Visa,0.412
+2026-09-30,INV-96/02,top|ExxonMobil Holdings,0.41
+2026-09-30,INV-96/02,top|Johnson & Johnson,0.387
+2026-09-30,INV-96/02,top|ASML Holding,0.347
+2026-09-30,INV-96/02,top|Walmart,0.32
+2026-09-30,INV-96/02,top|Mastercard,0.311
+2026-09-30,INV-96/02,top|AbbVie,0.3
+2026-09-30,INV-96/02,top|Costco Wholesale,0.266
+2026-09-30,INV-96/02,top|Cisco Systems,0.241
+2026-09-30,INV-96/02,top|Palantir Technologies,0.223
+2026-09-30,INV-96/02,top|Merck & Co,0.217
+2026-09-30,INV-96/02,top|UnitedHealth Group,0.214
+2026-09-30,INV-96/02,top|The Home Depot,0.201
+2026-09-30,INV-96/02,top|GE Aerospace,0.199
+2026-09-30,INV-96/02,top|Bank of America,0.198
+2026-09-30,INV-96/02,top|Roche Holding AG Ordinary Shares new,0.191
+2026-09-30,INV-96/02,top|Applied Materials,0.185
+2026-09-30,INV-96/02,top|Intel,0.178
+2026-09-30,INV-96/02,top|Lam Research,0.177
+2026-09-30,INV-96/02,top|HSBC Holdings,0.176
+2026-09-30,INV-96/02,top|Novartis,0.171
+2026-09-30,INV-96/02,top|Caterpillar,0.17
+2026-09-30,INV-96/02,top|Palo Alto Networks,0.17
+2026-09-30,INV-96/02,top|Royal Bank of Canada,0.167
+2026-09-30,INV-96/02,top|Netflix,0.164
+2026-09-30,INV-96/02,top|Texas Instruments,0.163
+2026-09-30,INV-96/02,top|AstraZeneca,0.161
+2026-09-30,INV-96/02,top|The Goldman Sachs Group,0.161
+2026-09-30,INV-96/02,top|Wells Fargo & Co,0.154
+2026-09-30,INV-96/02,top|Thermo Fisher Scientific,0.153
 2026-09-30,INV-96/02,bd_dur,0.39
 2026-09-30,INV-96/02,cov_dur,41.3
 2026-09-30,INV-96/02,bd_direct,58.7
@@ -1229,6 +1999,41 @@ date,fund_code,metric,value
 2026-09-30,INV-TIPF,top|Marsh,0.158
 2026-09-30,INV-TIPF,top|Cisco Systems,0.157
 2026-09-30,INV-TIPF,top|Procter & Gamble,0.15
+2026-09-30,INV-TIPF,top|W.W. Grainger,0.145
+2026-09-30,INV-TIPF,top|Welltower,0.145
+2026-09-30,INV-TIPF,top|Verizon Communications,0.139
+2026-09-30,INV-TIPF,top|KDDI,0.138
+2026-09-30,INV-TIPF,top|NVIDIA,0.132
+2026-09-30,INV-TIPF,top|Cheniere Energy,0.132
+2026-09-30,INV-TIPF,top|Merck & Co,0.131
+2026-09-30,INV-TIPF,top|Deutsche Boerse,0.125
+2026-09-30,INV-TIPF,top|Vertex Pharmaceuticals,0.118
+2026-09-30,INV-TIPF,top|Texas Instruments,0.118
+2026-09-30,INV-TIPF,top|Consolidated Edison,0.118
+2026-09-30,INV-TIPF,top|Eni SpA,0.114
+2026-09-30,INV-TIPF,top|SoftBank,0.113
+2026-09-30,INV-TIPF,top|Berkshire Hathaway,0.113
+2026-09-30,INV-TIPF,top|PepsiCo,0.113
+2026-09-30,INV-TIPF,top|Cardinal Health,0.111
+2026-09-30,INV-TIPF,top|SAP,0.11
+2026-09-30,INV-TIPF,top|The Kroger,0.102
+2026-09-30,INV-TIPF,top|TJX Companies,0.1
+2026-09-30,INV-TIPF,top|Visa,0.099
+2026-09-30,INV-TIPF,top|Colgate-Palmolive,0.093
+2026-09-30,INV-TIPF,top|ExxonMobil Holdings,0.093
+2026-09-30,INV-TIPF,top|Chevron,0.092
+2026-09-30,INV-TIPF,top|Public Service Enterprise Group,0.09
+2026-09-30,INV-TIPF,top|Roper Technologies,0.09
+2026-09-30,INV-TIPF,top|Walmart,0.089
+2026-09-30,INV-TIPF,top|Exelon,0.089
+2026-09-30,INV-TIPF,top|Costco Wholesale,0.088
+2026-09-30,INV-TIPF,top|Accenture,0.088
+2026-09-30,INV-TIPF,top|Gilead Sciences,0.088
+2026-09-30,INV-TIPF,top|Amgen,0.085
+2026-09-30,INV-TIPF,top|Orange,0.085
+2026-09-30,INV-TIPF,top|Transurban Group,0.083
+2026-09-30,INV-TIPF,top|Ecolab,0.082
+2026-09-30,INV-TIPF,top|Trane Technologies,0.08
 2026-09-30,INV-TIPF,bd_dur,4.58
 2026-09-30,INV-TIPF,cov_dur,97.9
 2026-09-30,INV-TIPF,bd_direct,88.8
@@ -1279,11 +2084,46 @@ date,fund_code,metric,value
 2026-09-30,LMN-03/09,top|Meta Platforms,1.116
 2026-09-30,LMN-03/09,top|Samsung Electronics,0.956
 2026-09-30,LMN-03/09,top|Tesla,0.934
-2026-09-30,LMN-03/09,top|Eli Lilly and,0.917
+2026-09-30,LMN-03/09,top|Eli Lilly and Co,0.917
 2026-09-30,LMN-03/09,top|Micron Technology,0.796
-2026-09-30,LMN-03/09,top|JPMorgan Chase &,0.769
+2026-09-30,LMN-03/09,top|JPMorgan Chase & Co,0.769
 2026-09-30,LMN-03/09,top|Advanced Micro Devices,0.745
 2026-09-30,LMN-03/09,top|ASML Holding,0.739
+2026-09-30,LMN-03/09,top|Visa,0.729
+2026-09-30,LMN-03/09,top|SK hynix,0.721
+2026-09-30,LMN-03/09,top|Johnson & Johnson,0.61
+2026-09-30,LMN-03/09,top|Berkshire Hathaway,0.567
+2026-09-30,LMN-03/09,top|Applied Materials,0.473
+2026-09-30,LMN-03/09,top|Lam Research,0.456
+2026-09-30,LMN-03/09,top|AbbVie,0.447
+2026-09-30,LMN-03/09,top|ExxonMobil Holdings,0.435
+2026-09-30,LMN-03/09,top|Novartis,0.39
+2026-09-30,LMN-03/09,top|Mastercard,0.379
+2026-09-30,LMN-03/09,top|Tencent Holdings,0.376
+2026-09-30,LMN-03/09,top|Cisco Systems,0.373
+2026-09-30,LMN-03/09,top|The Home Depot,0.37
+2026-09-30,LMN-03/09,top|Palo Alto Networks,0.365
+2026-09-30,LMN-03/09,top|Walmart,0.341
+2026-09-30,LMN-03/09,top|Analog Devices,0.323
+2026-09-30,LMN-03/09,top|Verizon Communications,0.319
+2026-09-30,LMN-03/09,top|GE Aerospace,0.307
+2026-09-30,LMN-03/09,top|Gilead Sciences,0.293
+2026-09-30,LMN-03/09,top|Costco Wholesale,0.287
+2026-09-30,LMN-03/09,top|UnitedHealth Group,0.282
+2026-09-30,LMN-03/09,top|Merck & Co,0.275
+2026-09-30,LMN-03/09,top|Roche Holding AG Ordinary Shares new,0.266
+2026-09-30,LMN-03/09,top|The Walt Disney,0.262
+2026-09-30,LMN-03/09,top|Texas Instruments,0.257
+2026-09-30,LMN-03/09,top|Intel,0.253
+2026-09-30,LMN-03/09,top|Alibaba Group Holding,0.253
+2026-09-30,LMN-03/09,top|Palantir Technologies,0.231
+2026-09-30,LMN-03/09,top|The Toronto-Dominion Bank,0.228
+2026-09-30,LMN-03/09,top|Amgen,0.226
+2026-09-30,LMN-03/09,top|GE Vernova,0.225
+2026-09-30,LMN-03/09,top|MediaTek,0.223
+2026-09-30,LMN-03/09,top|Sony Group,0.222
+2026-09-30,LMN-03/09,top|Recruit Holdings,0.222
+2026-09-30,LMN-03/09,top|Citigroup,0.212
 2026-09-30,LMN-03/09,bd_dur,4.79
 2026-09-30,LMN-03/09,cov_dur,100.0
 2026-09-30,LMN-03/09,bd_direct,0.0
@@ -1333,12 +2173,47 @@ date,fund_code,metric,value
 2026-09-30,LMN-61/67,top|Broadcom,0.353
 2026-09-30,LMN-61/67,top|Meta Platforms,0.34
 2026-09-30,LMN-61/67,top|Tesla,0.249
-2026-09-30,LMN-61/67,top|Eli Lilly and,0.247
+2026-09-30,LMN-61/67,top|Eli Lilly and Co,0.247
 2026-09-30,LMN-61/67,top|Micron Technology,0.235
 2026-09-30,LMN-61/67,top|Samsung Electronics,0.234
-2026-09-30,LMN-61/67,top|JPMorgan Chase &,0.224
+2026-09-30,LMN-61/67,top|JPMorgan Chase & Co,0.224
 2026-09-30,LMN-61/67,top|Advanced Micro Devices,0.19
 2026-09-30,LMN-61/67,top|Berkshire Hathaway,0.185
+2026-09-30,LMN-61/67,top|SK hynix,0.177
+2026-09-30,LMN-61/67,top|Johnson & Johnson,0.158
+2026-09-30,LMN-61/67,top|ASML Holding,0.152
+2026-09-30,LMN-61/67,top|ExxonMobil Holdings,0.146
+2026-09-30,LMN-61/67,top|Visa,0.146
+2026-09-30,LMN-61/67,top|AbbVie,0.127
+2026-09-30,LMN-61/67,top|Walmart,0.112
+2026-09-30,LMN-61/67,top|Mastercard,0.106
+2026-09-30,LMN-61/67,top|Cisco Systems,0.105
+2026-09-30,LMN-61/67,top|Costco Wholesale,0.095
+2026-09-30,LMN-61/67,top|Tencent Holdings,0.093
+2026-09-30,LMN-61/67,top|Roche Holding AG Ordinary Shares new,0.088
+2026-09-30,LMN-61/67,top|Applied Materials,0.086
+2026-09-30,LMN-61/67,top|GE Aerospace,0.086
+2026-09-30,LMN-61/67,top|UnitedHealth Group,0.084
+2026-09-30,LMN-61/67,top|Lam Research,0.083
+2026-09-30,LMN-61/67,top|Novartis,0.081
+2026-09-30,LMN-61/67,top|Palantir Technologies,0.079
+2026-09-30,LMN-61/67,top|Merck & Co,0.077
+2026-09-30,LMN-61/67,top|Intel,0.072
+2026-09-30,LMN-61/67,top|Bank of America,0.07
+2026-09-30,LMN-61/67,top|Chevron,0.07
+2026-09-30,LMN-61/67,top|The Home Depot,0.07
+2026-09-30,LMN-61/67,top|HSBC Holdings,0.066
+2026-09-30,LMN-61/67,top|Texas Instruments,0.065
+2026-09-30,LMN-61/67,top|Royal Bank of Canada,0.064
+2026-09-30,LMN-61/67,top|Procter & Gamble,0.064
+2026-09-30,LMN-61/67,top|Shell,0.063
+2026-09-30,LMN-61/67,top|Mitsubishi UFJ Financial Group,0.063
+2026-09-30,LMN-61/67,top|Alibaba Group Holding,0.063
+2026-09-30,LMN-61/67,top|AstraZeneca,0.062
+2026-09-30,LMN-61/67,top|Caterpillar,0.062
+2026-09-30,LMN-61/67,top|Coca-Cola,0.062
+2026-09-30,LMN-61/67,top|GE Vernova,0.062
+2026-09-30,LMN-61/67,top|Palo Alto Networks,0.06
 2026-09-30,LMN-61/67,bd_dur,5.32
 2026-09-30,LMN-61/67,cov_dur,100.0
 2026-09-30,LMN-61/67,bd_direct,40.3
@@ -1388,12 +2263,47 @@ date,fund_code,metric,value
 2026-09-30,LMN-68/74,top|Broadcom,0.831
 2026-09-30,LMN-68/74,top|Meta Platforms,0.792
 2026-09-30,LMN-68/74,top|Tesla,0.587
-2026-09-30,LMN-68/74,top|Eli Lilly and,0.581
+2026-09-30,LMN-68/74,top|Eli Lilly and Co,0.581
 2026-09-30,LMN-68/74,top|Micron Technology,0.557
-2026-09-30,LMN-68/74,top|JPMorgan Chase &,0.523
+2026-09-30,LMN-68/74,top|JPMorgan Chase & Co,0.523
 2026-09-30,LMN-68/74,top|Samsung Electronics,0.464
 2026-09-30,LMN-68/74,top|Advanced Micro Devices,0.452
 2026-09-30,LMN-68/74,top|Berkshire Hathaway,0.43
+2026-09-30,LMN-68/74,top|Johnson & Johnson,0.368
+2026-09-30,LMN-68/74,top|ASML Holding,0.362
+2026-09-30,LMN-68/74,top|SK hynix,0.35
+2026-09-30,LMN-68/74,top|ExxonMobil Holdings,0.347
+2026-09-30,LMN-68/74,top|Visa,0.343
+2026-09-30,LMN-68/74,top|AbbVie,0.298
+2026-09-30,LMN-68/74,top|Walmart,0.263
+2026-09-30,LMN-68/74,top|Mastercard,0.251
+2026-09-30,LMN-68/74,top|Cisco Systems,0.247
+2026-09-30,LMN-68/74,top|Costco Wholesale,0.222
+2026-09-30,LMN-68/74,top|Roche Holding AG Ordinary Shares new,0.209
+2026-09-30,LMN-68/74,top|Applied Materials,0.201
+2026-09-30,LMN-68/74,top|GE Aerospace,0.2
+2026-09-30,LMN-68/74,top|UnitedHealth Group,0.198
+2026-09-30,LMN-68/74,top|Lam Research,0.195
+2026-09-30,LMN-68/74,top|Novartis,0.192
+2026-09-30,LMN-68/74,top|Palantir Technologies,0.188
+2026-09-30,LMN-68/74,top|Tencent Holdings,0.182
+2026-09-30,LMN-68/74,top|Merck & Co,0.181
+2026-09-30,LMN-68/74,top|Intel,0.166
+2026-09-30,LMN-68/74,top|Chevron,0.165
+2026-09-30,LMN-68/74,top|Bank of America,0.165
+2026-09-30,LMN-68/74,top|The Home Depot,0.164
+2026-09-30,LMN-68/74,top|HSBC Holdings,0.156
+2026-09-30,LMN-68/74,top|Texas Instruments,0.153
+2026-09-30,LMN-68/74,top|Royal Bank of Canada,0.152
+2026-09-30,LMN-68/74,top|Shell,0.152
+2026-09-30,LMN-68/74,top|Procter & Gamble,0.15
+2026-09-30,LMN-68/74,top|AstraZeneca,0.149
+2026-09-30,LMN-68/74,top|Caterpillar,0.146
+2026-09-30,LMN-68/74,top|GE Vernova,0.145
+2026-09-30,LMN-68/74,top|Coca-Cola,0.145
+2026-09-30,LMN-68/74,top|Palo Alto Networks,0.142
+2026-09-30,LMN-68/74,top|Mitsubishi UFJ Financial Group,0.14
+2026-09-30,LMN-68/74,top|Nestle,0.14
 2026-09-30,LMN-68/74,bd_dur,5.38
 2026-09-30,LMN-68/74,cov_dur,100.0
 2026-09-30,LMN-68/74,bd_direct,42.3
@@ -1443,12 +2353,47 @@ date,fund_code,metric,value
 2026-09-30,LMN-75/81,top|Broadcom,1.246
 2026-09-30,LMN-75/81,top|Meta Platforms,1.182
 2026-09-30,LMN-75/81,top|Tesla,0.97
-2026-09-30,LMN-75/81,top|Eli Lilly and,0.961
+2026-09-30,LMN-75/81,top|Eli Lilly and Co,0.961
 2026-09-30,LMN-75/81,top|Micron Technology,0.819
 2026-09-30,LMN-75/81,top|Samsung Electronics,0.798
-2026-09-30,LMN-75/81,top|JPMorgan Chase &,0.791
+2026-09-30,LMN-75/81,top|JPMorgan Chase & Co,0.791
 2026-09-30,LMN-75/81,top|Advanced Micro Devices,0.741
 2026-09-30,LMN-75/81,top|Berkshire Hathaway,0.647
+2026-09-30,LMN-75/81,top|ASML Holding,0.618
+2026-09-30,LMN-75/81,top|Johnson & Johnson,0.602
+2026-09-30,LMN-75/81,top|SK hynix,0.601
+2026-09-30,LMN-75/81,top|Visa,0.572
+2026-09-30,LMN-75/81,top|ExxonMobil Holdings,0.531
+2026-09-30,LMN-75/81,top|AbbVie,0.45
+2026-09-30,LMN-75/81,top|Mastercard,0.419
+2026-09-30,LMN-75/81,top|Walmart,0.408
+2026-09-30,LMN-75/81,top|Cisco Systems,0.369
+2026-09-30,LMN-75/81,top|Roche Holding AG Ordinary Shares new,0.358
+2026-09-30,LMN-75/81,top|Novartis,0.346
+2026-09-30,LMN-75/81,top|Costco Wholesale,0.342
+2026-09-30,LMN-75/81,top|Tencent Holdings,0.311
+2026-09-30,LMN-75/81,top|HSBC Holdings,0.302
+2026-09-30,LMN-75/81,top|Merck & Co,0.302
+2026-09-30,LMN-75/81,top|GE Aerospace,0.302
+2026-09-30,LMN-75/81,top|UnitedHealth Group,0.301
+2026-09-30,LMN-75/81,top|Applied Materials,0.294
+2026-09-30,LMN-75/81,top|Lam Research,0.284
+2026-09-30,LMN-75/81,top|Palantir Technologies,0.283
+2026-09-30,LMN-75/81,top|The Home Depot,0.275
+2026-09-30,LMN-75/81,top|Intel,0.271
+2026-09-30,LMN-75/81,top|Shell,0.269
+2026-09-30,LMN-75/81,top|AstraZeneca,0.265
+2026-09-30,LMN-75/81,top|Texas Instruments,0.251
+2026-09-30,LMN-75/81,top|Bank of America,0.25
+2026-09-30,LMN-75/81,top|Nestle,0.249
+2026-09-30,LMN-75/81,top|Chevron,0.244
+2026-09-30,LMN-75/81,top|SAP,0.24
+2026-09-30,LMN-75/81,top|Palo Alto Networks,0.237
+2026-09-30,LMN-75/81,top|Royal Bank of Canada,0.231
+2026-09-30,LMN-75/81,top|Procter & Gamble,0.223
+2026-09-30,LMN-75/81,top|The Toronto-Dominion Bank,0.218
+2026-09-30,LMN-75/81,top|Caterpillar,0.217
+2026-09-30,LMN-75/81,top|Coca-Cola,0.215
 2026-09-30,LMN-75/81,bd_dur,5.09
 2026-09-30,LMN-75/81,cov_dur,100.0
 2026-09-30,LMN-75/81,bd_direct,84.1
@@ -1498,12 +2443,47 @@ date,fund_code,metric,value
 2026-09-30,LMN-82/88,top|Broadcom,1.205
 2026-09-30,LMN-82/88,top|Meta Platforms,1.143
 2026-09-30,LMN-82/88,top|Tesla,0.981
-2026-09-30,LMN-82/88,top|Eli Lilly and,0.968
+2026-09-30,LMN-82/88,top|Eli Lilly and Co,0.968
 2026-09-30,LMN-82/88,top|Samsung Electronics,0.82
 2026-09-30,LMN-82/88,top|Micron Technology,0.797
 2026-09-30,LMN-82/88,top|Advanced Micro Devices,0.766
-2026-09-30,LMN-82/88,top|JPMorgan Chase &,0.765
+2026-09-30,LMN-82/88,top|JPMorgan Chase & Co,0.765
 2026-09-30,LMN-82/88,top|Berkshire Hathaway,0.623
+2026-09-30,LMN-82/88,top|ASML Holding,0.618
+2026-09-30,LMN-82/88,top|SK hynix,0.618
+2026-09-30,LMN-82/88,top|Johnson & Johnson,0.611
+2026-09-30,LMN-82/88,top|Visa,0.576
+2026-09-30,LMN-82/88,top|ExxonMobil Holdings,0.509
+2026-09-30,LMN-82/88,top|AbbVie,0.435
+2026-09-30,LMN-82/88,top|Mastercard,0.424
+2026-09-30,LMN-82/88,top|Walmart,0.391
+2026-09-30,LMN-82/88,top|Novartis,0.358
+2026-09-30,LMN-82/88,top|Roche Holding AG Ordinary Shares new,0.358
+2026-09-30,LMN-82/88,top|Cisco Systems,0.358
+2026-09-30,LMN-82/88,top|Costco Wholesale,0.328
+2026-09-30,LMN-82/88,top|Tencent Holdings,0.319
+2026-09-30,LMN-82/88,top|HSBC Holdings,0.317
+2026-09-30,LMN-82/88,top|Merck & Co,0.307
+2026-09-30,LMN-82/88,top|GE Aerospace,0.292
+2026-09-30,LMN-82/88,top|UnitedHealth Group,0.291
+2026-09-30,LMN-82/88,top|Intel,0.287
+2026-09-30,LMN-82/88,top|Applied Materials,0.286
+2026-09-30,LMN-82/88,top|The Home Depot,0.277
+2026-09-30,LMN-82/88,top|Lam Research,0.277
+2026-09-30,LMN-82/88,top|Palantir Technologies,0.273
+2026-09-30,LMN-82/88,top|Shell,0.268
+2026-09-30,LMN-82/88,top|AstraZeneca,0.265
+2026-09-30,LMN-82/88,top|Texas Instruments,0.255
+2026-09-30,LMN-82/88,top|Nestle,0.248
+2026-09-30,LMN-82/88,top|SAP,0.248
+2026-09-30,LMN-82/88,top|Palo Alto Networks,0.244
+2026-09-30,LMN-82/88,top|Bank of America,0.24
+2026-09-30,LMN-82/88,top|Chevron,0.228
+2026-09-30,LMN-82/88,top|Royal Bank of Canada,0.226
+2026-09-30,LMN-82/88,top|The Toronto-Dominion Bank,0.224
+2026-09-30,LMN-82/88,top|Gilead Sciences,0.214
+2026-09-30,LMN-82/88,top|Alibaba Group Holding,0.214
+2026-09-30,LMN-82/88,top|Procter & Gamble,0.209
 2026-09-30,LMN-82/88,bd_dur,5.23
 2026-09-30,LMN-82/88,cov_dur,100.0
 2026-09-30,LMN-82/88,bd_direct,85.6
@@ -1553,12 +2533,47 @@ date,fund_code,metric,value
 2026-09-30,LMN-89/95,top|Broadcom,1.18
 2026-09-30,LMN-89/95,top|Meta Platforms,1.124
 2026-09-30,LMN-89/95,top|Tesla,1.009
-2026-09-30,LMN-89/95,top|Eli Lilly and,0.989
+2026-09-30,LMN-89/95,top|Eli Lilly and Co,0.989
 2026-09-30,LMN-89/95,top|Samsung Electronics,0.811
 2026-09-30,LMN-89/95,top|Advanced Micro Devices,0.806
 2026-09-30,LMN-89/95,top|Micron Technology,0.793
-2026-09-30,LMN-89/95,top|JPMorgan Chase &,0.755
+2026-09-30,LMN-89/95,top|JPMorgan Chase & Co,0.755
 2026-09-30,LMN-89/95,top|Johnson & Johnson,0.636
+2026-09-30,LMN-89/95,top|SK hynix,0.611
+2026-09-30,LMN-89/95,top|Berkshire Hathaway,0.603
+2026-09-30,LMN-89/95,top|Visa,0.586
+2026-09-30,LMN-89/95,top|ASML Holding,0.556
+2026-09-30,LMN-89/95,top|ExxonMobil Holdings,0.49
+2026-09-30,LMN-89/95,top|AbbVie,0.433
+2026-09-30,LMN-89/95,top|Mastercard,0.432
+2026-09-30,LMN-89/95,top|Walmart,0.374
+2026-09-30,LMN-89/95,top|Cisco Systems,0.357
+2026-09-30,LMN-89/95,top|Novartis,0.339
+2026-09-30,LMN-89/95,top|Roche Holding AG Ordinary Shares new,0.32
+2026-09-30,LMN-89/95,top|Tencent Holdings,0.318
+2026-09-30,LMN-89/95,top|Merck & Co,0.314
+2026-09-30,LMN-89/95,top|Costco Wholesale,0.314
+2026-09-30,LMN-89/95,top|Intel,0.307
+2026-09-30,LMN-89/95,top|HSBC Holdings,0.293
+2026-09-30,LMN-89/95,top|GE Aerospace,0.291
+2026-09-30,LMN-89/95,top|Applied Materials,0.289
+2026-09-30,LMN-89/95,top|UnitedHealth Group,0.285
+2026-09-30,LMN-89/95,top|The Home Depot,0.281
+2026-09-30,LMN-89/95,top|Lam Research,0.28
+2026-09-30,LMN-89/95,top|Texas Instruments,0.265
+2026-09-30,LMN-89/95,top|Palantir Technologies,0.263
+2026-09-30,LMN-89/95,top|Palo Alto Networks,0.252
+2026-09-30,LMN-89/95,top|The Toronto-Dominion Bank,0.237
+2026-09-30,LMN-89/95,top|Bank of America,0.23
+2026-09-30,LMN-89/95,top|Shell,0.229
+2026-09-30,LMN-89/95,top|SAP,0.226
+2026-09-30,LMN-89/95,top|AstraZeneca,0.225
+2026-09-30,LMN-89/95,top|Gilead Sciences,0.225
+2026-09-30,LMN-89/95,top|Royal Bank of Canada,0.222
+2026-09-30,LMN-89/95,top|Alibaba Group Holding,0.213
+2026-09-30,LMN-89/95,top|Nestle,0.211
+2026-09-30,LMN-89/95,top|Chevron,0.21
+2026-09-30,LMN-89/95,top|GE Vernova,0.21
 2026-09-30,LMN-89/95,bd_dur,5.73
 2026-09-30,LMN-89/95,cov_dur,100.0
 2026-09-30,LMN-89/95,bd_direct,69.2
@@ -1608,12 +2623,47 @@ date,fund_code,metric,value
 2026-09-30,LMN-96/02,top|Broadcom,1.181
 2026-09-30,LMN-96/02,top|Meta Platforms,1.121
 2026-09-30,LMN-96/02,top|Tesla,0.9
-2026-09-30,LMN-96/02,top|Eli Lilly and,0.892
+2026-09-30,LMN-96/02,top|Eli Lilly and Co,0.892
 2026-09-30,LMN-96/02,top|Samsung Electronics,0.839
 2026-09-30,LMN-96/02,top|Micron Technology,0.79
 2026-09-30,LMN-96/02,top|ASML Holding,0.772
-2026-09-30,LMN-96/02,top|JPMorgan Chase &,0.761
+2026-09-30,LMN-96/02,top|JPMorgan Chase & Co,0.761
 2026-09-30,LMN-96/02,top|Advanced Micro Devices,0.691
+2026-09-30,LMN-96/02,top|SK hynix,0.633
+2026-09-30,LMN-96/02,top|Visa,0.627
+2026-09-30,LMN-96/02,top|Berkshire Hathaway,0.598
+2026-09-30,LMN-96/02,top|Johnson & Johnson,0.566
+2026-09-30,LMN-96/02,top|ExxonMobil Holdings,0.486
+2026-09-30,LMN-96/02,top|AbbVie,0.436
+2026-09-30,LMN-96/02,top|Novartis,0.405
+2026-09-30,LMN-96/02,top|Mastercard,0.381
+2026-09-30,LMN-96/02,top|Walmart,0.374
+2026-09-30,LMN-96/02,top|Applied Materials,0.374
+2026-09-30,LMN-96/02,top|Roche Holding AG Ordinary Shares new,0.365
+2026-09-30,LMN-96/02,top|Lam Research,0.36
+2026-09-30,LMN-96/02,top|Cisco Systems,0.36
+2026-09-30,LMN-96/02,top|Tencent Holdings,0.33
+2026-09-30,LMN-96/02,top|Costco Wholesale,0.313
+2026-09-30,LMN-96/02,top|The Home Depot,0.312
+2026-09-30,LMN-96/02,top|GE Aerospace,0.294
+2026-09-30,LMN-96/02,top|HSBC Holdings,0.292
+2026-09-30,LMN-96/02,top|Palo Alto Networks,0.29
+2026-09-30,LMN-96/02,top|UnitedHealth Group,0.287
+2026-09-30,LMN-96/02,top|Merck & Co,0.273
+2026-09-30,LMN-96/02,top|Shell,0.264
+2026-09-30,LMN-96/02,top|AstraZeneca,0.261
+2026-09-30,LMN-96/02,top|Palantir Technologies,0.259
+2026-09-30,LMN-96/02,top|Analog Devices,0.249
+2026-09-30,LMN-96/02,top|Nestle,0.245
+2026-09-30,LMN-96/02,top|Verizon Communications,0.242
+2026-09-30,LMN-96/02,top|Texas Instruments,0.238
+2026-09-30,LMN-96/02,top|Gilead Sciences,0.238
+2026-09-30,LMN-96/02,top|Intel,0.236
+2026-09-30,LMN-96/02,top|SAP,0.232
+2026-09-30,LMN-96/02,top|The Toronto-Dominion Bank,0.231
+2026-09-30,LMN-96/02,top|Bank of America,0.228
+2026-09-30,LMN-96/02,top|Alibaba Group Holding,0.222
+2026-09-30,LMN-96/02,top|Chevron,0.216
 2026-09-30,LMN-96/02,bd_dur,5.72
 2026-09-30,LMN-96/02,cov_dur,100.0
 2026-09-30,LMN-96/02,bd_direct,79.6
@@ -1666,9 +2716,44 @@ date,fund_code,metric,value
 2026-09-30,LMN-TIPF,top|Micron Technology,0.147
 2026-09-30,LMN-TIPF,top|ASML Holding,0.141
 2026-09-30,LMN-TIPF,top|SK hynix,0.136
-2026-09-30,LMN-TIPF,top|JPMorgan Chase &,0.136
+2026-09-30,LMN-TIPF,top|JPMorgan Chase & Co,0.136
 2026-09-30,LMN-TIPF,top|Tesla,0.129
-2026-09-30,LMN-TIPF,top|Eli Lilly and,0.126
+2026-09-30,LMN-TIPF,top|Eli Lilly and Co,0.126
+2026-09-30,LMN-TIPF,top|Advanced Micro Devices,0.104
+2026-09-30,LMN-TIPF,top|Johnson & Johnson,0.091
+2026-09-30,LMN-TIPF,top|AbbVie,0.082
+2026-09-30,LMN-TIPF,top|Berkshire Hathaway,0.081
+2026-09-30,LMN-TIPF,top|Roche Holding AG Ordinary Shares new,0.079
+2026-09-30,LMN-TIPF,top|Novartis,0.074
+2026-09-30,LMN-TIPF,top|Tencent Holdings,0.073
+2026-09-30,LMN-TIPF,top|Cisco Systems,0.071
+2026-09-30,LMN-TIPF,top|Applied Materials,0.062
+2026-09-30,LMN-TIPF,top|Lam Research,0.061
+2026-09-30,LMN-TIPF,top|ExxonMobil Holdings,0.061
+2026-09-30,LMN-TIPF,top|Visa,0.059
+2026-09-30,LMN-TIPF,top|GE Aerospace,0.057
+2026-09-30,LMN-TIPF,top|Mitsubishi UFJ Financial Group,0.055
+2026-09-30,LMN-TIPF,top|Sony Group,0.053
+2026-09-30,LMN-TIPF,top|Recruit Holdings,0.053
+2026-09-30,LMN-TIPF,top|Alibaba Group Holding,0.049
+2026-09-30,LMN-TIPF,top|UnitedHealth Group,0.048
+2026-09-30,LMN-TIPF,top|Walmart,0.046
+2026-09-30,LMN-TIPF,top|HSBC Holdings,0.045
+2026-09-30,LMN-TIPF,top|GE Vernova,0.045
+2026-09-30,LMN-TIPF,top|Shell,0.045
+2026-09-30,LMN-TIPF,top|AstraZeneca,0.044
+2026-09-30,LMN-TIPF,top|Mastercard,0.043
+2026-09-30,LMN-TIPF,top|Gilead Sciences,0.042
+2026-09-30,LMN-TIPF,top|Citigroup,0.042
+2026-09-30,LMN-TIPF,top|BHP Group,0.042
+2026-09-30,LMN-TIPF,top|Toyota Motor,0.041
+2026-09-30,LMN-TIPF,top|Nestle,0.041
+2026-09-30,LMN-TIPF,top|MediaTek,0.04
+2026-09-30,LMN-TIPF,top|Analog Devices,0.04
+2026-09-30,LMN-TIPF,top|Texas Instruments,0.04
+2026-09-30,LMN-TIPF,top|KLA,0.039
+2026-09-30,LMN-TIPF,top|The Toronto-Dominion Bank,0.039
+2026-09-30,LMN-TIPF,top|Costco Wholesale,0.038
 2026-09-30,LMN-TIPF,bd_dur,4.69
 2026-09-30,LMN-TIPF,cov_dur,100.0
 2026-09-30,LMN-TIPF,bd_direct,44.7
@@ -1717,13 +2802,48 @@ date,fund_code,metric,value
 2026-09-30,S017,top|Taiwan Semiconductor Manufacturing,0.098
 2026-09-30,S017,top|Broadcom,0.087
 2026-09-30,S017,top|Meta Platforms,0.083
-2026-09-30,S017,top|Eli Lilly and,0.063
+2026-09-30,S017,top|Eli Lilly and Co,0.063
 2026-09-30,S017,top|Tesla,0.062
 2026-09-30,S017,top|Micron Technology,0.057
-2026-09-30,S017,top|JPMorgan Chase &,0.053
+2026-09-30,S017,top|JPMorgan Chase & Co,0.053
 2026-09-30,S017,top|Advanced Micro Devices,0.049
 2026-09-30,S017,top|Samsung Electronics,0.045
 2026-09-30,S017,top|Visa,0.04
+2026-09-30,S017,top|Johnson & Johnson,0.038
+2026-09-30,S017,top|ASML Holding,0.037
+2026-09-30,S017,top|Berkshire Hathaway,0.035
+2026-09-30,S017,top|SK hynix,0.035
+2026-09-30,S017,top|Walmart,0.031
+2026-09-30,S017,top|Mastercard,0.03
+2026-09-30,S017,top|ExxonMobil Holdings,0.03
+2026-09-30,S017,top|AbbVie,0.03
+2026-09-30,S017,top|Cisco Systems,0.024
+2026-09-30,S017,top|Merck & Co,0.021
+2026-09-30,S017,top|UnitedHealth Group,0.021
+2026-09-30,S017,top|Costco Wholesale,0.02
+2026-09-30,S017,top|Bank of America,0.02
+2026-09-30,S017,top|The Home Depot,0.02
+2026-09-30,S017,top|Mitsubishi UFJ Financial Group,0.019
+2026-09-30,S017,top|Intel,0.019
+2026-09-30,S017,top|HSBC Holdings,0.019
+2026-09-30,S017,top|Applied Materials,0.019
+2026-09-30,S017,top|Tencent Holdings,0.018
+2026-09-30,S017,top|Lam Research,0.018
+2026-09-30,S017,top|Caterpillar,0.018
+2026-09-30,S017,top|Palo Alto Networks,0.017
+2026-09-30,S017,top|Novartis,0.017
+2026-09-30,S017,top|AstraZeneca,0.017
+2026-09-30,S017,top|Netflix,0.016
+2026-09-30,S017,top|Palantir Technologies,0.016
+2026-09-30,S017,top|Texas Instruments,0.016
+2026-09-30,S017,top|The Goldman Sachs Group,0.016
+2026-09-30,S017,top|Roche Holding AG Ordinary Shares new,0.016
+2026-09-30,S017,top|Thermo Fisher Scientific,0.015
+2026-09-30,S017,top|Wells Fargo & Co,0.015
+2026-09-30,S017,top|GE Aerospace,0.015
+2026-09-30,S017,top|SAP,0.015
+2026-09-30,S017,top|Amgen,0.015
+2026-09-30,S017,top|CrowdStrike Holdings,0.014
 2026-09-30,S017,bd_dur,4.4
 2026-09-30,S017,cov_dur,81.8
 2026-09-30,S017,bd_direct,24.8
@@ -1772,13 +2892,48 @@ date,fund_code,metric,value
 2026-09-30,S018,top|Taiwan Semiconductor Manufacturing,2.032
 2026-09-30,S018,top|Broadcom,1.518
 2026-09-30,S018,top|Meta Platforms,1.326
-2026-09-30,S018,top|Eli Lilly and,1.035
+2026-09-30,S018,top|Eli Lilly and Co,1.035
 2026-09-30,S018,top|Tesla,1.011
 2026-09-30,S018,top|Micron Technology,0.945
 2026-09-30,S018,top|Samsung Electronics,0.924
-2026-09-30,S018,top|JPMorgan Chase &,0.852
+2026-09-30,S018,top|JPMorgan Chase & Co,0.852
 2026-09-30,S018,top|Advanced Micro Devices,0.832
 2026-09-30,S018,top|SK hynix,0.739
+2026-09-30,S018,top|Visa,0.683
+2026-09-30,S018,top|ASML Holding,0.683
+2026-09-30,S018,top|Berkshire Hathaway,0.641
+2026-09-30,S018,top|ExxonMobil Holdings,0.627
+2026-09-30,S018,top|Johnson & Johnson,0.622
+2026-09-30,S018,top|Walmart,0.515
+2026-09-30,S018,top|Mastercard,0.495
+2026-09-30,S018,top|AbbVie,0.491
+2026-09-30,S018,top|Cisco Systems,0.457
+2026-09-30,S018,top|Costco Wholesale,0.381
+2026-09-30,S018,top|UnitedHealth Group,0.354
+2026-09-30,S018,top|Tencent Holdings,0.351
+2026-09-30,S018,top|Applied Materials,0.351
+2026-09-30,S018,top|Merck & Co,0.347
+2026-09-30,S018,top|The Home Depot,0.338
+2026-09-30,S018,top|Lam Research,0.324
+2026-09-30,S018,top|Bank of America,0.316
+2026-09-30,S018,top|Intel,0.315
+2026-09-30,S018,top|Palo Alto Networks,0.303
+2026-09-30,S018,top|Palantir Technologies,0.296
+2026-09-30,S018,top|Banco Santander,0.277
+2026-09-30,S018,top|Linde,0.274
+2026-09-30,S018,top|Mitsubishi UFJ Financial Group,0.271
+2026-09-30,S018,top|Caterpillar,0.266
+2026-09-30,S018,top|Texas Instruments,0.264
+2026-09-30,S018,top|HSBC Holdings,0.261
+2026-09-30,S018,top|Netflix,0.255
+2026-09-30,S018,top|The Goldman Sachs Group,0.254
+2026-09-30,S018,top|Roche Holding AG Ordinary Shares new,0.254
+2026-09-30,S018,top|SAP,0.252
+2026-09-30,S018,top|Citigroup,0.251
+2026-09-30,S018,top|GE Aerospace,0.25
+2026-09-30,S018,top|Novartis,0.245
+2026-09-30,S018,top|International Business Machines,0.243
+2026-09-30,S018,top|Wells Fargo & Co,0.239
 2026-09-30,S018,bd_dur,3.38
 2026-09-30,S018,cov_dur,98.9
 2026-09-30,S018,bd_direct,98.9
@@ -1825,12 +2980,47 @@ date,fund_code,metric,value
 2026-09-30,S019,top|Broadcom,0.627
 2026-09-30,S019,top|Meta Platforms,0.603
 2026-09-30,S019,top|Tesla,0.451
-2026-09-30,S019,top|Eli Lilly and,0.444
+2026-09-30,S019,top|Eli Lilly and Co,0.444
 2026-09-30,S019,top|Micron Technology,0.431
-2026-09-30,S019,top|JPMorgan Chase &,0.405
+2026-09-30,S019,top|JPMorgan Chase & Co,0.405
 2026-09-30,S019,top|Samsung Electronics,0.382
 2026-09-30,S019,top|Advanced Micro Devices,0.36
 2026-09-30,S019,top|Berkshire Hathaway,0.313
+2026-09-30,S019,top|Johnson & Johnson,0.293
+2026-09-30,S019,top|SK hynix,0.288
+2026-09-30,S019,top|ASML Holding,0.287
+2026-09-30,S019,top|Visa,0.253
+2026-09-30,S019,top|ExxonMobil Holdings,0.239
+2026-09-30,S019,top|AbbVie,0.232
+2026-09-30,S019,top|Cisco Systems,0.196
+2026-09-30,S019,top|Walmart,0.185
+2026-09-30,S019,top|Mastercard,0.185
+2026-09-30,S019,top|Applied Materials,0.164
+2026-09-30,S019,top|Roche Holding AG Ordinary Shares new,0.164
+2026-09-30,S019,top|GE Aerospace,0.16
+2026-09-30,S019,top|Lam Research,0.16
+2026-09-30,S019,top|Novartis,0.157
+2026-09-30,S019,top|Costco Wholesale,0.156
+2026-09-30,S019,top|Tencent Holdings,0.15
+2026-09-30,S019,top|UnitedHealth Group,0.149
+2026-09-30,S019,top|Merck & Co,0.134
+2026-09-30,S019,top|Palantir Technologies,0.13
+2026-09-30,S019,top|Intel,0.126
+2026-09-30,S019,top|Texas Instruments,0.123
+2026-09-30,S019,top|Chevron,0.122
+2026-09-30,S019,top|The Home Depot,0.122
+2026-09-30,S019,top|HSBC Holdings,0.118
+2026-09-30,S019,top|GE Vernova,0.117
+2026-09-30,S019,top|Bank of America,0.116
+2026-09-30,S019,top|Procter & Gamble,0.113
+2026-09-30,S019,top|Mitsubishi UFJ Financial Group,0.112
+2026-09-30,S019,top|Gilead Sciences,0.111
+2026-09-30,S019,top|Citigroup,0.11
+2026-09-30,S019,top|Coca-Cola,0.109
+2026-09-30,S019,top|Shell,0.106
+2026-09-30,S019,top|The Toronto-Dominion Bank,0.106
+2026-09-30,S019,top|Palo Alto Networks,0.105
+2026-09-30,S019,top|AstraZeneca,0.105
 2026-09-30,S019,bd_dur,5.3
 2026-09-30,S019,cov_dur,100.0
 2026-09-30,S019,bd_direct,32.5
@@ -1886,6 +3076,41 @@ date,fund_code,metric,value
 2026-09-30,S021,top|Ignitis Grupe,1.9
 2026-09-30,S021,top|Microsoft,1.879
 2026-09-30,S021,top|HgCapital Trust PLC/Fund,1.8
+2026-09-30,S021,top|Oakley Capital Investments,1.694
+2026-09-30,S021,top|CSG,1.626
+2026-09-30,S021,top|Alphabet,1.369
+2026-09-30,S021,top|AB Artea bankas,1.189
+2026-09-30,S021,top|Amazon.com,1.159
+2026-09-30,S021,top|Broadcom,0.828
+2026-09-30,S021,top|Rokiskio Suris,0.585
+2026-09-30,S021,top|Meta Platforms,0.547
+2026-09-30,S021,top|Eli Lilly and Co,0.502
+2026-09-30,S021,top|Tesla,0.48
+2026-09-30,S021,top|Advanced Micro Devices,0.444
+2026-09-30,S021,top|JPMorgan Chase & Co,0.42
+2026-09-30,S021,top|Visa,0.416
+2026-09-30,S021,top|Micron Technology,0.405
+2026-09-30,S021,top|Berkshire Hathaway,0.364
+2026-09-30,S021,top|AbbVie,0.301
+2026-09-30,S021,top|Johnson & Johnson,0.301
+2026-09-30,S021,top|ASML Holding,0.283
+2026-09-30,S021,top|Walmart,0.251
+2026-09-30,S021,top|Mastercard,0.243
+2026-09-30,S021,top|Cisco Systems,0.234
+2026-09-30,S021,top|ExxonMobil Holdings,0.226
+2026-09-30,S021,top|Costco Wholesale,0.21
+2026-09-30,S021,top|The Home Depot,0.204
+2026-09-30,S021,top|Applied Materials,0.168
+2026-09-30,S021,top|Merck & Co,0.168
+2026-09-30,S021,top|UnitedHealth Group,0.166
+2026-09-30,S021,top|Caterpillar,0.162
+2026-09-30,S021,top|Palo Alto Networks,0.162
+2026-09-30,S021,top|Roche Holding AG Ordinary Shares new,0.161
+2026-09-30,S021,top|Intel,0.158
+2026-09-30,S021,top|Lam Research,0.158
+2026-09-30,S021,top|Texas Instruments,0.157
+2026-09-30,S021,top|The Goldman Sachs Group,0.156
+2026-09-30,S021,top|Bank of America,0.154
 2026-09-30,S021,bd_dur,0.7
 2026-09-30,S021,cov_dur,85.3
 2026-09-30,S021,bd_direct,40.4
@@ -1948,12 +3173,47 @@ date,fund_code,metric,value
 2026-09-30,S028,top|Broadcom,1.259
 2026-09-30,S028,top|Meta Platforms,1.2
 2026-09-30,S028,top|Tesla,0.948
-2026-09-30,S028,top|Eli Lilly and,0.933
+2026-09-30,S028,top|Eli Lilly and Co,0.933
 2026-09-30,S028,top|Samsung Electronics,0.907
 2026-09-30,S028,top|Micron Technology,0.864
-2026-09-30,S028,top|JPMorgan Chase &,0.805
+2026-09-30,S028,top|JPMorgan Chase & Co,0.805
 2026-09-30,S028,top|Advanced Micro Devices,0.749
 2026-09-30,S028,top|SK hynix,0.684
+2026-09-30,S028,top|Berkshire Hathaway,0.632
+2026-09-30,S028,top|ASML Holding,0.612
+2026-09-30,S028,top|Johnson & Johnson,0.602
+2026-09-30,S028,top|Visa,0.541
+2026-09-30,S028,top|ExxonMobil Holdings,0.517
+2026-09-30,S028,top|AbbVie,0.463
+2026-09-30,S028,top|Mastercard,0.399
+2026-09-30,S028,top|Walmart,0.389
+2026-09-30,S028,top|Cisco Systems,0.386
+2026-09-30,S028,top|Tencent Holdings,0.356
+2026-09-30,S028,top|Roche Holding AG Ordinary Shares new,0.349
+2026-09-30,S028,top|Novartis,0.338
+2026-09-30,S028,top|Costco Wholesale,0.326
+2026-09-30,S028,top|Applied Materials,0.317
+2026-09-30,S028,top|GE Aerospace,0.312
+2026-09-30,S028,top|Lam Research,0.309
+2026-09-30,S028,top|UnitedHealth Group,0.303
+2026-09-30,S028,top|Merck & Co,0.288
+2026-09-30,S028,top|Palantir Technologies,0.278
+2026-09-30,S028,top|HSBC Holdings,0.272
+2026-09-30,S028,top|Intel,0.267
+2026-09-30,S028,top|Chevron,0.267
+2026-09-30,S028,top|The Home Depot,0.259
+2026-09-30,S028,top|Texas Instruments,0.253
+2026-09-30,S028,top|Mitsubishi UFJ Financial Group,0.252
+2026-09-30,S028,top|Shell,0.247
+2026-09-30,S028,top|Procter & Gamble,0.243
+2026-09-30,S028,top|Bank of America,0.241
+2026-09-30,S028,top|AstraZeneca,0.24
+2026-09-30,S028,top|Alibaba Group Holding,0.239
+2026-09-30,S028,top|Coca-Cola,0.234
+2026-09-30,S028,top|The Toronto-Dominion Bank,0.231
+2026-09-30,S028,top|Royal Bank of Canada,0.23
+2026-09-30,S028,top|GE Vernova,0.229
+2026-09-30,S028,top|Palo Alto Networks,0.229
 2026-09-30,S028,cov_dur,0.0
 2026-09-30,S028,bd_direct,0.0
 2026-09-30,S032,tot_eur,43486854
@@ -1999,12 +3259,47 @@ date,fund_code,metric,value
 2026-09-30,S032,top|Broadcom,0.619
 2026-09-30,S032,top|Samsung Electronics,0.44
 2026-09-30,S032,top|Meta Platforms,0.431
-2026-09-30,S032,top|Eli Lilly and,0.395
+2026-09-30,S032,top|Eli Lilly and Co,0.395
 2026-09-30,S032,top|Tesla,0.377
 2026-09-30,S032,top|Akola Group,0.351
 2026-09-30,S032,top|SK hynix,0.333
 2026-09-30,S032,top|Advanced Micro Devices,0.33
-2026-09-30,S032,top|JPMorgan Chase &,0.328
+2026-09-30,S032,top|JPMorgan Chase & Co,0.328
+2026-09-30,S032,top|AB Artea bankas,0.323
+2026-09-30,S032,top|Visa,0.314
+2026-09-30,S032,top|Micron Technology,0.309
+2026-09-30,S032,top|Ignitis Grupe,0.291
+2026-09-30,S032,top|Berkshire Hathaway,0.285
+2026-09-30,S032,top|Johnson & Johnson,0.234
+2026-09-30,S032,top|AbbVie,0.226
+2026-09-30,S032,top|ASML Holding,0.22
+2026-09-30,S032,top|Walmart,0.198
+2026-09-30,S032,top|Mastercard,0.191
+2026-09-30,S032,top|ExxonMobil Holdings,0.188
+2026-09-30,S032,top|Rokiskio Suris,0.184
+2026-09-30,S032,top|Cisco Systems,0.175
+2026-09-30,S032,top|Costco Wholesale,0.164
+2026-09-30,S032,top|The Home Depot,0.154
+2026-09-30,S032,top|Merck & Co,0.13
+2026-09-30,S032,top|UnitedHealth Group,0.13
+2026-09-30,S032,top|Roche Holding AG Ordinary Shares new,0.126
+2026-09-30,S032,top|Applied Materials,0.124
+2026-09-30,S032,top|Palo Alto Networks,0.12
+2026-09-30,S032,top|Bank of America,0.119
+2026-09-30,S032,top|Texas Instruments,0.119
+2026-09-30,S032,top|Caterpillar,0.119
+2026-09-30,S032,top|The Goldman Sachs Group,0.117
+2026-09-30,S032,top|Royal Bank of Canada,0.116
+2026-09-30,S032,top|Lam Research,0.116
+2026-09-30,S032,top|Palantir Technologies,0.115
+2026-09-30,S032,top|Intel,0.112
+2026-09-30,S032,top|Novartis,0.112
+2026-09-30,S032,top|HSBC Holdings,0.111
+2026-09-30,S032,top|Linde,0.106
+2026-09-30,S032,top|AstraZeneca,0.105
+2026-09-30,S032,top|International Business Machines,0.103
+2026-09-30,S032,top|Mitsubishi UFJ Financial Group,0.099
+2026-09-30,S032,top|Morgan Stanley,0.098
 2026-09-30,S032,bd_dur,5.05
 2026-09-30,S032,cov_dur,93.5
 2026-09-30,S032,bd_direct,74.4
@@ -2054,12 +3349,47 @@ date,fund_code,metric,value
 2026-09-30,S033,top|Broadcom,1.295
 2026-09-30,S033,top|Meta Platforms,0.979
 2026-09-30,S033,top|Samsung Electronics,0.908
-2026-09-30,S033,top|Eli Lilly and,0.865
+2026-09-30,S033,top|Eli Lilly and Co,0.865
 2026-09-30,S033,top|Tesla,0.83
-2026-09-30,S033,top|JPMorgan Chase &,0.717
+2026-09-30,S033,top|JPMorgan Chase & Co,0.717
 2026-09-30,S033,top|Advanced Micro Devices,0.695
 2026-09-30,S033,top|SK hynix,0.686
 2026-09-30,S033,top|Micron Technology,0.684
+2026-09-30,S033,top|Akola Group,0.651
+2026-09-30,S033,top|Visa,0.65
+2026-09-30,S033,top|Berkshire Hathaway,0.624
+2026-09-30,S033,top|Ignitis Grupe,0.571
+2026-09-30,S033,top|AB Artea bankas,0.536
+2026-09-30,S033,top|Johnson & Johnson,0.513
+2026-09-30,S033,top|ASML Holding,0.48
+2026-09-30,S033,top|AbbVie,0.469
+2026-09-30,S033,top|ExxonMobil Holdings,0.447
+2026-09-30,S033,top|Walmart,0.432
+2026-09-30,S033,top|Mastercard,0.418
+2026-09-30,S033,top|Cisco Systems,0.364
+2026-09-30,S033,top|Costco Wholesale,0.359
+2026-09-30,S033,top|The Home Depot,0.318
+2026-09-30,S033,top|Merck & Co,0.285
+2026-09-30,S033,top|UnitedHealth Group,0.284
+2026-09-30,S033,top|Roche Holding AG Ordinary Shares new,0.273
+2026-09-30,S033,top|Rokiskio Suris,0.272
+2026-09-30,S033,top|Palantir Technologies,0.263
+2026-09-30,S033,top|Applied Materials,0.26
+2026-09-30,S033,top|Bank of America,0.26
+2026-09-30,S033,top|Palo Alto Networks,0.251
+2026-09-30,S033,top|Texas Instruments,0.248
+2026-09-30,S033,top|Caterpillar,0.247
+2026-09-30,S033,top|Lam Research,0.245
+2026-09-30,S033,top|HSBC Holdings,0.244
+2026-09-30,S033,top|The Goldman Sachs Group,0.244
+2026-09-30,S033,top|Novartis,0.244
+2026-09-30,S033,top|Royal Bank of Canada,0.238
+2026-09-30,S033,top|Intel,0.235
+2026-09-30,S033,top|AstraZeneca,0.229
+2026-09-30,S033,top|Linde,0.22
+2026-09-30,S033,top|GE Aerospace,0.217
+2026-09-30,S033,top|Mitsubishi UFJ Financial Group,0.217
+2026-09-30,S033,top|International Business Machines,0.214
 2026-09-30,S033,bd_dur,0.39
 2026-09-30,S033,cov_dur,63.3
 2026-09-30,S033,bd_direct,36.7
@@ -2119,7 +3449,7 @@ date,fund_code,metric,value
 2026-09-30,S046,top|Apple,1.102
 2026-09-30,S046,top|Amazon.com,0.485
 2026-09-30,S046,top|Tesla,0.386
-2026-09-30,S046,top|Eli Lilly and,0.328
+2026-09-30,S046,top|Eli Lilly and Co,0.328
 2026-09-30,S046,top|Broadcom,0.326
 2026-09-30,S046,top|Visa,0.318
 2026-09-30,S046,top|Meta Platforms,0.265
@@ -2128,6 +3458,41 @@ date,fund_code,metric,value
 2026-09-30,S046,top|Micron Technology,0.241
 2026-09-30,S046,top|AbbVie,0.204
 2026-09-30,S046,top|Johnson & Johnson,0.194
+2026-09-30,S046,top|JPMorgan Chase & Co,0.18
+2026-09-30,S046,top|ASML Holding,0.169
+2026-09-30,S046,top|Cisco Systems,0.155
+2026-09-30,S046,top|Merck & Co,0.145
+2026-09-30,S046,top|Berkshire Hathaway,0.136
+2026-09-30,S046,top|Intel,0.136
+2026-09-30,S046,top|SAP,0.133
+2026-09-30,S046,top|The Home Depot,0.132
+2026-09-30,S046,top|Walmart,0.127
+2026-09-30,S046,top|Palo Alto Networks,0.124
+2026-09-30,S046,top|ExxonMobil Holdings,0.124
+2026-09-30,S046,top|S&P Global,0.11
+2026-09-30,S046,top|Costco Wholesale,0.109
+2026-09-30,S046,top|Gilead Sciences,0.109
+2026-09-30,S046,top|Advantest,0.106
+2026-09-30,S046,top|Lam Research,0.104
+2026-09-30,S046,top|Recruit Holdings,0.103
+2026-09-30,S046,top|GE Aerospace,0.099
+2026-09-30,S046,top|Sony Group,0.095
+2026-09-30,S046,top|Salesforce,0.093
+2026-09-30,S046,top|Hitachi,0.093
+2026-09-30,S046,top|Texas Instruments,0.089
+2026-09-30,S046,top|Schneider Electric,0.088
+2026-09-30,S046,top|The Walt Disney,0.085
+2026-09-30,S046,top|AT&T,0.085
+2026-09-30,S046,top|Sumitomo Mitsui Financial Group,0.082
+2026-09-30,S046,top|Accenture,0.08
+2026-09-30,S046,top|Thermo Fisher Scientific,0.079
+2026-09-30,S046,top|Amgen,0.077
+2026-09-30,S046,top|Verizon Communications,0.076
+2026-09-30,S046,top|Bank of America,0.074
+2026-09-30,S046,top|American Express,0.074
+2026-09-30,S046,top|Morgan Stanley,0.073
+2026-09-30,S046,top|Qualcomm,0.073
+2026-09-30,S046,top|Linde,0.071
 2026-09-30,S046,bd_dur,6.11
 2026-09-30,S046,cov_dur,100.0
 2026-09-30,S046,bd_direct,85.7
@@ -2175,14 +3540,49 @@ date,fund_code,metric,value
 2026-09-30,S047,top|Amazon.com,1.069
 2026-09-30,S047,top|Tesla,0.681
 2026-09-30,S047,top|Broadcom,0.681
-2026-09-30,S047,top|Eli Lilly and,0.597
+2026-09-30,S047,top|Eli Lilly and Co,0.597
 2026-09-30,S047,top|Meta Platforms,0.584
 2026-09-30,S047,top|Visa,0.568
 2026-09-30,S047,top|ASML Holding,0.536
 2026-09-30,S047,top|Micron Technology,0.506
 2026-09-30,S047,top|Advanced Micro Devices,0.475
 2026-09-30,S047,top|Mastercard,0.449
-2026-09-30,S047,top|JPMorgan Chase &,0.42
+2026-09-30,S047,top|JPMorgan Chase & Co,0.42
+2026-09-30,S047,top|AbbVie,0.393
+2026-09-30,S047,top|SAP,0.379
+2026-09-30,S047,top|Johnson & Johnson,0.356
+2026-09-30,S047,top|Cisco Systems,0.315
+2026-09-30,S047,top|Merck & Co,0.279
+2026-09-30,S047,top|Walmart,0.259
+2026-09-30,S047,top|Schneider Electric,0.246
+2026-09-30,S047,top|Berkshire Hathaway,0.233
+2026-09-30,S047,top|The Home Depot,0.233
+2026-09-30,S047,top|ExxonMobil Holdings,0.232
+2026-09-30,S047,top|Intel,0.223
+2026-09-30,S047,top|GE Aerospace,0.185
+2026-09-30,S047,top|Costco Wholesale,0.184
+2026-09-30,S047,top|Lam Research,0.181
+2026-09-30,S047,top|Palo Alto Networks,0.181
+2026-09-30,S047,top|S&P Global,0.179
+2026-09-30,S047,top|Bank of America,0.178
+2026-09-30,S047,top|Salesforce,0.177
+2026-09-30,S047,top|Thermo Fisher Scientific,0.173
+2026-09-30,S047,top|Gilead Sciences,0.171
+2026-09-30,S047,top|Banco Santander,0.17
+2026-09-30,S047,top|Amgen,0.164
+2026-09-30,S047,top|Novartis,0.164
+2026-09-30,S047,top|Texas Instruments,0.158
+2026-09-30,S047,top|Advantest,0.155
+2026-09-30,S047,top|Sanofi,0.153
+2026-09-30,S047,top|International Business Machines,0.153
+2026-09-30,S047,top|Palantir Technologies,0.153
+2026-09-30,S047,top|Recruit Holdings,0.151
+2026-09-30,S047,top|Roche Holding AG Ordinary Shares new,0.149
+2026-09-30,S047,top|Iberdrola,0.145
+2026-09-30,S047,top|BNP Paribas Act. Cat.A,0.145
+2026-09-30,S047,top|Qualcomm,0.145
+2026-09-30,S047,top|Allianz,0.145
+2026-09-30,S047,top|Morgan Stanley,0.145
 2026-09-30,S047,bd_dur,5.68
 2026-09-30,S047,cov_dur,100.0
 2026-09-30,S047,bd_direct,90.8
@@ -2233,11 +3633,46 @@ date,fund_code,metric,value
 2026-09-30,S048,top|Micron Technology,1.355
 2026-09-30,S048,top|Tesla,1.144
 2026-09-30,S048,top|Advanced Micro Devices,1.08
-2026-09-30,S048,top|Eli Lilly and,1.06
+2026-09-30,S048,top|Eli Lilly and Co,1.06
 2026-09-30,S048,top|HSBC Holdings,0.859
-2026-09-30,S048,top|JPMorgan Chase &,0.849
+2026-09-30,S048,top|JPMorgan Chase & Co,0.849
 2026-09-30,S048,top|ASML Holding,0.837
 2026-09-30,S048,top|Johnson & Johnson,0.776
+2026-09-30,S048,top|Rio Tinto,0.696
+2026-09-30,S048,top|Visa,0.658
+2026-09-30,S048,top|Novartis,0.58
+2026-09-30,S048,top|Intel,0.575
+2026-09-30,S048,top|Roche Holding AG Ordinary Shares new,0.562
+2026-09-30,S048,top|Berkshire Hathaway,0.543
+2026-09-30,S048,top|AbbVie,0.536
+2026-09-30,S048,top|Texas Instruments,0.517
+2026-09-30,S048,top|Mastercard,0.516
+2026-09-30,S048,top|Cisco Systems,0.512
+2026-09-30,S048,top|Palo Alto Networks,0.51
+2026-09-30,S048,top|Palantir Technologies,0.501
+2026-09-30,S048,top|Walmart,0.493
+2026-09-30,S048,top|AstraZeneca,0.488
+2026-09-30,S048,top|Merck & Co,0.485
+2026-09-30,S048,top|GE Aerospace,0.483
+2026-09-30,S048,top|Analog Devices,0.48
+2026-09-30,S048,top|CrowdStrike Holdings,0.467
+2026-09-30,S048,top|Costco Wholesale,0.459
+2026-09-30,S048,top|Lam Research,0.457
+2026-09-30,S048,top|Applied Materials,0.455
+2026-09-30,S048,top|Siemens,0.415
+2026-09-30,S048,top|Air Liquide,0.414
+2026-09-30,S048,top|Linde,0.404
+2026-09-30,S048,top|Caterpillar,0.402
+2026-09-30,S048,top|Iberdrola,0.389
+2026-09-30,S048,top|DNB Bank,0.388
+2026-09-30,S048,top|Verizon Communications,0.38
+2026-09-30,S048,top|UnitedHealth Group,0.372
+2026-09-30,S048,top|UBS Group,0.366
+2026-09-30,S048,top|PSP Swiss Property,0.36
+2026-09-30,S048,top|Banco Santander,0.356
+2026-09-30,S048,top|Pfizer,0.352
+2026-09-30,S048,top|Thermo Fisher Scientific,0.344
+2026-09-30,S048,top|Bank of America,0.344
 2026-09-30,S048,bd_dur,5.45
 2026-09-30,S048,cov_dur,100.0
 2026-09-30,S048,bd_direct,100.0
@@ -2283,13 +3718,48 @@ date,fund_code,metric,value
 2026-09-30,S049,top|Taiwan Semiconductor Manufacturing,0.92
 2026-09-30,S049,top|Broadcom,0.907
 2026-09-30,S049,top|Meta Platforms,0.699
-2026-09-30,S049,top|Eli Lilly and,0.599
+2026-09-30,S049,top|Eli Lilly and Co,0.599
 2026-09-30,S049,top|Tesla,0.579
-2026-09-30,S049,top|JPMorgan Chase &,0.494
+2026-09-30,S049,top|JPMorgan Chase & Co,0.494
 2026-09-30,S049,top|Micron Technology,0.493
 2026-09-30,S049,top|Advanced Micro Devices,0.482
 2026-09-30,S049,top|Visa,0.435
 2026-09-30,S049,top|Berkshire Hathaway,0.419
+2026-09-30,S049,top|Samsung Electronics,0.416
+2026-09-30,S049,top|Johnson & Johnson,0.353
+2026-09-30,S049,top|ASML Holding,0.348
+2026-09-30,S049,top|SK hynix,0.324
+2026-09-30,S049,top|AbbVie,0.314
+2026-09-30,S049,top|ExxonMobil Holdings,0.306
+2026-09-30,S049,top|Walmart,0.297
+2026-09-30,S049,top|Mastercard,0.285
+2026-09-30,S049,top|Cisco Systems,0.256
+2026-09-30,S049,top|Costco Wholesale,0.241
+2026-09-30,S049,top|The Home Depot,0.214
+2026-09-30,S049,top|Merck & Co,0.197
+2026-09-30,S049,top|UnitedHealth Group,0.196
+2026-09-30,S049,top|Applied Materials,0.193
+2026-09-30,S049,top|Lam Research,0.18
+2026-09-30,S049,top|Bank of America,0.179
+2026-09-30,S049,top|Palo Alto Networks,0.179
+2026-09-30,S049,top|Palantir Technologies,0.176
+2026-09-30,S049,top|Roche Holding AG Ordinary Shares new,0.172
+2026-09-30,S049,top|Caterpillar,0.168
+2026-09-30,S049,top|Texas Instruments,0.168
+2026-09-30,S049,top|Intel,0.167
+2026-09-30,S049,top|Tencent Holdings,0.167
+2026-09-30,S049,top|The Goldman Sachs Group,0.163
+2026-09-30,S049,top|HSBC Holdings,0.159
+2026-09-30,S049,top|Novartis,0.155
+2026-09-30,S049,top|GE Aerospace,0.151
+2026-09-30,S049,top|International Business Machines,0.149
+2026-09-30,S049,top|AstraZeneca,0.149
+2026-09-30,S049,top|Linde,0.148
+2026-09-30,S049,top|Netflix,0.148
+2026-09-30,S049,top|SAP,0.143
+2026-09-30,S049,top|Wells Fargo & Co,0.14
+2026-09-30,S049,top|Morgan Stanley,0.138
+2026-09-30,S049,top|Thermo Fisher Scientific,0.137
 2026-09-30,S049,bd_dur,4.72
 2026-09-30,S049,cov_dur,76.5
 2026-09-30,S049,bd_direct,7.1
@@ -2345,6 +3815,41 @@ date,fund_code,metric,value
 2026-09-30,S050,top|The Walt Disney,1.225
 2026-09-30,S050,top|Verizon Communications,1.219
 2026-09-30,S050,top|Microsoft,1.022
+2026-09-30,S050,top|Amgen,0.935
+2026-09-30,S050,top|Coca-Cola,0.87
+2026-09-30,S050,top|Gilead Sciences,0.792
+2026-09-30,S050,top|The Toronto-Dominion Bank,0.764
+2026-09-30,S050,top|Broadcom,0.743
+2026-09-30,S050,top|American Express,0.743
+2026-09-30,S050,top|Tokyo Electron,0.72
+2026-09-30,S050,top|Marvell Technology,0.715
+2026-09-30,S050,top|ServiceNow,0.678
+2026-09-30,S050,top|American Tower,0.622
+2026-09-30,S050,top|S&P Global,0.609
+2026-09-30,S050,top|Accenture,0.602
+2026-09-30,S050,top|Schneider Electric,0.589
+2026-09-30,S050,top|Adobe,0.577
+2026-09-30,S050,top|Sumitomo Mitsui Financial Group,0.573
+2026-09-30,S050,top|L'Oreal,0.557
+2026-09-30,S050,top|Bank of New York Mellon,0.557
+2026-09-30,S050,top|ABB,0.555
+2026-09-30,S050,top|Progressive,0.539
+2026-09-30,S050,top|Intuit,0.534
+2026-09-30,S050,top|Wheaton Precious Metals,0.529
+2026-09-30,S050,top|Vertex Pharmaceuticals,0.511
+2026-09-30,S050,top|Sony Group,0.509
+2026-09-30,S050,top|IDEXX Laboratories,0.499
+2026-09-30,S050,top|Automatic Data Processing,0.494
+2026-09-30,S050,top|Booking Holdings,0.486
+2026-09-30,S050,top|Recruit Holdings,0.483
+2026-09-30,S050,top|Western Digital,0.471
+2026-09-30,S050,top|Cadence Design Systems,0.459
+2026-09-30,S050,top|PepsiCo,0.448
+2026-09-30,S050,top|Danaher,0.445
+2026-09-30,S050,top|Equinix,0.437
+2026-09-30,S050,top|Keysight Technologies,0.435
+2026-09-30,S050,top|Caterpillar,0.43
+2026-09-30,S050,top|Intercontinental Exchange,0.425
 2026-09-30,S051,tot_eur,26359859
 2026-09-30,S051,cov_fund,100.0
 2026-09-30,S051,mix_eq,99.144
@@ -2394,6 +3899,41 @@ date,fund_code,metric,value
 2026-09-30,S051,top|Micron Technology,1.023
 2026-09-30,S051,top|Lam Research,0.794
 2026-09-30,S051,top|Palo Alto Networks,0.715
+2026-09-30,S051,top|Eli Lilly and Co,0.664
+2026-09-30,S051,top|Gilead Sciences,0.638
+2026-09-30,S051,top|AT&T,0.622
+2026-09-30,S051,top|GE Aerospace,0.611
+2026-09-30,S051,top|Salesforce,0.593
+2026-09-30,S051,top|ASML Holding,0.584
+2026-09-30,S051,top|Qualcomm,0.581
+2026-09-30,S051,top|Samsung Electronics,0.571
+2026-09-30,S051,top|Automatic Data Processing,0.569
+2026-09-30,S051,top|Merck & Co,0.533
+2026-09-30,S051,top|Costco Wholesale,0.525
+2026-09-30,S051,top|Advanced Micro Devices,0.516
+2026-09-30,S051,top|Moodys,0.516
+2026-09-30,S051,top|Coca-Cola,0.513
+2026-09-30,S051,top|Abbott Laboratories,0.45
+2026-09-30,S051,top|ServiceNow,0.45
+2026-09-30,S051,top|The Home Depot,0.435
+2026-09-30,S051,top|Delta Electronics,0.428
+2026-09-30,S051,top|Verizon Communications,0.427
+2026-09-30,S051,top|SK hynix,0.414
+2026-09-30,S051,top|American Express,0.411
+2026-09-30,S051,top|Intel,0.406
+2026-09-30,S051,top|KLA,0.398
+2026-09-30,S051,top|Accenture,0.378
+2026-09-30,S051,top|Bristol-Myers Squibb,0.375
+2026-09-30,S051,top|Uber Technologies,0.359
+2026-09-30,S051,top|Samsung Electro-Mechanics,0.353
+2026-09-30,S051,top|Danaher,0.351
+2026-09-30,S051,top|Roche Holding AG Ordinary Shares new,0.347
+2026-09-30,S051,top|United Rentals,0.333
+2026-09-30,S051,top|Sherwin-Williams,0.33
+2026-09-30,S051,top|United Microelectronics,0.329
+2026-09-30,S051,top|Medtronic,0.326
+2026-09-30,S051,top|Novartis,0.325
+2026-09-30,S051,top|Tencent Holdings,0.308
 2026-09-30,S052,tot_eur,61117290
 2026-09-30,S052,cov_fund,100.0
 2026-09-30,S052,mix_eq,98.665
@@ -2438,11 +3978,46 @@ date,fund_code,metric,value
 2026-09-30,S052,top|Micron Technology,1.358
 2026-09-30,S052,top|Tesla,1.165
 2026-09-30,S052,top|Advanced Micro Devices,1.087
-2026-09-30,S052,top|Eli Lilly and,1.084
-2026-09-30,S052,top|JPMorgan Chase &,0.904
+2026-09-30,S052,top|Eli Lilly and Co,1.084
+2026-09-30,S052,top|JPMorgan Chase & Co,0.904
 2026-09-30,S052,top|HSBC Holdings,0.84
 2026-09-30,S052,top|ASML Holding,0.826
 2026-09-30,S052,top|Johnson & Johnson,0.786
+2026-09-30,S052,top|Rio Tinto,0.676
+2026-09-30,S052,top|Visa,0.674
+2026-09-30,S052,top|Intel,0.571
+2026-09-30,S052,top|Novartis,0.568
+2026-09-30,S052,top|Berkshire Hathaway,0.561
+2026-09-30,S052,top|Roche Holding AG Ordinary Shares new,0.552
+2026-09-30,S052,top|Cisco Systems,0.536
+2026-09-30,S052,top|Mastercard,0.528
+2026-09-30,S052,top|Texas Instruments,0.516
+2026-09-30,S052,top|Palo Alto Networks,0.509
+2026-09-30,S052,top|Walmart,0.507
+2026-09-30,S052,top|Palantir Technologies,0.505
+2026-09-30,S052,top|Merck & Co,0.495
+2026-09-30,S052,top|AbbVie,0.492
+2026-09-30,S052,top|GE Aerospace,0.486
+2026-09-30,S052,top|AstraZeneca,0.479
+2026-09-30,S052,top|Analog Devices,0.475
+2026-09-30,S052,top|CrowdStrike Holdings,0.465
+2026-09-30,S052,top|Lam Research,0.458
+2026-09-30,S052,top|Applied Materials,0.457
+2026-09-30,S052,top|Caterpillar,0.435
+2026-09-30,S052,top|Costco Wholesale,0.423
+2026-09-30,S052,top|Siemens,0.406
+2026-09-30,S052,top|Air Liquide,0.402
+2026-09-30,S052,top|Linde,0.395
+2026-09-30,S052,top|UnitedHealth Group,0.391
+2026-09-30,S052,top|DNB Bank,0.39
+2026-09-30,S052,top|Bank of America,0.383
+2026-09-30,S052,top|Iberdrola,0.381
+2026-09-30,S052,top|Verizon Communications,0.379
+2026-09-30,S052,top|UBS Group,0.357
+2026-09-30,S052,top|Pfizer,0.351
+2026-09-30,S052,top|PSP Swiss Property,0.35
+2026-09-30,S052,top|Banco Santander,0.349
+2026-09-30,S052,top|The Home Depot,0.348
 2026-09-30,S052,bd_dur,3.95
 2026-09-30,S052,cov_dur,100.0
 2026-09-30,S052,bd_direct,100.0
@@ -2489,12 +4064,47 @@ date,fund_code,metric,value
 2026-09-30,S053,top|Broadcom,0.871
 2026-09-30,S053,top|Micron Technology,0.704
 2026-09-30,S053,top|Tesla,0.611
-2026-09-30,S053,top|Eli Lilly and,0.57
+2026-09-30,S053,top|Eli Lilly and Co,0.57
 2026-09-30,S053,top|Advanced Micro Devices,0.564
-2026-09-30,S053,top|JPMorgan Chase &,0.475
+2026-09-30,S053,top|JPMorgan Chase & Co,0.475
 2026-09-30,S053,top|HSBC Holdings,0.42
 2026-09-30,S053,top|ASML Holding,0.41
 2026-09-30,S053,top|Johnson & Johnson,0.41
+2026-09-30,S053,top|Visa,0.354
+2026-09-30,S053,top|Rio Tinto,0.343
+2026-09-30,S053,top|Berkshire Hathaway,0.293
+2026-09-30,S053,top|Intel,0.293
+2026-09-30,S053,top|Novartis,0.282
+2026-09-30,S053,top|Cisco Systems,0.278
+2026-09-30,S053,top|Mastercard,0.277
+2026-09-30,S053,top|Roche Holding AG Ordinary Shares new,0.274
+2026-09-30,S053,top|AbbVie,0.271
+2026-09-30,S053,top|Walmart,0.267
+2026-09-30,S053,top|Texas Instruments,0.266
+2026-09-30,S053,top|Palantir Technologies,0.263
+2026-09-30,S053,top|Palo Alto Networks,0.261
+2026-09-30,S053,top|Merck & Co,0.257
+2026-09-30,S053,top|GE Aerospace,0.253
+2026-09-30,S053,top|Analog Devices,0.244
+2026-09-30,S053,top|Costco Wholesale,0.24
+2026-09-30,S053,top|CrowdStrike Holdings,0.238
+2026-09-30,S053,top|Lam Research,0.238
+2026-09-30,S053,top|AstraZeneca,0.237
+2026-09-30,S053,top|Applied Materials,0.237
+2026-09-30,S053,top|Caterpillar,0.226
+2026-09-30,S053,top|Linde,0.21
+2026-09-30,S053,top|UnitedHealth Group,0.204
+2026-09-30,S053,top|Air Liquide,0.204
+2026-09-30,S053,top|Siemens,0.202
+2026-09-30,S053,top|Bank of America,0.2
+2026-09-30,S053,top|Verizon Communications,0.196
+2026-09-30,S053,top|DNB Bank,0.191
+2026-09-30,S053,top|Iberdrola,0.189
+2026-09-30,S053,top|The Home Depot,0.183
+2026-09-30,S053,top|Pfizer,0.181
+2026-09-30,S053,top|The Goldman Sachs Group,0.179
+2026-09-30,S053,top|PSP Swiss Property,0.178
+2026-09-30,S053,top|UBS Group,0.177
 2026-09-30,S053,bd_dur,5.3
 2026-09-30,S053,cov_dur,100.0
 2026-09-30,S053,bd_direct,93.2
@@ -2543,13 +4153,48 @@ date,fund_code,metric,value
 2026-09-30,S054,top|Broadcom,0.363
 2026-09-30,S054,top|Meta Platforms,0.326
 2026-09-30,S054,top|Tesla,0.316
-2026-09-30,S054,top|Eli Lilly and,0.296
+2026-09-30,S054,top|Eli Lilly and Co,0.296
 2026-09-30,S054,top|Micron Technology,0.282
 2026-09-30,S054,top|Visa,0.279
-2026-09-30,S054,top|JPMorgan Chase &,0.237
+2026-09-30,S054,top|JPMorgan Chase & Co,0.237
 2026-09-30,S054,top|Advanced Micro Devices,0.228
 2026-09-30,S054,top|Mastercard,0.216
 2026-09-30,S054,top|AbbVie,0.204
+2026-09-30,S054,top|ASML Holding,0.188
+2026-09-30,S054,top|Johnson & Johnson,0.176
+2026-09-30,S054,top|Cisco Systems,0.162
+2026-09-30,S054,top|Walmart,0.154
+2026-09-30,S054,top|Merck & Co,0.144
+2026-09-30,S054,top|SAP,0.138
+2026-09-30,S054,top|ExxonMobil Holdings,0.129
+2026-09-30,S054,top|Berkshire Hathaway,0.124
+2026-09-30,S054,top|The Home Depot,0.119
+2026-09-30,S054,top|Bank of America,0.105
+2026-09-30,S054,top|Intel,0.101
+2026-09-30,S054,top|GE Aerospace,0.1
+2026-09-30,S054,top|Thermo Fisher Scientific,0.098
+2026-09-30,S054,top|Costco Wholesale,0.095
+2026-09-30,S054,top|Amgen,0.094
+2026-09-30,S054,top|Lam Research,0.09
+2026-09-30,S054,top|Schneider Electric,0.09
+2026-09-30,S054,top|Salesforce,0.086
+2026-09-30,S054,top|Palantir Technologies,0.085
+2026-09-30,S054,top|Wells Fargo & Co,0.083
+2026-09-30,S054,top|Gilead Sciences,0.081
+2026-09-30,S054,top|Texas Instruments,0.079
+2026-09-30,S054,top|International Business Machines,0.078
+2026-09-30,S054,top|S&P Global,0.077
+2026-09-30,S054,top|Morgan Stanley,0.077
+2026-09-30,S054,top|Palo Alto Networks,0.077
+2026-09-30,S054,top|Qualcomm,0.074
+2026-09-30,S054,top|Caterpillar,0.074
+2026-09-30,S054,top|KLA,0.073
+2026-09-30,S054,top|UnitedHealth Group,0.072
+2026-09-30,S054,top|Equinix,0.072
+2026-09-30,S054,top|Accenture,0.072
+2026-09-30,S054,top|American Express,0.071
+2026-09-30,S054,top|The Walt Disney,0.069
+2026-09-30,S054,top|BlackRock,0.069
 2026-09-30,S054,bd_dur,5.1
 2026-09-30,S054,cov_dur,100.0
 2026-09-30,S054,bd_direct,88.1
@@ -2599,12 +4244,47 @@ date,fund_code,metric,value
 2026-09-30,S056,top|Broadcom,1.457
 2026-09-30,S056,top|Meta Platforms,1.345
 2026-09-30,S056,top|Tesla,1.056
-2026-09-30,S056,top|Eli Lilly and,1.021
+2026-09-30,S056,top|Eli Lilly and Co,1.021
 2026-09-30,S056,top|Micron Technology,0.997
-2026-09-30,S056,top|JPMorgan Chase &,0.86
+2026-09-30,S056,top|JPMorgan Chase & Co,0.86
 2026-09-30,S056,top|Advanced Micro Devices,0.825
 2026-09-30,S056,top|Samsung Electronics,0.727
 2026-09-30,S056,top|Berkshire Hathaway,0.714
+2026-09-30,S056,top|ExxonMobil Holdings,0.668
+2026-09-30,S056,top|Visa,0.627
+2026-09-30,S056,top|Johnson & Johnson,0.609
+2026-09-30,S056,top|ASML Holding,0.602
+2026-09-30,S056,top|SK hynix,0.55
+2026-09-30,S056,top|Walmart,0.487
+2026-09-30,S056,top|AbbVie,0.475
+2026-09-30,S056,top|Mastercard,0.467
+2026-09-30,S056,top|Costco Wholesale,0.414
+2026-09-30,S056,top|Cisco Systems,0.393
+2026-09-30,S056,top|Chevron,0.367
+2026-09-30,S056,top|Palantir Technologies,0.366
+2026-09-30,S056,top|Intel,0.345
+2026-09-30,S056,top|UnitedHealth Group,0.342
+2026-09-30,S056,top|Applied Materials,0.337
+2026-09-30,S056,top|Merck & Co,0.337
+2026-09-30,S056,top|Lam Research,0.329
+2026-09-30,S056,top|Bank of America,0.326
+2026-09-30,S056,top|GE Aerospace,0.323
+2026-09-30,S056,top|Procter & Gamble,0.318
+2026-09-30,S056,top|Caterpillar,0.315
+2026-09-30,S056,top|Roche Holding AG Ordinary Shares new,0.312
+2026-09-30,S056,top|Coca-Cola,0.31
+2026-09-30,S056,top|The Home Depot,0.305
+2026-09-30,S056,top|Tencent Holdings,0.298
+2026-09-30,S056,top|HSBC Holdings,0.292
+2026-09-30,S056,top|Philip Morris International,0.28
+2026-09-30,S056,top|Palo Alto Networks,0.277
+2026-09-30,S056,top|Novartis,0.274
+2026-09-30,S056,top|Shell,0.264
+2026-09-30,S056,top|Netflix,0.263
+2026-09-30,S056,top|The Goldman Sachs Group,0.262
+2026-09-30,S056,top|Royal Bank of Canada,0.262
+2026-09-30,S056,top|AstraZeneca,0.26
+2026-09-30,S056,top|Texas Instruments,0.255
 2026-09-30,S056,cov_dur,0.0
 2026-09-30,S056,bd_direct,0.0
 2026-09-30,S057,tot_eur,4853660
@@ -2650,12 +4330,47 @@ date,fund_code,metric,value
 2026-09-30,S057,top|Broadcom,0.867
 2026-09-30,S057,top|Meta Platforms,0.809
 2026-09-30,S057,top|Tesla,0.638
-2026-09-30,S057,top|Eli Lilly and,0.624
+2026-09-30,S057,top|Eli Lilly and Co,0.624
 2026-09-30,S057,top|Micron Technology,0.587
-2026-09-30,S057,top|JPMorgan Chase &,0.513
+2026-09-30,S057,top|JPMorgan Chase & Co,0.513
 2026-09-30,S057,top|Advanced Micro Devices,0.486
 2026-09-30,S057,top|Berkshire Hathaway,0.436
 2026-09-30,S057,top|ExxonMobil Holdings,0.419
+2026-09-30,S057,top|Samsung Electronics,0.403
+2026-09-30,S057,top|Visa,0.386
+2026-09-30,S057,top|Johnson & Johnson,0.371
+2026-09-30,S057,top|ASML Holding,0.357
+2026-09-30,S057,top|SK hynix,0.306
+2026-09-30,S057,top|Walmart,0.299
+2026-09-30,S057,top|Mastercard,0.289
+2026-09-30,S057,top|AbbVie,0.287
+2026-09-30,S057,top|Costco Wholesale,0.251
+2026-09-30,S057,top|Cisco Systems,0.237
+2026-09-30,S057,top|Chevron,0.235
+2026-09-30,S057,top|Palantir Technologies,0.226
+2026-09-30,S057,top|Procter & Gamble,0.21
+2026-09-30,S057,top|Merck & Co,0.207
+2026-09-30,S057,top|UnitedHealth Group,0.206
+2026-09-30,S057,top|Coca-Cola,0.206
+2026-09-30,S057,top|Intel,0.192
+2026-09-30,S057,top|Bank of America,0.189
+2026-09-30,S057,top|Roche Holding AG Ordinary Shares new,0.188
+2026-09-30,S057,top|Applied Materials,0.188
+2026-09-30,S057,top|GE Aerospace,0.187
+2026-09-30,S057,top|The Home Depot,0.184
+2026-09-30,S057,top|Lam Research,0.183
+2026-09-30,S057,top|Philip Morris International,0.182
+2026-09-30,S057,top|Caterpillar,0.175
+2026-09-30,S057,top|HSBC Holdings,0.173
+2026-09-30,S057,top|Shell,0.171
+2026-09-30,S057,top|Palo Alto Networks,0.17
+2026-09-30,S057,top|Tencent Holdings,0.167
+2026-09-30,S057,top|Novartis,0.166
+2026-09-30,S057,top|Royal Bank of Canada,0.162
+2026-09-30,S057,top|Texas Instruments,0.157
+2026-09-30,S057,top|AstraZeneca,0.156
+2026-09-30,S057,top|Netflix,0.155
+2026-09-30,S057,top|RTX,0.153
 2026-09-30,S057,bd_dur,2.64
 2026-09-30,S057,cov_dur,100.0
 2026-09-30,S057,bd_direct,0.0
@@ -2706,11 +4421,46 @@ date,fund_code,metric,value
 2026-09-30,S058,top|Meta Platforms,1.355
 2026-09-30,S058,top|Micron Technology,1.057
 2026-09-30,S058,top|Tesla,1.017
-2026-09-30,S058,top|Eli Lilly and,0.974
+2026-09-30,S058,top|Eli Lilly and Co,0.974
 2026-09-30,S058,top|Advanced Micro Devices,0.946
-2026-09-30,S058,top|JPMorgan Chase &,0.869
+2026-09-30,S058,top|JPMorgan Chase & Co,0.869
 2026-09-30,S058,top|Samsung Electronics,0.846
 2026-09-30,S058,top|ExxonMobil Holdings,0.747
+2026-09-30,S058,top|Berkshire Hathaway,0.714
+2026-09-30,S058,top|ASML Holding,0.702
+2026-09-30,S058,top|Visa,0.677
+2026-09-30,S058,top|SK hynix,0.652
+2026-09-30,S058,top|Johnson & Johnson,0.623
+2026-09-30,S058,top|Walmart,0.522
+2026-09-30,S058,top|AbbVie,0.506
+2026-09-30,S058,top|Mastercard,0.469
+2026-09-30,S058,top|Costco Wholesale,0.447
+2026-09-30,S058,top|Cisco Systems,0.435
+2026-09-30,S058,top|Intel,0.431
+2026-09-30,S058,top|Applied Materials,0.378
+2026-09-30,S058,top|Lam Research,0.374
+2026-09-30,S058,top|Caterpillar,0.353
+2026-09-30,S058,top|Palantir Technologies,0.353
+2026-09-30,S058,top|Merck & Co,0.352
+2026-09-30,S058,top|HSBC Holdings,0.338
+2026-09-30,S058,top|Bank of America,0.337
+2026-09-30,S058,top|UnitedHealth Group,0.335
+2026-09-30,S058,top|Roche Holding AG Ordinary Shares new,0.329
+2026-09-30,S058,top|GE Aerospace,0.323
+2026-09-30,S058,top|The Home Depot,0.322
+2026-09-30,S058,top|Palo Alto Networks,0.318
+2026-09-30,S058,top|Tencent Holdings,0.316
+2026-09-30,S058,top|Novartis,0.297
+2026-09-30,S058,top|Royal Bank of Canada,0.292
+2026-09-30,S058,top|The Goldman Sachs Group,0.283
+2026-09-30,S058,top|Texas Instruments,0.277
+2026-09-30,S058,top|Netflix,0.276
+2026-09-30,S058,top|GE Vernova,0.261
+2026-09-30,S058,top|AstraZeneca,0.257
+2026-09-30,S058,top|Thermo Fisher Scientific,0.247
+2026-09-30,S058,top|Wells Fargo & Co,0.246
+2026-09-30,S058,top|Siemens,0.243
+2026-09-30,S058,top|SAP,0.242
 2026-09-30,S058,bd_dur,0.39
 2026-09-30,S058,cov_dur,100.0
 2026-09-30,S058,bd_direct,0.0
@@ -2760,12 +4510,47 @@ date,fund_code,metric,value
 2026-09-30,S059,top|Broadcom,1.364
 2026-09-30,S059,top|Meta Platforms,1.298
 2026-09-30,S059,top|Tesla,0.991
-2026-09-30,S059,top|Eli Lilly and,0.983
+2026-09-30,S059,top|Eli Lilly and Co,0.983
 2026-09-30,S059,top|Micron Technology,0.881
-2026-09-30,S059,top|JPMorgan Chase &,0.829
+2026-09-30,S059,top|JPMorgan Chase & Co,0.829
 2026-09-30,S059,top|Samsung Electronics,0.77
 2026-09-30,S059,top|Advanced Micro Devices,0.749
 2026-09-30,S059,top|Berkshire Hathaway,0.729
+2026-09-30,S059,top|ExxonMobil Holdings,0.627
+2026-09-30,S059,top|ASML Holding,0.624
+2026-09-30,S059,top|Visa,0.613
+2026-09-30,S059,top|Johnson & Johnson,0.596
+2026-09-30,S059,top|SK hynix,0.583
+2026-09-30,S059,top|Walmart,0.471
+2026-09-30,S059,top|AbbVie,0.46
+2026-09-30,S059,top|Mastercard,0.45
+2026-09-30,S059,top|Costco Wholesale,0.399
+2026-09-30,S059,top|Cisco Systems,0.374
+2026-09-30,S059,top|Roche Holding AG Ordinary Shares new,0.355
+2026-09-30,S059,top|Palantir Technologies,0.341
+2026-09-30,S059,top|Merck & Co,0.327
+2026-09-30,S059,top|UnitedHealth Group,0.323
+2026-09-30,S059,top|Chevron,0.321
+2026-09-30,S059,top|Novartis,0.319
+2026-09-30,S059,top|Tencent Holdings,0.318
+2026-09-30,S059,top|HSBC Holdings,0.318
+2026-09-30,S059,top|Royal Bank of Canada,0.316
+2026-09-30,S059,top|Intel,0.308
+2026-09-30,S059,top|GE Aerospace,0.304
+2026-09-30,S059,top|Shell,0.303
+2026-09-30,S059,top|Bank of America,0.299
+2026-09-30,S059,top|Applied Materials,0.295
+2026-09-30,S059,top|AstraZeneca,0.294
+2026-09-30,S059,top|The Home Depot,0.294
+2026-09-30,S059,top|Procter & Gamble,0.293
+2026-09-30,S059,top|Lam Research,0.286
+2026-09-30,S059,top|Coca-Cola,0.283
+2026-09-30,S059,top|Nestle,0.277
+2026-09-30,S059,top|Mitsubishi UFJ Financial Group,0.277
+2026-09-30,S059,top|Caterpillar,0.268
+2026-09-30,S059,top|Palo Alto Networks,0.259
+2026-09-30,S059,top|SAP,0.25
+2026-09-30,S059,top|Philip Morris International,0.249
 2026-09-30,S059,cov_dur,0.0
 2026-09-30,S059,bd_direct,0.0
 2026-09-30,SBN-03/09,tot_eur,2987236
@@ -2810,13 +4595,48 @@ date,fund_code,metric,value
 2026-09-30,SBN-03/09,top|Taiwan Semiconductor Manufacturing,2.107
 2026-09-30,SBN-03/09,top|Broadcom,1.592
 2026-09-30,SBN-03/09,top|Meta Platforms,1.386
-2026-09-30,SBN-03/09,top|Eli Lilly and,1.098
+2026-09-30,SBN-03/09,top|Eli Lilly and Co,1.098
 2026-09-30,SBN-03/09,top|Tesla,1.08
 2026-09-30,SBN-03/09,top|Micron Technology,0.997
 2026-09-30,SBN-03/09,top|Samsung Electronics,0.953
-2026-09-30,SBN-03/09,top|JPMorgan Chase &,0.893
+2026-09-30,SBN-03/09,top|JPMorgan Chase & Co,0.893
 2026-09-30,SBN-03/09,top|Advanced Micro Devices,0.866
 2026-09-30,SBN-03/09,top|SK hynix,0.755
+2026-09-30,SBN-03/09,top|Berkshire Hathaway,0.746
+2026-09-30,SBN-03/09,top|ExxonMobil Holdings,0.74
+2026-09-30,SBN-03/09,top|Visa,0.705
+2026-09-30,SBN-03/09,top|ASML Holding,0.666
+2026-09-30,SBN-03/09,top|Johnson & Johnson,0.639
+2026-09-30,SBN-03/09,top|Walmart,0.533
+2026-09-30,SBN-03/09,top|Mastercard,0.52
+2026-09-30,SBN-03/09,top|AbbVie,0.51
+2026-09-30,SBN-03/09,top|Cisco Systems,0.468
+2026-09-30,SBN-03/09,top|Costco Wholesale,0.433
+2026-09-30,SBN-03/09,top|Applied Materials,0.374
+2026-09-30,SBN-03/09,top|UnitedHealth Group,0.372
+2026-09-30,SBN-03/09,top|Tencent Holdings,0.367
+2026-09-30,SBN-03/09,top|Merck & Co,0.364
+2026-09-30,SBN-03/09,top|The Home Depot,0.352
+2026-09-30,SBN-03/09,top|Lam Research,0.346
+2026-09-30,SBN-03/09,top|Palantir Technologies,0.333
+2026-09-30,SBN-03/09,top|Intel,0.33
+2026-09-30,SBN-03/09,top|Bank of America,0.329
+2026-09-30,SBN-03/09,top|Palo Alto Networks,0.313
+2026-09-30,SBN-03/09,top|GE Aerospace,0.311
+2026-09-30,SBN-03/09,top|Caterpillar,0.297
+2026-09-30,SBN-03/09,top|Texas Instruments,0.278
+2026-09-30,SBN-03/09,top|Netflix,0.27
+2026-09-30,SBN-03/09,top|The Goldman Sachs Group,0.27
+2026-09-30,SBN-03/09,top|Banco Santander,0.268
+2026-09-30,SBN-03/09,top|Roche Holding AG Ordinary Shares new,0.264
+2026-09-30,SBN-03/09,top|Linde,0.262
+2026-09-30,SBN-03/09,top|Mitsubishi UFJ Financial Group,0.261
+2026-09-30,SBN-03/09,top|Citigroup,0.256
+2026-09-30,SBN-03/09,top|International Business Machines,0.256
+2026-09-30,SBN-03/09,top|HSBC Holdings,0.255
+2026-09-30,SBN-03/09,top|Wells Fargo & Co,0.253
+2026-09-30,SBN-03/09,top|Alibaba Group Holding,0.251
+2026-09-30,SBN-03/09,top|SAP,0.245
 2026-09-30,SBN-03/09,cov_dur,0.0
 2026-09-30,SBN-03/09,bd_direct,0.0
 2026-09-30,SBN-61/67,tot_eur,256241857
@@ -2861,13 +4681,48 @@ date,fund_code,metric,value
 2026-09-30,SBN-61/67,top|Taiwan Semiconductor Manufacturing,0.518
 2026-09-30,SBN-61/67,top|Broadcom,0.422
 2026-09-30,SBN-61/67,top|Meta Platforms,0.41
-2026-09-30,SBN-61/67,top|Eli Lilly and,0.299
+2026-09-30,SBN-61/67,top|Eli Lilly and Co,0.299
 2026-09-30,SBN-61/67,top|Micron Technology,0.291
 2026-09-30,SBN-61/67,top|Tesla,0.291
-2026-09-30,SBN-61/67,top|JPMorgan Chase &,0.248
+2026-09-30,SBN-61/67,top|JPMorgan Chase & Co,0.248
 2026-09-30,SBN-61/67,top|Advanced Micro Devices,0.238
 2026-09-30,SBN-61/67,top|Samsung Electronics,0.238
 2026-09-30,SBN-61/67,top|ASML Holding,0.201
+2026-09-30,SBN-61/67,top|SK hynix,0.196
+2026-09-30,SBN-61/67,top|Berkshire Hathaway,0.193
+2026-09-30,SBN-61/67,top|Visa,0.189
+2026-09-30,SBN-61/67,top|Johnson & Johnson,0.177
+2026-09-30,SBN-61/67,top|ExxonMobil Holdings,0.169
+2026-09-30,SBN-61/67,top|Walmart,0.147
+2026-09-30,SBN-61/67,top|Mastercard,0.146
+2026-09-30,SBN-61/67,top|AbbVie,0.138
+2026-09-30,SBN-61/67,top|Cisco Systems,0.134
+2026-09-30,SBN-61/67,top|Costco Wholesale,0.11
+2026-09-30,SBN-61/67,top|Merck & Co,0.105
+2026-09-30,SBN-61/67,top|UnitedHealth Group,0.101
+2026-09-30,SBN-61/67,top|Applied Materials,0.098
+2026-09-30,SBN-61/67,top|The Home Depot,0.092
+2026-09-30,SBN-61/67,top|Palantir Technologies,0.092
+2026-09-30,SBN-61/67,top|Bank of America,0.09
+2026-09-30,SBN-61/67,top|Lam Research,0.088
+2026-09-30,SBN-61/67,top|Tencent Holdings,0.087
+2026-09-30,SBN-61/67,top|Palo Alto Networks,0.085
+2026-09-30,SBN-61/67,top|Intel,0.083
+2026-09-30,SBN-61/67,top|GE Aerospace,0.081
+2026-09-30,SBN-61/67,top|Citigroup,0.08
+2026-09-30,SBN-61/67,top|HSBC Holdings,0.079
+2026-09-30,SBN-61/67,top|Roche Holding AG Ordinary Shares new,0.077
+2026-09-30,SBN-61/67,top|Texas Instruments,0.076
+2026-09-30,SBN-61/67,top|Caterpillar,0.076
+2026-09-30,SBN-61/67,top|Novartis,0.074
+2026-09-30,SBN-61/67,top|Netflix,0.074
+2026-09-30,SBN-61/67,top|SAP,0.074
+2026-09-30,SBN-61/67,top|Mitsubishi UFJ Financial Group,0.073
+2026-09-30,SBN-61/67,top|The Goldman Sachs Group,0.073
+2026-09-30,SBN-61/67,top|AstraZeneca,0.072
+2026-09-30,SBN-61/67,top|Wells Fargo & Co,0.07
+2026-09-30,SBN-61/67,top|Verizon Communications,0.07
+2026-09-30,SBN-61/67,top|Thermo Fisher Scientific,0.07
 2026-09-30,SBN-61/67,bd_dur,4.47
 2026-09-30,SBN-61/67,cov_dur,80.8
 2026-09-30,SBN-61/67,bd_direct,36.3
@@ -2916,13 +4771,48 @@ date,fund_code,metric,value
 2026-09-30,SBN-68/74,top|Taiwan Semiconductor Manufacturing,1.125
 2026-09-30,SBN-68/74,top|Broadcom,0.875
 2026-09-30,SBN-68/74,top|Meta Platforms,0.85
-2026-09-30,SBN-68/74,top|Eli Lilly and,0.622
+2026-09-30,SBN-68/74,top|Eli Lilly and Co,0.622
 2026-09-30,SBN-68/74,top|Tesla,0.617
 2026-09-30,SBN-68/74,top|Micron Technology,0.574
 2026-09-30,SBN-68/74,top|Samsung Electronics,0.516
-2026-09-30,SBN-68/74,top|JPMorgan Chase &,0.515
+2026-09-30,SBN-68/74,top|JPMorgan Chase & Co,0.515
 2026-09-30,SBN-68/74,top|Advanced Micro Devices,0.487
 2026-09-30,SBN-68/74,top|SK hynix,0.424
+2026-09-30,SBN-68/74,top|ASML Holding,0.403
+2026-09-30,SBN-68/74,top|Berkshire Hathaway,0.398
+2026-09-30,SBN-68/74,top|Visa,0.39
+2026-09-30,SBN-68/74,top|Johnson & Johnson,0.368
+2026-09-30,SBN-68/74,top|ExxonMobil Holdings,0.347
+2026-09-30,SBN-68/74,top|Walmart,0.305
+2026-09-30,SBN-68/74,top|Mastercard,0.298
+2026-09-30,SBN-68/74,top|AbbVie,0.284
+2026-09-30,SBN-68/74,top|Cisco Systems,0.253
+2026-09-30,SBN-68/74,top|Costco Wholesale,0.229
+2026-09-30,SBN-68/74,top|UnitedHealth Group,0.212
+2026-09-30,SBN-68/74,top|Merck & Co,0.209
+2026-09-30,SBN-68/74,top|Applied Materials,0.202
+2026-09-30,SBN-68/74,top|The Home Depot,0.194
+2026-09-30,SBN-68/74,top|Tencent Holdings,0.19
+2026-09-30,SBN-68/74,top|Bank of America,0.19
+2026-09-30,SBN-68/74,top|Lam Research,0.189
+2026-09-30,SBN-68/74,top|Intel,0.188
+2026-09-30,SBN-68/74,top|Palantir Technologies,0.182
+2026-09-30,SBN-68/74,top|GE Aerospace,0.171
+2026-09-30,SBN-68/74,top|Palo Alto Networks,0.17
+2026-09-30,SBN-68/74,top|Caterpillar,0.17
+2026-09-30,SBN-68/74,top|HSBC Holdings,0.159
+2026-09-30,SBN-68/74,top|Netflix,0.157
+2026-09-30,SBN-68/74,top|Texas Instruments,0.156
+2026-09-30,SBN-68/74,top|The Goldman Sachs Group,0.152
+2026-09-30,SBN-68/74,top|Roche Holding AG Ordinary Shares new,0.151
+2026-09-30,SBN-68/74,top|Novartis,0.147
+2026-09-30,SBN-68/74,top|Wells Fargo & Co,0.146
+2026-09-30,SBN-68/74,top|AstraZeneca,0.144
+2026-09-30,SBN-68/74,top|Linde,0.143
+2026-09-30,SBN-68/74,top|Thermo Fisher Scientific,0.141
+2026-09-30,SBN-68/74,top|Citigroup,0.141
+2026-09-30,SBN-68/74,top|Amgen,0.139
+2026-09-30,SBN-68/74,top|International Business Machines,0.137
 2026-09-30,SBN-68/74,bd_dur,4.59
 2026-09-30,SBN-68/74,cov_dur,77.6
 2026-09-30,SBN-68/74,bd_direct,23.2
@@ -2972,12 +4862,47 @@ date,fund_code,metric,value
 2026-09-30,SBN-75/81,top|Broadcom,1.337
 2026-09-30,SBN-75/81,top|Meta Platforms,1.198
 2026-09-30,SBN-75/81,top|Samsung Electronics,0.895
-2026-09-30,SBN-75/81,top|Eli Lilly and,0.886
+2026-09-30,SBN-75/81,top|Eli Lilly and Co,0.886
 2026-09-30,SBN-75/81,top|Tesla,0.884
 2026-09-30,SBN-75/81,top|Micron Technology,0.867
-2026-09-30,SBN-75/81,top|JPMorgan Chase &,0.741
+2026-09-30,SBN-75/81,top|JPMorgan Chase & Co,0.741
 2026-09-30,SBN-75/81,top|Advanced Micro Devices,0.737
 2026-09-30,SBN-75/81,top|SK hynix,0.727
+2026-09-30,SBN-75/81,top|ASML Holding,0.593
+2026-09-30,SBN-75/81,top|Visa,0.577
+2026-09-30,SBN-75/81,top|ExxonMobil Holdings,0.558
+2026-09-30,SBN-75/81,top|Berkshire Hathaway,0.549
+2026-09-30,SBN-75/81,top|Johnson & Johnson,0.536
+2026-09-30,SBN-75/81,top|Walmart,0.442
+2026-09-30,SBN-75/81,top|Mastercard,0.422
+2026-09-30,SBN-75/81,top|AbbVie,0.418
+2026-09-30,SBN-75/81,top|Cisco Systems,0.4
+2026-09-30,SBN-75/81,top|Tencent Holdings,0.336
+2026-09-30,SBN-75/81,top|Applied Materials,0.325
+2026-09-30,SBN-75/81,top|Costco Wholesale,0.323
+2026-09-30,SBN-75/81,top|UnitedHealth Group,0.303
+2026-09-30,SBN-75/81,top|Merck & Co,0.302
+2026-09-30,SBN-75/81,top|Lam Research,0.301
+2026-09-30,SBN-75/81,top|Intel,0.292
+2026-09-30,SBN-75/81,top|The Home Depot,0.288
+2026-09-30,SBN-75/81,top|Bank of America,0.278
+2026-09-30,SBN-75/81,top|Palo Alto Networks,0.267
+2026-09-30,SBN-75/81,top|Palantir Technologies,0.251
+2026-09-30,SBN-75/81,top|Banco Santander,0.251
+2026-09-30,SBN-75/81,top|Caterpillar,0.246
+2026-09-30,SBN-75/81,top|Mitsubishi UFJ Financial Group,0.238
+2026-09-30,SBN-75/81,top|Texas Instruments,0.23
+2026-09-30,SBN-75/81,top|Alibaba Group Holding,0.229
+2026-09-30,SBN-75/81,top|GE Aerospace,0.225
+2026-09-30,SBN-75/81,top|Netflix,0.225
+2026-09-30,SBN-75/81,top|The Goldman Sachs Group,0.223
+2026-09-30,SBN-75/81,top|Linde,0.221
+2026-09-30,SBN-75/81,top|Citigroup,0.215
+2026-09-30,SBN-75/81,top|HSBC Holdings,0.213
+2026-09-30,SBN-75/81,top|International Business Machines,0.211
+2026-09-30,SBN-75/81,top|Wells Fargo & Co,0.209
+2026-09-30,SBN-75/81,top|SAP,0.208
+2026-09-30,SBN-75/81,top|Thermo Fisher Scientific,0.202
 2026-09-30,SBN-75/81,bd_dur,4.74
 2026-09-30,SBN-75/81,cov_dur,69.0
 2026-09-30,SBN-75/81,bd_direct,20.6
@@ -3027,12 +4952,47 @@ date,fund_code,metric,value
 2026-09-30,SBN-82/88,top|Broadcom,1.41
 2026-09-30,SBN-82/88,top|Meta Platforms,1.246
 2026-09-30,SBN-82/88,top|Samsung Electronics,0.939
-2026-09-30,SBN-82/88,top|Eli Lilly and,0.93
+2026-09-30,SBN-82/88,top|Eli Lilly and Co,0.93
 2026-09-30,SBN-82/88,top|Tesla,0.926
 2026-09-30,SBN-82/88,top|Micron Technology,0.903
-2026-09-30,SBN-82/88,top|JPMorgan Chase &,0.781
+2026-09-30,SBN-82/88,top|JPMorgan Chase & Co,0.781
 2026-09-30,SBN-82/88,top|Advanced Micro Devices,0.775
 2026-09-30,SBN-82/88,top|SK hynix,0.763
+2026-09-30,SBN-82/88,top|ASML Holding,0.633
+2026-09-30,SBN-82/88,top|Visa,0.617
+2026-09-30,SBN-82/88,top|Berkshire Hathaway,0.57
+2026-09-30,SBN-82/88,top|Johnson & Johnson,0.569
+2026-09-30,SBN-82/88,top|ExxonMobil Holdings,0.562
+2026-09-30,SBN-82/88,top|Walmart,0.47
+2026-09-30,SBN-82/88,top|AbbVie,0.445
+2026-09-30,SBN-82/88,top|Mastercard,0.444
+2026-09-30,SBN-82/88,top|Cisco Systems,0.425
+2026-09-30,SBN-82/88,top|Tencent Holdings,0.353
+2026-09-30,SBN-82/88,top|Applied Materials,0.34
+2026-09-30,SBN-82/88,top|Costco Wholesale,0.34
+2026-09-30,SBN-82/88,top|UnitedHealth Group,0.319
+2026-09-30,SBN-82/88,top|Merck & Co,0.317
+2026-09-30,SBN-82/88,top|Lam Research,0.314
+2026-09-30,SBN-82/88,top|The Home Depot,0.308
+2026-09-30,SBN-82/88,top|Intel,0.304
+2026-09-30,SBN-82/88,top|Bank of America,0.293
+2026-09-30,SBN-82/88,top|Palo Alto Networks,0.282
+2026-09-30,SBN-82/88,top|Palantir Technologies,0.263
+2026-09-30,SBN-82/88,top|Banco Santander,0.26
+2026-09-30,SBN-82/88,top|Caterpillar,0.253
+2026-09-30,SBN-82/88,top|Mitsubishi UFJ Financial Group,0.25
+2026-09-30,SBN-82/88,top|Texas Instruments,0.243
+2026-09-30,SBN-82/88,top|Linde,0.243
+2026-09-30,SBN-82/88,top|Alibaba Group Holding,0.24
+2026-09-30,SBN-82/88,top|Netflix,0.235
+2026-09-30,SBN-82/88,top|The Goldman Sachs Group,0.235
+2026-09-30,SBN-82/88,top|HSBC Holdings,0.229
+2026-09-30,SBN-82/88,top|GE Aerospace,0.227
+2026-09-30,SBN-82/88,top|Citigroup,0.226
+2026-09-30,SBN-82/88,top|International Business Machines,0.224
+2026-09-30,SBN-82/88,top|SAP,0.223
+2026-09-30,SBN-82/88,top|Wells Fargo & Co,0.22
+2026-09-30,SBN-82/88,top|Roche Holding AG Ordinary Shares new,0.214
 2026-09-30,SBN-82/88,bd_dur,3.23
 2026-09-30,SBN-82/88,cov_dur,99.4
 2026-09-30,SBN-82/88,bd_direct,99.4
@@ -3080,11 +5040,46 @@ date,fund_code,metric,value
 2026-09-30,SBN-89/95,top|Meta Platforms,1.268
 2026-09-30,SBN-89/95,top|Samsung Electronics,0.949
 2026-09-30,SBN-89/95,top|Tesla,0.918
-2026-09-30,SBN-89/95,top|Eli Lilly and,0.915
+2026-09-30,SBN-89/95,top|Eli Lilly and Co,0.915
 2026-09-30,SBN-89/95,top|Micron Technology,0.908
 2026-09-30,SBN-89/95,top|SK hynix,0.779
-2026-09-30,SBN-89/95,top|JPMorgan Chase &,0.755
+2026-09-30,SBN-89/95,top|JPMorgan Chase & Co,0.755
 2026-09-30,SBN-89/95,top|Advanced Micro Devices,0.745
+2026-09-30,SBN-89/95,top|ASML Holding,0.619
+2026-09-30,SBN-89/95,top|ExxonMobil Holdings,0.612
+2026-09-30,SBN-89/95,top|Berkshire Hathaway,0.58
+2026-09-30,SBN-89/95,top|Visa,0.569
+2026-09-30,SBN-89/95,top|Johnson & Johnson,0.541
+2026-09-30,SBN-89/95,top|Walmart,0.445
+2026-09-30,SBN-89/95,top|Mastercard,0.43
+2026-09-30,SBN-89/95,top|AbbVie,0.415
+2026-09-30,SBN-89/95,top|Cisco Systems,0.407
+2026-09-30,SBN-89/95,top|Tencent Holdings,0.351
+2026-09-30,SBN-89/95,top|Applied Materials,0.338
+2026-09-30,SBN-89/95,top|Costco Wholesale,0.336
+2026-09-30,SBN-89/95,top|UnitedHealth Group,0.312
+2026-09-30,SBN-89/95,top|Merck & Co,0.312
+2026-09-30,SBN-89/95,top|Lam Research,0.31
+2026-09-30,SBN-89/95,top|Intel,0.304
+2026-09-30,SBN-89/95,top|The Home Depot,0.286
+2026-09-30,SBN-89/95,top|Bank of America,0.282
+2026-09-30,SBN-89/95,top|Palo Alto Networks,0.268
+2026-09-30,SBN-89/95,top|Palantir Technologies,0.262
+2026-09-30,SBN-89/95,top|Caterpillar,0.259
+2026-09-30,SBN-89/95,top|GE Aerospace,0.253
+2026-09-30,SBN-89/95,top|Banco Santander,0.25
+2026-09-30,SBN-89/95,top|Mitsubishi UFJ Financial Group,0.241
+2026-09-30,SBN-89/95,top|Alibaba Group Holding,0.239
+2026-09-30,SBN-89/95,top|Netflix,0.232
+2026-09-30,SBN-89/95,top|Citigroup,0.229
+2026-09-30,SBN-89/95,top|Texas Instruments,0.229
+2026-09-30,SBN-89/95,top|The Goldman Sachs Group,0.223
+2026-09-30,SBN-89/95,top|Wells Fargo & Co,0.213
+2026-09-30,SBN-89/95,top|Linde,0.212
+2026-09-30,SBN-89/95,top|International Business Machines,0.212
+2026-09-30,SBN-89/95,top|HSBC Holdings,0.212
+2026-09-30,SBN-89/95,top|SAP,0.207
+2026-09-30,SBN-89/95,top|Thermo Fisher Scientific,0.204
 2026-09-30,SBN-89/95,bd_dur,3.29
 2026-09-30,SBN-89/95,cov_dur,99.4
 2026-09-30,SBN-89/95,bd_direct,99.4
@@ -3130,13 +5125,48 @@ date,fund_code,metric,value
 2026-09-30,SBN-96/02,top|Taiwan Semiconductor Manufacturing,2.054
 2026-09-30,SBN-96/02,top|Broadcom,1.381
 2026-09-30,SBN-96/02,top|Meta Platforms,1.279
-2026-09-30,SBN-96/02,top|Eli Lilly and,0.945
+2026-09-30,SBN-96/02,top|Eli Lilly and Co,0.945
 2026-09-30,SBN-96/02,top|Tesla,0.942
 2026-09-30,SBN-96/02,top|Samsung Electronics,0.939
 2026-09-30,SBN-96/02,top|Micron Technology,0.905
-2026-09-30,SBN-96/02,top|JPMorgan Chase &,0.777
+2026-09-30,SBN-96/02,top|JPMorgan Chase & Co,0.777
 2026-09-30,SBN-96/02,top|SK hynix,0.763
 2026-09-30,SBN-96/02,top|Advanced Micro Devices,0.755
+2026-09-30,SBN-96/02,top|ASML Holding,0.634
+2026-09-30,SBN-96/02,top|ExxonMobil Holdings,0.627
+2026-09-30,SBN-96/02,top|Berkshire Hathaway,0.603
+2026-09-30,SBN-96/02,top|Visa,0.593
+2026-09-30,SBN-96/02,top|Johnson & Johnson,0.557
+2026-09-30,SBN-96/02,top|Walmart,0.459
+2026-09-30,SBN-96/02,top|Mastercard,0.443
+2026-09-30,SBN-96/02,top|AbbVie,0.432
+2026-09-30,SBN-96/02,top|Cisco Systems,0.412
+2026-09-30,SBN-96/02,top|Tencent Holdings,0.352
+2026-09-30,SBN-96/02,top|Costco Wholesale,0.35
+2026-09-30,SBN-96/02,top|Applied Materials,0.337
+2026-09-30,SBN-96/02,top|Merck & Co,0.32
+2026-09-30,SBN-96/02,top|UnitedHealth Group,0.319
+2026-09-30,SBN-96/02,top|Lam Research,0.309
+2026-09-30,SBN-96/02,top|Intel,0.301
+2026-09-30,SBN-96/02,top|The Home Depot,0.296
+2026-09-30,SBN-96/02,top|Bank of America,0.288
+2026-09-30,SBN-96/02,top|Palo Alto Networks,0.274
+2026-09-30,SBN-96/02,top|Palantir Technologies,0.271
+2026-09-30,SBN-96/02,top|Caterpillar,0.261
+2026-09-30,SBN-96/02,top|GE Aerospace,0.258
+2026-09-30,SBN-96/02,top|Banco Santander,0.258
+2026-09-30,SBN-96/02,top|Mitsubishi UFJ Financial Group,0.254
+2026-09-30,SBN-96/02,top|Alibaba Group Holding,0.24
+2026-09-30,SBN-96/02,top|Netflix,0.238
+2026-09-30,SBN-96/02,top|Texas Instruments,0.236
+2026-09-30,SBN-96/02,top|The Goldman Sachs Group,0.229
+2026-09-30,SBN-96/02,top|Citigroup,0.228
+2026-09-30,SBN-96/02,top|HSBC Holdings,0.228
+2026-09-30,SBN-96/02,top|SAP,0.222
+2026-09-30,SBN-96/02,top|Wells Fargo & Co,0.219
+2026-09-30,SBN-96/02,top|Linde,0.219
+2026-09-30,SBN-96/02,top|International Business Machines,0.219
+2026-09-30,SBN-96/02,top|Roche Holding AG Ordinary Shares new,0.214
 2026-09-30,SBN-96/02,bd_dur,3.08
 2026-09-30,SBN-96/02,cov_dur,99.4
 2026-09-30,SBN-96/02,bd_direct,99.4
@@ -3182,13 +5212,48 @@ date,fund_code,metric,value
 2026-09-30,SBN-TIPF,top|Broadcom,0.269
 2026-09-30,SBN-TIPF,top|Taiwan Semiconductor Manufacturing,0.266
 2026-09-30,SBN-TIPF,top|Meta Platforms,0.24
-2026-09-30,SBN-TIPF,top|Eli Lilly and,0.197
+2026-09-30,SBN-TIPF,top|Eli Lilly and Co,0.197
 2026-09-30,SBN-TIPF,top|Tesla,0.193
 2026-09-30,SBN-TIPF,top|Micron Technology,0.165
-2026-09-30,SBN-TIPF,top|JPMorgan Chase &,0.163
+2026-09-30,SBN-TIPF,top|JPMorgan Chase & Co,0.163
 2026-09-30,SBN-TIPF,top|Advanced Micro Devices,0.146
 2026-09-30,SBN-TIPF,top|Berkshire Hathaway,0.142
 2026-09-30,SBN-TIPF,top|Visa,0.125
+2026-09-30,SBN-TIPF,top|ExxonMobil Holdings,0.122
+2026-09-30,SBN-TIPF,top|Samsung Electronics,0.119
+2026-09-30,SBN-TIPF,top|Johnson & Johnson,0.116
+2026-09-30,SBN-TIPF,top|ASML Holding,0.103
+2026-09-30,SBN-TIPF,top|Walmart,0.098
+2026-09-30,SBN-TIPF,top|Mastercard,0.094
+2026-09-30,SBN-TIPF,top|AbbVie,0.091
+2026-09-30,SBN-TIPF,top|SK hynix,0.09
+2026-09-30,SBN-TIPF,top|Costco Wholesale,0.081
+2026-09-30,SBN-TIPF,top|Cisco Systems,0.074
+2026-09-30,SBN-TIPF,top|Palantir Technologies,0.065
+2026-09-30,SBN-TIPF,top|UnitedHealth Group,0.065
+2026-09-30,SBN-TIPF,top|Merck & Co,0.064
+2026-09-30,SBN-TIPF,top|The Home Depot,0.062
+2026-09-30,SBN-TIPF,top|GE Aerospace,0.06
+2026-09-30,SBN-TIPF,top|Bank of America,0.059
+2026-09-30,SBN-TIPF,top|Applied Materials,0.058
+2026-09-30,SBN-TIPF,top|Roche Holding AG Ordinary Shares new,0.055
+2026-09-30,SBN-TIPF,top|Lam Research,0.054
+2026-09-30,SBN-TIPF,top|Palo Alto Networks,0.053
+2026-09-30,SBN-TIPF,top|Texas Instruments,0.05
+2026-09-30,SBN-TIPF,top|HSBC Holdings,0.05
+2026-09-30,SBN-TIPF,top|Caterpillar,0.049
+2026-09-30,SBN-TIPF,top|Tencent Holdings,0.049
+2026-09-30,SBN-TIPF,top|Intel,0.049
+2026-09-30,SBN-TIPF,top|Novartis,0.049
+2026-09-30,SBN-TIPF,top|Netflix,0.048
+2026-09-30,SBN-TIPF,top|The Goldman Sachs Group,0.048
+2026-09-30,SBN-TIPF,top|AstraZeneca,0.046
+2026-09-30,SBN-TIPF,top|Wells Fargo & Co,0.046
+2026-09-30,SBN-TIPF,top|Thermo Fisher Scientific,0.045
+2026-09-30,SBN-TIPF,top|Amgen,0.044
+2026-09-30,SBN-TIPF,top|SAP,0.044
+2026-09-30,SBN-TIPF,top|International Business Machines,0.043
+2026-09-30,SBN-TIPF,top|Mitsubishi UFJ Financial Group,0.043
 2026-09-30,SBN-TIPF,bd_dur,4.23
 2026-09-30,SBN-TIPF,cov_dur,78.8
 2026-09-30,SBN-TIPF,bd_direct,47.6
@@ -3236,14 +5301,49 @@ date,fund_code,metric,value
 2026-09-30,SWD-03/09,top|Amazon.com,2.414
 2026-09-30,SWD-03/09,top|Broadcom,1.53
 2026-09-30,SWD-03/09,top|Meta Platforms,1.365
-2026-09-30,SWD-03/09,top|Eli Lilly and,1.352
+2026-09-30,SWD-03/09,top|Eli Lilly and Co,1.352
 2026-09-30,SWD-03/09,top|Micron Technology,1.196
 2026-09-30,SWD-03/09,top|Tesla,1.156
 2026-09-30,SWD-03/09,top|Advanced Micro Devices,1.024
 2026-09-30,SWD-03/09,top|Visa,0.92
-2026-09-30,SWD-03/09,top|JPMorgan Chase &,0.858
+2026-09-30,SWD-03/09,top|JPMorgan Chase & Co,0.858
 2026-09-30,SWD-03/09,top|ASML Holding,0.85
 2026-09-30,SWD-03/09,top|Johnson & Johnson,0.744
+2026-09-30,SWD-03/09,top|Mastercard,0.654
+2026-09-30,SWD-03/09,top|AbbVie,0.624
+2026-09-30,SWD-03/09,top|Walmart,0.608
+2026-09-30,SWD-03/09,top|Berkshire Hathaway,0.546
+2026-09-30,SWD-03/09,top|Cisco Systems,0.543
+2026-09-30,SWD-03/09,top|HSBC Holdings,0.53
+2026-09-30,SWD-03/09,top|Merck & Co,0.513
+2026-09-30,SWD-03/09,top|Costco Wholesale,0.511
+2026-09-30,SWD-03/09,top|Intel,0.507
+2026-09-30,SWD-03/09,top|Palo Alto Networks,0.474
+2026-09-30,SWD-03/09,top|Texas Instruments,0.469
+2026-09-30,SWD-03/09,top|The Home Depot,0.455
+2026-09-30,SWD-03/09,top|UnitedHealth Group,0.433
+2026-09-30,SWD-03/09,top|Applied Materials,0.414
+2026-09-30,SWD-03/09,top|GE Aerospace,0.414
+2026-09-30,SWD-03/09,top|Lam Research,0.397
+2026-09-30,SWD-03/09,top|Bank of America,0.395
+2026-09-30,SWD-03/09,top|Novartis,0.395
+2026-09-30,SWD-03/09,top|Roche Holding AG Ordinary Shares new,0.394
+2026-09-30,SWD-03/09,top|Caterpillar,0.391
+2026-09-30,SWD-03/09,top|ExxonMobil Holdings,0.385
+2026-09-30,SWD-03/09,top|Palantir Technologies,0.384
+2026-09-30,SWD-03/09,top|Linde,0.379
+2026-09-30,SWD-03/09,top|The Goldman Sachs Group,0.352
+2026-09-30,SWD-03/09,top|Analog Devices,0.34
+2026-09-30,SWD-03/09,top|Netflix,0.334
+2026-09-30,SWD-03/09,top|Siemens,0.327
+2026-09-30,SWD-03/09,top|Morgan Stanley,0.327
+2026-09-30,SWD-03/09,top|AstraZeneca,0.322
+2026-09-30,SWD-03/09,top|Thermo Fisher Scientific,0.32
+2026-09-30,SWD-03/09,top|CrowdStrike Holdings,0.318
+2026-09-30,SWD-03/09,top|GE Vernova,0.315
+2026-09-30,SWD-03/09,top|Salesforce,0.31
+2026-09-30,SWD-03/09,top|Iberdrola,0.31
+2026-09-30,SWD-03/09,top|SAP,0.31
 2026-09-30,SWD-03/09,cov_dur,0.0
 2026-09-30,SWD-03/09,bd_direct,0.0
 2026-09-30,SWD-61/67,tot_eur,313134480
@@ -3290,11 +5390,46 @@ date,fund_code,metric,value
 2026-09-30,SWD-61/67,top|Meta Platforms,0.351
 2026-09-30,SWD-61/67,top|Tesla,0.312
 2026-09-30,SWD-61/67,top|Visa,0.285
-2026-09-30,SWD-61/67,top|Eli Lilly and,0.252
+2026-09-30,SWD-61/67,top|Eli Lilly and Co,0.252
 2026-09-30,SWD-61/67,top|AbbVie,0.229
 2026-09-30,SWD-61/67,top|Mastercard,0.228
 2026-09-30,SWD-61/67,top|Advanced Micro Devices,0.215
-2026-09-30,SWD-61/67,top|JPMorgan Chase &,0.204
+2026-09-30,SWD-61/67,top|JPMorgan Chase & Co,0.204
+2026-09-30,SWD-61/67,top|Cisco Systems,0.19
+2026-09-30,SWD-61/67,top|Walmart,0.164
+2026-09-30,SWD-61/67,top|Johnson & Johnson,0.164
+2026-09-30,SWD-61/67,top|Merck & Co,0.151
+2026-09-30,SWD-61/67,top|GE Aerospace,0.146
+2026-09-30,SWD-61/67,top|Lam Research,0.145
+2026-09-30,SWD-61/67,top|Berkshire Hathaway,0.145
+2026-09-30,SWD-61/67,top|Intel,0.134
+2026-09-30,SWD-61/67,top|Palo Alto Networks,0.125
+2026-09-30,SWD-61/67,top|The Home Depot,0.12
+2026-09-30,SWD-61/67,top|Costco Wholesale,0.118
+2026-09-30,SWD-61/67,top|ASML Holding,0.118
+2026-09-30,SWD-61/67,top|HSBC Holdings,0.117
+2026-09-30,SWD-61/67,top|Bank of America,0.107
+2026-09-30,SWD-61/67,top|Caterpillar,0.105
+2026-09-30,SWD-61/67,top|Salesforce,0.103
+2026-09-30,SWD-61/67,top|Palantir Technologies,0.101
+2026-09-30,SWD-61/67,top|AT&T,0.101
+2026-09-30,SWD-61/67,top|Qualcomm,0.098
+2026-09-30,SWD-61/67,top|Linde,0.097
+2026-09-30,SWD-61/67,top|S&P Global,0.096
+2026-09-30,SWD-61/67,top|Gilead Sciences,0.096
+2026-09-30,SWD-61/67,top|Thermo Fisher Scientific,0.094
+2026-09-30,SWD-61/67,top|Texas Instruments,0.093
+2026-09-30,SWD-61/67,top|Applied Materials,0.093
+2026-09-30,SWD-61/67,top|Abbott Laboratories,0.092
+2026-09-30,SWD-61/67,top|Rio Tinto,0.092
+2026-09-30,SWD-61/67,top|KLA,0.09
+2026-09-30,SWD-61/67,top|ExxonMobil Holdings,0.089
+2026-09-30,SWD-61/67,top|Amgen,0.089
+2026-09-30,SWD-61/67,top|Coca-Cola,0.087
+2026-09-30,SWD-61/67,top|Verizon Communications,0.087
+2026-09-30,SWD-61/67,top|UnitedHealth Group,0.084
+2026-09-30,SWD-61/67,top|Wells Fargo & Co,0.083
+2026-09-30,SWD-61/67,top|Accenture,0.083
 2026-09-30,SWD-61/67,bd_dur,4.94
 2026-09-30,SWD-61/67,cov_dur,97.9
 2026-09-30,SWD-61/67,bd_direct,78.2
@@ -3344,12 +5479,47 @@ date,fund_code,metric,value
 2026-09-30,SWD-68/74,top|Broadcom,0.928
 2026-09-30,SWD-68/74,top|Micron Technology,0.747
 2026-09-30,SWD-68/74,top|Tesla,0.667
-2026-09-30,SWD-68/74,top|Eli Lilly and,0.647
+2026-09-30,SWD-68/74,top|Eli Lilly and Co,0.647
 2026-09-30,SWD-68/74,top|Advanced Micro Devices,0.595
-2026-09-30,SWD-68/74,top|JPMorgan Chase &,0.512
+2026-09-30,SWD-68/74,top|JPMorgan Chase & Co,0.512
 2026-09-30,SWD-68/74,top|Johnson & Johnson,0.439
 2026-09-30,SWD-68/74,top|Visa,0.409
 2026-09-30,SWD-68/74,top|HSBC Holdings,0.388
+2026-09-30,SWD-68/74,top|Berkshire Hathaway,0.367
+2026-09-30,SWD-68/74,top|ASML Holding,0.361
+2026-09-30,SWD-68/74,top|Rio Tinto,0.324
+2026-09-30,SWD-68/74,top|Mastercard,0.3
+2026-09-30,SWD-68/74,top|Cisco Systems,0.299
+2026-09-30,SWD-68/74,top|Walmart,0.293
+2026-09-30,SWD-68/74,top|AbbVie,0.289
+2026-09-30,SWD-68/74,top|Intel,0.283
+2026-09-30,SWD-68/74,top|GE Aerospace,0.272
+2026-09-30,SWD-68/74,top|Merck & Co,0.263
+2026-09-30,SWD-68/74,top|Lam Research,0.259
+2026-09-30,SWD-68/74,top|Palantir Technologies,0.257
+2026-09-30,SWD-68/74,top|Novartis,0.257
+2026-09-30,SWD-68/74,top|Texas Instruments,0.256
+2026-09-30,SWD-68/74,top|Costco Wholesale,0.254
+2026-09-30,SWD-68/74,top|Palo Alto Networks,0.252
+2026-09-30,SWD-68/74,top|Applied Materials,0.251
+2026-09-30,SWD-68/74,top|Roche Holding AG Ordinary Shares new,0.244
+2026-09-30,SWD-68/74,top|Analog Devices,0.23
+2026-09-30,SWD-68/74,top|Caterpillar,0.224
+2026-09-30,SWD-68/74,top|CrowdStrike Holdings,0.219
+2026-09-30,SWD-68/74,top|AstraZeneca,0.212
+2026-09-30,SWD-68/74,top|UnitedHealth Group,0.21
+2026-09-30,SWD-68/74,top|Linde,0.209
+2026-09-30,SWD-68/74,top|Bank of America,0.209
+2026-09-30,SWD-68/74,top|The Home Depot,0.2
+2026-09-30,SWD-68/74,top|Verizon Communications,0.186
+2026-09-30,SWD-68/74,top|KLA,0.184
+2026-09-30,SWD-68/74,top|The Goldman Sachs Group,0.182
+2026-09-30,SWD-68/74,top|Netflix,0.179
+2026-09-30,SWD-68/74,top|Air Liquide,0.174
+2026-09-30,SWD-68/74,top|Pfizer,0.174
+2026-09-30,SWD-68/74,top|DNB Bank,0.171
+2026-09-30,SWD-68/74,top|GE Vernova,0.171
+2026-09-30,SWD-68/74,top|Iberdrola,0.169
 2026-09-30,SWD-68/74,bd_dur,5.87
 2026-09-30,SWD-68/74,cov_dur,95.8
 2026-09-30,SWD-68/74,bd_direct,94.9
@@ -3399,12 +5569,47 @@ date,fund_code,metric,value
 2026-09-30,SWD-75/81,top|Broadcom,1.376
 2026-09-30,SWD-75/81,top|Tesla,1.124
 2026-09-30,SWD-75/81,top|Micron Technology,1.099
-2026-09-30,SWD-75/81,top|Eli Lilly and,1.091
+2026-09-30,SWD-75/81,top|Eli Lilly and Co,1.091
 2026-09-30,SWD-75/81,top|Advanced Micro Devices,1.01
-2026-09-30,SWD-75/81,top|JPMorgan Chase &,0.775
+2026-09-30,SWD-75/81,top|JPMorgan Chase & Co,0.775
 2026-09-30,SWD-75/81,top|Johnson & Johnson,0.735
 2026-09-30,SWD-75/81,top|ASML Holding,0.693
 2026-09-30,SWD-75/81,top|Visa,0.682
+2026-09-30,SWD-75/81,top|HSBC Holdings,0.627
+2026-09-30,SWD-75/81,top|Berkshire Hathaway,0.585
+2026-09-30,SWD-75/81,top|Mastercard,0.526
+2026-09-30,SWD-75/81,top|Intel,0.52
+2026-09-30,SWD-75/81,top|Rio Tinto,0.485
+2026-09-30,SWD-75/81,top|Walmart,0.464
+2026-09-30,SWD-75/81,top|Merck & Co,0.46
+2026-09-30,SWD-75/81,top|AbbVie,0.458
+2026-09-30,SWD-75/81,top|Cisco Systems,0.45
+2026-09-30,SWD-75/81,top|Palo Alto Networks,0.446
+2026-09-30,SWD-75/81,top|Texas Instruments,0.445
+2026-09-30,SWD-75/81,top|Novartis,0.434
+2026-09-30,SWD-75/81,top|Palantir Technologies,0.415
+2026-09-30,SWD-75/81,top|GE Aerospace,0.409
+2026-09-30,SWD-75/81,top|Costco Wholesale,0.409
+2026-09-30,SWD-75/81,top|Roche Holding AG Ordinary Shares new,0.396
+2026-09-30,SWD-75/81,top|Analog Devices,0.376
+2026-09-30,SWD-75/81,top|Applied Materials,0.372
+2026-09-30,SWD-75/81,top|Lam Research,0.369
+2026-09-30,SWD-75/81,top|Linde,0.362
+2026-09-30,SWD-75/81,top|Caterpillar,0.361
+2026-09-30,SWD-75/81,top|CrowdStrike Holdings,0.356
+2026-09-30,SWD-75/81,top|The Home Depot,0.349
+2026-09-30,SWD-75/81,top|UnitedHealth Group,0.339
+2026-09-30,SWD-75/81,top|AstraZeneca,0.336
+2026-09-30,SWD-75/81,top|Bank of America,0.334
+2026-09-30,SWD-75/81,top|Verizon Communications,0.324
+2026-09-30,SWD-75/81,top|Air Liquide,0.323
+2026-09-30,SWD-75/81,top|Siemens,0.318
+2026-09-30,SWD-75/81,top|Iberdrola,0.315
+2026-09-30,SWD-75/81,top|The Goldman Sachs Group,0.295
+2026-09-30,SWD-75/81,top|International Business Machines,0.294
+2026-09-30,SWD-75/81,top|Salesforce,0.292
+2026-09-30,SWD-75/81,top|Netflix,0.292
+2026-09-30,SWD-75/81,top|AT&T,0.284
 2026-09-30,SWD-75/81,bd_dur,2.81
 2026-09-30,SWD-75/81,cov_dur,81.2
 2026-09-30,SWD-75/81,bd_direct,85.6
@@ -3451,12 +5656,47 @@ date,fund_code,metric,value
 2026-09-30,SWD-82/88,top|Broadcom,1.459
 2026-09-30,SWD-82/88,top|Micron Technology,1.247
 2026-09-30,SWD-82/88,top|Tesla,1.022
-2026-09-30,SWD-82/88,top|Eli Lilly and,0.987
+2026-09-30,SWD-82/88,top|Eli Lilly and Co,0.987
 2026-09-30,SWD-82/88,top|Advanced Micro Devices,0.935
-2026-09-30,SWD-82/88,top|JPMorgan Chase &,0.786
+2026-09-30,SWD-82/88,top|JPMorgan Chase & Co,0.786
 2026-09-30,SWD-82/88,top|HSBC Holdings,0.712
 2026-09-30,SWD-82/88,top|ASML Holding,0.703
 2026-09-30,SWD-82/88,top|Johnson & Johnson,0.681
+2026-09-30,SWD-82/88,top|Visa,0.623
+2026-09-30,SWD-82/88,top|Rio Tinto,0.577
+2026-09-30,SWD-82/88,top|Berkshire Hathaway,0.565
+2026-09-30,SWD-82/88,top|Intel,0.504
+2026-09-30,SWD-82/88,top|Mastercard,0.484
+2026-09-30,SWD-82/88,top|Cisco Systems,0.482
+2026-09-30,SWD-82/88,top|AbbVie,0.477
+2026-09-30,SWD-82/88,top|Walmart,0.476
+2026-09-30,SWD-82/88,top|Novartis,0.455
+2026-09-30,SWD-82/88,top|Texas Instruments,0.451
+2026-09-30,SWD-82/88,top|Roche Holding AG Ordinary Shares new,0.447
+2026-09-30,SWD-82/88,top|Merck & Co,0.445
+2026-09-30,SWD-82/88,top|GE Aerospace,0.443
+2026-09-30,SWD-82/88,top|Palantir Technologies,0.442
+2026-09-30,SWD-82/88,top|Palo Alto Networks,0.441
+2026-09-30,SWD-82/88,top|Lam Research,0.422
+2026-09-30,SWD-82/88,top|Analog Devices,0.421
+2026-09-30,SWD-82/88,top|Applied Materials,0.418
+2026-09-30,SWD-82/88,top|Costco Wholesale,0.418
+2026-09-30,SWD-82/88,top|Caterpillar,0.395
+2026-09-30,SWD-82/88,top|CrowdStrike Holdings,0.391
+2026-09-30,SWD-82/88,top|AstraZeneca,0.379
+2026-09-30,SWD-82/88,top|Linde,0.366
+2026-09-30,SWD-82/88,top|Air Liquide,0.361
+2026-09-30,SWD-82/88,top|Bank of America,0.354
+2026-09-30,SWD-82/88,top|UnitedHealth Group,0.349
+2026-09-30,SWD-82/88,top|Iberdrola,0.344
+2026-09-30,SWD-82/88,top|DNB Bank,0.34
+2026-09-30,SWD-82/88,top|Siemens,0.333
+2026-09-30,SWD-82/88,top|Verizon Communications,0.33
+2026-09-30,SWD-82/88,top|KLA,0.33
+2026-09-30,SWD-82/88,top|The Home Depot,0.324
+2026-09-30,SWD-82/88,top|Pfizer,0.312
+2026-09-30,SWD-82/88,top|The Goldman Sachs Group,0.311
+2026-09-30,SWD-82/88,top|Netflix,0.307
 2026-09-30,SWD-82/88,bd_dur,1.56
 2026-09-30,SWD-82/88,cov_dur,74.3
 2026-09-30,SWD-82/88,bd_direct,80.7
@@ -3503,12 +5743,47 @@ date,fund_code,metric,value
 2026-09-30,SWD-89/95,top|Broadcom,1.43
 2026-09-30,SWD-89/95,top|Micron Technology,1.192
 2026-09-30,SWD-89/95,top|Tesla,0.992
-2026-09-30,SWD-89/95,top|Eli Lilly and,0.965
+2026-09-30,SWD-89/95,top|Eli Lilly and Co,0.965
 2026-09-30,SWD-89/95,top|Advanced Micro Devices,0.926
-2026-09-30,SWD-89/95,top|JPMorgan Chase &,0.762
+2026-09-30,SWD-89/95,top|JPMorgan Chase & Co,0.762
 2026-09-30,SWD-89/95,top|ASML Holding,0.697
 2026-09-30,SWD-89/95,top|Johnson & Johnson,0.666
 2026-09-30,SWD-89/95,top|HSBC Holdings,0.651
+2026-09-30,SWD-89/95,top|Visa,0.631
+2026-09-30,SWD-89/95,top|Rio Tinto,0.589
+2026-09-30,SWD-89/95,top|Berkshire Hathaway,0.537
+2026-09-30,SWD-89/95,top|Intel,0.513
+2026-09-30,SWD-89/95,top|Cisco Systems,0.489
+2026-09-30,SWD-89/95,top|Mastercard,0.487
+2026-09-30,SWD-89/95,top|AbbVie,0.485
+2026-09-30,SWD-89/95,top|Walmart,0.477
+2026-09-30,SWD-89/95,top|Novartis,0.467
+2026-09-30,SWD-89/95,top|Roche Holding AG Ordinary Shares new,0.459
+2026-09-30,SWD-89/95,top|Texas Instruments,0.453
+2026-09-30,SWD-89/95,top|Merck & Co,0.451
+2026-09-30,SWD-89/95,top|Palo Alto Networks,0.444
+2026-09-30,SWD-89/95,top|GE Aerospace,0.444
+2026-09-30,SWD-89/95,top|Palantir Technologies,0.432
+2026-09-30,SWD-89/95,top|Analog Devices,0.422
+2026-09-30,SWD-89/95,top|Costco Wholesale,0.408
+2026-09-30,SWD-89/95,top|Lam Research,0.408
+2026-09-30,SWD-89/95,top|Caterpillar,0.4
+2026-09-30,SWD-89/95,top|Applied Materials,0.393
+2026-09-30,SWD-89/95,top|CrowdStrike Holdings,0.391
+2026-09-30,SWD-89/95,top|AstraZeneca,0.39
+2026-09-30,SWD-89/95,top|Linde,0.371
+2026-09-30,SWD-89/95,top|Air Liquide,0.368
+2026-09-30,SWD-89/95,top|Bank of America,0.355
+2026-09-30,SWD-89/95,top|DNB Bank,0.347
+2026-09-30,SWD-89/95,top|Siemens,0.343
+2026-09-30,SWD-89/95,top|UnitedHealth Group,0.343
+2026-09-30,SWD-89/95,top|Verizon Communications,0.329
+2026-09-30,SWD-89/95,top|The Home Depot,0.327
+2026-09-30,SWD-89/95,top|Iberdrola,0.324
+2026-09-30,SWD-89/95,top|Pfizer,0.312
+2026-09-30,SWD-89/95,top|The Goldman Sachs Group,0.308
+2026-09-30,SWD-89/95,top|PSP Swiss Property,0.308
+2026-09-30,SWD-89/95,top|Salesforce,0.303
 2026-09-30,SWD-89/95,bd_dur,1.75
 2026-09-30,SWD-89/95,cov_dur,74.7
 2026-09-30,SWD-89/95,bd_direct,81.6
@@ -3554,13 +5829,48 @@ date,fund_code,metric,value
 2026-09-30,SWD-96/02,top|Broadcom,1.402
 2026-09-30,SWD-96/02,top|Meta Platforms,1.374
 2026-09-30,SWD-96/02,top|Micron Technology,1.175
-2026-09-30,SWD-96/02,top|Eli Lilly and,0.964
+2026-09-30,SWD-96/02,top|Eli Lilly and Co,0.964
 2026-09-30,SWD-96/02,top|Tesla,0.958
 2026-09-30,SWD-96/02,top|Advanced Micro Devices,0.901
-2026-09-30,SWD-96/02,top|JPMorgan Chase &,0.743
+2026-09-30,SWD-96/02,top|JPMorgan Chase & Co,0.743
 2026-09-30,SWD-96/02,top|ASML Holding,0.729
 2026-09-30,SWD-96/02,top|Johnson & Johnson,0.676
 2026-09-30,SWD-96/02,top|HSBC Holdings,0.663
+2026-09-30,SWD-96/02,top|Visa,0.658
+2026-09-30,SWD-96/02,top|Rio Tinto,0.585
+2026-09-30,SWD-96/02,top|Berkshire Hathaway,0.544
+2026-09-30,SWD-96/02,top|Intel,0.521
+2026-09-30,SWD-96/02,top|Cisco Systems,0.503
+2026-09-30,SWD-96/02,top|AbbVie,0.503
+2026-09-30,SWD-96/02,top|Mastercard,0.497
+2026-09-30,SWD-96/02,top|Walmart,0.492
+2026-09-30,SWD-96/02,top|Novartis,0.476
+2026-09-30,SWD-96/02,top|Texas Instruments,0.469
+2026-09-30,SWD-96/02,top|Palo Alto Networks,0.461
+2026-09-30,SWD-96/02,top|Merck & Co,0.457
+2026-09-30,SWD-96/02,top|GE Aerospace,0.441
+2026-09-30,SWD-96/02,top|Roche Holding AG Ordinary Shares new,0.439
+2026-09-30,SWD-96/02,top|Palantir Technologies,0.434
+2026-09-30,SWD-96/02,top|Analog Devices,0.428
+2026-09-30,SWD-96/02,top|Costco Wholesale,0.426
+2026-09-30,SWD-96/02,top|Caterpillar,0.41
+2026-09-30,SWD-96/02,top|Lam Research,0.402
+2026-09-30,SWD-96/02,top|Applied Materials,0.4
+2026-09-30,SWD-96/02,top|AstraZeneca,0.399
+2026-09-30,SWD-96/02,top|CrowdStrike Holdings,0.396
+2026-09-30,SWD-96/02,top|Linde,0.378
+2026-09-30,SWD-96/02,top|Air Liquide,0.374
+2026-09-30,SWD-96/02,top|Siemens,0.363
+2026-09-30,SWD-96/02,top|Bank of America,0.36
+2026-09-30,SWD-96/02,top|UnitedHealth Group,0.359
+2026-09-30,SWD-96/02,top|The Home Depot,0.339
+2026-09-30,SWD-96/02,top|Verizon Communications,0.335
+2026-09-30,SWD-96/02,top|Iberdrola,0.325
+2026-09-30,SWD-96/02,top|The Goldman Sachs Group,0.323
+2026-09-30,SWD-96/02,top|Pfizer,0.318
+2026-09-30,SWD-96/02,top|Salesforce,0.315
+2026-09-30,SWD-96/02,top|Netflix,0.313
+2026-09-30,SWD-96/02,top|PSP Swiss Property,0.31
 2026-09-30,SWD-96/02,bd_dur,2.14
 2026-09-30,SWD-96/02,cov_dur,60.5
 2026-09-30,SWD-96/02,bd_direct,81.1
@@ -3608,11 +5918,46 @@ date,fund_code,metric,value
 2026-09-30,SWD-TIPF,top|Micron Technology,0.225
 2026-09-30,SWD-TIPF,top|Tesla,0.183
 2026-09-30,SWD-TIPF,top|Advanced Micro Devices,0.176
-2026-09-30,SWD-TIPF,top|Eli Lilly and,0.164
+2026-09-30,SWD-TIPF,top|Eli Lilly and Co,0.164
 2026-09-30,SWD-TIPF,top|HSBC Holdings,0.154
 2026-09-30,SWD-TIPF,top|ASML Holding,0.143
-2026-09-30,SWD-TIPF,top|JPMorgan Chase &,0.137
+2026-09-30,SWD-TIPF,top|JPMorgan Chase & Co,0.137
 2026-09-30,SWD-TIPF,top|Rio Tinto,0.131
+2026-09-30,SWD-TIPF,top|Johnson & Johnson,0.125
+2026-09-30,SWD-TIPF,top|Novartis,0.102
+2026-09-30,SWD-TIPF,top|Visa,0.101
+2026-09-30,SWD-TIPF,top|Intel,0.099
+2026-09-30,SWD-TIPF,top|Roche Holding AG Ordinary Shares new,0.097
+2026-09-30,SWD-TIPF,top|Berkshire Hathaway,0.095
+2026-09-30,SWD-TIPF,top|Texas Instruments,0.086
+2026-09-30,SWD-TIPF,top|Cisco Systems,0.086
+2026-09-30,SWD-TIPF,top|GE Aerospace,0.085
+2026-09-30,SWD-TIPF,top|AstraZeneca,0.085
+2026-09-30,SWD-TIPF,top|Palo Alto Networks,0.084
+2026-09-30,SWD-TIPF,top|Analog Devices,0.084
+2026-09-30,SWD-TIPF,top|Palantir Technologies,0.083
+2026-09-30,SWD-TIPF,top|Merck & Co,0.079
+2026-09-30,SWD-TIPF,top|Mastercard,0.079
+2026-09-30,SWD-TIPF,top|AbbVie,0.079
+2026-09-30,SWD-TIPF,top|Lam Research,0.078
+2026-09-30,SWD-TIPF,top|CrowdStrike Holdings,0.078
+2026-09-30,SWD-TIPF,top|Air Liquide,0.078
+2026-09-30,SWD-TIPF,top|Applied Materials,0.077
+2026-09-30,SWD-TIPF,top|Walmart,0.076
+2026-09-30,SWD-TIPF,top|Caterpillar,0.074
+2026-09-30,SWD-TIPF,top|DNB Bank,0.073
+2026-09-30,SWD-TIPF,top|Siemens,0.071
+2026-09-30,SWD-TIPF,top|Costco Wholesale,0.07
+2026-09-30,SWD-TIPF,top|Iberdrola,0.069
+2026-09-30,SWD-TIPF,top|Linde,0.069
+2026-09-30,SWD-TIPF,top|PSP Swiss Property,0.068
+2026-09-30,SWD-TIPF,top|Diploma,0.067
+2026-09-30,SWD-TIPF,top|CCL Industries Inc Registered Shs -B- Non Vtg,0.063
+2026-09-30,SWD-TIPF,top|UBS Group,0.063
+2026-09-30,SWD-TIPF,top|Banco Santander,0.063
+2026-09-30,SWD-TIPF,top|Unilever,0.062
+2026-09-30,SWD-TIPF,top|Verizon Communications,0.062
+2026-09-30,SWD-TIPF,top|Bank of America,0.061
 2026-09-30,SWD-TIPF,bd_dur,5.56
 2026-09-30,SWD-TIPF,cov_dur,97.3
 2026-09-30,SWD-TIPF,bd_direct,82.6
