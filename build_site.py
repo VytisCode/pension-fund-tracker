@@ -407,6 +407,10 @@ def build_fresh(groups: list, generated: str) -> None:
         payload["attrMiss"] = attr_missing()
     except Exception:
         pass
+    try:
+        payload["claude"] = claude_tasks(payload.get("attrMiss") or {})
+    except Exception:
+        pass
     # Nauji Lietuvos banko failai per paskutines 21 d. (iš data/ops_log.csv) – svetainė rodo žalią juostą „LB paskelbė …“
     try:
         import csv as _csv
@@ -576,6 +580,23 @@ def _anorm(s: str) -> str:
     s = re.sub(r"\(.*?\)", " ", s)
     s = re.sub(r"\b(class|series|serija|klase)\b.*$|\b[a-c]\d?\s+series\b.*$", " ", s)
     return re.sub(r"[^a-z0-9]+", " ", s).strip()
+
+
+def claude_tasks(am: dict, today=None) -> list:
+    """Darbai, kuriuos gali atlikti tik Claude sesija (Morningstar ir pan.) – svetainėje savininkui rodomi su paruoštu tekstu
+    („Parašykite Claude: …“ + Kopijuoti). Tie patys priminimai – vakariniame laiške (daily_report.py)."""
+    today = today or datetime.now(ZoneInfo("Europe/Vilnius")).date()
+    out = []
+    lt = ROOT / "data" / "lookthrough.csv"
+    q = am.get("q")
+    if q and (not lt.exists() or f"\n{q}," not in lt.read_text(encoding="utf-8")):
+        out.append({"id": f"lt-{q}", "kind": "lt", "q": q,
+                    "prompt": f"Atnaujink Morningstar portfelių analizę {q} ketvirčiui (procedūra MORNINGSTAR.md)."})
+    if today.month in (1, 4, 7, 10) and today.day <= 10:
+        qe = (date(today.year, today.month, 1) - timedelta(days=1)).isoformat()
+        out.append({"id": f"hold-{qe}", "kind": "hold", "q": qe,
+                    "prompt": f"Surink ETF sudėtis ketvirčio pabaigai {qe} (MORNINGSTAR.md, 0 žingsnis)."})
+    return out
 
 
 def attr_missing(min_eur: float = 500_000) -> dict:

@@ -484,7 +484,11 @@ const NT = {
     attrT: (k, q) => `${k} portfelių fond${k === 1 ? 'as' : 'ai'} be požymių (${q})`,
     attrWhat: e => `Naujausiame LB portfelių ketvirtyje yra fondų / ETF (iš viso ${e} mln. €), kuriems dar nesurinkti regionas, TER, SFDR ir kiti požymiai. Juos renka Claude iš fondų puslapių.`,
     attrImpact: 'Portfelių skirtukuose „Požymiai“, regionų ir mokesčių suvestinėse šie fondai rodomi kaip „nežinoma“.',
-    attrTodo: 'Parašykite Claude: „surink portfelių požymius“.',
+    attrTodo: 'Parašykite Claude (nukopijuokite tekstą):', attrPrompt: 'Surink portfelių požymius naujiems fondams (žr. svetainės pranešimą).',
+    clT: { lt: q => `Morningstar „tikroji sudėtis pro fondus“ neatnaujinta (${q})`, hold: q => `Laikas surinkti ETF sudėtis ketvirčio pabaigai (${q})` },
+    clWhat: { lt: 'Naujausio LB ketvirčio portfeliams dar neapskaičiuoti sektoriai, regionai, didžiausios bendrovės pro ETF. Morningstar veikia tik pokalbyje su Claude, todėl automatiškai to padaryti negalima.', hold: 'Morningstar duoda tik naujausias ETF sudėtis. Surinkus jas per 10 dienų po ketvirčio pabaigos, didžiausios bendrovės atitiks LB portfelių datą.' },
+    clImpact: { lt: 'Portfeliai → Fondo portfelis ir Palyginimas grupėje rodo ankstesnio ketvirčio tikrąją sudėtį.', hold: 'Jei nesurinksite, bendrovių svoriai bus kelių savaičių vėlesni nei portfelių data (apytiksliai).' },
+    copy: 'Kopijuoti', copied: 'Nukopijuota ✓',
     lbNewTodo: 'Nieko – tik informacija. Paspaudus „Supratau“ šis pranešimas daugiau nerodomas.', barSeen: 'Supratau',
     what: 'Kas tai', why: 'Kodėl', impact: 'Ką įtakoja', todo: 'Ką daryti', open: 'Atidaryti šaltinį', hdr: 'Pranešimai',
     sum: (a, w) => [a ? `⚠ ${a} reikia veiksmo` : '', w ? `${w} laukiama` : ''].filter(Boolean).join(', '),
@@ -536,7 +540,11 @@ const NT = {
     attrT: (k, q) => `${k} portfolio fund${k === 1 ? '' : 's'} without attributes (${q})`,
     attrWhat: e => `The latest Bank of Lithuania portfolio quarter has funds / ETFs (EUR ${e} m in total) whose region, TER, SFDR etc. are not yet collected. Claude collects them from fund pages.`,
     attrImpact: 'Portfolio “Attributes” tabs and region / fee summaries show these funds as “unknown”.',
-    attrTodo: 'Write to Claude: “collect portfolio attributes”.',
+    attrTodo: 'Write to Claude (copy the text):', attrPrompt: 'Surink portfelių požymius naujiems fondams (žr. svetainės pranešimą).',
+    clT: { lt: q => `Morningstar look-through not updated (${q})`, hold: q => `Time to collect ETF holdings for the quarter end (${q})` },
+    clWhat: { lt: 'Sectors, regions and largest companies through ETFs are not yet computed for the latest LB quarter. Morningstar works only in a chat with Claude.', hold: 'Morningstar gives only the latest ETF holdings; collected within 10 days of the quarter end they match the LB portfolio date.' },
+    clImpact: { lt: 'Portfolios → Fund portfolio and Peer comparison show the previous quarter’s look-through.', hold: 'Otherwise company weights are a few weeks later than the portfolio date (approximate).' },
+    copy: 'Copy', copied: 'Copied ✓',
     lbNewTodo: 'Nothing – information only. Click “Got it” to stop showing this notice.', barSeen: 'Got it',
     what: 'What it is', why: 'Why', impact: 'What it affects', todo: 'What to do', open: 'Open the source', hdr: 'Notices',
     sum: (a, w) => [a ? `⚠ ${a} action needed` : '', w ? `${w} waiting` : ''].filter(Boolean).join(', '),
@@ -636,16 +644,24 @@ function noticesList() {
   // 7. nauji portfelių fondai be požymių (renka Claude – savininkui užtenka vienos žinutės)
   const am = FRESH.attrMiss;
   if (am && am.n) out.push({ id: `attr-${am.q}-${am.n}`, lvl: 'act', title: n.attrT(am.n, am.q), what: n.attrWhat((am.eur / 1e6).toFixed(1)),
-    impact: n.attrImpact, todo: n.attrTodo, owner: true });
-  const ord = { act: 0, new: 1, wait: 2, info: 3 };
-  return out.sort((a, b) => ord[a.lvl] - ord[b.lvl]);
+    impact: n.attrImpact, todo: n.attrTodo, prompt: n.attrPrompt, owner: true, ownerOnly: true });
+  // 8. darbai, kuriuos atlieka tik Claude (Morningstar) – savininkui paruoštas tekstas su „Kopijuoti“
+  (FRESH.claude || []).forEach(c => out.push({ id: c.id, lvl: 'act', title: n.clT[c.kind](c.q), what: n.clWhat[c.kind], impact: n.clImpact[c.kind],
+    todo: n.attrTodo, prompt: c.prompt, owner: true, ownerOnly: true }));
+  const ord = { act: 0, new: 1, wait: 2, info: 3 }, own = isOwner();
+  return out.filter(x => !x.ownerOnly || own).sort((a, b) => ord[a.lvl] - ord[b.lvl]);
 }
 function noticesHTML(list) {
   if (!list.length) return '';
   const n = NTH(), ic = { act: '⚠', wait: '⏳', info: 'ℹ', new: '🆕' };
   return `<div class="ntc-list"><span class="fr-l">${n.hdr}</span>` + list.map(x => `<details class="ntc l-${x.lvl}" id="ntc-${hEsc(x.id)}"><summary><span class="ic">${ic[x.lvl]}</span><b>${hEsc(x.title)}</b> <span class="lv">${n.lvl[x.lvl]}</span></summary><dl>`
     + `<dt>${n.what}</dt><dd>${hEsc(x.what)}</dd>` + (x.why ? `<dt>${n.why}</dt><dd>${hEsc(x.why)}</dd>` : '')
-    + `<dt>${n.impact}</dt><dd>${hEsc(x.impact)}</dd><dt>${n.todo}</dt><dd>${hEsc(x.todo)}${x.owner ? ` <span class="na">${n.owner}</span>` : ''}${x.url ? ` <a href="${hEsc(x.url)}" target="_blank" rel="noopener">${n.open} ↗</a>` : ''}</dd></dl></details>`).join('') + '</div>';
+    + `<dt>${n.impact}</dt><dd>${hEsc(x.impact)}</dd><dt>${n.todo}</dt><dd>${hEsc(x.todo)}${x.prompt ? promptChip(x.prompt) : ''}${x.owner && !x.ownerOnly ? ` <span class="na">${n.owner}</span>` : ''}${x.url ? ` <a href="${hEsc(x.url)}" target="_blank" rel="noopener">${n.open} ↗</a>` : ''}</dd></dl></details>`).join('') + '</div>';
+}
+/* „Parašykite Claude“: paruoštas tekstas + Kopijuoti (savininkui nereikia nieko sugalvoti) */
+function promptChip(p) {
+  const n = NTH();
+  return ` <span class="cprompt"><code>${hEsc(p)}</code><button type="button" class="btn cp" data-p="${hEsc(p)}" data-ok="${hEsc(n.copied)}" onclick="event.stopPropagation();try{navigator.clipboard.writeText(this.dataset.p).catch(()=>{})}catch(e){};this.textContent=this.dataset.ok">${n.copy}</button></span>`;
 }
 /* juosta virš puslapio: tik „reikia veiksmo“, kol nepaspausta „Šiandien nerodyti“ (atskirai kiekvienam pranešimui) */
 function lbArchName(f) {
@@ -675,7 +691,7 @@ function noticeBar(list) {
   let bar = document.getElementById('ntcBar');
   if (!show.length) { if (bar) bar.remove(); return; }
   if (!bar) { bar = document.createElement('div'); bar.id = 'ntcBar'; bar.className = 'ntcbar'; bar.setAttribute('role', 'status'); const h = document.querySelector('header'); (h || document.body).after(bar); }
-  bar.innerHTML = `<span>⚠ ${show.map(x => hEsc(x.title)).join(' · ')}</span><button type="button" class="nb-more">${n.barMore}</button><button type="button" class="nb-hide">${n.barHide}</button>`;
+  bar.innerHTML = `<span>⚠ ${show.map(x => hEsc(x.title) + (x.prompt ? promptChip(x.prompt) : '')).join(' · ')}</span><button type="button" class="nb-more">${n.barMore}</button><button type="button" class="nb-hide">${n.barHide}</button>`;
   bar.querySelector('.nb-more').onclick = () => {
     const sb = document.getElementById('stBtn'), fr = document.getElementById('fresh');
     if (fr) { fr.hidden = false; if (sb) sb.setAttribute('aria-expanded', 'true'); const d = document.getElementById('ntc-' + show[0].id); if (d) { d.open = true; d.scrollIntoView({ block: 'nearest' }); } }

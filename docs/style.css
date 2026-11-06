@@ -85,6 +85,9 @@ h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; }
 .ntc .lv { font-size: 12px; color: var(--text-3); margin-left: 6px; white-space: nowrap; }
 .ntc dl { display: grid; grid-template-columns: 110px 1fr; gap: 4px 12px; margin: 0; padding: 4px 12px 10px; line-height: 1.45; }
 .ntc dt { color: var(--text-3); } .ntc dd { margin: 0; }
+.cprompt { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 2px 0; }
+.cprompt code { background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: 4px; padding: 2px 6px; font-size: 13px; color: var(--text); user-select: all; }
+.cprompt .cp { padding: 1px 8px; font-size: 12px; }
 @media (max-width: 600px) { .ntc dl { grid-template-columns: 1fr; gap: 0; } .ntc dd { margin-bottom: 6px; } }
 .ntcbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 8px 0; padding: 8px 12px; border-radius: 8px;
   border: 1px solid var(--dneg); color: var(--text); font-size: 14px; background: color-mix(in srgb, var(--dneg) 8%, transparent); }

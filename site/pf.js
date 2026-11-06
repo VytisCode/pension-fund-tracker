@@ -517,7 +517,7 @@ function ltBlock(f, qi) {
   const dt = qLabel(qi);
   return h + `<p class="note">${t.note(dt, d.cov_fund != null ? num(d.cov_fund, 0) + ' %' : '–')}</p>`
     + `<details class="ltMore ltCite"><summary>${t.citeBtn}</summary><p class="meta" style="user-select:all">${esc(t.cite(dt))}</p>`
-    + `<button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.previousElementSibling.textContent);this.textContent='${t.copied}'">${t.copy}</button></details>`;
+    + `<button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.previousElementSibling.textContent).catch(()=>{});this.textContent='${t.copied}'">${t.copy}</button></details>`;
 }
 /* Pozicijos istorija: svoris kiekvieno ketvirčio pabaigoje šiame fonde ir kitų valdytojų tos pačios grupės fonduose */
 function weightSeries(f, si) {
