@@ -3,8 +3,9 @@
 Skaičiuoja iš jau sugeneruotų svetainės duomenų (docs/data.js – II pakopa, docs/data3.js – III pakopa), todėl skaičiai
 sutampa su svetaine. Be AI, be išorinių užklausų.
 
-Kasdien: II ir III pakopos dienos ir metų pokytis, valdytojų eilė šiais metais, vietų pokyčiai grupėse, neįprasti judesiai,
-naujienos ir Seimas, artėjantys duomenys. Penktadienį – savaitės suvestinė, pirmą mėnesio laišką – praėjusio mėnesio.
+Savininkas 2026-11-06: kasdienis laiškas – trumpas, žmogiška kalba („dabar skaitau kaip robotas“); platesnis – kas mėnesį,
+kas ketvirtį ir gavus naujus LB portfelius. Kasdien: kaip vakar sekėsi, ar pasikeitė metų lyderis, neįprastas valdytojo elgesys,
+viena naujiena, penktadienį – savaitė. Mėnesio / ketvirčio / portfelių blokai – daily_report.py prideda pagal progą.
 Vienos dienos „geriausias fondas“ sąmoningai nerodomas: dienos grąža – daugiausia rinkos triukšmas.
 
     python report_market.py      – atspausdina rinkos dalį
@@ -150,39 +151,93 @@ def unusual(D: dict, a0: int, a: int, b: int, lim: float, label) -> list:
             for who, xs in by.items() for grp, dv in [xs[0]]]
 
 
-def news_lines(today: str) -> list:
+MON = ["sausio", "vasario", "kovo", "balandžio", "gegužės", "birželio", "liepos", "rugpjūčio", "rugsėjo", "spalio", "lapkričio", "gruodžio"]
+MON_N = ["Sausis", "Vasaris", "Kovas", "Balandis", "Gegužė", "Birželis", "Liepa", "Rugpjūtis", "Rugsėjis", "Spalis", "Lapkritis", "Gruodis"]
+
+
+def _p1(x):                                             # „−1,4 %“ – kasdieniam tekstui užtenka vieno skaitmens
+    return _pp(x, 1)
+
+
+def _day(n: int) -> str:
+    d = EPOCH + timedelta(days=n)
+    return f"{MON[d.month - 1]} {d.day} d."
+
+
+def _move(x) -> str:
+    return "beveik nepasikeitė" if x is None or abs(x) < 0.2 else ("pakilo" if x > 0 else "krito")
+
+
+def _clean(u: str) -> str:
+    return re.sub(r"[?&]utm_[^#]*$", "", u)
+
+
+def _mgr_list(m: dict) -> str:
+    return ", ".join(f"{NAMES.get(p, p)} {_p1(v)}" for p, v in sorted(m.items(), key=lambda kv: -kv[1]))
+
+
+def _best_worst(m: dict) -> str:
+    o = sorted(m.items(), key=lambda kv: -kv[1])
+    return f"geriausias rezultatas – {NAMES.get(o[0][0], o[0][0])} ({_p1(o[0][1])}), prasčiausias – {NAMES.get(o[-1][0], o[-1][0])} ({_p1(o[-1][1])})" if len(o) > 1 else ""
+
+
+def daily(today: str) -> tuple:
+    """Trumpas kasdienis tekstas: (temos pradžia, eilutės)."""
+    D2, D3 = _load("data.js"), _load("data3.js")
+    L2, L3 = _last_day(D2), _last_day(D3)
+    P2, P3 = _prev_day(D2, L2), _prev_day(D3, L3)
+    d2, _ = pillar2(D2, P2, L2, True)
+    y2, ym = pillar2(D2, _ytd0(L2), L2)
+    _, ym0 = pillar2(D2, _ytd0(L2), P2)
+    eq = pillar3(D3, P3, L3, True).get("equity")
+    out = [f"{_day(L2).capitalize()} fondai {_move(d2)}: vidutinis II pakopos fondas {_p1(d2)}"
+           + (f", III pakopos akcijų fondai {_p1(eq[0])}" if eq else "") + f". Nuo metų pradžios II pakopa uždirbo {_p1(y2)}."]
+    lead = lambda m: max(m, key=m.get) if m else None
+    if ym and ym0 and lead(ym) != lead(ym0):
+        out.append(f"Naujas metų lyderis: {NAMES.get(lead(ym), lead(ym))} ({_p1(ym[lead(ym)])}) aplenkė {NAMES.get(lead(ym0), lead(ym0))}.")
+    odd = unusual(D2, _prev_day(D2, P2), P2, L2, 1.0, lambda f: NAMES.get(f["provider"], f["provider"]))
+    for x in odd[:2]:                                   # „Allianz: 4 grupėse vidutiniškai +1,92 p. p. …“ → paprastas sakinys
+        m = re.match(r"(\S+): (?:(\d+) grupėse vidutiniškai )?.*?([+−]\d+,\d+) p\. p\.", x)
+        if m:
+            who, n, v = m.group(1), m.group(2), float(m.group(3).replace("−", "-").replace(",", "."))
+            up = (d2 or 0) >= 0
+            more = (v > 0) == up                        # nuokrypis ta pačia kryptimi kaip rinka – judėjo labiau
+            verb = "pakilo" if up else "nukrito"
+            out.append(f"{who} tą dieną elgėsi kitaip nei kiti: {verb} ~{abs(v):.1f} p. p. {'daugiau' if more else 'mažiau'}".replace(".", ",", 1)
+                       + (f" ({n} grupėse)." if n else "."))
+    if date.fromisoformat(today).weekday() == 4:        # penktadienis – savaitė vienu sakiniu
+        w, wm = pillar2(D2, L2 - 7, L2)
+        out.append(f"Per savaitę II pakopa {_p1(w)}; " + _best_worst(wm) + ".")
+    out += news_short(today) + seimas_short(today)
+    return f"{_p1(d2)} ({_day(L2)})", out
+
+
+def news_short(today: str) -> list:
     try:
         with (ROOT / "data" / "news.csv").open(encoding="utf-8") as f:
-            rows = [r for r in csv.DictReader(f) if r["first_seen"] == today]
+            rows = [r for r in csv.DictReader(f) if r["first_seen"] == today and r["country"] == "LT"]
     except OSError:
         return []
     if not rows:
         return []
-    rows.sort(key=lambda r: (r["country"] != "LT", r["date"]), reverse=False)
-    lt = [r for r in rows if r["country"] == "LT"]
-    other = len(rows) - len(lt)
-    out = ["", f"Naujienos ({len(lt)} LT" + (f", {other} LV/EE" if other else "") + "):"]
-    clean = lambda u: re.sub(r"[?&]utm_[^#]*$", "", u)
-    out += [f"  • {r['title']} – {r['source'] or r['via']}\n    {clean(r['article_url'] or r['url'])}" for r in (lt or rows)[:3]]
-    if len(lt) > 3:
-        out.append(f"  … ir dar {len(lt) - 3}: {SITE}index.html#tab=nw")
-    return out
+    r = rows[0]
+    more = f" (ir dar {len(rows) - 1} – {SITE}index.html#tab=nw)" if len(rows) > 1 else ""
+    return [f"Naujiena: {r['title']} ({r['source'] or r['via']}) {_clean(r['article_url'] or r['url'])}{more}"]
 
 
-def seimas_lines(today: str) -> list:
+def seimas_short(today: str) -> list:
     try:
         with (ROOT / "data" / "seimas.csv").open(encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
     except OSError:
         return []
-    soon = (date.fromisoformat(today) + timedelta(days=14)).isoformat()
-    up = sorted({(r["date"], r["title"], r["stage"]) for r in rows if today <= r["date"] <= soon})
-    new = sorted({(r["date"], r["title"], r["stage"]) for r in rows if r["first_seen"] == today and r["date"] < today})
-    if not up and not new:
+    soon = (date.fromisoformat(today) + timedelta(days=3)).isoformat()
+    up = sorted({(r["date"], r["title"]) for r in rows if today <= r["date"] <= soon})
+    if not up:
         return []
-    cut = lambda s: s if len(s) <= 150 else s[:147] + "…"
-    return (["", "Seimas (pensijų ir Sodros klausimai):"]
-            + [f"  • {d}: {cut(t)}" + (f" ({st})" if st else "") for d, t, st in (up + new)[:4]])
+    d, t = up[0]
+    t = t if len(t) <= 120 else t[:117] + "…"
+    return [f"Seime {_day((date.fromisoformat(d) - EPOCH).days)}: {t}" + (f" (ir dar {len(up) - 1})" if len(up) > 1 else "")]
 
 
 def calendar_lines(today: str) -> list:
@@ -196,70 +251,102 @@ def calendar_lines(today: str) -> list:
     except Exception:  # noqa: BLE001
         return []
     xs.sort(key=lambda s: s["next"])
-    return (["", "Artimiausi laukiami duomenys (30 d.):"] + [f"  • {_iso(s['next'])}: {s['lt']}" for s in xs[:5]]) if xs else []
+    return (["Šį mėnesį laukiama: " + "; ".join(f"{s['lt'][0].lower() + s['lt'][1:]} ({_day(s['next'])})" for s in xs[:4]) + "."]) if xs else []
 
 
-def build(today: str, first_of_month: bool) -> list:
+def month_block(today: str) -> list:
+    """Platesnis blokas pirmame mėnesio laiške: praėjęs mėnuo."""
     D2, D3 = _load("data.js"), _load("data3.js")
-    L2, L3 = _last_day(D2), _last_day(D3)
-    P2, P3 = _prev_day(D2, L2), _prev_day(D3, L3)
-    y2, y3 = _ytd0(L2), _ytd0(L3)
-    out = ["", f"RINKA ({_iso(L2)})"]
-    d_mkt, _ = pillar2(D2, P2, L2, True)
-    y_mkt, y_mgr = pillar2(D2, y2, L2)
-    out.append(f"II pakopa, vidutinis gyvenimo ciklo fondas (svertinis pagal turtą): dieną {_pp(d_mkt)}, šiais metais {_pp(y_mkt)}.")
-    order = sorted(y_mgr.items(), key=lambda kv: -kv[1])
-    out.append("  Valdytojai šiais metais (jų gyvenimo ciklo fondų vidurkis): " + ", ".join(f"{NAMES.get(p, p)} {_pp(v)}" for p, v in order) + ".")
-    # vietų pokyčiai grupėse (šie metai): vakar vs šiandien
-    r0, r1 = ranks2(D2, y2, P2), ranks2(D2, y2, L2)
-    moves = []
-    for g in D2["groups"]:
-        for p, k in r1.get(g["id"], {}).items():
-            k0 = r0.get(g["id"], {}).get(p)
-            if k0 and k < k0:                                 # tik pakilimai (kiekvienas pakilimas reiškia kažkieno kritimą)
-                moves.append((g["label"] if "label" in g else g["id"], p, k0, k))
-    if moves:
-        out.append("  Pakilo grupėje (šie metai): " + "; ".join(f"{gl.replace('Gimę ', '')} – {NAMES.get(p, p)} {k0}→{k} vieta" for gl, p, k0, k in moves[:6])
-                   + (f" ir dar {len(moves) - 6}" if len(moves) > 6 else "") + ".")
-    p3d, p3y = pillar3(D3, P3, L3, True), pillar3(D3, y3, L3)
-    out.append(f"III pakopa ({_iso(L3)}), kategorijų vidurkiai – dieną / šiais metais:")
-    for k in ("bond", "mixed", "equity"):
-        if k in p3y:
-            avg, best, worst, n = p3y[k]
-            out.append(f"  {CAT3[k]}: {_pp(p3d.get(k, (None,))[0])} / {_pp(avg)}; geriausias {best[1]} {_pp(best[0])}, silpniausias {worst[1]} {_pp(worst[0])} (iš {n})")
-    lbl2 = lambda f: NAMES.get(f["provider"], f["provider"])
-    lbl3 = lambda f: next((p["label"] for p in D3["providers"] if p["id"] == f["provider"]), "")
-    odd = unusual(D2, _prev_day(D2, P2), P2, L2, 1.0, lbl2) + unusual(D3, _prev_day(D3, P3), P3, L3, 1.5, lbl3)
-    if odd:
-        out += ["  Neįprasti dienos judesiai (nukrypimas nuo grupės > 1 p. p., III pakopoje > 1,5 p. p.):"] + [f"    • {x}" for x in odd[:5]]
-    wd = date.fromisoformat(today).weekday()
-    if wd == 4:                                          # penktadienis – savaitės suvestinė
-        w0 = L2 - 7
-        w_mkt, w_mgr = pillar2(D2, w0, L2)
-        out += ["", f"SAVAITĖ ({_iso(w0)} → {_iso(L2)})",
-                f"II pakopa: {_pp(w_mkt)}. Valdytojai: " + ", ".join(f"{NAMES.get(p, p)} {_pp(v)}" for p, v in sorted(w_mgr.items(), key=lambda kv: -kv[1])) + ".",
-                "III pakopa: " + ", ".join(f"{CAT3[k]} {_pp(v[0])}" for k, v in pillar3(D3, L3 - 7, L3).items() if k in CAT3) + "."]
-    if first_of_month:                                    # pirmas mėnesio laiškas – praėjusio mėnesio suvestinė
-        t = date.fromisoformat(today)
-        m1 = (date(t.year, t.month, 1) - timedelta(days=1))
-        m0 = (date(m1.year, m1.month, 1) - timedelta(days=1))
-        a, b = (m0 - EPOCH).days, (m1 - EPOCH).days
-        m_mkt, m_mgr = pillar2(D2, a, b)
-        out += ["", f"PRAĖJĘS MĖNUO ({m1:%Y-%m})",
-                f"II pakopa: {_pp(m_mkt)}. Valdytojai: " + ", ".join(f"{NAMES.get(p, p)} {_pp(v)}" for p, v in sorted(m_mgr.items(), key=lambda kv: -kv[1])) + ".",
-                "III pakopa: " + ", ".join(f"{CAT3[k]} {_pp(v[0])}" for k, v in pillar3(D3, a, b).items() if k in CAT3) + ".",
-                f"Mėnesio apžvalga: {SITE}review.html"]
-    out += news_lines(today) + seimas_lines(today) + calendar_lines(today)
+    t = date.fromisoformat(today)
+    m1 = date(t.year, t.month, 1) - timedelta(days=1)
+    m0 = date(m1.year, m1.month, 1) - timedelta(days=1)
+    a, b = (m0 - EPOCH).days, (m1 - EPOCH).days
+    mm, mg = pillar2(D2, a, b)
+    ym, yg = pillar2(D2, _ytd0(b), b)
+    c3 = pillar3(D3, a, b)
+    out = ["", f"── {MON_N[m1.month - 1]}: kaip sekėsi per mėnesį ──",
+           f"II pakopos vidutinis fondas {_p1(mm)}; {_best_worst(mg)}.",
+           f"Nuo metų pradžios: {_mgr_list(yg)} (vidurkis {_p1(ym)}).",
+           "III pakopa: " + ", ".join(f"{CAT3[k].lower()} fondai {_p1(c3[k][0])}" for k in CAT3 if k in c3) + "."]
+    best = [(k, c3[k][1]) for k in ("equity", "mixed") if k in c3]
+    if best:
+        out.append("Geriausi III pakopos fondai: " + "; ".join(f"{CAT3[k].lower()} – {n} ({_p1(v)})" for k, (v, n) in best) + ".")
+    out += calendar_lines(today)
+    out.append(f"Išsami mėnesio apžvalga: {SITE}review.html")
+    return out
+
+
+def quarter_block(today: str) -> list:
+    """Ketvirčio pradžios laiške: praėjęs ketvirtis ir valdytojų vietos."""
+    D2, D3 = _load("data.js"), _load("data3.js")
+    t = date.fromisoformat(today)
+    q1 = date(t.year, t.month, 1) - timedelta(days=1)
+    q0m = q1.month - 2
+    q0 = date(q1.year, q0m, 1) - timedelta(days=1)
+    a, b = (q0 - EPOCH).days, (q1 - EPOCH).days
+    qm, qg = pillar2(D2, a, b)
+    c3 = pillar3(D3, a, b)
+    qn = (q1.month - 1) // 3 + 1
+    out = ["", f"── {q1.year} m. {['I', 'II', 'III', 'IV'][qn - 1]} ketvirtis ──",
+           f"II pakopos vidutinis fondas {_p1(qm)}. Valdytojai per ketvirtį: {_mgr_list(qg)}.",
+           "III pakopa: " + "; ".join(f"{CAT3[k].lower()} {_p1(c3[k][0])}, geriausias {c3[k][1][1]} ({_p1(c3[k][1][0])})" for k in CAT3 if k in c3) + ".",
+           "Lietuvos banko portfelius ir rezultatus už šį ketvirtį tikimės po ~2 mėn.; kai ateis, gausite atskirą platesnį laišką.",
+           f"Rezultatai: {SITE}performance.html · III pakopa: {SITE}performance3.html"]
+    return out
+
+
+def portfolio_block() -> list:
+    """Gavus naujus LB portfelius: ką fondai pakeitė per ketvirtį (visa rinka, II + III pakopa)."""
+    rows = {}
+    with (ROOT / "data" / "portfolios.csv").open(encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            rows.setdefault(r["date"], []).append(r)
+    ds = sorted(rows)
+    if len(ds) < 2:
+        return []
+    cur, prv = rows[ds[-1]], rows[ds[-2]]
+    v = lambda r: float(r["value"] or 0)
+    def mix(rs):
+        tot = sum(v(r) for r in rs) or 1
+        out = {}
+        for r in rs:
+            out[r["type"]] = out.get(r["type"], 0) + v(r) / tot * 100
+        return out, tot
+    m1, t1 = mix(cur)
+    m0, t0 = mix(prv)
+    lbl = {"equity": "akcijos", "fund": "fondai ir ETF", "bond": "obligacijos", "cash": "pinigai"}
+    try:                                               # LB faile fondams dažnai nurodyta valdymo įmonė – tikras pavadinimas iš ISIN registro
+        with (ROOT / "data" / "isin_names.csv").open(encoding="utf-8") as f:
+            nm = {r["isin"]: r["name"] for r in csv.DictReader(f) if r.get("name")}
+    except OSError:
+        nm = {}
+    def agg(rs, skip_bonds=False):
+        out = {}
+        for r in rs:
+            if skip_bonds and r["type"] == "bond":       # obligacijų dingimas dažniausiai = išpirkimas, ne pardavimas (auditas #2)
+                continue
+            k = r["pos_id"] or r["name"]
+            out[k] = (out.get(k, (0, ""))[0] + v(r), nm.get(r["pos_id"], r["name"]))
+        return out
+    a1, a0 = agg(cur), agg(prv)
+    new = sorted(((x, n) for k, (x, n) in a1.items() if k not in a0), reverse=True)[:3]
+    gone = sorted(((x, n) for k, (x, n) in agg(prv, True).items() if k not in a1), reverse=True)[:3]
+    mln = lambda x: f"{x / 1e6:.1f}".replace(".", ",") + " mln. €"
+    q = ds[-1]
+    out = ["", f"── Nauji fondų portfeliai ({q}) ──",
+           f"Visų II ir III pakopos fondų investicijos: {mln(t1)} (prieš ketvirtį {mln(t0)}).",
+           "Sudėtis: " + ", ".join(f"{lbl[k]} {m1.get(k, 0):.0f} % (" + f"{(m1.get(k, 0) - m0.get(k, 0)):+.1f}".replace(".", ",").replace("-", "−") + " p. p.)"
+                                    for k in ("fund", "equity", "bond", "cash")) + "."]
+    if new:
+        out.append("Didžiausi nauji pirkiniai: " + "; ".join(f"{n} ({mln(x)})" for x, n in new) + ".")
+    if gone:
+        out.append("Visiškai parduota (be išpirktų obligacijų): " + "; ".join(f"{n} ({mln(x)})" for x, n in gone) + ".")
+    out.append(f"Visi pokyčiai: {SITE}portfolios.html#tab=tc")
     return out
 
 
 if __name__ == "__main__":
-    print("\n".join(build(str(date.today()), True)))
-
-
-def headline() -> str:
-    """Laiško temai: II pakopos vidutinio gyvenimo ciklo fondo dienos pokytis."""
-    D2 = _load("data.js")
-    L2 = _last_day(D2)
-    d, _ = pillar2(D2, _prev_day(D2, L2), L2, True)
-    return f"II pakopa {_pp(d)} per dieną" if d is not None else ""
+    import sys
+    t = sys.argv[1] if len(sys.argv) > 1 else str(date.today())
+    h, ls = daily(t)
+    print(h); print("\n".join(ls)); print("\n".join(month_block(t) + quarter_block(t) + portfolio_block()))

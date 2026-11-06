@@ -184,75 +184,68 @@ def source_lines() -> list:
 
 
 def build() -> tuple:
-    """Laiško tvarka (savininkas 2026-11-06 pasirinko „Rinka + veiksmai + naujienos“): 1) ar reikia jūsų veiksmo, 2) rinka,
-    3) naujienos, Seimas, kalendorius, 4) techninė būklė – viena eilutė, kai viskas gerai."""
+    """Savininkas 2026-11-06: kasdien – trumpas, žmogiškas laiškas („dabar skaitau kaip robotas“); platesnis – pirmame mėnesio laiške,
+    ketvirčio pradžioje ir tą dieną, kai atkeliauja nauji LB portfeliai (report_market.py). Technika – tik kai kažkas negerai."""
     existing = store.load()
     expected = u.expected_date()
     today = f"{datetime.now(u.TZ):%Y-%m-%d}"
     lines2, missing = provider_lines(existing, expected)
     lines3 = pillar3_lines()
     missing3 = [x.split(":")[0].strip() for x in lines3 if "❌" in x]
-    state = u.load_state().get(today, {})
     try:
         last_sent = json.loads(REPORT_STATE.read_text(encoding="utf-8")).get("last_sent", "")
     except (OSError, ValueError):
         last_sent = ""
-    actions, extra = [], []
-    try:   # nauji portfelių fondai be požymių – renka Claude, savininkui reikia tik paprašyti
+    actions = []
+    try:   # Claude darbai, kuriuos savininkas turi tik paprašyti
         import build_site
         am = build_site.attr_missing()
         if am["n"]:
-            actions.append(f"{am['n']} portfelių fondai ({am['q']}, {am['eur'] / 1e6:.1f} mln. €) be požymių (regionas, TER, SFDR)."
-                           " Parašykite Claude: „surink portfelių požymius“.")
-        lt = build_site.ROOT / "data" / "lookthrough.csv"     # tikroji sudėtis pro fondus (Morningstar, MORNINGSTAR.md)
+            actions.append(f"{am['n']} naujiems portfelių fondams trūksta požymių. Parašykite Claude: „surink portfelių požymius“.")
+        lt = build_site.ROOT / "data" / "lookthrough.csv"
         if am["q"] and (not lt.exists() or f"\n{am['q']}," not in lt.read_text(encoding="utf-8")):
-            actions.append(f"{am['q']} ketvirčio „tikroji sudėtis pro fondus“ dar neapskaičiuota. Parašykite Claude: „atnaujink Morningstar portfelių analizę“.")
-        if int(today[5:7]) in (1, 4, 7, 10) and int(today[8:10]) <= 10:   # ETF sudėtys – tik naujausios, todėl renkamos iškart po ketvirčio pabaigos
-            actions.append("Ketvirtis ką tik baigėsi. Parašykite Claude: „surink ETF sudėtis ketvirčio pabaigai“ (Morningstar).")
+            actions.append(f"{am['q']} portfelių „sudėtis pro fondus“ dar neapskaičiuota. Parašykite Claude: „atnaujink Morningstar portfelių analizę“.")
+        if int(today[5:7]) in (1, 4, 7, 10) and int(today[8:10]) <= 10:
+            actions.append("Ketvirtis ką tik baigėsi. Parašykite Claude: „surink ETF sudėtis ketvirčio pabaigai“.")
     except Exception:  # noqa: BLE001
         pass
     src = source_lines()
     if src:
-        actions.append("Neveikia šaltinis – žr. „Neveikiantys šaltiniai“ apačioje.")
-    if missing or missing3:
-        extra.append("Trūksta šiandienos duomenų: " + ", ".join(missing + [f"{m} (III)" for m in missing3])
-                     + ". Dažniausiai pasitaiso kitą rytą savaime; jei kartojasi 2 d. – parašykite Claude.")
+        actions.append("Neveikia duomenų šaltinis (žr. apačioje).")
     stale = stale_section(today)
+    if any("rankiniu būdu" in x for x in stale):
+        actions.append("Reikia atnaujinti rankinius duomenis (žr. apačioje).")
     ideas = ideas_section()
     if any("Klausimas jums" in x for x in ideas):
-        actions.append("Claude užduoda jums klausimą – žr. apačioje.")
-    if any("rankiniu būdu" in x for x in stale):
-        actions.append("Pasenę rankiniai duomenys – žr. „Pasenę duomenys“ apačioje.")
+        actions.append("Claude turi jums klausimą (žr. apačioje).")
 
+    new_month = last_sent[:7] != today[:7]
+    new_quarter = new_month and int(today[5:7]) in (1, 4, 7, 10)
+    lb_new = lb_new_lines(today)
+    new_pf = any("portfel" in x for x in lb_new)
     try:
-        import report_market
-        head = report_market.headline()
-        market = report_market.build(today, last_sent[:7] != today[:7])
+        import report_market as rm
+        head, daily = rm.daily(today)
+        extra = (rm.month_block(today) if new_month else []) + (rm.quarter_block(today) if new_quarter else []) + (rm.portfolio_block() if new_pf else [])
     except Exception as e:  # noqa: BLE001 – rinkos dalis neturi sustabdyti laiško
-        head, market = "", ["", f"(Rinkos santraukos paruošti nepavyko: {e!r})"]
+        head, daily, extra = "", [f"(Rinkos santraukos šiandien paruošti nepavyko: {e!r})"], []
     ok = not missing and not missing3
-    subject = f"Pensijų fondai {today}: " + (f"{head} · " if head else "") + ("viskas atnaujinta" if ok else "trūksta – " + ", ".join(missing + missing3))
-    body = ["Ar reikia jūsų veiksmo: " + ("TAIP" if actions else "ne – viskas veikia savaime.")]
-    body += [f"  → {a}" for a in actions] + [f"  ℹ {x}" for x in extra]
-    body += market
-    body += lb_new_lines(today)
-    body += ["", "TECHNINĖ BŪKLĖ"]
-    if ok:
-        body.append(f"Duomenys už {expected}: II pakopa – visi {len(lines2)} valdytojai, III pakopa – visi {len(lines3)} atnaujinti ✅."
-                    + (f" Luminor bandymų: {state['LUMINOR']} iš {u.MAX_BROWSER_ATTEMPTS}." if state.get("LUMINOR") else ""))
-    else:
-        body += [f"Laukiama fondų vertė už {expected}.", "II pakopa:"] + lines2 + ["III pakopa:"] + lines3
-        problems = todays_problems(today)
-        warn = [p for p in problems if "netinkama data" in p]
-        body += ["Klaidos šiandien:"] + ([p for p in problems if "netinkama data" not in p] or ["  nėra"])
-        if warn:
-            body.append(f"  (+ {len(warn)} praleistų netinkamų datų įspėjimų – įprasta)")
-    body += src
-    runs = runs_today(today)
-    if runs:
-        body.append(runs)
-    body += stale
-    body += ideas
+    tag = " · portfeliai" if new_pf else " · ketvirčio apžvalga" if new_quarter else " · mėnesio apžvalga" if new_month else ""
+    subject = f"Pensijų fondai: {head or today}{tag}" + ("" if ok else " · trūksta duomenų")
+    body = ["Labas vakaras,", ""] + daily + [""]
+    body += ["Iš jūsų šiandien nieko nereikia." if not actions else "Reikia jūsų:"] + [f"  • {a}" for a in actions]
+    body.append("Duomenys surinkti visi." if ok else
+                "Dar trūksta: " + ", ".join(missing + [f"{m} (III pakopa)" for m in missing3]) + ". Dažniausiai pasitaiso savaime kitą rytą.")
+    body += extra
+    if not ok or src or stale or ideas:                  # techninės detalės – tik kai kažkas negerai
+        body += ["", "── Detalės ──"]
+        if not ok:
+            body += [f"Laukiama vertė už {expected}.", "II pakopa:"] + lines2 + ["III pakopa:"] + lines3
+            body += [p for p in todays_problems(today) if "netinkama data" not in p][:8]
+            runs = runs_today(today)
+            if runs:
+                body.append(runs)
+        body += src + stale + ideas
     body += ["", f"Svetainė: {SITE_URL}"]
     return subject, mask("\n".join(body))
 
