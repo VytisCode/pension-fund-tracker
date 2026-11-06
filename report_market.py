@@ -315,22 +315,37 @@ def portfolio_block() -> list:
     m1, t1 = mix(cur)
     m0, t0 = mix(prv)
     lbl = {"equity": "akcijos", "fund": "fondai ir ETF", "bond": "obligacijos", "cash": "pinigai"}
-    try:                                               # LB faile fondams dažnai nurodyta valdymo įmonė – tikras pavadinimas iš ISIN registro
-        with (ROOT / "data" / "isin_names.csv").open(encoding="utf-8") as f:
-            nm = {r["isin"]: r["name"] for r in csv.DictReader(f) if r.get("name")}
-    except OSError:
-        nm = {}
+    # pavadinimai – kaip svetainėje (build_site.build_portfolios): pilnas oficialus fondo / ETF pavadinimas iš data/fund_attributes.csv;
+    # LB pavadinimas, o jei LB nurodė tik valdymo bendrovę – ISIN registro (OpenFIGI) pavadinimas
+    def _rd(fn, key="isin"):
+        try:
+            with (ROOT / "data" / fn).open(encoding="utf-8") as f:
+                return {r[key]: r["name"] for r in csv.DictReader(f) if r.get("name")}
+        except OSError:
+            return {}
+    full, figi = _rd("fund_attributes.csv"), _rd("isin_names.csv")
+    try:
+        from build_site import COMPANY_NAME
+    except Exception:  # noqa: BLE001
+        COMPANY_NAME = re.compile(r"\b(S\.?A\.?|GmbH|Ltd|Limited|Management|AG|Inc|PLC|N\.V\.)\b", re.I)
+    def nice(r):
+        if r["pos_id"] in full:
+            return full[r["pos_id"]]
+        if r["type"] == "fund" and COMPANY_NAME.search(r["name"]) and r["pos_id"] in figi:
+            return figi[r["pos_id"]]
+        return r["name"]
     def agg(rs, skip_bonds=False):
         out = {}
         for r in rs:
             if skip_bonds and r["type"] == "bond":       # obligacijų dingimas dažniausiai = išpirkimas, ne pardavimas (auditas #2)
                 continue
             k = r["pos_id"] or r["name"]
-            out[k] = (out.get(k, (0, ""))[0] + v(r), nm.get(r["pos_id"], r["name"]))
+            x, _, ps = out.get(k, (0, "", set()))
+            out[k] = (x + v(r), nice(r), ps | {r["provider"]})
         return out
     a1, a0 = agg(cur), agg(prv)
-    new = sorted(((x, n) for k, (x, n) in a1.items() if k not in a0), reverse=True)[:3]
-    gone = sorted(((x, n) for k, (x, n) in agg(prv, True).items() if k not in a1), reverse=True)[:3]
+    new = sorted(((x, n, ps) for k, (x, n, ps) in a1.items() if k not in a0), key=lambda t: -t[0])[:3]
+    gone = sorted(((x, n, ps) for k, (x, n, ps) in agg(prv, True).items() if k not in a1), key=lambda t: -t[0])[:3]
     mln = lambda x: f"{x / 1e6:.1f}".replace(".", ",") + " mln. €"
     q = ds[-1]
     out = ["", f"── Nauji fondų portfeliai ({q}) ──",
@@ -338,9 +353,9 @@ def portfolio_block() -> list:
            "Sudėtis: " + ", ".join(f"{lbl[k]} {m1.get(k, 0):.0f} % (" + f"{(m1.get(k, 0) - m0.get(k, 0)):+.1f}".replace(".", ",").replace("-", "−") + " p. p.)"
                                     for k in ("fund", "equity", "bond", "cash")) + "."]
     if new:
-        out.append("Didžiausi nauji pirkiniai: " + "; ".join(f"{n} ({mln(x)})" for x, n in new) + ".")
+        out.append("Didžiausi nauji pirkiniai: " + "; ".join(f"{n} ({', '.join(sorted(ps))}, {mln(x)})" for x, n, ps in new) + ".")
     if gone:
-        out.append("Visiškai parduota (be išpirktų obligacijų): " + "; ".join(f"{n} ({mln(x)})" for x, n in gone) + ".")
+        out.append("Visiškai parduota (be išpirktų obligacijų): " + "; ".join(f"{n} ({', '.join(sorted(ps))}, {mln(x)})" for x, n, ps in gone) + ".")
     out.append(f"Visi pokyčiai: {SITE}portfolios.html#tab=tc")
     return out
 
