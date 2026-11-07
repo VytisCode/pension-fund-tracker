@@ -1,15 +1,17 @@
 {
- "checked": "2026-11-06",
+ "checked": "2026-11-07",
  "files": {
   "lbr": {
    "date": "20260930",
-   "url": "https://www.lb.lt/uploads/documents/files/musu-veikla/finansu-rinkos-dalyviu-prieziura/finansu-sektoriai/pensiju-fondai/2_pakopa_rezultatai_20260930.xlsx",
-   "at": "2026-10-14"
+   "url": "https://www.lb.lt/uploads/documents/files/musu-veikla/finansu-rinkos-dalyviu-prieziura/finansu-sektoriai/pensiju-fondai/2_pakopa_rezultatai_20260930_.xlsx",
+   "at": "2026-11-07"
   },
   "pf": {
    "date": "20260930",
    "url": "https://www.lb.lt/uploads/documents/files/musu-veikla/finansu-rinkos-dalyviu-prieziura/finansu-sektoriai/pensiju-fondai/PF_Portfeliai_20260930.xlsx",
    "at": "2026-11-06"
   }
- }
+ },
+ "dated": "2026-11-07",
+ "revisions": "2026-11-07"
 }
