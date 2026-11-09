@@ -192,12 +192,21 @@ def lv_funds():
         if r["avg"]:
             avg[k].append((day(r["date"]), float(r["avg"])))
     rep, top = lv_reports()
+    dl = {}                                                     # naujausi kasdieniai turtas ir dalyviai (tools/fetch_lv_plans.py)
+    if (D / "baltic_lv_daily.csv").exists():
+        for r in csv.DictReader((D / "baltic_lv_daily.csv").open(encoding="utf-8")):
+            if r["assets_eur"] and r["date"] >= dl.get((r["pillar"], r["slug"]), {}).get("date", ""):
+                dl[(r["pillar"], r["slug"])] = r
     out = []
     for k, p in plans.items():
         if not ser.get(k):
             continue
         last = rep.get(k[1], {})
         lq = max((q for q, r in last.items() if r["assets_eur"]), default=None) if k[0] == "II" else None
+        dd = dl.get((k[0], (p.get("slug") or "").strip("/")))
+        if dd and (not lq or dd["date"] > lq):                  # kasdieniai duomenys naujesni už ketvirčio ataskaitą
+            last = {dd["date"]: {"assets_eur": dd["assets_eur"], "participants": dd["participants"]}}
+            lq = dd["date"]
         prov = p["provider"].lower()
         mgr = next((lab for key, lab in LV_PROV if key in prov), p["provider"])
         eq = fnum(p["stock_pct"])
@@ -253,7 +262,7 @@ def ee_totals():
 
 def reform():
     """II pakopos reformų palyginimas (savininkas 2026-10-21): Estija (išėjimas leidžiamas nuo 2021-01-01) ir Lietuva (nuo 2026-01-01).
-    Kiekvienai šaliai – mėnesio (EE) ar ketvirčio (LT, LB duomenys) pabaigos taškai: mėnesių skaičius nuo paskutinio mėnesio prieš
+    Kiekvienai šaliai – mėnesio (EE) ar ketvirčio (LT, LB duomenys – fondų suma) pabaigos taškai: mėnesių skaičius nuo paskutinio mėnesio prieš
     reformą (0), dalyviai, grynieji aktyvai (mln. €), sukauptas investicijų uždarbis ir sukauptas grynasis srautas (įmokos − išmokos −
     išėjimai) nuo taško 0, mln. €. Srautas = turto pokytis − uždarbis; uždarbis = turtas ankstesnę dieną × vieneto vertės pokytis."""
     out = {}
@@ -314,6 +323,128 @@ def series(start, pts):
             "gain": G, "flow": F, "base": base}
 
 
+LV_MGR = LV_PROV + [("vairo", "Vairo"), ("signet", "Signet")]
+
+
+def _lv_mgr(prov):
+    p = (prov or "").lower()
+    return next((lab for key, lab in LV_MGR if key in p), prov)
+
+
+def shares():
+    """Rinkos dalys pagal valdytoją laike (kolegės QlikView vaizdas, savininkas 2026-11-09): kiekvienai šaliai ir pakopai –
+    mėnesio (LV, EE) ar ketvirčio (LT, LB duomenys – fondų suma) pabaigos valdytojų turtas (mln. €) ir dalyviai.
+    LV – data/baltic_lv_daily.csv (manapensija.lv); „Luminor plāns 53-58“ manapensija sąraše nėra, todėl jo turtas imamas iš
+    ketvirčio ataskaitos ir tarp ketvirčių perskaičiuojamas pagal plāno indeksą (pažymima „est“). EE – data/baltic_ee.csv
+    (III pakopos dalyvių pagal fondą Estija neskelbia). LT – data/lb_results_history.csv (fondų sumos pagal valdytoją).
+    Grąžinama {šalis: {pakopa: {m: [mėnuo], f: 'M'|'Q', mg: {valdytojas: {na: [...], inv: [...]}}, est: [mėnuo]}}}."""
+    out = defaultdict(dict)
+
+    def pack(by, freq, est=()):          # by[mėnuo][valdytojas] = [na_eur, inv]
+        ms = sorted(by)
+        mg = sorted({g for m in ms for g in by[m]})
+        return {"m": ms, "f": freq, "est": sorted(est),
+                "mg": {g: {"na": [round(by[m][g][0] / 1e6, 2) if g in by[m] and by[m][g][0] else None for m in ms],
+                           "inv": [int(by[m][g][1]) if g in by[m] and by[m][g][1] else None for m in ms]} for g in mg}}
+
+    # Latvija: paskutinė turima mėnesio diena (pakopai), plānų suma pagal valdytoją
+    p = D / "baltic_lv_daily.csv"
+    if p.exists():
+        rows = defaultdict(lambda: defaultdict(dict))            # pl -> date -> slug -> row
+        for r in csv.DictReader(p.open(encoding="utf-8")):
+            if r["assets_eur"]:
+                rows[r["pillar"]][r["date"]][r["slug"]] = r
+        rep = lv_reports()[0].get("028", {})                     # Luminor plāns 53-58 (II) – žr. aprašą
+        idx = sorted((r["date"], float(r["value"])) for r in csv.DictReader((D / "baltic_lv_index.csv").open(encoding="utf-8"))
+                     if r["pillar"] == "II" and r["plan_id"] == "028")
+        def idx_at(d):
+            v = [x for x in idx if x[0] <= d]
+            return v[-1][1] if v else None
+        for pl, by_d in rows.items():
+            # mėnesio diena – vėliausia, kurią yra beveik visi to mėnesio plāni (kai kuriomis dienomis API grąžina ne visus,
+            # pvz. 2025-12-24…26, 12-31); trūkstamas plāns, veikęs prieš ir po, imamas iš paskutinės jo dienos tą ar praeitą mėnesį
+            mon = defaultdict(list)
+            for d in sorted(by_d):
+                mon[d[:7]].append(d)
+            pick = {}
+            for m, ds in mon.items():
+                mx = max(len(by_d[d]) for d in ds)
+                pick[m] = [d for d in ds if len(by_d[d]) >= mx * 0.95][-1]
+            span = {}
+            for d in sorted(by_d):
+                for sl in by_d[d]:
+                    span[sl] = (span.get(sl, (d, d))[0], d)
+            seen = {}                                            # plāns -> paskutinė žinoma eilutė (iki pasirinktos dienos)
+            by, est, lum = defaultdict(dict), set(), set()
+            for m in sorted(pick):
+                for d in mon[m]:
+                    if d <= pick[m]:
+                        for sl, r in by_d[d].items():
+                            seen[sl] = r
+                d = pick[m]
+                for sl, (a0, a1) in span.items():
+                    r = by_d[d].get(sl)
+                    if r is None:
+                        if not (a0 < d < a1) or sl not in seen or (date.fromisoformat(d) - date.fromisoformat(seen[sl]["date"])).days > 62:
+                            continue
+                        r = seen[sl]; est.add(m)
+                    g = _lv_mgr(r["provider"])
+                    a = by[m].setdefault(g, [0.0, 0])
+                    a[0] += float(r["assets_eur"]); a[1] += int(r["participants"] or 0)
+                if pl == "II" and "luminor-plans-53-58" not in by_d[d] and rep and idx and d <= idx[-1][0]:   # 2026-10-20 sujungtas su 50-60
+                    gap = lambda q: abs((date.fromisoformat(d) - date.fromisoformat(q)).days)
+                    qs = sorted((q for q in rep if rep[q]["assets_eur"] and gap(q) < 135), key=lambda q: (q > d, gap(q)))   # artimiausia ankstesnė, kitaip vėlesnė
+                    if qs:
+                        q = qs[0]; i0, i1 = idx_at(q), idx_at(d)
+                        if i0 and i1:
+                            a = by[m].setdefault("Luminor", [0.0, 0])
+                            a[0] += float(rep[q]["assets_eur"]) * i1 / i0
+                            est.add(m); lum.add(m)
+            out["LV"][pl] = pack(by, "M", est)
+            out["LV"][pl]["lum"] = min(lum) if lum else None      # nuo kada žinomas „Luminor plāns 53-58“ turtas
+    # Estija: paskutinė mėnesio diena
+    p = D / "baltic_ee.csv"
+    if p.exists():
+        meta = {(r["pillar"], r["fund_id"]): r["fund"] for r in csv.DictReader((D / "baltic_ee_meta.csv").open(encoding="utf-8"))}
+        lastr = defaultdict(dict)                                # (pl, mėnuo) -> fund_id -> eilutė (vėliausia)
+        for r in csv.DictReader(p.open(encoding="utf-8")):
+            lastr[(r["pillar"], r["date"][:7])][r["fund_id"]] = r
+        for pl in ("II", "III"):
+            by = defaultdict(dict)
+            for (pp, m), fs in lastr.items():
+                if pp != pl:
+                    continue
+                for fid, r in fs.items():
+                    if not r["net_assets"]:
+                        continue
+                    n = meta.get((pl, fid), "")
+                    g = next((x for x in EE_PROV if n.lower().startswith(x.lower())), n.split()[0] if n else "?")
+                    a = by[m].setdefault(g, [0.0, 0])
+                    a[0] += float(r["net_assets"]); a[1] += int(r["investors"] or 0)
+            if by:
+                out["EE"][pl] = pack(by, "M")
+    # Lietuva: LB ketvirčių duomenys (valdymo įmonių sumos)
+    p = D / "lb_results_history.csv"
+    if p.exists():
+        by = defaultdict(lambda: defaultdict(dict))
+        for r in csv.DictReader(p.open(encoding="utf-8")):
+            if r["kind"] != "fund" or not r["nav_meur"] or not r["provider"]:
+                continue
+            a = by[r["pillar"]][r["date"][:7]].setdefault(LT_PROV.get(r["provider"].upper(), r["provider"]), [0.0, 0])
+            a[0] += float(r["nav_meur"]) * 1e6; a[1] += int(float(r["participants"] or 0))
+        for pl, b in by.items():
+            out["LT"][pl] = pack(b, "Q")
+    return out
+
+
+def _safe(fn):
+    try:
+        return fn()
+    except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
+        print(f"baltic: {fn.__name__} nepavyko:", e)
+        return None
+
+
 def build() -> dict:
     funds = []
     for f in (ee_funds, lv_funds, lt_funds):
@@ -348,7 +479,7 @@ def build() -> dict:
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
         print("baltic: reformų palyginimas nepavyko:", e)
         rf = None
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "_perf": perf}
+    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "_perf": perf}
 
 
 PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],

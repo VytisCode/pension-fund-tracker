@@ -124,7 +124,7 @@ const rgHtml = f => f.risk ? `<span class="rg ${f.risk}" title="${hEsc(T().rg[f.
    vaizdas. Šalių palyginime – tik panašios rizikos fondai, laisvas palyginimas ir reformos. ---------- */
 addStrings({ bx: {
   modes: { X: 'Compare countries' }, modesS: { X: 'Compare' },
-  tabs: { ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', jr: 'Road to retirement', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms' },
+  tabs: { ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', jr: 'Road to retirement', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms', bs: 'Baltic market' },
   ovT: c => `${c}: overview`, ovL: { LT: 'Lithuanian pillar II and III funds in the same views as Latvian and Estonian ones. More about Lithuania – on the Results and Market facts pages.', LV: 'Latvian pillar II and III pension plans (manapensija.lv). Funds are compared within Latvian groups by equity share.', EE: 'Estonian pillar II and III pension funds (pensionikeskus.ee). Estonia has no official groups, so funds are compared within risk groups.' },
   ldT: p => `Leaders of each group, ${p}`, ldN: 'Median return of the group and its best and weakest fund. 3, 5 and 10-year returns are annual.',
   ldH: ['Group', 'Funds', 'Median', 'Best', 'Weakest'],
@@ -139,7 +139,7 @@ addStrings({ bx: {
   topLt: 'Full portfolios of Lithuanian funds – on the <a href="portfolios.html">Portfolios and assets</a> page.',
   cmTop: 'Largest investments of the selected funds', closed: 'closed', fClosed: 'Show closed funds', mt: 'How it is calculated (methodology)' } }, { bx: {
   modes: { X: 'Šalių palyginimas' }, modesS: { X: 'Palyginimas' },
-  tabs: { ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', jr: 'Kelias į pensiją', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos' },
+  tabs: { ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', jr: 'Kelias į pensiją', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos', bs: 'Baltijos rinka' },
   ovT: c => `${c}: apžvalga`, ovL: { LT: 'Lietuvos II ir III pakopos fondai tais pačiais vaizdais kaip Latvijos ir Estijos. Daugiau apie Lietuvą – puslapiuose „Rezultatai“ ir „Rinkos faktai“.', LV: 'Latvijos II ir III pakopos pensijų plānai (manapensija.lv). Fondai lyginami Latvijos grupėse pagal akcijų dalį.', EE: 'Estijos II ir III pakopos pensijų fondai (pensionikeskus.ee). Estijoje oficialių grupių nėra, todėl fondai lyginami rizikos grupėse.' },
   ldT: p => `Grupių lyderiai, ${p}`, ldN: 'Grupės grąžos mediana, geriausias ir silpniausias fondas. 3, 5 ir 10 metų grąžos – metinės.',
   ldH: ['Grupė', 'Fondų', 'Mediana', 'Geriausias', 'Silpniausias'],
@@ -153,9 +153,9 @@ addStrings({ bx: {
   topT: c => `${c}: didžiausios investicijos`, topL: { LV: 'Kiekvieno Latvijos II pakopos plāno 10 didžiausių investicijų iš valdytojų ketvirčio ataskaitų (manapensija.lv).', EE: 'Kiekvieno Estijos fondo 10 didžiausių investicijų iš mėnesio investicijų ataskaitų (pensionikeskus.ee).' },
   topLt: 'Visi Lietuvos fondų portfeliai – puslapyje <a href="portfolios.html">Portfeliai ir turtas</a>.',
   cmTop: 'Pasirinktų fondų didžiausios investicijos', closed: 'uždarytas', fClosed: 'Rodyti uždarytus fondus', mt: 'Kaip skaičiuota (metodika)' } });
-const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'top', 'jr'], X: ['rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
-const TMAP = { jr: 'rk', ov: 'rk', cr: 'rk', rs: 'rk', mg: 'rk', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov' };   // perjungus režimą – artimiausias skirtukas
-const TID = { ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', jr: 'jrT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT' };
+const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'top', 'jr'], X: ['bs', 'rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
+const TMAP = { jr: 'rk', ov: 'rk', cr: 'rk', rs: 'rk', mg: 'bs', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov', bs: 'mg' };   // perjungus režimą – artimiausias skirtukas
+const TID = { ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', jr: 'jrT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT', bs: 'bsT' };
 const modeTabs = () => CR.c === 'X' ? TABS.X : TABS.c.filter(k => k !== 'jr' || CR.pl === 'II');   // kelias į pensiją – tik II pakopa
 
 /* ---------- Apžvalga (šalis) ir „Panaši rizika“ (šalių palyginimas) ---------- */
@@ -484,13 +484,13 @@ addStrings({ mg: {
   h: { m: 'Manager', n: 'Funds', na: 'Assets, € m', sh: 'Market share', inv: 'Participants', wr: 'Return (asset-weighted)', top: 'Funds in the better half of their group', fee: 'Average fee' },
   shT: 'Market share by assets', brT: 'What each manager can be proud of', brNone: 'No fund is the best in its group in these periods.',
   br: (g, f, h, v, n) => `Best in “${g}” over ${h}: ${f} (${v}, ${n} funds in the group).`,
-  n: (d, lv) => `Assets – latest known (${lv ? 'Latvia – managers’ quarterly reports' : 'daily data'}${d ? `, ${d}` : ''}). Asset-weighted return – average of the manager’s fund returns weighted by assets. Better half – the fund’s return is among the better half of its country group (only groups with at least 2 funds).`,
+  n: (d, lv) => `Assets – latest known (${lv ? 'Latvia – manapensija.lv daily data' : 'daily data'}${d ? `, ${d}` : ''}). Asset-weighted return – average of the manager’s fund returns weighted by assets. Better half – the fund’s return is among the better half of its country group (only groups with at least 2 funds).`,
   noNa: 'Assets of these plans are not published.' } }, { mg: {
   t: c => `${c}: valdytojai`, l: 'Pasirinktos šalies ir pakopos valdytojai: dydis, rinkos dalis ir kaip jų fondams sekasi, palyginus su kitais tos pačios grupės fondais.',
   h: { m: 'Valdytojas', n: 'Fondų', na: 'Turtas, mln. €', sh: 'Rinkos dalis', inv: 'Dalyviai', wr: 'Grąža (svertinė turtu)', top: 'Fondų geresnėje grupės pusėje', fee: 'Vidutinis mokestis' },
   shT: 'Rinkos dalis pagal turtą', brT: 'Kuo gali pasigirti kiekvienas valdytojas', brNone: 'Nė vienas fondas šiais laikotarpiais nėra geriausias savo grupėje.',
   br: (g, f, h, v, n) => `Geriausias grupėje „${g}“ per ${h}: ${f} (${v}, grupėje ${n} ${ltN(n, 'fondas', 'fondai', 'fondų')}).`,
-  n: (d, lv) => `Turtas – naujausias žinomas (${lv ? 'Latvija – valdytojų ketvirčio ataskaitos' : 'kasdieniai duomenys'}${d ? `, ${d}` : ''}). Svertinė grąža – valdytojo fondų grąžų vidurkis, sveriant turtu. Geresnė pusė – fondo grąža tarp geresnės pusės jo šalies grupės fondų (tik grupės, kuriose bent 2 fondai).`,
+  n: (d, lv) => `Turtas – naujausias žinomas (${lv ? 'Latvija – manapensija.lv kasdieniai duomenys' : 'kasdieniai duomenys'}${d ? `, ${d}` : ''}). Svertinė grąža – valdytojo fondų grąžų vidurkis, sveriant turtu. Geresnė pusė – fondo grąža tarp geresnės pusės jo šalies grupės fondų (tik grupės, kuriose bent 2 fondai).`,
   noNa: 'Šių plānų turtas neskelbiamas.' } });
 let MGH = 'ytd';
 const BRH = { ytd: { lt: 'šiuos metus', en: 'this year' }, y1: { lt: '1 metus', en: '1 year' }, y3: { lt: '3 metus', en: '3 years' }, y5: { lt: '5 metus', en: '5 years' } };
@@ -528,6 +528,105 @@ function renderMg() {
     return `<section class="card"><h3>${hEsc(r.m)}</h3>${b.length ? `<ul>${b.slice(0, 6).map(x => `<li>${hEsc(m.br(x.g, x.f, BRH[x.h][lang] || BRH[x.h].lt, fmtP(x.v), x.n))}</li>`).join('')}${b.length > 6 ? `<li class="note">+${b.length - 6}</li>` : ''}</ul>` : `<p class="note">${m.brNone}</p>`}</section>`; }).join('');
 }
 $('mgSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MGH = b.dataset.h; renderMg(); });
+
+/* ---------- Rinkos dalis laike ir pokytis nuo metų pradžios (kolegės „QlikView“ vaizdai, savininkas 2026-11-09): valdytojų turtas ir
+   dalyviai kiekvieno mėnesio (LV, EE) ar ketvirčio (LT, LB) pabaigoje – BALTIC.sh (baltic.py shares()). ---------- */
+addStrings({ ms: {
+  t: 'Market share over time', l: 'Each manager’s share of the country’s pillar market at the end of every month (Lithuania – every quarter, Bank of Lithuania data).',
+  k: { na: 'By assets', inv: 'By participants' },
+  n: (f, est) => `Source: ${f}.${est ? ' Latvia: the assets of “Luminor plāns 53-58” are not listed on manapensija.lv – taken from its quarterly report and moved between quarters by the plan’s unit value (estimate). Its assets before ${est} are not known, so until then the Latvian total and Luminor’s share are too small (about 8% of the market).' : ''}`,
+  src: { LV: 'manapensija.lv (assets and participants of each plan)', EE: 'pensionikeskus.ee (assets and active investors of each fund)', LT: 'Bank of Lithuania quarterly results (sum of each manager’s funds)' },
+  noInv: 'Participants by fund are not published for this pillar.', none: 'No data on managers’ assets for this pillar.',
+  yT: d => `Change since the start of the year (${d})`,
+  yH: ['Manager', 'Assets at year start, € m', 'Assets now, € m', 'Change, € m', 'Change', 'Market share', 'Share change, p.p.', 'Participants', 'Participants change', 'Assets per participant, €'],
+  tot: 'Whole market', yN: (a, b) => `Year start – ${a}, now – ${b}. Change in assets includes both investment results and money flows (contributions, payouts, switches).` },
+  bs: { t: 'Baltic pension market', l: 'Lithuania, Latvia and Estonia: market size, change since the start of the year and managers – each country with its latest available data.',
+  mT: 'Markets', mH: ['Market', 'Data as of', 'Assets, € m', 'Change since year start, € m', 'Change', 'Participants', 'Managers', 'Largest manager'],
+  gT: 'Managers across the Baltics', k: { na: 'Assets, € m', sh: 'Market share' }, tot: 'Total', all: 'Baltics, total',
+  n: 'Latvian pillar III – only open pension funds (closed funds are not on manapensija.lv). Estonian pillar III – participants by fund are not published. Lithuania – quarter-end data of the Bank of Lithuania; the fall of Lithuanian pillar II assets in 2026 is the reform (people leaving the pillar and taking money out).' } }, { ms: {
+  t: 'Rinkos dalis laike', l: 'Kiekvieno valdytojo dalis šalies pakopos rinkoje kiekvieno mėnesio pabaigoje (Lietuva – kiekvieno ketvirčio, LB duomenys).',
+  k: { na: 'Pagal turtą', inv: 'Pagal dalyvius' },
+  n: (f, est) => `Šaltinis: ${f}.${est ? ' Latvija: „Luminor plāns 53-58“ manapensija.lv sąraše nėra – jo turtas paimtas iš ketvirčio ataskaitos ir tarp ketvirčių perskaičiuotas pagal plāno vieneto vertę (apytiksliai). Jo turtas iki ${est} nežinomas, todėl iki tol Latvijos suma ir Luminor dalis per mažos (apie 8 % rinkos).' : ''}`,
+  src: { LV: 'manapensija.lv (kiekvieno plāno turtas ir dalyviai)', EE: 'pensionikeskus.ee (kiekvieno fondo turtas ir aktyvūs investuotojai)', LT: 'LB ketvirčio rezultatai (valdytojo fondų suma)' },
+  noInv: 'Dalyvių skaičius pagal fondą šiai pakopai neskelbiamas.', none: 'Šiai pakopai valdytojų turto duomenų nėra.',
+  yT: d => `Pokytis nuo metų pradžios (${d})`,
+  yH: ['Valdytojas', 'Turtas metų pradžioje, mln. €', 'Turtas dabar, mln. €', 'Pokytis, mln. €', 'Pokytis', 'Rinkos dalis', 'Dalies pokytis, p. p.', 'Dalyviai', 'Dalyvių pokytis', 'Turtas vienam dalyviui, €'],
+  tot: 'Visa rinka', yN: (a, b) => `Metų pradžia – ${a}, dabar – ${b}. Turto pokytis apima ir investicijų rezultatą, ir pinigų srautus (įmokas, išmokas, perėjimus).` },
+  bs: { t: 'Baltijos pensijų rinka', l: 'Lietuva, Latvija ir Estija: rinkos dydis, pokytis nuo metų pradžios ir valdytojai – kiekviena šalis su naujausiais turimais duomenimis.',
+  mT: 'Rinkos', mH: ['Rinka', 'Duomenys', 'Turtas, mln. €', 'Pokytis nuo metų pradžios, mln. €', 'Pokytis', 'Dalyviai', 'Valdytojų', 'Didžiausias valdytojas'],
+  gT: 'Valdytojai visose Baltijos šalyse', k: { na: 'Turtas, mln. €', sh: 'Rinkos dalis' }, tot: 'Iš viso', all: 'Baltijos šalys iš viso',
+  n: 'Latvijos III pakopa – tik atvirieji pensijų fondai (uždarųjų manapensija.lv nėra). Estijos III pakopa – dalyvių pagal fondą neskelbia. Lietuva – LB ketvirčio pabaigos duomenys; Lietuvos II pakopos turto sumažėjimas 2026 m. – reforma (dalyviai išeina ir atsiima pinigus).' } });
+let MSK = 'na', BSK = 'na';
+const shOf = (c, pl) => (BALTIC.sh || {})[c] && BALTIC.sh[c][pl];
+const mEnd = m => Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0) / DAY;
+const mLab = (S, i) => S.f === 'Q' ? S.m[i] : S.m[i];
+function shAt(S, i, k) {                                  // {valdytojas: vertė} i-tajame taške ir suma
+  const o = {}; let s = 0;
+  Object.entries(S.mg).forEach(([g, x]) => { const v = x[k][i]; if (v != null) { o[g] = v; s += v; } });
+  return { o, s };
+}
+function ytdIdx(S) {                                      // [metų pradžios (praėjusių metų paskutinis taškas), dabartinis] indeksai
+  const i1 = S.m.length - 1, y = S.m[i1].slice(0, 4);
+  let i0 = -1; S.m.forEach((m, i) => { if (m.slice(0, 4) < y) i0 = i; });
+  return [i0, i1];
+}
+function mgColor(S) {                                     // ta pati spalva valdytojui grafike ir lentelėje: pagal dabartinį dydį
+  const last = shAt(S, S.m.length - 1, 'na').o;
+  return new Map(Object.keys(S.mg).sort((a, b) => (last[b] || 0) - (last[a] || 0) || a.localeCompare(b)).map((g, i) => [g, PAL[i % PAL.length]]));
+}
+function renderMs() {
+  const t = T().ms, S = shOf(CR.c, CR.pl);
+  $('msT').textContent = t.t; $('msL').textContent = t.l; $('myT').textContent = t.yT('');
+  if (!S || !S.m.length) { $('msSeg').innerHTML = ''; $('msCh').innerHTML = `<p class="note">${t.none}</p>`; $('myTbl').innerHTML = ''; $('msN').textContent = ''; $('myN').textContent = ''; return; }
+  const hasInv = Object.values(S.mg).some(x => x.inv.some(v => v));
+  if (!hasInv) MSK = 'na';
+  $('msSeg').innerHTML = ['na', 'inv'].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === MSK}"${k === 'inv' && !hasInv ? ' disabled' : ''}>${t.k[k]}</button>`).join('');
+  const col = mgColor(S), ser = [];
+  col.forEach((c, g) => { const pts = [];
+    S.m.forEach((m, i) => { const a = shAt(S, i, MSK), v = S.mg[g][MSK][i]; if (v != null && a.s > 0) pts.push([mEnd(m), v / a.s * 100]); });
+    if (pts.length > 1) ser.push({ points: pts, color: c, label: g, provider: g }); });
+  const x0 = mEnd(S.m[0]), x1 = mEnd(S.m[S.m.length - 1]);
+  drawLineChart($('msCh'), ser, x0, x1, { zero: true });
+  $('msN').textContent = t.n(t.src[CR.c], CR.c === 'LV' && CR.pl === 'II' && S.lum ? S.lum : '') + (hasInv ? '' : ' ' + t.noInv);
+  // pokytis nuo metų pradžios
+  const [i0, i1] = ytdIdx(S); if (i0 < 0) { $('myTbl').innerHTML = ''; $('myN').textContent = ''; return; }
+  const A0 = shAt(S, i0, 'na'), A1 = shAt(S, i1, 'na'), P0 = shAt(S, i0, 'inv'), P1 = shAt(S, i1, 'inv');
+  $('myT').textContent = t.yT(`${S.m[i0]} → ${S.m[i1]}`);
+  const f1 = v => v == null ? '–' : num(v, 1), f0 = v => v == null ? '–' : num(v, 0), fp = v => v == null || !isFinite(v) ? '–' : pctPlain(v), fpp = v => v == null || !isFinite(v) ? '–' : (v < 0 ? '−' : '+') + num(Math.abs(v), 2);
+  const row = (g, a0, a1, p0, p1, s0, s1, tot) => {
+    const d = a0 != null && a1 != null ? a1 - a0 : null, dp = d != null && a0 ? d / a0 * 100 : null, sh = s1 ? a1 / s1 * 100 : null, sh0 = s0 && a0 != null ? a0 / s0 * 100 : null;
+    const pd = p0 != null && p1 != null ? p1 - p0 : null;
+    return `<tr${tot ? ' class="tot"' : ''}><td class="nm">${tot ? `<b>${hEsc(g)}</b>` : `<i class="dot" style="background:${col.get(g)}"></i><b>${hEsc(g)}</b>`}</td><td class="n">${f1(a0)}</td><td class="n">${f1(a1)}</td><td class="n ${sgn(d)}">${f1(d)}</td><td class="n ${sgn(dp)}">${fp(dp)}</td>`
+      + `<td class="n">${tot ? '100' + pctSfx() : fp(sh)}</td><td class="n ${tot ? '' : sgn(sh - sh0)}">${tot || sh == null || sh0 == null ? '–' : fpp(sh - sh0)}</td><td class="n">${f0(p1)}</td><td class="n ${sgn(pd)}">${pd == null ? '–' : (pd < 0 ? '−' : '+') + num(Math.abs(pd), 0)}</td><td class="n">${a1 != null && p1 ? num(a1 * 1e6 / p1, 0) : '–'}</td></tr>`; };
+  const gs = [...col.keys()].filter(g => A1.o[g] != null || A0.o[g] != null);
+  $('myTbl').innerHTML = `<thead><tr>${t.yH.map((h, i) => `<th${i ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
+    + gs.map(g => row(g, A0.o[g], A1.o[g], P0.o[g], P1.o[g], A0.s, A1.s)).join('')
+    + row(t.tot, A0.s, A1.s, P0.s || null, P1.s || null, A0.s, A1.s, true) + '</tbody>';
+  $('myN').textContent = t.yN(S.m[i0], S.m[i1]);
+}
+$('msSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; MSK = b.dataset.k; renderMs(); });
+
+function renderBs() {
+  const T0 = T(), b = T0.bs;
+  $('bsT').textContent = b.t; $('bsL').textContent = b.l; $('bsMT').textContent = b.mT; $('bsGT').textContent = b.gT; $('bsN').textContent = b.n;
+  const mk = [], G = new Map();
+  ['LT', 'LV', 'EE'].forEach(c => ['II', 'III'].forEach(pl => { const S = shOf(c, pl); if (!S || !S.m.length) return;
+    const [i0, i1] = ytdIdx(S), A1 = shAt(S, i1, 'na'), A0 = i0 >= 0 ? shAt(S, i0, 'na') : null, P1 = shAt(S, i1, 'inv');
+    const big = Object.entries(A1.o).sort((x, y) => y[1] - x[1])[0];
+    mk.push({ k: `${c}-${pl}`, lab: `${T0.c[c]}, ${T0.pl(pl)}`, d: S.m[i1], na: A1.s, d0: A0 ? A1.s - A0.s : null, dp: A0 && A0.s ? (A1.s / A0.s - 1) * 100 : null, inv: P1.s || null, n: Object.keys(A1.o).length, big, tot: A1.s });
+    Object.entries(A1.o).forEach(([g, v]) => { if (!G.has(g)) G.set(g, {}); G.get(g)[`${c}-${pl}`] = v; }); }));
+  const f1 = v => v == null ? '–' : num(v, 1);
+  const sum = mk.reduce((s, r) => s + r.na, 0), sd = mk.every(r => r.d0 != null) ? mk.reduce((s, r) => s + r.d0, 0) : null;
+  $('bsM').innerHTML = `<thead><tr>${b.mH.map((h, i) => `<th${i > 1 ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
+    + mk.map(r => `<tr><td class="nm"><b>${hEsc(r.lab)}</b></td><td>${r.d}</td><td class="n">${f1(r.na)}</td><td class="n ${sgn(r.d0)}">${f1(r.d0)}</td><td class="n ${sgn(r.dp)}">${r.dp == null ? '–' : pctPlain(r.dp)}</td><td class="n">${r.inv ? num(r.inv, 0) : '–'}</td><td class="n">${r.n}</td><td class="nm">${r.big ? `${hEsc(r.big[0])} (${pctPlain(r.big[1] / r.tot * 100)})` : '–'}</td></tr>`).join('')
+    + `<tr class="tot"><td class="nm"><b>${b.all}</b></td><td></td><td class="n"><b>${f1(sum)}</b></td><td class="n ${sgn(sd)}">${f1(sd)}</td><td class="n ${sgn(sd)}">${sd == null ? '–' : pctPlain(sd / (sum - sd) * 100)}</td><td></td><td class="n">${G.size}</td><td></td></tr></tbody>`;
+  $('bsSeg').innerHTML = ['na', 'sh'].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === BSK}">${b.k[k]}</button>`).join('');
+  const rows = [...G.entries()].map(([g, o]) => ({ g, o, s: Object.values(o).reduce((a, v) => a + v, 0) })).sort((x, y) => y.s - x.s);
+  const cell = (r, m) => { const v = r.o[m.k]; return `<td class="n">${v == null ? '–' : BSK === 'na' ? num(v, 1) : pctPlain(v / m.tot * 100)}</td>`; };
+  $('bsG').innerHTML = `<thead><tr><th>${T0.mg.h.m}</th>${mk.map(m => `<th class="n">${m.k.replace('-', ' ')}</th>`).join('')}<th class="n">${b.tot}</th></tr></thead><tbody>`
+    + rows.map(r => `<tr><td class="nm"><b>${hEsc(r.g)}</b></td>${mk.map(m => cell(r, m)).join('')}<td class="n"><b>${BSK === 'na' ? num(r.s, 1) : pctPlain(r.s / sum * 100)}</b></td></tr>`).join('') + '</tbody>';
+}
+$('bsSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; BSK = b.dataset.k; renderBs(); });
 
 /* ---------- Excel: fondai ir vertės su formulėmis ---------- */
 async function excel() {
@@ -669,7 +768,7 @@ function render() {
   BXM.c = CR.c; BXM.pl = CR.pl;
   document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  if (CR.c === 'X') { renderX(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderTop(); if (CR.pl === 'II') renderJr(); }
+  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderTop(); if (CR.pl === 'II') renderJr(); }
   $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
   const ks = modeTabs();
@@ -693,4 +792,4 @@ function fromHash() {                                   // #c=LV&pl=III&tab=rs (
 renderHeader('baltic', render);
 { const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, false); }
 addEventListener('hashchange', () => { const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, true); });
-addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else { renderOv(); if (CR.pl === 'II' && TAB_CUR === 'jr') renderJr(); } }, 200); });
+addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else { renderOv(); if (TAB_CUR === 'mg') renderMs(); if (CR.pl === 'II' && TAB_CUR === 'jr') renderJr(); } }, 200); });

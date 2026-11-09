@@ -354,7 +354,7 @@ const BXM = { c: 'LT', pl: 'II' };
 const bxPage = (c, pl) => `baltic_${c.toLowerCase()}${pl === 'III' ? '3' : ''}`;
 function bxTabs(c, pl) {
   const b = (k, lt, en) => ['baltic', k, lt, en, `c=${c}&pl=${pl}`];
-  if (c === 'X') return [b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
+  if (c === 'X') return [b('bs', 'Baltijos rinka', 'Baltic market'), b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
   const pp = bxPage(c, pl), lt2 = c === 'LT' && pl === 'II';
   const mk = [[pp, 'market', 'Visa rinka', 'Whole market']];   // ir LT III – valdytojų vaizdu (2026-11-06)
   return [b('ov', 'Apžvalga', 'Overview'), ...mk, b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],

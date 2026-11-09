@@ -15,6 +15,8 @@
   .bx h2 { margin-top: 0; }
   .bx > [data-tab] > h2.sec { margin: 0 0 -8px; }
   .bx > [data-tab] > .lead { margin: 0; color: var(--text-2); }
+  i.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .bt tr.tot td { border-top: 2px solid var(--border, #ccc); font-weight: 600; }
   .kp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .kp .card h3 { margin: 0 0 6px; font-size: 15px; display: flex; gap: 8px; align-items: center; }
   .kp .card p { margin: 4px 0; font-size: 13.5px; color: var(--text-2); }
@@ -90,6 +92,8 @@
       <p class="lead" id="mgL"></p>
       <section class="card"><div class="seg" id="mgSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="mgTbl"></table></div><p class="note" id="mgN"></p></section>
       <section class="card"><h2 id="mgShT"></h2><div id="mgSh"></div></section>
+      <section class="card"><h2 id="msT"></h2><p class="note" id="msL" style="margin-top:0"></p><div class="seg" id="msSeg" role="group"></div><div class="chart" id="msCh" style="margin-top:10px"></div><p class="note" id="msN"></p></section>
+      <section class="card"><h2 id="myT"></h2><div class="scroll"><table class="bt" id="myTbl"></table></div><p class="note" id="myN"></p></section>
       <h2 class="sec" id="mgBrT" style="margin-top:6px"></h2>
       <div class="topg" id="mgBr"></div>
     </div>
@@ -123,6 +127,12 @@
       <section class="card"><div class="sel" id="cmSel"></div><div class="chart" id="cmCh"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="cmTbl"></table></div><p class="note" id="cmN"></p></section>
       <section class="card" id="cmTopS"><h2 id="cmTopT"></h2><p class="note" id="cmTopL"></p><div class="topg" id="cmTopG"></div></section>
     </div>
+    <div data-tab="bs">
+      <h2 class="sec" id="bsT"></h2>
+      <p class="lead" id="bsL"></p>
+      <section class="card"><h2 id="bsMT"></h2><div class="scroll"><table class="bt" id="bsM"></table></div></section>
+      <section class="card"><h2 id="bsGT"></h2><div class="seg" id="bsSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="bsG"></table></div><p class="note" id="bsN"></p></section>
+    </div>
     <div data-tab="rf">
       <h2 class="sec" id="rfT"></h2>
       <p class="lead" id="rfL"></p>
@@ -135,10 +145,10 @@
   <footer id="foot"></footer>
 </div>
 <div id="actions"><button class="btn" type="button" id="xlBtn"></button></div>
-<script src="data.js?v=f29b12f1"></script>
-<script src="common.js?v=e54bbceb"></script>
-<script src="data_baltic.js?v=599e366a"></script>
+<script src="data.js?v=6b285438"></script>
+<script src="common.js?v=2e7b97f2"></script>
+<script src="data_baltic.js?v=77ff781f"></script>
 <script src="bxjr.js?v=d7f785b9"></script>
-<script src="baltic.js?v=452ce2ce"></script>
+<script src="baltic.js?v=166d931d"></script>
 </body>
 </html>
