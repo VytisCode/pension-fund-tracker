@@ -80,7 +80,7 @@ def _matrix(wb, wm, helper, sel, cur, date, S, tabs):
     put(wm, 4, hc + 1, "T", "hdr")
     put(wm, 4, hc + 2, "A", "hdr")
     put(wm, 4, hc + 3, "B", "hdr")
-    put(wm, 4, hc + 4, "Obl. riba", "hdr")
+    put(wm, 4, hc + 4, "Strat. obl. dalis", "hdr")
     for k, x in enumerate(helper):
         rr = 5 + k
         put(wm, rr, hc, x["name"], "in")
@@ -167,7 +167,7 @@ def write_proof(path, prov, date, an, rows_by_date, funds_cfg, alts, amap, la, l
     for lbl, txt, url in (("LB pensijų fondų portfeliai (ketvirčio)", "Lapai „Skolos VP“ (obligacijos) ir „KIS“ (fondai) → lapas „Pozicijos“", LB_PF_URL),
                           ("LB pensijų fondų veiklos rodikliai (ketvirčio)", "Grynieji aktyvai, dalyviai, rizikingų investicijų dalis → lapas „Fondai“", LB_RES_URL),
                           ("Alternatyvų sąrašas", "Projekto konfigūracija data/liq_alternatives.csv (kiekviena eilutė su šaltiniu ir peržiūros data) → lapas „Alternatyvų sąrašas“", None),
-                          ("Fondų obligacijų ribos", "SEB – Vyčio likvidumo matrica 2026-07-30 („Obligacijų dalis taisyklėse“); kiti valdytojai – 100 − LB „rizikingų investicijų dalis“", None)):
+                          ("Fondų strateginės obligacijų dalys", "SEB – Vyčio likvidumo matrica 2026-07-30 („Obligacijų dalis taisyklėse“); kiti valdytojai – 100 − LB „rizikingų investicijų dalis“", None)):
         r += 1
         put(ws, r, 1, lbl)
         c = put(ws, r, 3, txt + (f" – {url}" if url else ""))
@@ -180,7 +180,7 @@ def write_proof(path, prov, date, an, rows_by_date, funds_cfg, alts, amap, la, l
                  ("Matrica", "Jautrumo matrica: pasirinkite fondą, rodiklį ir formulę (mėlyni langeliai)"),
                  ("Jautrumas", "Kiekvieno fondo ribos prie 0 % ir −10 % rinkos, 50 % / −10 % scenarijus"),
                  ("Skaičiavimai", "Visi fondai × ketvirčiai: kiekviena reikšmė – formulė iš „Pozicijos“ ir „Fondai“"),
-                 ("Fondai", "LB grynieji aktyvai, dalyviai, obligacijų ribos (pradiniai duomenys)"),
+                 ("Fondai", "LB grynieji aktyvai, dalyviai, strateginės obligacijų dalys (pradiniai duomenys)"),
                  ("Pozicijos", "Kiekviena LB obligacijų ir fondų (KIS) pozicija su požymiais (pradiniai duomenys)"),
                  ("Alternatyvų sąrašas", "Kurios pozicijos laikomos alternatyviomis ir kodėl"),
                  ("Išimtys", "Duomenų patikros"), ("Metodika", "Formulės ir prielaidos"), ("Laiškas A / B", "Laiško tekstai")):
@@ -226,7 +226,7 @@ def write_proof(path, prov, date, an, rows_by_date, funds_cfg, alts, amap, la, l
 
     # ---------- Fondai ----------
     wf = wb.create_sheet("Fondai")
-    title(wf, "Fondų duomenys", f"LB pensijų fondų veiklos rodikliai ({LB_RES_URL}); obligacijų ribos – data/liq_funds.csv arba LB rizikingų dalis")
+    title(wf, "Fondų duomenys", f"LB pensijų fondų veiklos rodikliai ({LB_RES_URL}); strateginės obligacijų dalys – data/liq_funds.csv arba LB rizikingų dalis")
     head(wf, 5, ["Ketvirtis", "Fondo kodas", "Fondas", "Pakopa", "Grynieji aktyvai, EUR", "Aktyvų šaltinis", "Dalyviai", "Dalyviai prieš 2 ketv.",
                  "Obligacijų dalis taisyklėse, %", "Ribos šaltinis", "Alternatyvų analizė (1)", "Baltijos analizė (1)"],
          [11, 13, 30, 8, 16, 26, 11, 12, 12, 44, 11, 11])
@@ -257,7 +257,7 @@ def write_proof(path, prov, date, an, rows_by_date, funds_cfg, alts, amap, la, l
           "Išėjimo riba = 1 − alternatyvų dalis ÷ 30 % (tik II pakopa). Scenarijus: A ÷ (A + (T − A − x·T)·(1 − m)); kaip 2026-07-30 Excel: A ÷ (A + (T − A)·(1 − x − m)).")
     cols = ["Ketvirtis", "Fondo kodas", "Fondas", "Pakopa", "Fondo turtas (T), EUR", "Alternatyvos (A), EUR", "Alternatyvų dalis", "30 % riba taikoma",
             "Gali išeiti iki 30 %", "Gali išeiti, EUR", "Baltijos obligacijos (B), EUR", "Visos obligacijos, EUR", "Baltijos obligacijų dalis",
-            "Fondo obligacijų riba", "Gali išeiti iki obligacijų ribos", "Gali išeiti, EUR", "Dalyvių pokytis per 2 ketv.",
+            "Strateginė obligacijų dalis", "Gali išeiti iki strateginės dalies", "Gali išeiti, EUR", "Dalyvių pokytis per 2 ketv.",
             "Scenarijus x / m (pataisyta)", "Scenarijus x / m (kaip 2026-07-30 Excel)", "Riba prie −10 % rinkos (tiksli)",
             "Ankstesnio ketv. A, EUR", "Ankstesnė alternatyvų dalis", "Dalies pokytis", "iš jo dėl fondo turto pokyčio", "iš jo dėl alternatyvų vertės",
             "Ankstesnė išėjimo riba", "Fondo turto pokytis", "Ankstesnė Baltijos obl. dalis"]
@@ -401,9 +401,9 @@ def write_proof(path, prov, date, an, rows_by_date, funds_cfg, alts, amap, la, l
     # ---------- 4 Baltijos ----------
     w4 = wb.create_sheet("4 Baltijos obligacijos")
     tabs["bal"] = w4.title
-    title(w4, f"4 lentelė. Baltijos šalių obligacijos ir fondo obligacijų riba, {date}", "lapas „Skaičiavimai“ (LB „Skolos VP“, emitento šalis LT/LV/EE)",
-          "Fondai, kurių obligacijų dalis taisyklėse ≤ 5 % (rizikingi, akcijos iki 100 %), neįtraukti – ten tai ne riba.")
-    head(w4, 5, ["Fondas", "Pakopa", "Baltijos obligacijos, EUR", "Dalis fonde", "Fondo obligacijų riba", "Išnaudota ribos", "Gali išeiti iki ribos", "Gali išeiti, EUR"],
+    title(w4, f"4 lentelė. Baltijos šalių obligacijos ir strateginė obligacijų dalis, {date}", "lapas „Skaičiavimai“ (LB „Skolos VP“, emitento šalis LT/LV/EE)",
+          "Fondai, kurių obligacijų dalis taisyklėse ≤ 5 % (rizikingi, akcijos iki 100 %), neįtraukti. II pakopoje obligacijų dalis – strateginė, ne riba: viršijus – nukrypimas nuo strategijos, ne pažeidimas.")
+    head(w4, 5, ["Fondas", "Pakopa", "Baltijos obligacijos, EUR", "Dalis fonde", "Strateginė obligacijų dalis", "Užpildyta strateginės dalies", "Gali išeiti iki strateginės dalies", "Gali išeiti, EUR"],
          [34, 8, 16, 12, 12, 12, 14, 16])
     for k, x in enumerate(bal):
         rr = 6 + k
@@ -482,8 +482,8 @@ def write_proof(path, prov, date, an, rows_by_date, funds_cfg, alts, amap, la, l
                        ("Buferis iki 30 %, p. p.", f"=(Riba30-{S('R', date, sel['code'])})*100", "0.00", "Riba30 − scenarijus"),
                        ("Tas pats kaip 2026-07-30 Excel formule", f"={S('S', date, sel['code'])}", PCT, "Skaičiavimai, stulpelis S")]
     if bal:
-        rows_s += [("Arčiausiai Baltijos obligacijų ribos – fondas", "='4 Baltijos obligacijos'!A6", None, "4 lentelė, pirma eilutė"),
-                   ("Jo išėjimų riba iki obligacijų ribos", "='4 Baltijos obligacijos'!G6", PCT, "4 lentelė, stulpelis G")]
+        rows_s += [("Arčiausiai strateginės obligacijų dalies – fondas", "='4 Baltijos obligacijos'!A6", None, "4 lentelė, pirma eilutė"),
+                   ("Gali išeiti iki strateginės obligacijų dalies", "='4 Baltijos obligacijos'!G6", PCT, "4 lentelė, stulpelis G")]
     for k, (lbl, fx, fm_, where) in enumerate(rows_s, 6):
         put(wsu, k, 1, lbl, "t")
         put(wsu, k, 2, fx, "res", fm_)

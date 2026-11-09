@@ -55,9 +55,9 @@
       tot: g => { const t = g.reduce((a, f) => a + f.aum, 0); return t ? g.reduce((a, f) => a + f.alt_xe, 0) / t : null; } },
     as: { t: 'Alternatyvų dalis portfelyje', ok: f => f.in_alt, v: f => f.alt_sh, d: v => LIM - v, g: v => 1 - v / LIM, e: f => f.alt,
       tot: g => { const t = g.reduce((a, f) => a + f.aum, 0); return t ? g.reduce((a, f) => a + f.alt, 0) / t : null; } },
-    bx: { t: 'Baltijos obligacijų išėjimų riba – kiek turto gali išeiti iki fondo obligacijų ribos', ok: f => f.in_bal && f.lim && f.bal > 0, v: f => f.bal_x, d: v => v, g: v => v, e: f => f.bal_xe,
+    bx: { t: 'Baltijos obligacijų išėjimų riba – kiek turto gali išeiti iki strateginės obligacijų dalies', ok: f => f.in_bal && f.lim && f.bal > 0, v: f => f.bal_x, d: v => v, g: v => v, e: f => f.bal_xe,
       tot: g => { const t = g.reduce((a, f) => a + f.aum, 0); return t ? g.reduce((a, f) => a + f.bal_xe, 0) / t : null; } },
-    bu: { t: 'Baltijos obligacijos – kiek fondo obligacijų ribos jau išnaudota', ok: f => f.in_bal && f.lim && f.bal > 0, v: f => f.bal_sh / f.lim, d: v => 1 - v, g: v => 1 - v, e: f => f.bal,
+    bu: { t: 'Baltijos obligacijos – kiek strateginės obligacijų dalies jau užpildyta', ok: f => f.in_bal && f.lim && f.bal > 0, v: f => f.bal_sh / f.lim, d: v => 1 - v, g: v => 1 - v, e: f => f.bal,
       tot: g => { const t = g.reduce((a, f) => a + f.lim * f.aum, 0); return t ? g.reduce((a, f) => a + f.bal, 0) / t : null; } },
   };
   // Excel 3 spalvų skalė (raudona → geltona → žalia), vientisos spalvos – kad kopijuojant išliktų
@@ -89,7 +89,7 @@
     const cell = (f, p) => {
       if (!f || !M.ok(f)) return '<td>–</td>';
       const v = M.v(f);
-      return `<td style="background:${heat(M.g(v))}" title="${h(`${f.name} · ${p.date}\nAUM ${me(f.aum)}\n${st.tm === 'ax' ? `Gali išeiti ${me(f.alt_xe)}; alternatyvos ${me(f.alt)} (${pc(f.alt_sh)})` : st.tm === 'as' ? `Alternatyvos ${me(f.alt)}; gali išeiti ${pc(f.alt_x)}` : `Baltijos obl. ${me(f.bal)} (${pc(f.bal_sh)}), fondo riba ${pc(f.lim, 1)}; gali išeiti ${me(f.bal_xe)}`}`)}">${pc(v, 1)}</td>`;
+      return `<td style="background:${heat(M.g(v))}" title="${h(`${f.name} · ${p.date}\nAUM ${me(f.aum)}\n${st.tm === 'ax' ? `Gali išeiti ${me(f.alt_xe)}; alternatyvos ${me(f.alt)} (${pc(f.alt_sh)})` : st.tm === 'as' ? `Alternatyvos ${me(f.alt)}; gali išeiti ${pc(f.alt_x)}` : `Baltijos obl. ${me(f.bal)} (${pc(f.bal_sh)}), strateginė obl. dalis ${pc(f.lim, 1)}; gali išeiti ${me(f.bal_xe)}`}`)}">${pc(v, 1)}</td>`;
     };
     const line = (lbl, vals, bold) => {
       const ds = vals.map(v => v == null ? null : M.d(v)), cur = vals[n0 - 1], q = vals[n0 - 2], y = vals[yi];
@@ -117,7 +117,7 @@
     const step = top > .6 ? .2 : .05;
     for (let g = 0; g <= top + 1e-9; g += step) svg += `<line x1="${xs(g)}" x2="${xs(g)}" y1="${pt - 6}" y2="${H0 - 30}" stroke="currentColor" stroke-opacity=".12"/><text x="${xs(g)}" y="${H0 - 16}" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">${Math.round(g * 100)} %</text>`;
     const lim = st.tm === 'as' ? LIM : st.tm === 'bu' ? 1 : 0;
-    svg += `<line x1="${xs(lim)}" x2="${xs(lim)}" y1="${pt - 10}" y2="${H0 - 30}" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="5 4"/><text x="${xs(lim) + 4}" y="${pt - 12}" font-size="11" fill="#c0392b" font-weight="700">${lim ? 'riba' : 'riba (0 % – nebėra kam išeiti)'}</text>`;
+    svg += `<line x1="${xs(lim)}" x2="${xs(lim)}" y1="${pt - 10}" y2="${H0 - 30}" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="5 4"/><text x="${xs(lim) + 4}" y="${pt - 12}" font-size="11" fill="#c0392b" font-weight="700">${st.tm[0] === 'b' ? (lim ? 'strateginė dalis' : 'strateginė dalis pasiekta (0 %)') : (lim ? 'riba' : 'riba (0 % – nebėra kam išeiti)')}</text>`;
     bars.forEach((b, k) => {
       const y = pt + k * (bh + gap) + (b.tot ? 6 : 0), col = heat(M.g(b.v)).split(';')[0], dy = b.y != null ? b.v - b.y : null;
       if (b.tot && !bars[k - 1].tot) svg += `<line x1="8" x2="${W - 8}" y1="${y - gap / 2 - 3}" y2="${y - gap / 2 - 3}" stroke="currentColor" stroke-opacity=".25"/>`;
@@ -129,7 +129,7 @@
     });
     svg += '</svg>';
     const expl = { ax: `100 % – riba toli, 0 % – alternatyvos jau sudaro ${pc(LIM, 0)}. Pvz. 80 % reiškia: išėjus 80 % fondo turto (alternatyvos neparduodamos), jų dalis pasiektų ${pc(LIM, 0)}.`,
-      as: `Raudona linija – ${pc(LIM, 0)} riba.`, bx: '100 % – riba toli, 0 % – Baltijos obligacijos jau pasiekė fondo obligacijų ribą.', bu: '100 % – Baltijos obligacijų dalis lygi fondo obligacijų ribai.' }[st.tm];
+      as: `Raudona linija – ${pc(LIM, 0)} riba.`, bx: '100 % – riba toli, 0 % – Baltijos obligacijos jau pasiekė strateginę obligacijų dalį (nukrypimas nuo strategijos, ne pažeidimas).', bu: '100 % – Baltijos obligacijų dalis lygi strateginei obligacijų daliai.' }[st.tm];
     return o + `<div class="chart" id="liqTC">${svg}</div><div class="legend"><span><i style="background:#9bc97a"></i>${qn(PS[n0 - 1].date)} (spalva – kaip arti ribos)</span><span>│ prieš ketvirtį (${qn(PS[Math.max(0, n0 - 2)].date)})</span><span>○ prieš metus (${qn(PS[yi].date)})</span><span style="color:#c0392b">┆ riba</span></div>` + tbl(head, body.concat(tots))
       + `<p class="note">${expl} Spalva – tolydi skalė: ${REL ? `kontrasto režimas – raudoniausias langelis yra arčiausiai ribos šioje lentelėje, žaliausias – toliausiai; spalvos rodo skirtumus, ne absoliutų pavojų` : 'žalia – toli nuo ribos, geltona – pusiaukelėje, raudona – prie ribos'}. „Riba … tempu“ – po kiek ketvirčių riba būtų pasiekta, jei atstumas iki jos mažėtų tokiu pačiu greičiu kaip per paskutinį ketvirtį arba vidutiniškai per paskutinius ${Math.min(4, n0 - 1)} ketv. (tiesinė ekstrapoliacija, ne prognozė). Užvedus pelę ant langelio – eurai ir AUM.</p></section>`;
   }
@@ -205,7 +205,7 @@
     if (!byC[st.bf] || !bal.includes(byC[st.bf])) st.bf = p.bal_sel || (bal[0] && bal[0].code);
     const sel = byC[p.sel];
     let o = `<h2 class="sec">${h(st.m)} fondų likvidumas: kiek turto gali išeiti iki ribų</h2>
-      <p class="lead">Kiek turto gali išeiti ir kiek gali kristi rinkos, kol <b>alternatyvių investicijų</b> dalis pasiekia ${pc(LIM, 0)} ribą, o <b>Baltijos šalių obligacijų</b> dalis – fondo taisyklėse nustatytą obligacijų dalį.
+      <p class="lead">Kiek turto gali išeiti ir kiek gali kristi rinkos, kol <b>alternatyvių investicijų</b> dalis pasiekia ${pc(LIM, 0)} ribą, o <b>Baltijos šalių obligacijų</b> dalis – fondo taisyklėse nustatytą strateginę obligacijų dalį (II pakopoje tai ne riba: viršijus – nukrypimas nuo strategijos, ne pažeidimas).
       Tai ne prognozė, o konservatyvus testas: nelikvidi dalis laikoma nekintančia, išėjimai ir rinkų kritimas mažina tik likusį turtą. Neįtraukti likę neišmokėti įsipareigojimai (commitment) – jų duomenų nėra.</p>
       <div class="bar pfbar"><label>Valdytojas <select id="liqG">${MGRS.map(m => `<option${m === st.m ? ' selected' : ''}>${h(m)}</option>`).join('')}</select></label><label>Ketvirtis <select id="liqD">${P.map((x, i) => `<option value="${i}"${i === st.d ? ' selected' : ''}>${x.date}</option>`).join('')}</select></label>
       <label>Matricos formulė <select id="liqM"><option value="fix"${XL ? '' : ' selected'}>Pataisyta (pagrindinė)</option><option value="excel"${XL ? ' selected' : ''}>Kaip 2026-07-30 Excel faile</option></select></label>
@@ -247,18 +247,18 @@
     }
 
     // Baltijos obligacijos
-    o += `<section class="card" style="margin-top:12px"><b>Baltijos šalių obligacijos ir fondo obligacijų riba</b>`
-      + tbl(['Fondas', 'Pakopa', 'AUM', 'Baltijos obligacijos, €', 'Baltijos obligacijos, %', 'Fondo obligacijų riba', 'Išėjimų riba, %', 'Išėjimų riba, €', 'Visos obligacijos, €', 'Prie 0 %', 'Prie −10 %', '50 % / −10 %'],
+    o += `<section class="card" style="margin-top:12px"><b>Baltijos šalių obligacijos ir strateginė obligacijų dalis</b>`
+      + tbl(['Fondas', 'Pakopa', 'AUM', 'Baltijos obligacijos, €', 'Baltijos obligacijos, %', 'Strateginė obligacijų dalis', 'Gali išeiti iki jos, %', 'Gali išeiti iki jos, €', 'Visos obligacijos, €', 'Prie 0 %', 'Prie −10 %', '50 % / −10 %'],
         F.filter(f => f.in_bal).map(f => {
           const ok = f.lim, v = ok ? share(f.bal, f.aum, .5, .1, mode) : null;
           return `<tr><td class="l">${h(f.name)}</td><td>${f.pillar}</td><td>${eu(f.aum)}</td><td${pk('bal', f)}>${eu(f.bal)}</td><td${pk('bal', f, ok ? ` style="background:${cBal(f.bal_sh, f.lim)}"` : '')}>${pc(f.bal_sh)}</td><td>${pc(f.lim, 1)}</td><td>${pc(f.bal_x)}</td><td>${eu(f.bal_xe)}</td><td>${eu(f.bonds)}</td>
             <td>${ok && f.bal ? gx(hit(f.bal, f.aum, f.lim, 0, mode)) : '–'}</td><td>${ok && f.bal ? gx(hit(f.bal, f.aum, f.lim, .1, mode)) : '–'}</td><td${v != null ? ` style="background:${cBal(v, f.lim)}"` : ''}>${pc(v)}</td></tr>`;
         }).concat(['II', 'III'].filter(pl => p.bal_tot && p.bal_tot[pl]).map(pl => { const g = p.bal_tot[pl];
           return tr([`Total ${pl} pakopa`, '', eu(g.aum), eu(g.bal), pc(g.bal / g.aum), '', pc(g.xe / g.aum), eu(g.xe), '', '', '', ''], 1); })))
-      + '<p class="note">Įtraukta: LB „Skolos VP“ pozicijos, kurių emitento šalis LT, LV ar EE. Neįtraukta: akcijos, fondai, pinigai, ne Baltijos obligacijos. Išėjimų riba = 1 − Baltijos obligacijų dalis ÷ fondo riba. Spalva – pagal fondo ribą: žalia &lt; 90 % ribos, geltona 90–100 %, raudona ≥ ribos.</p>';
+      + '<p class="note">Įtraukta: LB „Skolos VP“ pozicijos, kurių emitento šalis LT, LV ar EE. Neįtraukta: akcijos, fondai, pinigai, ne Baltijos obligacijos. Gali išeiti = 1 − Baltijos obligacijų dalis ÷ strateginė obligacijų dalis. Spalva: žalia &lt; 90 % strateginės dalies, geltona 90–100 %, raudona ≥ jos. Strateginė dalis nėra riba – ją viršijus fondas nukrypsta nuo strategijos, bet nepažeidžia reikalavimų. Gyvenimo ciklo fondai nuo 1975 m. grupės kasmet „sensta“: kai vidutiniam dalyviui (teoriškai) sukanka 47 metai, rizikingų aktyvų dalis pradedama mažinti taisyklių proporcijomis (kiekvienas valdytojas – savaip), todėl strateginė obligacijų dalis kasmet didėja; jaunesnių grupių fondai rizikos dar nemažina.</p>';
     const bf = byC[st.bf];
     if (bf) o += `<div class="bar pfbar"><label>Matrica fondui ${fsel('liqBF', bal, st.bf)}</label></div>
-      <p class="meta">${h(bf.name)}: Baltijos obligacijų dalis (riba ${pc(bf.lim, 1)}), B = ${eu(bf.bal)}, AUM = ${eu(bf.aum)}. Numatytasis – fondas arčiausiai ribos.</p>`
+      <p class="meta">${h(bf.name)}: Baltijos obligacijų dalis (strateginė dalis ${pc(bf.lim, 1)}), B = ${eu(bf.bal)}, AUM = ${eu(bf.aum)}. Numatytasis – fondas arčiausiai strateginės dalies.</p>`
       + matrix(bf.bal, bf.aum, v => cBal(v, bf.lim), mode)
       + det('Baltijos obligacijų pozicijos', !F.some(f => f.balpos.length) ? '<p class="note">Pozicijų sąrašas – tik 2 paskutiniams ketvirčiams.</p>' : tbl(['Fondas', 'Pozicija', 'Vertė', 'Dalis'], F.filter(f => f.in_bal).flatMap(f => f.balpos.map(([n, v]) => tr([h(f.name), h(n), eu(v), pc(v / f.aum)])))));
     o += '</section>';
@@ -307,9 +307,9 @@
       + (p.la.length ? det('Laiško projektas A – išsamesnis', letter('liqLA', p.la)) + det('Laiško projektas B – trumpesnis vadovybinis', letter('liqLB', p.lb))
         : `<p class="note">Laiško projektai – 2 paskutiniams ketvirčiams${alt.length ? '' : ' ir tik valdytojams, turintiems alternatyvių investicijų'}.</p>`)
       + det('Metodika ir „įskaitant likusius įsipareigojimus“ logika', `<pre class="liqp">${h(LIQ.method.join('\n'))}</pre>`)
-      + det('Konfigūracija: alternatyvų sąrašas ir obligacijų ribos',
+      + det('Konfigūracija: alternatyvų sąrašas ir strateginės obligacijų dalys',
         tbl(['Pavadinimas', 'Alternatyva?', 'Rūšis', 'Šaltinis', 'Peržiūrėta'], LIQ.alts.map(a => tr([h(a.name), a.is_alt === '1' ? 'taip' : 'NE', h(a.cls), h(a.src), h(a.rev)])))
-        + tbl(['Fondas', 'Obligacijų riba, %', 'Šaltinis', 'Peržiūrėta'], MG[st.m].limits.map(a => tr([h(a.name), a.lim == null ? 'nėra (LB: rizikingų iki 100 %)' : (Math.round(a.lim * 10) / 10).toString().replace('.', ','), h(a.src), h(a.rev)]))))
+        + tbl(['Fondas', 'Strateginė obligacijų dalis, %', 'Šaltinis', 'Peržiūrėta'], MG[st.m].limits.map(a => tr([h(a.name), a.lim == null ? 'nėra (LB: rizikingų iki 100 %)' : (Math.round(a.lim * 10) / 10).toString().replace('.', ','), h(a.src), h(a.rev)]))))
       + '<p class="note">Excel su visomis lentelėmis galite atsisiųsti bet kada – mygtukas „⤓ Excel“ viršuje (2 paskutiniai ketvirčiai). Be to, kai LB paskelbia naujus portfelius, Excel ir laiškai A/B automatiškai ateina su vakariniu laišku. Laiškas kolegoms automatiškai nesiunčiamas – jį siunčiate patys.</p></section>';
     box.innerHTML = o;
     const tc = box.querySelector('#liqTC'); if (tc) tc._legend = [{ l: 'dabar', c: '#9bc97a' }, { l: 'prieš ketvirtį (│)', c: '#333' }, { l: 'prieš metus (○)', c: '#333' }, { l: 'riba', c: '#c0392b', d: '5 4' }];

@@ -9,7 +9,7 @@ Tai ne prognozė, o konservatyvus matematinis testas: nelikvidi dalis laikoma ne
 kritimas mažina tik likusį (likvidų) turtą.
 
 Šaltiniai: data/portfolios.csv (LB portfeliai, portfolios.py), data/lb_results_history.csv (grynieji aktyvai,
-dalyviai). Konfigūracija (su šaltiniu ir peržiūros data): data/liq_funds.csv (fondai, obligacijų ribos),
+dalyviai). Konfigūracija (su šaltiniu ir peržiūros data): data/liq_funds.csv (fondai, strateginės obligacijų dalys),
 data/liq_alternatives.csv (kontroliuojamas alternatyvų sąrašas; is_alt=0 – patvirtinta, kad NE alternatyva). Nauji ar neaiškūs instrumentai į skaičiavimą
 NEįtraukiami – jie rodomi išimčių sąraše žmogaus peržiūrai.
 
@@ -306,7 +306,7 @@ def analyse(date, rows, funds, amap, nav, part, all_dates, risky=None):
         soft = lim is not None and lim <= SOFT_BOND_LIMIT
         lim = lim / 100 if lim is not None and not soft else None
         if f["baltic"] == "1" and not lim and not soft:
-            exc.append(("Nėra obligacijų ribos", code, f["name"], None, "papildyti data/liq_funds.csv"))
+            exc.append(("Nėra strateginės obligacijų dalies", code, f["name"], None, "papildyti data/liq_funds.csv"))
         p_now, p_old = part.get((date, code)), part.get((d2, code)) if d2 else None
         ex_p, ex_e = exit_limit(d["alt"], t, ALT_LIMIT)
         bx_p, bx_e = exit_limit(d["bal"], t, lim) if lim else (None, None)
@@ -414,7 +414,7 @@ def compare(cur, prev):
         ra = prev["res"].get(r["code"])
         add(f"Baltijos obligacijų išėjimų riba: {r['name']}", ra and ra["bal_x"], r["bal_x"], pct, d_pp)
     if a.get("bal_min") and b.get("bal_min"):
-        rows.append(("Arčiausiai obligacijų ribos esantis fondas", a["bal_min"]["name"], b["bal_min"]["name"],
+        rows.append(("Arčiausiai strateginės obligacijų dalies esantis fondas", a["bal_min"]["name"], b["bal_min"]["name"],
                      "nepasikeitė" if a["bal_min"]["code"] == b["bal_min"]["code"] else "PASIKEITĖ"))
     return rows
 
@@ -537,12 +537,12 @@ def letter_tables(cur, prev, ref, an=None):
     top = {r["code"] for r in s.get("bal_top", [])}
     bm = s.get("bal_min")
     if bal:
-        T["bal"] = dict(title=f"Baltijos šalių obligacijos ir fondo obligacijų riba, {d}",
-                        head=["Fondas", "Pakopa", "Baltijos obligacijos", "Dalis fonde", "Fondo obligacijų riba", "Gali išeiti iki ribos"],
+        T["bal"] = dict(title=f"Baltijos šalių obligacijos ir strateginė obligacijų dalis, {d}",
+                        head=["Fondas", "Pakopa", "Baltijos obligacijos", "Dalis fonde", "Strateginė obligacijų dalis", "Gali išeiti iki strateginės dalies"],
                         rows=[[C(r["name"], b=r["code"] in top or (bm and r["code"] == bm["code"])), C(r["pillar"]), C(meur(r["bal"])),
                                C(pct(r["bal_sh"]), "FFC7CE" if r["bal_sh"] >= r["lim"] else "FFEB9C" if r["bal_sh"] >= 0.9 * r["lim"] else "C6EFCE", r["code"] in top),
                                C(pct(r["lim"], 1)), C(pct(r["bal_x"]), heat(r["bal_x"]), bool(bm and r["code"] == bm["code"]))] for r in bal],
-                        note="Surikiuota nuo arčiausiai ribos esančio fondo. Įtrauktos LT, LV, EE emitentų (vyriausybių ir įmonių) obligacijos. Paryškinti skaičiai minimi laiške.")
+                        note="Surikiuota nuo arčiausiai strateginės dalies esančio fondo. II pakopoje obligacijų dalis taisyklėse – strateginė (ne viršutinė riba): ją viršijus – nukrypimas nuo strategijos, ne pažeidimas. Įtrauktos LT, LV, EE emitentų (vyriausybių ir įmonių) obligacijos. Paryškinti skaičiai minimi laiške.")
     # 5. Pokyčiai
     if prev:
         dec = {x["name"]: x for x in decompose(cur, prev)}
@@ -607,10 +607,10 @@ def letters(cur, prev, ref, prov="SEB", an=None):
     bal_top = " ir ".join(f"{r['name']} ({pct(r['bal_sh'])})" for r in s.get("bal_top", []))
     bm = s.get("bal_min")
     if s.get("bal_over"):
-        bal_concl = ("nustatyta, kad " + ", ".join(f"{r['name']} ({pct(r['bal_sh'])} prie {pct(r['lim'], 1)} ribos)" for r in s["bal_over"])
+        bal_concl = ("nustatyta, kad " + ", ".join(f"{r['name']} ({pct(r['bal_sh'])} prie {pct(r['lim'], 1)} strateginės dalies)" for r in s["bal_over"])
                      + " Baltijos obligacijų dalis jau siekia arba viršija taikomą obligacijų dalį")
     elif bm and bm["bal_x"] < 0.30:
-        bal_concl = f"nustatytas reikšmingas priartėjimas prie ribos fonde {bm['name']}"
+        bal_concl = f"nustatytas reikšmingas priartėjimas prie strateginės obligacijų dalies fonde {bm['name']}"
     else:
         bal_concl = "reikšmingų rizikų nenustatyta"
     changes = []
@@ -660,7 +660,7 @@ def letters(cur, prev, ref, prov="SEB", an=None):
          "", *tok("mx"), "Baltijos šalių obligacijos", "",
          f"• Didžiausia Baltijos obligacijų dalis nustatyta fonduose {bal_top}{ref_t('bal')}."]
     if bm:
-        a.append(f"• Mažiausia apskaičiuota išėjimų riba iki konkrečiam fondui taikomos obligacijų ribos yra {pct(bm['bal_x'])} fonde {bm['name']} (riba {pct(bm['lim'], 1)}).")
+        a.append(f"• Mažiausiai turto gali išeiti, kol Baltijos obligacijos pasiektų strateginę obligacijų dalį, fonde {bm['name']}: {pct(bm['bal_x'])} (strateginė dalis {pct(bm['lim'], 1)}). Tai nebūtų pažeidimas – tik nukrypimas nuo strategijos.")
     a += [f"• Pagal taikytas konservatyvias prielaidas, {bal_concl}.", "", *tok("bal"),
           f"Pokyčiai nuo ankstesnio vertinimo{ref_t('chg')}", ""]
     a += [f"• {c}" for c in changes]
@@ -716,9 +716,10 @@ METHOD = [
     "",
     "Baltijos šalių obligacijos",
     "• Įtraukiamos LB „Skolos VP“ pozicijos, kurių emitento šalis LT, LV, EE (vyriausybės, savivaldybės, bendrovės, bankai). Neįtraukiamos akcijos, fondai, pinigai, ne Baltijos obligacijos.",
-    "• Riba R – „Obligacijų dalis taisyklėse“ (data/liq_funds.csv su šaltiniu ir peržiūros data). Išėjimo riba % = 1 − B / (R × AUM); EUR = AUM − B / R; jei B ≥ R × AUM – 0 %.",
+    "• R – strateginė obligacijų dalis („Obligacijų dalis taisyklėse“, data/liq_funds.csv su šaltiniu ir peržiūros data). Išėjimo lygis % = 1 − B / (R × AUM); EUR = AUM − B / R; jei B ≥ R × AUM – 0 %.",
+    "• II pakopoje R – strateginė dalis, ne viršutinė riba: ją viršijus – nukrypimas nuo strategijos, ne pažeidimas. Gyvenimo ciklo fondai nuo 1975 m. grupės iki Turto išsaugojimo fondo kasmet „sensta“ – mažina rizikingų aktyvų dalį taisyklėse numatytomis proporcijomis (kiekvienas valdytojas – savaip); rizika pradedama mažinti, kai vidutiniam fondo dalyviui (teoriškai) sukanka 47 metai, jaunesnių grupių fondai jos dar nemažina. Todėl R kasmet keičiasi – data/liq_funds.csv reikia peržiūrėti kartą per metus.",
     "• Rizikinguose fonduose (akcijos iki 100 %), kurių „obligacijų dalis taisyklėse“ ≤ 5 % (pvz. 2 %), tai strateginė dalis, ne viršutinė riba – ją viršijus pažeidimo nėra (savininkas 2026-11-09), todėl Baltijos obligacijų riba šiems fondams netaikoma.",
-    "• Matrica ta pati (B vietoje A), spalvos pagal fondo ribą: žalia < 90 % R, geltona 90–100 % R, raudona ≥ R.",
+    "• Matrica ta pati (B vietoje A), spalvos pagal strateginę dalį: žalia < 90 % R, geltona 90–100 % R, raudona ≥ R.",
     "",
     "Palyginimas",
     "• Lyginama su ankstesniu ketvirčiu ir su atskaitos laikotarpiu (2025-12-31, prieš reformą). Alternatyvų dalies pokytis išskaidomas į dalį dėl alternatyvų vertės EUR pokyčio ((A1 − A0)/T1) ir dėl AUM pokyčio (A0/T1 − A0/T0).",
@@ -742,9 +743,9 @@ def summary_lines(cur, prev):
     if not s.get("alt_min"):
         out = [head, "• Šis valdytojas alternatyvių (nelistinguotų PE / NT / infrastruktūros) investicijų neturi – vertinamos tik Baltijos obligacijos."]
         if s.get("bal_top"):
-            out.append("• Didžiausia Baltijos obligacijų dalis: " + "; ".join(f"{r['name']} {pct(r['bal_sh'])} (riba {pct(r['lim'], 1)})" for r in s["bal_top"]) + ".")
+            out.append("• Didžiausia Baltijos obligacijų dalis: " + "; ".join(f"{r['name']} {pct(r['bal_sh'])} (strateginė dalis {pct(r['lim'], 1)})" for r in s["bal_top"]) + ".")
         if s.get("bal_min"):
-            out.append(f"• Arčiausiai obligacijų ribos: {s['bal_min']['name']} – išėjimų riba {pct(s['bal_min']['bal_x'])}.")
+            out.append(f"• Arčiausiai strateginės obligacijų dalies: {s['bal_min']['name']} – išėjimų riba {pct(s['bal_min']['bal_x'])}.")
         return out
     sel = s["selected"]
     verd, why = verdict(cur, prev)
@@ -759,11 +760,11 @@ def summary_lines(cur, prev):
         f"• 50 % išėjimų / −10 % rinkos: {pct(sel['c5010'])}, buferis {pp(ALT_LIMIT - sel['c5010'])} iki 30 %.",
     ]
     if s.get("bal_top"):
-        out.append("• Didžiausia Baltijos obligacijų dalis: " + "; ".join(f"{r['name']} {pct(r['bal_sh'])} (riba {pct(r['lim'], 1)})" for r in s["bal_top"]) + ".")
+        out.append("• Didžiausia Baltijos obligacijų dalis: " + "; ".join(f"{r['name']} {pct(r['bal_sh'])} (strateginė dalis {pct(r['lim'], 1)})" for r in s["bal_top"]) + ".")
     if s.get("bal_min"):
-        out.append(f"• Arčiausiai obligacijų ribos: {s['bal_min']['name']} – išėjimų riba {pct(s['bal_min']['bal_x'])} ({meur(s['bal_min']['bal_xe'])}).")
+        out.append(f"• Arčiausiai strateginės obligacijų dalies: {s['bal_min']['name']} – išėjimų riba {pct(s['bal_min']['bal_x'])} ({meur(s['bal_min']['bal_xe'])}).")
     if s.get("bal_over"):
-        out.append("• Baltijos obligacijos jau ≥ fondo obligacijų ribos: " + ", ".join(f"{r['name']} ({pct(r['bal_sh'])} / {pct(r['lim'], 1)})" for r in s["bal_over"]) + " – išėjimų riba 0 %.")
+        out.append("• Baltijos obligacijos jau ≥ strateginės obligacijų dalies (nukrypimas nuo strategijos, ne pažeidimas): " + ", ".join(f"{r['name']} ({pct(r['bal_sh'])} / {pct(r['lim'], 1)})" for r in s["bal_over"]) + " – išėjimų riba 0 %.")
     out.append(f"• Palyginti su ankstesniu: situacija {verd} – {why}.")
     n_rev = sum(1 for e in cur["exc"] if e[0].startswith("Galimai"))
     out.append(f"• Išimtys: {len(cur['exc'])} (iš jų galimai alternatyvių naujų pozicijų – {n_rev}); žr. lapą „Išimtys“.")
