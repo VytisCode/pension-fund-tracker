@@ -1,0 +1,39 @@
+name: LV plans history backfill
+
+# Vienkartinis / pakartotinis Latvijos plānų dienos istorijos (turtas, dalyviai) užpildymas nuo 2003 m.
+# (tools/fetch_lv_plans.py su dideliu biudžetu). Tik papildo data/baltic_lv_daily.csv. Kasdien tą patį po truputį daro update.yml.
+on:
+  workflow_dispatch:
+    inputs:
+      budget:
+        description: "Kiek istorinių užklausų"
+        required: false
+        default: "6000"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-fund-data
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Backfill
+        run: python -u tools/fetch_lv_plans.py --budget "${{ inputs.budget }}" --minutes 60
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/baltic_lv_daily.csv data/lv_daily_state.json
+          git diff --cached --quiet && exit 0
+          git commit -m "data: LV plānu istorija $(TZ=Europe/Vilnius date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3 4; do git pull --rebase -X theirs origin main && git push && exit 0; sleep $((i*10)); done
+          exit 1
