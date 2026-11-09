@@ -1,16 +1,17 @@
-/* SEB fondų likvidumas (skiltis „Alternatyvios“, portfolios.html).
+/* Valdytojų fondų likvidumas (skiltis „Alternatyvios“, portfolios.html) – bet kuris valdytojas (savininkas 2026-11-09).
    Duomenys – docs/data_liq.js (liquidity.py site_payload, build_site.py). Matricas skaičiuoja čia, iš A / B ir AUM.
    Savininkas 2026-11-09: „ištaisyk formules, viskas turi matytis dashboard skiltyje Alternatyvos“. */
 (function () {
-  if (typeof LIQ === 'undefined' || !LIQ.periods || !LIQ.periods.length) return;
+  if (typeof LIQ === 'undefined' || !LIQ.mgr || !Object.keys(LIQ.mgr).length) return;
   const box = document.getElementById('liqBox');
   if (!box) return;
-  const P = LIQ.periods, LIM = LIQ.limit;
+  const MG = LIQ.mgr, LIM = LIQ.limit, MGRS = Object.keys(MG).sort((a, b) => (a === 'SEB' ? -1 : b === 'SEB' ? 1 : a.localeCompare(b)));
+  let P = null;
   const EX = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9], MK = Array.from({ length: 20 }, (_, i) => i / 20);
-  const st = { d: P.length - 1, mode: 'fix', af: null, bf: null };
+  const st = { m: 'SEB', d: null, mode: 'fix', af: null, bf: null };
   try { Object.assign(st, JSON.parse(localStorage.getItem('liqST') || '{}')); } catch (e) { /* be atminties */ }
-  if (st.d >= P.length) st.d = P.length - 1;
-  const save = () => { try { localStorage.setItem('liqST', JSON.stringify({ mode: st.mode })); } catch (e) { /* */ } };
+  if (!MG[st.m]) st.m = MGRS[0];
+  const save = () => { try { localStorage.setItem('liqST', JSON.stringify({ mode: st.mode, m: st.m })); } catch (e) { /* */ } };
   const h = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const pc = (v, d = 2) => v == null ? '–' : (v * 100).toFixed(d).replace('.', ',') + ' %';
   const eu = v => v == null ? '–' : Math.round(v).toLocaleString('lt-LT').replace(/ /g, ' ') + ' €';
@@ -38,16 +39,18 @@
   const det = (title, body, open) => `<details class="liqd"${open ? ' open' : ''}><summary><b>${title}</b></summary>${body}</details>`;
 
   function render() {
+    P = MG[st.m].periods;
+    if (st.d == null || st.d >= P.length) st.d = P.length - 1;
     const p = P[st.d], F = p.funds, mode = st.mode, XL = mode === 'excel';
     const alt = F.filter(f => f.in_alt), bal = F.filter(f => f.in_bal && f.lim && f.bal > 0);
     const byC = Object.fromEntries(F.map(f => [f.code, f]));
     if (!byC[st.af] || !byC[st.af].in_alt) st.af = p.sel;
     if (!byC[st.bf] || !bal.includes(byC[st.bf])) st.bf = p.bal_sel || (bal[0] && bal[0].code);
     const sel = byC[p.sel];
-    let o = `<h2 class="sec">SEB fondų likvidumas: kiek turto gali išeiti iki ribų</h2>
+    let o = `<h2 class="sec">${h(st.m)} fondų likvidumas: kiek turto gali išeiti iki ribų</h2>
       <p class="lead">Kiek turto gali išeiti ir kiek gali kristi rinkos, kol <b>alternatyvių investicijų</b> dalis pasiekia ${pc(LIM, 0)} ribą, o <b>Baltijos šalių obligacijų</b> dalis – fondo taisyklėse nustatytą obligacijų dalį.
       Tai ne prognozė, o konservatyvus testas: nelikvidi dalis laikoma nekintančia, išėjimai ir rinkų kritimas mažina tik likusį turtą. Neįtraukti likę neišmokėti įsipareigojimai (commitment) – jų duomenų nėra.</p>
-      <div class="bar pfbar"><label>Ketvirtis <select id="liqD">${P.map((x, i) => `<option value="${i}"${i === st.d ? ' selected' : ''}>${x.date}</option>`).join('')}</select></label>
+      <div class="bar pfbar"><label>Valdytojas <select id="liqG">${MGRS.map(m => `<option${m === st.m ? ' selected' : ''}>${h(m)}</option>`).join('')}</select></label><label>Ketvirtis <select id="liqD">${P.map((x, i) => `<option value="${i}"${i === st.d ? ' selected' : ''}>${x.date}</option>`).join('')}</select></label>
       <label>Matricos formulė <select id="liqM"><option value="fix"${XL ? '' : ' selected'}>Pataisyta (pagrindinė)</option><option value="excel"${XL ? ' selected' : ''}>Kaip 2026-07-30 Excel faile</option></select></label></div>
       <p class="note">${XL
         ? 'Kaip Excel faile: A / (A + (T − A) × (1 − x − m)); x – ne alternatyvaus turto dalis, x ir m sudedami. Taip atkuriami 2026-07-30 laiško skaičiai (22,79 %), bet matricos riba nesutampa su lentelės „Išėjimo riba“.'
@@ -58,10 +61,12 @@
     const sum = g => { const t = g.reduce((a, f) => a + f.aum, 0), a = g.reduce((x, f) => x + f.alt, 0), xe = g.reduce((x, f) => x + f.alt_xe, 0); return [t, a, xe]; };
     const ii = alt.filter(f => f.pillar === 'II'), iii = alt.filter(f => f.pillar === 'III');
     const totRow = (lbl, g) => { const [t, a, xe] = sum(g); return tr([lbl, '', eu(t), eu(a), pc(t ? a / t : null), pc(t ? xe / t : null), eu(xe), ''], 1); };
+    if (!alt.length) o += `<section class="card" style="margin-top:12px"><b>Alternatyvios investicijos ir ${pc(LIM, 0)} riba</b><p class="note">${h(st.m)} fondai ${p.date} alternatyvių (nelistinguotų privataus kapitalo, NT, infrastruktūros ir pan.) investicijų neturi.</p></section>`;
+    else {
     o += `<section class="card" style="margin-top:12px"><b>Alternatyvios investicijos ir ${pc(LIM, 0)} riba</b>`
       + tbl(['Fondas', 'Pakopa', 'AUM', 'Alternatyvos, €', 'Alternatyvos, %', `Išėjimo riba iki ${pc(LIM, 0)}, %`, 'Išėjimo riba, €', 'Dalyvių pokytis per 2 ketv.'],
         alt.map(f => `<tr><td class="l">${h(f.name)}${f.code === p.sel ? ' ★' : ''}</td><td>${f.pillar}</td><td>${eu(f.aum)}</td><td>${eu(f.alt)}</td><td style="background:${cAlt(f.alt_sh)}">${pc(f.alt_sh)}</td><td>${pc(f.alt_x)}</td><td>${eu(f.alt_xe)}</td><td>${pc(f.part_chg, 1)}</td></tr>`)
-          .concat([totRow('Total II pakopa', ii), totRow('III pakopa (SEB pensija 18+)', iii), totRow('Total visi analizuojami', alt)]))
+          .concat([totRow('Total II pakopa', ii), ...(iii.length ? [totRow('Total III pakopa', iii)] : []), totRow('Total visi analizuojami', alt)]))
       + `<p class="note">Išėjimo riba = 1 − alternatyvų dalis ÷ ${pc(LIM, 0)}. Bendra riba – svertinė eurais (Σ išėjimo ribų € ÷ Σ AUM); paprastas fondų procentų vidurkis būtų ${pc(p.ii.avg_wrong)}, bet jis netaikomas – mažam ir dideliam fondui suteiktų vienodą svorį. ★ – matricos fondas: ${h(p.sel_reason)}. AUM – LB grynieji aktyvai.</p>`;
     o += tbl(['Fondas', 'Riba prie 0 % (matrica)', 'Riba prie −10 % (matrica)', '50 % išėjimų / −10 % rinkos', 'Buferis iki 30 %', 'Tas pats kitu būdu*'],
       alt.map(f => {
@@ -73,8 +78,9 @@
     o += `<div class="bar pfbar" style="margin-top:10px"><label>Matrica fondui ${fsel('liqAF', alt, st.af)}</label></div>
       <p class="meta">${h(af.name)}: alternatyvų dalis, kai A = ${eu(af.alt)}, AUM = ${eu(af.aum)}. Spalvos: žalia &lt; 25 %, geltona 25–30 %, raudona ≥ 30 %.</p>`
       + matrix(af.alt, af.aum, cAlt, mode)
-      + det('Alternatyvios pozicijos', tbl(['Fondas', 'Pozicija', 'Vertė', 'Dalis'], alt.flatMap(f => f.altpos.map(([n, v]) => tr([h(f.name), h(n), eu(v), pc(v / f.aum)])))))
+      + det('Alternatyvios pozicijos', alt.some(f => f.altpos.length) ? tbl(['Fondas', 'Pozicija', 'Vertė', 'Dalis'], alt.flatMap(f => f.altpos.map(([n, v]) => tr([h(f.name), h(n), eu(v), pc(v / f.aum)])))) : '<p class="note">Pozicijų sąrašas – tik 2 paskutiniams ketvirčiams.</p>')
       + '</section>';
+    }
 
     // Baltijos obligacijos
     o += `<section class="card" style="margin-top:12px"><b>Baltijos šalių obligacijos ir fondo obligacijų riba</b>`
@@ -90,11 +96,11 @@
     if (bf) o += `<div class="bar pfbar"><label>Matrica fondui ${fsel('liqBF', bal, st.bf)}</label></div>
       <p class="meta">${h(bf.name)}: Baltijos obligacijų dalis (riba ${pc(bf.lim, 1)}), B = ${eu(bf.bal)}, AUM = ${eu(bf.aum)}. Numatytasis – fondas arčiausiai ribos.</p>`
       + matrix(bf.bal, bf.aum, v => cBal(v, bf.lim), mode)
-      + det('Baltijos obligacijų pozicijos', tbl(['Fondas', 'Pozicija', 'Vertė', 'Dalis'], F.filter(f => f.in_bal).flatMap(f => f.balpos.map(([n, v]) => tr([h(f.name), h(n), eu(v), pc(v / f.aum)])))));
+      + det('Baltijos obligacijų pozicijos', !F.some(f => f.balpos.length) ? '<p class="note">Pozicijų sąrašas – tik 2 paskutiniams ketvirčiams.</p>' : tbl(['Fondas', 'Pozicija', 'Vertė', 'Dalis'], F.filter(f => f.in_bal).flatMap(f => f.balpos.map(([n, v]) => tr([h(f.name), h(n), eu(v), pc(v / f.aum)])))));
     o += '</section>';
 
     // Istorija: lentelė + grafikas (visi ketvirčiai iki pasirinkto)
-    const HS = (LIQ.hist || []).filter(x => x.date <= p.date);
+    const HS = (MG[st.m].hist || []).filter(x => x.date <= p.date);
     if (HS.length > 1) {
       const ser = [['alt_max', 'Alternatyvų dalis, maks.', '#c9a227'], ['ii_x', 'II pakopos išėjimo riba iki 30 %', '#2f6fb3'], ['c5010', 'Matricos fondas: 50 % / −10 %', '#c0392b'], ['bal_ii_x', 'Baltijos obl. išėjimų riba, II pakopa', '#2e8b57']];
       const W = 900, H0 = 260, pl = 46, pr = 34, pt = 12, pb = 28, xs = i => pl + (HS.length === 1 ? 0 : i * (W - pl - pr) / (HS.length - 1)), ys = v => pt + (1 - v) * (H0 - pt - pb);
@@ -131,17 +137,18 @@
     // Laiškai, metodika, konfigūracija
     const letter = (id, lines) => `<p><button type="button" class="btn" data-copy="${id}">Kopijuoti</button></p><pre class="liqp" id="${id}">${h(lines.join('\n'))}</pre>`;
     o += `<section class="card" style="margin-top:12px">`
-      + det('Laiško projektas A – išsamesnis', letter('liqLA', p.la))
-      + det('Laiško projektas B – trumpesnis vadovybinis', letter('liqLB', p.lb))
+      + (p.la.length ? det('Laiško projektas A – išsamesnis', letter('liqLA', p.la)) + det('Laiško projektas B – trumpesnis vadovybinis', letter('liqLB', p.lb))
+        : `<p class="note">Laiško projektai – 2 paskutiniams ketvirčiams${alt.length ? '' : ' ir tik valdytojams, turintiems alternatyvių investicijų'}.</p>`)
       + det('Metodika ir „įskaitant likusius įsipareigojimus“ logika', `<pre class="liqp">${h(LIQ.method.join('\n'))}</pre>`)
       + det('Konfigūracija: alternatyvų sąrašas ir obligacijų ribos',
         tbl(['Pavadinimas', 'Alternatyva?', 'Rūšis', 'Šaltinis', 'Peržiūrėta'], LIQ.alts.map(a => tr([h(a.name), a.is_alt === '1' ? 'taip' : 'NE', h(a.cls), h(a.src), h(a.rev)])))
-        + tbl(['Fondas', 'Obligacijų riba, %', 'Šaltinis', 'Peržiūrėta'], LIQ.limits.map(a => tr([h(a.name), h(a.lim), h(a.src), h(a.rev)]))))
+        + tbl(['Fondas', 'Obligacijų riba, %', 'Šaltinis', 'Peržiūrėta'], MG[st.m].limits.map(a => tr([h(a.name), a.lim == null ? 'nėra (LB: rizikingų iki 100 %)' : (Math.round(a.lim * 10) / 10).toString().replace('.', ','), h(a.src), h(a.rev)]))))
       + '<p class="note">Excel su visomis lentelėmis ir spalvotomis matricomis bei laiškai A/B ateina su vakariniu laišku, kai LB paskelbia naujus portfelius. Laiškas kolegoms automatiškai nesiunčiamas.</p></section>';
     box.innerHTML = o;
+    box.querySelector('#liqG').addEventListener('change', e => { st.m = e.target.value; st.d = null; st.af = st.bf = null; save(); render(); });
     box.querySelector('#liqD').addEventListener('change', e => { st.d = +e.target.value; render(); });
     box.querySelector('#liqM').addEventListener('change', e => { st.mode = e.target.value; save(); render(); });
-    box.querySelector('#liqAF').addEventListener('change', e => { st.af = e.target.value; render(); });
+    const af0 = box.querySelector('#liqAF'); if (af0) af0.addEventListener('change', e => { st.af = e.target.value; render(); });
     const b = box.querySelector('#liqBF'); if (b) b.addEventListener('change', e => { st.bf = e.target.value; render(); });
     box.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', () => {
       const t = document.getElementById(btn.dataset.copy).textContent;

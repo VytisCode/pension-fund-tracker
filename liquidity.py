@@ -22,6 +22,7 @@ Failai yra SEB vidinė analizė – į viešą repo / svetainę NEdėti. Laiška
 Paleidimas:
   python liquidity.py                      – naujausias ketvirtis → ./likvidumas/<data>/
   python liquidity.py --date 2026-06-30 --out /mnt/project-files/likvidumas
+  python liquidity.py --mgr Swedbank         – kitas valdytojas (Allianz, Artea, Goindex, Luminor, SEB, Swedbank)
   python liquidity.py status               – naujausia data ir ar jau išsiųsta vakariniame laiške
   python liquidity.py selftest             – kontroliniai pavyzdžiai iš 2026-07-30 matricos
 """
@@ -134,40 +135,100 @@ def load_cfg():
     return funds, alts, amap
 
 
-def seb_dates():
-    ds = set()
-    with PF.open(encoding="utf-8") as f:
-        for r in csv.DictReader(f):
-            if r["provider"] == "SEB":
-                ds.add(r["date"])
-    return sorted(ds)
+START = "2024-09-30"                            # nuo kada rodoma (svetainė, istorija)
+_PF = {}
 
 
-def seb_rows(dates: set):
-    out = defaultdict(list)
-    with PF.open(encoding="utf-8") as f:
-        for r in csv.DictReader(f):
-            if r["provider"] == "SEB" and r["date"] in dates:
-                out[r["date"]].append(r)
-    return out
+def _load_pf():
+    """Visų valdytojų LB portfeliai nuo START (ir visų datų sąrašas) – vienas failo nuskaitymas."""
+    if not _PF:
+        dates, rows = defaultdict(set), defaultdict(lambda: defaultdict(list))
+        with PF.open(encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                dates[r["provider"]].add(r["date"])
+                if r["date"] >= "2024-01-01":
+                    rows[r["provider"]][r["date"]].append(r)
+        _PF.update(dates={k: sorted(v) for k, v in dates.items()}, rows=rows)
+    return _PF
+
+
+def providers():
+    return sorted(_load_pf()["dates"])
+
+
+def prov_dates(prov="SEB"):
+    return _load_pf()["dates"].get(prov, [])
+
+
+def prov_rows(prov="SEB"):
+    return _load_pf()["rows"].get(prov, {})
 
 
 def lb_results():
-    nav, part = {}, {}
+    nav, part, risky = {}, {}, {}
     if LBR.exists():
         with LBR.open(encoding="utf-8") as f:
             for r in csv.DictReader(f):
-                if r["provider"] == "SEB" and r["kind"] == "fund" and r["code"]:
+                if r["kind"] == "fund" and r["code"]:
+                    k = (r["date"], r["code"])
                     if num(r["nav_meur"]):
-                        nav[(r["date"], r["code"])] = num(r["nav_meur"]) * 1e6
+                        nav[k] = num(r["nav_meur"]) * 1e6
                     if num(r["participants"]):
-                        part[(r["date"], r["code"])] = num(r["participants"])
-    return nav, part
+                        part[k] = num(r["participants"])
+                    if r["risky"]:
+                        risky[k] = (r["pillar"], r["risky"])
+    return nav, part, risky
+
+
+def lb_bond_limit(pillar, risky):
+    """Strateginė ne rizikingų (obligacijų ir pan.) dalis = 100 − LB „rizikingų investicijų dalis“.
+    II pakopai sutampa su SEB „Obligacijų dalis taisyklėse“ (pvz. 1961–1967: 100 − 26,6 = 73,4 %). III: „iki X“ → 100 − X,
+    „a-b“ → 100 − vidurys; 0 % ar mažiau – ribos nėra."""
+    if not risky:
+        return None
+    v = str(risky).replace(",", ".").strip()
+    m = re.match(r"^(?:iki\s*)?([\d.]+)(?:\s*-\s*([\d.]+))?$", v)
+    if not m:
+        return None
+    x = float(m.group(1)) if not m.group(2) else (float(m.group(1)) + float(m.group(2))) / 2
+    lim = 100 - x
+    return lim if lim > 0.5 else None
+
+
+def short_name(prov, name, code):
+    y = re.search(r"(\d{4})\s*[–-]\s*(\d{4})", name)
+    if y:
+        return f"{prov} {y.group(1)}–{y.group(2)}"
+    if "TIPF" in code or "išsaugojimo" in name.lower():
+        return f"{prov} turto išsaugojimo"
+    return name if prov.lower() in name.lower() else f"{prov} {name}"
+
+
+def universe(prov, funds_cfg, amap):
+    """Analizuojami valdytojo fondai: SEB – iš data/liq_funds.csv; kiti – visi LB portfelių fondai nuo START.
+    Alternatyvų analizei – fondai, kurie bent vieną ketvirtį turėjo alternatyvų; Baltijos – visi."""
+    if prov == "SEB":
+        return [f for f in funds_cfg]
+    rows = prov_rows(prov)
+    names, has_alt, pillar = {}, set(), {}
+    for d, rs in rows.items():
+        if d < START:
+            continue
+        for r in rs:
+            names[r["fund_code"]] = r["fund_name"]
+            pillar[r["fund_code"]] = r["pillar"]
+            if r["type"] == "fund" and amap.get(r["pos_id"] if r["pos_id"] in amap else norm(r["name"])):
+                has_alt.add(r["fund_code"])
+    order = lambda c: (pillar[c], "0" if "TIPF" in c else c)
+    return [dict(code=c, name=short_name(prov, names[c], c), pillar=pillar[c], alt="1" if c in has_alt else "0", baltic="1",
+                 bond_limit_pct="", limit_source="LB rizikingų investicijų dalis (100 − X %)", reviewed="", note="")
+            for c in sorted(names, key=order)]
 
 
 # ---------- vieno laikotarpio analizė ----------
-def analyse(date, rows, funds, amap, nav, part, all_dates):
+def analyse(date, rows, funds, amap, nav, part, all_dates, risky=None):
     cfg = {f["code"]: f for f in funds}
+    risky = risky or {}
     fx = {}
     exc = []          # (tipas, fondas, pavadinimas, vertė, pastaba)
     review = {}       # galimai alternatyvios
@@ -214,7 +275,7 @@ def analyse(date, rows, funds, amap, nav, part, all_dates):
     for f in funds:
         code = f["code"]
         if code not in fx:
-            if f["alt"] == "1" or f["baltic"] == "1":
+            if f.get("reviewed") and (f["alt"] == "1" or f["baltic"] == "1"):   # tik konfigūruotiems (SEB) fondams
                 exc.append(("Fondo nėra duomenyse", code, f["name"], None, "konfigūracijoje yra, LB faile – ne"))
             continue
         d = fx[code]
@@ -230,6 +291,13 @@ def analyse(date, rows, funds, amap, nav, part, all_dates):
         if d["bal"] > d["bonds"] + 1e-6:
             exc.append(("Baltijos obligacijos > visos obligacijos", code, f["name"], d["bal"], "patikrinti"))
         lim = num(f["bond_limit_pct"])
+        rk = risky.get((date, code))
+        lb_lim = lb_bond_limit(*rk) if rk else None
+        if lim is not None and lb_lim is not None and abs(lim - lb_lim) > 0.5:
+            exc.append(("Riba skiriasi nuo LB", code, f["name"], None,
+                        f"konfigūracijoje {lim:.1f} %, pagal LB rizikingų dalį {lb_lim:.1f} % – patikrinti fondo taisykles"))
+        if lim is None:
+            lim = lb_lim
         lim = lim / 100 if lim is not None else None
         if f["baltic"] == "1" and not lim:
             exc.append(("Nėra obligacijų ribos", code, f["name"], None, "papildyti data/liq_funds.csv"))
@@ -306,7 +374,7 @@ def summarise(res):
 # ---------- palyginimas ----------
 def compare(cur, prev):
     """(rodiklis, ankstesnis, naujas, pokytis) – tekstu."""
-    if not prev:
+    if not prev or not prev["summary"].get("alt_min") or not cur["summary"].get("alt_min"):
         return []
     a, b = prev["summary"], cur["summary"]
     rows = []
@@ -360,8 +428,8 @@ def decompose(cur, prev):
 
 
 def verdict(cur, prev):
-    if not prev:
-        return "reikšmingai nepasikeitė", "ankstesnio vertinimo duomenų nėra"
+    if not prev or not prev["summary"].get("ii_x") or not cur["summary"].get("ii_x"):
+        return "reikšmingai nepasikeitė", "ankstesnio vertinimo (II pakopos) duomenų palyginimui nėra"
     a, b = prev["summary"], cur["summary"]
     dx = b["ii_x"] - a["ii_x"]
     dalt = b["all_alt"] / a["all_alt"] - 1 if a["all_alt"] else 0
@@ -462,7 +530,7 @@ def letters(cur, prev, ref):
 
 
 # ---------- Excel ----------
-def write_xlsx(path, cur, prev, ref, la, lb, hist=None):
+def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB"):
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -492,7 +560,7 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None):
     ws = wb.active
     ws.title = "Santrauka"
     ws.column_dimensions["A"].width = 120
-    ws["A1"] = f"SEB pensijų fondų likvidumo analizė – {cur['date']} (LB portfelių duomenys)"
+    ws["A1"] = f"{prov} pensijų fondų likvidumo analizė – {cur['date']} (LB portfelių duomenys)"
     ws["A1"].font = Font(bold=True, size=14)
     for i, t in enumerate(summary_lines(cur, prev), 3):
         ws.cell(i, 1, t).alignment = Alignment(wrap_text=True)
@@ -523,7 +591,7 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None):
         i += 1
     i += 1
     ws.cell(i, 1, "Bendra riba = Σ išėjimo ribų EUR / Σ AUM (svertinė eurais). Paprastas procentų vidurkis būtų "
-                  f"{pct(s['ii_x_avg_wrong'])} – jis netaikomas, nes mažam ir dideliam fondui suteiktų vienodą svorį.")
+                  f"{pct(s.get('ii_x_avg_wrong'))} – jis netaikomas, nes mažam ir dideliam fondui suteiktų vienodą svorį.")
     i += 2
     header(ws, i, ["Fondas", "Riba prie 0 % (matrica)", "Riba prie −10 % (matrica)", "Tiksli riba prie 0 %*",
                    "Tiksli riba prie −10 %*", "50 % / −10 %: alternatyvų dalis", "Buferis iki 30 %",
@@ -542,17 +610,20 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None):
 
     # Alternatyvų matricos
     ws = wb.create_sheet("Alt matricos")
-    sel = s["selected"]
-    order = [sel] + [r for r in alt if r["code"] != sel["code"]]
+    sel = s.get("selected")
+    order = ([sel] + [r for r in alt if r["code"] != sel["code"]]) if sel else []
     row = 1
+    if not sel:
+        ws["A1"] = "Valdytojo fondai alternatyvių investicijų neturi."
     ws.column_dimensions["A"].width = 22
     for k, r in enumerate(order):
         title = f"{r['name']}: alternatyvų dalis, kai A = {eur(r['alt'])}, AUM = {eur(r['aum'])}"
         if k == 0:
             title = "PAGRINDINĖ MATRICA – " + title + f". Pasirinkta, nes {s['sel_reason']}."
         row = matrix(ws, row, title, r["alt"], r["aum"], lambda v: color_alt(v), B, H, thin, P2)
-    row = matrix(ws, row, f"Palyginimui – kaip 2026-07-30 Excel faile (T−A)(1−x−m), x – ne alternatyvaus turto dalis: {sel['name']}",
-                 sel["alt"], sel["aum"], lambda v: color_alt(v), B, H, thin, P2, mode="excel")
+    if sel:
+        row = matrix(ws, row, f"Palyginimui – kaip 2026-07-30 Excel faile (T−A)(1−x−m), x – ne alternatyvaus turto dalis: {sel['name']}",
+                     sel["alt"], sel["aum"], lambda v: color_alt(v), B, H, thin, P2, mode="excel")
 
     # Baltijos obligacijos
     ws = wb.create_sheet("Baltijos obligacijos")
@@ -613,8 +684,8 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None):
             ws[f"{col}{k}"] = v
     n = len(lst) + 1
     YL = PatternFill("solid", fgColor="FFF2CC")
-    ws["A3"], ws["B3"] = "Fondas", sel["name"]
-    ws["A4"], ws["B4"] = "Rodiklis", "Alternatyvos"
+    ws["A3"], ws["B3"] = "Fondas", sel["name"] if sel else (lst[0]["name"] if lst else "")
+    ws["A4"], ws["B4"] = "Rodiklis", "Alternatyvos" if sel else "Baltijos obligacijos"
     ws["A5"], ws["B5"] = "Formulė", "Pataisyta"
     for c in ("B3", "B4", "B5"):
         ws[c].fill, ws[c].font = YL, B
@@ -812,10 +883,18 @@ METHOD = [
 
 def summary_lines(cur, prev):
     s = cur["summary"]
+    head = f"• Duomenų data: {cur['date']} (LB ketvirčio portfeliai); ankstesnis vertinimas: {prev['date'] if prev else '–'}."
+    if not s.get("alt_min"):
+        out = [head, "• Šis valdytojas alternatyvių (nelistinguotų PE / NT / infrastruktūros) investicijų neturi – vertinamos tik Baltijos obligacijos."]
+        if s.get("bal_top"):
+            out.append("• Didžiausia Baltijos obligacijų dalis: " + "; ".join(f"{r['name']} {pct(r['bal_sh'])} (riba {pct(r['lim'], 1)})" for r in s["bal_top"]) + ".")
+        if s.get("bal_min"):
+            out.append(f"• Arčiausiai obligacijų ribos: {s['bal_min']['name']} – išėjimų riba {pct(s['bal_min']['bal_x'])}.")
+        return out
     sel = s["selected"]
     verd, why = verdict(cur, prev)
     out = [
-        f"• Duomenų data: {cur['date']} (LB ketvirčio portfeliai); ankstesnis vertinimas: {prev['date'] if prev else '–'}.",
+        head,
         f"• Alternatyvų dalis: {pct(s['alt_min']['alt_sh'])} ({s['alt_min']['name']}) – {pct(s['alt_max']['alt_sh'])} ({s['alt_max']['name']}, {meur(s['alt_max']['alt'])}).",
         f"• II pakopos svertinė išėjimų riba iki 30 %: {pct(s['ii_x'])} arba {meur(s['ii_xe'])} (AUM {meur(s['ii_aum'])}).",
         f"• Jautriausias fondas: {s['sensitive']['name']} (išėjimo riba {pct(s['sensitive']['alt_x'])}).",
@@ -838,34 +917,38 @@ def summary_lines(cur, prev):
 
 
 # ---------- paleidimas ----------
-def run(date=None, out_dir=None):
-    funds, alts, amap = load_cfg()
-    dates = seb_dates()
+def run(date=None, out_dir=None, prov="SEB"):
+    funds_cfg, alts, amap = load_cfg()
+    funds = universe(prov, funds_cfg, amap)
+    dates = prov_dates(prov)
     date = date or dates[-1]
     if date not in dates:
-        raise SystemExit(f"Nėra SEB portfelių duomenų {date}. Yra: {', '.join(dates[-8:])}")
+        raise SystemExit(f"Nėra {prov} portfelių duomenų {date}. Yra: {', '.join(dates[-8:])}")
     i = dates.index(date)
     prev_d = dates[i - 1] if i else None
     ref_d = REFERENCE_DATE if REFERENCE_DATE in dates and REFERENCE_DATE < (prev_d or date) else None
-    rows = seb_rows({x for x in (date, prev_d, ref_d) if x})
-    nav, part = lb_results()
-    cur = analyse(date, rows[date], funds, amap, nav, part, dates)
-    prev = analyse(prev_d, rows[prev_d], funds, amap, nav, part, dates) if prev_d else None
-    ref = analyse(ref_d, rows[ref_d], funds, amap, nav, part, dates) if ref_d else None
-    la, lb = letters(cur, prev, ref)
+    rows = prov_rows(prov)
+    nav, part, risky = lb_results()
+    cur = analyse(date, rows[date], funds, amap, nav, part, dates, risky)
+    prev = analyse(prev_d, rows[prev_d], funds, amap, nav, part, dates, risky) if prev_d else None
+    ref = analyse(ref_d, rows[ref_d], funds, amap, nav, part, dates, risky) if ref_d else None
+    la, lb = letters(cur, prev, ref) if cur["summary"].get("alt_min") else ([], [])
     out = Path(out_dir or ROOT / "likvidumas") / date
     out.mkdir(parents=True, exist_ok=True)
     files = []
-    x = out / f"SEB_likvidumo_analize_{date}.xlsx"
+    x = out / f"{prov}_likvidumo_analize_{date}.xlsx"
     try:
-        an = all_analyses()
+        an = all_analyses(prov)
         hist = [history_row(an[d]) for d in sorted(an) if d <= date]
     except Exception:  # noqa: BLE001
         hist = None
-    write_xlsx(x, cur, prev, ref, la, lb, hist)
+    write_xlsx(x, cur, prev, ref, la, lb, hist, prov)
     files.append(x)
+    pre = "" if prov == "SEB" else f"{prov}_"
     for tag, txt in (("A_issamus", la), ("B_trumpas", lb)):
-        p = out / f"laiskas_{tag}_{date}.txt"
+        if not txt:
+            continue
+        p = out / f"{pre}laiskas_{tag}_{date}.txt"
         p.write_text("\n".join(txt) + "\n", encoding="utf-8")
         files.append(p)
     try:
@@ -876,7 +959,9 @@ def run(date=None, out_dir=None):
             for t in txt:
                 doc.add_paragraph(t)
             doc.add_page_break()
-        p = out / f"laiskas_{date}.docx"
+        if not la:
+            raise ImportError
+        p = out / f"{pre}laiskas_{date}.docx"
         doc.save(p)
         files.append(p)
     except ImportError:
@@ -896,62 +981,73 @@ def history_row(a):
                 bal_min_f=s["bal_min"]["name"] if s.get("bal_min") else None, bal_min_x=s["bal_min"]["bal_x"] if s.get("bal_min") else None)
 
 
-def all_analyses(start="2024-09-30"):
-    funds, alts, amap = load_cfg()
-    alld = seb_dates()
-    dates = [d for d in alld if d >= start]
-    rows = seb_rows(set(dates))
-    nav, part = lb_results()
-    return {d: analyse(d, rows[d], funds, amap, nav, part, alld) for d in dates}
+def all_analyses(prov="SEB", lbr=None):
+    funds_cfg, alts, amap = load_cfg()
+    funds = universe(prov, funds_cfg, amap)
+    alld = prov_dates(prov)
+    rows = prov_rows(prov)
+    nav, part, risky = lbr or lb_results()
+    return {d: analyse(d, rows[d], funds, amap, nav, part, alld, risky) for d in alld if d >= START}
 
 
-def site_payload():
-    """Svetainės skilčiai „Alternatyvios“ (portfolios.html, site/liq.js): visi SEB ketvirčiai – lentelės, palyginimas,
-    išimtys, laiškai; matricas naršyklė skaičiuoja pati iš A, B, AUM (abi formulės). Savininkas 2026-11-09: „viskas turi
-    matytis dashboard skiltyje Alternatyvos“."""
-    funds, alts, amap = load_cfg()
-    dates = [d for d in seb_dates() if d >= "2024-09-30"]
-    if not dates:
-        return {}
-    rows = seb_rows(set(dates))
-    nav, part = lb_results()
-    alld = seb_dates()
-    an = {d: analyse(d, rows[d], funds, amap, nav, part, alld) for d in dates}
+def prov_payload(prov, lbr):
+    funds_cfg, alts, amap = load_cfg()
+    an = all_analyses(prov, lbr)
+    dates = sorted(an)
     keys = ["code", "name", "pillar", "in_alt", "in_bal", "aum", "nav_src", "alt", "alt_sh", "alt_x", "alt_xe", "bal", "bal_sh",
-            "bonds", "lim", "bal_x", "bal_xe", "part", "part_chg", "hit0", "hit10", "ex0", "ex10", "c5010", "c5010_xl", "hit0_xl",
-            "hit10_xl", "bhit0", "bhit10", "b5010"]
+            "bonds", "lim", "bal_x", "bal_xe", "part", "part_chg", "c5010", "c5010_xl"]
     out = []
     for i, d in enumerate(dates):
         cur = an[d]
         prev = an[dates[i - 1]] if i else None
         ref = an.get(REFERENCE_DATE) if REFERENCE_DATE < (prev["date"] if prev else d) else None
-        la, lb = letters(cur, prev, ref)
         s = cur["summary"]
+        has_alt = bool(s.get("alt_min"))
+        last2 = i >= len(dates) - 2            # pozicijos ir laiškai – tik 2 paskutiniams ketvirčiams (failo dydis)
+        la, lb = letters(cur, prev, ref) if has_alt and i >= len(dates) - 2 else ([], [])   # laiškai – 2 paskutiniams ketvirčiams
         rs = []
         for r in cur["res"].values():
             x = {k: (round(r[k], 6) if isinstance(r.get(k), float) else r.get(k)) for k in keys}
-            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] else []
-            x["balpos"] = sorted(([n, round(v)] for n, v in r["balpos"].items()), key=lambda z: -z[1]) if r["in_bal"] else []
+            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] and last2 else []
+            x["balpos"] = sorted(([n, round(v)] for n, v in r["balpos"].items()), key=lambda z: -z[1]) if r["in_bal"] and last2 else []
             rs.append(x)
         out.append(dict(
             date=d, prev=prev["date"] if prev else None, ref=ref["date"] if ref else None, funds=rs,
-            sel=s["selected"]["code"], sel_reason=s["sel_reason"], sens=s["sensitive"]["code"],
+            sel=s["selected"]["code"] if has_alt else None, sel_reason=s.get("sel_reason", ""),
+            sens=s["sensitive"]["code"] if has_alt else None,
             bal_sel=s["bal_sel"]["code"] if s.get("bal_sel") else None,
-            ii=dict(aum=s["ii_aum"], alt=s["ii_alt"], xe=s["ii_xe"], x=s["ii_x"], avg_wrong=s["ii_x_avg_wrong"]),
+            ii=dict(aum=s.get("ii_aum"), alt=s.get("ii_alt"), xe=s.get("ii_xe"), x=s.get("ii_x"), avg_wrong=s.get("ii_x_avg_wrong")),
             bal_tot={pl: s.get(f"bal_{pl}") for pl in ("II", "III")},
-            summary=summary_lines(cur, prev), cmp=[list(t) for t in compare(cur, prev)],
-            cmp_ref=[list(t) for t in compare(cur, ref)] if ref else [],
+            summary=summary_lines(cur, prev),
+            cmp=[list(t) for t in compare(cur, prev)] if has_alt else [],
+            cmp_ref=[list(t) for t in compare(cur, ref)] if (ref and has_alt) else [],
             dec=[{k: (round(v, 6) if isinstance(v, float) else v) for k, v in r.items()} for r in decompose(cur, prev)],
             exc=[[a, b, c, round(v) if isinstance(v, float) else v, e] for a, b, c, v, e in cur["exc"]],
             la=la, lb=lb))
-    return dict(periods=out, limit=ALT_LIMIT, method=METHOD, hist=[history_row(an[d]) for d in dates],
-                alts=[dict(name=r["name"], is_alt=r["is_alt"], cls=r["class"], src=r["source"], rev=r["reviewed"]) for r in alts],
-                limits=[dict(code=f["code"], name=f["name"], lim=f["bond_limit_pct"], src=f["limit_source"], rev=f["reviewed"])
-                        for f in funds if f["baltic"] == "1"])
+    lim_rows = []
+    if out:
+        for f in out[-1]["funds"]:
+            if f["in_bal"]:
+                cfg = next((c for c in funds_cfg if c["code"] == f["code"]), None) if prov == "SEB" else None
+                lim_rows.append(dict(code=f["code"], name=f["name"], lim=f["lim"] * 100 if f["lim"] else None,
+                                     src=cfg["limit_source"] if cfg and cfg["bond_limit_pct"] else "LB rizikingų investicijų dalis (100 − X %)",
+                                     rev=cfg["reviewed"] if cfg and cfg["bond_limit_pct"] else out[-1]["date"]))
+    return dict(periods=out, hist=[history_row(an[d]) for d in dates if an[d]["summary"].get("alt_min")], limits=lim_rows)
+
+
+def site_payload():
+    """Svetainės skilčiai „Alternatyvios“ (portfolios.html, site/liq.js): kiekvienas valdytojas (savininkas 2026-11-09:
+    „turėtų būti pritaikoma bet kuriam valdytojui“), visi ketvirčiai nuo START – lentelės, palyginimas, išimtys, laiškai;
+    matricas naršyklė skaičiuoja pati iš A, B, AUM (abi formulės)."""
+    _, alts, _ = load_cfg()
+    lbr = lb_results()
+    mg = {p: prov_payload(p, lbr) for p in providers()}
+    return dict(mgr={k: v for k, v in mg.items() if v["periods"]}, limit=ALT_LIMIT, method=METHOD,
+                alts=[dict(name=r["name"], is_alt=r["is_alt"], cls=r["class"], src=r["source"], rev=r["reviewed"]) for r in alts])
 
 
 def latest_date():
-    d = seb_dates()
+    d = prov_dates("SEB")
     return d[-1] if d else None
 
 
@@ -994,7 +1090,8 @@ def main():
         return
     date = args[args.index("--date") + 1] if "--date" in args else None
     out = args[args.index("--out") + 1] if "--out" in args else None
-    cur, prev, files = run(date, out)
+    prov = args[args.index("--mgr") + 1] if "--mgr" in args else "SEB"
+    cur, prev, files = run(date, out, prov)
     print("\n".join(summary_lines(cur, prev)))
     print("\nFailai:\n" + "\n".join(str(f) for f in files))
 
