@@ -1003,13 +1003,13 @@ def prov_payload(prov, lbr):
         ref = an.get(REFERENCE_DATE) if REFERENCE_DATE < (prev["date"] if prev else d) else None
         s = cur["summary"]
         has_alt = bool(s.get("alt_min"))
-        last2 = i >= len(dates) - 2            # pozicijos ir laiškai – tik 2 paskutiniams ketvirčiams (failo dydis)
+        last2 = i >= len(dates) - 2            # laiškai – tik 2 paskutiniams ketvirčiams (failo dydis)
         la, lb = letters(cur, prev, ref) if has_alt and i >= len(dates) - 2 else ([], [])   # laiškai – 2 paskutiniams ketvirčiams
         rs = []
         for r in cur["res"].values():
             x = {k: (round(r[k], 6) if isinstance(r.get(k), float) else r.get(k)) for k in keys}
-            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] and last2 else []
-            x["balpos"] = sorted(([n, round(v)] for n, v in r["balpos"].items()), key=lambda z: -z[1]) if r["in_bal"] and last2 else []
+            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] else []
+            x["balpos"] = sorted(([n, round(v)] for n, v in r["balpos"].items()), key=lambda z: -z[1]) if r["in_bal"] else []
             rs.append(x)
         out.append(dict(
             date=d, prev=prev["date"] if prev else None, ref=ref["date"] if ref else None, funds=rs,

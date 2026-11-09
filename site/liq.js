@@ -36,6 +36,16 @@
   const fsel = (id, list, cur) => `<select id="${id}">${list.map(f => `<option value="${f.code}"${f.code === cur ? ' selected' : ''}>${h(f.name)}</option>`).join('')}</select>`;
   const tbl = (head, rows, cls = '') => `<div class="scroll"><table class="pft ${cls}"><thead><tr>${head.map((x, i) => `<th${i ? '' : ' class="l"'}>${x}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
   const tr = (cells, bold) => `<tr${bold ? ' style="font-weight:700"' : ''}>${cells.map((c, i) => i ? `<td>${c}</td>` : `<td class="l">${c}</td>`).join('')}</tr>`;
+  // Užvedus pelę – didžiausios pozicijos (title), paspaudus – visas sąrašas po eilute (savininkas 2026-11-09)
+  const isGov = n => /vyriausyb|government|republic|respublik/i.test(n);
+  const posOf = (k, f) => k === 'alt' ? f.altpos : f.balpos;
+  const tip = (k, f) => {
+    const L0 = posOf(k, f); if (!L0.length) return '';
+    const top = L0.slice(0, 6).map(([n, v]) => `${n} – ${pc(v / f.aum)} (${me(v)})`).join('\n');
+    const g = k === 'bal' ? L0.filter(([n]) => isGov(n)).reduce((a, [, v]) => a + v, 0) : 0;
+    return (k === 'bal' ? `Vyriausybių ${me(g)} · įmonių ${me(f.bal - g)}\n` : '') + top + (L0.length > 6 ? `\n… dar ${L0.length - 6}. Spustelėkite – visas sąrašas.` : '\nSpustelėkite – visas sąrašas.');
+  };
+  const pk = (k, f, extra = '') => posOf(k, f).length ? ` class="liqk" data-k="${k}" data-c="${f.code}" title="${h(tip(k, f))}"${extra}` : extra;
   const det = (title, body, open) => `<details class="liqd"${open ? ' open' : ''}><summary><b>${title}</b></summary>${body}</details>`;
 
   function render() {
@@ -65,7 +75,7 @@
     else {
     o += `<section class="card" style="margin-top:12px"><b>Alternatyvios investicijos ir ${pc(LIM, 0)} riba</b>`
       + tbl(['Fondas', 'Pakopa', 'AUM', 'Alternatyvos, €', 'Alternatyvos, %', `Išėjimo riba iki ${pc(LIM, 0)}, %`, 'Išėjimo riba, €', 'Dalyvių pokytis per 2 ketv.'],
-        alt.map(f => `<tr><td class="l">${h(f.name)}${f.code === p.sel ? ' ★' : ''}</td><td>${f.pillar}</td><td>${eu(f.aum)}</td><td>${eu(f.alt)}</td><td style="background:${cAlt(f.alt_sh)}">${pc(f.alt_sh)}</td><td>${pc(f.alt_x)}</td><td>${eu(f.alt_xe)}</td><td>${pc(f.part_chg, 1)}</td></tr>`)
+        alt.map(f => `<tr><td class="l">${h(f.name)}${f.code === p.sel ? ' ★' : ''}</td><td>${f.pillar}</td><td>${eu(f.aum)}</td><td${pk('alt', f)}>${eu(f.alt)}</td><td${pk('alt', f, ` style="background:${cAlt(f.alt_sh)}"`)}>${pc(f.alt_sh)}</td><td>${pc(f.alt_x)}</td><td>${eu(f.alt_xe)}</td><td>${pc(f.part_chg, 1)}</td></tr>`)
           .concat([totRow('Total II pakopa', ii), ...(iii.length ? [totRow('Total III pakopa', iii)] : []), totRow('Total visi analizuojami', alt)]))
       + `<p class="note">Išėjimo riba = 1 − alternatyvų dalis ÷ ${pc(LIM, 0)}. Bendra riba – svertinė eurais (Σ išėjimo ribų € ÷ Σ AUM); paprastas fondų procentų vidurkis būtų ${pc(p.ii.avg_wrong)}, bet jis netaikomas – mažam ir dideliam fondui suteiktų vienodą svorį. ★ – matricos fondas: ${h(p.sel_reason)}. AUM – LB grynieji aktyvai.</p>`;
     o += tbl(['Fondas', 'Riba prie 0 % (matrica)', 'Riba prie −10 % (matrica)', '50 % išėjimų / −10 % rinkos', 'Buferis iki 30 %', 'Tas pats kitu būdu*'],
@@ -87,7 +97,7 @@
       + tbl(['Fondas', 'Pakopa', 'AUM', 'Baltijos obligacijos, €', 'Baltijos obligacijos, %', 'Fondo obligacijų riba', 'Išėjimų riba, %', 'Išėjimų riba, €', 'Visos obligacijos, €', 'Prie 0 %', 'Prie −10 %', '50 % / −10 %'],
         F.filter(f => f.in_bal).map(f => {
           const ok = f.lim, v = ok ? share(f.bal, f.aum, .5, .1, mode) : null;
-          return `<tr><td class="l">${h(f.name)}</td><td>${f.pillar}</td><td>${eu(f.aum)}</td><td>${eu(f.bal)}</td><td${ok ? ` style="background:${cBal(f.bal_sh, f.lim)}"` : ''}>${pc(f.bal_sh)}</td><td>${pc(f.lim, 1)}</td><td>${pc(f.bal_x)}</td><td>${eu(f.bal_xe)}</td><td>${eu(f.bonds)}</td>
+          return `<tr><td class="l">${h(f.name)}</td><td>${f.pillar}</td><td>${eu(f.aum)}</td><td${pk('bal', f)}>${eu(f.bal)}</td><td${pk('bal', f, ok ? ` style="background:${cBal(f.bal_sh, f.lim)}"` : '')}>${pc(f.bal_sh)}</td><td>${pc(f.lim, 1)}</td><td>${pc(f.bal_x)}</td><td>${eu(f.bal_xe)}</td><td>${eu(f.bonds)}</td>
             <td>${ok && f.bal ? gx(hit(f.bal, f.aum, f.lim, 0, mode)) : '–'}</td><td>${ok && f.bal ? gx(hit(f.bal, f.aum, f.lim, .1, mode)) : '–'}</td><td${v != null ? ` style="background:${cBal(v, f.lim)}"` : ''}>${pc(v)}</td></tr>`;
         }).concat(['II', 'III'].filter(pl => p.bal_tot && p.bal_tot[pl]).map(pl => { const g = p.bal_tot[pl];
           return tr([`Total ${pl} pakopa`, '', eu(g.aum), eu(g.bal), pc(g.bal / g.aum), '', pc(g.xe / g.aum), eu(g.xe), '', '', '', ''], 1); })))
@@ -145,6 +155,18 @@
         + tbl(['Fondas', 'Obligacijų riba, %', 'Šaltinis', 'Peržiūrėta'], MG[st.m].limits.map(a => tr([h(a.name), a.lim == null ? 'nėra (LB: rizikingų iki 100 %)' : (Math.round(a.lim * 10) / 10).toString().replace('.', ','), h(a.src), h(a.rev)]))))
       + '<p class="note">Excel su visomis lentelėmis ir spalvotomis matricomis bei laiškai A/B ateina su vakariniu laišku, kai LB paskelbia naujus portfelius. Laiškas kolegoms automatiškai nesiunčiamas.</p></section>';
     box.innerHTML = o;
+    box.querySelectorAll('.liqk').forEach(td => td.addEventListener('click', () => {
+      const row = td.closest('tr'), nx = row.nextElementSibling, key = td.dataset.k + td.dataset.c;
+      if (nx && nx.classList.contains('liqx')) { const same = nx.dataset.key === key; nx.remove(); if (same) return; }
+      const f = byC[td.dataset.c], k = td.dataset.k, L0 = posOf(k, f);
+      const g = k === 'bal' ? [['Vyriausybių obligacijos', L0.filter(([n]) => isGov(n))], ['Įmonių obligacijos', L0.filter(([n]) => !isGov(n))]] : [['', L0]];
+      const body = g.filter(([, l]) => l.length).map(([t, l]) => (t ? `<tr><td class="l" colspan="3"><b>${t}: ${eu(l.reduce((a, [, v]) => a + v, 0))} (${pc(l.reduce((a, [, v]) => a + v, 0) / f.aum)})</b></td></tr>` : '')
+        + l.map(([n, v]) => `<tr><td class="l">${h(n)}</td><td>${eu(v)}</td><td>${pc(v / f.aum)}</td></tr>`).join('')).join('');
+      const x = document.createElement('tr'); x.className = 'liqx'; x.dataset.key = key;
+      x.innerHTML = `<td colspan="${row.children.length}" class="l"><b>${h(f.name)} – ${k === 'alt' ? 'alternatyvios investicijos' : 'Baltijos obligacijos'} (${p.date})</b>
+        <div class="fmore"><table class="liqxt"><thead><tr><th class="l">Pozicija</th><th>Vertė</th><th>Dalis fonde</th></tr></thead><tbody>${body}</tbody></table></div></td>`;
+      row.after(x);
+    }));
     box.querySelector('#liqG').addEventListener('change', e => { st.m = e.target.value; st.d = null; st.af = st.bf = null; save(); render(); });
     box.querySelector('#liqD').addEventListener('change', e => { st.d = +e.target.value; render(); });
     box.querySelector('#liqM').addEventListener('change', e => { st.mode = e.target.value; save(); render(); });

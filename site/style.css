@@ -626,3 +626,7 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 .liqs { margin: 6px 0 0 18px; padding: 0; } .liqs li { margin: 2px 0; }
 .liqd { margin: 8px 0; } .liqd summary { cursor: pointer; }
 .liqp { white-space: pre-wrap; font: inherit; font-size: .92em; background: var(--card2, rgba(127,127,127,.08)); padding: 10px; border-radius: 6px; }
+.liqk { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+.liqx > td { background: var(--card2, rgba(127,127,127,.06)); padding: 8px 10px; }
+.liqxt { margin-top: 6px; max-width: 760px; }
+.liqxt { border-collapse: collapse; width: 100%; } .liqxt th, .liqxt td { padding: 4px 8px; text-align: right; border-bottom: 1px solid rgba(127,127,127,.18); } .liqxt .l { text-align: left; }
