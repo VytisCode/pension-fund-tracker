@@ -606,6 +606,29 @@ function renderMs() {
 }
 $('msSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; MSK = b.dataset.k; renderMs(); });
 
+/* ---------- Latvija, II pakopa: dalyvių judėjimas pagal valdytoją (VSAA metinės ataskaitos, BALTIC.mv; kolegės „Participant movements“) ---------- */
+addStrings({ mv: { t: 'Participant movements (once a year)', h: ['Manager', 'At year start', 'New', 'Came from other plans', 'Left to other plans', 'Net switching', 'Died', 'Retired', 'Correction', 'At year end', 'Change'],
+  n: 'Source: VSAA annual reports on the state funded pension scheme. Switches between plans of the same manager are counted both as “came” and “left”, so net switching shows the real gain or loss. VSAA publishes these figures once a year; the 2022 report is a PDF and is not read yet.', tot: 'Whole scheme' } },
+  { mv: { t: 'Dalyvių judėjimas (kartą per metus)', h: ['Valdytojas', 'Metų pradžioje', 'Nauji', 'Atėjo iš kitų plānų', 'Išėjo į kitus plānus', 'Grynasis perėjimas', 'Mirė', 'Išėjo į pensiją', 'Korekcija', 'Metų pabaigoje', 'Pokytis'],
+  n: 'Šaltinis: VSAA metinės valstybinės kaupiamųjų pensijų schemos ataskaitos. Perėjimai tarp to paties valdytojo plānų įskaičiuoti ir į „atėjo“, ir į „išėjo“, todėl tikrąjį laimėjimą ar praradimą rodo grynasis perėjimas. VSAA šiuos skaičius skelbia kartą per metus; 2022 m. ataskaita – PDF, kol kas neperskaityta.', tot: 'Visa schema' } });
+let MVY = null;
+function renderMv() {
+  const M = BALTIC.mv, on = CR.c === 'LV' && CR.pl === 'II' && M && M.y && M.y.length;
+  $('mvC').hidden = !on; if (!on) return;
+  const t = T().mv; if (!M.y.includes(MVY)) MVY = M.y[M.y.length - 1];
+  const i = M.y.indexOf(MVY);
+  $('mvT').textContent = `${t.t}: ${MVY}`;
+  $('mvSeg').innerHTML = M.y.map(y => `<button type="button" data-y="${y}" aria-pressed="${y === MVY}">${y}</button>`).join('');
+  const f = v => v == null ? '–' : (v < 0 ? '−' : '') + num(Math.abs(v), 0), fs = v => v == null ? '–' : (v < 0 ? '−' : v > 0 ? '+' : '') + num(Math.abs(v), 0);
+  const row = (g, x, tot) => { const net = x.inn[i] != null && x.out[i] != null ? x.inn[i] + x.out[i] : null, ch = x.end[i] != null && x.start[i] != null ? x.end[i] - x.start[i] : null;
+    return `<tr${tot ? ' class="tot"' : ''}><td class="nm"><b>${hEsc(g)}</b></td><td class="n">${f(x.start[i])}</td><td class="n">${f(x.new[i])}</td><td class="n">${f(x.inn[i])}</td><td class="n">${f(x.out[i])}</td>`
+      + `<td class="n ${tot ? '' : sgn(net)}">${tot ? '–' : fs(net)}</td><td class="n">${f(x.died[i])}</td><td class="n">${f(x.ret[i])}</td><td class="n">${f(x.cor[i])}</td><td class="n">${f(x.end[i])}</td><td class="n ${sgn(ch)}">${fs(ch)}</td></tr>`; };
+  const gs = Object.keys(M.mg).filter(g => M.mg[g].end[i] != null || M.mg[g].start[i] != null).sort((a, b) => (M.mg[b].end[i] || 0) - (M.mg[a].end[i] || 0));
+  $('mvTbl').innerHTML = `<thead><tr>${t.h.map((h, j) => `<th${j ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${gs.map(g => row(g, M.mg[g])).join('')}${row(t.tot, M.tot, true)}</tbody>`;
+  $('mvN').textContent = t.n;
+}
+$('mvSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MVY = +b.dataset.y; renderMv(); });
+
 function renderBs() {
   const T0 = T(), b = T0.bs;
   $('bsT').textContent = b.t; $('bsL').textContent = b.l; $('bsMT').textContent = b.mT; $('bsGT').textContent = b.gT; $('bsN').textContent = b.n;
@@ -768,7 +791,7 @@ function render() {
   BXM.c = CR.c; BXM.pl = CR.pl;
   document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderTop(); if (CR.pl === 'II') renderJr(); }
+  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderMv(); renderTop(); if (CR.pl === 'II') renderJr(); }
   $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
   const ks = modeTabs();

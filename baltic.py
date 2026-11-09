@@ -437,6 +437,40 @@ def shares():
     return out
 
 
+VSAA_MGR = [("swedbank", "Swedbank"), ("hansa", "Swedbank"), ("seb", "SEB"), ("unilat", "SEB"), ("cbl", "CBL"), ("citadele", "CBL"), ("parex", "CBL"),
+            ("invl", "INVL"), ("finasta", "INVL"), ("luminor", "Luminor"), ("dnb", "Luminor"), ("nordea", "Luminor"), ("indexo", "Indexo"),
+            ("vairo", "Vairo"), ("signet", "Signet"), ("aktīvais plāns", "Signet"), ("norvik", "PNB (Norvik)"), ("pnb", "PNB (Norvik)"),
+            ("ablv", "ABLV"), ("index direct", "Index Direct"), ("integrum", "Integrum")]
+
+
+def vsaa_moves():
+    """LV II pakopos dalyvių judėjimas pagal valdytoją ir metus (VSAA metinės ataskaitos, tools/fetch_vsaa.py):
+    {y: [metai], mg: {valdytojas: {k: [..]}}, tot: {k: [..]}}; k – start, new, inn (iš kitų plānų), out (į kitus plānus),
+    died, ret (pensija + ES), cor, end. Perėjimai tarp to paties valdytojo plānų įskaičiuoti ir į inn, ir į out."""
+    p = D / "lv_vsaa_moves.csv"
+    if not p.exists():
+        return None
+    K = {"start": "start", "new": "new", "inn": "from_other", "out": "to_other", "died": "died", "ret": "retired", "eu": "eu", "cor": "correction", "end": "end"}
+    by, tot = defaultdict(lambda: defaultdict(lambda: defaultdict(int))), defaultdict(dict)
+    for r in csv.DictReader(p.open(encoding="utf-8")):
+        y, nm = int(r["year"]), r["plan"]
+        v = {k: int(r[c]) if r[c] not in ("", None) else 0 for k, c in K.items()}
+        v["ret"] += v.pop("eu")
+        if nm.lower().startswith("kop"):
+            tot[y] = v
+            continue
+        g = next((lab for key, lab in VSAA_MGR if key in nm.lower()), None)
+        if not g:
+            print("baltic: VSAA plāns be valdytojo:", nm)
+            continue
+        for k, x in v.items():
+            by[g][y][k] += x
+    ys = sorted(tot)
+    ks = ["start", "new", "inn", "out", "died", "ret", "cor", "end"]
+    return {"y": ys, "mg": {g: {k: [d[y][k] if y in d else None for y in ys] for k in ks} for g, d in sorted(by.items())},
+            "tot": {k: [tot[y].get(k) for y in ys] for k in ks}}
+
+
 def _safe(fn):
     try:
         return fn()
@@ -479,7 +513,7 @@ def build() -> dict:
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
         print("baltic: reformų palyginimas nepavyko:", e)
         rf = None
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "_perf": perf}
+    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "_perf": perf}
 
 
 PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],
