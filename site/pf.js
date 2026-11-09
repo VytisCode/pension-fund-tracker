@@ -276,6 +276,8 @@ const quarterSelect = (id, cur, from = 0) => `<select id="${id}">` + Q.map((_, i
 const qShort = i => { const [y, m] = Q[i].split('-'); return lang === 'lt' ? `${y.slice(2)} ${['I', 'II', 'III', 'IV'][m / 3 - 1]}` : `Q${m / 3} ’${y.slice(2)}`; };
 function drawColumns(el, cats, bars, dots, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
+  // PNG kopijai – legenda (kuri spalva kurį valdytoją reiškia; savininkas 2026-11-09)
+  el._legend = bars.concat(dots).filter(b => b.label).map(b => ({ c: colorOf(b.id), l: b.label + (b.vals && b.vals.length && b.vals[b.vals.length - 1] != null ? ' ' + num(b.vals[b.vals.length - 1], 2) + ' %' : '') }));
   if (!cats.length) { el.insertAdjacentHTML('beforeend', `<p class="na">${T().noData}</p>`); return; }
   const W = el.clientWidth || 600, H = opts.height || 280, m = { l: 44, r: 8, t: 12, b: 28 };
   const fmt = opts.fmt || (v => num(v, 2) + pctSfx());
@@ -751,7 +753,7 @@ function renderAlt() {
   const at = (r, i) => { const p = r.points.find(x => x[0] === QDAY[i]); return p ? p[1] : null; };
   const paint = () => drawColumns(el, cq, series.map(r => ({ id: r.provider, label: r.provider, vals: cq.map(i => at(r, i)) })), [], { height: 300 });
   renderAlt.paint = paint; paint();
-  document.getElementById('altChartMeta').textContent = T().altChart;
+  document.getElementById('altChartMeta').textContent = (lang === 'lt' ? `${pl} pakopa · ` : `Pillar ${pl} · `) + T().altChart.replace(/\(visi pakopos fondai kartu\)/, `(visi ${pl} pakopos fondai kartu)`) + ` · ${qLabel(cq[0])} – ${qLabel(cq[cq.length - 1])}`;
   document.getElementById('altLegend').innerHTML = series.map(r => `<span><i style="background:${colorOf(r.provider)}"></i>${r.provider} <b>${at(r, q1) == null ? '–' : num(at(r, q1), 2) + pctSfx()}</b></span>`).join('');
   // lentelė: kiekvienas fondas – dalis per paskutinius ketvirčius ir pokytis nuo pasirinkto ketvirčio
   const cols = []; for (let i = Math.max(0, q1 - 7); i <= q1; i++) cols.push(i);
