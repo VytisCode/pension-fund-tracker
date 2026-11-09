@@ -310,7 +310,7 @@
       + det('Konfigūracija: alternatyvų sąrašas ir obligacijų ribos',
         tbl(['Pavadinimas', 'Alternatyva?', 'Rūšis', 'Šaltinis', 'Peržiūrėta'], LIQ.alts.map(a => tr([h(a.name), a.is_alt === '1' ? 'taip' : 'NE', h(a.cls), h(a.src), h(a.rev)])))
         + tbl(['Fondas', 'Obligacijų riba, %', 'Šaltinis', 'Peržiūrėta'], MG[st.m].limits.map(a => tr([h(a.name), a.lim == null ? 'nėra (LB: rizikingų iki 100 %)' : (Math.round(a.lim * 10) / 10).toString().replace('.', ','), h(a.src), h(a.rev)]))))
-      + '<p class="note">Excel su visomis lentelėmis ir spalvotomis matricomis bei laiškai A/B ateina su vakariniu laišku, kai LB paskelbia naujus portfelius. Laiškas kolegoms automatiškai nesiunčiamas.</p></section>';
+      + '<p class="note">Excel su visomis lentelėmis galite atsisiųsti bet kada – mygtukas „⤓ Excel“ viršuje (2 paskutiniai ketvirčiai). Be to, kai LB paskelbia naujus portfelius, Excel ir laiškai A/B automatiškai ateina su vakariniu laišku. Laiškas kolegoms automatiškai nesiunčiamas – jį siunčiate patys.</p></section>';
     box.innerHTML = o;
     const tc = box.querySelector('#liqTC'); if (tc) tc._legend = [{ l: 'dabar', c: '#9bc97a' }, { l: 'prieš ketvirtį (│)', c: '#333' }, { l: 'prieš metus (○)', c: '#333' }, { l: 'riba', c: '#c0392b', d: '5 4' }];
     const hc = box.querySelector('#liqHC'); if (hc) hc._legend = [['Alternatyvų dalis, maks.', '#c9a227'], ['II pakopos išėjimo riba iki 30 %', '#2f6fb3'], ['Matricos fondas: 50 % / −10 %', '#c0392b'], ['Baltijos obl. išėjimų riba, II pakopa', '#2e8b57']].map(([l, c]) => ({ l, c }));
