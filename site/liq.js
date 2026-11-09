@@ -128,6 +128,67 @@
       + `<p class="note">${expl} Spalva – tolydi skalė: ${REL ? `kontrasto režimas – raudoniausias langelis yra arčiausiai ribos šioje lentelėje, žaliausias – toliausiai; spalvos rodo skirtumus, ne absoliutų pavojų` : 'žalia – toli nuo ribos, geltona – pusiaukelėje, raudona – prie ribos'}. „Riba … tempu“ – po kiek ketvirčių riba būtų pasiekta, jei atstumas iki jos mažėtų tokiu pačiu greičiu kaip per paskutinį ketvirtį arba vidutiniškai per paskutinius ${Math.min(4, n0 - 1)} ketv. (tiesinė ekstrapoliacija, ne prognozė). Užvedus pelę ant langelio – eurai ir AUM.</p></section>`;
   }
 
+  /* ---------- Pokyčiai ---------- */
+  const BAD = '#FFC7CE;color:#5c0d14', GOOD = '#C6EFCE;color:#1d3b23';
+  // v – pokytis; up – ar didėjimas blogai (artėjama prie ribos)
+  const dc = (v, up, txt, eps = 5e-4) => v == null || Math.abs(v) < eps ? `<td>${txt}</td>` : `<td style="background:${(v > 0) === up ? BAD : GOOD}">${txt}</td>`;
+  const sgn = (v, d = 1) => v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v * 100).toFixed(d).replace('.', ',') + ' %';
+  const dme = v => v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + me(Math.abs(v));
+  function changes(PS, di) {
+    const p = PS[di];
+    if (!di) return `<section class="card" style="margin-top:12px"><h3 style="margin:0 0 6px;font-size:1em;font-weight:700">Pokyčiai</h3><p class="note">Ankstesnio ketvirčio duomenų nėra.</p></section>`;
+    if (st.cb == null || st.cb >= di) st.cb = di - 1;
+    const q = PS[st.cb], qi = st.cb;
+    const opts = PS.slice(0, di).map((x, i) => `<option value="${i}"${i === qi ? ' selected' : ''}>${qn(x.date)}${i === di - 1 ? ' (ankstesnis)' : i === di - 4 ? ' (prieš metus)' : x.date === p.ref ? ' (prieš reformą)' : ''}</option>`).reverse().join('');
+    let o = `<section class="card" style="margin-top:12px"><h3 style="margin:0 0 6px;font-size:1em;font-weight:700">Pokyčiai: ${qn(q.date)} → ${qn(p.date)}</h3>
+      <div class="bar pfbar"><label>Palyginti su <select id="liqCB">${opts}</select></label></div>`;
+    // plytelės – II pakopos visuma
+    const tot = (pp0, pl) => { const g = pp0.funds.filter(f => f.pillar === pl && f.in_alt); const t = g.reduce((a, f) => a + f.aum, 0);
+      return g.length ? { aum: t, alt: g.reduce((a, f) => a + f.alt, 0), xe: g.reduce((a, f) => a + f.alt_xe, 0) } : null; };
+    const A = tot(q, 'II'), B = tot(p, 'II');
+    const kpi = (lbl, a, b, fmt, dfmt, up) => {
+      const d = a == null || b == null ? null : b - a, col = d == null || Math.abs(d) < 1e-9 ? 'var(--text-2)' : (d > 0) === up ? '#c0392b' : '#2e8b57';
+      return `<div class="kpi"><span>${lbl}</span><b>${fmt(b)}</b><small>buvo ${fmt(a)} · <span style="color:${col};font-weight:700">${d == null ? '–' : dfmt(d, a)}</span></small></div>`; };
+    if (A && B) {
+      const mx = pp0 => pp0.funds.filter(f => f.in_alt).reduce((m, f) => !m || f.alt_sh > m.alt_sh ? f : m, null);
+      const ma = mx(q), mb = mx(p);
+      o += `<div class="kpis">`
+        + kpi('II pakopa: gali išeiti iki 30 % ribos', A.xe / A.aum, B.xe / B.aum, v => pc(v, 1), d => ppf(d), false)
+        + kpi('Tai eurais', A.xe, B.xe, me, (d, a) => `${dme(d)} (${sgn(d / a)})`, false)
+        + kpi('II pakopos fondų turtas', A.aum, B.aum, me, (d, a) => `${dme(d)} (${sgn(d / a)})`, false)
+        + kpi('II pakopos alternatyvos eurais', A.alt, B.alt, me, (d, a) => `${dme(d)} (${sgn(d / a)})`, true)
+        + kpi(`Didžiausia alternatyvų dalis${mb ? ' – ' + h(mb.name.replace(/^\S+\s(pensija\s)?/, '')) : ''}`, ma && ma.alt_sh, mb && mb.alt_sh, v => pc(v, 1), d => ppf(d), true)
+        + `</div>`;
+    }
+    // fondų lentelė
+    const rows = p.funds.filter(f => f.in_alt || (f.in_bal && f.lim && f.bal > 0)).sort((a, b) => a.pillar.localeCompare(b.pillar) || a.name.localeCompare(b.name));
+    const why = (a, b) => {
+      if (!a.alt && !b.alt) return '–';
+      const byAum = a.alt / b.aum - a.alt_sh, byAlt = (b.alt - a.alt) / b.aum;
+      const main = Math.abs(byAum) >= Math.abs(byAlt) ? (b.aum < a.aum ? 'sumažėjo fondo turtas' : 'padidėjo fondo turtas') : (b.alt > a.alt ? 'padidėjo alternatyvų vertė' : 'sumažėjo alternatyvų vertė');
+      return [byAum, byAlt, main];
+    };
+    const body = rows.map(f => {
+      const a = q.funds.find(x => x.code === f.code);
+      if (!a) return `<tr><td class="l">${h(f.name)}</td><td colspan="10" class="l">naujas fondas – ${qn(q.date)} duomenų nėra</td></tr>`;
+      const w = f.in_alt ? why(a, f) : '–', alt = f.in_alt;
+      return `<tr><td class="l">${h(f.name)}</td>`
+        + dc(f.aum / a.aum - 1, false, sgn(f.aum / a.aum - 1), 5e-3)
+        + (alt ? dc(a.alt ? f.alt / a.alt - 1 : null, true, a.alt ? sgn(f.alt / a.alt - 1) : '–', 5e-3) : '<td>–</td>')
+        + (alt ? `<td>${pc(a.alt_sh)} → <b>${pc(f.alt_sh)}</b></td>` + dc(f.alt_sh - a.alt_sh, true, ppf(f.alt_sh - a.alt_sh)) : '<td>–</td><td>–</td>')
+        + (Array.isArray(w) ? `<td class="l" title="${h(`Dėl fondo turto pokyčio: ${ppf(w[0])}\nDėl alternatyvų vertės pokyčio: ${ppf(w[1])}`)}">${w[2]} <span class="meta">(${ppf(Math.abs(w[0]) >= Math.abs(w[1]) ? w[0] : w[1])})</span></td>` : '<td>–</td>')
+        + (alt ? `<td>${pc(a.alt_x, 1)} → <b>${pc(f.alt_x, 1)}</b></td>` : '<td>–</td>')
+        + (f.in_bal && f.lim && f.bal > 0 && a.lim ? dc(f.bal_sh - a.bal_sh, true, ppf(f.bal_sh - a.bal_sh)) : '<td>–</td>')
+        + '</tr>';
+    });
+    o += tbl(['Fondas', 'Fondo turtas', 'Alternatyvos, €', 'Alternatyvų dalis', 'Pokytis', 'Kodėl pasikeitė', 'Gali išeiti iki 30 %', 'Baltijos obl. dalis'], body)
+      + `<p class="note">Raudona – arčiau ribos (pablogėjo), žalia – toliau nuo ribos. Alternatyvų dalies pokytis išskaidytas į dvi dalis: kiek jis atsirado vien dėl to, kad pasikeitė fondo turtas (alternatyvos tos pačios), ir kiek – dėl pačių alternatyvų vertės pokyčio (nauji įmokėjimai, perkainojimas ar išmokos – iš LB duomenų jų atskirti negalima). Abiejų dalių suma = visas pokytis; „Kodėl pasikeitė“ rodo didesniąją (užvedus pelę – abi).</p>`;
+    // kas pasikeitė vardiniuose rodikliuose
+    const cmp = qi === di - 1 ? p.cmp : (q.date === p.ref ? p.cmp_ref : null);
+    if (cmp && cmp.length) o += det('Visi suvestiniai rodikliai (kaip Excel lape „Pokyčiai“)', tbl(['Rodiklis', qn(q.date), qn(p.date), 'Pokytis'], cmp.map(r => tr(r.map(h)))));
+    return o + '</section>';
+  }
+
   function render() {
     P = MG[st.m].periods;
     if (st.d == null || st.d >= P.length) st.d = P.length - 1;
@@ -213,14 +274,8 @@
         + '<p class="note">Matricos fondas kiekvieną ketvirtį parenkamas iš naujo (daugiausia dalyvių netekęs II pakopos fondas), todėl 50 % / −10 % eilutė gali būti apie skirtingus fondus.</p></section>';
     }
 
-    // Pokyčiai
-    o += `<section class="card" style="margin-top:12px"><b>Pokyčiai</b>`
-      + (p.cmp.length ? tbl(['Rodiklis', `Ankstesnis (${p.prev})`, `Naujas (${p.date})`, 'Pokytis'], p.cmp.map(r => tr(r.map(h)))) : '<p class="note">Ankstesnio ketvirčio duomenų nėra.</p>')
-      + (p.cmp_ref.length ? `<p class="meta" style="margin-top:8px">Nuo ${p.ref} (prieš reformą)</p>` + tbl(['Rodiklis', p.ref, p.date, 'Pokytis'], p.cmp_ref.map(r => tr(r.map(h)))) : '')
-      + (p.dec.length ? `<p class="meta" style="margin-top:8px">Alternatyvų dalies pokytis ${p.prev} → ${p.date}: kiek dėl alternatyvų vertės, kiek dėl fondo turto pokyčio</p>`
-        + tbl(['Fondas', 'Dalies pokytis', 'Dėl alternatyvų vertės (€)', 'Dėl AUM pokyčio', 'Alternatyvos, € pokytis', 'AUM pokytis'], p.dec.map(r => tr([h(r.name), pc(r.d_sh), pc(r.by_alt), pc(r.by_aum), eu(r.d_alt), pc(r.d_aum, 1)])))
-        + '<p class="note">Didesnė procentinė dalis dar nereiškia papildomų investicijų – ji gali kilti vien dėl mažėjančio AUM. Alternatyvų vertės pokytis € gali būti ir nauji įmokėjimai (drawdown), ir perkainojimas ar išmokos.</p>' : '')
-      + '</section>';
+    // Pokyčiai – perdaryta į rodiklių plyteles + vieną fondų lentelę (savininkas 2026-11-09: „labai neįdomu ir nepatogu skaityti“)
+    o += changes(P, st.d);
 
     // Išimtys
     o += `<section class="card" style="margin-top:12px"><b>Duomenų patikros ir išimtys (${p.exc.length})</b>`
@@ -251,11 +306,12 @@
         <div class="fmore"><table class="liqxt"><thead><tr><th class="l">Pozicija</th><th>Vertė</th><th>Dalis fonde</th></tr></thead><tbody>${body}</tbody></table></div></td>`;
       row.after(x);
     }));
-    box.querySelector('#liqG').addEventListener('change', e => { st.m = e.target.value; st.d = null; st.af = st.bf = null; save(); render(); });
-    box.querySelector('#liqD').addEventListener('change', e => { st.d = +e.target.value; render(); });
+    box.querySelector('#liqG').addEventListener('change', e => { st.m = e.target.value; st.d = null; st.cb = null; st.af = st.bf = null; save(); render(); });
+    box.querySelector('#liqD').addEventListener('change', e => { st.d = +e.target.value; st.cb = null; render(); });
     box.querySelector('#liqM').addEventListener('change', e => { st.mode = e.target.value; save(); render(); });
     const af0 = box.querySelector('#liqAF'); if (af0) af0.addEventListener('change', e => { st.af = e.target.value; render(); });
     const tm0 = box.querySelector('#liqTM'); if (tm0) tm0.addEventListener('change', e => { st.tm = e.target.value; save(); render(); });
+    const cb0 = box.querySelector('#liqCB'); if (cb0) cb0.addEventListener('change', e => { st.cb = +e.target.value; render(); });
     const hs0 = box.querySelector('#liqHS'); if (hs0) hs0.addEventListener('change', e => { st.hs = e.target.value; save(); render(); });
     const b = box.querySelector('#liqBF'); if (b) b.addEventListener('change', e => { st.bf = e.target.value; render(); });
     box.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', () => {

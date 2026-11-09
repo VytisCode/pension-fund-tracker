@@ -524,7 +524,7 @@ def letters(cur, prev, ref, prov="SEB"):
           "", "Pokyčiai nuo ankstesnio vertinimo", ""]
     a += [f"• {c}" for c in changes]
     if prev:
-        a += ["", pic(5, "„Pokyčiai“ – lentelė „Alternatyvų dalies pokytis … kiek dėl alternatyvų vertės, kiek dėl fondo turto pokyčio“",
+        a += ["", pic(5, "„Pokyčiai“ – plytelės ir fondų lentelė (Palyginti su – ankstesnis ketvirtis)",
                       "Mygtukas ⧉ virš lentelės. Parodo, ar dalis auga dėl naujų investicijų, ar dėl mažėjančio fondo turto.")]
     a += ["", "Apibendrinimas", "",
           f"Bendrai vertinant, esant stabilioms rinkų sąlygoms, 30 % alternatyvių investicijų riba būtų pasiekta po maždaug {pct(s['ii_x'], 0)} II pakopos fondų turto išėjimo. "
@@ -847,8 +847,46 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
 
     # Pokyčiai
     ws = wb.create_sheet("Pokyčiai")
-    header(ws, 1, ["Rodiklis", f"Ankstesnis ({prev['date'] if prev else '–'})", f"Naujas ({cur['date']})", "Pokytis"], [55, 34, 34, 28])
-    i = 2
+    i = 1
+    if prev:   # fondų lentelė – kaip svetainėje (raudona – arčiau ribos, žalia – toliau)
+        ws.cell(i, 1, f"Fondai: {prev['date']} → {cur['date']}  (raudona – arčiau ribos, žalia – toliau nuo ribos)").font = B
+        i += 1
+        header(ws, i, ["Fondas", "Fondo turto pokytis", "Alternatyvų € pokytis", "Alternatyvų dalis (buvo)", "Alternatyvų dalis (dabar)",
+                       "Pokytis, p. p.", "Dėl fondo turto pokyčio, p. p.", "Dėl alternatyvų vertės, p. p.", "Pagrindinė priežastis",
+                       "Gali išeiti iki 30 % (buvo)", "Gali išeiti iki 30 % (dabar)", "Baltijos obl. dalies pokytis, p. p."])
+        i += 1
+        def fill(c, v, up_bad, eps=5e-4):
+            if v is not None and abs(v) >= eps:
+                c.fill = R if (v > 0) == up_bad else G
+        for r in sorted(cur["res"].values(), key=lambda r: (r["pillar"], r["name"])):
+            pr = prev["res"].get(r["code"])
+            bal_ok = r["in_bal"] and r["lim"] and r["bal"] > 0
+            if not pr or not (r["in_alt"] or bal_ok):
+                continue
+            d_aum = r["aum"] / pr["aum"] - 1 if pr["aum"] else None
+            vals = [r["name"], d_aum, None, None, None, None, None, None, None, None, None, None]
+            if r["in_alt"]:
+                by_aum = pr["alt"] / r["aum"] - pr["alt_sh"]
+                by_alt = (r["alt"] - pr["alt"]) / r["aum"]
+                main = (("sumažėjo fondo turtas" if r["aum"] < pr["aum"] else "padidėjo fondo turtas") if abs(by_aum) >= abs(by_alt)
+                        else ("padidėjo alternatyvų vertė" if r["alt"] > pr["alt"] else "sumažėjo alternatyvų vertė"))
+                vals[2:11] = [r["alt"] / pr["alt"] - 1 if pr["alt"] else None, pr["alt_sh"], r["alt_sh"], (r["alt_sh"] - pr["alt_sh"]) * 100,
+                              by_aum * 100, by_alt * 100, main, pr["alt_x"], r["alt_x"]]
+            if bal_ok and pr["lim"]:
+                vals[11] = (r["bal_sh"] - pr["bal_sh"]) * 100
+            for j, v in enumerate(vals, 1):
+                c = ws.cell(i, j, v)
+                c.border = thin
+                c.number_format = "0.0%" if j in (2, 3) else P2 if j in (4, 5, 10, 11) else "+0.00;-0.00;0.00" if j in (6, 7, 8, 12) else "General"
+            fill(ws.cell(i, 2), vals[1], False, 5e-3)
+            fill(ws.cell(i, 3), vals[2], True, 5e-3)
+            fill(ws.cell(i, 6), vals[5] and vals[5] / 100, True)
+            fill(ws.cell(i, 12), vals[11] and vals[11] / 100, True)
+            i += 1
+        i += 2
+    header(ws, i, ["Rodiklis", f"Ankstesnis ({prev['date'] if prev else '–'})", f"Naujas ({cur['date']})", "Pokytis"],
+           [34, 14, 14, 14, 14, 12, 14, 14, 26, 14, 14, 14])
+    i += 1
     for t in compare(cur, prev):
         for j, v in enumerate(t, 1):
             ws.cell(i, j, v).border = thin
