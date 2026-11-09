@@ -519,3 +519,4 @@ ts,src,ev,dd,n,msg
 2026-11-09T15:30,idx.EUR_GOV7Y,ok,,,vėl veikia
 2026-11-09T15:30,idx.SP500,ok,,,vėl veikia
 2026-11-09T15:59,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-09T16:30,idx.EUR_GOV7Y,ok,,,vėl veikia
