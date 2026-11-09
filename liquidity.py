@@ -304,7 +304,9 @@ def analyse(date, rows, funds, amap, nav, part, all_dates, risky=None):
         p_now, p_old = part.get((date, code)), part.get((d2, code)) if d2 else None
         ex_p, ex_e = exit_limit(d["alt"], t, ALT_LIMIT)
         bx_p, bx_e = exit_limit(d["bal"], t, lim) if lim else (None, None)
-        res[code] = dict(code=code, name=f["name"], pillar=f["pillar"], in_alt=f["alt"] == "1", in_bal=f["baltic"] == "1",
+        # 30 % alternatyvų riba taikoma tik II pakopos fondams (savininkas 2026-11-09); III pakopa – tik informatyviai (alt_info)
+        res[code] = dict(code=code, name=f["name"], pillar=f["pillar"], in_alt=f["alt"] == "1" and f["pillar"] == "II",
+                         alt_info=f["alt"] == "1" and f["pillar"] != "II", in_bal=f["baltic"] == "1",
                          aum=t, pos=d["pos"], nav_src="LB grynieji aktyvai" if t_nav else "pozicijų suma",
                          alt=d["alt"], alt_sh=d["alt"] / t if t else None, alt_x=ex_p, alt_xe=ex_e,
                          bal=d["bal"], bal_sh=d["bal"] / t if t else None, bonds=d["bonds"], lim=lim, bal_x=bx_p, bal_xe=bx_e,
@@ -448,14 +450,148 @@ def grid_txt(x):
     return "daugiau nei 90 %" if x is None else f"{x * 100:.0f} %"
 
 
-def letters(cur, prev, ref, prov="SEB"):
-    s, d = cur["summary"], cur["date"]
-    # Kur įklijuoti dashboard vaizdus (savininkas 2026-11-09). Virš kiekvienos lentelės ir grafiko dešinėje – mygtukas ⧉
-    # („Kopijuoti kaip paveikslėlį“ / „Kopijuoti vaizdą“) – nukopijuoja PNG su pavadinimu ir data; laiške – Ctrl+V.
-    nav = f"Portfeliai → Alternatyvios (Valdytojas {prov}, Ketvirtis {d})"
+def _hexmix(a, b, t):
+    return "".join(f"{round(int(a[i:i + 2], 16) * (1 - t) + int(b[i:i + 2], 16) * t):02X}" for i in (0, 2, 4))
 
-    def pic(n, what, how):
-        return f"[ĮKLIJUOTI {n} PAV.: {nav} → {what}. {how}]"
+
+def heat(g):
+    """Excel 3 spalvų skalė: 0 – raudona, 0,5 – geltona, 1 – žalia."""
+    g = max(0.0, min(1.0, g))
+    return _hexmix("F8696B", "FFEB84", g * 2) if g < 0.5 else _hexmix("FFEB84", "63BE7B", (g - 0.5) * 2)
+
+
+def c_alt(v):
+    return "FFC7CE" if v >= ALT_LIMIT - 1e-12 else "FFEB9C" if v >= 0.25 else "C6EFCE"
+
+
+def letter_tables(cur, prev, ref, an=None):
+    """Laiško lentelės: kiekvienas laiške minimas skaičius matosi lentelėje (paryškintas). Viena struktūra –
+    Word, Excel, .txt ir svetainė (savininkas 2026-11-09: „tekstas yra, bet lentelėse nėra jį rodančių duomenų“)."""
+    s, d = cur["summary"], cur["date"]
+    if not s.get("alt_min"):
+        return {}
+    C = lambda v, bg=None, b=False: dict(v=v, bg=bg, b=b)  # noqa: E731
+    p = prev["summary"] if prev else None
+    alt = sorted([r for r in cur["res"].values() if r["in_alt"]], key=lambda r: r["alt_x"])
+    sens = {r["code"] for r in alt[:2]}
+    mx, mn = s["alt_max"]["code"], s["alt_min"]["code"]
+    pmx = p["alt_max"]["code"] if p else None
+    pmn = p["alt_min"]["code"] if p else None
+    T = {}
+    # 1. Alternatyvos
+    rows = []
+    for r in alt:
+        pr = prev["res"].get(r["code"]) if prev else None
+        rows.append([C(r["name"] + (" ▲" if r["code"] in sens else ""), b=r["code"] in sens), C(meur(r["aum"])),
+                     C(meur(r["alt"]), b=r["code"] == mx),
+                     C(pct(pr["alt_sh"]) if pr else "–", b=r["code"] in (pmx, pmn)),
+                     C(pct(r["alt_sh"]), c_alt(r["alt_sh"]), r["code"] in (mx, mn)),
+                     C(pct(r["alt_x"], 1), heat(r["alt_x"]), r["code"] in sens), C(meur(r["alt_xe"]))])
+    pt = (sum(r["alt"] for r in prev["res"].values() if r["in_alt"]) / p["ii_aum"]) if p and p.get("ii_aum") else None
+    rows.append([C("II pakopa iš viso", b=True), C(meur(s["ii_aum"]), b=True), C(meur(s["ii_alt"]), b=True), C(pct(pt), b=True),
+                 C(pct(s["ii_alt"] / s["ii_aum"]), b=True), C(pct(s["ii_x"], 1), heat(s["ii_x"]), True), C(meur(s["ii_xe"]), b=True)])
+    for r in sorted((r for r in cur["res"].values() if r.get("alt_info")), key=lambda r: r["name"]):
+        pr = prev["res"].get(r["code"]) if prev else None
+        rows.append([C(f"{r['name']} (III pakopa – riba netaikoma)"), C(meur(r["aum"])), C(meur(r["alt"])),
+                     C(pct(pr["alt_sh"]) if pr else "–"), C(pct(r["alt_sh"])), C("–"), C("–")])
+    T["alt"] = dict(title=f"Alternatyvios investicijos II pakopos fonduose, {d}",
+                    head=["Fondas", "Fondo turtas", "Alternatyvos", f"Dalis {prev['date'] if prev else ''}", f"Dalis {d}",
+                          "Gali išeiti iki 30 %", "Gali išeiti, suma"], rows=rows,
+                    note="Surikiuota nuo jautriausio fondo. ▲ – du jautriausi fondai. Paryškinti skaičiai minimi laiške. "
+                         "„Gali išeiti“ – kiek fondo turto gali išeiti (alternatyvos neparduodamos), kol jų dalis pasiekia 30 %. "
+                         "30 % riba taikoma tik II pakopos fondams; III pakopa – informatyviai.")
+    # 2. Raida per ketvirčius
+    if an:
+        ds = sorted(an)[-5:]
+        rows = []
+        for r in sorted(alt, key=lambda r: r["name"]):
+            vals = [an[x]["res"].get(r["code"]) for x in ds]
+            vals = [v["alt_x"] if v and v["in_alt"] else None for v in vals]
+            dy = (vals[-1] - vals[0]) if vals[0] is not None and vals[-1] is not None else None
+            rows.append([C(r["name"], b=r["code"] in sens)] + [C(pct(v, 1) if v is not None else "–", heat(v) if v is not None else None, i == len(vals) - 1 and r["code"] in sens) for i, v in enumerate(vals)]
+                        + [C(pp(dy, 1) if dy is not None else "–", ("FFC7CE" if dy < -5e-4 else "C6EFCE" if dy > 5e-4 else None) if dy is not None else None)])
+        tv = [an[x]["summary"].get("ii_x") for x in ds]
+        dy = tv[-1] - tv[0] if tv[0] is not None and tv[-1] is not None else None
+        rows.append([C("II pakopa iš viso", b=True)] + [C(pct(v, 1) if v is not None else "–", heat(v) if v is not None else None, True) for v in tv]
+                    + [C(pp(dy, 1) if dy is not None else "–", ("FFC7CE" if dy < 0 else "C6EFCE") if dy is not None else None, True)])
+        T["trend"] = dict(title="Kiek fondo turto gali išeiti iki 30 % ribos – raida per ketvirčius",
+                          head=["Fondas"] + ds + [f"Pokytis nuo {ds[0]}"], rows=rows,
+                          note="100 % – riba toli, 0 % – alternatyvos jau sudaro 30 %. Raudonėja – artėjama prie ribos.")
+    # 3. Matrica
+    sel = s["selected"]
+    xs, ms = [i / 10 for i in range(10)], [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+    hl = {(sel["hit0"], 0), (sel["hit10"], 0.10), (0.5, 0.10)}
+    rows = [[C(f"−{round(m * 100)} %" if m else "0 %", b=True)] + [C(pct(v, 1), c_alt(v), (x, m) in hl) for x in xs for v in [share(sel["alt"], sel["aum"], x, m)]] for m in ms]
+    T["mx"] = dict(title=f"{sel['name']}: alternatyvų dalis pagal išėjimus ir rinkų kritimą",
+                   head=["Rinkų kritimas ↓ / Išėjimai →"] + [f"{round(x * 100)} %" for x in xs], rows=rows,
+                   note=f"Alternatyvos {meur(sel['alt'])}, fondo turtas {meur(sel['aum'])}. Žalia < 25 %, geltona 25–30 %, raudona ≥ 30 %. "
+                        "Paryškinti langeliai minimi laiške. Išėjimai – viso fondo turto dalis; rinkų kritimas taikomas po išėjimų likusiam turtui.")
+    # 4. Baltijos obligacijos
+    bal = sorted([r for r in cur["res"].values() if r["in_bal"] and r["lim"] and r["bal"] > 0], key=lambda r: r["bal_x"])
+    top = {r["code"] for r in s.get("bal_top", [])}
+    bm = s.get("bal_min")
+    if bal:
+        T["bal"] = dict(title=f"Baltijos šalių obligacijos ir fondo obligacijų riba, {d}",
+                        head=["Fondas", "Pakopa", "Baltijos obligacijos", "Dalis fonde", "Fondo obligacijų riba", "Gali išeiti iki ribos"],
+                        rows=[[C(r["name"], b=r["code"] in top or (bm and r["code"] == bm["code"])), C(r["pillar"]), C(meur(r["bal"])),
+                               C(pct(r["bal_sh"]), "FFC7CE" if r["bal_sh"] >= r["lim"] else "FFEB9C" if r["bal_sh"] >= 0.9 * r["lim"] else "C6EFCE", r["code"] in top),
+                               C(pct(r["lim"], 1)), C(pct(r["bal_x"]), heat(r["bal_x"]), bool(bm and r["code"] == bm["code"]))] for r in bal],
+                        note="Surikiuota nuo arčiausiai ribos esančio fondo. Įtrauktos LT, LV, EE emitentų (vyriausybių ir įmonių) obligacijos. Paryškinti skaičiai minimi laiške.")
+    # 5. Pokyčiai
+    if prev:
+        dec = {x["name"]: x for x in decompose(cur, prev)}
+        top2 = {x["name"] for x in sorted(dec.values(), key=lambda x: -abs(x["d_sh"]))[:2]}
+        rows = []
+        for r in sorted(alt, key=lambda r: -abs(dec[r["name"]]["d_sh"]) if r["name"] in dec else 0):
+            x, pr = dec.get(r["name"]), prev["res"].get(r["code"])
+            if not x or not pr:
+                continue
+            why = ((("sumažėjo fondo turtas" if x["d_aum"] < 0 else "padidėjo fondo turtas") + f" ({pp(x['by_aum'])})") if abs(x["by_aum"]) >= abs(x["by_alt"])
+                   else (("padidėjo alternatyvų vertė" if x["d_alt"] > 0 else "sumažėjo alternatyvų vertė") + f" ({pp(x['by_alt'])})"))
+            b = r["name"] in top2
+            rows.append([C(r["name"], b=b), C(pct(x["d_aum"], 1), "FFC7CE" if x["d_aum"] < -5e-3 else "C6EFCE" if x["d_aum"] > 5e-3 else None, b),
+                         C(meur(x["d_alt"]), b=b), C(f"{pct(pr['alt_sh'])} → {pct(r['alt_sh'])}"),
+                         C(pp(x["d_sh"]), "FFC7CE" if x["d_sh"] > 5e-4 else "C6EFCE" if x["d_sh"] < -5e-4 else None, b), C(why, b=b),
+                         C(f"{pct(pr['alt_x'], 1)} → {pct(r['alt_x'], 1)}")])
+        pa = p["ii_aum"]
+        rows.append([C("II pakopa iš viso", b=True), C(pct(s["ii_aum"] / pa - 1, 1), b=True), C(meur(s["ii_alt"] - p["ii_alt"]), b=True),
+                     C(f"{pct(p['ii_alt'] / pa)} → {pct(s['ii_alt'] / s['ii_aum'])}", b=True), C(pp(s["ii_alt"] / s["ii_aum"] - p["ii_alt"] / pa), b=True), C(""),
+                     C(f"{pct(p['ii_x'], 1)} → {pct(s['ii_x'], 1)}", b=True)])
+        if ref and ref is not prev and ref["summary"].get("ii_aum"):
+            r0 = ref["summary"]
+            rows.append([C(f"II pakopa nuo {ref['date']} (prieš reformą)", b=True), C(pct(s["ii_aum"] / r0["ii_aum"] - 1, 1), b=True),
+                         C(meur(s["ii_alt"] - r0["ii_alt"]), b=True),
+                         C(f"{pct(r0['alt_min']['alt_sh'])}–{pct(r0['alt_max']['alt_sh'])} → {pct(s['alt_min']['alt_sh'])}–{pct(s['alt_max']['alt_sh'])}", b=True),
+                         C(""), C(""), C(f"{pct(r0['ii_x'], 1)} → {pct(s['ii_x'], 1)}", b=True)])
+        T["chg"] = dict(title=f"Pokyčiai: {prev['date']} → {d}",
+                        head=["Fondas", "Fondo turto pokytis", "Alternatyvų pokytis", "Alternatyvų dalis", "Dalies pokytis", "Kodėl pasikeitė",
+                              "Gali išeiti iki 30 %"], rows=rows,
+                        note="Kodėl pasikeitė – didesnioji dalis: dėl fondo turto pokyčio (alternatyvos tos pačios) ar dėl alternatyvų vertės pokyčio "
+                             "(nauji įmokėjimai, perkainojimas ar išmokos – iš LB duomenų neatskiriama). Paryškinti skaičiai minimi laiške.")
+    return T
+
+
+def tok_parse(line, lt):
+    """„{{T:alt:1}}“ → (lentelė, numeris) arba None."""
+    if not line.startswith("{{T:"):
+        return None
+    k, n = line[4:-2].split(":")
+    return (lt[k], n) if k in lt else None
+
+
+def table_txt(t, n):
+    """Lentelė tekstu (.txt laiškui) – stulpeliai atskirti tabuliacija (įklijavus į Excel – stulpeliai)."""
+    return [f"{n} lentelė. {t['title']}", "\t".join(t["head"])] + ["\t".join(c["v"] for c in r) for r in t["rows"]] + [t["note"]]
+
+
+def letters(cur, prev, ref, prov="SEB", an=None):
+    s, d = cur["summary"], cur["date"]
+    T = letter_tables(cur, prev, ref, an)
+    # lentelės numeruojamos atskirai kiekvienam laiškui (A – visos, B – tik 1 ir matrica)
+    NA = {k: i for i, k in enumerate([k for k in ("alt", "trend", "mx", "bal", "chg") if k in T], 1)}
+    NB = {k: i for i, k in enumerate([k for k in ("alt", "mx") if k in T], 1)}
+    ref_t = lambda k, N=NA: f" ({N[k]} lentelė)" if k in N else ""  # noqa: E731
+    tok = lambda k, N=NA: [f"{{{{T:{k}:{N[k]}}}}}", ""] if k in N else []  # noqa: E731
     sel = s["selected"]
     verd, why = verdict(cur, prev)
     sens = sorted([r for r in cur["res"].values() if r["in_alt"]], key=lambda r: r["alt_x"])[:2]
@@ -489,6 +625,9 @@ def letters(cur, prev, ref, prov="SEB"):
     changes = changes or ["Ankstesnio vertinimo duomenų palyginimui nėra."]
     rng = f"{pct(s['alt_min']['alt_sh'])[:-2]}–{pct(s['alt_max']['alt_sh'])}"
     mx = s["alt_max"]
+    info = sorted((r for r in cur["res"].values() if r.get("alt_info")), key=lambda r: r["name"])
+    iii_txt = ([("• III pakopos fondams 30 % alternatyvų riba netaikoma; informatyviai: "
+                 + ", ".join(f"{r['name']} – {pct(r['alt_sh'])} ({meur(r['alt'])})" for r in info) + ".")] if info else [])
     caveat = ("30 % riba skaičiuojama nuo faktinio fondų turto, todėl vertinimas remiasi Lietuvos banko duomenyse parodytomis "
               "faktinėmis portfelio pozicijomis vertinimo dieną. Dar neišmokėti alternatyvių investicijų įsipareigojimai į ribą "
               "neįskaičiuojami ir šiame vertinime nenagrinėti (juos galima vertinti tik kaip papildomą teorinį scenarijų).")
@@ -497,15 +636,13 @@ def letters(cur, prev, ref, prov="SEB"):
          "Pakartotinai įvertinau, kokio masto turto išėjimai ir rinkų korekcija galėtų reikšmingai paveikti fondų struktūrą. "
          "Analizėje daugiausia dėmesio skirta alternatyvioms investicijoms ir Baltijos šalių obligacijoms.", "",
          "Alternatyvios investicijos", "",
-         f"• Dabartinis alternatyvių investicijų svoris analizuojamuose fonduose siekia {rng}. Ankstesnio vertinimo metu jis siekė {prev_rng}.",
+         f"• Dabartinis alternatyvių investicijų svoris II pakopos fonduose siekia {rng}{ref_t('alt')}. Ankstesnio vertinimo metu jis siekė {prev_rng}.",
          f"• Didžiausia alternatyvių investicijų dalis nustatyta fonde {mx['name']}, kuriame ji sudaro {pct(mx['alt_sh'])}, arba {meur(mx['alt'])}.",
          f"• Neįskaitant likusių neišmokėtų įsipareigojimų, II pakopos fondus iki 30 % alternatyvių investicijų ribos galėtų palikti apie {pct(s['ii_x'], 0)} turto, arba {meur(s['ii_xe'], 0)}.",
          f"• Jautriausi likvidumo rizikai yra {sens_txt}.",
-         "", pic(1, "„Kaip artėjame prie ribų“, Rodiklis „Išėjimo riba iki 30 %“, Spalvos „Kontrastas“",
-                 "Du paveikslėliai: grafikas (mygtukas ⧉ virš grafiko) ir lentelė (mygtukas ⧉ virš lentelės). Parodo, kaip kiekvieno fondo riba mažėjo per ketvirčius."),
-         "", pic(2, "„Alternatyvios investicijos ir 30 % riba“ – pirmoji lentelė", "Mygtukas ⧉ virš lentelės (fondai, AUM, alternatyvos, išėjimo riba)."),
-         "",
-         f"• Fondą {sel['name']} analizei pasirinkau, nes {s['sel_reason']}. Jo jautrumo analizė rodo:",
+         *iii_txt, "", *tok("alt"),
+         *([f"Per paskutinius ketvirčius ši riba mažėja{ref_t('trend')}:", ""] if "trend" in T else []), *tok("trend"),
+         f"• Fondą {sel['name']} analizei pasirinkau, nes {s['sel_reason']}. Jo jautrumo analizė rodo{ref_t('mx')}:",
          f"   – esant −10 % rinkų kritimui, 30 % riba pasiekiama maždaug ties {grid_txt(sel['hit10'])} išėjimų;",
          f"   – nesant rinkų pokyčio, riba pasiekiama maždaug ties {grid_txt(sel['hit0'])} išėjimų;",
          f"   – esant 50 % išėjimų ir −10 % rinkų kritimui, alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, "
@@ -514,18 +651,15 @@ def letters(cur, prev, ref, prov="SEB"):
          f"   – esant 50 % išėjimų ir −10 % rinkų kritimui, alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, t. y. 30 % riba būtų viršyta.",
          f"   (Skaičiuota pataisyta formule: išėjimai – viso fondo turto dalis, rinkų kritimas taikomas po išėjimų likusiam likviam turtui. "
          f"Pagal ankstesnio Excel failo formulę 50 % / −10 % scenarijus būtų {pct(sel['c5010_xl'])}.)",
-         "", pic(3, f"„Matrica fondui“ – pasirinkite {sel['name']}, Matricos formulė „Pataisyta“", "Spalvota matrica – mygtukas ⧉ virš matricos."),
-         "", "Baltijos šalių obligacijos", "",
-         f"• Didžiausia Baltijos obligacijų dalis nustatyta fonduose {bal_top}."]
+         "", *tok("mx"), "Baltijos šalių obligacijos", "",
+         f"• Didžiausia Baltijos obligacijų dalis nustatyta fonduose {bal_top}{ref_t('bal')}."]
     if bm:
         a.append(f"• Mažiausia apskaičiuota išėjimų riba iki konkrečiam fondui taikomos obligacijų ribos yra {pct(bm['bal_x'])} fonde {bm['name']} (riba {pct(bm['lim'], 1)}).")
-    a += [f"• Pagal taikytas konservatyvias prielaidas, {bal_concl}.", "",
-          pic(4, "„Baltijos šalių obligacijos ir fondo obligacijų riba“ – lentelė", "Mygtukas ⧉ virš lentelės. Jei reikia – ir žemiau esanti matrica fondui arčiausiai ribos."),
-          "", "Pokyčiai nuo ankstesnio vertinimo", ""]
+    a += [f"• Pagal taikytas konservatyvias prielaidas, {bal_concl}.", "", *tok("bal"),
+          f"Pokyčiai nuo ankstesnio vertinimo{ref_t('chg')}", ""]
     a += [f"• {c}" for c in changes]
     if prev:
-        a += ["", pic(5, "„Pokyčiai“ – plytelės ir fondų lentelė (Palyginti su – ankstesnis ketvirtis)",
-                      "Mygtukas ⧉ virš lentelės. Parodo, ar dalis auga dėl naujų investicijų, ar dėl mažėjančio fondo turto.")]
+        a += ["", *tok("chg")[:1]]
     a += ["", "Apibendrinimas", "",
           f"Bendrai vertinant, esant stabilioms rinkų sąlygoms, 30 % alternatyvių investicijų riba būtų pasiekta po maždaug {pct(s['ii_x'], 0)} II pakopos fondų turto išėjimo. "
           f"Didžiausia rizika išlieka fonduose {' ir '.join(r['name'] for r in sens)}. "
@@ -533,22 +667,22 @@ def letters(cur, prev, ref, prov="SEB"):
           caveat, "", "Pridedu failą su skaičiavimais, lentelėmis ir jautrumo matricomis."]
     b = [f"Tema: Pensijų fondų likvidumo analizė pagal {d} duomenis", "", "Sveiki,", "",
          f"Atnaujinau pensijų fondų likvidumo vertinimą pagal {d} Lietuvos banko portfelių duomenis.", "", "Pagrindinės išvados:", "",
-         f"• Alternatyvių investicijų dalis fonduose siekia {rng}.",
+         f"• Alternatyvių investicijų dalis II pakopos fonduose siekia {rng}{ref_t('alt', NB)}.",
          f"• Iki 30 % ribos II pakopos fondus galėtų palikti apie {pct(s['ii_x'], 0)} turto, arba {meur(s['ii_xe'], 0)}.",
          f"• Jautriausi fondai: {sens_txt}.",
-         "", pic(1, "„Kaip artėjame prie ribų“, Rodiklis „Išėjimo riba iki 30 %“, Spalvos „Kontrastas“", "Tik grafikas – mygtukas ⧉ virš grafiko."), "",
-         f"• Esant 50 % išėjimų ir −10 % rinkų kritimui, fondo {sel['name']} alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, "
+         "", *tok("alt", NB),
+         f"• Esant 50 % išėjimų ir −10 % rinkų kritimui{ref_t('mx', NB)}, fondo {sel['name']} alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, "
          f"o buferis iki 30 % ribos būtų {(ALT_LIMIT - sel['c5010']) * 100:.2f}".replace(".", ",") + " procentinio punkto.",
-         "", pic(2, f"„Matrica fondui“ – {sel['name']}", "Mygtukas ⧉ virš matricos."), "",
+         "", *tok("mx", NB),
          f"• Didžiausia Baltijos obligacijų koncentracija nustatyta fonduose {bal_top}.",
          f"• Palyginti su ankstesniu vertinimu, situacija {verd}, nes {why}.", "",
          "Vertinimas – pagal faktinį turtą (kaip skaičiuojama 30 % riba); neišmokėti įsipareigojimai neįtraukti.", "",
          "Pridedu skaičiavimus ir jautrumo matricas."]
-    return a, b
+    return a, b, T
 
 
 # ---------- Excel ----------
-def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
+def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None, lt=None):
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -597,9 +731,7 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
             c.number_format = {3: E0, 4: E0, 7: E0, 5: P2, 6: P2, 8: P2}.get(j, "General")
         ws.cell(i, 5).fill = color_alt(r["alt_sh"])
         i += 1
-    ii = [r for r in alt if r["pillar"] == "II"]
-    iii = [r for r in alt if r["pillar"] == "III"]
-    for label, grp in (("Total II pakopa", ii), ("III pakopa (SEB pensija 18+)", iii), ("Total visi analizuojami fondai", alt)):
+    for label, grp in (("Total II pakopa", alt),):
         t, a = sum(r["aum"] for r in grp), sum(r["alt"] for r in grp)
         xe = sum(r["alt_xe"] for r in grp)
         for j, v in enumerate([label, "", t, a, a / t if t else None, xe / t if t else None, xe], 1):
@@ -607,6 +739,17 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
             c.font, c.border = B, thin
             c.number_format = {3: E0, 4: E0, 7: E0, 5: P2, 6: P2}.get(j, "General")
         i += 1
+    info = [r for r in cur["res"].values() if r.get("alt_info")]
+    if info:
+        i += 1
+        ws.cell(i, 1, "III pakopa – tik informatyviai: 30 % alternatyvų riba III pakopos fondams netaikoma").font = B
+        i += 1
+        for r in info:
+            for j, v in enumerate([r["name"], r["pillar"], r["aum"], r["alt"], r["alt_sh"], "riba netaikoma"], 1):
+                c = ws.cell(i, j, v)
+                c.border = thin
+                c.number_format = {3: E0, 4: E0, 5: P2}.get(j, "General")
+            i += 1
     i += 1
     ws.cell(i, 1, "Bendra riba = Σ išėjimo ribų EUR / Σ AUM (svertinė eurais). Paprastas procentų vidurkis būtų "
                   f"{pct(s.get('ii_x_avg_wrong'))} – jis netaikomas, nes mažam ir dideliam fondui suteiktų vienodą svorį.")
@@ -918,7 +1061,7 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
     header(ws, 1, ["Fondas", "Rūšis", "Pozicija", "Vertė, EUR", "Dalis fonde"], [32, 22, 60, 16, 12])
     i = 2
     for r in cur["res"].values():
-        for kind, pos in (("Alternatyva", r["altpos"] if r["in_alt"] else {}), ("Baltijos obligacija", r["balpos"] if r["in_bal"] else {})):
+        for kind, pos in (("Alternatyva", r["altpos"] if r["in_alt"] or r["alt_info"] else {}), ("Baltijos obligacija", r["balpos"] if r["in_bal"] else {})):
             for n, v in sorted(pos.items(), key=lambda x: -x[1]):
                 for j, x in enumerate([r["name"], kind, n, v, v / r["aum"]], 1):
                     c = ws.cell(i, j, x)
@@ -945,9 +1088,31 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
             c.font = B
     for name, txt in (("Laiškas A", la), ("Laiškas B", lb)):
         ws = wb.create_sheet(name)
-        ws.column_dimensions["A"].width = 140
-        for i, t in enumerate(txt, 1):
-            ws.cell(i, 1, t).alignment = Alignment(wrap_text=True)
+        ws.column_dimensions["A"].width = 60
+        for j in range(2, 12):
+            ws.column_dimensions[ws.cell(1, j).column_letter].width = 13
+        i = 1
+        for t in txt:
+            if lt and tok_parse(t, lt):
+                tb, n = tok_parse(t, lt)
+                ws.cell(i, 1, f"{n} lentelė. {tb['title']}").font = B
+                i += 1
+                header(ws, i, tb["head"])
+                i += 1
+                for r in tb["rows"]:
+                    for j, c in enumerate(r, 1):
+                        x = ws.cell(i, j, c["v"])
+                        x.border = thin
+                        if c["bg"]:
+                            x.fill = PatternFill("solid", fgColor=c["bg"])
+                        if c["b"]:
+                            x.font = B
+                    i += 1
+                ws.cell(i, 1, tb["note"]).font = Font(italic=True, size=9)
+                i += 1
+                continue
+            ws.cell(i, 1, t).alignment = Alignment(wrap_text=False)
+            i += 1
     wb.save(path)
 
 
@@ -1052,6 +1217,33 @@ def summary_lines(cur, prev):
 
 
 # ---------- paleidimas ----------
+def docx_table(doc, t, n):
+    """Laiško lentelė Word faile – su spalvomis ir paryškinimais (kopijuojama į Outlook kaip lentelė)."""
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+    from docx.shared import Pt
+    doc.add_paragraph().add_run(f"{n} lentelė. {t['title']}").bold = True
+    tb = doc.add_table(rows=1 + len(t["rows"]), cols=len(t["head"]))
+    tb.style = "Table Grid"
+
+    def put(cell, v, bg=None, b=False):
+        cell.text = ""
+        run = cell.paragraphs[0].add_run(v)
+        run.bold, run.font.size = b, Pt(8)
+        if bg:
+            sh = OxmlElement("w:shd")
+            sh.set(qn("w:val"), "clear")
+            sh.set(qn("w:color"), "auto")
+            sh.set(qn("w:fill"), bg)
+            cell._tc.get_or_add_tcPr().append(sh)
+    for j, h in enumerate(t["head"]):
+        put(tb.cell(0, j), h, "DDEBF7", True)
+    for i, r in enumerate(t["rows"], 1):
+        for j, c in enumerate(r):
+            put(tb.cell(i, j), c["v"], c["bg"], c["b"])
+    doc.add_paragraph().add_run(t["note"]).italic = True
+
+
 def run(date=None, out_dir=None, prov="SEB"):
     funds_cfg, alts, amap = load_cfg()
     funds = universe(prov, funds_cfg, amap)
@@ -1067,25 +1259,26 @@ def run(date=None, out_dir=None, prov="SEB"):
     cur = analyse(date, rows[date], funds, amap, nav, part, dates, risky)
     prev = analyse(prev_d, rows[prev_d], funds, amap, nav, part, dates, risky) if prev_d else None
     ref = analyse(ref_d, rows[ref_d], funds, amap, nav, part, dates, risky) if ref_d else None
-    la, lb = letters(cur, prev, ref, prov) if cur["summary"].get("alt_min") else ([], [])
-    out = Path(out_dir or ROOT / "likvidumas") / date
-    out.mkdir(parents=True, exist_ok=True)
-    files = []
-    x = out / f"{prov}_likvidumo_analize_{date}.xlsx"
     an = None
     try:
         an = all_analyses(prov)
         hist = [history_row(an[d]) for d in sorted(an) if d <= date]
+        an = {d: v for d, v in an.items() if d <= date}
     except Exception:  # noqa: BLE001
         hist = None
-    write_xlsx(x, cur, prev, ref, la, lb, hist, prov, {d: v for d, v in an.items() if d <= date} if hist else None)
+    la, lb, lt = letters(cur, prev, ref, prov, an) if cur["summary"].get("alt_min") else ([], [], {})
+    out = Path(out_dir or ROOT / "likvidumas") / date
+    out.mkdir(parents=True, exist_ok=True)
+    files = []
+    x = out / f"{prov}_likvidumo_analize_{date}.xlsx"
+    write_xlsx(x, cur, prev, ref, la, lb, hist, prov, an if hist else None, lt)
     files.append(x)
     pre = "" if prov == "SEB" else f"{prov}_"
     for tag, txt in (("A_issamus", la), ("B_trumpas", lb)):
         if not txt:
             continue
         p = out / f"{pre}laiskas_{tag}_{date}.txt"
-        p.write_text("\n".join(txt) + "\n", encoding="utf-8")
+        p.write_text("\n".join(z for t in txt for z in (table_txt(*tok_parse(t, lt)) if tok_parse(t, lt) else [t])) + "\n", encoding="utf-8")
         files.append(p)
     try:
         import docx
@@ -1093,10 +1286,8 @@ def run(date=None, out_dir=None, prov="SEB"):
         for tag, txt in (("Variantas A – išsamesnis", la), ("Variantas B – trumpesnis vadovybinis", lb)):
             doc.add_heading(tag, level=1)
             for t in txt:
-                if t.startswith("[ĮKLIJUOTI"):
-                    from docx.enum.text import WD_COLOR_INDEX
-                    run = doc.add_paragraph().add_run(t)
-                    run.bold, run.font.highlight_color = True, WD_COLOR_INDEX.YELLOW
+                if tok_parse(t, lt):
+                    docx_table(doc, *tok_parse(t, lt))
                 else:
                     doc.add_paragraph(t)
             doc.add_page_break()
@@ -1135,7 +1326,7 @@ def prov_payload(prov, lbr):
     funds_cfg, alts, amap = load_cfg()
     an = all_analyses(prov, lbr)
     dates = sorted(an)
-    keys = ["code", "name", "pillar", "in_alt", "in_bal", "aum", "nav_src", "alt", "alt_sh", "alt_x", "alt_xe", "bal", "bal_sh",
+    keys = ["code", "name", "pillar", "in_alt", "alt_info", "in_bal", "aum", "nav_src", "alt", "alt_sh", "alt_x", "alt_xe", "bal", "bal_sh",
             "bonds", "lim", "bal_x", "bal_xe", "part", "part_chg", "c5010", "c5010_xl"]
     out = []
     for i, d in enumerate(dates):
@@ -1145,11 +1336,11 @@ def prov_payload(prov, lbr):
         s = cur["summary"]
         has_alt = bool(s.get("alt_min"))
         last2 = i >= len(dates) - 2            # laiškai – tik 2 paskutiniams ketvirčiams (failo dydis)
-        la, lb = letters(cur, prev, ref, prov) if has_alt and i >= len(dates) - 2 else ([], [])   # laiškai – 2 paskutiniams ketvirčiams
+        la, lb, lt = letters(cur, prev, ref, prov, {x: an[x] for x in dates[:i + 1]}) if has_alt and i >= len(dates) - 2 else ([], [], {})   # laiškai – 2 paskutiniams ketvirčiams
         rs = []
         for r in cur["res"].values():
             x = {k: (round(r[k], 6) if isinstance(r.get(k), float) else r.get(k)) for k in keys}
-            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] else []
+            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] or r["alt_info"] else []
             x["balpos"] = sorted(([n, round(v)] for n, v in r["balpos"].items()), key=lambda z: -z[1]) if r["in_bal"] else []
             rs.append(x)
         out.append(dict(
@@ -1164,7 +1355,7 @@ def prov_payload(prov, lbr):
             cmp_ref=[list(t) for t in compare(cur, ref)] if (ref and has_alt) else [],
             dec=[{k: (round(v, 6) if isinstance(v, float) else v) for k, v in r.items()} for r in decompose(cur, prev)],
             exc=[[a, b, c, round(v) if isinstance(v, float) else v, e] for a, b, c, v, e in cur["exc"]],
-            la=la, lb=lb))
+            la=la, lb=lb, lt=lt))
     lim_rows = []
     if out:
         for f in out[-1]["funds"]:
@@ -1185,6 +1376,48 @@ def site_payload():
     mg = {p: prov_payload(p, lbr) for p in providers()}
     return dict(mgr={k: v for k, v in mg.items() if v["periods"]}, limit=ALT_LIMIT, method=METHOD,
                 alts=[dict(name=r["name"], is_alt=r["is_alt"], cls=r["class"], src=r["source"], rev=r["reviewed"]) for r in alts])
+
+
+def site_xlsx(out_dir, keep=2):
+    """Excel failai svetainės mygtukui „Atsisiųsti Excel“ (savininkas 2026-11-09): kiekvienam valdytojui – 2 paskutiniai
+    ketvirčiai, tas pats failas kaip prie vakarinio laiško. Perrašoma tik pasikeitus duomenims ar kodui (manifest.json),
+    kad kasdienis build nekurtų naujų binarinių failų versijų. Grąžina {valdytojas: {data: failo vardas}}."""
+    import hashlib
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    mf = out_dir / "manifest.json"
+    try:
+        old = json.loads(mf.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        old = {}
+    code = Path(__file__).read_bytes()
+    lbr = lb_results()
+    new, res = {}, {}
+    for prov in providers():
+        an = all_analyses(prov, lbr)
+        ds = sorted(an)
+        for i, d in enumerate(ds):
+            if i < len(ds) - keep:
+                continue
+            cur = an[d]
+            if not cur["res"]:
+                continue
+            prev = an[ds[i - 1]] if i else None
+            ref = an.get(REFERENCE_DATE) if REFERENCE_DATE < (prev["date"] if prev else d) else None
+            sub = {x: an[x] for x in ds[:i + 1]}
+            fn = f"{prov}_likvidumas_{d}.xlsx"
+            key = hashlib.sha1(code + json.dumps([{x: v["res"] for x, v in sub.items()}], sort_keys=True, default=str).encode()).hexdigest()
+            if old.get(fn) != key or not (out_dir / fn).exists():
+                la, lb, lt = letters(cur, prev, ref, prov, sub) if cur["summary"].get("alt_min") else ([], [], {})
+                hist = [history_row(sub[x]) for x in sorted(sub) if sub[x]["summary"].get("alt_min")]
+                write_xlsx(out_dir / fn, cur, prev, ref, la, lb, hist or None, prov, sub if hist else None, lt)
+            new[fn] = key
+            res.setdefault(prov, {})[d] = fn
+    for f in out_dir.glob("*.xlsx"):
+        if f.name not in new:
+            f.unlink()
+    mf.write_text(json.dumps(new, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    return res
 
 
 def latest_date():

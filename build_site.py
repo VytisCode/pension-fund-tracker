@@ -784,6 +784,10 @@ def build_portfolios(ver: dict) -> None:
     try:
         import liquidity
         liq = liquidity.site_payload()
+        try:   # Excel failai mygtukui „Atsisiųsti Excel“ – docs/liq/
+            liq["xl"] = liquidity.site_xlsx(DOCS / "liq")
+        except Exception as e:  # noqa: BLE001
+            print("  likvidumo Excel nepavyko:", e)
     except Exception as e:  # noqa: BLE001 – likvidumo dalis neturi sustabdyti portfelių puslapio
         print("likvidumas: nepavyko:", e)
         liq = {}
