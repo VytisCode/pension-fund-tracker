@@ -6,7 +6,7 @@ EE: pensionikeskus.ee II/III dienos statistika – visi statistikos meniu punkta
     įmokos, fondų keitimai).
 Nieko neįrašo į data/; rezultatai – probe_out/.
 """
-import json, re, time, urllib.request
+import json, re, time, urllib.parse, urllib.request
 from pathlib import Path
 
 out = Path("probe_out"); out.mkdir(exist_ok=True)
@@ -104,3 +104,26 @@ for l in list(LOG):
         (out / ("api_" + re.sub(r"\W+", "_", url.split("/api/")[1])[:90] + ".txt")).write_bytes(b[:3_000_000])
 
 (out / "baltic7.txt").write_text("\n".join(LOG), encoding="utf-8")
+
+# 4) VSAA: Valsts fondēto pensiju shēmas pārskati (dalībnieki, plānu maiņas) – failų sąrašas su pavadinimais ir pirmų failų turinys
+L2 = []
+for u in ("https://www.vsaa.gov.lv/lv/parskati-par-valsts-fondeto-pensiju-shemas-darbibu",
+          "https://www.vsaa.gov.lv/lv/statistika-par-valsts-fondeto-pensiju-shemu",
+          "https://www.vsaa.gov.lv/lv/daliba-pensiju-2-limeni", "https://www.vsaa.gov.lv/lv/metadati-pensiju-2limenis"):
+    st, ct, b = get(u); h = b.decode("utf-8", "replace")
+    (out / ("vsaa_" + u.rsplit("/", 1)[1] + ".html")).write_text(h, encoding="utf-8")
+    main = re.search(r"<main.*?</main>", h, re.S)
+    txt = re.sub(r"<[^>]+>", " ", main.group(0) if main else h); txt = re.sub(r"\s+", " ", txt)
+    L2.append(f"== {st} {u}\n{txt[:4000]}")
+    for href, t in re.findall(r'<a[^>]+href="([^"]*(?:media/\d+|\.xlsx?|\.csv|\.pdf)[^"]*)"[^>]*>(.*?)</a>', h, re.S):
+        L2.append(f"   FILE {urllib.parse.urljoin(u, href)} | {re.sub(r'<[^>]+>|\\s+', ' ', t).strip()[:150]}")
+import urllib.parse
+got = 0
+for l in L2:
+    if "FILE" in l and got < 12:
+        url = l.split()[1]; st, ct, b = get(url); got += 1
+        ext = ".xlsx" if b[:2] == b"PK" else ".pdf" if b[:4] == b"%PDF" else ".xls" if b[:4] == b"\xd0\xcf\x11\xe0" else ".bin"
+        fn = out / f"vsaa_{got}{ext}"; fn.write_bytes(b)
+        L2.append(f"   GOT {fn.name} {st} {ct} {len(b)} {url}")
+(out / "vsaa.txt").write_text("\n".join(L2), encoding="utf-8")
+print("\n".join(L2)[:20000])
