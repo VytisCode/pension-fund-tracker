@@ -1,58 +1,74 @@
 {
  "cpi": {
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  },
  "eonia": {
-  "ok": "2026-11-07"
+  "err": "2026-11-09",
+  "kind": "network",
+  "msg": "TimeoutError: The read operation timed out",
+  "ok": "2026-11-07",
+  "since": "2026-11-09"
  },
  "estr": {
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  },
  "idx.EURUSD": {
-  "ok": "2026-11-07"
+  "err": "2026-11-09",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "ok": "2026-11-07",
+  "since": "2026-11-09"
  },
  "idx.EUR_GOV7Y": {
-  "ok": "2026-11-07"
+  "err": "2026-11-09",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "ok": "2026-11-07",
+  "since": "2026-11-09"
  },
  "idx.MSCI_ACWI": {
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  },
  "idx.MSCI_WORLD": {
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  },
  "idx.SP500": {
-  "ok": "2026-11-07"
+  "err": "2026-11-09",
+  "kind": "other",
+  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
+  "ok": "2026-11-07",
+  "since": "2026-11-09"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  },
  "lb": {
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  },
  "nav.ALLIANZ": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "nav.ARTEA": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "nav.GOINDEX": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "nav.LUMINOR": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "nav.SEB": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "nav.SWEDBANK": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "proxy": {
-  "ok": "2026-11-06"
+  "ok": "2026-11-09"
  },
  "site": {
   "detail": "23 puslapiai",
-  "ok": "2026-11-07"
+  "ok": "2026-11-09"
  }
 }

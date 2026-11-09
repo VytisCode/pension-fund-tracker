@@ -483,3 +483,14 @@ ts,src,ev,dd,n,msg
 2026-11-07T11:33,lb.arch,new,2026-01-21,1,PF_lyginamieji_2026-01-21_1.xlsx
 2026-11-07T11:33,lb.arch,new,,1,islaidu-rodikliai-2025_2.xlsx
 2026-11-07T11:33,lb.lbr,new,2026-09-30,1,pataisyta: 2-pakopa-rezultatai-20260930.xlsx
+2026-11-09T11:38,estr,new,2026-11-06,1,
+2026-11-09T11:38,nav.GOINDEX,new,2026-11-06,8,
+2026-11-09T11:38,nav.SEB,new,2026-11-06,8,
+2026-11-09T11:38,nav.SWEDBANK,new,2026-11-06,8,
+2026-11-09T11:38,p3.GOINDEX,new,2026-11-06,2,
+2026-11-09T11:38,p3.SEB,new,2026-11-06,8,
+2026-11-09T11:38,p3.SWEDBANK,new,2026-11-06,6,
+2026-11-09T11:38,eonia,fail,,,network: TimeoutError: The read operation timed out
+2026-11-09T11:38,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-09T11:38,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
+2026-11-09T11:38,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
