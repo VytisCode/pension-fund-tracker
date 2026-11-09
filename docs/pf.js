@@ -180,14 +180,34 @@ function bucket(s) {
   return ac === 'equity' ? 'eq' : ac === 'bond' ? 'bd' : ac === 'money_market' ? 'cash' : ['private_equity', 'real_estate', 'other'].includes(ac) ? 'alt' : 'oth';
 }
 const regionOf = s => s.t === 'e' || s.t === 'b' ? ctyRegion(s.cty) : s.t !== 'f' ? null : s.a ? REG[s.a.reg] || 'oth' : 'unk';
+/* Tikroji akcijų regionų ekspozicija (savininko kolegos prašymas 2026-11-09: „pasaulio akcijų fondus išskaidyti“).
+   Tiesioginės akcijos – pagal emitento šalį, regioniniai fondai – pagal aprašytą regioną, o pasaulio (MSCI World, ACWI),
+   „kita“ ir neaprašyti akcijų fondai išskaidomi pagal jų pačių sudėtį (Morningstar, PF.etf reg_*). Jei profilio nėra
+   (ketvirčiai iki 2024 m. III ketv.), pasaulio fondams – apytiksliai MSCI ACWI / World svoriai.
+   Morningstar „išsivysčiusi Azija“ (Taivanas, P. Korėja, Honkongas, Singapūras) pasaulio su EM fonduose → EM (MSCI Taivaną ir Korėją laiko EM). */
+const RX_KEYS = ['na', 'eu', 'jp', 'em', 'baltic', 'oth'];
+const RXL = () => lang === 'lt' ? { na: 'JAV ir Kanada', eu: 'Europa', jp: 'Japonija', em: 'Besivystančios rinkos', baltic: 'Baltijos šalys', oth: 'Kitos šalys' } : { na: 'US and Canada', eu: 'Europe', jp: 'Japan', em: 'Emerging markets', baltic: 'Baltics', oth: 'Other countries' };
+const RX_IDX = { glob: { na: 0.67, eu: 0.15, jp: 0.05, em: 0.105, oth: 0.025 }, gdm: { na: 0.75, eu: 0.165, jp: 0.055, oth: 0.03 } };
+const MS_RX = { us: 'na', canada: 'na', uk: 'eu', eurozone: 'eu', europe_ex_euro: 'eu', japan: 'jp', europe_em: 'em', africa_me: 'em', latam: 'em', asia_em: 'em', australasia: 'oth', asia_dev: 'oth' };
+function rxSplit(s, r, qi) {          // → { k: { regionas: dalis (sumoje 1) }, src: 'ms' | 'idx' | null }
+  if (!['glob', 'gdm', 'oth', 'unk'].includes(r)) return { k: { [r === 'ap' ? 'oth' : r]: 1 }, src: null };
+  const ep = s.t === 'f' ? etfOf(s, qi) : null;
+  if (ep) {
+    const k = {}; let tot = 0;
+    Object.entries(MS_RX).forEach(([m, to]) => { const v = ep['reg_' + m] || 0; if (!v) return; if (m === 'asia_dev' && r === 'glob') to = 'em'; k[to] = (k[to] || 0) + v; tot += v; });
+    if (tot > 50) { Object.keys(k).forEach(x => { k[x] /= tot; }); return { k, src: 'ms' }; }
+  }
+  return RX_IDX[r] ? { k: RX_IDX[r], src: 'idx' } : { k: { oth: 1 }, src: null };
+}
 /* Fondo portfelio požymių suvestinė: visi rodikliai – % portfelio */
 function lookThrough(f, qi) {
-  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0, bw: 0, bdW: 0, mdS: 0, yrsS: 0, yW: 0, yS: 0, frn: 0, sb: 0 };
+  const m = f.q[qi], t = f.tot[qi], L = { b: {}, reg: {}, fw: 0, desc: 0, idx: 0, act: 0, terW: 0, terS: 0, em: 0, emW: 0, emUnk: 0, gold: 0, sfdr: 0, bw: 0, bdW: 0, mdS: 0, yrsS: 0, yW: 0, yS: 0, frn: 0, sb: 0, rx: {}, rxMs: 0, rxIdx: 0 };
   if (!m || !t) return L;
   m.forEach((x, si) => {
     const s = S[si], w = x.v / t * 100, b = bucket(s);
     L.b[b] = (L.b[b] || 0) + w;
-    if (b === 'eq') { const r = regionOf(s); L.reg[r] = (L.reg[r] || 0) + w; if (r === 'em') L.em += w; }
+    if (b === 'eq') { const r = regionOf(s); L.reg[r] = (L.reg[r] || 0) + w; if (r === 'em') L.em += w;
+      const x = rxSplit(s, r, qi); Object.entries(x.k).forEach(([k, v]) => { L.rx[k] = (L.rx[k] || 0) + w * v; }); if (x.src === 'ms') L.rxMs += w; else if (x.src === 'idx') L.rxIdx += w; }
     if (s.t === 'b') {
       L.bw += w; const m = bondAt(si, qi);
       if (m) { if (m.yrs <= 1) L.sb += w; L.bdW += w; L.mdS += w * m.md; L.yrsS += w * m.yrs; if (m.y != null) { L.yW += w; L.yS += w * m.y; } else L.frn += w; }
@@ -780,6 +800,7 @@ function peerRow(f, qi) {
   const r = { f, emUnk: L.emUnk, eq: L.b.eq || 0, bd: L.b.bd || 0, alt: L.b.alt || 0, cash: L.b.cash || 0, idx: L.idx, ter: L.ter, em: L.em, emW: L.emW, gold: L.gold, sfdr: L.sfdr, ytm: L.bw > 0.5 ? L.ytm : null, md: L.bw > 0.5 ? L.md : null };
   r.liq = r.cash + L.sb; r.eqX = r.liq < 95 ? r.eq / (100 - r.liq) * 100 : null;   // likvidumo rezervas ir strategija be jo (žr. REFORM)
   PG_REG.forEach(k => { r['r_' + k] = L.reg[k] || 0; });
+  RX_KEYS.forEach(k => { r['x_' + k] = L.rx[k] || 0; }); r.rxMs = L.rxMs; r.rxIdx = L.rxIdx;
   const d = ltOf(f, qi);                                   // tikroji sudėtis pro fondus (Morningstar), jei tam ketvirčiui surinkta
   if (d) {
     Object.assign(r, { lt_eq: d.mix_eq, lt_top10: d.top10, lt_us: d.mix_eq ? d.reg_us : null, lt_em: d.mix_eq ? ltEm(d) : null, lt_tech: d.sec_technology, lt_fin: d.sec_financial,
@@ -874,8 +895,8 @@ function pgBook(only, qOnly) {
   const L = lang === 'lt', t = T(), qi = qOnly ?? ST.pgq, P = '0.00%', N2 = '0.00';
   const funds = only || FUNDS.filter(f => f.q[qi] && (ST.pg === 'III' ? f.pl === 'III' : f.pl === 'II' && f.g === ST.pg)).sort((a, b) => a.p.localeCompare(b.p) || a.n.localeCompare(b.n));
   const SH = L ? ['Palyginimas', 'Pozicijos', 'Metodika'] : ['Comparison', 'Holdings', 'Methodology'], Q = `'${SH[1]}'`;
-  const pos = [L ? ['Fondo kodas', 'Pozicija', 'ISIN', 'Rūšis', 'Grupė', 'Akcijų regionas', 'Vertė, €', 'Dalis', 'Indeksinis', 'TER, %', 'TER svoris', 'TER × dalis', 'SFDR 8/9', 'Auksas', 'EM', 'Obligacija', 'YTM, %', 'YTM svoris', 'YTM × dalis', 'Trukmė', 'Trukmės svoris', 'Trukmė × dalis']
-    : ['Fund code', 'Holding', 'ISIN', 'Type', 'Group', 'Equity region', 'Value, €', 'Share', 'Index', 'TER, %', 'TER weight', 'TER × share', 'SFDR 8/9', 'Gold', 'EM', 'Bond', 'YTM, %', 'YTM weight', 'YTM × share', 'Duration', 'Duration weight', 'Duration × share']];
+  const pos = [L ? ['Fondo kodas', 'Pozicija', 'ISIN', 'Rūšis', 'Grupė', 'Akcijų regionas', 'Vertė, €', 'Dalis', 'Indeksinis', 'TER, %', 'TER svoris', 'TER × dalis', 'SFDR 8/9', 'Auksas', 'EM', 'Obligacija', 'YTM, %', 'YTM svoris', 'YTM × dalis', 'Trukmė', 'Trukmės svoris', 'Trukmė × dalis', ...RX_KEYS.map(k => 'Ekspozicija: ' + RXL()[k]), 'Regionų išskaidymo šaltinis']
+    : ['Fund code', 'Holding', 'ISIN', 'Type', 'Group', 'Equity region', 'Value, €', 'Share', 'Index', 'TER, %', 'TER weight', 'TER × share', 'SFDR 8/9', 'Gold', 'EM', 'Bond', 'YTM, %', 'YTM weight', 'YTM × share', 'Duration', 'Duration weight', 'Duration × share', ...RX_KEYS.map(k => 'Exposure: ' + RXL()[k]), 'Region split source']];
   funds.forEach(f => { const tot = f.tot[qi];
     f.q[qi].forEach((x, si) => { const sx = S[si], b = bucket(sx), n = pos.length + 1, w = x.v / tot, a = sx.t === 'f' ? sx.a : null, m = sx.t === 'b' ? bondAt(si, qi) : null;
       const reg = b === 'eq' ? regionOf(sx) : '', em = (b === 'eq' && reg === 'em') || (a && a.em === 'only' && b !== 'eq') ? 1 : 0;
@@ -883,20 +904,23 @@ function pgBook(only, qOnly) {
         a && a.ap === 'index' ? 1 : 0, a && a.ter != null ? a.ter : '', { t: 'n', f: `IF(J${n}="",0,H${n})`, v: a && a.ter != null ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(J${n}="",0,H${n}*J${n})`, v: a && a.ter != null ? w * a.ter : 0, z: '0.000000' },
         a && (a.sfdr === '8' || a.sfdr === '9') ? 1 : 0, a && a.th === 'gold' ? 1 : 0, em, sx.t === 'b' ? 1 : 0,
         m && m.y != null ? m.y : '', { t: 'n', f: `IF(Q${n}="",0,H${n})`, v: m && m.y != null ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(Q${n}="",0,H${n}*Q${n})`, v: m && m.y != null ? w * m.y : 0, z: '0.000000' },
-        m ? m.md : '', { t: 'n', f: `IF(T${n}="",0,H${n})`, v: m ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(T${n}="",0,H${n}*T${n})`, v: m ? w * m.md : 0, z: '0.000000' }]); }); });
+        m ? m.md : '', { t: 'n', f: `IF(T${n}="",0,H${n})`, v: m ? w : 0, z: '0.0000' }, { t: 'n', f: `IF(T${n}="",0,H${n}*T${n})`, v: m ? w * m.md : 0, z: '0.000000' },
+        ...(b === 'eq' ? (x => [...RX_KEYS.map(k => { const c = +(x.k[k] || 0).toFixed(4); return c ? { t: 'n', f: c === 1 ? `H${n}` : `H${n}*${c}`, v: w * c, z: '0.0000%' } : 0; }), x.src === 'ms' ? 'Morningstar' : x.src === 'idx' ? (L ? 'MSCI indekso svoriai' : 'MSCI index weights') : ''])(rxSplit(sx, reg, qi)) : [...RX_KEYS.map(() => 0), ''])]); }); });
   const R = c => `${Q}!$${c}:$${c}`, regs = PG_REG.filter(k => funds.some(f => (peerRow(f, qi)['r_' + k] || 0) > 0.05));
-  const cmp = [[L ? 'Fondo kodas' : 'Fund code', t.thFund, t.thEq, t.thBd, t.thAlt, t.thCash, t.thIdx, t.thTer + ', %', t.thGold, t.thSfdr, t.thEm, t.thYtm + ', %', t.thDur, ...regs.map(k => t.reg[k])]];
+  const cmp = [[L ? 'Fondo kodas' : 'Fund code', t.thFund, t.thEq, t.thBd, t.thAlt, t.thCash, t.thIdx, t.thTer + ', %', t.thGold, t.thSfdr, t.thEm, t.thYtm + ', %', t.thDur, ...regs.map(k => t.reg[k]), ...RX_KEYS.map(k => (L ? 'Ekspozicija: ' : 'Exposure: ') + RXL()[k])]];
   funds.forEach(f => { const r = peerRow(f, qi), n = cmp.length + 1, c = `${R('A')},$A${n}`, sh = (crit, v) => ({ t: 'n', f: `SUMIFS(${R('H')},${c}${crit})`, v: v / 100, z: P });
     cmp.push([f.c, fundName(f), sh(`,${R('E')},"eq"`, r.eq), sh(`,${R('E')},"bd"`, r.bd), sh(`,${R('E')},"alt"`, r.alt), sh(`,${R('E')},"cash"`, r.cash), sh(`,${R('I')},1`, r.idx),
       r.ter == null ? '' : { t: 'n', f: `SUMIFS(${R('L')},${c})/SUMIFS(${R('K')},${c})`, v: r.ter, z: N2 }, sh(`,${R('N')},1`, r.gold), sh(`,${R('M')},1`, r.sfdr), sh(`,${R('O')},1`, r.em),
       r.ytm == null ? '' : { t: 'n', f: `SUMIFS(${R('S')},${c})/SUMIFS(${R('R')},${c})`, v: r.ytm, z: N2 }, r.md == null ? '' : { t: 'n', f: `SUMIFS(${R('V')},${c})/SUMIFS(${R('U')},${c})`, v: r.md, z: N2 },
-      ...regs.map(k => sh(`,${R('E')},"eq",${R('F')},"${k}"`, r['r_' + k]))]); });
+      ...regs.map(k => sh(`,${R('E')},"eq",${R('F')},"${k}"`, r['r_' + k])), ...RX_KEYS.map((k, i) => ({ t: 'n', f: `SUMIFS(${R(['W', 'X', 'Y', 'Z', 'AA', 'AB'][i])},${c})`, v: r['x_' + k] / 100, z: P }))]); });
   const meth = L ? [['Metodika ir šaltiniai'], [], ['Ketvirtis', ''], ['Grupė', only ? 'pasirinkti fondai' : ST.pg], ['Šaltinis', 'Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos; fondų ir ETF požymiai – fondų dokumentai; obligacijų YTM ir trukmė – ESMA FIRDS sąlygos ir ataskaitos kaina.'], [],
     ['Dalis', 'Pozicijos vertė ÷ visų fondo pozicijų suma (SUMIFS).'], ['Grupės', 'eq – akcijos ir akcijų fondai; bd – obligacijos ir obligacijų fondai; cash – pinigai, indėliai, pinigų rinkos fondai; alt – privataus kapitalo, NT ir kt.; der – išvestinės; oth – kita.'],
-    ['TER, YTM, trukmė', 'Svertinis vidurkis tik tarp pozicijų, kurioms reikšmė žinoma: Σ(dalis × reikšmė) ÷ Σ dalis. YTM ir trukmė rodomi, kai obligacijų > 0,5 %.'], ['Regionai', 'Tik akcijos ir akcijų fondai; tiesioginės akcijos – pagal emitento šalį, fondai – pagal aprašytą regioną.']]
+    ['TER, YTM, trukmė', 'Svertinis vidurkis tik tarp pozicijų, kurioms reikšmė žinoma: Σ(dalis × reikšmė) ÷ Σ dalis. YTM ir trukmė rodomi, kai obligacijų > 0,5 %.'], ['Regionai', 'Tik akcijos ir akcijų fondai; tiesioginės akcijos – pagal emitento šalį, fondai – pagal aprašytą regioną.'],
+    ['Ekspozicija', 'Tikroji akcijų regionų ekspozicija: kaip „Regionai“, bet pasaulio (MSCI World, ACWI), „kita“ ir neaprašyti akcijų fondai išskaidyti pagal jų sudėtį (Morningstar, lape „Pozicijos“ – dalis × regiono koeficientas); be Morningstar profilio – apytiksliai MSCI svoriai (ACWI: JAV ir Kanada 67 %, Europa 15 %, Japonija 5 %, EM 10,5 %, kita 2,5 %; World: 75 / 16,5 / 5,5 / 0 / 3 %). Morningstar „išsivysčiusi Azija“ pasaulio su EM fonduose → EM (Taivanas, P. Korėja).']]
     : [['Methodology and sources'], [], ['Quarter', ''], ['Group', only ? 'selected funds' : ST.pg], ['Source', 'Bank of Lithuania quarterly pension fund investment reports; fund and ETF attributes – fund documents; bond YTM and duration – ESMA FIRDS terms and the reported price.'], [],
     ['Share', 'Holding value ÷ sum of all the fund’s holdings (SUMIFS).'], ['Groups', 'eq – equities and equity funds; bd – bonds and bond funds; cash – cash, deposits, money market funds; alt – private equity, real estate etc.; der – derivatives; oth – other.'],
-    ['TER, YTM, duration', 'Weighted average only over holdings where the value is known: Σ(share × value) ÷ Σ share. YTM and duration shown when bonds > 0.5 %.'], ['Regions', 'Equities and equity funds only; direct shares by issuer country, funds by their described region.']];
+    ['TER, YTM, duration', 'Weighted average only over holdings where the value is known: Σ(share × value) ÷ Σ share. YTM and duration shown when bonds > 0.5 %.'], ['Regions', 'Equities and equity funds only; direct shares by issuer country, funds by their described region.'],
+    ['Exposure', 'Actual equity exposure by region: like “Regions”, but global (MSCI World, ACWI), “other” and undescribed equity funds are split by their holdings (Morningstar; on “Holdings”: share × region coefficient); without a Morningstar profile – approximate MSCI weights (ACWI: US and Canada 67 %, Europe 15 %, Japan 5 %, EM 10.5 %, other 2.5 %; World: 75 / 16.5 / 5.5 / 0 / 3 %). Morningstar “Asia developed” in global funds that include EM → EM (Taiwan, South Korea).']];
   meth[2][1] = PF.quarters[qi];
   const wb = XLSX.utils.book_new(), add = (rows, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(rows); if (cols) ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
   add(cmp, SH[0], [{ wch: 12 }, { wch: 30 }, ...Array(cmp[0].length - 2).fill({ wch: 13 })]); add(pos, SH[1], [{ wch: 12 }, { wch: 46 }, { wch: 14 }, { wch: 18 }]); add(meth, SH[2], [{ wch: 18 }, { wch: 110 }]);
@@ -1150,7 +1174,8 @@ const OVS = {
     chgH: (a, b) => `Kas pasikeitė: ${a} → ${b}`, outH: 'Kuo išsiskiria', cmpH: 'Palyginti fondus', thM: 'Valdytojas', thEq: 'Akcijos', thBd: 'Obligacijos', thAlt: 'Alternatyvos', thCash: 'Pinigai', thBuy: 'Didžiausi pirkimai', thSell: 'Didžiausi pardavimai', thNew: 'Naujos / parduotos',
     pickG: 'Grupė:', pickAdd: '+ pridėti fondą', rm: 'pašalinti', none: 'Pasirinkite bent du fondus.', more: 'daugiausia', less: 'mažiausiai', med: 'mediana', inG: g => `grupėje ${g}`, amongM: 'tarp valdytojų',
     up: 'padidino', down: 'sumažino', by: d => `${d} p. p.`, outNone: 'Šį ketvirtį ryškių išskirtinumų nerasta.', outNote: 'Rodoma, kai skirtumas nuo grupės medianos ≥ 5 p. p. (TER – ≥ 0,1 p. p.) arba akcijų dalis per ketvirtį pasikeitė ≥ 3 p. p. Paspauskite teiginį – atsivers fondo portfelis; „palyginti grupę“ – visa grupė palyginime.',
-    m: { fee: 'valdymo mokestis', cost: 'bendros metinės išlaidos (mokestis + fondų TER)', eqX: 'akcijų dalis be išmokų rezervo', liq: 'išmokų rezervas (pinigai ir obligacijos iki 1 m.)', eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'pasaulio akcijų fondai (MSCI World, ACWI ir pan.)' },
+    m: { fee: 'valdymo mokestis', cost: 'bendros metinės išlaidos (mokestis + fondų TER)', eqX: 'akcijų dalis be išmokų rezervo', liq: 'išmokų rezervas (pinigai ir obligacijos iki 1 m.)', eq: 'akcijų dalis', bd: 'obligacijų dalis', alt: 'alternatyvių investicijų dalis', cash: 'pinigų ir indėlių dalis', em: 'besivystančių rinkų akcijos', r_baltic: 'Baltijos akcijos', idx: 'indeksinių fondų dalis', ter: 'fondų TER', n: 'pozicijų skaičius', top: 'didžiausia pozicija', ytm: 'obligacijų pajamingumas', md: 'obligacijų trukmė', r_na: 'Šiaurės Amerikos akcijos', r_eu: 'Europos akcijos', glob: 'iš jų per pasaulio akcijų fondus (MSCI World, ACWI ir pan.)',
+      x_na: 'JAV ir Kanados akcijos', x_eu: 'Europos akcijos', x_jp: 'Japonijos akcijos', x_em: 'besivystančių rinkų akcijos', x_baltic: 'Baltijos akcijos', x_oth: 'kitų šalių akcijos (Australija, Honkongas ir kt.)' },
     pl: 'Pakopa:', q: 'Ketvirtis:', dEq: 'akcijų dalį', inQ: 'per ketvirtį', to: 'iki',
     ctxBack: (q2, v2, q1, v1) => `Tai grįžimas, ne strategijos keitimas: ${q2} buvo ${v2} %, ${q1} laikinai ${v1} % (daugiau pinigų ir trumpų obligacijų).`, ctxAum: (a, b) => `Fondo turtas per ketvirtį: ${a} → ${b}.`,
     toFund: 'Paspauskite – atsivers fondo portfelis ir jo pokyčiai per ketvirčius.', cmpG: 'palyginti grupę →',
@@ -1163,7 +1188,8 @@ const OVS = {
     chgH: (a, b) => `What changed: ${a} → ${b}`, outH: 'What stands out', cmpH: 'Compare funds', thM: 'Manager', thEq: 'Equity', thBd: 'Bonds', thAlt: 'Alternatives', thCash: 'Cash', thBuy: 'Largest buys', thSell: 'Largest sells', thNew: 'New / exited',
     pickG: 'Group:', pickAdd: '+ add fund', rm: 'remove', none: 'Choose at least two funds.', more: 'highest', less: 'lowest', med: 'median', inG: g => `in group ${g}`, amongM: 'among managers',
     up: 'raised', down: 'cut', by: d => `${d} pp`, outNone: 'No marked outliers this quarter.', outNote: 'Shown when the gap from the group median is ≥ 5 pp (TER – ≥ 0.1 pp) or the equity share changed ≥ 3 pp in the quarter. Click a line to open the fund’s portfolio; “compare group” puts the whole group into the comparison.',
-    m: { fee: 'management fee', cost: 'total annual costs (fee + underlying funds’ TER)', eqX: 'equity share ex payout reserve', liq: 'payout reserve (cash and bonds up to 1 y)', eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'global equity funds (MSCI World, ACWI etc.)' },
+    m: { fee: 'management fee', cost: 'total annual costs (fee + underlying funds’ TER)', eqX: 'equity share ex payout reserve', liq: 'payout reserve (cash and bonds up to 1 y)', eq: 'equity share', bd: 'bond share', alt: 'alternatives share', cash: 'cash and deposits', em: 'emerging-market equity', r_baltic: 'Baltic equity', idx: 'index funds share', ter: 'fund TER', n: 'number of positions', top: 'largest position', ytm: 'bond yield', md: 'bond duration', r_na: 'North American equity', r_eu: 'European equity', glob: 'of which via global equity funds (MSCI World, ACWI etc.)',
+      x_na: 'US and Canadian equity', x_eu: 'European equity', x_jp: 'Japanese equity', x_em: 'emerging-market equity', x_baltic: 'Baltic equity', x_oth: 'other countries’ equity (Australia, Hong Kong etc.)' },
     pl: 'Pillar:', q: 'Quarter:', dEq: 'equity share', inQ: 'in the quarter', to: 'to',
     ctxBack: (q2, v2, q1, v1) => `A return, not a strategy change: ${q2} it was ${v2} %, ${q1} temporarily ${v1} % (more cash and short bonds).`, ctxAum: (a, b) => `Fund assets over the quarter: ${a} → ${b}.`,
     toFund: 'Click to open the fund’s portfolio and its changes by quarter.', cmpG: 'compare group →',
@@ -1293,12 +1319,18 @@ function renderCompare() {
   const tb = document.getElementById('ovCmp');
   if (sel.length < 2) { tb.innerHTML = `<tbody><tr><td>${o.none}</td></tr></tbody>`; return; }
   const M = sel.map(f => ({ f, a: ovMetrics(f, q1), b: f.q[q1 - 1] ? ovMetrics(f, q1 - 1) : null }));
-  const rows = [['eq', 1, true], ...(inReform(q1) || inReform(q1 - 1) ? [['eqX', 1, true], ['liq', 1, true]] : []), ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['glob', 1, true], ['r_na', 1, true], ['r_eu', 1, true], ['em', 1, true], ['r_baltic', 1, true], ['idx', 0, true], ['ter', 2, false], ['fee', 2, false], ['cost', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
+  const rows = [['eq', 1, true], ...(inReform(q1) || inReform(q1 - 1) ? [['eqX', 1, true], ['liq', 1, true]] : []), ['bd', 1, true], ['alt', 1, true], ['cash', 1, true], ['x_na', 1, true], ['x_eu', 1, true], ['x_jp', 1, true], ['x_em', 1, true], ['x_baltic', 1, true], ['x_oth', 1, true], ['glob', 1, true], ['idx', 0, true], ['ter', 2, false], ['fee', 2, false], ['cost', 2, false], ['ytm', 2, false], ['md', 1, false], ['n', 0, false], ['top', 1, false]];
   tb.innerHTML = `<thead><tr><th></th>${M.map(x => `<th class="n">${sw(x.f.p)}${esc(ovName(x.f))}</th>`).join('')}</tr></thead><tbody>`
     + rows.map(([k, d, isPct]) => { const vs = M.map(x => x.a[k]).filter(v => v != null), hi = Math.max(...vs), lo = Math.min(...vs);
-      return `<tr><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' || k === 'fee' || k === 'cost' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';
+      return `<tr${k === 'glob' ? ' class="ovinfo"' : ''}><td>${o.m[k]}${isPct ? ', %' : k === 'ter' || k === 'ytm' || k === 'fee' || k === 'cost' ? ', %' : k === 'md' ? (lang === 'lt' ? ', m.' : ', yrs') : ''}</td>` + M.map(x => { const v = x.a[k]; if (v == null) return '<td class="n na">–</td>';
         const dv = x.b && x.b[k] != null && isPct ? v - x.b[k] : null, ex = vs.length > 2 && (v === hi || v === lo) && hi - lo > (isPct ? 2 : 0.0001);
         return `<td class="n${ex ? (v === hi ? ' hi' : ' lo') : ''}"${k === 'top' ? ` title="${esc(x.a.topN)}"` : ''}>${num(v, d)}${dv != null && Math.abs(dv) >= 0.5 ? `<small> ${pp(dv)}</small>` : ''}</td>`; }).join('') + '</tr>'; }).join('') + '</tbody>';
+  /* kaip išskaidyti pasaulio fondai: kiek jų vertės pagal Morningstar sudėtį, kiek – apytiksliais MSCI svoriais */
+  const ms = M.reduce((t, x) => t + x.a.rxMs, 0), ix = M.reduce((t, x) => t + x.a.rxIdx, 0), L = lang === 'lt';
+  const cov = ms + ix > 0.05 ? (L ? ` Šį ketvirtį pagal tikrąją sudėtį išskaidyta ${num(ms / (ms + ix) * 100, 0)} % tokių fondų vertės${ix > 0.05 ? ', likusi dalis – apytiksliais MSCI ACWI / World svoriais' : ''}.` : ` This quarter ${num(ms / (ms + ix) * 100, 0)} % of such funds’ value is split by actual holdings${ix > 0.05 ? ', the rest with approximate MSCI ACWI / World weights' : ''}.`) : '';
+  document.getElementById('ovCmpNote').textContent = (L
+    ? 'Akcijos pagal regioną – tikroji ekspozicija: tiesioginės akcijos pagal emitento šalį, regioniniai fondai pagal savo regioną, o pasaulio (MSCI World, ACWI ir pan.) ir kiti nepriskirti akcijų fondai išskaidyti pagal jų pačių sudėtį (© Morningstar). Regionų suma = akcijų dalis. Morningstar „išsivysčiusi Azija“ (Taivanas, P. Korėja, Honkongas, Singapūras) pasaulio su EM fonduose priskirta besivystančioms rinkoms, nes MSCI Taivaną ir Korėją laiko besivystančiomis. Eilutė „iš jų per pasaulio akcijų fondus“ – tik informacija, kiek akcijų laikoma per tokius fondus.'
+    : 'Equity by region – actual exposure: direct shares by issuer country, regional funds by their region, and global (MSCI World, ACWI etc.) and other unassigned equity funds split by their own holdings (© Morningstar). Regions add up to the equity share. Morningstar “Asia developed” (Taiwan, South Korea, Hong Kong, Singapore) in global funds that include EM is counted as emerging markets, as MSCI classifies Taiwan and Korea as EM. The row “of which via global equity funds” is information only.') + cov;
 }
 function renderAll() {
   const qi = NQ - 1, live = FUNDS.filter(f => f.q[qi]), secs = new Set(live.flatMap(f => [...f.q[qi].keys()])).size;

@@ -72,6 +72,7 @@
   ul.ovout { grid-template-columns: repeat(2, minmax(0, 1fr)); } @media (max-width: 900px) { ul.ovout { grid-template-columns: 1fr; } }
   @media (max-width: 1100px) { .ovgrid { grid-template-columns: 1fr; } }
   .ovgrid h3, #ovCmpH { margin: 0 0 8px; font-size: 16px; }
+  .ovt tr.ovinfo td { font-style: italic; opacity: .7; }
   table.ovt td small { color: var(--text-3); } table.ovt td small.pos { color: var(--dpos); font-weight: 600; } table.ovt td small.neg { color: var(--dneg); font-weight: 600; }
   table.ovt td.hi { background: color-mix(in srgb, var(--dpos) 14%, transparent); font-weight: 600; } table.ovt td.lo { background: color-mix(in srgb, var(--dneg) 12%, transparent); }
   .ovtr { font-size: 12.5px; line-height: 1.35; white-space: normal; } .ovtr small { color: var(--text-3); }
@@ -99,7 +100,7 @@
     <section class="card" data-src="pf"><h3 id="ovChgH"></h3><p class="note ovref" id="ovRef" hidden></p><div class="scroll"><table class="pft ovt" id="ovChg"></table></div></section>
     <section class="card" data-src="pf"><h3 id="ovOutH"></h3><ul class="ovout" id="ovOut"></ul><p class="note" id="ovOutN"></p></section>
   </div>
-  <section class="card" data-src="pf" style="margin-top:12px"><h3 id="ovCmpH"></h3><div class="ovpick" id="ovPick"></div><div class="scroll"><table class="pft ovt" id="ovCmp"></table></div></section>
+  <section class="card" data-src="pf" style="margin-top:12px"><h3 id="ovCmpH"></h3><div class="ovpick" id="ovPick"></div><div class="scroll"><table class="pft ovt" id="ovCmp"></table></div><p class="note" id="ovCmpNote"></p></section>
   <h2 class="sec" id="detTitle" hidden></h2>
   <p class="lead" id="detLead" hidden></p>
   </div>
