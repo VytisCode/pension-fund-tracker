@@ -780,7 +780,16 @@ def build_portfolios(ver: dict) -> None:
     (DOCS / "data_pf.js").write_text(data_js, encoding="utf-8")
     shutil.copyfile(SITE / "portfolios.html", DOCS / "portfolios.html")
     shutil.copyfile(SITE / "pf.js", DOCS / "pf.js")
-    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_pf.js", "pf.js")}}
+    # SEB likvidumo analizė skiltyje „Alternatyvios“ (savininkas 2026-11-09) – liquidity.py
+    try:
+        import liquidity
+        liq = liquidity.site_payload()
+    except Exception as e:  # noqa: BLE001 – likvidumo dalis neturi sustabdyti portfelių puslapio
+        print("likvidumas: nepavyko:", e)
+        liq = {}
+    (DOCS / "data_liq.js").write_text("const LIQ=" + json.dumps(liq, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    shutil.copyfile(SITE / "liq.js", DOCS / "liq.js")
+    ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data_pf.js", "pf.js", "data_liq.js", "liq.js")}}
     text = (DOCS / "portfolios.html").read_text(encoding="utf-8")
     # valdymo mokesčiai „Bendroms metinėms išlaidoms“ (mokestis + investicinių fondų TER): II – data_fee.js, III – data_rep.js
     try:
@@ -805,7 +814,7 @@ def build_portfolios(ver: dict) -> None:
         text = text.replace('<script src="pf.js"></script>', '<script>var PFEE = ' + json.dumps(pfee) + ';</script>\n<script src="pf.js"></script>')
     except Exception as e:
         print("portfeliai: mokesčių nepavyko pridėti:", e)
-    for n in ("style.css", "common.js", "data_pf.js", "pf.js"):
+    for n in ("style.css", "common.js", "data_pf.js", "pf.js", "data_liq.js", "liq.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={ver[n]}"').replace(f'href="{n}"', f'href="{n}?v={ver[n]}"')
     (DOCS / "portfolios.html").write_text(text, encoding="utf-8")
     print(f"docs/data_pf.js: {len(data_js) / 1024:.0f} KB, ketvirčių: {len(quarters)}, fondų: {len(out)}, pozicijų: {len(secs)}")

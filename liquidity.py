@@ -85,13 +85,15 @@ def num(v):
 
 
 # ---------- formulės ----------
-def share(a: float, t: float, x: float, m: float, mode: str = "excel") -> float:
-    """Nelikvidžios dalies (a) svoris po x išėjimų ir m rinkų kritimo; likusi dalis t−a.
-    excel: (t−a)(1−x−m) – kaip 2026-07-30 Excel faile (x ir m – pradinio likvaus turto dalys, sumuojamos);
-    seq:   (t−a)(1−x)(1−m) – kritimas taikomas po išėjimų (švelnesnis)."""
+def share(a: float, t: float, x: float, m: float, mode: str = "fix") -> float:
+    """Nelikvidžios dalies (a) svoris po x išėjimų ir m rinkų kritimo.
+    fix (pataisyta, pagrindinė; savininkas 2026-11-09 „ištaisyk formules“): x – viso fondo turto (AUM) dalis, kaip lentelėje;
+         išėjimai mokami iš likvaus turto, tada rinkos kritimas m taikomas likusiam likviam turtui: (t − a − x·t)(1 − m).
+         Prie m = 0 riba sutampa su lentelės „Išėjimo riba“.
+    excel: (t−a)(1−x−m) – kaip 2026-07-30 Excel faile (x ir m – PRADINIO likvaus turto dalys, sumuojamos)."""
     if a <= 0:
         return 0.0
-    rest = (t - a) * ((1 - x - m) if mode == "excel" else (1 - x) * (1 - m))
+    rest = (t - a) * (1 - x - m) if mode == "excel" else (t - a - x * t) * (1 - m)
     return 1.0 if rest <= 0 else min(1.0, a / (a + rest))
 
 
@@ -103,7 +105,7 @@ def exit_limit(a: float, t: float, lim: float):
     return v, max(0.0, t - a / lim)
 
 
-def grid_hit(a, t, lim, m, mode="excel"):
+def grid_hit(a, t, lim, m, mode="fix"):
     """Mažiausias matricos išėjimų lygis (0–90 %), kai dalis ≥ ribos; None – nepasiekiama iki 90 %."""
     for x in EXITS:
         if share(a, t, x, m, mode) >= lim - 1e-12:
@@ -112,10 +114,10 @@ def grid_hit(a, t, lim, m, mode="excel"):
 
 
 def exact_hit(a, t, lim, m):
-    """Tiksli išėjimų dalis (nuo likvaus turto t−a), kai pasiekiama riba, Excel formulei."""
+    """Tiksli išėjimų dalis (viso AUM), kai pasiekiama riba, pataisytai formulei."""
     if a <= 0 or t <= a:
         return None if a <= 0 else 0.0
-    return max(0.0, 1 - m - a * (1 - lim) / (lim * (t - a)))
+    return max(0.0, min(1.0, (t - a - a * (1 - lim) / (lim * (1 - m))) / t))
 
 
 # ---------- duomenys ----------
@@ -244,7 +246,8 @@ def analyse(date, rows, funds, amap, nav, part, all_dates):
         r["hit0"], r["hit10"] = grid_hit(d["alt"], t, ALT_LIMIT, 0), grid_hit(d["alt"], t, ALT_LIMIT, 0.10)
         r["ex0"], r["ex10"] = exact_hit(d["alt"], t, ALT_LIMIT, 0), exact_hit(d["alt"], t, ALT_LIMIT, 0.10)
         r["c5010"] = share(d["alt"], t, *CENTRAL)
-        r["c5010_seq"] = share(d["alt"], t, *CENTRAL, mode="seq")
+        r["c5010_xl"] = share(d["alt"], t, *CENTRAL, mode="excel")
+        r["hit0_xl"], r["hit10_xl"] = grid_hit(d["alt"], t, ALT_LIMIT, 0, "excel"), grid_hit(d["alt"], t, ALT_LIMIT, 0.10, "excel")
         if lim:
             r["bhit0"], r["bhit10"] = grid_hit(d["bal"], t, lim, 0), grid_hit(d["bal"], t, lim, 0.10)
             r["b5010"] = share(d["bal"], t, *CENTRAL)
@@ -287,6 +290,10 @@ def summarise(res):
             s["sel_reason"] = ("tai matematiškai jautriausias fondas (mažiausia išėjimų riba iki 30 %); "
                                "tai nėra prognozė, kad iš jo pasitrauks daugiausia dalyvių")
     bal = [r for r in res.values() if r["in_bal"] and r["lim"]]
+    for pl in ("II", "III"):
+        g = [r for r in bal if r["pillar"] == pl]
+        t = sum(r["aum"] for r in g)
+        s[f"bal_{pl}"] = dict(aum=t, bal=sum(r["bal"] for r in g), xe=sum(r["bal_xe"] for r in g)) if t else None
     if bal:
         s["bal_top"] = sorted(bal, key=lambda r: -r["bal_sh"])[:2]
         s["bal_over"] = [r for r in bal if r["bal_sh"] >= r["lim"]]
@@ -427,7 +434,8 @@ def letters(cur, prev, ref):
          f"todėl iki 30 % ribos liktų {(ALT_LIMIT - sel['c5010']) * 100:.2f}".replace(".", ",") + " procentinio punkto buferis."
          if sel["c5010"] < ALT_LIMIT else
          f"   – esant 50 % išėjimų ir −10 % rinkų kritimui, alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, t. y. 30 % riba būtų viršyta.",
-         "   (Matricoje išėjimai ir rinkų kritimas matuojami kaip dalis ne alternatyvaus turto, todėl jie nesutampa su aukščiau nurodyta riba, skaičiuojama nuo viso fondo turto.)",
+         f"   (Skaičiuota pataisyta formule: išėjimai – viso fondo turto dalis, rinkų kritimas taikomas po išėjimų likusiam likviam turtui. "
+         f"Pagal ankstesnio Excel failo formulę 50 % / −10 % scenarijus būtų {pct(sel['c5010_xl'])}.)",
          "", "Baltijos šalių obligacijos", "",
          f"• Didžiausia Baltijos obligacijų dalis nustatyta fonduose {bal_top}."]
     if bm:
@@ -454,7 +462,7 @@ def letters(cur, prev, ref):
 
 
 # ---------- Excel ----------
-def write_xlsx(path, cur, prev, ref, la, lb):
+def write_xlsx(path, cur, prev, ref, la, lb, hist=None):
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -519,18 +527,18 @@ def write_xlsx(path, cur, prev, ref, la, lb):
     i += 2
     header(ws, i, ["Fondas", "Riba prie 0 % (matrica)", "Riba prie −10 % (matrica)", "Tiksli riba prie 0 %*",
                    "Tiksli riba prie −10 %*", "50 % / −10 %: alternatyvų dalis", "Buferis iki 30 %",
-                   "50 % / −10 % (seka)**"])
+                   "50 % / −10 % kaip Excel faile**", "Riba prie −10 % kaip Excel faile**"])
     i += 1
     for r in alt:
-        vals = [r["name"], grid_txt(r["hit0"]), grid_txt(r["hit10"]), r["ex0"], r["ex10"], r["c5010"], ALT_LIMIT - r["c5010"], r["c5010_seq"]]
+        vals = [r["name"], grid_txt(r["hit0"]), grid_txt(r["hit10"]), r["ex0"], r["ex10"], r["c5010"], ALT_LIMIT - r["c5010"], r["c5010_xl"], grid_txt(r["hit10_xl"])]
         for j, v in enumerate(vals, 1):
             c = ws.cell(i, j, v)
             c.border = thin
-            if j >= 4:
+            if 4 <= j <= 8:
                 c.number_format = P2
         ws.cell(i, 6).fill = color_alt(r["c5010"])
         i += 1
-    ws.cell(i + 1, 1, "* išėjimai kaip ne alternatyvaus turto dalis (kaip matricos stulpeliuose); ** kritimas taikomas po išėjimų (T−A)(1−x)(1−m) – žr. Metodika.")
+    ws.cell(i + 1, 1, "* išėjimai kaip viso fondo turto dalis; prie 0 % sutampa su „Išėjimo riba“. ** 2026-07-30 Excel formulė (T−A)(1−x−m), x – ne alternatyvaus turto dalis – žr. Metodika.")
 
     # Alternatyvų matricos
     ws = wb.create_sheet("Alt matricos")
@@ -543,8 +551,8 @@ def write_xlsx(path, cur, prev, ref, la, lb):
         if k == 0:
             title = "PAGRINDINĖ MATRICA – " + title + f". Pasirinkta, nes {s['sel_reason']}."
         row = matrix(ws, row, title, r["alt"], r["aum"], lambda v: color_alt(v), B, H, thin, P2)
-    row = matrix(ws, row, f"Palyginimui (ne pagrindinė): {sel['name']}, rinkų kritimas taikomas po išėjimų (T−A)(1−x)(1−m)",
-                 sel["alt"], sel["aum"], lambda v: color_alt(v), B, H, thin, P2, mode="seq")
+    row = matrix(ws, row, f"Palyginimui – kaip 2026-07-30 Excel faile (T−A)(1−x−m), x – ne alternatyvaus turto dalis: {sel['name']}",
+                 sel["alt"], sel["aum"], lambda v: color_alt(v), B, H, thin, P2, mode="excel")
 
     # Baltijos obligacijos
     ws = wb.create_sheet("Baltijos obligacijos")
@@ -564,6 +572,14 @@ def write_xlsx(path, cur, prev, ref, la, lb):
         if r["lim"]:
             ws.cell(i, 5).fill = color_bal(r["bal_sh"], r["lim"])
         i += 1
+    for pl in ("II", "III"):
+        g = s.get(f"bal_{pl}")
+        if g:
+            for j, v in enumerate([f"Total {pl} pakopa", "", g["aum"], g["bal"], g["bal"] / g["aum"], None, g["xe"] / g["aum"], g["xe"]], 1):
+                c = ws.cell(i, j, v)
+                c.font, c.border = B, thin
+                c.number_format = {3: E0, 4: E0, 8: E0, 5: P2, 7: P2}.get(j, "General")
+            i += 1
     i += 1
     ws.cell(i, 1, "Įtraukta: LB lapo „Skolos VP“ pozicijos, kurių emitento šalis LT, LV arba EE. Neįtraukta: akcijos, fondai, "
                   "pinigai, ne Baltijos obligacijos. Spalva – pagal fondo ribą: žalia < 90 % ribos, geltona 90–100 %, raudona ≥ ribos.")
@@ -583,6 +599,83 @@ def write_xlsx(path, cur, prev, ref, la, lb):
             title = "PAGRINDINĖ – arčiausiai ribos (mažiausia teigiama išėjimų riba). " + title
         lim = r["lim"]
         row = matrix(ws, row, title, r["bal"], r["aum"], lambda v, lim=lim: color_bal(v, lim), B, H, thin, P2)
+
+    # Interaktyvi matrica: fondas pasirenkamas sąraše (geltonas langelis), langeliai – Excel formulės
+    from openpyxl.worksheet.datavalidation import DataValidation
+    ws = wb.create_sheet("Matrica (pasirinkti)")
+    ws.column_dimensions["A"].width = 26
+    ws["A1"] = "Pasirinkite fondą ir formulę geltonuose langeliuose – matrica persiskaičiuoja (Excel formulės)."
+    ws["A1"].font = B
+    lst = [r for r in cur["res"].values() if r["in_alt"] or (r["in_bal"] and r["lim"])]
+    ws["N1"], ws["O1"], ws["P1"], ws["Q1"], ws["R1"] = "Fondas", "AUM", "Alternatyvos", "Baltijos obligacijos", "Obligacijų riba"
+    for k, r in enumerate(lst, 2):
+        for col, v in zip("NOPQR", [r["name"], r["aum"], r["alt"], r["bal"], r["lim"] or 0]):
+            ws[f"{col}{k}"] = v
+    n = len(lst) + 1
+    YL = PatternFill("solid", fgColor="FFF2CC")
+    ws["A3"], ws["B3"] = "Fondas", sel["name"]
+    ws["A4"], ws["B4"] = "Rodiklis", "Alternatyvos"
+    ws["A5"], ws["B5"] = "Formulė", "Pataisyta"
+    for c in ("B3", "B4", "B5"):
+        ws[c].fill, ws[c].font = YL, B
+    for c, opts in (("B3", f"=$N$2:$N${n}"), ("B4", '"Alternatyvos,Baltijos obligacijos"'), ("B5", '"Pataisyta,Kaip Excel faile"')):
+        dv = DataValidation(type="list", formula1=opts, allow_blank=False)
+        ws.add_data_validation(dv)
+        dv.add(c)
+    ws["A6"], ws["B6"] = "AUM", f"=INDEX($O$2:$O${n},MATCH($B$3,$N$2:$N${n},0))"
+    ws["A7"], ws["B7"] = "Nelikvidi dalis (A arba B)", f'=IF($B$4="Alternatyvos",INDEX($P$2:$P${n},MATCH($B$3,$N$2:$N${n},0)),INDEX($Q$2:$Q${n},MATCH($B$3,$N$2:$N${n},0)))'
+    ws["A8"], ws["B8"] = "Riba", f'=IF($B$4="Alternatyvos",{ALT_LIMIT},INDEX($R$2:$R${n},MATCH($B$3,$N$2:$N${n},0)))'
+    ws["B6"].number_format = ws["B7"].number_format = E0
+    ws["B8"].number_format = "0.0%"
+    ws["A10"] = "Rinkų kritimas ↓ / Išėjimai →"
+    ws["A10"].font = B
+    for j, x in enumerate(EXITS, 2):
+        c = ws.cell(10, j, x)
+        c.number_format, c.font, c.fill = "0%", B, H
+    from openpyxl.formatting.rule import FormulaRule
+    for k, m in enumerate(MARKET, 11):
+        c = ws.cell(k, 1, m)
+        c.number_format, c.font, c.fill = '"−"0%', B, H
+        for j in range(2, 2 + len(EXITS)):
+            col = ws.cell(10, j).column_letter
+            x, mm = f"{col}$10", f"$A{k}"
+            rest = f'IF($B$5="Pataisyta",($B$6-$B$7-{x}*$B$6)*(1-{mm}),($B$6-$B$7)*(1-{x}-{mm}))'
+            c = ws.cell(k, j, f"=IF($B$7<=0,0,IF({rest}<=0,1,MIN(1,$B$7/($B$7+{rest}))))")
+            c.number_format, c.border = P2, thin
+    rng = f"B11:{ws.cell(10, 1 + len(EXITS)).column_letter}{10 + len(MARKET)}"
+    ws.conditional_formatting.add(rng, FormulaRule(formula=["B11>=$B$8-0.0000001"], fill=R, stopIfTrue=True))
+    ws.conditional_formatting.add(rng, FormulaRule(formula=['B11>=IF($B$4="Alternatyvos",0.25,0.9*$B$8)'], fill=Y, stopIfTrue=True))
+    ws.conditional_formatting.add(rng, FormulaRule(formula=["B11>=0"], fill=G))
+    ws.cell(12 + len(MARKET), 1, "Spalvos: raudona ≥ ribos; geltona – alternatyvoms 25–30 %, obligacijoms 90–100 % ribos; žalia – žemiau. "
+                                 "Pataisyta: A/(A+(T−A−x·T)(1−m)); kaip Excel faile: A/(A+(T−A)(1−x−m)).")
+    wb.calculation.fullCalcOnLoad = True
+
+    # Istorija
+    if hist:
+        from openpyxl.chart import LineChart, Reference
+        ws = wb.create_sheet("Istorija")
+        cols = [("Data", "date", None), ("Alternatyvų dalis, min.", "alt_min", P2), ("Alternatyvų dalis, maks.", "alt_max", P2),
+                ("Didžiausia dalis – fondas", "alt_max_f", None), ("II pakopos AUM (alt. analizė)", "ii_aum", E0),
+                ("II pakopos alternatyvos, EUR", "ii_alt", E0), ("II pakopos išėjimo riba iki 30 %", "ii_x", P2),
+                ("II pakopos išėjimo riba, EUR", "ii_xe", E0), ("Jautriausias fondas", "sens", None), ("Matricos fondas", "sel", None),
+                ("50 % / −10 % (pataisyta)", "c5010", P2), ("50 % / −10 % (kaip Excel)", "c5010_xl", P2),
+                ("Baltijos obligacijų dalis, II pakopa", "bal_ii", P2), ("Baltijos obl. išėjimų riba, II pakopa", "bal_ii_x", P2),
+                ("Arčiausiai obligacijų ribos – fondas", "bal_min_f", None), ("Jo išėjimų riba", "bal_min_x", P2)]
+        header(ws, 1, [c[0] for c in cols], [12, 12, 12, 26, 16, 16, 14, 16, 24, 24, 12, 12, 14, 14, 26, 12])
+        for i, h in enumerate(hist, 2):
+            for j, (_, k, f) in enumerate(cols, 1):
+                c = ws.cell(i, j, h[k])
+                c.border = thin
+                if f:
+                    c.number_format = f
+        n = len(hist) + 1
+        ch = LineChart()
+        ch.title, ch.height, ch.width = "Alternatyvų dalis ir II pakopos išėjimo riba", 8, 22
+        ch.y_axis.number_format = "0%"
+        for col in (2, 3, 7, 11):
+            ch.add_data(Reference(ws, min_col=col, min_row=1, max_row=n), titles_from_data=True)
+        ch.set_categories(Reference(ws, min_col=1, min_row=2, max_row=n))
+        ws.add_chart(ch, f"A{n + 3}")
 
     # Pokyčiai
     ws = wb.create_sheet("Pokyčiai")
@@ -652,7 +745,7 @@ def write_xlsx(path, cur, prev, ref, la, lb):
     wb.save(path)
 
 
-def matrix(ws, row, title, a, t, color, B, H, thin, P2, mode="excel"):
+def matrix(ws, row, title, a, t, color, B, H, thin, P2, mode="fix"):
     ws.cell(row, 1, title).font = B
     row += 1
     ws.cell(row, 1, "Rinkų kritimas ↓ / Išėjimai →").font = B
@@ -686,12 +779,13 @@ METHOD = [
     "• ALT% = ALT / AUM. Išėjimo riba % = 1 − ALT / (30 % × AUM) = 1 − ALT% / 30 %; EUR = AUM − ALT / 30 %. Jei ALT% ≥ 30 % – riba 0 %.",
     "• Bendra II pakopos riba = Σ išėjimo ribų EUR / Σ AUM (svertinė eurais), ne fondų procentų vidurkis.",
     "",
-    "Jautrumo matrica (kaip 2026-07-30 Excel faile)",
-    "• Langelis = A / (A + (T − A) × (1 − x − m)); A – alternatyvos, T – AUM, x – išėjimai (stulpeliai 0–90 %), m – rinkų kritimas (eilutės 0–95 %). Jei (1 − x − m) ≤ 0 – 100 %; jei A = 0 – 0 %.",
-    "• SVARBU: šis Excel failo variantas x ir m SUMUOJA. Instrukcijoje užrašyta sandauga (1 − x)(1 − m) duoda 20,79 %, o ne kontrolinius 22,79 % (1996–2002, 50 %/−10 %); 22,79 % ir 31,56 % (su įsipareigojimais) atkuriami tik sumos formule. Todėl pagrindinė matrica – sumos formulė, o palyginimui pateikta ir sandaugos matrica.",
-    "• Kaip suprasti sumos formulę: ir išėjimai, ir rinkų nuostolis matuojami kaip PRADINIO ne alternatyvaus turto dalis (eurais). Sandaugos formulėje rinkos kritimas taikomas jau sumažėjusiam turtui – rezultatas švelnesnis.",
-    "• Matricos x yra ne alternatyvaus turto dalis, o lentelės „Išėjimo riba“ – viso AUM dalis. Pvz. 1996–2002 (2026-07-30): 64,80 % AUM = 72,45 % ne alternatyvaus turto, todėl matricoje riba be rinkų kritimo – ties 80 % stulpeliu.",
-    "• Prielaidos (konservatyvios): alternatyvų vertė nekinta; išėjimai finansuojami iš likvidaus turto; rinkų kritimas veikia tik likvidų turtą; alternatyvos neparduodamos. Jei alternatyvos kristų tiek pat, jų dalis nekiltų.",
+    "Jautrumo matrica (pataisyta formulė – pagrindinė)",
+    "• Langelis = A / (A + (T − A − x × T) × (1 − m)); A – alternatyvos, T – AUM, x – išėjimai kaip VISO fondo turto dalis (stulpeliai 0–90 %), m – rinkų kritimas (eilutės 0–95 %). Jei T − A − x × T ≤ 0 – 100 %; jei A = 0 – 0 %.",
+    "• Eiga: dalyviai išsiima x viso fondo turto, išmokama tik iš likvaus turto; tada rinkos krenta m ir tai paveikia likusį likvų turtą. Prie m = 0 riba tiksliai sutampa su lentelės „Išėjimo riba“ (pvz. 1996–2002, 2026-07-30: 64,80 %).",
+    "• Kodėl taisyta. 2026-07-30 Excel faile: A / (A + (T − A) × (1 − x − m)). Ten (1) x – ne alternatyvaus turto, o ne viso fondo dalis, todėl matricos riba (ties 80 %) nesutampa su lentelės riba (64,80 %); (2) x ir m sudedami – rinkos nuostolis skaičiuojamas nuo pradinio, o ne nuo po išėjimų likusio turto, todėl kritimas „užskaitomas“ ir išmokėtiems pinigams. Instrukcijoje užrašyta (1 − x)(1 − m) neatkuria nė vieno Excel kontrolinio skaičiaus (20,78 %, o ne 22,79 %).",
+    "• Palyginimas, 1996–2002, 2026-07-30 įvestys: 50 % / −10 %: pataisyta 22,93 %, Excel 22,79 %; riba be rinkų kritimo: pataisyta 64,80 % (matricoje 70 %), Excel ~72 % ne alternatyvaus turto (80 %); prie −10 %: pataisyta 62,1 % (70 %), Excel ~62 % (70 %).",
+    "• Lape „Alternatyvos“ ir matricų lape pateikiami abu variantai; laiške – pataisytas, su Excel varianto skaičiumi skliaustuose.",
+    "• Prielaidos (konservatyvios): alternatyvų vertė nekinta; išėjimai finansuojami iš likvaus turto; rinkų kritimas veikia tik likvų turtą; alternatyvos neparduodamos. Jei alternatyvos kristų tiek pat, jų dalis nekiltų.",
     "• Spalvos (fiksuotos): žalia < 25 %, geltona 25–30 %, raudona ≥ 30 %.",
     "• Matricos fondas: jei turimi LB dalyvių skaičiai – II pakopos fondas, kuriame per 2 paskutinius ketvirčius labiausiai sumažėjo dalyvių (faktinių išėjimų pakaitalas; mažėjimą lemia ir išėjimai į pensiją); kitaip – mažiausia išėjimo riba. Kitų fondų matricos – žemiau tame pačiame lape.",
     "",
@@ -708,7 +802,7 @@ METHOD = [
     "• Jei duomenys būtų: kiekvienam alternatyviam fondui ir pensijų fondui – commitment, visi drawdown, commitment pokyčiai, grąžintos sumos, perleidimai.",
     "   Undrawn = Commitment − Σ Drawdown (+ grąžintos commitment sumos ± perleidimai ar korekcijos).",
     "   ALT su commitment = ALT + Σ Undrawn; dalis = (ALT + Σ Undrawn) / AUM; išėjimo riba = 1 − (ALT + Σ Undrawn) / (30 % × AUM).",
-    "   Matrica: (ALT + U) / (ALT + U + (AUM − ALT − U) × (1 − x − m)).",
+    "   Matrica (pataisyta): (ALT + U) / (ALT + U + (AUM − ALT − U − x × AUM) × (1 − m)); Excel faile buvo (ALT + U) / (ALT + U + (AUM − ALT − U) × (1 − x − m)).",
     "   2026-07-30 pavyzdys (1996–2002): 4,18 mln. EUR (10,56 %) → su įsipareigojimais 6,17 mln. EUR (15,58 %); išėjimo riba 64,80 % → 48,08 %; 50 %/−10 %: 22,79 % → 31,56 %.",
     "• Pastaba dėl 2026-07-30 laiško: 22,79 % yra BE įsipareigojimų (ne „įskaitant būsimus įsipareigojimus“); „~60 % išėjimų“ su įsipareigojimais neatitinka matricos (~50 %). Ribos visada imamos iš apskaičiuotos matricos.",
     "",
@@ -727,7 +821,7 @@ def summary_lines(cur, prev):
         f"• Jautriausias fondas: {s['sensitive']['name']} (išėjimo riba {pct(s['sensitive']['alt_x'])}).",
         f"• Matricos fondas: {sel['name']} – {s['sel_reason']}.",
         f"• {sel['name']}: riba pasiekiama ties {grid_txt(sel['hit0'])} išėjimų be rinkų kritimo ir ties {grid_txt(sel['hit10'])} prie −10 % "
-        f"(tiksliai {pct(sel['ex0'], 1)} ir {pct(sel['ex10'], 1)} ne alternatyvaus turto).",
+        f"(tiksliai {pct(sel['ex0'], 1)} ir {pct(sel['ex10'], 1)} fondo turto).",
         f"• 50 % išėjimų / −10 % rinkos: {pct(sel['c5010'])}, buferis {pp(ALT_LIMIT - sel['c5010'])} iki 30 %.",
     ]
     if s.get("bal_top"):
@@ -763,7 +857,12 @@ def run(date=None, out_dir=None):
     out.mkdir(parents=True, exist_ok=True)
     files = []
     x = out / f"SEB_likvidumo_analize_{date}.xlsx"
-    write_xlsx(x, cur, prev, ref, la, lb)
+    try:
+        an = all_analyses()
+        hist = [history_row(an[d]) for d in sorted(an) if d <= date]
+    except Exception:  # noqa: BLE001
+        hist = None
+    write_xlsx(x, cur, prev, ref, la, lb, hist)
     files.append(x)
     for tag, txt in (("A_issamus", la), ("B_trumpas", lb)):
         p = out / f"laiskas_{tag}_{date}.txt"
@@ -785,6 +884,72 @@ def run(date=None, out_dir=None):
     return cur, prev, files
 
 
+def history_row(a):
+    """Vienas laiko eilutės įrašas (lapas „Istorija“ ir svetainės lentelė / grafikas)."""
+    s = a["summary"]
+    sel = s["selected"]
+    b2 = s.get("bal_II") or {}
+    return dict(date=a["date"], alt_min=s["alt_min"]["alt_sh"], alt_max=s["alt_max"]["alt_sh"], alt_max_f=s["alt_max"]["name"],
+                ii_aum=s["ii_aum"], ii_alt=s["ii_alt"], ii_x=s["ii_x"], ii_xe=s["ii_xe"], sens=s["sensitive"]["name"],
+                sel=sel["name"], c5010=sel["c5010"], c5010_xl=sel["c5010_xl"],
+                bal_ii=(b2["bal"] / b2["aum"]) if b2.get("aum") else None, bal_ii_x=(b2["xe"] / b2["aum"]) if b2.get("aum") else None,
+                bal_min_f=s["bal_min"]["name"] if s.get("bal_min") else None, bal_min_x=s["bal_min"]["bal_x"] if s.get("bal_min") else None)
+
+
+def all_analyses(start="2024-09-30"):
+    funds, alts, amap = load_cfg()
+    alld = seb_dates()
+    dates = [d for d in alld if d >= start]
+    rows = seb_rows(set(dates))
+    nav, part = lb_results()
+    return {d: analyse(d, rows[d], funds, amap, nav, part, alld) for d in dates}
+
+
+def site_payload():
+    """Svetainės skilčiai „Alternatyvios“ (portfolios.html, site/liq.js): visi SEB ketvirčiai – lentelės, palyginimas,
+    išimtys, laiškai; matricas naršyklė skaičiuoja pati iš A, B, AUM (abi formulės). Savininkas 2026-11-09: „viskas turi
+    matytis dashboard skiltyje Alternatyvos“."""
+    funds, alts, amap = load_cfg()
+    dates = [d for d in seb_dates() if d >= "2024-09-30"]
+    if not dates:
+        return {}
+    rows = seb_rows(set(dates))
+    nav, part = lb_results()
+    alld = seb_dates()
+    an = {d: analyse(d, rows[d], funds, amap, nav, part, alld) for d in dates}
+    keys = ["code", "name", "pillar", "in_alt", "in_bal", "aum", "nav_src", "alt", "alt_sh", "alt_x", "alt_xe", "bal", "bal_sh",
+            "bonds", "lim", "bal_x", "bal_xe", "part", "part_chg", "hit0", "hit10", "ex0", "ex10", "c5010", "c5010_xl", "hit0_xl",
+            "hit10_xl", "bhit0", "bhit10", "b5010"]
+    out = []
+    for i, d in enumerate(dates):
+        cur = an[d]
+        prev = an[dates[i - 1]] if i else None
+        ref = an.get(REFERENCE_DATE) if REFERENCE_DATE < (prev["date"] if prev else d) else None
+        la, lb = letters(cur, prev, ref)
+        s = cur["summary"]
+        rs = []
+        for r in cur["res"].values():
+            x = {k: (round(r[k], 6) if isinstance(r.get(k), float) else r.get(k)) for k in keys}
+            x["altpos"] = sorted(([n, round(v)] for n, v in r["altpos"].items()), key=lambda z: -z[1]) if r["in_alt"] else []
+            x["balpos"] = sorted(([n, round(v)] for n, v in r["balpos"].items()), key=lambda z: -z[1]) if r["in_bal"] else []
+            rs.append(x)
+        out.append(dict(
+            date=d, prev=prev["date"] if prev else None, ref=ref["date"] if ref else None, funds=rs,
+            sel=s["selected"]["code"], sel_reason=s["sel_reason"], sens=s["sensitive"]["code"],
+            bal_sel=s["bal_sel"]["code"] if s.get("bal_sel") else None,
+            ii=dict(aum=s["ii_aum"], alt=s["ii_alt"], xe=s["ii_xe"], x=s["ii_x"], avg_wrong=s["ii_x_avg_wrong"]),
+            bal_tot={pl: s.get(f"bal_{pl}") for pl in ("II", "III")},
+            summary=summary_lines(cur, prev), cmp=[list(t) for t in compare(cur, prev)],
+            cmp_ref=[list(t) for t in compare(cur, ref)] if ref else [],
+            dec=[{k: (round(v, 6) if isinstance(v, float) else v) for k, v in r.items()} for r in decompose(cur, prev)],
+            exc=[[a, b, c, round(v) if isinstance(v, float) else v, e] for a, b, c, v, e in cur["exc"]],
+            la=la, lb=lb))
+    return dict(periods=out, limit=ALT_LIMIT, method=METHOD, hist=[history_row(an[d]) for d in dates],
+                alts=[dict(name=r["name"], is_alt=r["is_alt"], cls=r["class"], src=r["source"], rev=r["reviewed"]) for r in alts],
+                limits=[dict(code=f["code"], name=f["name"], lim=f["bond_limit_pct"], src=f["limit_source"], rev=f["reviewed"])
+                        for f in funds if f["baltic"] == "1"])
+
+
 def latest_date():
     d = seb_dates()
     return d[-1] if d else None
@@ -803,14 +968,16 @@ def selftest():
     chk("1996–2002 alternatyvų dalis", a / t, 0.1056)
     chk("1996–2002 išėjimo riba", exit_limit(a, t, 0.30)[0], 0.6480)
     print(f"    išėjimo riba EUR: {meur(exit_limit(a, t, 0.30)[1])} (laukta ~25,65 mln.)")
-    chk("1996–2002 50 %/−10 %", share(a, t, 0.5, 0.1), 0.2279)
-    print(f"    matricos riba: 0 % → {grid_txt(grid_hit(a, t, .3, 0))} (laukta 80 %), −10 % → {grid_txt(grid_hit(a, t, .3, .1))} (laukta 70 %)")
-    ok &= grid_hit(a, t, .3, 0) == 0.8 and grid_hit(a, t, .3, .1) == 0.7
+    chk("1996–2002 50 %/−10 % (Excel formulė)", share(a, t, 0.5, 0.1, "excel"), 0.2279)
+    print(f"    Excel matricos riba: 0 % → {grid_txt(grid_hit(a, t, .3, 0, 'excel'))} (laukta 80 %), −10 % → {grid_txt(grid_hit(a, t, .3, .1, 'excel'))} (laukta 70 %)")
+    ok &= grid_hit(a, t, .3, 0, "excel") == 0.8 and grid_hit(a, t, .3, .1, "excel") == 0.7
+    chk("pataisyta: riba prie 0 % = lentelės išėjimo riba", exact_hit(a, t, .3, 0), exit_limit(a, t, .3)[0], 1e-9)
+    print(f"    pataisyta: 50 %/−10 % = {share(a, t, .5, .1) * 100:.2f} %, tiksli riba prie −10 % = {exact_hit(a, t, .3, .1) * 100:.2f} %")
     u = 0.1558 * t - a      # su įsipareigojimais 15,58 % – tik metodikos patikrai
-    chk("su įsipareigojimais 50 %/−10 % (tik metodikos patikra)", share(a + u, t, 0.5, 0.1), 0.3156, 0.0003)
+    chk("su įsipareigojimais 50 %/−10 % (Excel formulė, tik metodikos patikra)", share(a + u, t, 0.5, 0.1, "excel"), 0.3156, 0.0003)
     chk("su įsipareigojimais išėjimo riba (tik metodikos patikra)", exit_limit(a + u, t, 0.30)[0], 0.4808, 0.0003)
     chk("1961–1967 Baltijos obligacijų išėjimų riba", 1 - 0.2206 / 0.734, 0.6995)
-    print(f"    sandaugos formulė 50 %/−10 % būtų {share(a, t, .5, .1, 'seq') * 100:.2f} % – kontrolės NEatitinka")
+    print(f"    instrukcijos sandaugos formulė (T−A)(1−x)(1−m) 50 %/−10 % būtų {a / (a + (t - a) * .45) * 100:.2f} % – kontrolės NEatitinka")
     return ok
 
 

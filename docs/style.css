@@ -621,3 +621,8 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 .bxm .flag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; padding: 1px 5px; border-radius: 5px; background: var(--hover); }
 .bxm .sn { display: none; }
 @media (max-width: 560px) { .bxm .ln { display: none; } .bxm .sn { display: inline; } .bxm .seg a { padding: 6px 10px; } }
+/* SEB likvidumas (liq.js) */
+.liqm td { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.liqs { margin: 6px 0 0 18px; padding: 0; } .liqs li { margin: 2px 0; }
+.liqd { margin: 8px 0; } .liqd summary { cursor: pointer; }
+.liqp { white-space: pre-wrap; font: inherit; font-size: .92em; background: var(--card2, rgba(127,127,127,.08)); padding: 10px; border-radius: 6px; }
