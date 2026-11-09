@@ -8,10 +8,10 @@
   const MG = LIQ.mgr, LIM = LIQ.limit, MGRS = Object.keys(MG).sort((a, b) => (a === 'SEB' ? -1 : b === 'SEB' ? 1 : a.localeCompare(b)));
   let P = null;
   const EX = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9], MK = Array.from({ length: 20 }, (_, i) => i / 20);
-  const st = { m: 'SEB', d: null, mode: 'fix', af: null, bf: null };
+  const st = { m: 'SEB', d: null, mode: 'fix', af: null, bf: null, tm: 'ax', hs: 'rel' };
   try { Object.assign(st, JSON.parse(localStorage.getItem('liqST') || '{}')); } catch (e) { /* be atminties */ }
   if (!MG[st.m]) st.m = MGRS[0];
-  const save = () => { try { localStorage.setItem('liqST', JSON.stringify({ mode: st.mode, m: st.m })); } catch (e) { /* */ } };
+  const save = () => { try { localStorage.setItem('liqST', JSON.stringify({ mode: st.mode, m: st.m, tm: st.tm, hs: st.hs })); } catch (e) { /* */ } };
   const h = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const pc = (v, d = 2) => v == null ? '–' : (v * 100).toFixed(d).replace('.', ',') + ' %';
   const eu = v => v == null ? '–' : Math.round(v).toLocaleString('lt-LT').replace(/ /g, ' ') + ' €';
@@ -48,6 +48,86 @@
   const pk = (k, f, extra = '') => posOf(k, f).length ? ` class="liqk" data-k="${k}" data-c="${f.code}" title="${h(tip(k, f))}"${extra}` : extra;
   const det = (title, body, open) => `<details class="liqd"${open ? ' open' : ''}><summary><b>${title}</b></summary>${body}</details>`;
 
+  /* ---------- Fondai laike ---------- */
+  // Rodiklis: v – reikšmė, d – atstumas iki ribos (0 = riba pasiekta), g – „gerumas“ 0..1 spalvai
+  const TM = {
+    ax: { t: 'Išėjimo riba iki 30 % – kiek fondo turto gali išeiti', ok: f => f.in_alt, v: f => f.alt_x, d: v => v, g: v => v, e: f => f.alt_xe,
+      tot: g => { const t = g.reduce((a, f) => a + f.aum, 0); return t ? g.reduce((a, f) => a + f.alt_xe, 0) / t : null; } },
+    as: { t: 'Alternatyvų dalis portfelyje', ok: f => f.in_alt, v: f => f.alt_sh, d: v => LIM - v, g: v => 1 - v / LIM, e: f => f.alt,
+      tot: g => { const t = g.reduce((a, f) => a + f.aum, 0); return t ? g.reduce((a, f) => a + f.alt, 0) / t : null; } },
+    bx: { t: 'Baltijos obligacijų išėjimų riba – kiek turto gali išeiti iki fondo obligacijų ribos', ok: f => f.in_bal && f.lim && f.bal > 0, v: f => f.bal_x, d: v => v, g: v => v, e: f => f.bal_xe,
+      tot: g => { const t = g.reduce((a, f) => a + f.aum, 0); return t ? g.reduce((a, f) => a + f.bal_xe, 0) / t : null; } },
+    bu: { t: 'Baltijos obligacijos – kiek fondo obligacijų ribos jau išnaudota', ok: f => f.in_bal && f.lim && f.bal > 0, v: f => f.bal_sh / f.lim, d: v => 1 - v, g: v => 1 - v, e: f => f.bal,
+      tot: g => { const t = g.reduce((a, f) => a + f.lim * f.aum, 0); return t ? g.reduce((a, f) => a + f.bal, 0) / t : null; } },
+  };
+  // Excel 3 spalvų skalė (raudona → geltona → žalia), vientisos spalvos – kad kopijuojant išliktų
+  const mix = (a, b, t) => '#' + [0, 2, 4].map(i => Math.round(parseInt(a.substr(i, 2), 16) * (1 - t) + parseInt(b.substr(i, 2), 16) * t).toString(16).padStart(2, '0')).join('');
+  const heat0 = g => { g = Math.max(0, Math.min(1, g)); return (g < .5 ? mix('F8696B', 'FFEB84', g * 2) : mix('FFEB84', '63BE7B', (g - .5) * 2)) + ';color:#1a1a1a'; };
+  const ppf = v => v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v * 100).toFixed(1).replace('.', ',') + ' p. p.';
+  const qn = d => d.slice(0, 4) + ' ' + ['I', 'II', 'III', 'IV'][Math.floor((+d.slice(5, 7) - 1) / 3)] + ' ketv.';
+  // tempas – vidutinis atstumo iki ribos sumažėjimas per ketvirtį per paskutinius (iki) 4 ketvirčius
+  const eta = (ds, kk = 4) => {
+    const L0 = ds.filter(x => x != null); if (L0.length < 2) return '–';
+    const k = Math.min(kk, L0.length - 1), now = L0[L0.length - 1], sp = (L0[L0.length - 1 - k] - now) / k;
+    if (now <= 1e-9) return 'riba pasiekta';
+    if (sp <= 1e-9) return 'tolsta nuo ribos';
+    const n = now / sp; return n > 40 ? '> 10 metų' : `~${n.toFixed(1).replace('.', ',')} ketv.`;
+  };
+  function trend(PS) {
+    const M = TM[st.tm] || TM.ax; if (!TM[st.tm]) st.tm = 'ax';
+    const last = new Map(); PS.forEach(p => p.funds.forEach(f => { if (M.ok(f)) last.set(f.code, f); }));
+    const rows = [...last.values()].sort((a, b) => a.pillar.localeCompare(b.pillar) || a.name.localeCompare(b.name));
+    const pick = `<div class="bar pfbar"><label>Rodiklis <select id="liqTM">${Object.entries(TM).map(([k, x]) => `<option value="${k}"${k === st.tm ? ' selected' : ''}>${x.t}</option>`).join('')}</select></label>
+      <label>Spalvos <select id="liqHS"><option value="abs"${st.hs === 'rel' ? '' : ' selected'}>Pagal atstumą iki ribos</option><option value="rel"${st.hs === 'rel' ? ' selected' : ''}>Kontrastas: lentelės mažiausia – didžiausia</option></select></label></div>`;
+    let o = `<section class="card" style="margin-top:12px"><b>Kaip artėjame prie ribų: ${h(st.m)} fondai laike</b>${pick}`;
+    if (!rows.length) return o + `<p class="note">${h(st.m)} fondai šiam rodikliui duomenų neturi${st.tm[0] === 'a' ? ' (alternatyvių investicijų nėra)' : ''}.</p></section>`;
+    const at = (p, c) => p.funds.find(f => f.code === c);
+    const n0 = PS.length, yi = Math.max(0, n0 - 5);
+    const gs = rows.flatMap(r => PS.map(p => { const f = at(p, r.code); return f && M.ok(f) ? M.g(M.v(f)) : null; })).filter(x => x != null);
+    const g0 = Math.min(...gs), g1 = Math.max(...gs), REL = st.hs === 'rel' && g1 - g0 > 1e-6;
+    const heat = g => heat0(REL ? (g - g0) / (g1 - g0) : g);
+    const cell = (f, p) => {
+      if (!f || !M.ok(f)) return '<td>–</td>';
+      const v = M.v(f);
+      return `<td style="background:${heat(M.g(v))}" title="${h(`${f.name} · ${p.date}\nAUM ${me(f.aum)}\n${st.tm === 'ax' ? `Gali išeiti ${me(f.alt_xe)}; alternatyvos ${me(f.alt)} (${pc(f.alt_sh)})` : st.tm === 'as' ? `Alternatyvos ${me(f.alt)}; gali išeiti ${pc(f.alt_x)}` : `Baltijos obl. ${me(f.bal)} (${pc(f.bal_sh)}), fondo riba ${pc(f.lim, 1)}; gali išeiti ${me(f.bal_xe)}`}`)}">${pc(v, 1)}</td>`;
+    };
+    const line = (lbl, vals, bold) => {
+      const ds = vals.map(v => v == null ? null : M.d(v)), cur = vals[n0 - 1], q = vals[n0 - 2], y = vals[yi];
+      return `<tr${bold ? ' style="font-weight:700"' : ''}><td class="l">${lbl}</td>${vals.map(v => v == null ? '<td>–</td>' : `<td style="background:${heat(M.g(v))}">${pc(v, 1)}</td>`).join('')}<td>${cur == null || q == null ? '–' : ppf(cur - q)}</td><td>${cur == null || y == null ? '–' : ppf(cur - y)}</td><td>${eta(ds, 1)}</td><td>${eta(ds)}</td></tr>`;
+    };
+    const head = ['Fondas', ...PS.map(p => qn(p.date)), 'Per ketvirtį', `Nuo ${qn(PS[yi].date)}`, 'Riba: paskut. ketv. tempu', `Riba: ${Math.min(4, n0 - 1)} ketv. tempu`];
+    const body = rows.map(r => {
+      const fs = PS.map(p => at(p, r.code)), vals = fs.map(f => f && M.ok(f) ? M.v(f) : null);
+      const ds = vals.map(v => v == null ? null : M.d(v)), cur = vals[n0 - 1], q = vals[n0 - 2], y = vals[yi];
+      return `<tr><td class="l">${h(r.name)}</td>${fs.map((f, i) => cell(f, PS[i])).join('')}<td>${cur == null || q == null ? '–' : ppf(cur - q)}</td><td>${cur == null || y == null ? '–' : ppf(cur - y)}</td><td>${eta(ds, 1)}</td><td>${eta(ds)}</td></tr>`;
+    });
+    const tots = ['II', 'III'].filter(pl => rows.some(r => r.pillar === pl)).map(pl => line(`Total ${pl} pakopa (svertinė)`, PS.map(p => { const g = p.funds.filter(f => f.pillar === pl && M.ok(f)); return g.length ? M.tot(g) : null; }), 1));
+    // grafikas – po liniją kiekvienam fondui
+    const C8 = ['#2f6fb3', '#c0392b', '#2e8b57', '#c9a227', '#8e44ad', '#16a085', '#d35400', '#7f8c8d', '#e84393', '#34495e'];
+    const top = st.tm === 'as' ? Math.max(LIM * 1.15, ...rows.flatMap(r => PS.map(p => { const f = at(p, r.code); return f && M.ok(f) ? M.v(f) : 0; }))) : st.tm === 'bu' ? Math.max(1.1, ...rows.flatMap(r => PS.map(p => { const f = at(p, r.code); return f && M.ok(f) ? M.v(f) : 0; }))) : 1;
+    const W = 900, H0 = 280, pl0 = 46, pr = 200, pt = 12, pb = 28, xs = i => pl0 + (n0 === 1 ? 0 : i * (W - pl0 - pr) / (n0 - 1)), ys = v => pt + (1 - v / top) * (H0 - pt - pb);
+    let svg = `<svg viewBox="0 0 ${W} ${H0}" style="width:100%;max-width:${W}px;height:auto" role="img" aria-label="${h(M.t)}">`;
+    const step = top > .6 ? .2 : .05;
+    for (let g = 0; g <= top + 1e-9; g += step) svg += `<line x1="${pl0}" x2="${W - pr}" y1="${ys(g)}" y2="${ys(g)}" stroke="currentColor" stroke-opacity=".12"/><text x="${pl0 - 6}" y="${ys(g) + 4}" text-anchor="end" font-size="11" fill="currentColor" opacity=".7">${Math.round(g * 100)} %</text>`;
+    const lim = st.tm === 'as' ? LIM : st.tm === 'bu' ? 1 : 0;
+    svg += `<line x1="${pl0}" x2="${W - pr}" y1="${ys(lim)}" y2="${ys(lim)}" stroke="#c0392b" stroke-width="2" stroke-dasharray="5 4"/><text x="${pl0 + 4}" y="${ys(lim) - 5}" font-size="11" fill="#c0392b">riba</text>`;
+    PS.forEach((p, i) => { svg += `<text x="${xs(i)}" y="${H0 - 8}" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">${p.date.slice(0, 7)}</text>`; });
+    const ends = [];
+    rows.forEach((r, k) => {
+      const c = C8[k % C8.length], pts = PS.map((p, i) => { const f = at(p, r.code); return f && M.ok(f) ? [xs(i), ys(M.v(f)), M.v(f), p.date] : null; }).filter(Boolean);
+      if (!pts.length) return;
+      svg += `<polyline fill="none" stroke="${c}" stroke-width="2" points="${pts.map(q => q[0] + ',' + q[1]).join(' ')}"/>` + pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="3" fill="${c}"><title>${h(r.name)} ${q[3]}: ${pc(q[2], 1)}</title></circle>`).join('');
+      const e = pts[pts.length - 1]; ends.push([e[1], c, `${r.name.replace(/^\S+\s/, '')} ${pc(e[2], 1)}`, e[0]]);
+    });
+    ends.sort((a, b) => a[0] - b[0]); let yPrev = -1e9;
+    ends.forEach(e => { const y = Math.max(e[0], yPrev + 13); yPrev = y; svg += `<text x="${e[3] + 8}" y="${y + 4}" font-size="11" fill="${e[1]}">${h(e[2])}</text>`; });
+    svg += '</svg>';
+    const expl = { ax: `100 % – riba toli, 0 % – alternatyvos jau sudaro ${pc(LIM, 0)}. Pvz. 80 % reiškia: išėjus 80 % fondo turto (alternatyvos neparduodamos), jų dalis pasiektų ${pc(LIM, 0)}.`,
+      as: `Raudona linija – ${pc(LIM, 0)} riba.`, bx: '100 % – riba toli, 0 % – Baltijos obligacijos jau pasiekė fondo obligacijų ribą.', bu: '100 % – Baltijos obligacijų dalis lygi fondo obligacijų ribai.' }[st.tm];
+    return o + svg + tbl(head, body.concat(tots))
+      + `<p class="note">${expl} Spalva – tolydi skalė: ${REL ? `kontrasto režimas – raudoniausias langelis yra arčiausiai ribos šioje lentelėje, žaliausias – toliausiai; spalvos rodo skirtumus, ne absoliutų pavojų` : 'žalia – toli nuo ribos, geltona – pusiaukelėje, raudona – prie ribos'}. „Riba … tempu“ – po kiek ketvirčių riba būtų pasiekta, jei atstumas iki jos mažėtų tokiu pačiu greičiu kaip per paskutinį ketvirtį arba vidutiniškai per paskutinius ${Math.min(4, n0 - 1)} ketv. (tiesinė ekstrapoliacija, ne prognozė). Užvedus pelę ant langelio – eurai ir AUM.</p></section>`;
+  }
+
   function render() {
     P = MG[st.m].periods;
     if (st.d == null || st.d >= P.length) st.d = P.length - 1;
@@ -66,6 +146,9 @@
         ? 'Kaip Excel faile: A / (A + (T − A) × (1 − x − m)); x – ne alternatyvaus turto dalis, x ir m sudedami. Taip atkuriami 2026-07-30 laiško skaičiai (22,79 %), bet matricos riba nesutampa su lentelės „Išėjimo riba“.'
         : 'Pataisyta: A / (A + (T − A − x × T) × (1 − m)); x – viso fondo turto dalis (kaip lentelėje), rinkos kritimas taikomas po išėjimų likusiam turtui. Be rinkų kritimo riba sutampa su lentelės „Išėjimo riba“.'} Kodėl taisyta – „Metodika“ apačioje.</p>
       <section class="card"><b>Santrauka – ${p.date}</b><ul class="liqs">${p.summary.map(x => `<li>${h(x.replace(/^•\s*/, ''))}</li>`).join('')}</ul></section>`;
+
+    // Fondai laike: vieno valdytojo visi fondai × ketvirčiai – kaip artėjama prie ribų (savininkas 2026-11-09)
+    o += trend(P.slice(0, st.d + 1));
 
     // Alternatyvų lentelė
     const sum = g => { const t = g.reduce((a, f) => a + f.aum, 0), a = g.reduce((x, f) => x + f.alt, 0), xe = g.reduce((x, f) => x + f.alt_xe, 0); return [t, a, xe]; };
@@ -171,6 +254,8 @@
     box.querySelector('#liqD').addEventListener('change', e => { st.d = +e.target.value; render(); });
     box.querySelector('#liqM').addEventListener('change', e => { st.mode = e.target.value; save(); render(); });
     const af0 = box.querySelector('#liqAF'); if (af0) af0.addEventListener('change', e => { st.af = e.target.value; render(); });
+    const tm0 = box.querySelector('#liqTM'); if (tm0) tm0.addEventListener('change', e => { st.tm = e.target.value; save(); render(); });
+    const hs0 = box.querySelector('#liqHS'); if (hs0) hs0.addEventListener('change', e => { st.hs = e.target.value; save(); render(); });
     const b = box.querySelector('#liqBF'); if (b) b.addEventListener('change', e => { st.bf = e.target.value; render(); });
     box.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', () => {
       const t = document.getElementById(btn.dataset.copy).textContent;

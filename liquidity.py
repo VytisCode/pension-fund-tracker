@@ -530,7 +530,7 @@ def letters(cur, prev, ref):
 
 
 # ---------- Excel ----------
-def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB"):
+def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB", an=None):
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -748,6 +748,85 @@ def write_xlsx(path, cur, prev, ref, la, lb, hist=None, prov="SEB"):
         ch.set_categories(Reference(ws, min_col=1, min_row=2, max_row=n))
         ws.add_chart(ch, f"A{n + 3}")
 
+    # Fondai laike – vieno valdytojo fondai × ketvirčiai (savininkas 2026-11-09: „kaip artėjame prie ribos“)
+    if an and len(an) > 1:
+        from openpyxl.chart import LineChart, Reference
+        from openpyxl.formatting.rule import ColorScaleRule
+        ws = wb.create_sheet("Fondai laike")
+        ds = sorted(an)
+        ws.cell(1, 1, f"{prov} fondai laike: kaip artėjama prie ribų").font = Font(bold=True, size=13)
+        ws.cell(2, 1, "Spalvų skalė: raudona – prie ribos, geltona – pusiaukelėje, žalia – toli. Išėjimo riba 80 % = išėjus 80 % fondo turto "
+                      "(alternatyvos neparduodamos), jų dalis pasiektų 30 %. Pokyčiai – Excel formulės.")
+        blocks = [
+            ("Išėjimo riba iki 30 % (kiek fondo turto gali išeiti)", lambda r: r["in_alt"], lambda r: r["alt_x"], "alt_xe", "aum", True),
+            ("Alternatyvų dalis portfelyje", lambda r: r["in_alt"], lambda r: r["alt_sh"], "alt", "aum", False),
+            ("Baltijos obligacijų išėjimų riba (iki fondo obligacijų ribos)", lambda r: r["in_bal"] and r["lim"] and r["bal"] > 0, lambda r: r["bal_x"], "bal_xe", "aum", True),
+            ("Baltijos obligacijos: išnaudota fondo obligacijų ribos dalis", lambda r: r["in_bal"] and r["lim"] and r["bal"] > 0, lambda r: r["bal_sh"] / r["lim"], "bal", "limaum", False),
+        ]
+        row, n = 4, len(ds)
+        yi = max(0, n - 5)
+        first_block = None
+        for title, ok, val, num_k, den_k, up_good in blocks:
+            codes = {}
+            for d in ds:
+                for c, r in an[d]["res"].items():
+                    if ok(r):
+                        codes[c] = r
+            if not codes:
+                continue
+            ws.cell(row, 1, title).font = B
+            row += 1
+            header(ws, row, ["Fondas"] + ds + ["Per ketvirtį, p. p.", f"Nuo {ds[yi]}, p. p."])
+            row += 1
+            r0 = row
+            for c, last in sorted(codes.items(), key=lambda kv: (kv[1]["pillar"], kv[1]["name"])):
+                ws.cell(row, 1, last["name"]).border = thin
+                for j, d in enumerate(ds, 2):
+                    r = an[d]["res"].get(c)
+                    x = ws.cell(row, j, val(r) if r and ok(r) else None)
+                    x.number_format, x.border = "0.0%", thin
+                row += 1
+            for pl in ("II", "III"):
+                vals = []
+                for d in ds:
+                    g = [r for r in an[d]["res"].values() if r["pillar"] == pl and ok(r)]
+                    den = sum(r["lim"] * r["aum"] if den_k == "limaum" else r["aum"] for r in g)
+                    vals.append(sum(r[num_k] for r in g) / den if g and den else None)
+                if not any(v is not None for v in vals):
+                    continue
+                ws.cell(row, 1, f"Total {pl} pakopa (svertinė)").font = B
+                for j, v in enumerate(vals, 2):
+                    x = ws.cell(row, j, v)
+                    x.number_format, x.border, x.font = "0.0%", thin, B
+                row += 1
+            L = lambda j: ws.cell(1, j).column_letter  # noqa: E731
+            for i in range(r0, row):
+                for j, a in ((n + 2, n), (n + 3, yi + 2)):
+                    x = ws.cell(i, j, f'=IF(OR({L(n + 1)}{i}="",{L(a)}{i}=""),"",({L(n + 1)}{i}-{L(a)}{i})*100)')
+                    x.number_format, x.border = '+0.0;-0.0;0.0', thin
+            rng = f"B{r0}:{L(n + 1)}{row - 1}"
+            lo, hi = ("F8696B", "63BE7B") if up_good else ("63BE7B", "F8696B")
+            if up_good:
+                ws.conditional_formatting.add(rng, ColorScaleRule(start_type="num", start_value=0, start_color=lo, mid_type="num", mid_value=0.5, mid_color="FFEB84", end_type="num", end_value=1, end_color=hi))
+            else:
+                top = ALT_LIMIT if num_k == "alt" else 1
+                ws.conditional_formatting.add(rng, ColorScaleRule(start_type="num", start_value=0, start_color=lo, mid_type="num", mid_value=top / 2, mid_color="FFEB84", end_type="num", end_value=top, end_color=hi))
+            if first_block is None:
+                first_block = (r0 - 1, row - 1)
+            row += 2
+        ws.column_dimensions["A"].width = 34
+        for j in range(2, n + 4):
+            ws.column_dimensions[ws.cell(1, j).column_letter].width = 12
+        if first_block:
+            h0, h1 = first_block
+            ch = LineChart()
+            ch.title, ch.height, ch.width = "Išėjimo riba iki 30 % pagal fondą", 9, 24
+            ch.y_axis.number_format, ch.y_axis.scaling.min, ch.y_axis.scaling.max = "0%", 0, 1
+            for i in range(h0 + 1, h1 + 1):
+                ch.add_data(Reference(ws, min_col=1, max_col=n + 1, min_row=i), from_rows=True, titles_from_data=True)
+            ch.set_categories(Reference(ws, min_col=2, max_col=n + 1, min_row=h0))
+            ws.add_chart(ch, f"A{row + 1}")
+
     # Pokyčiai
     ws = wb.create_sheet("Pokyčiai")
     header(ws, 1, ["Rodiklis", f"Ankstesnis ({prev['date'] if prev else '–'})", f"Naujas ({cur['date']})", "Pokytis"], [55, 34, 34, 28])
@@ -937,12 +1016,13 @@ def run(date=None, out_dir=None, prov="SEB"):
     out.mkdir(parents=True, exist_ok=True)
     files = []
     x = out / f"{prov}_likvidumo_analize_{date}.xlsx"
+    an = None
     try:
         an = all_analyses(prov)
         hist = [history_row(an[d]) for d in sorted(an) if d <= date]
     except Exception:  # noqa: BLE001
         hist = None
-    write_xlsx(x, cur, prev, ref, la, lb, hist, prov)
+    write_xlsx(x, cur, prev, ref, la, lb, hist, prov, {d: v for d, v in an.items() if d <= date} if hist else None)
     files.append(x)
     pre = "" if prov == "SEB" else f"{prov}_"
     for tag, txt in (("A_issamus", la), ("B_trumpas", lb)):
