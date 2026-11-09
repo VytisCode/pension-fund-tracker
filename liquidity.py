@@ -180,6 +180,9 @@ def lb_results():
     return nav, part, risky
 
 
+SOFT_BOND_LIMIT = 5.0   # %, ≤ šios reikšmės obligacijų dalis laikoma ne ribojimu (rizikingi fondai, akcijos iki 100 %)
+
+
 def lb_bond_limit(pillar, risky):
     """Strateginė ne rizikingų (obligacijų ir pan.) dalis = 100 − LB „rizikingų investicijų dalis“.
     II pakopai sutampa su SEB „Obligacijų dalis taisyklėse“ (pvz. 1961–1967: 100 − 26,6 = 73,4 %). III: „iki X“ → 100 − X,
@@ -298,8 +301,11 @@ def analyse(date, rows, funds, amap, nav, part, all_dates, risky=None):
                         f"konfigūracijoje {lim:.1f} %, pagal LB rizikingų dalį {lb_lim:.1f} % – patikrinti fondo taisykles"))
         if lim is None:
             lim = lb_lim
-        lim = lim / 100 if lim is not None else None
-        if f["baltic"] == "1" and not lim:
+        # Rizikinguose fonduose (akcijos iki 100 %) „obligacijų dalis taisyklėse“ ~2 % – strateginė dalis, ne viršutinė riba:
+        # ją viršijus pažeidimo nebūtų (savininkas 2026-11-09) → riba netaikoma.
+        soft = lim is not None and lim <= SOFT_BOND_LIMIT
+        lim = lim / 100 if lim is not None and not soft else None
+        if f["baltic"] == "1" and not lim and not soft:
             exc.append(("Nėra obligacijų ribos", code, f["name"], None, "papildyti data/liq_funds.csv"))
         p_now, p_old = part.get((date, code)), part.get((d2, code)) if d2 else None
         ex_p, ex_e = exit_limit(d["alt"], t, ALT_LIMIT)
@@ -1163,6 +1169,7 @@ METHOD = [
     "Baltijos šalių obligacijos",
     "• Įtraukiamos LB „Skolos VP“ pozicijos, kurių emitento šalis LT, LV, EE (vyriausybės, savivaldybės, bendrovės, bankai). Neįtraukiamos akcijos, fondai, pinigai, ne Baltijos obligacijos.",
     "• Riba R – „Obligacijų dalis taisyklėse“ (data/liq_funds.csv su šaltiniu ir peržiūros data). Išėjimo riba % = 1 − B / (R × AUM); EUR = AUM − B / R; jei B ≥ R × AUM – 0 %.",
+    "• Rizikinguose fonduose (akcijos iki 100 %), kurių „obligacijų dalis taisyklėse“ ≤ 5 % (pvz. 2 %), tai strateginė dalis, ne viršutinė riba – ją viršijus pažeidimo nėra (savininkas 2026-11-09), todėl Baltijos obligacijų riba šiems fondams netaikoma.",
     "• Matrica ta pati (B vietoje A), spalvos pagal fondo ribą: žalia < 90 % R, geltona 90–100 % R, raudona ≥ R.",
     "",
     "Palyginimas",
