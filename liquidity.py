@@ -448,8 +448,14 @@ def grid_txt(x):
     return "daugiau nei 90 %" if x is None else f"{x * 100:.0f} %"
 
 
-def letters(cur, prev, ref):
+def letters(cur, prev, ref, prov="SEB"):
     s, d = cur["summary"], cur["date"]
+    # Kur įklijuoti dashboard vaizdus (savininkas 2026-11-09). Virš kiekvienos lentelės ir grafiko dešinėje – mygtukas ⧉
+    # („Kopijuoti kaip paveikslėlį“ / „Kopijuoti vaizdą“) – nukopijuoja PNG su pavadinimu ir data; laiške – Ctrl+V.
+    nav = f"Portfeliai → Alternatyvios (Valdytojas {prov}, Ketvirtis {d})"
+
+    def pic(n, what, how):
+        return f"[ĮKLIJUOTI {n} PAV.: {nav} → {what}. {how}]"
     sel = s["selected"]
     verd, why = verdict(cur, prev)
     sens = sorted([r for r in cur["res"].values() if r["in_alt"]], key=lambda r: r["alt_x"])[:2]
@@ -483,9 +489,9 @@ def letters(cur, prev, ref):
     changes = changes or ["Ankstesnio vertinimo duomenų palyginimui nėra."]
     rng = f"{pct(s['alt_min']['alt_sh'])[:-2]}–{pct(s['alt_max']['alt_sh'])}"
     mx = s["alt_max"]
-    caveat = ("Analizėje neįvertinti dar neišmokėti alternatyvių investicijų įsipareigojimai, nes naujausi patikimi "
-              "commitment duomenys nebuvo prieinami. Todėl pateiktas vertinimas atspindi tik Lietuvos banko duomenyse "
-              "parodytas faktines portfelio pozicijas vertinimo dieną.")
+    caveat = ("30 % riba skaičiuojama nuo faktinio fondų turto, todėl vertinimas remiasi Lietuvos banko duomenyse parodytomis "
+              "faktinėmis portfelio pozicijomis vertinimo dieną. Dar neišmokėti alternatyvių investicijų įsipareigojimai į ribą "
+              "neįskaičiuojami ir šiame vertinime nenagrinėti (juos galima vertinti tik kaip papildomą teorinį scenarijų).")
     a = [f"Tema: Pensijų fondų likvidumo vertinimas pagal {d} portfelių duomenis", "", "Sveiki,", "",
          f"Vertinimas atliktas naudojant {d} Lietuvos banko paskelbtus pensijų fondų portfelių duomenis.", "",
          "Pakartotinai įvertinau, kokio masto turto išėjimai ir rinkų korekcija galėtų reikšmingai paveikti fondų struktūrą. "
@@ -495,6 +501,10 @@ def letters(cur, prev, ref):
          f"• Didžiausia alternatyvių investicijų dalis nustatyta fonde {mx['name']}, kuriame ji sudaro {pct(mx['alt_sh'])}, arba {meur(mx['alt'])}.",
          f"• Neįskaitant likusių neišmokėtų įsipareigojimų, II pakopos fondus iki 30 % alternatyvių investicijų ribos galėtų palikti apie {pct(s['ii_x'], 0)} turto, arba {meur(s['ii_xe'], 0)}.",
          f"• Jautriausi likvidumo rizikai yra {sens_txt}.",
+         "", pic(1, "„Kaip artėjame prie ribų“, Rodiklis „Išėjimo riba iki 30 %“, Spalvos „Kontrastas“",
+                 "Du paveikslėliai: grafikas (mygtukas ⧉ virš grafiko) ir lentelė (mygtukas ⧉ virš lentelės). Parodo, kaip kiekvieno fondo riba mažėjo per ketvirčius."),
+         "", pic(2, "„Alternatyvios investicijos ir 30 % riba“ – pirmoji lentelė", "Mygtukas ⧉ virš lentelės (fondai, AUM, alternatyvos, išėjimo riba)."),
+         "",
          f"• Fondą {sel['name']} analizei pasirinkau, nes {s['sel_reason']}. Jo jautrumo analizė rodo:",
          f"   – esant −10 % rinkų kritimui, 30 % riba pasiekiama maždaug ties {grid_txt(sel['hit10'])} išėjimų;",
          f"   – nesant rinkų pokyčio, riba pasiekiama maždaug ties {grid_txt(sel['hit0'])} išėjimų;",
@@ -504,12 +514,18 @@ def letters(cur, prev, ref):
          f"   – esant 50 % išėjimų ir −10 % rinkų kritimui, alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, t. y. 30 % riba būtų viršyta.",
          f"   (Skaičiuota pataisyta formule: išėjimai – viso fondo turto dalis, rinkų kritimas taikomas po išėjimų likusiam likviam turtui. "
          f"Pagal ankstesnio Excel failo formulę 50 % / −10 % scenarijus būtų {pct(sel['c5010_xl'])}.)",
+         "", pic(3, f"„Matrica fondui“ – pasirinkite {sel['name']}, Matricos formulė „Pataisyta“", "Spalvota matrica – mygtukas ⧉ virš matricos."),
          "", "Baltijos šalių obligacijos", "",
          f"• Didžiausia Baltijos obligacijų dalis nustatyta fonduose {bal_top}."]
     if bm:
         a.append(f"• Mažiausia apskaičiuota išėjimų riba iki konkrečiam fondui taikomos obligacijų ribos yra {pct(bm['bal_x'])} fonde {bm['name']} (riba {pct(bm['lim'], 1)}).")
-    a += [f"• Pagal taikytas konservatyvias prielaidas, {bal_concl}.", "", "Pokyčiai nuo ankstesnio vertinimo", ""]
+    a += [f"• Pagal taikytas konservatyvias prielaidas, {bal_concl}.", "",
+          pic(4, "„Baltijos šalių obligacijos ir fondo obligacijų riba“ – lentelė", "Mygtukas ⧉ virš lentelės. Jei reikia – ir žemiau esanti matrica fondui arčiausiai ribos."),
+          "", "Pokyčiai nuo ankstesnio vertinimo", ""]
     a += [f"• {c}" for c in changes]
+    if prev:
+        a += ["", pic(5, "„Pokyčiai“ – lentelė „Alternatyvų dalies pokytis … kiek dėl alternatyvų vertės, kiek dėl fondo turto pokyčio“",
+                      "Mygtukas ⧉ virš lentelės. Parodo, ar dalis auga dėl naujų investicijų, ar dėl mažėjančio fondo turto.")]
     a += ["", "Apibendrinimas", "",
           f"Bendrai vertinant, esant stabilioms rinkų sąlygoms, 30 % alternatyvių investicijų riba būtų pasiekta po maždaug {pct(s['ii_x'], 0)} II pakopos fondų turto išėjimo. "
           f"Didžiausia rizika išlieka fonduose {' ir '.join(r['name'] for r in sens)}. "
@@ -520,11 +536,13 @@ def letters(cur, prev, ref):
          f"• Alternatyvių investicijų dalis fonduose siekia {rng}.",
          f"• Iki 30 % ribos II pakopos fondus galėtų palikti apie {pct(s['ii_x'], 0)} turto, arba {meur(s['ii_xe'], 0)}.",
          f"• Jautriausi fondai: {sens_txt}.",
+         "", pic(1, "„Kaip artėjame prie ribų“, Rodiklis „Išėjimo riba iki 30 %“, Spalvos „Kontrastas“", "Tik grafikas – mygtukas ⧉ virš grafiko."), "",
          f"• Esant 50 % išėjimų ir −10 % rinkų kritimui, fondo {sel['name']} alternatyvių investicijų dalis sudarytų {pct(sel['c5010'])}, "
          f"o buferis iki 30 % ribos būtų {(ALT_LIMIT - sel['c5010']) * 100:.2f}".replace(".", ",") + " procentinio punkto.",
+         "", pic(2, f"„Matrica fondui“ – {sel['name']}", "Mygtukas ⧉ virš matricos."), "",
          f"• Didžiausia Baltijos obligacijų koncentracija nustatyta fonduose {bal_top}.",
          f"• Palyginti su ankstesniu vertinimu, situacija {verd}, nes {why}.", "",
-         "Analizėje neįtraukti likę neišmokėti alternatyvių investicijų įsipareigojimai, nes šie duomenys neprieinami.", "",
+         "Vertinimas – pagal faktinį turtą (kaip skaičiuojama 30 % riba); neišmokėti įsipareigojimai neįtraukti.", "",
          "Pridedu skaičiavimus ir jautrumo matricas."]
     return a, b
 
@@ -1011,7 +1029,7 @@ def run(date=None, out_dir=None, prov="SEB"):
     cur = analyse(date, rows[date], funds, amap, nav, part, dates, risky)
     prev = analyse(prev_d, rows[prev_d], funds, amap, nav, part, dates, risky) if prev_d else None
     ref = analyse(ref_d, rows[ref_d], funds, amap, nav, part, dates, risky) if ref_d else None
-    la, lb = letters(cur, prev, ref) if cur["summary"].get("alt_min") else ([], [])
+    la, lb = letters(cur, prev, ref, prov) if cur["summary"].get("alt_min") else ([], [])
     out = Path(out_dir or ROOT / "likvidumas") / date
     out.mkdir(parents=True, exist_ok=True)
     files = []
@@ -1037,7 +1055,12 @@ def run(date=None, out_dir=None, prov="SEB"):
         for tag, txt in (("Variantas A – išsamesnis", la), ("Variantas B – trumpesnis vadovybinis", lb)):
             doc.add_heading(tag, level=1)
             for t in txt:
-                doc.add_paragraph(t)
+                if t.startswith("[ĮKLIJUOTI"):
+                    from docx.enum.text import WD_COLOR_INDEX
+                    run = doc.add_paragraph().add_run(t)
+                    run.bold, run.font.highlight_color = True, WD_COLOR_INDEX.YELLOW
+                else:
+                    doc.add_paragraph(t)
             doc.add_page_break()
         if not la:
             raise ImportError
@@ -1084,7 +1107,7 @@ def prov_payload(prov, lbr):
         s = cur["summary"]
         has_alt = bool(s.get("alt_min"))
         last2 = i >= len(dates) - 2            # laiškai – tik 2 paskutiniams ketvirčiams (failo dydis)
-        la, lb = letters(cur, prev, ref) if has_alt and i >= len(dates) - 2 else ([], [])   # laiškai – 2 paskutiniams ketvirčiams
+        la, lb = letters(cur, prev, ref, prov) if has_alt and i >= len(dates) - 2 else ([], [])   # laiškai – 2 paskutiniams ketvirčiams
         rs = []
         for r in cur["res"].values():
             x = {k: (round(r[k], 6) if isinstance(r.get(k), float) else r.get(k)) for k in keys}

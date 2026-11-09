@@ -79,7 +79,7 @@
     const rows = [...last.values()].sort((a, b) => a.pillar.localeCompare(b.pillar) || a.name.localeCompare(b.name));
     const pick = `<div class="bar pfbar"><label>Rodiklis <select id="liqTM">${Object.entries(TM).map(([k, x]) => `<option value="${k}"${k === st.tm ? ' selected' : ''}>${x.t}</option>`).join('')}</select></label>
       <label>Spalvos <select id="liqHS"><option value="abs"${st.hs === 'rel' ? '' : ' selected'}>Pagal atstumą iki ribos</option><option value="rel"${st.hs === 'rel' ? ' selected' : ''}>Kontrastas: lentelės mažiausia – didžiausia</option></select></label></div>`;
-    let o = `<section class="card" style="margin-top:12px"><b>Kaip artėjame prie ribų: ${h(st.m)} fondai laike</b>${pick}`;
+    let o = `<section class="card" style="margin-top:12px"><h3 style="margin:0 0 6px;font-size:1em;font-weight:700">Kaip artėjame prie ribų: ${h(st.m)} fondai laike</h3>${pick}`;
     if (!rows.length) return o + `<p class="note">${h(st.m)} fondai šiam rodikliui duomenų neturi${st.tm[0] === 'a' ? ' (alternatyvių investicijų nėra)' : ''}.</p></section>`;
     const at = (p, c) => p.funds.find(f => f.code === c);
     const n0 = PS.length, yi = Math.max(0, n0 - 5);
@@ -124,7 +124,7 @@
     svg += '</svg>';
     const expl = { ax: `100 % – riba toli, 0 % – alternatyvos jau sudaro ${pc(LIM, 0)}. Pvz. 80 % reiškia: išėjus 80 % fondo turto (alternatyvos neparduodamos), jų dalis pasiektų ${pc(LIM, 0)}.`,
       as: `Raudona linija – ${pc(LIM, 0)} riba.`, bx: '100 % – riba toli, 0 % – Baltijos obligacijos jau pasiekė fondo obligacijų ribą.', bu: '100 % – Baltijos obligacijų dalis lygi fondo obligacijų ribai.' }[st.tm];
-    return o + svg + tbl(head, body.concat(tots))
+    return o + `<div class="chart">${svg}</div>` + tbl(head, body.concat(tots))
       + `<p class="note">${expl} Spalva – tolydi skalė: ${REL ? `kontrasto režimas – raudoniausias langelis yra arčiausiai ribos šioje lentelėje, žaliausias – toliausiai; spalvos rodo skirtumus, ne absoliutų pavojų` : 'žalia – toli nuo ribos, geltona – pusiaukelėje, raudona – prie ribos'}. „Riba … tempu“ – po kiek ketvirčių riba būtų pasiekta, jei atstumas iki jos mažėtų tokiu pačiu greičiu kaip per paskutinį ketvirtį arba vidutiniškai per paskutinius ${Math.min(4, n0 - 1)} ketv. (tiesinė ekstrapoliacija, ne prognozė). Užvedus pelę ant langelio – eurai ir AUM.</p></section>`;
   }
 
@@ -206,7 +206,7 @@
         svg += `<polyline fill="none" stroke="${c}" stroke-width="2" points="${pts.map(q => q.join(',')).join(' ')}"/>` + pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="3" fill="${c}"/>`).join('');
       });
       svg += '</svg>';
-      o += `<section class="card" style="margin-top:12px"><b>Rodikliai laike</b>${svg}
+      o += `<section class="card" style="margin-top:12px"><h3 style="margin:0 0 6px;font-size:1em;font-weight:700">Rodikliai laike</h3><div class="chart" id="liqHC">${svg}</div>
         <div class="legend">${ser.map(([, l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}<span><i style="background:#c0392b;opacity:.5"></i>${pc(LIM, 0)} riba</span></div>`
         + tbl(['Data', 'Alternatyvų dalis, min.–maks.', 'Didžiausia dalis – fondas', 'II pakopos AUM', 'II pakopos alternatyvos', 'II pakopos išėjimo riba, %', 'Išėjimo riba, €', 'Jautriausias fondas', 'Matricos fondas', '50 % / −10 % (pataisyta)', '50 % / −10 % (kaip Excel)', 'Baltijos obl. dalis, II', 'Baltijos obl. išėjimų riba, II', 'Arčiausiai obl. ribos'],
           HS.map(x => tr([x.date, `${pc(x.alt_min)} – ${pc(x.alt_max)}`, h(x.alt_max_f), eu(x.ii_aum), eu(x.ii_alt), pc(x.ii_x), eu(x.ii_xe), h(x.sens), h(x.sel), pc(x.c5010), pc(x.c5010_xl), pc(x.bal_ii), pc(x.bal_ii_x), `${h(x.bal_min_f || '–')} ${pc(x.bal_min_x)}`])))
@@ -238,6 +238,7 @@
         + tbl(['Fondas', 'Obligacijų riba, %', 'Šaltinis', 'Peržiūrėta'], MG[st.m].limits.map(a => tr([h(a.name), a.lim == null ? 'nėra (LB: rizikingų iki 100 %)' : (Math.round(a.lim * 10) / 10).toString().replace('.', ','), h(a.src), h(a.rev)]))))
       + '<p class="note">Excel su visomis lentelėmis ir spalvotomis matricomis bei laiškai A/B ateina su vakariniu laišku, kai LB paskelbia naujus portfelius. Laiškas kolegoms automatiškai nesiunčiamas.</p></section>';
     box.innerHTML = o;
+    const hc = box.querySelector('#liqHC'); if (hc) hc._legend = [['Alternatyvų dalis, maks.', '#c9a227'], ['II pakopos išėjimo riba iki 30 %', '#2f6fb3'], ['Matricos fondas: 50 % / −10 %', '#c0392b'], ['Baltijos obl. išėjimų riba, II pakopa', '#2e8b57']].map(([l, c]) => ({ l, c }));
     box.querySelectorAll('.liqk').forEach(td => td.addEventListener('click', () => {
       const row = td.closest('tr'), nx = row.nextElementSibling, key = td.dataset.k + td.dataset.c;
       if (nx && nx.classList.contains('liqx')) { const same = nx.dataset.key === key; nx.remove(); if (same) return; }
