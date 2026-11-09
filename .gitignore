@@ -4,3 +4,4 @@ __pycache__/
 .env
 *_data_*.xlsx
 pension_data_combined_*.xlsx
+likvidumas/

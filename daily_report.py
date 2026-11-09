@@ -18,6 +18,8 @@ import subprocess
 import sys
 import urllib.request
 from datetime import datetime, timedelta
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from pathlib import Path
@@ -260,16 +262,42 @@ def already_sent(today: str) -> bool:
         return False
 
 
-def mark_sent(today: str) -> None:
-    REPORT_STATE.write_text(json.dumps({"last_sent": today}, indent=1) + "\n", encoding="utf-8")
+def mark_sent(today: str, **extra) -> None:
+    try:
+        st = json.loads(REPORT_STATE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        st = {}
+    st.update(last_sent=today, **extra)
+    REPORT_STATE.write_text(json.dumps(st, indent=1) + "\n", encoding="utf-8")
 
 
-def finish(today: str, forced: bool, keep: str) -> None:
+def liquidity_attachments() -> tuple:
+    """Savininkas 2026-11-09: atsiradus naujiems LB portfeliams – SEB fondų likvidumo analizė (Excel + laiško projektai)
+    pridedama prie vakarinio laiško. Tai SEB vidinė analizė: tik laiško priedas savininkui, ne svetainė / repo / Issue.
+    Pats laiškas kolegoms niekada nesiunčiamas automatiškai."""
+    try:
+        import tempfile
+        import liquidity
+        try:
+            done = json.loads(REPORT_STATE.read_text(encoding="utf-8")).get("liq", "")
+        except (OSError, ValueError):
+            done = ""
+        latest = liquidity.latest_date()
+        if not latest or latest <= done:
+            return [], ""
+        _, _, files = liquidity.run(out_dir=tempfile.mkdtemp(prefix="liq_"))
+        return files, latest
+    except Exception as e:  # noqa: BLE001 – priedas neturi sustabdyti laiško
+        print(f"Likvidumo analizės paruošti nepavyko: {e!r}")
+        return [], ""
+
+
+def finish(today: str, forced: bool, keep: str, **extra) -> None:
     """Bandomasis (ranka paprašytas) laiškas nepažymi dienos kaip atliktos – vakarinė ataskaita vis tiek bus išsiųsta."""
     if forced and keep:
         REPORT_STATE.write_text(keep, encoding="utf-8")
     elif not forced:
-        mark_sent(today)
+        mark_sent(today, **extra)
 
 
 def output(name: str, value: str) -> None:
@@ -304,13 +332,23 @@ def send() -> int:
         output("fallback", "true")
         finish(today, forced, keep)
         return 0
-    msg = MIMEText(body, "plain", "utf-8")
+    liq_files, liq_date = liquidity_attachments()
+    if liq_files:
+        subject += " · likvidumo analizė"
+        body += (f"\n\nPridėta: SEB pensijų fondų likvidumo analizė pagal {liq_date} LB portfelius (Excel su matricomis "
+                 "ir laiško projektai A/B). Laiškas kolegoms niekur neišsiųstas – peržiūrėkite ir siųskite patys.")
+    msg = MIMEMultipart()
+    msg.attach(MIMEText(body, "plain", "utf-8"))
+    for f in liq_files:
+        part = MIMEApplication(Path(f).read_bytes(), Name=Path(f).name)
+        part["Content-Disposition"] = f'attachment; filename="{Path(f).name}"'
+        msg.attach(part)
     msg["Subject"], msg["From"], msg["To"], msg["Date"] = subject, user, ", ".join(to), formatdate(localtime=True)
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=60) as smtp:
         smtp.login(user, password)
         smtp.sendmail(user, to, msg.as_string())
     print(f"Išsiųsta: {subject}")
-    finish(today, forced, keep)
+    finish(today, forced, keep, **({"liq": liq_date} if liq_date else {}))
     return 0
 
 

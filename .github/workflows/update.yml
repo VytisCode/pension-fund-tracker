@@ -207,6 +207,8 @@ jobs:
             exit 0
           fi
           [ "$FORCE_REPORT" = "true" ] && rm -f data/report_state.json
+          # SEB likvidumo analizės priedui (liquidity.py), kai yra nauji LB portfeliai
+          python -c "import openpyxl, docx" 2>/dev/null || pip install -q openpyxl python-docx
           python daily_report.py send
 
       - name: Daily report fallback (GitHub issue comment)
