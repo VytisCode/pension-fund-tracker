@@ -168,6 +168,11 @@ function renderHeader(active, onLang) {
   if (sec && SEC_IMG[sec.id]) {          // skyriaus nuotraukų juosta (auditas 2026-10-21: nuotraukos – orientacijai, ne dekoracijai)
     const st = document.createElement('div'); st.className = 'sechero'; st.style.backgroundImage = `url(img/${secImg(sec.id, active)}.jpg)`;
     st.innerHTML = '<div class="shtx"><span id="secName"></span><p id="secDesc"></p></div>'; nav.before(st); document.body.classList.add('has-hero'); document.body.classList.toggle('pg-home', sec.id === 'home');
+    if (document.documentElement.dataset.design === 'v2' && sec.id === 'home') {   // naujas dizainas: skirtukai virš nuotraukos, pagrindiniai skaičiai – ant nuotraukos (tik Pradžios „Šiandien“)
+      st.before(nav);
+      const big = document.getElementById('big'), rr = big && big.parentNode.querySelector(':scope > .refrow');
+      if (big) { const ov = document.createElement('div'); ov.className = 'hkpi'; if (rr) ov.append(rr); ov.append(big); st.append(ov); st.classList.add('has-kpi'); document.body.classList.add('home-kpi'); }
+    }
     const bg = document.createElement('div'); bg.className = 'pagebg'; bg.style.backgroundImage = st.style.backgroundImage; document.body.prepend(bg);   // savininkas 2026-10-21: nuotraukos – ir fono dalis
   }
   const side = document.createElement('aside');

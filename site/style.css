@@ -602,13 +602,13 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 .sechero { position: relative; height: 190px; margin: 6px 0 14px; border-radius: 16px; overflow: hidden; background: var(--hover) center 55% / cover no-repeat; display: flex; align-items: center; padding: 0 32px; box-shadow: 0 6px 24px rgba(60, 40, 10, .12); }
 .sechero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--surface) 92%, transparent) 0%, color-mix(in srgb, var(--surface) 70%, transparent) 34%, transparent 66%); }
 .sechero .shtx { position: relative; max-width: 46%; }
-.sechero span { display: block; font-family: "Source Serif 4", Georgia, serif; font-size: 32px; font-weight: 600; line-height: 1.15; color: var(--text); }
-.sechero small { display: block; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; color: var(--accent); margin: 4px 0 0; }
-.sechero p { margin: 8px 0 0; font-size: 15px; line-height: 1.45; color: var(--text-2); }
+.sechero .shtx > span { display: block; font-family: "Source Serif 4", Georgia, serif; font-size: 32px; font-weight: 600; line-height: 1.15; color: var(--text); }
+.sechero .shtx small { display: block; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; color: var(--accent); margin: 4px 0 0; }
+.sechero .shtx > p { margin: 8px 0 0; font-size: 15px; line-height: 1.45; color: var(--text-2); }
 .pagebg { position: absolute; left: 0; right: 0; top: 0; height: 520px; z-index: -1; background: center 40% / cover no-repeat; opacity: .16; filter: blur(18px) saturate(1.1); pointer-events: none;
   -webkit-mask-image: linear-gradient(#000 0%, transparent 100%); mask-image: linear-gradient(#000 0%, transparent 100%); }
-@media (max-width: 1000px) { .sechero { height: 150px; } .sechero span { font-size: 26px; } .sechero .shtx { max-width: 60%; } }
-@media (max-width: 700px) { .sechero { height: 110px; margin: 0 0 10px; border-radius: 12px; padding: 0 16px; } .sechero span { font-size: 20px; } .sechero small, .sechero p { display: none; } .sechero .shtx { max-width: 70%; } .pagebg { height: 300px; } }
+@media (max-width: 1000px) { .sechero { height: 150px; } .sechero .shtx > span { font-size: 26px; } .sechero .shtx { max-width: 60%; } }
+@media (max-width: 700px) { .sechero { height: 110px; margin: 0 0 10px; border-radius: 12px; padding: 0 16px; } .sechero .shtx > span { font-size: 20px; } .sechero .shtx small, .sechero .shtx > p { display: none; } .sechero .shtx { max-width: 70%; } .pagebg { height: 300px; } }
 @media print { .sechero { display: none; } }
 @media (min-width: 701px) { .has-hero .crumb { display: none; } }   /* kompiuteryje skyrių jau rodo nuotraukų juosta */
 /* Baltijos šalys: šalies ir pakopos juosta virš skirtukų (common.js bxBar) */
@@ -670,7 +670,7 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 }
 @media screen {
   [data-design="v2"] body { -webkit-font-smoothing: antialiased; }
-  [data-design="v2"] :is(h1, h2, h3, .concl, .crumb, .sechero span) { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -.015em; }
+  [data-design="v2"] :is(h1, h2, h3, .concl, .crumb, .sechero .shtx > span) { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -.015em; }
   [data-design="v2"] h2 { font-weight: 650; }
   /* kortelės: be rėmelių, didesnis apvalinimas, švelnus šešėlis */
   [data-design="v2"] .card { border-color: transparent; border-radius: 16px; box-shadow: var(--v2-shadow); }
@@ -690,9 +690,9 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
   /* skyriaus nuotrauka: tamsus perėjimas ir baltas tekstas – solidžiau */
   [data-design="v2"] .sechero { border-radius: 18px; box-shadow: var(--v2-shadow); background-position: center 50%; }
   [data-design="v2"] .sechero::before { background: linear-gradient(90deg, rgba(14,22,34,.84) 0%, rgba(14,22,34,.58) 42%, rgba(14,22,34,.06) 80%); }
-  [data-design="v2"] .sechero span { color: #fff; font-weight: 700; }
-  [data-design="v2"] .sechero small { color: #e9d3a6; }
-  [data-design="v2"] .sechero p { color: rgba(255,255,255,.86); }
+  [data-design="v2"] .sechero .shtx > span { color: #fff; font-weight: 700; }
+  [data-design="v2"] .sechero .shtx small { color: #e9d3a6; }
+  [data-design="v2"] .sechero .shtx > p { color: rgba(255,255,255,.86); }
   [data-design="v2"] .pagebg { opacity: .08; }
   /* lentelės: ramesnė antraštė, eilutės užvedus */
   [data-design="v2"] th { color: var(--text-3); font-weight: 600; font-size: 11.5px; letter-spacing: .01em; }
@@ -703,10 +703,10 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 @media screen and (min-width: 701px) {
   [data-design="v2"] .sechero { height: 240px; transition: height .25s ease; }
   [data-design="v2"] body.pg-home .sechero { height: min(42vh, 400px); align-items: flex-end; padding-bottom: 32px; }
-  [data-design="v2"] body.pg-home .sechero span { font-size: 40px; }
+  [data-design="v2"] body.pg-home .sechero .shtx > span { font-size: 40px; }
   [data-design="v2"] body.tab-deep:not(.pg-home) .sechero { height: 112px; }
-  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero p { display: none; }
-  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero span { font-size: 26px; }
+  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero .shtx > p { display: none; }
+  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero .shtx > span { font-size: 26px; }
 }
 /* Naujas dizainas – 2 žingsnis (savininkas: „mažai kas pasikeitė“): skyriai kaip kortelės, kompaktiška pranešimų eilutė */
 @media screen {
@@ -727,7 +727,7 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 }
 @media screen {
   [data-design="v2"] .side { background: var(--v2-side); border-right: 1px solid var(--line); }
-  [data-design="v2"] .sechero small { color: #e9d3a6; }
+  [data-design="v2"] .sechero .shtx small { color: #e9d3a6; }
   [data-design="v2"] .pagebg { display: none; }
   [data-design="v2"] input, [data-design="v2"] select { color-scheme: inherit; }
 }
@@ -774,3 +774,27 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
   /* grafikų ašių tekstas – ramesnis, skaičiai vienodo pločio */
   [data-design="v2"] .chart svg text, [data-design="v2"] .mchart svg text { font-variant-numeric: tabular-nums; }
 }
+
+/* Naujas dizainas – Pradžia: skaičiai ant nuotraukos (common.js .hkpi); kortelės – „stiklas“, spalvos perrašomos vietoje */
+@media screen {
+  [data-design="v2"] .sechero.has-kpi { height: auto !important; min-height: min(42vh, 400px); flex-direction: column; align-items: stretch; justify-content: flex-end; gap: 18px; padding: 96px 28px 24px; overflow: visible; }
+  [data-design="v2"] .sechero.has-kpi::before { border-radius: inherit; background: linear-gradient(90deg, rgba(14,12,10,.70) 0%, rgba(14,12,10,.30) 45%, rgba(14,12,10,0) 80%), linear-gradient(180deg, rgba(14,12,10,.10) 0%, rgba(14,12,10,.25) 40%, rgba(14,12,10,.80) 100%); }
+  [data-design="v2"] .hkpi { position: relative; display: flex; flex-direction: column; gap: 12px;
+    --text: #fff; --text-2: rgba(255,255,255,.86); --text-3: rgba(255,255,255,.70); --line: rgba(255,255,255,.18); --grid: rgba(255,255,255,.14); --hover: rgba(255,255,255,.12); --card: rgba(28,22,17,.42); color: var(--text); }
+  [data-design="v2"] .hkpi .refrow { margin: 0; color: var(--text-2); }
+  [data-design="v2"] .hkpi .refrow select { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.25); }
+  [data-design="v2"] .hkpi .refrow select option { color: #222; }
+  [data-design="v2"] .hkpi .seg { background: rgba(255,255,255,.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  [data-design="v2"] .hkpi .seg button[aria-pressed="true"], [data-design="v2"] .hkpi .seg .on { background: rgba(255,255,255,.92); color: #1c1714; }
+  [data-design="v2"] .hkpi .big { margin: 0; }
+  [data-design="v2"] .hkpi .big > * { background: var(--card); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); border: 0; }
+  [data-design="v2"] body.home-kpi #tdTitle { display: none; }
+  [data-design="v2"] body.tab-deep .sechero.has-kpi { min-height: 0; height: 112px !important; padding-top: 0; padding-bottom: 0; justify-content: center; overflow: hidden; }
+  [data-design="v2"] body.tab-deep .sechero.has-kpi .hkpi, [data-design="v2"] body.tab-deep .sechero.has-kpi p { display: none; }
+  [data-design="v2"] body.tab-deep .sechero.has-kpi span { font-size: 26px; }
+}
+@media screen and (max-width: 700px) {
+  [data-design="v2"] .sechero.has-kpi { padding: 70px 12px 12px; }
+}
+@media screen { [data-design="v2"] .sechero.has-kpi .shtx { align-self: flex-start; max-width: 60%; margin: 0; } [data-design="v2"] .hkpi { font-size: 14px; } }
+@media screen { [data-design="v2"] .hkpi a { color: #f1dcae; } [data-design="v2"] .hkpi a:hover { color: #fff; } }
