@@ -171,6 +171,37 @@ def build_home_split() -> None:
 
 
 
+def share_gaps(sh: dict, fl: dict) -> None:
+    """„Rinkos dalis laike“ (LV/EE) patikimumas (savininkas 2026-11-10: „atrodo neįtikėtinai“): duomenyse yra tik šaltinio dabar rodomi fondai,
+    todėl perimtų / uždarytų fondų istorijos nėra. Kiekvienas sujungimas, kurio atiduodančio fondo duomenyse nėra (baltic.py flows „g“),
+    ≥ 1 % rinkos – žyma grafike (S["gap"] = [[mėnuo, valdytojas, mln. €, % rinkos]]); S["cut"] – pirmas mėnuo, kai rinka ne mažesnė nei
+    15 % jos dydžio po 24 mėn. (pirmųjų mėnesių kelių fondų dalys – ne rinkos vaizdas)."""
+    for c, pls in sh.items():
+        for pl, S in pls.items():
+            if c not in fl or pl not in fl[c] or not S.get("m"):
+                continue
+            tot = [sum((x["na"][i] or 0) for x in S["mg"].values()) for i in range(len(S["m"]))]
+            mi = {m[:7]: i for i, m in enumerate(S["m"])}
+            gaps = []
+            for f in fl[c][pl]["f"]:
+                for k, v in (f.get("g") or {}).items():
+                    k = int(k); m = f"{k // 12}-{k % 12 + 1:02d}"
+                    if v <= 0 or m not in mi or not tot[mi[m]]:
+                        continue
+                    if c == "LV" and pl == "II" and f["n"] == "Luminor plāns 50-60" and S.get("lum") and m >= S["lum"][:7]:
+                        continue                     # „Luminor plāns 53-58“ – shares() jau įskaito (ketvirčio ataskaitos)
+                    if (f.get("g") or {}).get(str(k + 1), 0) < -0.8 * v:
+                        continue                     # tą patį kitą mėnesį išėjo – duomenų šuolis, ne perėmimas
+                    p = v / tot[mi[m]] * 100
+                    if p >= 1:
+                        gaps.append([m, f["m"], round(v, 1), round(p, 1)])
+            S["gap"] = sorted(gaps)
+            cut = 0
+            while cut + 24 < len(tot) and tot[cut] < 0.15 * tot[cut + 24]:
+                cut += 1
+            S["cut"] = cut
+
+
 def build_ctry_review() -> None:
     """Mėnesio apžvalga Latvijai ir Estijai (PERTVARKA-SALYS.md 3 etapas): review.html su tos šalies DATA (data_bx_{c}2.js) ir turtu
     (data_bx_flow.js); Lietuvos REP / AUM / PF neįkeliami – rev.js tas skiltis praleidžia."""
@@ -316,6 +347,10 @@ def build_baltic(ver: dict) -> None:
         fj = "const BXFLOW=" + json.dumps(fl, ensure_ascii=False, separators=(",", ":")) + ";\n"
         (DOCS / "data_bx_flow.js").write_text(fj, encoding="utf-8")
         payload["flv"] = hashlib.md5(fj.encode()).hexdigest()[:8]
+        try:
+            share_gaps(payload.get("sh") or {}, fl)
+        except Exception as e:
+            print("share_gaps: nepavyko:", e)
         print(f"docs/data_bx_flow.js: {len(fj) / 1024:.0f} KB")
     data_js = "const BALTIC=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_baltic.js").write_text(data_js, encoding="utf-8")

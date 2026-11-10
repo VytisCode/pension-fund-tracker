@@ -537,6 +537,9 @@ addStrings({ ms: {
   n: (f, est) => `Source: ${f}.${est ? ' Latvia: the assets of “Luminor plāns 53-58” are not listed on manapensija.lv – taken from its quarterly report and moved between quarters by the plan’s unit value (estimate). Its assets before ${est} are not known, so until then the Latvian total and Luminor’s share are too small (about 8% of the market).' : ''}`,
   src: { LV: 'manapensija.lv (assets and participants of each plan)', EE: 'pensionikeskus.ee (assets and active investors of each fund)', LT: 'Bank of Lithuania quarterly results (sum of each manager’s funds)' },
   noInv: 'Participants by fund are not published for this pillar.', none: 'No data on managers’ assets for this pillar.',
+  gapE: (m, v, p) => `${m} took over a fund that is not in the source data (${v} € m, ${p} % of the market). Before this, that fund's assets are missing, so the other managers' shares are overstated.`,
+  gapN: (d, l) => `Caution: the source lists only today's funds, so funds that were taken over or closed are missing from the history; shares before ${d} are approximate. Takeovers of missing funds (≥ 1 % of the market): ${l}.`,
+  cutN: d => `The chart starts in ${d}: in the first months after the launch only a few small funds existed.`,
   yT: d => `Change since the start of the year (${d})`,
   yH: ['Manager', 'Assets at year start, € m', 'Assets now, € m', 'Change, € m', 'Change', 'Market share', 'Share change, p.p.', 'Participants', 'Participants change', 'Assets per participant, €'],
   tot: 'Whole market', yN: (a, b) => `Year start – ${a}, now – ${b}. Change in assets includes both investment results and money flows (contributions, payouts, switches).` },
@@ -549,6 +552,9 @@ addStrings({ ms: {
   n: (f, est) => `Šaltinis: ${f}.${est ? ' Latvija: „Luminor plāns 53-58“ manapensija.lv sąraše nėra – jo turtas paimtas iš ketvirčio ataskaitos ir tarp ketvirčių perskaičiuotas pagal plāno vieneto vertę (apytiksliai). Jo turtas iki ${est} nežinomas, todėl iki tol Latvijos suma ir Luminor dalis per mažos (apie 8 % rinkos).' : ''}`,
   src: { LV: 'manapensija.lv (kiekvieno plāno turtas ir dalyviai)', EE: 'pensionikeskus.ee (kiekvieno fondo turtas ir aktyvūs investuotojai)', LT: 'LB ketvirčio rezultatai (valdytojo fondų suma)' },
   noInv: 'Dalyvių skaičius pagal fondą šiai pakopai neskelbiamas.', none: 'Šiai pakopai valdytojų turto duomenų nėra.',
+  gapE: (m, v, p) => `${m} perėmė fondą, kurio šaltinio duomenyse nėra (${v} mln. €, ${p} % rinkos). Iki tol šio fondo turto trūksta, todėl kitų valdytojų dalys padidintos.`,
+  gapN: (d, l) => `Dėmesio: šaltinis rodo tik dabartinius fondus, todėl perimtų ar uždarytų fondų istorijos nėra; dalys iki ${d} – apytikslės. Trūkstamų fondų perėmimai (≥ 1 % rinkos): ${l}.`,
+  cutN: d => `Grafikas prasideda ${d}: pirmaisiais mėnesiais po starto veikė tik keli maži fondai.`,
   yT: d => `Pokytis nuo metų pradžios (${d})`,
   yH: ['Valdytojas', 'Turtas metų pradžioje, mln. €', 'Turtas dabar, mln. €', 'Pokytis, mln. €', 'Pokytis', 'Rinkos dalis', 'Dalies pokytis, p. p.', 'Dalyviai', 'Dalyvių pokytis', 'Turtas vienam dalyviui, €'],
   tot: 'Visa rinka', yN: (a, b) => `Metų pradžia – ${a}, dabar – ${b}. Turto pokytis apima ir investicijų rezultatą, ir pinigų srautus (įmokas, išmokas, perėjimus).` },
@@ -585,9 +591,12 @@ function renderMs() {
   col.forEach((c, g) => { const pts = [];
     S.m.forEach((m, i) => { const a = shAt(S, i, MSK), v = S.mg[g][MSK][i]; if (v != null && a.s > 0) pts.push([mEnd(m), v / a.s * 100]); });
     if (pts.length > 1) ser.push({ points: pts, color: c, label: g, provider: g }); });
-  const x0 = mEnd(S.m[0]), x1 = mEnd(S.m[S.m.length - 1]);
-  drawLineChart($('msCh'), ser, x0, x1, { zero: true });
-  $('msN').textContent = t.n(t.src[CR.c], CR.c === 'LV' && CR.pl === 'II' && S.lum ? S.lum : '') + (hasInv ? '' : ' ' + t.noInv);
+  const x0 = mEnd(S.m[S.cut || 0]), x1 = mEnd(S.m[S.m.length - 1]), G = S.gap || [];   // cut, gap – build_site.py share_gaps()
+  const ev = G.map((g, i) => ({ day: mEnd(g[0]), n: i + 1, title: g[1], text: t.gapE(g[1], num(g[2], 1), num(g[3], 1)) }));
+  drawLineChart($('msCh'), ser.map(s => ({ ...s, points: s.points.filter(p => p[0] >= x0) })), x0, x1, { zero: true, events: ev });
+  $('msN').textContent = t.n(t.src[CR.c], CR.c === 'LV' && CR.pl === 'II' && S.lum ? S.lum : '') + (hasInv ? '' : ' ' + t.noInv)
+    + (G.length ? ' ' + t.gapN(G[G.length - 1][0], G.map((g, i) => `${i + 1} – ${g[0]}, ${g[1]}, ${num(g[2], 1)} mln. € (${num(g[3], 1)} %)`).join('; ')) : '')
+    + (S.cut ? ' ' + t.cutN(S.m[S.cut]) : '');
   // pokytis nuo metų pradžios
   const [i0, i1] = ytdIdx(S); if (i0 < 0) { $('myTbl').innerHTML = ''; $('myN').textContent = ''; return; }
   const A0 = shAt(S, i0, 'na'), A1 = shAt(S, i1, 'na'), P0 = shAt(S, i0, 'inv'), P1 = shAt(S, i1, 'inv');
