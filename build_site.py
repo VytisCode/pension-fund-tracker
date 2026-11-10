@@ -423,6 +423,17 @@ def build_fresh(groups: list, generated: str) -> None:
     payload["bxLate"] = [{k: s.get(k) for k in ("id", "lt", "en", "how_lt", "how_en", "url", "last", "next", "fmt", "st", "src_lt", "src_en", "f_lt", "f_en")}
                          for s in inv if s["id"].startswith("bx_") and s["mode"] == "auto"
                          and ((s.get("next") is not None and s["next"] < today) or (st_all.get(s.get("st") or "", {}).get("err")))]
+    try:   # LV ir EE puslapių šviežumo eilutė („Duomenys iki …“ – tos šalies, ne Lietuvos; PERTVARKA-SALYS.md 1 etapas)
+        bt = {}
+        for c, fn in (("LV", "baltic_lv_daily.csv"), ("EE", "baltic_ee.csv")):
+            with (ROOT / "data" / fn).open(encoding="utf-8") as fh:
+                fh.seek(0, 2); fh.seek(max(0, fh.tell() - 400000)); tail = fh.read().splitlines()[1:]
+            ds = [ln[:10] for ln in tail if re.match(r"\d{4}-\d\d-\d\d,", ln)]
+            if ds:
+                bt[c] = day_number(max(ds))
+        payload["bxTop"] = bt
+    except Exception:
+        pass
     try:
         payload["attrMiss"] = attr_missing()
     except Exception:

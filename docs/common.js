@@ -170,7 +170,7 @@ function renderHeader(active, onLang) {
   const scrim = document.createElement('div'); scrim.className = 'side-scrim'; scrim.hidden = true;
   document.body.prepend(side, scrim);
   sideUI(side, scrim);
-  document.addEventListener('click', e => { const a = e.target.closest('a.na[data-na]'); if (!a) return; e.preventDefault(); ctryNa(a.dataset.na, PCTRY); });
+  document.addEventListener('click', e => { const a = e.target.closest('a.na[data-na]'); if (!a) return; e.preventDefault(); ctryNa(a.dataset.na, PCTRY, a); });
   document.getElementById('ctry').addEventListener('click', e => { const b = e.target.closest('a[data-c]'); if (!b) return; try { localStorage.setItem('ctry', b.dataset.c); } catch (er) {} });
   const acts = document.getElementById('actions');
   if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
@@ -190,7 +190,7 @@ function renderHeader(active, onLang) {
     el.lang = ulang;
     const t = T();
     document.getElementById('title').textContent = t.siteTitle;
-    ctryRender(active);
+    ctryRender(active); ctryAvail();
     { const cp = secPage(active), cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : active === 'how' ? t.secNav.how : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
       const sh = document.getElementById('secName'); if (sh) sh.innerHTML = `${sn}${pn && pn !== sn && cs.pages.length > 1 ? ` <small>${pn}</small>` : ''}`;
       const sd = document.getElementById('secDesc'); if (sd && cs) sd.textContent = t.secDesc[cs.id] || '';
@@ -375,11 +375,21 @@ function bxTabs(c, pl) {
   const b = (k, lt, en) => ['baltic', k, lt, en, `c=${c}&pl=${pl}`];
   if (c === 'X') return [b('bs', 'Baltijos rinka', 'Baltic market'), b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
   const pp = bxPage(c, pl), lt2 = c === 'LT' && pl === 'II';
-  const mk = [[pp, 'market', 'Visa rinka', 'Whole market']];   // ir LT III – valdytojų vaizdu (2026-11-06)
-  return [b('ov', 'Apžvalga', 'Overview'), ...mk, b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
+  if (c === 'LT') return [b('ov', 'Apžvalga', 'Overview'), [pp, 'market', 'Visa rinka', 'Whole market'], b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
-    b('mg', 'Valdytojai', 'Managers'), c === 'LT' ? ['aum', 'dc', 'Turto pokytis', 'Asset change'] : b('fl', 'Turto pokytis', 'Asset change'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : []),
-    ...(pl === 'II' && c !== 'LV' ? [['baltic', 'rf', 'Reformos: EE ir LT', 'Reforms: EE and LT', 'c=X&pl=II']] : [])];   // reformų palyginimas – „Šalių palyginime“, nuoroda ir iš LT/EE (savininkas 2026-10-21 ieškojo)
+    b('mg', 'Valdytojai', 'Managers'), ['aum', 'dc', 'Turto pokytis', 'Asset change'], b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : [])];
+  /* Latvija ir Estija (PERTVARKA-SALYS.md, 1 etapas): skirtukų juosta – tik to meniu skyriaus, kaip Lietuvos puslapiuose. „Rezultatai“ – ta pati
+     tvarka kaip LT (Visa rinka, Lyderiai, Fondų palyginimas, Rizika, Metai ir mėnesiai), tada šalies papildomi; ko šalyje dar nėra – pilka. */
+  const na = (lt, en, why) => ['', 'na', lt, en, null, why];
+  const sp = secPage(document.body.dataset.page);
+  if (sp === 'managers') return [b('mg', 'Valdytojai', 'Managers')];
+  if (sp === 'portfolios') return [b('top', 'Didžiausios investicijos', 'Largest investments')];
+  if (sp === 'aum') return [b('fl', 'Turto pokytis', 'Asset change')];
+  if (sp === 'journey') return [b('jr', 'Kelias į pensiją', 'Road to retirement')];
+  return [[pp, 'market', 'Visa rinka', 'Whole market'], [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
+    b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', 'Kilimas ir kritimas', 'Run-up and drawdown'],
+    b('cr', pl === 'III' ? 'Visi fondai – rodikliai' : 'Visi fondai', pl === 'III' ? 'All funds – key figures' : 'All funds'), b('ov', 'Apžvalga', 'Overview'),
+    ...(pl === 'II' ? [na('Grupių grafikai', 'Group charts', 's2'), na('Rinkos įžvalgos', 'Market insights', 's2')] : [na('Kategorijų grafikai', 'Category charts', 's2')])];
 }
 const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];
 function bxBar() {                        // šalies ir pakopos juosta (nuorodos): perjungus šalį lieka tas pats skirtukas
@@ -396,7 +406,8 @@ function groupTabs(pn) {
   const page = document.body.dataset.page, G = tabGroupOf(page); if (!G) return;
   const own = [...pn.querySelectorAll('a')], L = lang === 'lt';
   const ownFor = k => own.find(a => paneOf(pnTarget(a.dataset.id)) === k);
-  const out = G.map(([p, k, lt, en, ex]) => {
+  const out = G.map(([p, k, lt, en, ex, why]) => {
+    if (why) { const a = document.createElement('a'); a.href = '#'; a.className = 'xt na'; a.dataset.na = 'tab'; a.dataset.why = why; a.setAttribute('aria-disabled', 'true'); a.textContent = L ? lt : en; a.title = ctryWhy('tab', PCTRY, why); return a; }
     // p === page su c=X – nuoroda į „Šalių palyginimą“ tame pačiame puslapyje
     if (p !== page || (ex && ex.startsWith('c=X') && BXM.c !== 'X')) { const a = document.createElement('a'); a.href = `${p}.html${k ? '#tab=' + k : ''}${ex ? '&' + ex : ''}`; a.className = 'xt'; a.textContent = L ? lt : en; return a; }
     if (!k) { const a = document.createElement('a'); a.href = '#'; a.setAttribute('aria-current', 'true'); a.textContent = L ? lt : en; a.onclick = e => e.preventDefault(); return a; }
@@ -454,6 +465,14 @@ function freshRender() {
   const sb = document.getElementById('stBtn');
   if (!sb || typeof FRESH === 'undefined') return;
   const t = T(), late = FRESH.providers.map(p => ({ ...p, lag: businessDaysBetween(p.d, FRESH.top) })).filter(p => p.lag);
+  if (PCTRY && PCTRY !== 'LT') {          // Latvijos ir Estijos puslapiai – tos šalies data ir tik jos pranešimai (be Lietuvos banko naujienų)
+    const nl = noticesList().filter(x => x.id.startsWith('bx-')), d = (FRESH.bxTop || {})[PCTRY];
+    sb.innerHTML = `${t.dataUntil} <b>${d ? iso(d) : '–'}</b> · <span class="ok">${t.ctry.src[PCTRY]} <span class="chev">▾</span></span>`
+      + (nl.length ? ` <span class="late">· ${NTH().sum(nl.filter(x => x.lvl === 'act').length, nl.filter(x => x.lvl === 'wait').length)}</span>` : '');
+    sb.title = t.freshMore;
+    document.getElementById('fresh').innerHTML = noticesHTML(nl) + `<div class="fr-src"><a href="ops.html">${lang === 'lt' ? 'Duomenų kalendorius: kas ir kada atkeliavo, kas nepavyko, kas laukia →' : 'Data calendar: what arrived when, what failed, what is coming →'}</a></div>`;
+    noticeBar(nl); srcLines(); return;
+  }
   sb.innerHTML = `${t.dataUntil} <b>${iso(FRESH.top)}</b> · ` + (late.length
     ? `<span class="late">${t.lateLbl} ${late.map(p => `${hEsc(p.label)} (${iso(p.d).slice(5)})`).join(', ')} <span class="chev">▾</span></span>`
     : `<span class="ok">${t.allFresh(FRESH.providers.length)} ✓ <span class="chev">▾</span></span>`);
@@ -1823,14 +1842,14 @@ function secPage(active) {              // kuriam LT puslapiui (meniu punktui) p
   const m = String(active || '').match(/^baltic_(lt|lv|ee)(3?)$/); if (m) return m[2] ? 'performance3' : 'performance';
   if (active === 'baltic') {
     let q; try { q = new URLSearchParams(location.hash.slice(1)); } catch (e) { q = new URLSearchParams(); }
-    const c = typeof CR !== 'undefined' && CR.c ? CR.c : q.get('c'), k = typeof TAB_CUR !== 'undefined' && TAB_CUR ? TAB_CUR : q.get('tab'), pl = typeof CR !== 'undefined' && CR.pl ? CR.pl : q.get('pl');
+    const c = typeof CR !== 'undefined' && CR.c ? CR.c : q.get('c'), k = q.get('tab') || (typeof TAB_CUR !== 'undefined' && TAB_CUR), pl = typeof CR !== 'undefined' && CR.pl ? CR.pl : q.get('pl');
     if (!c || c === 'X') return 'baltic';
     return { mg: 'managers', top: 'portfolios', fl: 'aum', jr: 'journey' }[k] || (pl === 'III' ? 'performance3' : 'performance');
   }
   return PAGE_ALIAS[active] && !String(active).startsWith('baltic') ? PAGE_ALIAS[active] : active;
 }
-function ctryWhy(p, c) {
-  const t = T().ctry, e = CTRY_PAGES[p] || [], why = e[2] || 'data', cn = t.names[c] || c;
+function ctryWhy(p, c, w) {
+  const t = T().ctry, e = CTRY_PAGES[p] || [], why = w || e[2] || 'data', cn = t.names[c] || c;
   return why === 'data' ? (t.why[p] || t.noData)(cn) : t.soon(cn, why.slice(1));
 }
 function ctryRender(active) {           // antraštės jungiklis LT | LV | EE: tas pats puslapis kitos šalies duomenimis
@@ -1846,22 +1865,32 @@ function ctryRender(active) {           // antraštės jungiklis LT | LV | EE: t
 }
 function markSide(active) {             // Baltijos puslapyje skirtukas keičia meniu punktą (pvz. Valdytojai → Turto pokytis)
   const cur = secPage(active), sec = SECTIONS.find(s => s.pages.includes(cur));
+  if (markSide.sec && (cur !== markSide.sec || pageCtry(active) !== PCTRY) && String(active).startsWith('baltic')) { markSide.sec = cur; location.reload(); return; }   // kitas meniu skyrius tame pačiame puslapyje – nauja antraštė
+  markSide.sec = cur;
   document.querySelectorAll('#side .nav a[data-s]').forEach(a => { if (sec && a.dataset.s === sec.id) a.setAttribute('aria-current', 'page'); else if (a.dataset.s !== 'how' && a.dataset.s !== 'about') a.removeAttribute('aria-current'); });
 }
-function ctryNa(p, c) {                 // kortelė: kodėl šio puslapio šalyje nėra
+function ctryAvail() {                  // „Apie“: kas yra kiekvienoje šalyje (savininkas 2026-11-10 pritarė)
+  const el = document.getElementById('ctryAvail'); if (!el) return;
+  const t = T().ctry, pages = SECTIONS.flatMap(s => s.pages.filter(p => p !== 'ops' && p !== 'baltic'));
+  const cell = (p, c) => { const h = ctryHref(p, c); if (h) return `<td><a href="${h}">✓</a></td>`; const w = (CTRY_PAGES[p] || [])[2] || 'data';
+    return `<td class="note" title="${hEsc(ctryWhy(p, c))}">${w === 'data' ? t.avNo : t.avSoon(w.slice(1))}</td>`; };
+  el.innerHTML = `<h2>${t.avT}</h2><p class="note">${t.avL}</p><div class="scroll"><table class="bt"><thead><tr><th></th>${CTRYS.map(c => `<th>${t.names[c]}</th>`).join('')}</tr></thead><tbody>`
+    + pages.map(p => `<tr><td>${hEsc(T().subNav[p] || p)}</td>${CTRYS.map(c => cell(p, c)).join('')}</tr>`).join('') + '</tbody></table></div>';
+}
+function ctryNa(p, c, el) {             // kortelė: kodėl šio puslapio (ar skirtuko) šalyje nėra
   const t = T().ctry; let d = document.getElementById('naCard');
   if (!d) { d = document.createElement('div'); d.id = 'naCard'; d.className = 'na-card'; d.setAttribute('role', 'dialog'); document.body.append(d);
     d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-x]')) d.hidden = true; });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') d.hidden = true; }); }
-  const nm = T().subNav[p] || T().secNav[p] || p, lt = ctryHref(p, 'LT');
-  d.innerHTML = `<div class="na-box"><h3>${hEsc(nm)} · ${hEsc(t.names[c] || c)}</h3><p>${hEsc(ctryWhy(p, c))}</p>`
+  const tab = p === 'tab', nm = tab ? el.textContent : T().subNav[p] || T().secNav[p] || p, lt = tab ? ctryHref(secPage(document.body.dataset.page), 'LT') : ctryHref(p, 'LT');
+  d.innerHTML = `<div class="na-box"><h3>${hEsc(nm)} · ${hEsc(t.names[c] || c)}</h3><p>${hEsc(ctryWhy(p, c, tab ? el.dataset.why : null))}</p>`
     + `<p class="na-acts"><a class="btn" href="${lt}">${hEsc(t.openLt)}</a> <button class="btn" type="button" data-x>${hEsc(t.close)}</button></p></div>`;
   d.hidden = false; d.querySelector('[data-x]').focus();
 }
-addStrings({ langLbl: 'Language', ctry: { lbl: 'Country', names: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia' }, close: 'Close', openLt: 'Open the Lithuanian version',
+addStrings({ langLbl: 'Language', ctry: { lbl: 'Country', names: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'What is available for each country', avL: 'The same menu for every country. Where a country does not publish the data, the section is grey; sections being prepared are marked with the stage of the plan.', avNo: 'no data', avSoon: n => `being prepared (stage ${n})`, close: 'Close', openLt: 'Open the Lithuanian version',
   soon: (c, n) => `${c}: this section is being prepared (stage ${n} of the plan). Until then it is shown only for Lithuania.`, noData: c => `${c} does not publish the data needed for this section.`,
   why: { reports: c => `${c} has no equivalent of the Bank of Lithuania quarterly results files and manager report data this section is built on.` } } }, {
-  langLbl: 'Kalba', ctry: { lbl: 'Šalis', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija' }, close: 'Uždaryti', openLt: 'Atidaryti Lietuvos versiją',
+  langLbl: 'Kalba', ctry: { lbl: 'Šalis', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Kas yra kiekvienai šaliai', avL: 'Visoms šalims – tas pats meniu. Kur šalis neskelbia duomenų, skiltis pilka; ruošiamos skiltys pažymėtos plano etapu.', avNo: 'nėra duomenų', avSoon: n => `ruošiama (${n} etapas)`, close: 'Uždaryti', openLt: 'Atidaryti Lietuvos versiją',
   soon: (c, n) => `${c}: ši skiltis ruošiama (${n} plano etapas). Kol kas ji rodoma tik Lietuvai.`, noData: c => `${c} neskelbia duomenų, reikalingų šiai skilčiai.`,
   why: { reports: c => `${c}: nėra Lietuvos banko ketvirčio rezultatų failų ir valdytojų ataskaitų duomenų atitikmens, kuriais remiasi ši skiltis.` } } });
 const SECTIONS = [
@@ -1894,7 +1923,7 @@ addStrings3({
   monShort: ['janv.', 'febr.', 'marts', 'apr.', 'maijs', 'jūn.', 'jūl.', 'aug.', 'sept.', 'okt.', 'nov.', 'dec.'],
   secNav: { home: 'Sākums', facts: 'Tirgus fakti', results: 'Rezultāti', mgr: 'Pārvaldītāji un fondi', pf: 'Portfeļi un aktīvi', rep: 'Pārskati', jr: 'Ceļš uz pensiju', baltic: 'Baltijas valstu salīdzinājums', how: 'Kā tas darbojas', about: 'Par', help: 'Palīdzība' },
   subNav: { index: 'Tirgus šodien', review: 'Mēneša pārskats', ops: 'Datu kalendārs', performance: 'II līmenis', performance3: 'III līmenis', pillar3: 'III līmenis', facts: 'Tirgus fakti', managers: 'Pārvaldītāji', overview: 'Grupu grafiki', manager: 'Pārvaldītājs un fonds', portfolios: 'Portfeļi', aum: 'Aktīvi (AUM)', reports: 'Pārskati', journey: 'Ceļš uz pensiju', baltic: 'Baltijas valstu salīdzinājums' },
-  ctry: { lbl: 'Valsts', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Igaunija' }, close: 'Aizvērt', openLt: 'Atvērt Lietuvas versiju',
+  ctry: { lbl: 'Valsts', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Igaunija' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Kas pieejams katrai valstij', avL: 'Visām valstīm – viena un tā pati izvēlne. Ja valsts datus nepublicē, sadaļa ir pelēka; gatavotās sadaļas atzīmētas ar plāna posmu.', avNo: 'nav datu', avSoon: n => `tiek gatavots (${n}. posms)`, close: 'Aizvērt', openLt: 'Atvērt Lietuvas versiju',
     soon: (c, n) => `${c}: šī sadaļa tiek gatavota (plāna ${n}. posms). Līdz tam tā ir pieejama tikai Lietuvai.`, noData: c => `${c} nepublicē šai sadaļai vajadzīgos datus.`,
     why: { reports: c => `${c}: nav Lietuvas Bankas ceturkšņa rezultātu failu un pārvaldītāju pārskatu datu analoga, uz kuriem balstās šī sadaļa.` } } }, {
   siteTitle: 'Pensionifondid', locale: 'et-EE', langLbl: 'Keel', tools: 'Tööriistad', themeDark: 'Tume režiim', themeLight: 'Hele režiim',
@@ -1903,7 +1932,7 @@ addStrings3({
   monShort: ['jaan', 'veebr', 'märts', 'apr', 'mai', 'juuni', 'juuli', 'aug', 'sept', 'okt', 'nov', 'dets'],
   secNav: { home: 'Avaleht', facts: 'Turu faktid', results: 'Tulemused', mgr: 'Fondivalitsejad ja fondid', pf: 'Portfellid ja varad', rep: 'Aruanded', jr: 'Tee pensionini', baltic: 'Balti riikide võrdlus', how: 'Kuidas see töötab', about: 'Teave', help: 'Abi' },
   subNav: { index: 'Turg täna', review: 'Kuu ülevaade', ops: 'Andmekalender', performance: 'II sammas', performance3: 'III sammas', pillar3: 'III sammas', facts: 'Turu faktid', managers: 'Fondivalitsejad', overview: 'Gruppide graafikud', manager: 'Fondivalitseja ja fond', portfolios: 'Portfellid', aum: 'Varad (AUM)', reports: 'Aruanded', journey: 'Tee pensionini', baltic: 'Balti riikide võrdlus' },
-  ctry: { lbl: 'Riik', names: { LT: 'Leedu', LV: 'Läti', EE: 'Eesti' }, close: 'Sulge', openLt: 'Ava Leedu versioon',
+  ctry: { lbl: 'Riik', names: { LT: 'Leedu', LV: 'Läti', EE: 'Eesti' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Mis on iga riigi kohta saadaval', avL: 'Kõigil riikidel on sama menüü. Kui riik andmeid ei avalda, on jaotis hall; ettevalmistamisel jaotised on märgitud plaani etapiga.', avNo: 'andmed puuduvad', avSoon: n => `ettevalmistamisel (${n}. etapp)`, close: 'Sulge', openLt: 'Ava Leedu versioon',
     soon: (c, n) => `${c}: see jaotis on ettevalmistamisel (plaani ${n}. etapp). Seni on see saadaval ainult Leedu kohta.`, noData: c => `${c} ei avalda selle jaotise jaoks vajalikke andmeid.`,
     why: { reports: c => `${c}: puudub Leedu Panga kvartalitulemuste failide ja fondivalitsejate aruannete andmete vaste, millel see jaotis põhineb.` } } });
 

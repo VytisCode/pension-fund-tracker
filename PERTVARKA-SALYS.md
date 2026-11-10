@@ -22,8 +22,8 @@ arba `git checkout 85f4dee -- site/ build_site.py` ir `python build_site.py`. Da
 | # | Kas | Būsena |
 |---|-----|--------|
 | 0 | Atšaukimo taškas, šis planas, šalies jungiklis antraštėje, pilki meniu punktai su paaiškinimu, 4 kalbų sistema (meniu ir antraštė LV/ET), priminimas laiške | PADARYTA 2026-11-10 |
-| 1 | Rezultatai (II ir III pakopa, visi skirtukai kaip LT) ir Valdytojai LV/EE – meniu veda į šalies versijas, grupės kaip LT; LT pranešimai (LB failai) nerodomi LV/EE puslapiuose | vykdoma |
-| 2 | Turtas (Turto pokytis jau yra), Rinkos faktai (faktų kortelės, mėnesio apžvalga), Pradžia LV/EE | laukia |
+| 1 | Rezultatai (II ir III pakopa, visi skirtukai kaip LT) ir Valdytojai LV/EE – meniu veda į šalies versijas, grupės kaip LT; LT pranešimai (LB failai) nerodomi LV/EE puslapiuose | PADARYTA 2026-11-10: šalies skirtukų juosta pagal meniu skyrių (`common.js` `bxTabs`), LV grupių tvarka nuo konservatyviausios, šalies „Duomenys iki“, „Apie“ – lentelė „Kas yra kiekvienai šaliai“. Dar trūksta (pilka): Grupių grafikai, Rinkos įžvalgos, Kategorijų grafikai – 2 etape |
+| 2 | Turtas (Turto pokytis jau yra), Rinkos faktai (faktų kortelės, mėnesio apžvalga), Pradžia LV/EE, Grupių/Kategorijų grafikai ir Rinkos įžvalgos LV/EE | vykdoma |
 | 3 | Portfeliai (10 didžiausių), Kelias į pensiją, LV/EE naujienos, valdytojo puslapis | laukia |
 | 4 | Visi tekstai LV ir ET; „Baltijos šalys“ → tik „Baltijos šalių palyginimas“; senų Baltijos šalies skirtukų išėmimas | laukia |
 | vėliau | Pilni LV/EE portfeliai iš valdytojų svetainių – tik savininkui sutikus | – |

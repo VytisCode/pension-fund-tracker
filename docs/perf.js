@@ -184,7 +184,7 @@ const PERIOD_IDS = ['1d', '1w', '1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'
 const OV_PRESETS = { ovAll: PERIOD_IDS, ovLong: ['1y', '3y', '5y', 'max'] };
 const presetRange = (per, end, group, sel) => presetRangeF(per, end, group.funds, per === 'max' ? maxAnchor(group, sel) : 0);
 // amžiaus grupių tvarka visur vienoda: turto išsaugojimo, 1961–1967 … 2003–2009 (auditas #32)
-{ const R3 = { bond: '0', mixed: '1', equity: '2' };   // III pakopa – pagal riziką (obligacijų, mišraus, akcijų), kaip „Kategorijų grafikuose“
+{ const R3 = { bond: '0', mixed: '1', equity: '2', e30: '1a', e75: '1b', e100: '1c', zz: 'z' };   // III pakopa – pagal riziką (obligacijų, mišraus, akcijų), kaip „Kategorijų grafikuose“; LV – nuo mažiausios akcijų dalies, EE r1…r4, „kiti“ – gale
   DATA.groups.sort((a, b) => (a.id === 'turto' ? '0' : R3[a.id] || a.id).localeCompare(b.id === 'turto' ? '0' : R3[b.id] || b.id)); }
 const P = { period: 'ytd', from: '', to: '', group: DATA.groups[DATA.groups.length - 1].id, provs: new Set(DATA.providers.map(p => p.id)),
   hmGroup: DATA.groups[DATA.groups.length - 1].id, hl: null, pin: null, view: 'ret', diffRef: 'avg', zoom: null, events: false, adv: false, cs: null, rf: null, hmProv: null, sumWin: 'sel', ovP: new Set(['1y', '3y', '5y', 'max']), gx: false, idx: new Set(['MSCI_ACWI', 'SP500']) };
