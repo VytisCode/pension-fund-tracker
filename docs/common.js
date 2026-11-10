@@ -359,7 +359,7 @@ function bxTabs(c, pl) {
   const mk = [[pp, 'market', 'Visa rinka', 'Whole market']];   // ir LT III – valdytojų vaizdu (2026-11-06)
   return [b('ov', 'Apžvalga', 'Overview'), ...mk, b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
-    b('mg', 'Valdytojai', 'Managers'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : []),
+    b('mg', 'Valdytojai', 'Managers'), c === 'LT' ? ['aum', 'dc', 'Turto pokytis', 'Asset change'] : b('fl', 'Turto pokytis', 'Asset change'), b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : []),
     ...(pl === 'II' && c !== 'LV' ? [['baltic', 'rf', 'Reformos: EE ir LT', 'Reforms: EE and LT', 'c=X&pl=II']] : [])];   // reformų palyginimas – „Šalių palyginime“, nuoroda ir iš LT/EE (savininkas 2026-10-21 ieškojo)
 }
 const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];

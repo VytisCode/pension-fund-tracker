@@ -557,6 +557,83 @@ def build() -> dict:
     return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "sw": _safe(lv_switch), "_perf": perf}
 
 
+def flows():
+    """Turto pokyčio išskaidymas LV ir EE (kaip Lietuvos „Turtas“ – aum.py): grąža, pinigų srautai ir sujungimai.
+    Kiekvienam fondui – mėnesio pabaigos taškai (paskutinė turima mėnesio diena): turtas ir vieneto vertė. Svetainė ir Excel skaičiuoja
+    tomis pačiomis formulėmis: grąža = turtas₀ × (vv₁ ÷ vv₀ − 1), srautas = turtas₁ − turtas₀ × vv₁ ÷ vv₀.
+    Fondas, kurio duomenys baigėsi anksčiau nei kitų (uždarytas, sujungtas) – papildomas taškas su turtu 0 (visas turtas išeina).
+    Naujas fondas – pradžios taškas su turtu 0 (pradinis turtas – įplaukos). Šaltinio sąraše nesančių fondų turtas, atėjęs per sujungimą
+    (pvz. „Luminor plāns 53-58“ → 50-60, 2026-10-20), rinkai būtų netikra įplauka, todėl skaičiuojamas atskirai („g“, mln. €):
+    fondo dienos srautas > max(5 mln. €, 20 % turto), o visos šalies pakopos tos dienos grynasis srautas ≥ pusės jo (kitur tiek pat neišėjo).
+    Latvijoje taip pat ir atvirkščiai (didelis netikėtas ištekėjimas – duomenų šuolis); Estijoje dideli ištekėjimai – tikros išmokos (2021 reforma).
+    Grąžinama {šalis: {pakopa: {f: [{n, m, k0, a, u, g}], end}}}; k = metai × 12 + mėnuo − 1."""
+    ser = defaultdict(list)                                 # (c, pl, m, n) -> [(data, vv, turtas)]
+    p = D / "baltic_lv_daily.csv"
+    if p.exists():
+        for r in csv.DictReader(p.open(encoding="utf-8")):
+            if r["assets_eur"] and r["nav"] and float(r["nav"]) > 0:
+                ser[("LV", r["pillar"], _lv_mgr(r["provider"]), r["name"].strip())].append((r["date"], float(r["nav"]), float(r["assets_eur"])))
+    p = D / "baltic_ee.csv"
+    if p.exists():
+        meta = {(r["pillar"], r["fund_id"]): r["fund"].strip() for r in csv.DictReader((D / "baltic_ee_meta.csv").open(encoding="utf-8"))}
+        for r in csv.DictReader(p.open(encoding="utf-8")):
+            if r["net_assets"] and r["nav"] and float(r["nav"]) > 0:
+                n = meta.get((r["pillar"], r["fund_id"]), r["fund_id"])
+                g = next((x for x in EE_PROV if n.lower().startswith(x.lower())), n.split()[0] if n else "?")
+                ser[("EE", r["pillar"], g, n)].append((r["date"], float(r["nav"]), float(r["net_assets"])))
+    kof = lambda d: int(d[:4]) * 12 + int(d[5:7]) - 1
+    days, first, last = defaultdict(set), {}, {}
+    for k, pts in ser.items():
+        pts.sort()
+        cp = k[:2]
+        days[cp].update(d for d, _, _ in pts)
+        first[cp] = min(first.get(cp, "9999"), pts[0][0]); last[cp] = max(last.get(cp, ""), pts[-1][0])
+    # dienos srautai: fondo įvykiai ir šalies pakopos suma
+    ev, net = [], defaultdict(float)
+    for k, pts in ser.items():
+        cp = k[:2]; ds = sorted(days[cp])
+        if pts[0][0] > first[cp]:                           # naujas fondas: pradinis turtas – įplauka
+            ev.append((k, pts[0][0], pts[0][2], 0.0)); net[cp + (pts[0][0],)] += pts[0][2]
+        for (d0, u0, a0), (d1, u1, a1) in zip(pts, pts[1:]):
+            fl = a1 - a0 * u1 / u0
+            net[cp + (d1,)] += fl
+            ev.append((k, d1, fl, a0))
+        if (date.fromisoformat(last[cp]) - date.fromisoformat(pts[-1][0])).days > 20:   # uždarytas: turtas išeina kitą dieną
+            nx = next((d for d in ds if d > pts[-1][0]), None)
+            if nx:
+                ev.append((k, nx, -pts[-1][2], pts[-1][2])); net[cp + (nx,)] -= pts[-1][2]
+    mg = defaultdict(lambda: defaultdict(float))
+    for k, d, fl, a0 in ev:
+        big = abs(fl) > max(5e6, 0.2 * a0)
+        if not big or (fl < 0 and k[0] != "LV"):
+            continue
+        m = net[k[:2] + (d,)]
+        if fl > 0 and m >= 0.5 * fl:
+            mg[k][kof(d)] += min(fl, m)
+        elif fl < 0 and m <= 0.5 * fl:
+            mg[k][kof(d)] += max(fl, m)
+    out = defaultdict(dict)
+    for k, pts in sorted(ser.items()):
+        c, pl, m, n = k
+        me = {}
+        for d, u, a in pts:
+            me[kof(d)] = (u, a)
+        ks = sorted(me)
+        k0 = ks[0]
+        a = [None] * (ks[-1] - k0 + 1); u = [None] * len(a)
+        for kk in ks:
+            a[kk - k0] = round(me[kk][1] / 1e6, 4); u[kk - k0] = round(me[kk][0], 7)
+        if pts[0][0] > first[(c, pl)]:                      # naujas fondas: taškas prieš pradžią su turtu 0
+            k0 -= 1; a.insert(0, 0.0); u.insert(0, u[0])
+        if (date.fromisoformat(last[(c, pl)]) - date.fromisoformat(pts[-1][0])).days > 20:
+            a.append(0.0); u.append(u[-1])
+        rec = {"n": n, "m": m, "k0": k0, "a": a, "u": u}
+        if mg.get(k):
+            rec["g"] = {str(kk): round(v / 1e6, 3) for kk, v in sorted(mg[k].items()) if abs(v) >= 5e4}
+        out[c].setdefault(pl, {"f": [], "end": last[(c, pl)], "start": first[(c, pl)]})["f"].append(rec)
+    return out
+
+
 PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],
         "EE": [("zz", "Per trumpa istorija", "Too short history"), ("r1", "Maža rizika (svyravimas iki 4 %)", "Low risk (volatility under 4%)"), ("r2", "Vidutinė rizika (4–8 %)", "Moderate risk (4–8%)"),
                ("r3", "Didesnė rizika (8–12 %)", "Higher risk (8–12%)"), ("r4", "Didelė rizika (daugiau nei 12 %)", "High risk (over 12%)")]}

@@ -124,7 +124,7 @@ const rgHtml = f => f.risk ? `<span class="rg ${f.risk}" title="${hEsc(T().rg[f.
    vaizdas. Šalių palyginime – tik panašios rizikos fondai, laisvas palyginimas ir reformos. ---------- */
 addStrings({ bx: {
   modes: { X: 'Compare countries' }, modesS: { X: 'Compare' },
-  tabs: { ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', jr: 'Road to retirement', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms', bs: 'Baltic market' },
+  tabs: { fl: 'Asset change', ov: 'Overview', cr: 'Results', rs: 'Risk', yr: 'Years', cmp: 'Fund comparison', top: 'Largest investments', jr: 'Road to retirement', rk: 'Similar risk', hm: 'Yearly returns', rf: 'Reforms', bs: 'Baltic market' },
   ovT: c => `${c}: overview`, ovL: { LT: 'Lithuanian pillar II and III funds in the same views as Latvian and Estonian ones. More about Lithuania – on the Results and Market facts pages.', LV: 'Latvian pillar II and III pension plans (manapensija.lv). Funds are compared within Latvian groups by equity share.', EE: 'Estonian pillar II and III pension funds (pensionikeskus.ee). Estonia has no official groups, so funds are compared within risk groups.' },
   ldT: p => `Leaders of each group, ${p}`, ldN: 'Median return of the group and its best and weakest fund. 3, 5 and 10-year returns are annual.',
   ldH: ['Group', 'Funds', 'Median', 'Best', 'Weakest'],
@@ -139,7 +139,7 @@ addStrings({ bx: {
   topLt: 'Full portfolios of Lithuanian funds – on the <a href="portfolios.html">Portfolios and assets</a> page.',
   cmTop: 'Largest investments of the selected funds', closed: 'closed', fClosed: 'Show closed funds', mt: 'How it is calculated (methodology)' } }, { bx: {
   modes: { X: 'Šalių palyginimas' }, modesS: { X: 'Palyginimas' },
-  tabs: { ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', jr: 'Kelias į pensiją', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos', bs: 'Baltijos rinka' },
+  tabs: { fl: 'Turto pokytis', ov: 'Apžvalga', cr: 'Rezultatai', rs: 'Rizika', yr: 'Metai', cmp: 'Fondų palyginimas', top: 'Didžiausios investicijos', jr: 'Kelias į pensiją', rk: 'Panaši rizika', hm: 'Metų grąžos', rf: 'Reformos', bs: 'Baltijos rinka' },
   ovT: c => `${c}: apžvalga`, ovL: { LT: 'Lietuvos II ir III pakopos fondai tais pačiais vaizdais kaip Latvijos ir Estijos. Daugiau apie Lietuvą – puslapiuose „Rezultatai“ ir „Rinkos faktai“.', LV: 'Latvijos II ir III pakopos pensijų plānai (manapensija.lv). Fondai lyginami Latvijos grupėse pagal akcijų dalį.', EE: 'Estijos II ir III pakopos pensijų fondai (pensionikeskus.ee). Estijoje oficialių grupių nėra, todėl fondai lyginami rizikos grupėse.' },
   ldT: p => `Grupių lyderiai, ${p}`, ldN: 'Grupės grąžos mediana, geriausias ir silpniausias fondas. 3, 5 ir 10 metų grąžos – metinės.',
   ldH: ['Grupė', 'Fondų', 'Mediana', 'Geriausias', 'Silpniausias'],
@@ -153,9 +153,9 @@ addStrings({ bx: {
   topT: c => `${c}: didžiausios investicijos`, topL: { LV: 'Kiekvieno Latvijos II pakopos plāno 10 didžiausių investicijų iš valdytojų ketvirčio ataskaitų (manapensija.lv).', EE: 'Kiekvieno Estijos fondo 10 didžiausių investicijų iš mėnesio investicijų ataskaitų (pensionikeskus.ee).' },
   topLt: 'Visi Lietuvos fondų portfeliai – puslapyje <a href="portfolios.html">Portfeliai ir turtas</a>.',
   cmTop: 'Pasirinktų fondų didžiausios investicijos', closed: 'uždarytas', fClosed: 'Rodyti uždarytus fondus', mt: 'Kaip skaičiuota (metodika)' } });
-const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'top', 'jr'], X: ['bs', 'rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
-const TMAP = { jr: 'rk', ov: 'rk', cr: 'rk', rs: 'rk', mg: 'bs', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov', bs: 'mg' };   // perjungus režimą – artimiausias skirtukas
-const TID = { ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', jr: 'jrT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT', bs: 'bsT' };
+const TABS = { c: ['ov', 'cr', 'rs', 'mg', 'fl', 'top', 'jr'], X: ['bs', 'rk', 'hm', 'cmp', 'rf'] };   // kiti šalies skirtukai – baltic_*.html (common.js bxTabs)
+const TMAP = { fl: 'bs', jr: 'rk', ov: 'rk', cr: 'rk', rs: 'rk', mg: 'bs', top: 'cmp', rk: 'cr', hm: 'cr', cmp: 'ov', rf: 'ov', bs: 'mg' };   // perjungus režimą – artimiausias skirtukas
+const TID = { fl: 'flT', ov: 'ovT', cr: 'crT', rs: 'rsT', mg: 'mgT', top: 'topT', jr: 'jrT', rk: 'xT', hm: 'hmT', cmp: 'cmT', rf: 'rfT', bs: 'bsT' };
 const modeTabs = () => CR.c === 'X' ? TABS.X : TABS.c.filter(k => k !== 'jr' || CR.pl === 'II');   // kelias į pensiją – tik II pakopa
 
 /* ---------- Apžvalga (šalis) ir „Panaši rizika“ (šalių palyginimas) ---------- */
@@ -709,6 +709,168 @@ function renderBs() {
 }
 $('bsSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; BSK = b.dataset.k; renderBs(); });
 
+/* ---------- Turto pokytis: kas keitė turtą – investicijų grąža, pinigų srautai ir sujungimai (kaip Lietuvos „Turtas“ – aum.html;
+   savininkas 2026-11-10: „kad visos Baltijos šalys turėtų vienodas galimybes“). Duomenys – BXFLOW (baltic.py flows(), docs/data_bx_flow.js,
+   įkeliama tik atidarius skirtuką): kiekvieno fondo mėnesio pabaigos turtas ir vieneto vertė. Tarp dviejų taškų: grąža = turtas₀ × (vv₁ ÷ vv₀ − 1),
+   srautas = turtas₁ − turtas₀ × vv₁ ÷ vv₀; sujungimai (turtas iš šaltinio sąraše nesančių fondų) – atskirai. Tos pačios formulės – Excel. ---------- */
+addStrings({ fl: {
+  tab: 'Asset change', t: c => `${c}: what changed the assets`,
+  l: 'Each change in fund assets is split into the investment result (how assets would have changed with no money coming in or out) and money flows: contributions, payouts and switches between managers. This shows whether a manager grows because of its results or because people bring (or take) money.',
+  lt: 'Lithuanian funds: the same split (with reform payouts shown separately) – on the <a href="aum.html#tab=dc">Assets → What changed assets</a> page.',
+  yT: 'By year', yH: ['Year', 'Assets at start, € m', 'Investment result, € m', 'Money flows, € m', 'Mergers, € m', 'Assets at end, € m', 'Flows, % of start assets', 'Result, % of start assets'],
+  leg: { r: 'Investment result', f: 'Money flows', g: 'Mergers' },
+  mT: 'By manager', mH: ['Manager', 'Assets at start, € m', 'Investment result, € m', 'Money flows, € m', 'Mergers, € m', 'Assets at end, € m', 'Flows, % of start assets', 'Share of market flows'],
+  hz: { ytd: 'Since year start', y1: '12 months', y3: '3 years', y5: '5 years', y10: '10 years' },
+  tot: 'Whole market', per: (a, b) => `Period: end of ${a} – end of ${b}.`,
+  hT: 'Money flows by month, € m', hN: 'Monthly net money flow of each manager (contributions − payouts ± switches). Green – money comes in, red – goes out.',
+  part: d => `* – year to date (data to ${d}).`,
+  n: { LV: 'Source: manapensija.lv – daily assets and unit value of each plan (since 2003). Month-end – the last available day of the month. “Mergers” – assets that came from plans not listed on manapensija.lv (e.g. “Luminor plāns 53-58” merged into “Luminor plāns 50-60” on 20 October 2026) and one-off data jumps; for the market they are not new money, so they are shown separately. Latvian pillar II has no lump-sum reform payouts, so flows are mostly contributions (about 5–6% of gross wages), switches and pensions paid.',
+       EE: 'Source: pensionikeskus.ee – daily net assets and unit value of each fund (since 2002). Month-end – the last available day of the month. “Mergers” – assets that came from funds not in the source list. The large outflow of 2021–2022 in pillar II is the Estonian reform (people withdrew their savings, payouts in September 2021, January, May and September 2022).' },
+  none: 'No asset data for this pillar.', load: 'Loading…',
+  xl: 'Excel with formulas', xlF: 'Asset change', xlS: ['Years', 'Managers', 'Points', 'Methodology'] } }, { fl: {
+  tab: 'Turto pokytis', t: c => `${c}: kas keitė turtą`,
+  l: 'Kiekvienas fondų turto pokytis išskaidytas į investicijų rezultatą (kiek turtas būtų pasikeitęs, jei pinigų nei įneštų, nei išimtų) ir pinigų srautus: įmokas, išmokas ir perėjimus tarp valdytojų. Taip matyti, ar valdytojas auga dėl rezultatų, ar dėl to, kad žmonės atneša (ar išsineša) pinigus.',
+  lt: 'Lietuvos fondų tas pats išskaidymas (su atskirai parodytomis reformos išmokomis) – puslapyje <a href="aum.html#tab=dc">Turtas → Kas keitė turtą</a>.',
+  yT: 'Pagal metus', yH: ['Metai', 'Turtas pradžioje, mln. €', 'Investicijų rezultatas, mln. €', 'Pinigų srautai, mln. €', 'Sujungimai, mln. €', 'Turtas pabaigoje, mln. €', 'Srautai, % pradžios turto', 'Rezultatas, % pradžios turto'],
+  leg: { r: 'Investicijų rezultatas', f: 'Pinigų srautai', g: 'Sujungimai' },
+  mT: 'Pagal valdytoją', mH: ['Valdytojas', 'Turtas pradžioje, mln. €', 'Investicijų rezultatas, mln. €', 'Pinigų srautai, mln. €', 'Sujungimai, mln. €', 'Turtas pabaigoje, mln. €', 'Srautai, % pradžios turto', 'Dalis rinkos srautų'],
+  hz: { ytd: 'Nuo metų pradžios', y1: '12 mėn.', y3: '3 metai', y5: '5 metai', y10: '10 metų' },
+  tot: 'Visa rinka', per: (a, b) => `Laikotarpis: ${a} pabaiga – ${b} pabaiga.`,
+  hT: 'Pinigų srautai pagal mėnesį, mln. €', hN: 'Kiekvieno valdytojo grynasis mėnesio pinigų srautas (įmokos − išmokos ± perėjimai). Žalia – pinigai ateina, raudona – išeina.',
+  part: d => `* – nuo metų pradžios (duomenys iki ${d}).`,
+  n: { LV: 'Šaltinis: manapensija.lv – kiekvieno plāno kasdienis turtas ir vieneto vertė (nuo 2003 m.). Mėnesio pabaiga – paskutinė turima mėnesio diena. „Sujungimai“ – turtas, atėjęs iš plānų, kurių manapensija.lv sąraše nėra (pvz. „Luminor plāns 53-58“ 2026-10-20 sujungtas su „Luminor plāns 50-60“), ir vienkartiniai duomenų šuoliai; rinkai tai ne nauji pinigai, todėl rodoma atskirai. Latvijos II pakopoje vienkartinių reformos išmokų nėra, todėl srautai – daugiausia įmokos (apie 5–6 % bruto atlyginimo), perėjimai ir išmokėtos pensijos.',
+       EE: 'Šaltinis: pensionikeskus.ee – kiekvieno fondo kasdieniai grynieji aktyvai ir vieneto vertė (nuo 2002 m.). Mėnesio pabaiga – paskutinė turima mėnesio diena. „Sujungimai“ – turtas, atėjęs iš fondų, kurių šaltinio sąraše nėra. Didelis 2021–2022 m. II pakopos ištekėjimas – Estijos reforma (žmonės atsiėmė santaupas; išmokos 2021 m. rugsėjį, 2022 m. sausį, gegužę ir rugsėjį).' },
+  none: 'Šiai pakopai turto duomenų nėra.', load: 'Įkeliama…',
+  xl: 'Excel su formulėmis', xlF: 'Turto pokytis', xlS: ['Metai', 'Valdytojai', 'Taškai', 'Metodika'] } });
+let FLH = 'ytd';
+const kLab = k => `${Math.floor(k / 12)}-${String(k % 12 + 1).padStart(2, '0')}`;
+function loadFlow(cb) {
+  if (typeof BXFLOW !== 'undefined') return cb();
+  if (loadFlow.p) return loadFlow.p.push(cb);
+  loadFlow.p = [cb]; const s = document.createElement('script'); s.src = `data_bx_flow.js?v=${BALTIC.flv || ''}`;
+  s.onload = () => { const q = loadFlow.p; loadFlow.p = null; q.forEach(f => f()); }; s.onerror = () => { loadFlow.p = null; };
+  document.head.appendChild(s);
+}
+const flS = () => typeof BXFLOW !== 'undefined' && BXFLOW[CR.c] && BXFLOW[CR.c][CR.pl];
+function flPairs(S, fn) {                                 // fn(fondas, k, a0, u0, a1, u1, sujungimai) kiekvienai taškų porai (k – pabaigos mėnuo)
+  S.f.forEach(f => { let p = null;
+    f.a.forEach((a, i) => { if (a == null) return; const k = f.k0 + i;
+      if (p) fn(f, k, p[0], p[1], a, f.u[i], (f.g && f.g[k]) || 0); p = [a, f.u[i]]; }); });
+}
+const flAt = (f, k) => { const i = k - f.k0; return i >= 0 && i < f.a.length && f.a[i] != null ? f.a[i] : 0; };
+function flAgg(S, kS, kE, key) {                          // {raktas: {a0, a1, r, f, g}} laikotarpiui (kS; kE]
+  const o = new Map(), get = x => { if (!o.has(x)) o.set(x, { a0: 0, a1: 0, r: 0, f: 0, g: 0 }); return o.get(x); };
+  S.f.forEach(f => { const x = get(key(f)); x.a0 += flAt(f, kS); x.a1 += flAt(f, kE); });
+  flPairs(S, (f, k, a0, u0, a1, u1, g) => { if (k <= kS || k > kE) return; const x = get(key(f)); x.r += a0 * (u1 / u0 - 1); x.f += a1 - a0 * u1 / u0 - g; x.g += g; });
+  return o;
+}
+function flBars(el, rows) {                               // metų stulpeliai: rezultatas, srautai, sujungimai (kiekvienas savo stulpelis)
+  const t = T().fl, W = el.clientWidth || 800, H = Math.max(240, Math.min(360, Math.round(W * 0.36))), m = { l: 54, r: 10, t: 10, b: 26 };
+  let lo = 0, hi = 0; rows.forEach(r => [r.r, r.f, r.g].forEach(v => { lo = Math.min(lo, v); hi = Math.max(hi, v); }));
+  const ticks = niceTicks(lo, hi); lo = Math.min(lo, ticks[0]); hi = Math.max(hi, ticks[ticks.length - 1]);
+  const gw = (W - m.l - m.r) / rows.length, bw = Math.max(1.5, Math.min(14, gw * 0.8 / 3)), Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const C = { r: '#2b8de0', f: '#2f8f12', g: '#9a9a9a' }, every = Math.max(1, Math.ceil(rows.length / Math.floor((W - m.l - m.r) / 38)));
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${t.yT}">`
+    + ticks.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${num(v, 0)}</text>`).join('');
+  rows.forEach((r, i) => { const x0 = m.l + i * gw + (gw - bw * 3) / 2;
+    ['r', 'f', 'g'].forEach((k, j) => { const v = r[k]; if (!v) return; const y = Y(Math.max(0, v)), h = Math.abs(Y(v) - Y(0));
+      s += `<rect x="${(x0 + j * bw).toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(1, bw - 1).toFixed(1)}" height="${Math.max(0.5, h).toFixed(1)}" fill="${C[k]}"><title>${r.y}: ${t.leg[k]} ${num(v, 1)}</title></rect>`; });
+    if (i % every === 0) s += `<text x="${m.l + (i + 0.5) * gw}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--text-3)">${r.y}</text>`; });
+  el.innerHTML = s + '</svg>' + `<p class="note">${['r', 'f', 'g'].map(k => `<i class="dot" style="background:${C[k]}"></i>${t.leg[k]}`).join(' &nbsp; ')}</p>`;
+}
+function renderFl() {
+  const t = T().fl, b = T();
+  $('flT').textContent = t.t(b.c[CR.c] || CR.c);
+  if (CR.c === 'LT') { $('flL').innerHTML = t.lt; $('flBody').style.display = 'none'; return; }
+  $('flL').textContent = t.l; $('flBody').style.display = 'contents'; $('flYT').textContent = t.yT; $('flMT').textContent = t.mT;
+  if (typeof BXFLOW === 'undefined') { $('flYTbl').innerHTML = `<tbody><tr><td>${t.load}</td></tr></tbody>`; return loadFlow(() => { if (TAB_CUR === 'fl') renderFl(); }); }
+  const S = flS();
+  if (!S) { ['flYTbl', 'flMTbl', 'flHTbl'].forEach(id => { $(id).innerHTML = ''; }); $('flCh').innerHTML = `<p class="note">${t.none}</p>`; $('flN').textContent = ''; return; }
+  const kEnd = Math.max(...S.f.map(f => f.k0 + f.a.length - 1)), kFirst = Math.min(...S.f.map(f => f.k0)), y1 = Math.floor(kEnd / 12), y0 = Math.floor(kFirst / 12) + 1;
+  const f1 = v => num(v, 1), pc = (v, a) => a > 0 ? pctPlain(v / a * 100) : '–';
+  // pagal metus
+  const ys = []; for (let y = y0; y <= y1; y++) { const x = flAgg(S, y * 12 - 1, Math.min(y * 12 + 11, kEnd), () => 1).get(1); ys.push({ y: y === y1 && kEnd % 12 !== 11 ? `${y}*` : String(y), ...x }); }
+  flBars($('flCh'), ys);
+  const hasG = ys.some(r => Math.abs(r.g) >= 0.05);
+  const hd = h => `<thead><tr>${h.map((x, i) => i === 4 && !hasG ? '' : `<th${i ? ' class="n"' : ''}>${x}</th>`).join('')}</tr></thead>`;
+  const row = (lab, x, tot, extra) => `<tr${tot ? ' class="tot"' : ''}><td class="nm"><b>${lab}</b></td><td class="n">${f1(x.a0)}</td><td class="n ${sgn(x.r)}">${f1(x.r)}</td><td class="n ${sgn(x.f)}">${f1(x.f)}</td>${hasG ? `<td class="n">${Math.abs(x.g) >= 0.05 ? f1(x.g) : '–'}</td>` : ''}<td class="n">${f1(x.a1)}</td><td class="n ${sgn(x.f)}">${pc(x.f, x.a0)}</td>${extra}</tr>`;
+  $('flYTbl').innerHTML = hd(t.yH) + '<tbody>' + ys.slice().reverse().map(x => row(x.y, x, false, `<td class="n ${sgn(x.r)}">${pc(x.r, x.a0)}</td>`)).join('') + '</tbody>';
+  // pagal valdytoją
+  $('flSeg').innerHTML = ['ytd', 'y1', 'y3', 'y5', 'y10'].map(h => `<button type="button" data-h="${h}" aria-pressed="${h === FLH}">${t.hz[h]}</button>`).join('');
+  const kS = FLH === 'ytd' ? y1 * 12 - 1 : Math.max(kFirst, kEnd - { y1: 12, y3: 36, y5: 60, y10: 120 }[FLH]);
+  const M = flAgg(S, kS, kEnd, f => f.m), tot = { a0: 0, a1: 0, r: 0, f: 0, g: 0 };
+  M.forEach(x => Object.keys(tot).forEach(k => { tot[k] += x[k]; }));
+  const ms = [...M.entries()].filter(([, x]) => x.a0 || x.a1).sort((a, b) => b[1].a1 - a[1].a1);
+  const posF = ms.reduce((s, [, x]) => s + Math.max(0, x.f), 0);
+  $('flMTbl').innerHTML = hd(t.mH) + '<tbody>' + ms.map(([g, x]) => row(hEsc(g), x, false, `<td class="n">${x.f > 0 && posF ? pctPlain(x.f / posF * 100) : '–'}</td>`)).join('') + row(t.tot, tot, true, '<td class="n">–</td>') + '</tbody>';
+  $('flMN').textContent = t.per(kLab(kS), kLab(kEnd)) + (lang === 'lt' ? ' „Dalis rinkos srautų“ – valdytojo įplaukų dalis visų valdytojų, kuriems pinigai atėjo, įplaukų sumoje.' : ' “Share of market flows” – the manager’s inflow as a share of the total inflow of all managers with positive flows.');
+  // pagal mėnesį (paskutiniai 12)
+  const ks = []; for (let k = Math.max(kFirst + 1, kEnd - 11); k <= kEnd; k++) ks.push(k);
+  const H = new Map(); flPairs(S, (f, k, a0, u0, a1, u1, g) => { if (k < ks[0]) return; const m = H.get(f.m) || H.set(f.m, {}).get(f.m); m[k] = (m[k] || 0) + a1 - a0 * u1 / u0 - g; });
+  const mx = Math.max(1e-9, ...[...H.values()].flatMap(o => Object.values(o).map(Math.abs)));
+  const bg = v => v == null ? '' : ` style="background:${v >= 0 ? `rgba(47,143,18,${(0.08 + 0.5 * Math.abs(v) / mx).toFixed(2)})` : `rgba(214,69,65,${(0.08 + 0.5 * Math.abs(v) / mx).toFixed(2)})`}"`;
+  $('flHTbl').innerHTML = `<thead><tr><th>${t.mH[0]}</th>${ks.map(k => `<th class="n">${kLab(k)}</th>`).join('')}<th class="n">Σ</th></tr></thead><tbody>`
+    + ms.filter(([g]) => H.has(g)).map(([g]) => { const o = H.get(g); return `<tr><td class="nm"><b>${hEsc(g)}</b></td>${ks.map(k => `<td class="n"${bg(o[k])}>${o[k] == null ? '–' : num(o[k], 1)}</td>`).join('')}<td class="n ${sgn(ks.reduce((s, k) => s + (o[k] || 0), 0))}">${num(ks.reduce((s, k) => s + (o[k] || 0), 0), 1)}</td></tr>`; }).join('') + '</tbody>';
+  $('flHT').textContent = t.hT; $('flHN').textContent = t.hN;
+  $('flN').textContent = (kEnd % 12 !== 11 ? t.part(S.end) + ' ' : '') + t.n[CR.c];
+  $('flXl').textContent = '⤓ ' + t.xl;
+  renderFl.last = { S, kS, kEnd, y0, y1 };
+}
+$('flSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; FLH = b.dataset.h; renderFl(); });
+/* Excel – įrodymų failas: lapas „Taškai“ – kiekviena fondo mėnesio pabaigos taškų pora (mėlyni pradiniai duomenys iš šaltinio),
+   grąža ir srautai – formulės; „Metai“ ir „Valdytojai“ – SUMIFS iš „Taškai“, laikotarpio ribos – mėlyni įvesties langeliai. */
+async function flExcel() {
+  const L = lang === 'lt', t = T().fl, { S, kS, kEnd, y0, y1 } = renderFl.last, wb = XL.book(), sh = t.xlS, P = `'${sh[2]}'`, M3 = '#,##0.000', M1 = '#,##0.0';
+  const src = CR.c === 'LV' ? 'manapensija.lv' : 'pensionikeskus.ee', name = `${T().c[CR.c]} ${CR.pl}`;
+  const pts = [[{ v: `${t.xlF}: ${name} – ${sh[2].toLowerCase()}`, s: 'title' }], [{ v: (L ? 'Šaltinis: ' : 'Source: ') + src + (L ? ' (mėnesio pabaigos turtas ir vieneto vertė; sujungimai – nustatyti iš kasdienių duomenų, žr. „Metodika“).' : ' (month-end assets and unit value; mergers – found from daily data, see “Methodology”).'), s: 'sub' }], [],
+    (L ? ['Valdytojas', 'Fondas', 'Pradžios mėnuo', 'Turtas pradžioje, mln. €', 'Vieneto vertė pradžioje', 'Pabaigos mėnuo', 'Turtas pabaigoje, mln. €', 'Vieneto vertė pabaigoje', 'Investicijų rezultatas, mln. €', 'Visas srautas, mln. €', 'Sujungimai, mln. €', 'Pinigų srautai, mln. €', 'Metai', 'Pabaigos mėnesio nr.', 'Pradžios mėnesio nr.']
+      : ['Manager', 'Fund', 'Start month', 'Assets at start, € m', 'Unit value at start', 'End month', 'Assets at end, € m', 'Unit value at end', 'Investment result, € m', 'Total flow, € m', 'Mergers, € m', 'Money flows, € m', 'Year', 'End month no.', 'Start month no.']).map(h => ({ v: h, s: 'hdr' }))];
+  const R0 = pts.length + 1;
+  S.f.forEach(f => { let p = null;
+    f.a.forEach((a, i) => { if (a == null) return; const k = f.k0 + i;
+      if (p) { const n = pts.length + 1, [a0, u0, k0] = p, u1 = f.u[i], g = (f.g && f.g[k]) || 0;
+        pts.push([f.m, f.n, kLab(k0), { v: a0, s: 'in', z: M3 }, { v: u0, s: 'in', z: '0.0000000' }, kLab(k), { v: a, s: 'in', z: M3 }, { v: u1, s: 'in', z: '0.0000000' },
+          { f: `D${n}*(H${n}/E${n}-1)`, v: a0 * (u1 / u0 - 1), z: M3 }, { f: `G${n}-D${n}*H${n}/E${n}`, v: a - a0 * u1 / u0, z: M3 }, { v: g, s: 'in', z: M3 },
+          { f: `J${n}-K${n}`, v: a - a0 * u1 / u0 - g, z: M3 }, { f: `VALUE(LEFT(F${n},4))`, v: Math.floor(k / 12) }, { f: `M${n}*12+VALUE(MID(F${n},6,2))-1`, v: k }, { f: `VALUE(LEFT(C${n},4))*12+VALUE(MID(C${n},6,2))-1`, v: k0 }]); }
+      p = [a, f.u[i], k]; }); });
+  const N = Math.max(R0, pts.length), rg = c => `${P}!$${c}$${R0}:$${c}$${N}`;
+  // „Metai“
+  const Y = [[{ v: `${t.xlF}: ${name} – ${sh[0].toLowerCase()}`, s: 'title' }], [{ v: L ? `Sumos iš lapo „${sh[2]}“ (SUMIFS pagal metus). Turtas – fondų mėnesio pabaigos turto suma; patikra = pradžia + rezultatas + srautai + sujungimai − pabaiga.` : `Sums from the “${sh[2]}” sheet (SUMIFS by year). Assets – sum of funds’ month-end assets; check = start + result + flows + mergers − end.`, s: 'sub' }], [],
+    [...t.yH.slice(0, 6), L ? 'Patikra' : 'Check', L ? 'Pradžios mėnesio nr.' : 'Start month no.', L ? 'Pabaigos mėnesio nr.' : 'End month no.'].map(h => ({ v: h, s: 'hdr' }))];
+  const yA = y => S.f.reduce((s, f) => s + flAt(f, Math.min(y * 12 + 11, kEnd)), 0);
+  for (let y = y0; y <= y1; y++) { const n = Y.length + 1, x = flAgg(S, y * 12 - 1, Math.min(y * 12 + 11, kEnd), () => 1).get(1), ke = Math.min(y * 12 + 11, kEnd);
+    Y.push([y, { f: `SUMIFS(${rg('D')},${rg('O')},H${n})`, v: x.a0, z: M1 }, { f: `SUMIFS(${rg('I')},${rg('M')},A${n})`, v: x.r, z: M1 }, { f: `SUMIFS(${rg('L')},${rg('M')},A${n})`, v: x.f, z: M1 },
+      { f: `SUMIFS(${rg('K')},${rg('M')},A${n})`, v: x.g, z: M1 }, { f: `SUMIFS(${rg('G')},${rg('N')},I${n})`, v: yA(y), z: M1 }, { f: `B${n}+C${n}+D${n}+E${n}-F${n}`, v: x.a0 + x.r + x.f + x.g - yA(y), z: M3 }, { v: y * 12 - 1, s: 'in' }, { v: ke, s: 'in' }]); }
+  // „Valdytojai“
+  const Mg = flAgg(S, kS, kEnd, f => f.m), V = [[{ v: `${t.xlF}: ${name} – ${sh[1].toLowerCase()}`, s: 'title' }], [{ v: L ? 'Laikotarpio ribos (mėnesio nr. = metai × 12 + mėnuo − 1) – mėlyni langeliai, juos galima keisti.' : 'Period limits (month no. = year × 12 + month − 1) – blue cells, can be changed.', s: 'sub' }],
+    [L ? 'Pradžia (mėnesio nr., neįskaitant)' : 'Start (month no., excluded)', { v: kS, s: 'in' }, kLab(kS)], [L ? 'Pabaiga (mėnesio nr.)' : 'End (month no.)', { v: kEnd, s: 'in' }, kLab(kEnd)], [],
+    [t.mH[0], ...t.mH.slice(1, 6), L ? 'Patikra' : 'Check'].map(h => ({ v: h, s: 'hdr' }))];
+  [...Mg.entries()].filter(([, x]) => x.a0 || x.a1).sort((a, b) => b[1].a1 - a[1].a1).forEach(([g, x]) => { const n = V.length + 1, q = `${rg('A')},$A${n}`;
+    V.push([g, { f: `SUMIFS(${rg('D')},${q},${rg('O')},$B$3)`, v: x.a0, z: M1 },
+      { f: `SUMIFS(${rg('I')},${q},${rg('N')},">"&$B$3,${rg('N')},"<="&$B$4)`, v: x.r, z: M1 }, { f: `SUMIFS(${rg('L')},${q},${rg('N')},">"&$B$3,${rg('N')},"<="&$B$4)`, v: x.f, z: M1 },
+      { f: `SUMIFS(${rg('K')},${q},${rg('N')},">"&$B$3,${rg('N')},"<="&$B$4)`, v: x.g, z: M1 }, { f: `SUMIFS(${rg('G')},${q},${rg('N')},$B$4)`, v: x.a1, z: M1 }, { f: `B${n}+C${n}+D${n}+E${n}-F${n}`, v: x.a0 + x.r + x.f + x.g - x.a1, z: M3 }]); });
+  const meth = (L ? [['Metodika ir šaltiniai'], [], ['Šaltinis', `${src}: kiekvieno fondo kasdienis turtas ir vieneto vertė; čia – paskutinė turima kiekvieno mėnesio diena.`],
+    ['Investicijų rezultatas', 'Turtas pradžioje × (vieneto vertė pabaigoje ÷ vieneto vertė pradžioje − 1) – kiek turtas būtų pasikeitęs be jokių srautų.'],
+    ['Visas srautas', 'Turtas pabaigoje − turtas pradžioje × vieneto vertė pabaigoje ÷ vieneto vertė pradžioje: įmokos, išmokos, perėjimai, sujungimai.'],
+    ['Sujungimai', 'Turtas, atėjęs iš fondų, kurių šaltinio sąraše nėra (fondo dienos srautas didesnis už 5 mln. € ir 20 % jo turto, o visos rinkos tos dienos grynasis srautas – bent pusė jo), ir vienkartiniai duomenų šuoliai. Nustatoma iš kasdienių duomenų (svetainės baltic.py flows), todėl čia – mėlynas pradinis duomuo.'],
+    ['Pinigų srautai', 'Visas srautas − sujungimai.'],
+    ['Nauji ir uždaryti fondai', 'Naujas fondas – taškas prieš pradžią su turtu 0 (pradinis turtas – įplauka). Uždarytas ar sujungtas fondas – taškas po pabaigos su turtu 0 (visas turtas išeina; jį gavęs fondas rodo įplauką).'],
+    ['Atsisiųsta', String(BALTIC.generated || iso(TOP))]]
+    : [['Methodology and sources'], [], ['Source', `${src}: daily assets and unit value of each fund; here – the last available day of each month.`],
+    ['Investment result', 'Assets at start × (unit value at end ÷ unit value at start − 1) – how assets would have changed with no flows.'],
+    ['Total flow', 'Assets at end − assets at start × unit value at end ÷ unit value at start: contributions, payouts, switches, mergers.'],
+    ['Mergers', 'Assets that came from funds not in the source list (a fund’s daily flow above €5 m and 20% of its assets while the whole market’s net flow that day is at least half of it) and one-off data jumps. Found from daily data (baltic.py flows), so here it is a blue input.'],
+    ['Money flows', 'Total flow − mergers.'],
+    ['New and closed funds', 'New fund – a point before its start with assets 0 (initial assets are an inflow). Closed or merged fund – a point after its end with assets 0 (all assets leave; the receiving fund shows an inflow).'],
+    ['Downloaded', String(BALTIC.generated || iso(TOP))]]).map((r, i) => r.map((v, j) => ({ v, s: i === 0 ? 'title' : j === 0 ? 'b' : '' })));
+  XL.sheet(wb, sh[0], Y, { cols: [8, 14, 16, 14, 13, 14, 10, 10, 10], freeze: { r: 4 } });
+  XL.sheet(wb, sh[1], V, { cols: [26, 14, 16, 14, 13, 14, 10], freeze: { r: 6 } });
+  XL.sheet(wb, sh[2], pts, { cols: [14, 40, 10, 13, 12, 10, 13, 12, 14, 13, 12, 13, 7, 9, 9], freeze: { r: 4 } });
+  XL.sheet(wb, sh[3], meth, { cols: [24, 130] });
+  await XL.save(wb, `${t.xlF} ${CR.c} ${CR.pl} ${kLab(kEnd)}.xlsx`);
+}
+$('flXl').addEventListener('click', () => flExcel().catch(e => console.error(e)));
+
 /* ---------- Excel: fondai ir vertės su formulėmis ---------- */
 async function excel() {
   const t = T(), rs = BX.filter(f => CR.c === 'X' || f.c === CR.c).map(f => ({ f })), wb = XL.book(), xd = d => ({ v: d + 25569, z: 'yyyy-mm-dd', s: 'in' }), xv = v => ({ v, z: '0.00000', s: 'in' });
@@ -849,7 +1011,7 @@ function render() {
   BXM.c = CR.c; BXM.pl = CR.pl;
   document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderMv(); renderSw(); renderTop(); if (CR.pl === 'II') renderJr(); }
+  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderMv(); renderSw(); renderTop(); if (TAB_CUR === 'fl' || typeof BXFLOW !== 'undefined') renderFl(); if (CR.pl === 'II') renderJr(); }
   $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
   const ks = modeTabs();
@@ -871,6 +1033,6 @@ function fromHash() {                                   // #c=LV&pl=III&tab=rs (
   return k === 'fd' || bq ? 'cr' : k;
 }
 renderHeader('baltic', render);
-{ const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, false); }
+{ const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, false); if (TAB_CUR === 'fl') renderFl(); }
 addEventListener('hashchange', () => { const k = fromHash(); render(); if (k && modeTabs().includes(k)) showTab(k, true); });
-addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else { renderOv(); if (TAB_CUR === 'mg') renderMs(); if (CR.pl === 'II' && TAB_CUR === 'jr') renderJr(); } }, 200); });
+addEventListener('resize', () => { clearTimeout(render.r); render.r = setTimeout(() => { if (CR.c === 'X') { renderCmp(); renderRf(); } else { renderOv(); if (TAB_CUR === 'mg') renderMs(); if (TAB_CUR === 'fl') renderFl(); if (CR.pl === 'II' && TAB_CUR === 'jr') renderJr(); } }, 200); });

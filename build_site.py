@@ -256,6 +256,13 @@ def build_baltic(ver: dict) -> None:
 
     payload = baltic.build()
     perf = payload.pop("_perf", {})
+    # turto pokyčio išskaidymas (LV, EE) – atskiras failas, įkeliamas tik atidarius skirtuką „Turto pokytis“ (baltic.js loadFlow)
+    fl = baltic._safe(baltic.flows)
+    if fl:
+        fj = "const BXFLOW=" + json.dumps(fl, ensure_ascii=False, separators=(",", ":")) + ";\n"
+        (DOCS / "data_bx_flow.js").write_text(fj, encoding="utf-8")
+        payload["flv"] = hashlib.md5(fj.encode()).hexdigest()[:8]
+        print(f"docs/data_bx_flow.js: {len(fj) / 1024:.0f} KB")
     data_js = "const BALTIC=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_baltic.js").write_text(data_js, encoding="utf-8")
     for n in ("baltic.html", "baltic.js", "bxjr.js"):
