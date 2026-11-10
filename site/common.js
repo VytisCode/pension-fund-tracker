@@ -12,7 +12,7 @@ const I18N = {
     thProvider: 'Manager', thReturn: 'Return', thUnit: 'Unit value', thAssets: 'Net assets, € m',
     dataUntil: 'Data until', updated: 'updated', freshLbl: 'Latest value:',
     freshLate: n => `${n} business day${n === 1 ? '' : 's'} behind the newest data – returns for this provider may be missing or older`,
-    foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', designNew: 'New design (beta)', designOld: 'Back to the current design', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', sideOpen: 'Open menu', sideClose: 'Close menu', sideCollapse: 'Collapse menu', sideExpand: 'Expand menu', stLoading: 'Loading data…', stErrT: 'Could not load the data', stErrW: 'The data file did not load (network glitch or the site is being updated). The rest of the page works.', stRetry: 'Try again', stNoSel: 'No funds selected', stNoSelW: 'Select at least one fund above to draw the chart.', stNoPer: 'No data for this period', stNoPerW: 'The selected funds did not exist yet in this period or values are not published. Choose a longer period or other dates.', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
+    foldMore: 'How to read ▾', foldLess: 'Show less ▴', tools: 'Tools', navLbl: 'Pages', themeLight: 'Light theme', themeDark: 'Dark theme', sideOpen: 'Open menu', sideClose: 'Close menu', sideCollapse: 'Collapse menu', sideExpand: 'Expand menu', stLoading: 'Loading data…', stErrT: 'Could not load the data', stErrW: 'The data file did not load (network glitch or the site is being updated). The rest of the page works.', stRetry: 'Try again', stNoSel: 'No funds selected', stNoSelW: 'Select at least one fund above to draw the chart.', stNoPer: 'No data for this period', stNoPerW: 'The selected funds did not exist yet in this period or values are not published. Choose a longer period or other dates.', lateLbl: 'late:', allFresh: n => `all ${n} providers up to date`, freshMore: 'Show each provider’s latest value date',
     srcLbl: 'Other data:', srcLateLbl: 'overdue:', srcBy: d => `next by ${d}`, srcNext: d => `New data expected by ${d} (approximate)`, srcIrreg: 'Updated when the Bank of Lithuania publishes a new file',
     srcK: { p3: 'Pillar III', pf: 'LB portfolio reports', lbr: 'LB results report', fee2: 'LB fees (II)', fee3: 'LB fees (III)', idx: 'Indices', estr: '€STR', cpi: 'Inflation (CPI)' },
     freshOk: 'Up to date', noNew: 'no new data', noData: 'Not enough data for this period.',
@@ -26,7 +26,7 @@ const I18N = {
     thProvider: 'Valdytojas', thReturn: 'Grąža', thUnit: 'Vieneto vertė', thAssets: 'Aktyvai, mln. €',
     dataUntil: 'Duomenys iki', updated: 'atnaujinta', freshLbl: 'Paskutinė vertė:',
     freshLate: n => `Atsilieka ${n} d. d. nuo naujausių duomenų – šio tiekėjo grąžos gali nebūti arba ji senesnė`,
-    foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', designNew: 'Naujas dizainas (bandomasis)', designOld: 'Grįžti į dabartinį dizainą', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', sideOpen: 'Atidaryti meniu', sideClose: 'Uždaryti meniu', sideCollapse: 'Suskleisti meniu', sideExpand: 'Išskleisti meniu', stLoading: 'Kraunami duomenys…', stErrT: 'Duomenų įkelti nepavyko', stErrW: 'Duomenų failas neatsisiuntė (ryšio sutrikimas arba svetainė tuo metu atnaujinama). Kita puslapio dalis veikia.', stRetry: 'Bandyti dar kartą', stNoSel: 'Nepasirinktas nė vienas fondas', stNoSelW: 'Pažymėkite bent vieną fondą virš grafiko.', stNoPer: 'Šiam laikotarpiui duomenų nėra', stNoPerW: 'Pasirinkti fondai tuo metu dar neveikė arba vertės neskelbtos. Pasirinkite ilgesnį laikotarpį arba kitas datas.', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
+    foldMore: 'Kaip skaityti? ▾', foldLess: 'Suskleisti ▴', tools: 'Įrankiai', navLbl: 'Puslapiai', themeLight: 'Šviesi tema', themeDark: 'Tamsi tema', sideOpen: 'Atidaryti meniu', sideClose: 'Uždaryti meniu', sideCollapse: 'Suskleisti meniu', sideExpand: 'Išskleisti meniu', stLoading: 'Kraunami duomenys…', stErrT: 'Duomenų įkelti nepavyko', stErrW: 'Duomenų failas neatsisiuntė (ryšio sutrikimas arba svetainė tuo metu atnaujinama). Kita puslapio dalis veikia.', stRetry: 'Bandyti dar kartą', stNoSel: 'Nepasirinktas nė vienas fondas', stNoSelW: 'Pažymėkite bent vieną fondą virš grafiko.', stNoPer: 'Šiam laikotarpiui duomenų nėra', stNoPerW: 'Pasirinkti fondai tuo metu dar neveikė arba vertės neskelbtos. Pasirinkite ilgesnį laikotarpį arba kitas datas.', lateLbl: 'vėluoja:', allFresh: n => `visi ${n} valdytojai atnaujinti`, freshMore: 'Rodyti kiekvieno valdytojo paskutinės vertės datą',
     srcLbl: 'Kiti duomenys:', srcLateLbl: 'vėluoja:', srcBy: d => `naujų laukiama iki ${d}`, srcNext: d => `Naujų duomenų laukiama iki ${d} (apytiksliai)`, srcIrreg: 'Atnaujinama, kai Lietuvos bankas paskelbia naują failą',
     srcK: { p3: 'III pakopa', pf: 'LB portfelių ataskaitos', lbr: 'LB rezultatų ataskaita', fee2: 'LB mokesčiai (II)', fee3: 'LB mokesčiai (III)', idx: 'Indeksai', estr: '€STR', cpi: 'Infliacija (VKI)' },
     freshOk: 'Duomenys naujausi', noNew: 'nėra naujų duomenų', noData: 'Šiam laikotarpiui duomenų nepakanka.',
@@ -174,6 +174,10 @@ function renderHeader(active, onLang) {
       if (big) { const ov = document.createElement('div'); ov.className = 'hkpi'; if (rr) ov.append(rr); ov.append(big); st.append(ov); st.classList.add('has-kpi'); document.body.classList.add('home-kpi'); }
     }
     const bg = document.createElement('div'); bg.className = 'pagebg'; bg.style.backgroundImage = st.style.backgroundImage; document.body.prepend(bg);   // savininkas 2026-10-21: nuotraukos – ir fono dalis
+  }
+  if ('IntersectionObserver' in window) {   // naujas dizainas: skirtukų juostos fonas tik prilipus (kitaip matosi kitokio atspalvio juosta)
+    const sent = document.createElement('div'); sent.style.cssText = 'height:1px;margin-bottom:-1px'; nav.before(sent);
+    new IntersectionObserver(([e]) => nav.classList.toggle('stuck', !e.isIntersecting)).observe(sent);
   }
   const side = document.createElement('aside');
   side.className = 'side'; side.id = 'side';
@@ -1982,7 +1986,7 @@ addStrings({
   qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija', n: 'Straipsnis' }, qNews: q => `Visi straipsniai su „${q}“ →`, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
 });
 addStrings3({
-  siteTitle: 'Pensiju fondi', locale: 'lv-LV', langLbl: 'Valoda', tools: 'Rīki', designNew: 'Jaunais dizains (izmēģinājuma)', designOld: 'Atpakaļ uz pašreizējo dizainu', themeDark: 'Tumšais režīms', themeLight: 'Gaišais režīms',
+  siteTitle: 'Pensiju fondi', locale: 'lv-LV', langLbl: 'Valoda', tools: 'Rīki', themeDark: 'Tumšais režīms', themeLight: 'Gaišais režīms',
   qPh: 'Meklēt fondu, rādītāju vai tabulu…', navOps: 'Datu kalendārs', dlBtn: 'Lejupielādēt datus', printCozy: 'Drukāt / PDF (kā ekrānā)', printPlain: 'Drukāt / PDF (balts, prezentācijām)',
   sideOpen: 'Atvērt izvēlni', sideClose: 'Aizvērt izvēlni', sideCollapse: 'Sakļaut izvēlni', sideExpand: 'Izvērst izvēlni', navLbl: 'Sadaļas lapas',
   monShort: ['janv.', 'febr.', 'marts', 'apr.', 'maijs', 'jūn.', 'jūl.', 'aug.', 'sept.', 'okt.', 'nov.', 'dec.'],
@@ -1991,7 +1995,7 @@ addStrings3({
   ctry: { lbl: 'Valsts', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Igaunija' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Kas pieejams katrai valstij', avL: 'Visām valstīm – viena un tā pati izvēlne. Ja valsts datus nepublicē, sadaļa ir pelēka; gatavotās sadaļas atzīmētas ar plāna posmu.', avNo: 'nav datu', avSoon: n => `tiek gatavots (${n}. posms)`, close: 'Aizvērt', openLt: 'Atvērt Lietuvas versiju',
     soon: (c, n) => `${c}: šī sadaļa tiek gatavota (plāna ${n}. posms). Līdz tam tā ir pieejama tikai Lietuvai.`, noData: c => `${c} nepublicē šai sadaļai vajadzīgos datus.`,
     why: { reports: c => `${c}: nav Lietuvas Bankas ceturkšņa rezultātu failu un pārvaldītāju pārskatu datu analoga, uz kuriem balstās šī sadaļa.`, ops: c => `Datu kalendārs seko tikai Lietuvas avotiem. ${c}: katra avota pēdējais datums un kad gaidāmi jauni dati – tabulā lapā “Par”.` } } }, {
-  siteTitle: 'Pensionifondid', locale: 'et-EE', langLbl: 'Keel', tools: 'Tööriistad', designNew: 'Uus kujundus (katseline)', designOld: 'Tagasi praegusele kujundusele', themeDark: 'Tume režiim', themeLight: 'Hele režiim',
+  siteTitle: 'Pensionifondid', locale: 'et-EE', langLbl: 'Keel', tools: 'Tööriistad', themeDark: 'Tume režiim', themeLight: 'Hele režiim',
   qPh: 'Otsi fondi, näitajat või tabelit…', navOps: 'Andmekalender', dlBtn: 'Laadi andmed alla', printCozy: 'Prindi / PDF (nagu ekraanil)', printPlain: 'Prindi / PDF (valge, esitlusteks)',
   sideOpen: 'Ava menüü', sideClose: 'Sulge menüü', sideCollapse: 'Ahenda menüü', sideExpand: 'Laienda menüü', navLbl: 'Jaotise lehed',
   monShort: ['jaan', 'veebr', 'märts', 'apr', 'mai', 'juuni', 'juuli', 'aug', 'sept', 'okt', 'nov', 'dets'],
