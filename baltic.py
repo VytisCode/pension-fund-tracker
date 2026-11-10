@@ -440,7 +440,10 @@ def shares():
 VSAA_MGR = [("swedbank", "Swedbank"), ("hansa", "Swedbank"), ("seb", "SEB"), ("unilat", "SEB"), ("cbl", "CBL"), ("citadele", "CBL"), ("parex", "CBL"),
             ("invl", "INVL"), ("finasta", "INVL"), ("luminor", "Luminor"), ("dnb", "Luminor"), ("nordea", "Luminor"), ("indexo", "Indexo"),
             ("vairo", "Vairo"), ("signet", "Signet"), ("aktīvais plāns", "Signet"), ("norvik", "PNB (Norvik)"), ("pnb", "PNB (Norvik)"),
-            ("ablv", "ABLV"), ("index direct", "Index Direct"), ("integrum", "Integrum")]
+            ("ablv", "ABLV"), ("index direct", "Index Direct"), ("integrum", "Integrum"),
+            # seni (nebesantys) – savo vardu, kai dabartinis valdytojas nežinomas tikrai
+            ("parekss", "CBL"), ("suprema", "Suprema/EVLI"), ("valsts kas", "Valsts kase"), ("baltikums", "Baltikums"), ("optimus", "Optimus"), ("daugava", "Daugava, Gauja, Venta"),
+            ("gauja", "Daugava, Gauja, Venta"), ('"venta', "Daugava, Gauja, Venta"), ("venta", "Daugava, Gauja, Venta")]
 
 
 def vsaa_moves():
@@ -469,6 +472,44 @@ def vsaa_moves():
     ks = ["start", "new", "inn", "out", "died", "ret", "cor", "end"]
     return {"y": ys, "mg": {g: {k: [d[y][k] if y in d else None for y in ys] for k in ks} for g, d in sorted(by.items())},
             "tot": {k: [tot[y].get(k) for y in ys] for k in ks}}
+
+
+def _vsaa_mgr(nm):
+    n = nm.lower().strip()
+    if n.startswith("c "):                                  # 2026 m. Citadele plānų pervadinimas („C Universālais plāns 61+“)
+        return "CBL"
+    if "adaptīv" in n and "vairo" not in n:
+        return "Indexo"
+    # „aktīvais plāns“ (Signet) – tik kai joks kitas valdytojas neatpažintas (pvz. „Optimus aktīvais plāns“ – Optimus)
+    return next((lab for key, lab in VSAA_MGR if key in n and key != "aktīvais plāns"), None) or next((lab for key, lab in VSAA_MGR if key in n), None)
+
+
+def lv_switch():
+    """LV II pakopa: mėnesinis dalyvių perėjimas tarp valdytojų (VSAA, tools/fetch_vsaa_switch.py → data/lv_switch.csv, nuo 2003-01).
+    {m: [mėnesiai], g: [valdytojai], x: [[[iš, į, n], ...] kiekvienam mėnesiui], own: [[valdytojas, n] ...] – perėjimai tarp
+    to paties valdytojo plānų, tot: [visi perėjimai per mėnesį]}. Nežinomo valdytojo plānai – „Kiti“."""
+    p = D / "lv_switch.csv"
+    if not p.exists():
+        return None
+    agg, own, tot, unk = defaultdict(lambda: defaultdict(int)), defaultdict(lambda: defaultdict(int)), defaultdict(int), set()
+    for r in csv.DictReader(p.open(encoding="utf-8")):
+        a, b, n = _vsaa_mgr(r["from_plan"]), _vsaa_mgr(r["to_plan"]), int(r["n"])
+        for nm, g in ((r["from_plan"], a), (r["to_plan"], b)):
+            if not g:
+                unk.add(nm)
+        a, b = a or "Kiti", b or "Kiti"
+        tot[r["month"]] += n
+        if a == b:
+            own[r["month"]][a] += n
+        else:
+            agg[r["month"]][(a, b)] += n
+    if unk:
+        print("baltic: VSAA kustība – plāni be valdytojo:", "; ".join(sorted(unk))[:1500])
+    ms = sorted(tot)
+    gs = sorted({g for m in ms for k in agg[m] for g in k} | {g for m in ms for g in own[m]})
+    gi = {g: i for i, g in enumerate(gs)}
+    return {"m": ms, "g": gs, "x": [[[gi[a], gi[b], n] for (a, b), n in sorted(agg[m].items())] for m in ms],
+            "own": [[[gi[g], n] for g, n in sorted(own[m].items())] for m in ms], "tot": [tot[m] for m in ms]}
 
 
 def _safe(fn):
@@ -513,7 +554,7 @@ def build() -> dict:
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
         print("baltic: reformų palyginimas nepavyko:", e)
         rf = None
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "_perf": perf}
+    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "sw": _safe(lv_switch), "_perf": perf}
 
 
 PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],
