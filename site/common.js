@@ -131,9 +131,13 @@ function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   document.body.dataset.page = active;
   PCTRY = pageCtry(active);
-  if (HOME_PAGES.includes(active)) document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab]; if (o && o !== active) { p.dataset.off = o; p.hidden = true; } });
+  { const hb = String(active).replace(/_(lv|ee)$/, '');   // šalies kopijos (index_lv, facts_ee …): kiti skirtukai – tos šalies puslapiuose, nesantys – pilki
+    if (HOME_PAGES.includes(hb)) document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab];
+      if (o && o !== hb) { p.dataset.off = hb === active ? o : ctryHref(o, PCTRY) || `${o}.html`; p.hidden = true; }
+      else if (hb !== active && HOME_NA[p.dataset.tab]) p.dataset.na = HOME_NA[p.dataset.tab]; });
+    if (hb !== active && typeof ctryTexts === 'function') ctryTexts(PCTRY); }
   { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
-    const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(`${o.dataset.off}.html${location.hash}`); }
+    const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(/\.html/.test(o.dataset.off) ? o.dataset.off : `${o.dataset.off}.html${location.hash}`); }
   if (tabGroupOf(active) && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
   h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="${ctryHome(PCTRY)}"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a><div class="ctry" id="ctry" role="group"></div>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
@@ -214,8 +218,8 @@ function renderHeader(active, onLang) {
       if (a.classList.contains('na')) a.title = ctryWhy(a.dataset.p, PCTRY);
     });
     const qb = document.getElementById('q'); qb.placeholder = t.qPh; qb.setAttribute('aria-label', t.qPh);
-    { const bx = active.match(/^baltic_(lt|lv|ee)(3?)$/), cn = { lt: ['Lietuva', 'Lithuania'], lv: ['Latvija', 'Latvia'], ee: ['Estija', 'Estonia'] };   // Baltijos „Rezultatų“ kopijos – šalis ir pakopa (buvo tuščia)
-      const nm = bx ? `${cn[bx[1]][lang === 'lt' ? 0 : 1]} · ${bx[2] ? 'III' : 'II'} ${lang === 'lt' ? 'pakopa' : 'pillar'} · ${t.secNav.results}` : t[navKey(active)] || t.subNav[active] || t.subNav[PAGE_ALIAS[active]] || '';
+    { const bx = active.match(/^baltic_(lt|lv|ee)(3?)(?:_ov)?$/), cn = { lt: ['Lietuva', 'Lithuania'], lv: ['Latvija', 'Latvia'], ee: ['Estija', 'Estonia'] };   // Baltijos „Rezultatų“ kopijos – šalis ir pakopa (buvo tuščia)
+      const nm = bx ? `${cn[bx[1]][lang === 'lt' ? 0 : 1]} · ${bx[2] ? 'III' : 'II'} ${lang === 'lt' ? 'pakopa' : 'pillar'} · ${t.secNav.results}` : t[navKey(active)] || t.subNav[active] || t.subNav[PAGE_ALIAS[active]] || t.subNav[secPage(active)] || '';
       document.title = `${nm} · ${t.siteTitle}`; }   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
     pr.querySelector('[data-p=cozy]').textContent = '🖶 ' + t.printCozy; pr.querySelector('[data-p=plain]').textContent = '🖶 ' + t.printPlain;
@@ -329,7 +333,7 @@ function addSubnav(items) {
   if (!pn) {
     pn = document.createElement('div'); pn.className = 'pnav'; nav.append(pn);
     pn.addEventListener('click', e => {
-      const a = e.target.closest('a'); if (!a) return;
+      const a = e.target.closest('a'); if (!a || a.classList.contains('na')) return;
       const el = pnTarget(a.dataset.id); if (!el) return;
       e.preventDefault();
       if (hasTabs()) { showTab(paneOf(el), true); return; }
@@ -339,7 +343,8 @@ function addSubnav(items) {
     pn.addEventListener('scroll', () => scrollEdges(pn), { passive: true });
     let q = 0; addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(() => { q = 0; pnSpy(); }); }, { passive: true });
   }
-  pn.innerHTML = items.filter(x => !hasTabs() || paneOn(document.getElementById(x.id))).map(x => `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`).join('');
+  pn.innerHTML = items.filter(x => !hasTabs() || paneOn(document.getElementById(x.id))).map(x => { const pe = document.getElementById(x.id), np = pe && pe.closest('[data-na]');
+    return np ? `<a href="#" class="na" aria-disabled="true" data-na="tab" data-why="${np.dataset.na}" title="${hEsc(ctryWhy('tab', PCTRY, np.dataset.na))}">${x.label}</a>` : `<a href="#${x.id}" data-id="${x.id}">${x.label}</a>`; }).join('');
   groupTabs(pn);
   pn.classList.toggle('tabs', hasTabs());
   if (hasTabs()) { if (!TAB_CUR) showTab(tabStart(), false); else markTab(); } else pnSpy();
@@ -359,7 +364,7 @@ const HOME_PAGES = ['index', 'facts', 'managers'];
 const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
 /* Du puslapiai – viena skirtukų juosta: III pakopa (pillar3 + performance3) ir II pakopa (performance + overview „Grupių grafikai“).
    Kito puslapio skirtukai – paprastos nuorodos „puslapis.html#tab=…“; šoniniame meniu abu puslapiai – vienas punktas. */
-const PAGE_ALIAS = { pillar3: 'performance3', overview: 'performance', baltic_lt: 'baltic', baltic_lt3: 'baltic', baltic_lv: 'baltic', baltic_lv3: 'baltic', baltic_ee: 'baltic', baltic_ee3: 'baltic' };
+const PAGE_ALIAS = { pillar3: 'performance3', overview: 'performance', baltic_lv_ov: 'baltic', baltic_lv3_ov: 'baltic', baltic_ee_ov: 'baltic', baltic_ee3_ov: 'baltic', baltic_lt: 'baltic', baltic_lt3: 'baltic', baltic_lv: 'baltic', baltic_lv3: 'baltic', baltic_ee: 'baltic', baltic_ee3: 'baltic' };
 const TG3 = [['performance3', 'market', 'Visa rinka', 'Whole market'], ['performance3', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance3', 'fund', 'Fondų palyginimas', 'Fund comparison'],
   ['performance3', 'risk', 'Rizika', 'Risk'], ['performance3', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['pillar3', 'cat', 'Kategorijų grafikai', 'Category charts'], ['pillar3', 'all', 'Visi fondai – rodikliai', 'All funds – key figures']];
 /* II ir III pakopa – ta pati skirtukų tvarka (auditas 2026-11-06): Visa rinka, Lyderiai, Fondų palyginimas, Rizika, Metai ir mėnesiai, grupių grafikai, tada pakopos savitas */
@@ -389,7 +394,7 @@ function bxTabs(c, pl) {
   return [[pp, 'market', 'Visa rinka', 'Whole market'], [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', 'Kilimas ir kritimas', 'Run-up and drawdown'],
     b('cr', pl === 'III' ? 'Visi fondai – rodikliai' : 'Visi fondai', pl === 'III' ? 'All funds – key figures' : 'All funds'), b('ov', 'Apžvalga', 'Overview'),
-    ...(pl === 'II' ? [na('Grupių grafikai', 'Group charts', 's2'), na('Rinkos įžvalgos', 'Market insights', 's2')] : [na('Kategorijų grafikai', 'Category charts', 's2')])];
+    [pp + '_ov', '', pl === 'II' ? 'Grupių grafikai' : 'Kategorijų grafikai', pl === 'II' ? 'Group charts' : 'Category charts'], ...(pl === 'II' ? [na('Rinkos įžvalgos', 'Market insights', 's2')] : [])];
 }
 const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];
 function bxBar() {                        // šalies ir pakopos juosta (nuorodos): perjungus šalį lieka tas pats skirtukas
@@ -419,7 +424,7 @@ function groupTabs(pn) {
 }
 const tabKey = () => 'tab:' + (document.body.dataset.page || location.pathname.split('/').pop());
 function tabStart() {
-  const panes = [...document.querySelectorAll('[data-tab]')].filter(p => !p.dataset.off).map(p => p.dataset.tab);
+  const panes = [...document.querySelectorAll('[data-tab]')].filter(p => !p.dataset.off && !p.dataset.na).map(p => p.dataset.tab);
   let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
   if (panes.includes(k)) return k;
   try { k = localStorage.getItem(tabKey()); } catch (e) {}
@@ -437,7 +442,7 @@ function openPane(id) {                   // atidaro skirtuką su elementu ir nu
 function showTab(k, user) {
   if (!k) return;
   const off = document.querySelector(`[data-tab="${k}"][data-off]`);
-  if (off) { location.href = `${off.dataset.off}.html` + (/[#&]go=/.test(location.hash) ? location.hash : `#tab=${k}`); return; }
+  if (off) { location.href = /\.html/.test(off.dataset.off) ? off.dataset.off : `${off.dataset.off}.html` + (/[#&]go=/.test(location.hash) ? location.hash : `#tab=${k}`); return; }
   const prev = TAB_CUR; TAB_CUR = k;
   document.querySelectorAll('[data-tab]').forEach(p => { p.hidden = p.dataset.tab !== k; });
   document.body.dataset.ptab = k;
@@ -1815,17 +1820,18 @@ if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() 
 const CTRYS = ['LT', 'LV', 'EE'];
 let PCTRY = 'LT';
 const LANG_NAMES = { lt: 'Lietuvių', en: 'English', lv: 'Latviešu', et: 'Eesti' };
+const HOME_NA = { nw: 's3', eu: 's3', pv: 's3' };   // Pradžios / Rinkos faktų skirtukai, kurių šalies duomenų dar nėra
 const bxH = (c, tab, pl = 'II') => `baltic.html#c=${c}&pl=${pl}&tab=${tab}`;
 // [LV, EE, priežastis: 'sN' – ruošiama N etape, 'data' – šalies duomenų nėra, 'all' – bendras visoms šalims]
 const CTRY_PAGES = {
-  index: [null, null, 's2'], review: [null, null, 's2'], ops: [null, null, 's2'], facts: [null, null, 's2'],
+  index: ['index_lv.html', 'index_ee.html'], review: [null, null, 's3'], ops: [null, null, 's3'], facts: ['facts_lv.html', 'facts_ee.html'],
   performance: ['baltic_lv.html', 'baltic_ee.html'], performance3: ['baltic_lv3.html', 'baltic_ee3.html'],
   managers: [bxH('LV', 'mg'), bxH('EE', 'mg')], manager: [null, null, 's3'],
   portfolios: [bxH('LV', 'top'), bxH('EE', 'top')], aum: [bxH('LV', 'fl'), bxH('EE', 'fl')],
   reports: [null, null, 'data'], journey: [bxH('LV', 'jr'), bxH('EE', 'jr')], baltic: ['all'], how: ['all'], apie: ['all'],
 };
 function pageCtry(active) {
-  const m = String(active || '').match(/^baltic_(lt|lv|ee)/); if (m) return m[1].toUpperCase();
+  const m = String(active || '').match(/^baltic_(lt|lv|ee)/) || String(active || '').match(/^(?:index|facts|managers)_(lv|ee)$/); if (m) return m[1].toUpperCase();
   if (active === 'baltic') { let c = null; try { c = new URLSearchParams(location.hash.slice(1)).get('c'); } catch (e) {}
     if (typeof CR !== 'undefined' && CR.c) c = CR.c; return c && c !== 'X' ? c : c === 'X' ? null : 'LT'; }
   return 'LT';
@@ -1839,7 +1845,8 @@ function ctryHref(p, c) {               // puslapio p atitikmuo šalyje c (null 
 }
 const ctryHome = c => ctryHref('index', c) || ctryHref('performance', c);
 function secPage(active) {              // kuriam LT puslapiui (meniu punktui) priklauso dabartinis puslapis
-  const m = String(active || '').match(/^baltic_(lt|lv|ee)(3?)$/); if (m) return m[2] ? 'performance3' : 'performance';
+  const h = String(active || '').match(/^(index|facts|managers)_(lv|ee)$/); if (h) return h[1];
+  const m = String(active || '').match(/^baltic_(lt|lv|ee)(3?)(_ov)?$/); if (m) return m[2] ? 'performance3' : 'performance';
   if (active === 'baltic') {
     let q; try { q = new URLSearchParams(location.hash.slice(1)); } catch (e) { q = new URLSearchParams(); }
     const c = typeof CR !== 'undefined' && CR.c ? CR.c : q.get('c'), k = q.get('tab') || (typeof TAB_CUR !== 'undefined' && TAB_CUR), pl = typeof CR !== 'undefined' && CR.pl ? CR.pl : q.get('pl');
@@ -1868,6 +1875,18 @@ function markSide(active) {             // Baltijos puslapyje skirtukas keičia 
   if (markSide.sec && (cur !== markSide.sec || pageCtry(active) !== PCTRY) && String(active).startsWith('baltic')) { markSide.sec = cur; location.reload(); return; }   // kitas meniu skyrius tame pačiame puslapyje – nauja antraštė
   markSide.sec = cur;
   document.querySelectorAll('#side .nav a[data-s]').forEach(a => { if (sec && a.dataset.s === sec.id) a.setAttribute('aria-current', 'page'); else if (a.dataset.s !== 'how' && a.dataset.s !== 'about') a.removeAttribute('aria-current'); });
+}
+function ctryTexts(c) {                 // šalies kopijoje tekstai, minintys Lietuvos banką, rodo tos šalies šaltinį (funkcijos apgaubiamos)
+  if (!c || c === 'LT' || ctryTexts.done) return; ctryTexts.done = 1;
+  const src = { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }[c];
+  const fix = v => typeof v !== 'string' ? v : v.replace(/Lietuvos bank(as|o|ui|ą|e)/g, src).replace(/(the )?Bank of Lithuania(’s|'s)?/g, src).replace(/\bLB\b/g, src);
+  const walk = (o, seen) => { if (!o || typeof o !== 'object' || seen.has(o)) return; seen.add(o);
+    Object.keys(o).forEach(k => { const v = o[k];
+      if (typeof v === 'string') o[k] = fix(v);
+      else if (typeof v === 'function') o[k] = (...a) => fix(v(...a));
+      else if (Array.isArray(v)) v.forEach((x, i) => { if (typeof x === 'string') v[i] = fix(x); else walk(x, seen); });
+      else walk(v, seen); }); };
+  const seen = new Set(); ['lt', 'en'].forEach(l => walk(I18N[l], seen));
 }
 function ctryAvail() {                  // „Apie“: kas yra kiekvienoje šalyje (savininkas 2026-11-10 pritarė)
   const el = document.getElementById('ctryAvail'); if (!el) return;

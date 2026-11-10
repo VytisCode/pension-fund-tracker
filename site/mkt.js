@@ -2,7 +2,7 @@
    Lietuvos banko ketvirčių rezultatų ataskaitos nuo 2015 m. (docs/data_mkt.js, žr. market.py) – visa rinka, valdytojai, fondai.
    Faktų kortelės – neutralūs, šaltinį ir skaičiavimą nurodantys sakiniai, kuriuos galima nukopijuoti į naujieną.
    Fondai lyginami tik LB grupės viduje (gyvenimo ciklo – pagal gimimo metus; turto išsaugojimo – tarpusavyje). */
-const MK_ORDER = ['2003-2009', '1996-2002', '1989-1995', '1982-1988', '1975-1981', '1968-1974', '1961-1967', '1954-1960', 'turto', 'gc', 'akc', 'vid', 'maz', 'kons', 'mis', 'obl'];
+const MK_ORDER = ['r1', 'r2', 'r3', 'r4', 'e30', 'e75', 'e100', 'zz', '2003-2009', '1996-2002', '1989-1995', '1982-1988', '1975-1981', '1968-1974', '1961-1967', '1954-1960', 'turto', 'gc', 'akc', 'vid', 'maz', 'kons', 'mis', 'obl'];
 const MK_PROV = ['Allianz', 'Artea', 'Goindex', 'Luminor', 'SEB', 'Swedbank', 'ERGO'];
 const mkColor = p => { const i = MK_PROV.indexOf(p); return i >= 0 && i < 6 ? `var(--s${i + 1})` : 'var(--text-3)'; };
 const MK_MON = { lt: ['sausio', 'vasario', 'kovo', 'balandžio', 'gegužės', 'birželio', 'liepos', 'rugpjūčio', 'rugsėjo', 'spalio', 'lapkričio', 'gruodžio'],
@@ -126,7 +126,7 @@ function qRet(pl, di, gi = -1) {
 /* investicinis prieaugis per ketvirtį: kiekvieno fondo q × (turtas pradžioje + pusė pinigų srauto), srautas = pabaiga − pradžia × (1 + q).
    Nuo 2026 II ketv. reformos išmokos mokamos ketvirčio pradžioje, todėl tada visas srautas laikomas buvusiu pradžioje.
    Patikra: 2025 m. II pakopa – 618 mln. €, kaip LIPFA metų apžvalgoje. */
-const payoutQ = d => d >= '2026-06-30';
+const payoutQ = d => !MKT.c && d >= '2026-06-30';   // Lietuvos reformos išmokos (LV/EE – ne)
 function gainAt(pl, di, m) {                // m – tik šio valdytojo fondai
   if (di < 0) return null;
   const d = MKT[pl].dates[di], pd = dIdx(pl, qBack(d, 3)); if (pd < 0) return null;
@@ -147,7 +147,7 @@ function byMgr(pl, di) {
   return o;
 }
 const groupKeyOf = (pl, gi) => MKT[pl].groups[gi][0];
-function groupLbl(pl, gi) { const k = groupKeyOf(pl, gi), gl = T().gl; return /^\d{4}-\d{4}$/.test(k) ? gl.born(k) : k === 'akc' ? (pl === 'II' ? gl.akc2 : gl.akc3) : gl[k] || k; }
+function groupLbl(pl, gi) { const k = groupKeyOf(pl, gi), gl = T().gl; return /^\d{4}-\d{4}$/.test(k) ? gl.born(k) : k === 'akc' ? (pl === 'II' ? gl.akc2 : gl.akc3) : gl[k] || (MKT.gl && MKT.gl[k] && MKT.gl[k][lang]) || k; }
 const groupsAt = (pl, di) => [...new Set(rowsAt(pl, di).map(r => fundOf(pl, r)[2]))].sort((a, b) => MK_ORDER.indexOf(groupKeyOf(pl, a)) - MK_ORDER.indexOf(groupKeyOf(pl, b)));
 
 /* ---------- formatai ---------- */

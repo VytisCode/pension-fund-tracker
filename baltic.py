@@ -554,7 +554,12 @@ def build() -> dict:
     except Exception as e:                  # papildoma dalis – jos klaida neturi sustabdyti puslapio
         print("baltic: reformų palyginimas nepavyko:", e)
         rf = None
-    return {"funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "sw": _safe(lv_switch), "_perf": perf}
+    gmap = {}
+    for f in funds:
+        if f["c"] in ("LV", "EE"):
+            gmap.setdefault(f["c"], {})[(f["pl"], f["n"])] = (f["cg"] if f["c"] == "LV" else f.get("risk")) or "zz"
+    mk = {c: _safe(lambda c=c: mkt(c, gmap.get(c, {}))) for c in ("LV", "EE")}
+    return {"_mkt": mk, "funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "sw": _safe(lv_switch), "_perf": perf}
 
 
 def flows():
@@ -634,9 +639,106 @@ def flows():
     return out
 
 
-PGRP = {"LV": [("zz", "Kiti plānai", "Other plans"), ("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities")],
-        "EE": [("zz", "Per trumpa istorija", "Too short history"), ("r1", "Maža rizika (svyravimas iki 4 %)", "Low risk (volatility under 4%)"), ("r2", "Vidutinė rizika (4–8 %)", "Moderate risk (4–8%)"),
-               ("r3", "Didesnė rizika (8–12 %)", "Higher risk (8–12%)"), ("r4", "Didelė rizika (daugiau nei 12 %)", "High risk (over 12%)")]}
+def mkt(c, gmap):
+    """Rinkos faktų duomenys Latvijai ir Estijai tuo pačiu formatu kaip Lietuvos market.py (docs/data_mkt_lv.js, data_mkt_ee.js →
+    tas pats mkt.js: Ketvirčio faktai, Rinka laike, Fondai pagal grupes, II ir III pakopa; PERTVARKA-SALYS.md 2 etapas).
+    Lietuvoje skaičiai – LB ketvirčio failai; čia – iš kasdienių duomenų ketvirčio pabaigoje (paskutinė turima diena ne senesnė nei 10 d.):
+    dalyviai, grynieji aktyvai, grąžos iš vieneto vertės (nuo metų pradžios, 1 m., 3/5/10/15 m. – metinės), ketvirčio grąža,
+    3 m. svyravimas (mėnesio grąžų standartinis nuokrypis × √12). Grupių vidurkiai – svertiniai fondų turtu ketvirčio pabaigoje (kaip LB).
+    gmap: {(pakopa, pavadinimas): grupės raktas} – tos pačios grupės kaip „Rezultatuose“."""
+    from bisect import bisect_right
+    ser, mgr = defaultdict(list), {}
+    if c == "LV":
+        for r in csv.DictReader((D / "baltic_lv_daily.csv").open(encoding="utf-8")):
+            if r["nav"] and float(r["nav"]) > 0:
+                k = (r["pillar"], r["name"].strip())
+                ser[k].append((r["date"], float(r["nav"]), float(r["assets_eur"]) if r["assets_eur"] else None, int(r["participants"]) if r["participants"] else None))
+                mgr[k] = _lv_mgr(r["provider"])
+    else:
+        meta = {(r["pillar"], r["fund_id"]): r["fund"].strip() for r in csv.DictReader((D / "baltic_ee_meta.csv").open(encoding="utf-8"))}
+        for r in csv.DictReader((D / "baltic_ee.csv").open(encoding="utf-8")):
+            if r["nav"] and float(r["nav"]) > 0:
+                n = meta.get((r["pillar"], r["fund_id"]), r["fund_id"])
+                k = (r["pillar"], n)
+                ser[k].append((r["date"], float(r["nav"]), float(r["net_assets"]) if r["net_assets"] else None, int(r["investors"]) if r["investors"] else None))
+                mgr[k] = next((x for x in EE_PROV if n.lower().startswith(x.lower())), n.split()[0])
+    last_all = max(p[-1][0] for p in ser.values() for _ in [p.sort()]) if ser else "2000-01-01"
+    qe = lambda y, q: date(y, 3 * q, 31 if q in (1, 4) else 30).isoformat()
+    def at(pts, ds, d, lim=10):                    # paskutinis taškas ≤ d, ne senesnis nei lim d.
+        i = bisect_right(ds, d) - 1
+        if i < 0 or (date.fromisoformat(d) - date.fromisoformat(ds[i])).days > lim:
+            return None
+        return pts[i]
+    def back(d, months):
+        y, m = int(d[:4]), int(d[5:7]) - months
+        while m <= 0:
+            y, m = y - 1, m + 12
+        return (date(y + (m == 12), m % 12 + 1, 1) - date.resolution).isoformat()
+    out = {"c": c}
+    for pl in ("II", "III"):
+        keys = sorted(k for k in ser if k[0] == pl)
+        if not keys:
+            continue
+        first = min(ser[k][0][0] for k in keys)
+        dates, y, q = [], int(first[:4]), (int(first[5:7]) + 2) // 3
+        while qe(y, q) <= last_all:
+            if qe(y, q) >= first:
+                dates.append(qe(y, q))
+            q += 1
+            if q > 4:
+                y, q = y + 1, 1
+        di = {d: i for i, d in enumerate(dates)}
+        gids = [g for g in [x[0] for x in PGRP[c]] if any(gmap.get(k) == g for k in keys)]
+        groups = [[g, next(lt for x, lt, en in PGRP[c] if x == g)] for g in gids]
+        F, rows = [], []
+        for k in keys:
+            g = gmap.get(k)
+            if g not in gids:
+                continue
+            pts = ser[k]; ds = [p[0] for p in pts]
+            fid = len(F); F.append([mgr[k], k[1], gids.index(g)])
+            for d in dates:
+                p = at(pts, ds, d)
+                if not p or not p[2]:
+                    continue
+                def r(months, ann):
+                    b = at(pts, ds, back(d, months), 10)
+                    if not b:
+                        return None
+                    x = p[1] / b[1]
+                    return round(((x ** (12 / months)) - 1 if ann else x - 1) * 100, 2)
+                ye = at(pts, ds, f"{int(d[:4]) - 1}-12-31", 10)
+                ytd = round((p[1] / ye[1] - 1) * 100, 2) if ye else None
+                mr = [at(pts, ds, back(d, m), 10) for m in range(36, -1, -1)]
+                std = None
+                if all(mr):
+                    rr = [mr[i + 1][1] / mr[i][1] - 1 for i in range(36)]
+                    mu = sum(rr) / 36
+                    std = round(math.sqrt(sum((x - mu) ** 2 for x in rr) / 35) * math.sqrt(12) * 100, 2)
+                rows.append([di[d], fid, p[3], round(p[2] / 1e6, 3), ytd, r(12, False), r(36, True), r(60, True), None, None, None, std, None,
+                             r(3, False), r(120, True), r(180, True), None, None])
+        avgs = []
+        for d in dates:
+            i = di[d]
+            rs = [x for x in rows if x[0] == i]
+            for g in [-1] + list(range(len(gids))):
+                sel = [x for x in rs if g < 0 or F[x[1]][2] == g]
+                def w(col):
+                    v = [(x[3], x[col]) for x in sel if x[col] is not None and x[3]]
+                    tw = sum(a for a, _ in v)
+                    return round(sum(a * b for a, b in v) / tw, 2) if tw else None
+                if sel:
+                    avgs.append([i, g, w(4), w(5), w(6), w(7), None, None, None, w(13), w(14), w(15)])
+        out[pl] = {"dates": dates, "groups": groups, "funds": F, "rows": rows, "avgs": avgs}
+    out["gl"] = {g: {"lt": lt, "en": en} for g, lt, en in PGRP[c]}
+    out["cols"] = {"row": ["d", "f", "part", "nav", "ret_ytd", "ret_1y", "ret_3y", "ret_5y", "ret_gcf", "bm_ytd", "bm_1y", "std_3y", "risky", "ret_q", "ret_10y", "ret_15y", "bar", "bik"],
+                   "avg": ["d", "g", "ret_ytd", "ret_1y", "ret_3y", "ret_5y", "ret_gcf", "bm_ytd", "bm_1y", "ret_q", "ret_10y", "ret_15y"]}
+    return out
+
+
+PGRP = {"LV": [("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–75 % akcijų", "31–75% equities"), ("e100", "Daugiau nei 75 % akcijų", "Over 75% equities"), ("zz", "Kiti plānai", "Other plans")],
+        "EE": [("r1", "Maža rizika (svyravimas iki 4 %)", "Low risk (volatility under 4%)"), ("r2", "Vidutinė rizika (4–8 %)", "Moderate risk (4–8%)"),
+               ("r3", "Didesnė rizika (8–12 %)", "Higher risk (8–12%)"), ("r4", "Didelė rizika (daugiau nei 12 %)", "High risk (over 12%)"), ("zz", "Per trumpa istorija", "Too short history")]}   # nuo mažiausios rizikos, kaip LT; „kiti“ – gale
 
 
 def perf_data(funds):

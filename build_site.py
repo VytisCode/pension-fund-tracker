@@ -150,6 +150,10 @@ def main() -> None:
         text = text.replace(f'src="{n}"', f'src="{n}?v={v}"').replace(f'href="{n}"', f'href="{n}?v={v}"')
     (DOCS / "ops.html").write_text(text, encoding="utf-8")
     build_home_split()
+    try:
+        build_ctry_home()
+    except Exception as e:              # papildoma dalis – jos klaida neturi sustabdyti svetainės
+        print("ctry_home: nepavyko:", e)
 
 
 def build_home_split() -> None:
@@ -164,6 +168,27 @@ def build_home_split() -> None:
 
 
 
+
+
+def build_ctry_home() -> None:
+    """Trys šalys viename dashboard (PERTVARKA-SALYS.md, 2 etapas): Pradžia ir Rinkos faktai Latvijai ir Estijai – tie patys index.html /
+    facts.html (mkt.js), tik su tos šalies duomenimis: DATA – data_bx_lv2.js (Rezultatų duomenys), MKT – data_mkt_lv.js (baltic.py mkt).
+    Lietuviški duomenų failai (journey, rep, earn, news) lieka įkelti, kad kodas veiktų, bet jų skirtukai šalyje pilki (common.js HOME_NA)."""
+    dec = 'DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));'
+    for page in ("index", "facts"):
+        src = (DOCS / f"{page}.html").read_text(encoding="utf-8")
+        for c in ("lv", "ee"):
+            fm, fd = DOCS / f"data_mkt_{c}.js", DOCS / f"data_bx_{c}2.js"
+            if not fm.exists() or not fd.exists():
+                continue
+            hm, hd = (hashlib.md5(x.read_bytes()).hexdigest()[:8] for x in (fm, fd))
+            t = re.sub(r'<script src="data\.js\?v=[0-9a-f]+"></script>', f'<script src="data_bx_{c}2.js?v={hd}"></script><script>{dec}</script>', src, count=1)
+            t = re.sub(r'<script src="data_mkt\.js\?v=[0-9a-f]+"></script>', f'<script src="data_mkt_{c}.js?v={hm}"></script>', t, count=1)
+            t = re.sub(r'<script src="(common\.js\?v=[0-9a-f]+)"></script>', lambda m: f'<script src="{m.group(1)}"></script><script>BXM.c = "{c.upper()}"; BXM.pl = "II"; var CTRY_COPY = "{c.upper()}"; p3Colors();</script>', t, count=1)
+            t = re.sub(r'<script src="data_cpi\.js\?v=[0-9a-f]+"></script>', '', t, count=1)   # infliacija – šalies (CPI jau data_bx_*)
+            t = t.replace(f"renderHeader('{page}',", f"renderHeader('{page}_{c}',")
+            assert f"data_mkt_{c}.js" in t and f"data_bx_{c}2.js" in t and f"'{page}_{c}'" in t and "CTRY_COPY" in t, (page, c)
+            (DOCS / f"{page}_{c}.html").write_text(t, encoding="utf-8")
 
 
 def market_index(groups: list) -> dict:
@@ -256,6 +281,9 @@ def build_baltic(ver: dict) -> None:
 
     payload = baltic.build()
     perf = payload.pop("_perf", {})
+    for c, m in (payload.pop("_mkt", None) or {}).items():      # LV/EE rinkos faktų duomenys (mkt.js formatu) – Pradžia, Rinkos faktai
+        if m:
+            (DOCS / f"data_mkt_{c.lower()}.js").write_text("const MKT=" + json.dumps(m, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     # turto pokyčio išskaidymas (LV, EE) – atskiras failas, įkeliamas tik atidarius skirtuką „Turto pokytis“ (baltic.js loadFlow)
     fl = baltic._safe(baltic.flows)
     if fl:
@@ -318,6 +346,13 @@ def build_baltic_perf(ver: dict, perf: dict, cpi: dict) -> None:
         t = t.replace("<title>", f"<title>{cn[c]} · {pl} pakopa · ")
         assert fn in t and "p3Colors" in t and "data_cpi.js" not in t
         (DOCS / f"{name}.html").write_text(t, encoding="utf-8")
+        # „Grupių grafikai“ (overview.html) tos šalies duomenimis – baltic_lv_ov.html … (PERTVARKA-SALYS.md, 2 etapas)
+        o = (DOCS / "overview.html").read_text(encoding="utf-8")
+        o2 = o.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', f'<script src="{fn}?v={h}"></script><script>{dec}</script>')
+        o2 = o2.replace(f'<script src="common.js?v={ver["common.js"]}"></script>', f'<script src="common.js?v={ver["common.js"]}"></script><script>BXM.c = "{c}"; BXM.pl = "{pl}"; p3Colors();</script>')
+        o2 = o2.replace("renderHeader('overview',", f"renderHeader('{name}_ov',").replace("<title>", f"<title>{cn[c]} · {pl} pakopa · ")
+        assert fn in o2 and "p3Colors" in o2 and f"'{name}_ov'" in o2
+        (DOCS / f"{name}_ov.html").write_text(o2, encoding="utf-8")
     for pl, src in (("II", "performance.html"), ("III", "performance3.html")):     # Lietuva – tie patys duomenys kaip „Rezultatuose“
         name = f"baltic_lt{'3' if pl == 'III' else ''}"
         t = (DOCS / src).read_text(encoding="utf-8")
