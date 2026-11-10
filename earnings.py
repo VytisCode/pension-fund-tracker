@@ -79,6 +79,10 @@ def lb_quarters(mkt, pl):
     return out
 
 
+COLS = {"fm": ["month (y*12+m-1)", "fund", "gain €m", "assets at month start €m"], "fd": ["day", "fund", "unit value day before", "unit value", "assets day before €m", "estimated"],
+        "q": ["quarter", "source d|lb", "gain €m", "by manager", "assets at start €m", "LB estimate €m"]}
+
+
 def build(mkt=None):
     import aum
     import market
@@ -89,79 +93,86 @@ def build(mkt=None):
     funds = aum.build()["funds"]
     out = {}
     for pl in ("II", "III"):
-        tot = defaultdict(lambda: [0.0, 0.0, 0.0])                # diena -> [uždarbis, bazė, įvertinta bazė]
-        mgr = defaultdict(lambda: defaultdict(float))
-        mgb = defaultdict(lambda: defaultdict(float))
-        fm, fd, flist = [], [], []
-        last = max((r[0] for f in funds if f["pl"] == pl for r in daily[pl].get((f["p"], f["n"]), [])), default="2000-01-01")
-        cut = date.fromordinal(date.fromisoformat(last).toordinal() - DAILY_FUND_DAYS).isoformat()
-        qcov = defaultdict(float)                                   # ketvirtis -> kasdieniais duomenimis apimtas pradžios turtas
+        items = []
         for f in funds:
             if f["pl"] != pl:
                 continue
-            rows = [r for r in daily[pl].get((f["p"], f["n"]), []) if r[0] >= START[pl]]
+            rows = daily[pl].get((f["p"], f["n"]), [])
             pts = [(date.fromordinal(date(1970, 1, 1).toordinal() + d).isoformat(), a * 1e6) for d, a in zip(f["d"], f["a"])]
-            ds = fund_days(rows, pts)
-            if not ds:
-                continue
-            fi = len(flist)
-            mg = NAME.get(f["p"], f["p"])
-            flist.append([mg, f["n"], f["g"]])
-            mon = defaultdict(lambda: [0.0, 0.0])
-            seenq = set()
-            for d1, g, b, e, u0, u1 in ds:
-                d = wk(d1)
-                t = tot[d]
-                t[0] += g; t[1] += b; t[2] += b if e else 0
-                mgr[mg][d] += g
-                mgb[mg][d] += b
-                mm = mon[d[:7]]
-                mm[0] += g
-                if not mm[1]:
-                    mm[1] = b                                       # turtas mėnesio pradžioje (pirmos dienos bazė)
-                if qkey(d) not in seenq:
-                    seenq.add(qkey(d)); qcov[qkey(d)] += b
-                if d >= cut:
-                    fd.append([dn(d1), fi, u0, u1, round(b / 1e6, 3), int(e)])
-            for k, (g, b) in sorted(mon.items()):
-                fm.append([int(k[:4]) * 12 + int(k[5:7]) - 1, fi, round(g / 1e6, 4), round(b / 1e6, 2)])
-        days = sorted(tot)
-        dd, prev = [], 0
-        for d in days:
-            dd.append(dn(d) - prev); prev = dn(d)
-        provs = sorted(mgr)
-        # ketvirčiai: kasdieniai, jei apima ≥ 90 % LB pradžios turto, kitaip – LB įvertis
-        lbq = lb_quarters(mkt, pl)
-        qs = []
-        for q in sorted(set(lbq) | {qkey(d) for d in days}):
-            lb = lbq.get(q, {})
-            lb_base = sum(b for _, b in lb.values())
-            dg = {p: sum(v for d, v in mgr[p].items() if qkey(d) == q) for p in provs}
-            in_q = [d for d in days if qkey(d) == q]
-            full = in_q and (not lb_base or qcov[q] >= MIN_COVER * lb_base) and in_q[0][5:] <= f"{['01', '04', '07', '10'][int(q[-1]) - 1]}-10"
-            if full:
-                qs.append([q, "d", round(sum(tot[d][0] for d in in_q) / 1e6, 3), {p: round(v / 1e6, 3) for p, v in dg.items() if v},
-                           round(qcov[q] / 1e6, 1), round(sum(lb[p][0] for p in lb) / 1e6, 3) if lb else None])
-            elif lb:
-                lmg = defaultdict(float)
-                for p, (g, b) in lb.items():
-                    lmg[p] += g
-                qs.append([q, "lb", round(sum(lmg.values()) / 1e6, 3), {p: round(v / 1e6, 3) for p, v in lmg.items()}, round(lb_base / 1e6, 1), None])
-        run = 0                                                     # dienų rodinys – nuo paskutinės nepertrauktos kasdienių ketvirčių sekos
-        for i in range(len(qs) - 1, -1, -1):
-            if qs[i][1] != "d":
-                break
-            run = i
-        q0 = qs[run][0]
-        ds = dn(f"{q0[:4]}-{int(q0[-1]) * 3 - 2:02d}-01")
-        out[pl] = {"ds": ds, "dd": dd, "g": [round(tot[d][0] / 1e6, 3) for d in days], "b": [round(tot[d][1] / 1e6, 1) for d in days],
-                   "e": [round(tot[d][2] / tot[d][1], 2) if tot[d][1] else 0 for d in days],
-                   "m": {p: [round(mgr[p].get(d, 0) / 1e6, 4) for d in days] for p in provs},
-                   "mb": {p: [round(mgb[p].get(d, 0) / 1e6, 1) for d in days] for p in provs},
-                   "funds": flist, "fm": fm, "fd": fd, "q": qs}
-    out["cols"] = {"fm": ["month (y*12+m-1)", "fund", "gain €m", "assets at month start €m"], "fd": ["day", "fund", "unit value day before", "unit value", "assets day before €m", "estimated"],
-                   "q": ["quarter", "source d|lb", "gain €m", "by manager", "assets at start €m", "LB estimate €m"]}
+            items.append((NAME.get(f["p"], f["p"]), f["n"], f["g"], rows, pts))
+        out[pl] = pillar(items, lb_quarters(mkt, pl), START[pl])
+    out["cols"] = COLS
     return out
+
+
+def pillar(items, lbq, start):
+    """items [(valdytojas, fondas, grupė, kasdienės eilutės [(data, vv, turtas|None)], turto taškai [(data, €)])], lbq – lb_quarters() arba {}.
+    Naudoja ir Latvija bei Estija (baltic.py earn: kasdienis turtas, LB įverčio nėra)."""
+    tot = defaultdict(lambda: [0.0, 0.0, 0.0])                # diena -> [uždarbis, bazė, įvertinta bazė]
+    mgr = defaultdict(lambda: defaultdict(float))
+    mgb = defaultdict(lambda: defaultdict(float))
+    fm, fd, flist = [], [], []
+    last = max((r[0] for it in items for r in it[3]), default="2000-01-01")
+    cut = date.fromordinal(date.fromisoformat(last).toordinal() - DAILY_FUND_DAYS).isoformat()
+    qcov = defaultdict(float)                                   # ketvirtis -> kasdieniais duomenimis apimtas pradžios turtas
+    for mg, name, grp, rows, pts in items:
+        rows = [r for r in rows if r[0] >= start]
+        ds = fund_days(rows, pts)
+        if not ds:
+            continue
+        fi = len(flist)
+        flist.append([mg, name, grp])
+        mon = defaultdict(lambda: [0.0, 0.0])
+        seenq = set()
+        for d1, g, b, e, u0, u1 in ds:
+            d = wk(d1)
+            t = tot[d]
+            t[0] += g; t[1] += b; t[2] += b if e else 0
+            mgr[mg][d] += g
+            mgb[mg][d] += b
+            mm = mon[d[:7]]
+            mm[0] += g
+            if not mm[1]:
+                mm[1] = b                                       # turtas mėnesio pradžioje (pirmos dienos bazė)
+            if qkey(d) not in seenq:
+                seenq.add(qkey(d)); qcov[qkey(d)] += b
+            if d >= cut:
+                fd.append([dn(d1), fi, u0, u1, round(b / 1e6, 3), int(e)])
+        for k, (g, b) in sorted(mon.items()):
+            fm.append([int(k[:4]) * 12 + int(k[5:7]) - 1, fi, round(g / 1e6, 4), round(b / 1e6, 2)])
+    days = sorted(tot)
+    dd, prev = [], 0
+    for d in days:
+        dd.append(dn(d) - prev); prev = dn(d)
+    provs = sorted(mgr)
+    # ketvirčiai: kasdieniai, jei apima ≥ 90 % LB pradžios turto, kitaip – LB įvertis
+    qs = []
+    for q in sorted(set(lbq) | {qkey(d) for d in days}):
+        lb = lbq.get(q, {})
+        lb_base = sum(b for _, b in lb.values())
+        dg = {p: sum(v for d, v in mgr[p].items() if qkey(d) == q) for p in provs}
+        in_q = [d for d in days if qkey(d) == q]
+        full = in_q and (not lb_base or qcov[q] >= MIN_COVER * lb_base) and in_q[0][5:] <= f"{['01', '04', '07', '10'][int(q[-1]) - 1]}-10"
+        if full:
+            qs.append([q, "d", round(sum(tot[d][0] for d in in_q) / 1e6, 3), {p: round(v / 1e6, 3) for p, v in dg.items() if v},
+                       round(qcov[q] / 1e6, 1), round(sum(lb[p][0] for p in lb) / 1e6, 3) if lb else None])
+        elif lb:
+            lmg = defaultdict(float)
+            for p, (g, b) in lb.items():
+                lmg[p] += g
+            qs.append([q, "lb", round(sum(lmg.values()) / 1e6, 3), {p: round(v / 1e6, 3) for p, v in lmg.items()}, round(lb_base / 1e6, 1), None])
+    run = 0                                                     # dienų rodinys – nuo paskutinės nepertrauktos kasdienių ketvirčių sekos
+    for i in range(len(qs) - 1, -1, -1):
+        if qs[i][1] != "d":
+            break
+        run = i
+    q0 = qs[run][0] if qs else qkey(last)
+    ds = dn(f"{q0[:4]}-{int(q0[-1]) * 3 - 2:02d}-01")
+    return {"ds": ds, "dd": dd, "g": [round(tot[d][0] / 1e6, 3) for d in days], "b": [round(tot[d][1] / 1e6, 1) for d in days],
+            "e": [round(tot[d][2] / tot[d][1], 2) if tot[d][1] else 0 for d in days],
+            "m": {p: [round(mgr[p].get(d, 0) / 1e6, 4) for d in days] for p in provs},
+            "mb": {p: [round(mgb[p].get(d, 0) / 1e6, 1) for d in days] for p in provs},
+            "funds": flist, "fm": fm, "fd": fd, "q": qs}
 
 
 if __name__ == "__main__":

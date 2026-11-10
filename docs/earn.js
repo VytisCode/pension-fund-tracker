@@ -54,7 +54,7 @@ addStrings({ eu: {
 const EUS = { pl: 'II', sc: '', gr: 'd', per: '3m' };
 try { Object.assign(EUS, JSON.parse(localStorage.getItem('euS') || '{}')); } catch (e) {}
 const euSave = () => { try { localStorage.setItem('euS', JSON.stringify(EUS)); } catch (e) {} };
-const EU_REFORM = dayOf('2026-01-01');
+const EU_REFORM = typeof CTRY_COPY !== 'undefined' ? Infinity : dayOf('2026-01-01');   // LV/EE (facts_lv/ee) – Lietuvos reformos riba netaikoma
 const euCache = {};
 
 function euDays(pl) {                                  // dienų numeriai iš skirtumų
@@ -166,7 +166,7 @@ function renderEarn() {
       text: t.sAvg(who, y, yS.n ? yS.g / yS.n : 0, py, pyS.n ? pyS.g / pyS.n : 0) + (pre.n > 200 && post.n ? t.sRef(who, pre.g / pre.n, post.g / post.n, preAnn, post.r) : '') },
   ];
   facts = facts.filter(Boolean);
-  if (oneBefore) facts.push({ h: t.kOne, v: oneNow, plain: true, sub: `2025-12-31: ${mMn(oneBefore)}`, text: t.sOne(ld, oneNow, iso(before.d), oneBefore) });
+  if (oneBefore && EU_REFORM < Infinity) facts.push({ h: t.kOne, v: oneNow, plain: true, sub: `2025-12-31: ${mMn(oneBefore)}`, text: t.sOne(ld, oneNow, iso(before.d), oneBefore) });
   const ests = L.e > 0.005 ? `<p class="note">${t.estN(pctPlain(L.e * 100, 0))}</p>` : '';
   const kp = `<div class="kpis eukp">${facts.map((f, i) => `<div class="kpi"><span>${hEsc(f.h)}</span><b class="${f.plain ? '' : mCls(f.v)}">${f.plain ? mMn(f.v) : mSMn(f.v)}</b><small>${f.r != null ? pct(f.r) : hEsc(f.sub || '')}</small></div>`).join('')}</div>`;
   const says = `<ul class="eusay">${facts.map((f, i) => `<li>${hEsc(f.text)} <button type="button" class="btn" data-eucp="${i}">${T().copy}</button></li>`).join('')}</ul>`;

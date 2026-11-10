@@ -184,6 +184,10 @@ def build_ctry_home() -> None:
             hm, hd = (hashlib.md5(x.read_bytes()).hexdigest()[:8] for x in (fm, fd))
             t = re.sub(r'<script src="data\.js\?v=[0-9a-f]+"></script>', f'<script src="data_bx_{c}2.js?v={hd}"></script><script>{dec}</script>', src, count=1)
             t = re.sub(r'<script src="data_mkt\.js\?v=[0-9a-f]+"></script>', f'<script src="data_mkt_{c}.js?v={hm}"></script>', t, count=1)
+            fe = DOCS / f"data_earn_{c}.js"
+            if fe.exists():
+                he = hashlib.md5(fe.read_bytes()).hexdigest()[:8]
+                t = re.sub(r'<script src="data_earn\.js\?v=[0-9a-f]+"></script>', f'<script src="data_earn_{c}.js?v={he}"></script>', t, count=1)
             t = re.sub(r'<script src="(common\.js\?v=[0-9a-f]+)"></script>', lambda m: f'<script src="{m.group(1)}"></script><script>BXM.c = "{c.upper()}"; BXM.pl = "II"; var CTRY_COPY = "{c.upper()}"; p3Colors();</script>', t, count=1)
             t = re.sub(r'<script src="data_cpi\.js\?v=[0-9a-f]+"></script>', '', t, count=1)   # infliacija – šalies (CPI jau data_bx_*)
             t = t.replace(f"renderHeader('{page}',", f"renderHeader('{page}_{c}',")
@@ -281,6 +285,9 @@ def build_baltic(ver: dict) -> None:
 
     payload = baltic.build()
     perf = payload.pop("_perf", {})
+    for c, m in (payload.pop("_earn", None) or {}).items():     # LV/EE „Uždarbis eurais“ (baltic.py earn)
+        if m:
+            (DOCS / f"data_earn_{c.lower()}.js").write_text("const EARN=" + json.dumps(m, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     for c, m in (payload.pop("_mkt", None) or {}).items():      # LV/EE rinkos faktų duomenys (mkt.js formatu) – Pradžia, Rinkos faktai
         if m:
             (DOCS / f"data_mkt_{c.lower()}.js").write_text("const MKT=" + json.dumps(m, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")

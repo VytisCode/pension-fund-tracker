@@ -559,7 +559,8 @@ def build() -> dict:
         if f["c"] in ("LV", "EE"):
             gmap.setdefault(f["c"], {})[(f["pl"], f["n"])] = (f["cg"] if f["c"] == "LV" else f.get("risk")) or "zz"
     mk = {c: _safe(lambda c=c: mkt(c, gmap.get(c, {}))) for c in ("LV", "EE")}
-    return {"_mkt": mk, "funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "sw": _safe(lv_switch), "_perf": perf}
+    ek = {c: _safe(lambda c=c: earn(c, gmap.get(c, {}))) for c in ("LV", "EE")}
+    return {"_mkt": mk, "_earn": ek, "funds": sorted(funds, key=lambda f: (f["c"], f["pl"], f["m"], f["n"])), "tot": tot, "rf": rf, "cpi": hicp(), "jr": jr(), "sh": _safe(shares), "mv": _safe(vsaa_moves), "sw": _safe(lv_switch), "_perf": perf}
 
 
 def flows():
@@ -639,14 +640,8 @@ def flows():
     return out
 
 
-def mkt(c, gmap):
-    """Rinkos faktų duomenys Latvijai ir Estijai tuo pačiu formatu kaip Lietuvos market.py (docs/data_mkt_lv.js, data_mkt_ee.js →
-    tas pats mkt.js: Ketvirčio faktai, Rinka laike, Fondai pagal grupes, II ir III pakopa; PERTVARKA-SALYS.md 2 etapas).
-    Lietuvoje skaičiai – LB ketvirčio failai; čia – iš kasdienių duomenų ketvirčio pabaigoje (paskutinė turima diena ne senesnė nei 10 d.):
-    dalyviai, grynieji aktyvai, grąžos iš vieneto vertės (nuo metų pradžios, 1 m., 3/5/10/15 m. – metinės), ketvirčio grąža,
-    3 m. svyravimas (mėnesio grąžų standartinis nuokrypis × √12). Grupių vidurkiai – svertiniai fondų turtu ketvirčio pabaigoje (kaip LB).
-    gmap: {(pakopa, pavadinimas): grupės raktas} – tos pačios grupės kaip „Rezultatuose“."""
-    from bisect import bisect_right
+def _series(c):
+    """Kasdienės eilutės {(pakopa, fondas): [(data, vv, turtas €, dalyviai)]} ir valdytojai – mkt() ir earn()."""
     ser, mgr = defaultdict(list), {}
     if c == "LV":
         for r in csv.DictReader((D / "baltic_lv_daily.csv").open(encoding="utf-8")):
@@ -662,6 +657,38 @@ def mkt(c, gmap):
                 k = (r["pillar"], n)
                 ser[k].append((r["date"], float(r["nav"]), float(r["net_assets"]) if r["net_assets"] else None, int(r["investors"]) if r["investors"] else None))
                 mgr[k] = next((x for x in EE_PROV if n.lower().startswith(x.lower())), n.split()[0])
+    return ser, mgr
+
+
+def earn(c, gmap):
+    """„Uždarbis eurais“ Latvijai ir Estijai (docs/data_earn_lv.js, data_earn_ee.js → tas pats earn.js; PERTVARKA-SALYS.md 3 etapas):
+    tas pats earnings.pillar() kaip Lietuvai – fondo dienos uždarbis = turtas ankstesnę dieną × vieneto vertės pokytis; turtas kasdienis
+    (manapensija.lv, pensionikeskus.ee), todėl įverčių ir LB ketvirčių nėra."""
+    import earnings
+    ser, mgr = _series(c)
+    out = {}
+    for pl in ("II", "III"):
+        items = []
+        for k in sorted(x for x in ser if x[0] == pl):
+            pts = sorted(ser[k])
+            rows = [(d, u, a) for d, u, a, _ in pts]
+            items.append((mgr[k], k[1], gmap.get(k, "zz"), rows, [(d, a) for d, u, a, _ in pts if a]))
+        if items:
+            out[pl] = earnings.pillar(items, {}, earnings.START[pl])
+    out["cols"] = earnings.COLS
+    out["c"] = c
+    return out
+
+
+def mkt(c, gmap):
+    """Rinkos faktų duomenys Latvijai ir Estijai tuo pačiu formatu kaip Lietuvos market.py (docs/data_mkt_lv.js, data_mkt_ee.js →
+    tas pats mkt.js: Ketvirčio faktai, Rinka laike, Fondai pagal grupes, II ir III pakopa; PERTVARKA-SALYS.md 2 etapas).
+    Lietuvoje skaičiai – LB ketvirčio failai; čia – iš kasdienių duomenų ketvirčio pabaigoje (paskutinė turima diena ne senesnė nei 10 d.):
+    dalyviai, grynieji aktyvai, grąžos iš vieneto vertės (nuo metų pradžios, 1 m., 3/5/10/15 m. – metinės), ketvirčio grąža,
+    3 m. svyravimas (mėnesio grąžų standartinis nuokrypis × √12). Grupių vidurkiai – svertiniai fondų turtu ketvirčio pabaigoje (kaip LB).
+    gmap: {(pakopa, pavadinimas): grupės raktas} – tos pačios grupės kaip „Rezultatuose“."""
+    from bisect import bisect_right
+    ser, mgr = _series(c)
     last_all = max(p[-1][0] for p in ser.values() for _ in [p.sort()]) if ser else "2000-01-01"
     qe = lambda y, q: date(y, 3 * q, 31 if q in (1, 4) else 30).isoformat()
     def at(pts, ds, d, lim=10):                    # paskutinis taškas ≤ d, ne senesnis nei lim d.
@@ -753,6 +780,13 @@ def perf_data(funds):
             if not fs:
                 continue
             ser = {f["id"]: f.get("full") or f["pts"] for f in fs}
+            if c == "LV":                   # 2026-11-10: kasdienės manapensija.lv vertės (baltic_lv_daily.csv, €) vietoj retų (~kas 9–18 d., ×100) –
+                lvd = _series("LV")[0]      # kitaip „Šie metai“ prasidėdavo ne nuo gruodžio 31 d.; anksčiau už kasdienes – senos ÷ 100
+                for f in fs:
+                    dk = lvd.get((pl, f["n"]))
+                    if dk:
+                        dp = [(day(d), u) for d, u, _, _ in sorted(dk)]
+                        ser[f["id"]] = [(x, y / 100) for x, y in ser[f["id"]] if x < dp[0][0]] + dp
             top = max(v[-1][0] for v in ser.values())
             fs = [f for f in fs if ser[f["id"]][-1][0] > top - 45]
             key = (lambda f: f["cg"] or "zz") if c == "LV" else (lambda f: f["risk"] or "zz")
@@ -774,7 +808,7 @@ def perf_data(funds):
             last = max(ser[f["id"]][-1][0] for f in fs)
             n3 = [len([p for p in ser[f["id"]] if p[0] > last - 1096]) / 3 for f in fs if ser[f["id"]][0][0] < last - 1096]
             ppy = sorted(n3)[len(n3) // 2] if n3 else 252
-            out[(c, pl)] = {"providers": provs, "groups": groups, "ppy": round(ppy, 1), "stale": 20 if c == "LV" else 5}
+            out[(c, pl)] = {"providers": provs, "groups": groups, "ppy": round(ppy, 1), "stale": 5}
     return out
 
 

@@ -81,7 +81,7 @@ function inPrepare() {
     for (let i = 1; i < f.d.length; i++) {
       const d0 = f.d[i - 1], d1 = f.d[i], a0 = f.a[i - 1], a1 = f.a[i], u0 = uv(d0), u1 = uv(d1);
       if (u0 == null || u1 == null) continue;
-      const r = u1 / u0 - 1, e = d1 - d0 <= 7 ? a0 * r : r * (a0 + a1 / (1 + r)) / 2;
+      const r = u1 / u0 - 1, m1 = (f.mg || {})[d1] || 0, e = d1 - d0 <= 7 ? a0 * r : r * (a0 + (a1 - m1) / (1 + r)) / 2;   // m1 – sujungimu gautas turtas (LV/EE) uždarbio neneša
       iv.push([d0, d1, e, a1 - a0 - e - ((f.mg || {})[d1] || 0), (payDay[inKey(f.n)] || {})[d1] || 0]);   // mg – LV/EE fondų sujungimai (ne srautas)
     }
     return { n: f.n, p: f.p, g: f.g, d: f.d, a: f.a, u, iv };
