@@ -144,7 +144,7 @@ function renderHeader(active, onLang) {
   { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
     const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(/\.html/.test(o.dataset.off) ? o.dataset.off : `${o.dataset.off}.html${location.hash}`); }
   if (tabGroupOf(active) && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
-  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="${ctryHome(PCTRY)}"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a><div class="ctry" id="ctry" role="group"></div>
+  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="${ctryHome(PCTRY)}"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a><div class="ctry" id="ctry" role="group"></div><div class="ctry plsw" id="plSw" role="group" hidden></div>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
@@ -182,7 +182,7 @@ function renderHeader(active, onLang) {
   const side = document.createElement('aside');
   side.className = 'side'; side.id = 'side';
   side.innerHTML = `<button class="side-tg" type="button" id="sideTg" aria-controls="side">${svgI(CHEV_L)}<span class="nl"></span></button>`
-    + `<div class="nav">${SECTIONS.map(s => `<a ${secLnk(s)} data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`
+    + `<div class="nav">${SECTIONS.map(s => (s.id === 'jr' ? `<div class="nav-grp">${{ lt: 'Kita', en: 'More', lv: 'Cits', et: 'Muu' }[ulang] || 'More'}</div>` : '') + `<a ${secLnk(s)} data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`
       + (s === sec && s.pages.length > 1 ? `<div class="side-sub">${subs(s).map(p => `<a ${lnk(p)} data-p="${p}"></a>`).join('')}</div>` : '')).join('')}`
     + `<a href="how.html" data-s="how" class="nav-about">${svgI(NAV_ICONS.how)}<span class="nl"></span></a><a href="apie.html" data-s="about" class="nav-about nav-about2">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`;
   const scrim = document.createElement('div'); scrim.className = 'side-scrim'; scrim.hidden = true;
@@ -1732,7 +1732,27 @@ function pillQ(t, cols) {
     srt.slice(0, k).forEach(([td]) => mark(td, 'pq-g')); srt.slice(-k).forEach(([td]) => mark(td, 'pq-r'));
   }));
 }
-if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); cardHead(); sortScan(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
+/* II | III jungiklis viršutinėje juostoje (maketas 8): rodomas tik puslapiuose, kurie turi kitos pakopos atitikmenį */
+function plState() {
+  const p = location.pathname.split('/').pop() || 'index.html', h = location.hash;
+  let m;
+  if ((m = /^(performance|baltic_(?:lv|ee|lt))(3?)\.html$/.exec(p))) return { cur: m[2] ? 'III' : 'II', go: x => { location.href = m[1] + (x === 'III' ? '3' : '') + '.html' + h; } };
+  if (p === 'overview.html' || p === 'pillar3.html') return { cur: p === 'pillar3.html' ? 'III' : 'II', go: x => { location.href = (x === 'III' ? 'pillar3' : 'overview') + '.html' + h; } };
+  if (p === 'baltic.html' && /[#&]c=(LV|EE)/.test(h)) return { cur: /pl=III/.test(h) ? 'III' : 'II', go: x => { location.hash = /pl=I+/.test(h) ? h.replace(/pl=I+/, 'pl=' + x) : h + '&pl=' + x; } };
+  if (typeof MS !== 'undefined' && typeof mkRender === 'function' && MS.pl && document.querySelector('[data-tab="mg"]:not([hidden]), [data-tab="mk"]:not([hidden]), [data-tab="qf"]:not([hidden]), [data-tab="fd"]:not([hidden])'))
+    return { cur: MS.pl, go: x => { MS.pl = x; if (typeof mkSave === 'function') mkSave(); mkRender(); } };
+  return null;
+}
+function plSw() {
+  const el = document.getElementById('plSw'); if (!el) return; const st = plState();
+  if (!st) { el.hidden = true; return; } el.hidden = false;
+  const L = { lt: 'pakopa', en: 'pillar', lv: 'līmenis', et: 'sammas' }[typeof ulang === 'string' ? ulang : 'lt'] || 'pillar';
+  const html = ['II', 'III'].map(x => `<a href="#" data-pl="${x}" aria-pressed="${x === st.cur ? 'true' : 'false'}" title="${x} ${L}">${x}</a>`).join('');
+  if (el.innerHTML !== html) el.innerHTML = html;
+}
+document.addEventListener('click', e => { const a = e.target.closest('#plSw a[data-pl]'); if (!a) return; e.preventDefault(); const st = plState(); if (st && a.dataset.pl !== st.cur) st.go(a.dataset.pl); setTimeout(plSw, 50); });
+addEventListener('hashchange', () => setTimeout(plSw, 50));
+if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); cardHead(); sortScan(); plSw(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
 
 /* ---------- Žodynėlis (auditas #66) ----------
    Užvedus pelę (telefone – palietus) ant lentelės stulpelio ar KPI pavadinimo su terminu rodomas paaiškinimas.
