@@ -651,21 +651,21 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
    vienas šriftas (Inter), švelnūs šešėliai. Tik ekranui – spausdinimo dizainai nesikeičia. ===== */
 @media screen {
   :root[data-design="v2"] {
-    --surface: #f4f2ee; --card: #ffffff; --line: #e6e2db; --text: #15202e; --text-2: #4b5664; --text-3: #7f8790;
-    --grid: #ece9e3; --axis: #b9bcc1; --accent: #1f3a5f; --on-accent: #ffffff; --hover: #eef1f5; --warn: #9a6a1c; --dpos: #2e7d4f; --dneg: #b4472e;
-    --v2-shadow: 0 1px 2px rgba(21,32,46,.04), 0 8px 24px -12px rgba(21,32,46,.16); --v2-gold: #a8792a;
+    --surface: #eeebe5; --card: #ffffff; --line: #e3ded5; --text: #142033; --text-2: #485364; --text-3: #7a828d;
+    --grid: #ebe7e0; --axis: #b4b8be; --accent: #1d3a63; --on-accent: #ffffff; --hover: #f2efe9; --warn: #9a6a1c; --dpos: #2e7d4f; --dneg: #b4472e;
+    --v2-shadow: 0 1px 2px rgba(20,32,51,.05), 0 10px 28px -14px rgba(20,32,51,.22); --v2-gold: #a8792a; --v2-side: #f7f5f1;
   }
   :root[data-design="v2"][data-theme="dark"] {
-    --surface: #14171b; --card: #1c2026; --line: #2b3038; --text: #eef0f2; --text-2: #b5bcc5; --text-3: #8b939d;
-    --grid: #262b32; --axis: #4f5660; --accent: #9db7d9; --on-accent: #0f1a28; --hover: #252c35; --warn: #e0b060; --dpos: #6cc391; --dneg: #ec8a6f;
-    --v2-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6); --v2-gold: #d6ab5e;
+    --surface: #0c1320; --card: #141d2b; --line: #243145; --text: #e8edf4; --text-2: #b0bccb; --text-3: #8191a4;
+    --grid: #1b2637; --axis: #3b4a60; --accent: #8fb3e8; --on-accent: #0c1626; --hover: #1c283a; --warn: #e6b866; --dpos: #6cc391; --dneg: #ec8a6f;
+    --v2-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 10px 30px -14px rgba(0,0,0,.7); --v2-gold: #d9b26a; --v2-side: #0f1726;
   }
 }
 @media screen and (prefers-color-scheme: dark) {
   :root[data-design="v2"]:not([data-theme="light"]) {
-    --surface: #14171b; --card: #1c2026; --line: #2b3038; --text: #eef0f2; --text-2: #b5bcc5; --text-3: #8b939d;
-    --grid: #262b32; --axis: #4f5660; --accent: #9db7d9; --on-accent: #0f1a28; --hover: #252c35; --warn: #e0b060; --dpos: #6cc391; --dneg: #ec8a6f;
-    --v2-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6); --v2-gold: #d6ab5e;
+    --surface: #0c1320; --card: #141d2b; --line: #243145; --text: #e8edf4; --text-2: #b0bccb; --text-3: #8191a4;
+    --grid: #1b2637; --axis: #3b4a60; --accent: #8fb3e8; --on-accent: #0c1626; --hover: #1c283a; --warn: #e6b866; --dpos: #6cc391; --dneg: #ec8a6f;
+    --v2-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 10px 30px -14px rgba(0,0,0,.7); --v2-gold: #d9b26a; --v2-side: #0f1726;
   }
 }
 @media screen {
@@ -724,4 +724,21 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
   [data-design="v2"] .ntcbar span { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   [data-design="v2"] .ntcbar:hover span, [data-design="v2"] .ntcbar:focus-within span { white-space: normal; }
   [data-design="v2"] .ntcbar button { border: 0; background: var(--grid); border-radius: 8px; flex: none; }
+}
+@media screen {
+  [data-design="v2"] .side { background: var(--v2-side); border-right: 1px solid var(--line); }
+  [data-design="v2"] .sechero small { color: #e9d3a6; }
+  [data-design="v2"] .pagebg { display: none; }
+  [data-design="v2"] input, [data-design="v2"] select { color-scheme: inherit; }
+}
+/* Tamsi tema: vietų spalvos (rk1–rk6) tamsiais atspalviais, kad šviesus tekstas būtų įskaitomas (abu dizainai) */
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .rk1 { background: #2f6b47; color: #eaf5ee; } :root:not([data-theme="light"]) .rk2 { background: #2a4f3a; color: #e3efe7; }
+  :root:not([data-theme="light"]) .rk3 { background: #2e3f33; color: #e6ece7; } :root:not([data-theme="light"]) .rk4 { background: #463c2a; color: #f1e9da; }
+  :root:not([data-theme="light"]) .rk5 { background: #5a3428; color: #f6e4dd; } :root:not([data-theme="light"]) .rk6 { background: #7a3a27; color: #fbe9e2; }
+}
+@media screen {
+  :root[data-theme="dark"] .rk1 { background: #2f6b47; color: #eaf5ee; } :root[data-theme="dark"] .rk2 { background: #2a4f3a; color: #e3efe7; }
+  :root[data-theme="dark"] .rk3 { background: #2e3f33; color: #e6ece7; } :root[data-theme="dark"] .rk4 { background: #463c2a; color: #f1e9da; }
+  :root[data-theme="dark"] .rk5 { background: #5a3428; color: #f6e4dd; } :root[data-theme="dark"] .rk6 { background: #7a3a27; color: #fbe9e2; }
 }

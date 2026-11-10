@@ -60,6 +60,7 @@ const CAT3 = { lt: { bond: 'Obligacijų fondai', mixed: 'Mišraus investavimo fo
 const groupLabel = g => g.lbl ? g.lbl[lang] || g.lbl.lt : g.id === 'turto' ? T().turto : (CAT3[lang] || CAT3.lt)[g.id] || g.id.replace('-', '–');
 
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+const isDarkUI = () => { const t = document.documentElement.dataset.theme; return t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches); };
 /* Naujas dizainas (2026-11-10, bandomasis): tas pats turinys, kitas apvalkalas – style.css blokas [data-design="v2"]; įjungiama Įrankių meniu, prisimenama naršyklėje (?design=v2 / ?design=v1) */
 try { const q = new URLSearchParams(location.search).get('design'); if (q) localStorage.setItem('design', q); if (localStorage.getItem('design') === 'v2') document.documentElement.dataset.design = 'v2'; } catch (e) {}
 
@@ -238,7 +239,7 @@ function renderHeader(active, onLang) {
   document.getElementById('theme').addEventListener('click', () => {
     el.dataset.theme = isDark() ? 'light' : 'dark';
     try { localStorage.setItem('theme', el.dataset.theme); } catch (e) {}
-    apply();
+    apply(); if (typeof onLang === 'function') onLang();   // lentelių spalvos (heatmap) priklauso nuo temos
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
   document.getElementById('designBtn').addEventListener('click', () => {   // grafikai piešiami su spalvomis iš CSS – todėl perkraunama
@@ -390,7 +391,7 @@ const paneOn = el => { const p = el && el.closest('[data-tab]'); return p && !p.
    facts.html ir managers.html – index.html kopijos (build_site.py), kiekviename rodomi tik savi skirtukai; kiti lieka DOM'e paslėpti
    (data-off = puslapis, kuriame jie rodomi), o nuoroda į juos (#go=, #tab=) nukreipia į tą puslapį – seni adresai veikia. */
 /* Naujo dizaino šalies nuotraukos (Unsplash licencija; savininkas išrinko 2026-11-10; parsiunčia .github/workflows/fetch_images.yml) – home = viršutinė juosta */
-const CTRY_IMG = { LT: 'ctry-lt-1', LV: 'ctry-lv-1', EE: 'ctry-ee-1' };   // Pradžia ir Baltijos palyginimas – šalies panorama
+const CTRY_IMG = { LT: 'ctry-lt-2', LV: 'ctry-lv-1', EE: 'ctry-ee-1' };   // Pradžia ir Baltijos palyginimas – šalies panorama
 const SEC_IMG2 = { facts: 'sec2-facts', results: 'sec2-results', mgr: 'sec2-mgr', pf: 'sec2-pf', rep: 'sec2-rep', jr: 'sec-jr', news: 'sec2-news' };
 const PAGE_IMG2 = { aum: 'sec2-aum' };
 function secImg(id, active) {           // naujame dizaine – nauji vaizdai; senajame – kaip buvo
