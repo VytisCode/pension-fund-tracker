@@ -761,3 +761,16 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 @media screen and (prefers-color-scheme: dark) {
   [data-design="v2"]:not([data-theme="light"]) body { background: radial-gradient(1100px 650px at 18% -8%, var(--v2-glow), transparent 70%), radial-gradient(1000px 800px at 105% 110%, rgba(0,0,0,.55), transparent 70%), var(--surface); background-attachment: fixed; }
 }
+
+/* Naujas dizainas – vienodi kortelių įrankiai: grafikų (.ctools) ir lentelių (.ttools) mygtukai – ta pati rami „kapsulė“, visada matoma */
+@media screen {
+  [data-design="v2"] .ctools, [data-design="v2"] .ttools { gap: 0; padding: 2px; border-radius: 999px; background: color-mix(in srgb, var(--hover) 85%, transparent); box-shadow: inset 0 0 0 1px var(--line); opacity: .7; width: max-content; }
+  [data-design="v2"] .ttools { margin: 2px 0 6px auto; }
+  [data-design="v2"] .ctools { top: 6px; right: 6px; }
+  [data-design="v2"] :hover > .ctools, [data-design="v2"] .ctools:focus-within, [data-design="v2"] .ttools:hover, [data-design="v2"] :hover > .ttools { opacity: 1; }
+  [data-design="v2"] .ctools .btn, [data-design="v2"] .ttools .btn { background: transparent; border: 0; box-shadow: none; border-radius: 999px; padding: 2px 9px; font-size: 12px; color: var(--text-2); }
+  [data-design="v2"] .ctools .btn:hover, [data-design="v2"] .ttools .btn:hover { background: var(--card); color: var(--text); }
+  [data-design="v2"] .ttools .btn.xl, [data-design="v2"] .ctools .btn.xl { color: var(--accent); }
+  /* grafikų ašių tekstas – ramesnis, skaičiai vienodo pločio */
+  [data-design="v2"] .chart svg text, [data-design="v2"] .mchart svg text { font-variant-numeric: tabular-nums; }
+}

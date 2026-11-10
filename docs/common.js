@@ -878,6 +878,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const wide = W > 560, m = { l: opts.ml ?? 46, r: opts.mr ?? 16, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
   if (!series.length || x1 <= x0) { const t = T(), none = !nIn; el.insertAdjacentHTML('beforeend', `<p class="na state st-empty" role="status">${svgI('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', 22)}<span><b>${none ? t.stNoSel : t.stNoPer}</b><span>${none ? t.stNoSelW : t.stNoPerW}</span></span></p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
+  const V2 = document.documentElement.dataset.design === 'v2', LW = V2 ? 2.4 : 2;   // naujame dizaine – storesnės linijos, ištisinis švelnus tinklelis
   const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
   el._legend = series.map(r => { let l = ''; try { l = sLab(r); } catch (e) {} return { c: sCol(r), l, d: r.dash || '' }; }).filter(x => x.l);   // PNG legendai (chartPng)
   let lo = opts.zero === false ? Infinity : 0, hi = opts.zero === false ? -Infinity : 0;    // zero: false – ašis neprivalo apimti nulio
@@ -891,7 +892,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const add = (tag, attrs, parent = svg) => { const n = document.createElementNS(ns, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
 
   niceTicks(lo, hi).forEach(t => {
-    add('line', Object.assign({ x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 }, t === 0 ? {} : { 'stroke-opacity': 0.7, 'stroke-dasharray': '2 3' }));   // švelnesnis tinklelis (auditas #46)
+    add('line', Object.assign({ x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 }, t === 0 ? {} : V2 ? { 'stroke-opacity': 0.8 } : { 'stroke-opacity': 0.7, 'stroke-dasharray': '2 3' }));   // švelnesnis tinklelis (auditas #46)
     const tx = add('text', { x: m.l - 8, y: Y(t) + 4, 'text-anchor': 'end', fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = num(t, t % 1 ? 1 : 0) + (opts.axisUnit ?? '%');
   });
   // X ašis (auditas #25): pirma žyma – laikotarpio pradžia; toliau mėnesių pradžios žmonišku formatu („vas.“, „2026 bal.“), ilgiems laikotarpiams – metai
@@ -925,7 +926,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       q.forEach(p => els[r.provider].push(add('circle', { cx: X(p[0]).toFixed(1), cy: Y(p[1]).toFixed(1), r: 2.6, fill: sCol(r) })));
     }
     pts.forEach((p, i) => { if (i === 0 || i === pts.length - 1 || p[0] - last >= step) { path += (path ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); last = p[0]; } });
-    (els[r.provider] = els[r.provider] || []).push(add('path', Object.assign({ d: path, fill: 'none', stroke: sCol(r), 'stroke-width': 2, 'stroke-linejoin': 'miter', 'stroke-miterlimit': 2, 'stroke-linecap': 'butt' }, r.dash ? { 'stroke-dasharray': r.dash } : {})));
+    (els[r.provider] = els[r.provider] || []).push(add('path', Object.assign({ d: path, fill: 'none', stroke: sCol(r), 'stroke-width': LW, 'stroke-linejoin': 'miter', 'stroke-miterlimit': 2, 'stroke-linecap': 'butt' }, r.dash ? { 'stroke-dasharray': r.dash } : {})));
   });
   if (wide) {                                  // tiesioginės žymos dešinėje be persidengimo
     const labels = series.map(r => ({ r, y: Y(r.points[r.points.length - 1][1]) })).sort((a, b) => a.y - b.y);
@@ -986,7 +987,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       Object.keys(els).forEach(k => els[k].forEach(n => {
         const on = !id || k === id;
         n.setAttribute('opacity', on ? 1 : 0.15);
-        if (n.tagName === 'path') { n.setAttribute('stroke-width', id && on ? 3 : 2); if (id && on) n.parentNode.insertBefore(n, cross); }
+        if (n.tagName === 'path') { n.setAttribute('stroke-width', id && on ? LW + 1 : LW); if (id && on) n.parentNode.insertBefore(n, cross); }
       }));
     },
   };
