@@ -748,7 +748,7 @@ function renderMgr() {
   if (el.closest('[hidden]')) return;
   const ds = MKT[pl].dates, ser = MKP().map(m => ({ provider: m, color: mkColor(m), label: m, points: ds.map((d, i) => { const x = byMgr(pl, i)[m], T1 = totals(pl, i); return x && T1[MS.sh] ? [dayOf(d), x[MS.sh] / T1[MS.sh] * 100] : null; }).filter(Boolean) })).filter(s => s.points.length > 1);
   ser.forEach(s => { if (MS.mgr && s.provider !== MS.mgr) s.color = `color-mix(in srgb, ${s.color} 30%, transparent)`; });
-  drawLineChart(el, ser, dayOf(ds[0]), dayOf(ds[ds.length - 1]), { fmt: v => pctPlain(v, 1), mr: el.clientWidth > 560 ? 90 : 16 });
+  drawLineChart(el, ser, dayOf(ds[0]), dayOf(ds[ds.length - 1]), { fmt: v => pctPlain(v, 1) });
   document.getElementById('mgLegend').innerHTML = ser.map(s => `<span class="chip"><i style="background:${mkColor(s.provider)}"></i>${s.provider}</span>`).join(' ');
 }
 /* Valdytojų plytelės (maketas 6, savininkas 2026-11-10: „tiek kortelių, kiek valdytojų, ir valdikliai“): po vieną kiekvienam šalies valdytojui –

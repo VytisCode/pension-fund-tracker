@@ -879,7 +879,8 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
   const nIn = series.length; series = series.filter(r => r.points.length > 1);
   const W = opts.width || el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
-  const wide = W > 560, m = { l: opts.ml ?? 46, r: opts.mr ?? 16, t: opts.events && opts.events.length ? 26 : 10, b: 26 };
+  const wide = W > 560, labW = () => { const ls = series.filter(r => r.points.length > 1).map(r => String(r.label || labelOf(r.provider) || '').length); return ls.length ? Math.min(Math.round(W * 0.24), Math.round((Math.max(...ls) + 8) * 6.4 + 16)) : 16; };
+  const m = { l: opts.ml ?? 46, r: opts.mr ?? (wide ? labW() : 16), t: opts.events && opts.events.length ? 26 : 10, b: 26 };   // be nurodytos paraštės – vieta užrašams linijų galuose (maketas 9)
   if (!series.length || x1 <= x0) { const t = T(), none = !nIn; el.insertAdjacentHTML('beforeend', `<p class="na state st-empty" role="status">${svgI('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', 22)}<span><b>${none ? t.stNoSel : t.stNoPer}</b><span>${none ? t.stNoSelW : t.stNoPerW}</span></span></p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   const V2 = document.documentElement.dataset.design === 'v2', LW = V2 ? 2.4 : 2;   // naujame dizaine – storesnės linijos, ištisinis švelnus tinklelis
@@ -939,7 +940,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: sCol(l.r), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
       if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = sLab(l.r) + ' ';
-      const tv = add('tspan', { 'font-weight': 700, fill: 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1);
+      const tv = add('tspan', { 'font-weight': 700, fill: document.documentElement.dataset.design === 'v2' ? sCol(l.r) : 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1);
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
     });
@@ -1698,11 +1699,11 @@ function cardHead() {
 /* Rikiuojamos rodiklių lentelės (maketas 7, savininkas 2026-11-10 „Ok“): paspaudus stulpelio antraštę `table.metrics` eilutės rikiuojamos
    (antrą kartą – atvirkščiai, trečią – pradinė tvarka). Indeksų ir suvestinės eilutės lieka apačioje; lentelės su keliomis grupėmis (gstart) nerikiuojamos.
    Pasirinkimas prisimenamas, kol puslapis atidarytas – perpiešus lentelę pritaikomas iš naujo. */
-const SORTS = {};
+const TSORT = {};
 const sortNum = td => { const x = (td ? td.textContent : '').replace(/[\s\u00a0\u202f%€]|p\.\s?p\.|pp/g, '').replace('−', '-').replace(',', '.'); const v = parseFloat(x); return isFinite(v) && /^[-+]?[\d.]/.test(x) ? v : null; };
 function sortOk(t) { return t && t.tHead && t.tHead.rows.length === 1 && t.tBodies[0] && t.tBodies[0].rows.length > 2 && !t.querySelector('tr.gstart, [rowspan], thead [colspan]'); }
 function sortApply(t) {
-  const st = SORTS[t.id]; if (!st || !sortOk(t)) return; t._srt = st;
+  const st = TSORT[t.id]; if (!st || !sortOk(t)) return; t._srt = st;
   const tb = t.tBodies[0], rows = [...tb.rows], fix = r => /\b(idxrow|tot|avg|sum|foot)\b/.test(r.className);
   rows.forEach((r, i) => { if (r._o == null) r._o = i; });
   const mv = rows.filter(r => !fix(r)), st0 = rows.filter(fix);
@@ -1715,10 +1716,10 @@ function sortApply(t) {
 document.addEventListener('click', e => {
   const th = e.target.closest && e.target.closest('table.metrics thead th'); if (!th || e.target.closest('button, select, a, input, .info, .ik')) return;
   const t = th.closest('table'); if (!t.id || !sortOk(t)) return;
-  const c = th.cellIndex, o = SORTS[t.id]; SORTS[t.id] = { c, d: !o || o.c !== c ? 1 : o.d === 1 ? -1 : 0 };
+  const c = th.cellIndex, o = TSORT[t.id]; TSORT[t.id] = { c, d: !o || o.c !== c ? 1 : o.d === 1 ? -1 : 0 };
   sortApply(t);
 });
-function sortScan() { document.querySelectorAll('table.metrics').forEach(t => { if (sortOk(t)) { const ths = t.tHead.rows[0].cells; if (!ths[0].classList.contains('srt')) [...ths].forEach(h => { h.classList.add('srt'); h.title = h.title || (lang === 'lt' ? 'Spustelėkite – rikiuoti' : 'Click to sort'); }); if (SORTS[t.id] && t._srt !== SORTS[t.id]) sortApply(t); } }); }
+function sortScan() { document.querySelectorAll('table.metrics').forEach(t => { if (sortOk(t)) { const ths = t.tHead.rows[0].cells; if (!ths[0].classList.contains('srt')) [...ths].forEach(h => { h.classList.add('srt'); h.title = h.title || (lang === 'lt' ? 'Spustelėkite – rikiuoti' : 'Click to sort'); }); if (TSORT[t.id] && t._srt !== TSORT[t.id]) sortApply(t); } }); }
 /* spalvoti ženkleliai (maketas 7): geriausias ketvirtis grupėje – žalias, silpniausias – raudonas; tik stulpeliai, kur „daugiau“ tikrai „geriau“ */
 function pillQ(t, cols) {
   if (!t || !t.tBodies[0]) return; const blocks = []; let cur = [];

@@ -603,7 +603,7 @@ function renderOverall() {
 /* ---------- 2. fondų palyginimas ---------- */
 let chartState = null;
 P.mr = 16;                                               // dešinė paraštė: grafikas „susispaudžia“ užvedus pelę, kad tilptų legenda
-function paintChart() { const cs = chartState; if (cs) cs.ctl = drawLineChart($('chart'), cs.series, cs.x0, cs.x1, Object.assign({}, cs.opt, { mr: P.mr })); }
+function paintChart() { const cs = chartState; if (cs) cs.ctl = drawLineChart($('chart'), cs.series, cs.x0, cs.x1, Object.assign({}, cs.opt, { mr: ($('chart').clientWidth || 0) > 560 ? 150 : 16 })); }
 let mrAnim = 0;
 function animateMr(target) {
   cancelAnimationFrame(mrAnim);
@@ -1418,8 +1418,7 @@ function buildControls() {
   ['sel', '1w', '1m'].forEach(w => { const b = document.createElement('button'); b.type = 'button'; b.dataset.w = w; b.addEventListener('click', () => { P.sumWin = w; saveState(); syncSumWin(); renderSummary(); }); $('sumWin').appendChild(b); });
   ['ret', 'diff'].forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.addEventListener('click', () => { P.view = v; saveState(); syncView(); drawChart(); }); $('viewSeg').appendChild(b); });
   if (!matchMedia('(hover: none)').matches) {
-    $('chart').addEventListener('mouseenter', () => { if (($('chart').clientWidth || 0) > 560) animateMr(150); });
-    $('chart').addEventListener('mouseleave', () => animateMr(16));
+    /* maketas 9 (savininkas 2026-11-10): užrašai linijų galuose matomi visada – paraštė nebekinta užvedus pelę */
   }
   $('diffRef').addEventListener('change', e => { P.diffRef = e.target.value; saveState(); drawChart(); });
   $('resetZoom').addEventListener('click', () => { P.zoom = null; drawChart(); });
