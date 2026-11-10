@@ -234,6 +234,13 @@ def build() -> tuple:
             actions.append("Ketvirtis ką tik baigėsi. Parašykite Claude: „surink ETF sudėtis ketvirčio pabaigai“.")
     except Exception:  # noqa: BLE001
         pass
+    try:   # savininko priminimai su datomis (data/owner_reminders.csv: from,to,text) – Claude įrašo, kai susitariama
+        import csv as _csv
+        for r in _csv.DictReader((ROOT / "data" / "owner_reminders.csv").open(encoding="utf-8")):
+            if r["from"] <= today <= r["to"]:
+                actions.append(r["text"])
+    except (OSError, KeyError):
+        pass
     src = source_lines()
     if src:
         actions.append("Neveikia duomenų šaltinis (žr. apačioje).")

@@ -36,9 +36,19 @@ const I18N = {
 };
 function addStrings(en, lt) { Object.assign(I18N.en, en); Object.assign(I18N.lt, lt); }
 
-let lang = 'lt';                        // numatytoji kalba – lietuvių (auditas #28)
-try { const l = localStorage.getItem('lang'); if (l === 'en' || l === 'lt') lang = l; } catch (e) {}
-const T = () => I18N[lang];
+/* Kalbos (savininkas 2026-11-10: „reikia visų 4 kalbų“ – LT, EN, LV, ET; PERTVARKA-SALYS.md). `ulang` – sąsajos kalba; `lang` – turinio kalba
+   kode ('lt' arba 'en': latviui ir estui tai, kas dar neišversta, rodoma angliškai). I18N.lv ir I18N.et paveldi I18N.en – vertimai addStrings3(). */
+const ULANGS = ['lt', 'en', 'lv', 'et'];
+let ulang = 'lt';                       // numatytoji kalba – lietuvių (auditas #28)
+try { const l = localStorage.getItem('lang'); if (ULANGS.includes(l)) ulang = l; } catch (e) {}
+let lang = ulang === 'lt' ? 'lt' : 'en';
+I18N.lv = Object.create(I18N.en); I18N.et = Object.create(I18N.en);
+function addStrings3(lv, et) {          // vertimai į latvių ir estų kalbas; objektai papildo angliškus (ko nėra – angliškai)
+  [[I18N.lv, lv], [I18N.et, et]].forEach(([o, x]) => Object.entries(x || {}).forEach(([k, v]) => {
+    const base = I18N.en[k], own = Object.prototype.hasOwnProperty.call(o, k) ? o[k] : null;
+    o[k] = v && typeof v === 'object' && !Array.isArray(v) && base && typeof base === 'object' && !Array.isArray(base) ? Object.assign(Object.create(base), own || {}, v) : v; }));
+}
+const T = () => I18N[ulang];
 // Vienas skaičių formatas visur (auditas #31): procentai – visada 2 skaitmenys po kablelio, LT – tarpas prieš %
 const pctSfx = () => lang === 'lt' ? ' %' : '%';
 const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
@@ -120,28 +130,31 @@ function sideUI(side, scrim) {
 function renderHeader(active, onLang) {
   const h = document.getElementById('top');
   document.body.dataset.page = active;
+  PCTRY = pageCtry(active);
   if (HOME_PAGES.includes(active)) document.querySelectorAll('[data-tab]').forEach(p => { const o = TAB_HOME[p.dataset.tab]; if (o && o !== active) { p.dataset.off = o; p.hidden = true; } });
   { let k = null; try { k = new URLSearchParams(location.hash.slice(1)).get('tab'); } catch (e) {}
     const o = k && document.querySelector(`[data-tab="${k}"][data-off]`); if (o) location.replace(`${o.dataset.off}.html${location.hash}`); }
   if (tabGroupOf(active) && !document.querySelector('[data-tab]')) setTimeout(() => { if (!document.querySelector('#snav .pnav')) addSubnav([]); });
-  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="index.html"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a>
+  h.innerHTML = `<div class="hrow"><button class="btn ico menu-btn" type="button" id="menuBtn" aria-controls="side" aria-expanded="false">${svgI(MENU)}</button><a class="brand" href="${ctryHome(PCTRY)}"><img src="favicon.svg" width="28" height="28" alt=""><h1 id="title"></h1><span class="crumb" id="crumb"></span></a><div class="ctry" id="ctry" role="group"></div>
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
         <a class="btn" id="opsLink" href="ops.html"></a>
         <a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a>
         <div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div></div></div>
-      <button class="btn ico" type="button" id="lang"></button><button class="btn ico" type="button" id="theme"></button></div></div>
+      <select class="btn ico langsel" id="lang">${ULANGS.map(l => `<option value="${l}">${l.toUpperCase()}</option>`).join('')}</select><button class="btn ico" type="button" id="theme"></button></div></div>
     <div class="status"><button type="button" class="stbtn" id="stBtn" aria-expanded="false"></button><span class="sub" id="sub"></span></div>
     <div class="fresh" id="fresh" hidden></div>`;
   /* Šoninis meniu (UI atnaujinimas 2026-10-17): kompiuteryje – kairėje, suskleidžiamas iki ikonų juostos (įsimenama);
      planšetėje ir telefone – ištraukiamas mygtuku ☰. Viršuje lieka lipni juosta su skyriaus puslapiais ir skirtukais. */
   const nav = document.createElement('nav');
   nav.className = 'snav'; nav.id = 'snav';
-  const cur = PAGE_ALIAS[active] || active;
+  const cur = secPage(active);
   const sec = SECTIONS.find(s => s.pages.includes(cur));
   const subs = s => s.pages.filter(p => p !== 'ops' || active === 'ops');   // Duomenų kalendorius – įrankių meniu (kolegoms nereikalingas)
-  nav.innerHTML = sec && sec.pages.length > 1 ? `<div class="subnav">${subs(sec).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '';
+  const lnk = p => { const h = ctryHref(p, PCTRY); return h ? `href="${h}"` : `href="#" class="na" aria-disabled="true" data-na="${p}"`; };   // šalyje nesantis puslapis – pilkas
+  const secLnk = s => lnk(s.pages.find(x => ctryHref(x, PCTRY)) || s.pages[0]);
+  nav.innerHTML = sec && sec.pages.length > 1 ? `<div class="subnav">${subs(sec).map(p => `<a ${lnk(p)} data-p="${p}"></a>`).join('')}</div>` : '';
   h.after(nav);
   if (sec && SEC_IMG[sec.id]) {          // skyriaus nuotraukų juosta (auditas 2026-10-21: nuotraukos – orientacijai, ne dekoracijai)
     const st = document.createElement('div'); st.className = 'sechero'; st.style.backgroundImage = `url(img/sec-${SEC_IMG[sec.id]}.jpg)`;
@@ -151,12 +164,14 @@ function renderHeader(active, onLang) {
   const side = document.createElement('aside');
   side.className = 'side'; side.id = 'side';
   side.innerHTML = `<button class="side-tg" type="button" id="sideTg" aria-controls="side">${svgI(CHEV_L)}<span class="nl"></span></button>`
-    + `<div class="nav">${SECTIONS.map(s => `<a href="${s.pages[0]}.html" data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`
-      + (s === sec && s.pages.length > 1 ? `<div class="side-sub">${subs(s).map(p => `<a href="${p}.html" data-p="${p}"></a>`).join('')}</div>` : '')).join('')}`
+    + `<div class="nav">${SECTIONS.map(s => `<a ${secLnk(s)} data-s="${s.id}">${svgI(NAV_ICONS[s.icon])}<span class="nl"></span></a>`
+      + (s === sec && s.pages.length > 1 ? `<div class="side-sub">${subs(s).map(p => `<a ${lnk(p)} data-p="${p}"></a>`).join('')}</div>` : '')).join('')}`
     + `<a href="how.html" data-s="how" class="nav-about">${svgI(NAV_ICONS.how)}<span class="nl"></span></a><a href="apie.html" data-s="about" class="nav-about nav-about2">${svgI(NAV_ICONS.apie)}<span class="nl"></span></a></div>`;
   const scrim = document.createElement('div'); scrim.className = 'side-scrim'; scrim.hidden = true;
   document.body.prepend(side, scrim);
   sideUI(side, scrim);
+  document.addEventListener('click', e => { const a = e.target.closest('a.na[data-na]'); if (!a) return; e.preventDefault(); ctryNa(a.dataset.na, PCTRY); });
+  document.getElementById('ctry').addEventListener('click', e => { const b = e.target.closest('a[data-c]'); if (!b) return; try { localStorage.setItem('ctry', b.dataset.c); } catch (er) {} });
   const acts = document.getElementById('actions');
   if (acts) document.getElementById('tmActs').append(acts);   // puslapio veiksmų mygtukai (Kopijuoti, Excel, Spausdinti) – į meniu
   /* Spausdinimas (auditas #51): du dizainai – jaukus (kaip ekrane) ir baltas (prezentacijoms); antraštė su data ir šaltiniais */
@@ -172,40 +187,44 @@ function renderHeader(active, onLang) {
   const tmShow = on => { tmp.hidden = !on; tmb.setAttribute('aria-expanded', on); };
   const el = document.documentElement, isDark = () => el.dataset.theme === 'dark' || (!el.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
   const apply = () => {
-    el.lang = lang;
+    el.lang = ulang;
     const t = T();
     document.getElementById('title').textContent = t.siteTitle;
-    { const cp = PAGE_ALIAS[active] || active, cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : active === 'how' ? t.secNav.how : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
+    ctryRender(active);
+    { const cp = secPage(active), cs = SECTIONS.find(s => s.pages.includes(cp)), sn = cs ? t.secNav[cs.id] : active === 'apie' ? t.secNav.about : active === 'how' ? t.secNav.how : '', pn = t.subNav[cp];   // „Jūs esate čia“ (auditas 2026-10-21)
       const sh = document.getElementById('secName'); if (sh) sh.innerHTML = `${sn}${pn && pn !== sn && cs.pages.length > 1 ? ` <small>${pn}</small>` : ''}`;
       const sd = document.getElementById('secDesc'); if (sd && cs) sd.textContent = t.secDesc[cs.id] || '';
       document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
     document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
     const lb = document.getElementById('lang');
-    lb.textContent = lang === 'lt' ? 'EN' : 'LT'; lb.title = lang === 'lt' ? 'English' : 'Lietuviškai'; lb.setAttribute('aria-label', lb.title);
+    lb.value = ulang; lb.title = t.langLbl; lb.setAttribute('aria-label', t.langLbl);
+    [...lb.options].forEach(o => { o.textContent = `${o.value.toUpperCase()} – ${LANG_NAMES[o.value]}`; });
     const tb = document.getElementById('theme'), dark = isDark();
     tb.innerHTML = svgI(dark ? SUN : MOON); tb.title = dark ? t.themeLight : t.themeDark; tb.setAttribute('aria-label', tb.title);
     nav.setAttribute('aria-label', t.navLbl);
     sideLabels();
     side.querySelectorAll('.nav a[data-s]').forEach(a => {
-      a.querySelector('.nl').textContent = t.secNav[a.dataset.s]; a.title = t.secNav[a.dataset.s];
+      a.querySelector('.nl').textContent = t.secNav[a.dataset.s]; a.title = a.classList.contains('na') ? `${t.secNav[a.dataset.s]} – ${ctryWhy(a.dataset.na, PCTRY)}` : t.secNav[a.dataset.s];
       if ((sec && a.dataset.s === sec.id) || (active === 'apie' && a.dataset.s === 'about') || (active === 'how' && a.dataset.s === 'how')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     document.querySelectorAll('.subnav a, .side-sub a').forEach(a => {
       a.textContent = t.subNav[a.dataset.p];
-      if (a.dataset.p === (PAGE_ALIAS[active] || active)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      if (a.dataset.p === secPage(active)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      if (a.classList.contains('na')) a.title = ctryWhy(a.dataset.p, PCTRY);
     });
     const qb = document.getElementById('q'); qb.placeholder = t.qPh; qb.setAttribute('aria-label', t.qPh);
     { const bx = active.match(/^baltic_(lt|lv|ee)(3?)$/), cn = { lt: ['Lietuva', 'Lithuania'], lv: ['Latvija', 'Latvia'], ee: ['Estija', 'Estonia'] };   // Baltijos „Rezultatų“ kopijos – šalis ir pakopa (buvo tuščia)
-      const nm = bx ? `${cn[bx[1]][lang === 'lt' ? 0 : 1]} · ${bx[2] ? 'III' : 'II'} ${lang === 'lt' ? 'pakopa' : 'pillar'} · ${t.secNav.baltic}` : t[navKey(active)] || t.subNav[active] || t.subNav[PAGE_ALIAS[active]] || '';
+      const nm = bx ? `${cn[bx[1]][lang === 'lt' ? 0 : 1]} · ${bx[2] ? 'III' : 'II'} ${lang === 'lt' ? 'pakopa' : 'pillar'} · ${t.secNav.results}` : t[navKey(active)] || t.subNav[active] || t.subNav[PAGE_ALIAS[active]] || '';
       document.title = `${nm} · ${t.siteTitle}`; }   // savas pavadinimas kiekvienam puslapiui (auditas #26)
     document.getElementById('tmBtn').innerHTML = `⋯<span class="tml"> ${t.tools}</span>`; document.getElementById('tmBtn').title = t.tools;
     pr.querySelector('[data-p=cozy]').textContent = '🖶 ' + t.printCozy; pr.querySelector('[data-p=plain]').textContent = '🖶 ' + t.printPlain;
     document.getElementById('dlBtn').textContent = '⬇ ' + t.dlBtn; if (!document.getElementById('dlPanel').hidden) dlRender();
     freshRender();
   };
-  document.getElementById('lang').addEventListener('click', () => {
-    lang = lang === 'lt' ? 'en' : 'lt'; try { localStorage.setItem('lang', lang); } catch (e) {}
+  document.getElementById('lang').addEventListener('change', e => {
+    ulang = ULANGS.includes(e.target.value) ? e.target.value : 'lt'; lang = ulang === 'lt' ? 'lt' : 'en';
+    try { localStorage.setItem('lang', ulang); } catch (er) {}
     apply(); onLang();
   });
   document.getElementById('theme').addEventListener('click', () => {
@@ -370,8 +389,8 @@ function bxBar() {                        // šalies ir pakopos juosta (nuorodos
   const L = lang === 'lt', CN = { LT: L ? 'Lietuva' : 'Lithuania', LV: L ? 'Latvija' : 'Latvia', EE: L ? 'Estija' : 'Estonia' };
   const href = (c, pl) => { const G = bxTabs(c, pl), cur = TAB_CUR, e = G.find(x => x[1] === cur) || G.find(x => x[1] === ({ rk: 'cr', hm: 'ym', cmp: 'fund', rf: 'ov', fund: 'cmp', ym: 'hm', sum: 'rk' })[cur]) || G[0];
     return `${e[0]}.html#tab=${e[1]}${e[0] === 'baltic' ? `&c=${c}&pl=${pl}` : ''}`; };
-  el.innerHTML = `<div class="seg" role="group">${['LT', 'LV', 'EE', 'X'].map(c => `<a href="${href(c, BXM.pl)}" aria-pressed="${BXM.c === c}">${c === 'X' ? `<span class="ln">${L ? 'Šalių palyginimas' : 'Compare countries'}</span><span class="sn">${L ? 'Palyginimas' : 'Compare'}</span>` : `<span class="flag">${c}</span><span class="ln"> ${CN[c]}</span>`}</a>`).join('')}</div>`
-    + (BXM.c === 'X' ? '' : `<div class="seg" role="group">${['II', 'III'].map(p => `<a href="${href(BXM.c, p)}" aria-pressed="${BXM.pl === p}">${p} ${L ? 'pakopa' : 'pillar'}</a>`).join('')}</div>`);
+  void CN; if (typeof ctryRender === 'function') ctryRender(document.body.dataset.page);   // šalis – antraštės jungiklyje (2026-11-10)
+  el.innerHTML = (BXM.c === 'X' ? '' : `<div class="seg" role="group">${['II', 'III'].map(p => `<a href="${href(BXM.c, p)}" aria-pressed="${BXM.pl === p}">${p} ${L ? 'pakopa' : 'pillar'}</a>`).join('')}</div>`);
 }
 function groupTabs(pn) {
   const page = document.body.dataset.page, G = tabGroupOf(page); if (!G) return;
@@ -1771,6 +1790,80 @@ if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() 
 /* ---------- Skyriai, paieška ir katalogas (savininko patvirtinta struktūra 2026-10-16) ----------
    Meniu – 6 skyriai; po skyriumi – jo puslapių juosta. Paieška viršuje: tuščia – katalogas (kas yra kiekviename skyriuje
    ir ką gausi paspaudęs), su tekstu – rezultatai. Nuoroda „puslapis#go=…“ nuveda tiesiai prie lentelės ar grafiko. */
+/* ---------- Trys šalys viename dashboard (savininkas 2026-11-10, PERTVARKA-SALYS.md). Kiekvienas LT puslapis – jo atitikmuo Latvijai
+   ir Estijai: nuoroda arba null (puslapis rodomas pilkas; paspaudus – kortelė, kodėl nėra ir ką rodome vietoj). Puslapio šalis – iš puslapio:
+   baltic_lv* → LV, baltic.html → CR.c (palyginimas – null), kiti – LT. ---------- */
+const CTRYS = ['LT', 'LV', 'EE'];
+let PCTRY = 'LT';
+const LANG_NAMES = { lt: 'Lietuvių', en: 'English', lv: 'Latviešu', et: 'Eesti' };
+const bxH = (c, tab, pl = 'II') => `baltic.html#c=${c}&pl=${pl}&tab=${tab}`;
+// [LV, EE, priežastis: 'sN' – ruošiama N etape, 'data' – šalies duomenų nėra, 'all' – bendras visoms šalims]
+const CTRY_PAGES = {
+  index: [null, null, 's2'], review: [null, null, 's2'], ops: [null, null, 's2'], facts: [null, null, 's2'],
+  performance: ['baltic_lv.html', 'baltic_ee.html'], performance3: ['baltic_lv3.html', 'baltic_ee3.html'],
+  managers: [bxH('LV', 'mg'), bxH('EE', 'mg')], manager: [null, null, 's3'],
+  portfolios: [bxH('LV', 'top'), bxH('EE', 'top')], aum: [bxH('LV', 'fl'), bxH('EE', 'fl')],
+  reports: [null, null, 'data'], journey: [bxH('LV', 'jr'), bxH('EE', 'jr')], baltic: ['all'], how: ['all'], apie: ['all'],
+};
+function pageCtry(active) {
+  const m = String(active || '').match(/^baltic_(lt|lv|ee)/); if (m) return m[1].toUpperCase();
+  if (active === 'baltic') { let c = null; try { c = new URLSearchParams(location.hash.slice(1)).get('c'); } catch (e) {}
+    if (typeof CR !== 'undefined' && CR.c) c = CR.c; return c && c !== 'X' ? c : c === 'X' ? null : 'LT'; }
+  return 'LT';
+}
+function ctryHref(p, c) {               // puslapio p atitikmuo šalyje c (null – nėra)
+  if (p === 'baltic') return 'baltic.html#c=X&tab=bs';
+  if (!c || c === 'LT') return `${p}.html`;
+  const e = CTRY_PAGES[p]; if (!e) return null;
+  if (e[0] === 'all') return `${p}.html`;
+  return e[c === 'LV' ? 0 : 1] || null;
+}
+const ctryHome = c => ctryHref('index', c) || ctryHref('performance', c);
+function secPage(active) {              // kuriam LT puslapiui (meniu punktui) priklauso dabartinis puslapis
+  const m = String(active || '').match(/^baltic_(lt|lv|ee)(3?)$/); if (m) return m[2] ? 'performance3' : 'performance';
+  if (active === 'baltic') {
+    let q; try { q = new URLSearchParams(location.hash.slice(1)); } catch (e) { q = new URLSearchParams(); }
+    const c = typeof CR !== 'undefined' && CR.c ? CR.c : q.get('c'), k = typeof TAB_CUR !== 'undefined' && TAB_CUR ? TAB_CUR : q.get('tab'), pl = typeof CR !== 'undefined' && CR.pl ? CR.pl : q.get('pl');
+    if (!c || c === 'X') return 'baltic';
+    return { mg: 'managers', top: 'portfolios', fl: 'aum', jr: 'journey' }[k] || (pl === 'III' ? 'performance3' : 'performance');
+  }
+  return PAGE_ALIAS[active] && !String(active).startsWith('baltic') ? PAGE_ALIAS[active] : active;
+}
+function ctryWhy(p, c) {
+  const t = T().ctry, e = CTRY_PAGES[p] || [], why = e[2] || 'data', cn = t.names[c] || c;
+  return why === 'data' ? (t.why[p] || t.noData)(cn) : t.soon(cn, why.slice(1));
+}
+function ctryRender(active) {           // antraštės jungiklis LT | LV | EE: tas pats puslapis kitos šalies duomenimis
+  const el = document.getElementById('ctry'); if (!el) return;
+  const t = T().ctry, cur = secPage(active) === 'baltic' ? 'performance' : secPage(active), pc = pageCtry(active), hash = location.hash;
+  const keepHash = /^(performance3?|baltic_(lt|lv|ee)3?)$/.test(String(active));   // „Rezultatų“ skirtukai sutampa
+  el.setAttribute('aria-label', t.lbl);
+  el.innerHTML = CTRYS.map(c => { let h = ctryHref(cur, c), na = false;
+    if (!h) { na = true; h = ctryHref((SECTIONS.find(s => s.pages.includes(cur)) || { pages: [] }).pages.find(x => ctryHref(x, c)) || 'performance', c); }
+    if (keepHash && /^(performance3?|baltic_(lv|ee)3?)\.html$/.test(h) && /tab=/.test(hash)) h += (hash.match(/tab=[^&]+/) ? '#' + hash.match(/tab=[^&]+/)[0] : '');
+    return `<a href="${h}" data-c="${c}" aria-pressed="${pc === c}" title="${t.names[c]}${na ? ' – ' + ctryWhy(cur, c) : ''}"><span class="flag">${c}</span><span class="ln"> ${t.names[c]}</span></a>`; }).join('');
+  if (typeof markSide === 'function') markSide(active);
+}
+function markSide(active) {             // Baltijos puslapyje skirtukas keičia meniu punktą (pvz. Valdytojai → Turto pokytis)
+  const cur = secPage(active), sec = SECTIONS.find(s => s.pages.includes(cur));
+  document.querySelectorAll('#side .nav a[data-s]').forEach(a => { if (sec && a.dataset.s === sec.id) a.setAttribute('aria-current', 'page'); else if (a.dataset.s !== 'how' && a.dataset.s !== 'about') a.removeAttribute('aria-current'); });
+}
+function ctryNa(p, c) {                 // kortelė: kodėl šio puslapio šalyje nėra
+  const t = T().ctry; let d = document.getElementById('naCard');
+  if (!d) { d = document.createElement('div'); d.id = 'naCard'; d.className = 'na-card'; d.setAttribute('role', 'dialog'); document.body.append(d);
+    d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-x]')) d.hidden = true; });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') d.hidden = true; }); }
+  const nm = T().subNav[p] || T().secNav[p] || p, lt = ctryHref(p, 'LT');
+  d.innerHTML = `<div class="na-box"><h3>${hEsc(nm)} · ${hEsc(t.names[c] || c)}</h3><p>${hEsc(ctryWhy(p, c))}</p>`
+    + `<p class="na-acts"><a class="btn" href="${lt}">${hEsc(t.openLt)}</a> <button class="btn" type="button" data-x>${hEsc(t.close)}</button></p></div>`;
+  d.hidden = false; d.querySelector('[data-x]').focus();
+}
+addStrings({ langLbl: 'Language', ctry: { lbl: 'Country', names: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia' }, close: 'Close', openLt: 'Open the Lithuanian version',
+  soon: (c, n) => `${c}: this section is being prepared (stage ${n} of the plan). Until then it is shown only for Lithuania.`, noData: c => `${c} does not publish the data needed for this section.`,
+  why: { reports: c => `${c} has no equivalent of the Bank of Lithuania quarterly results files and manager report data this section is built on.` } } }, {
+  langLbl: 'Kalba', ctry: { lbl: 'Šalis', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija' }, close: 'Uždaryti', openLt: 'Atidaryti Lietuvos versiją',
+  soon: (c, n) => `${c}: ši skiltis ruošiama (${n} plano etapas). Kol kas ji rodoma tik Lietuvai.`, noData: c => `${c} neskelbia duomenų, reikalingų šiai skilčiai.`,
+  why: { reports: c => `${c}: nėra Lietuvos banko ketvirčio rezultatų failų ir valdytojų ataskaitų duomenų atitikmens, kuriais remiasi ši skiltis.` } } });
 const SECTIONS = [
   { id: 'home', icon: 'index', pages: ['index', 'review', 'ops'] },
   { id: 'facts', icon: 'facts', pages: ['facts'] },
@@ -1783,17 +1876,37 @@ const SECTIONS = [
 ];
 addStrings({
   secDesc: { home: 'What is happening in the pension fund market today', facts: 'Key market figures with sources and Excel formulas', results: 'Returns, risk and comparison of pillar II and III funds within their groups', mgr: 'Managers’ market shares, funds and achievements', pf: 'Where the funds invest and how much they manage', rep: 'Managers’ reports, fees and KID scenarios', jr: 'How much you can save and what your pension may be', baltic: 'Pension funds of Lithuania, Latvia and Estonia in one place' },
-  secNav: { home: 'Home', facts: 'Market facts', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic states', how: 'How it works', about: 'About', help: 'Help' },
-  subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III', facts: 'Market facts', managers: 'Managers', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic states' },
+  secNav: { home: 'Home', facts: 'Market facts', results: 'Results', mgr: 'Managers & funds', pf: 'Portfolios & assets', rep: 'Reports', jr: 'Retirement path', baltic: 'Baltic comparison', how: 'How it works', about: 'About', help: 'Help' },
+  subNav: { index: 'Market today', review: 'Monthly review', ops: 'Data calendar', performance: 'Pillar II', performance3: 'Pillar III', pillar3: 'Pillar III', facts: 'Market facts', managers: 'Managers', overview: 'Group charts', manager: 'Manager & fund', portfolios: 'Portfolios', aum: 'Assets (AUM)', reports: 'Reports', journey: 'Retirement path', baltic: 'Baltic comparison' },
   navOps: 'Data calendar', qPh: 'Search for a fund, metric or table…', qCat: 'Catalog – what you can find', qFound: q => `Found: “${q}”`, qNone: 'Nothing found. Try another word – or browse the catalog.',
   qOpen: 'Open →', qKind: { t: 'Table', g: 'Chart', x: 'Text', c: 'Calculator', p: 'Profile', d: 'Term', m: 'Methodology', f: 'Fund', s: 'Holding', n: 'Article' }, qNews: q => `All articles with “${q}” →`, qHint: 'Tip: press / to search',
 }, {
   secDesc: { home: 'Kas šiandien vyksta pensijų fondų rinkoje', facts: 'Svarbiausi rinkos skaičiai su šaltiniais ir Excel formulėmis', results: 'II ir III pakopos fondų grąža, rizika ir palyginimas grupėse', mgr: 'Valdytojų rinkos dalys, fondai ir pasiekimai', pf: 'Kur investuoja fondai ir kiek turto valdo', rep: 'Valdytojų ataskaitos, mokesčiai ir KID scenarijai', jr: 'Kiek galite sukaupti ir kokia gali būti pensija', baltic: 'Lietuvos, Latvijos ir Estijos pensijų fondai vienoje vietoje' },
-  secNav: { home: 'Pradžia', facts: 'Rinkos faktai', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalys', how: 'Kaip tai veikia', about: 'Apie', help: 'Pagalba' },
-  subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopa', facts: 'Rinkos faktai', managers: 'Valdytojai', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalys' },
+  secNav: { home: 'Pradžia', facts: 'Rinkos faktai', results: 'Rezultatai', mgr: 'Valdytojai ir fondai', pf: 'Portfeliai ir turtas', rep: 'Ataskaitos', jr: 'Kelias į pensiją', baltic: 'Baltijos šalių palyginimas', how: 'Kaip tai veikia', about: 'Apie', help: 'Pagalba' },
+  subNav: { index: 'Rinka šiandien', review: 'Mėnesio apžvalga', ops: 'Duomenų kalendorius', performance: 'II pakopa', performance3: 'III pakopa', pillar3: 'III pakopa', facts: 'Rinkos faktai', managers: 'Valdytojai', overview: 'Grupių grafikai', manager: 'Valdytojas ir fondas', portfolios: 'Portfeliai', aum: 'Turtas (AUM)', reports: 'Ataskaitos', journey: 'Kelias į pensiją', baltic: 'Baltijos šalių palyginimas' },
   navOps: 'Duomenų kalendorius', qPh: 'Ieškoti fondo, rodiklio ar lentelės…', qCat: 'Katalogas – ką galima rasti', qFound: q => `Rasta: „${q}“`, qNone: 'Nieko nerasta. Pabandykite kitą žodį – arba naršykite katalogą.',
   qOpen: 'Atidaryti →', qKind: { t: 'Lentelė', g: 'Grafikas', x: 'Tekstas', c: 'Skaičiuoklė', p: 'Kortelė', d: 'Terminas', m: 'Metodika', f: 'Fondas', s: 'Investicija', n: 'Straipsnis' }, qNews: q => `Visi straipsniai su „${q}“ →`, qHint: 'Patarimas: paspauskite /, kad ieškotumėte',
 });
+addStrings3({
+  siteTitle: 'Pensiju fondi', locale: 'lv-LV', langLbl: 'Valoda', tools: 'Rīki', themeDark: 'Tumšais režīms', themeLight: 'Gaišais režīms',
+  qPh: 'Meklēt fondu, rādītāju vai tabulu…', navOps: 'Datu kalendārs', dlBtn: 'Lejupielādēt datus', printCozy: 'Drukāt / PDF (kā ekrānā)', printPlain: 'Drukāt / PDF (balts, prezentācijām)',
+  sideOpen: 'Atvērt izvēlni', sideClose: 'Aizvērt izvēlni', sideCollapse: 'Sakļaut izvēlni', sideExpand: 'Izvērst izvēlni', navLbl: 'Sadaļas lapas',
+  monShort: ['janv.', 'febr.', 'marts', 'apr.', 'maijs', 'jūn.', 'jūl.', 'aug.', 'sept.', 'okt.', 'nov.', 'dec.'],
+  secNav: { home: 'Sākums', facts: 'Tirgus fakti', results: 'Rezultāti', mgr: 'Pārvaldītāji un fondi', pf: 'Portfeļi un aktīvi', rep: 'Pārskati', jr: 'Ceļš uz pensiju', baltic: 'Baltijas valstu salīdzinājums', how: 'Kā tas darbojas', about: 'Par', help: 'Palīdzība' },
+  subNav: { index: 'Tirgus šodien', review: 'Mēneša pārskats', ops: 'Datu kalendārs', performance: 'II līmenis', performance3: 'III līmenis', pillar3: 'III līmenis', facts: 'Tirgus fakti', managers: 'Pārvaldītāji', overview: 'Grupu grafiki', manager: 'Pārvaldītājs un fonds', portfolios: 'Portfeļi', aum: 'Aktīvi (AUM)', reports: 'Pārskati', journey: 'Ceļš uz pensiju', baltic: 'Baltijas valstu salīdzinājums' },
+  ctry: { lbl: 'Valsts', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Igaunija' }, close: 'Aizvērt', openLt: 'Atvērt Lietuvas versiju',
+    soon: (c, n) => `${c}: šī sadaļa tiek gatavota (plāna ${n}. posms). Līdz tam tā ir pieejama tikai Lietuvai.`, noData: c => `${c} nepublicē šai sadaļai vajadzīgos datus.`,
+    why: { reports: c => `${c}: nav Lietuvas Bankas ceturkšņa rezultātu failu un pārvaldītāju pārskatu datu analoga, uz kuriem balstās šī sadaļa.` } } }, {
+  siteTitle: 'Pensionifondid', locale: 'et-EE', langLbl: 'Keel', tools: 'Tööriistad', themeDark: 'Tume režiim', themeLight: 'Hele režiim',
+  qPh: 'Otsi fondi, näitajat või tabelit…', navOps: 'Andmekalender', dlBtn: 'Laadi andmed alla', printCozy: 'Prindi / PDF (nagu ekraanil)', printPlain: 'Prindi / PDF (valge, esitlusteks)',
+  sideOpen: 'Ava menüü', sideClose: 'Sulge menüü', sideCollapse: 'Ahenda menüü', sideExpand: 'Laienda menüü', navLbl: 'Jaotise lehed',
+  monShort: ['jaan', 'veebr', 'märts', 'apr', 'mai', 'juuni', 'juuli', 'aug', 'sept', 'okt', 'nov', 'dets'],
+  secNav: { home: 'Avaleht', facts: 'Turu faktid', results: 'Tulemused', mgr: 'Fondivalitsejad ja fondid', pf: 'Portfellid ja varad', rep: 'Aruanded', jr: 'Tee pensionini', baltic: 'Balti riikide võrdlus', how: 'Kuidas see töötab', about: 'Teave', help: 'Abi' },
+  subNav: { index: 'Turg täna', review: 'Kuu ülevaade', ops: 'Andmekalender', performance: 'II sammas', performance3: 'III sammas', pillar3: 'III sammas', facts: 'Turu faktid', managers: 'Fondivalitsejad', overview: 'Gruppide graafikud', manager: 'Fondivalitseja ja fond', portfolios: 'Portfellid', aum: 'Varad (AUM)', reports: 'Aruanded', journey: 'Tee pensionini', baltic: 'Balti riikide võrdlus' },
+  ctry: { lbl: 'Riik', names: { LT: 'Leedu', LV: 'Läti', EE: 'Eesti' }, close: 'Sulge', openLt: 'Ava Leedu versioon',
+    soon: (c, n) => `${c}: see jaotis on ettevalmistamisel (plaani ${n}. etapp). Seni on see saadaval ainult Leedu kohta.`, noData: c => `${c} ei avalda selle jaotise jaoks vajalikke andmeid.`,
+    why: { reports: c => `${c}: puudub Leedu Panga kvartalitulemuste failide ja fondivalitsejate aruannete andmete vaste, millel see jaotis põhineb.` } } });
+
 // [skyrius, puslapis, go (id arba antraštės pradžia), rūšis, Excel, LT pavadinimas, LT – ką pamatysi, EN pavadinimas, EN aprašymas, papildomi žodžiai]
 const CATALOG = [
   ['home', 'index', '', 'x', 0, 'Šiandien trumpai', 'Metų lyderis ir paskutinis, savaitės pokytis, II pakopos turtas, didžiausias skirtumas grupėje.', 'Today in brief', 'Year-to-date leader and laggard, weekly change, pillar II assets, widest gap in a group.', 'santrauka kpi lyderis'],

@@ -2,6 +2,8 @@
 
 Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `noindex`, niekur nereklamuojama). Savininkas Vytis – ne programuotojas, bendrauja lietuviškai. Jei užduotis prieštarauja taisyklėms – sustok ir paklausk.
 
+**Vykdomas projektas (2026-11-10): trys šalys viename dashboard – planas ir būsena `PERTVARKA-SALYS.md`; kiekvienoje gijoje tęsti nuo pirmo nebaigto etapo ir savininkui priminti, kuriame etape esame.** Šalių žemėlapis – `common.js` `CTRY_PAGES`, kalbos – `ulang`/`addStrings3`.
+
 ## Taisyklės
 
 1. **Tik `main` šaka.** Jokių naujų šakų ir PR (savininko sprendimas 2026-10-14 – jis kodo netikrina). Commit'ai ir push tiesiai į `main`, tik po patikros (žr. „Patikra“).

@@ -630,3 +630,18 @@ html:not(.booted) table:empty { height: 180px; width: 100%; border-radius: 10px;
 .liqx > td { background: var(--card2, rgba(127,127,127,.06)); padding: 8px 10px; }
 .liqxt { margin-top: 6px; max-width: 760px; }
 .liqxt { border-collapse: collapse; width: 100%; } .liqxt th, .liqxt td { padding: 4px 8px; text-align: right; border-bottom: 1px solid rgba(127,127,127,.18); } .liqxt .l { text-align: left; }
+
+/* Šalies jungiklis antraštėje ir pilki (šalyje nesantys) meniu punktai (2026-11-10, PERTVARKA-SALYS.md) */
+.ctry { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; flex: none; margin-left: 12px; }
+.ctry a { color: var(--text-2); padding: 5px 10px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.ctry a + a { border-left: 1px solid var(--line); }
+.ctry a[aria-pressed="true"] { background: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.ctry a[aria-pressed="true"] .flag { background: rgba(255,255,255,.22); color: inherit; }
+@media (max-width: 1440px) { .ctry .ln { display: none; } }
+@media (max-width: 560px) { .ctry { margin-left: 4px; } .ctry a { padding: 4px 7px; } }
+select.langsel { width: auto; padding: 0 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
+.na-card { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.na-card[hidden] { display: none; }
+.na-card .na-box { background: var(--card, var(--bg)); color: var(--text); border-radius: 12px; padding: 18px 20px; max-width: 460px; box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+.na-card h3 { margin: 0 0 8px; font-size: 16px; } .na-card p { margin: 0 0 10px; line-height: 1.45; } .na-card .na-acts { margin: 12px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
