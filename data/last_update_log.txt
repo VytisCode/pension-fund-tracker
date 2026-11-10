@@ -1,19 +1,4 @@
-atnaujinta iki 2026-11-06
-ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-11-06
-GOINDEX: jau atnaujinta iki 2026-11-06
-
-Vilnius: 2026-11-09 14:46, laukiama diena: 2026-11-06
-SEB: jau atnaujinta iki 2026-11-06
-SWEDBANK: jau atnaujinta iki 2026-11-06
-LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-06
-GOINDEX: jau atnaujinta iki 2026-11-06
-
-III pakopa – Vilnius: 2026-11-09 14:46, laukiama diena: 2026-11-06
-SEB: jau atnaujinta iki 2026-11-06
-SWEDBANK: jau atnaujinta iki 2026-11-06
-LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-11-06
-
-Vilnius: 2026-11-10 13:15, laukiama diena: 2026-11-09
+iama diena: 2026-11-09
   ! Artea pensija 2003-2009: netinkama data 2026-10-21 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-22 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-23 – praleista
@@ -231,4 +216,20 @@ GOINDEX: jau atnaujinta iki 2026-11-09
 III pakopa – Vilnius: 2026-11-10 14:16, laukiama diena: 2026-11-09
 ARTEA: gauta 23048 eil., nauja/pakeista 5; viskas iki 2026-11-09
 GOINDEX: jau atnaujinta iki 2026-11-09
+
+Vilnius: 2026-11-10 14:45, laukiama diena: 2026-11-09
+ARTEA: jau atnaujinta iki 2026-11-09
+ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-11-09
+GOINDEX: jau atnaujinta iki 2026-11-09
+
+Vilnius: 2026-11-10 14:46, laukiama diena: 2026-11-09
+SEB: jau atnaujinta iki 2026-11-09
+SWEDBANK: jau atnaujinta iki 2026-11-09
+LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-09
+GOINDEX: jau atnaujinta iki 2026-11-09
+
+III pakopa – Vilnius: 2026-11-10 14:46, laukiama diena: 2026-11-09
+SEB: jau atnaujinta iki 2026-11-09
+SWEDBANK: jau atnaujinta iki 2026-11-09
+LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-11-09
 
