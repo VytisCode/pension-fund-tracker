@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <title>Funded pension daily statistics — Pensionikeskus</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="author" content="name">
+    <meta name="description" content="description here">
+    <meta name="keywords" content="keywords,here">
+    <link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/ico/favicon-16x16.png">
+    <link rel="manifest" href="/static/ico/site.webmanifest">
+    <link rel="mask-icon" href="/static/ico/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/ico/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="/static/ico/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="/static/css/app.16.css" type="text/css">
+    <meta name='robots' content='max-image-preview:large' />
+<link rel="alternate" href="/statistika/ii-sammas/kogumispensioni-paevastatistika/" hreflang="et" />
+<link rel="alternate" href="/ru/%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0/ii-%d1%81%d1%82%d1%83%d0%bf%d0%b5%d0%bd%d1%8c/%d0%b4%d0%bd%d0%b5%d0%b2%d0%bd%d0%b0%d1%8f-%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0-%d0%bd%d0%b0%d0%ba%d0%be%d0%bf%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d0%b9-%d0%bf%d0%b5/" hreflang="ru" />
+<link rel="alternate" href="/en/statistics/ii-pillar/funded-pension-daily-statistics/" hreflang="en" />
+<style id='safe-svg-svg-icon-style-inline-css' type='text/css'>
+.safe-svg-cover{text-align:center}.safe-svg-cover .safe-svg-inside{display:inline-block;max-width:100%}.safe-svg-cover svg{height:100%;max-height:100%;max-width:100%;width:100%}
+
+</style>
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel="canonical" href="/en/statistics/ii-pillar/funded-pension-daily-statistics/" />
+            <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CRKPWY397V"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-CRKPWY397V');
+        </script>
+    </head>
+<body class="page-template page-template-funds-statistics-type2 page-template-funds-statistics-type2-php page page-id-5337 page-child parent-pageid-5340 site-en">
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 header-upper-row">
+                    <div class="header-logo">
+                        <a href="/en/">
+                            <img src="/static/images/Header-logo.svg" alt="Logo"/>
+                        </a>
+                    </div>
+                    <div class="header-buttons">
+                                                <button class="btn"
+                            data-toggle="dropdown"
+                            data-button="language"
+                            type="button"
+                        ><a href="/en/statistics/ii-pillar/funded-pension-daily-statistics/">English</a></button>
+                        <ul class="dropdown-menu" aria-labelledby="desktop-langs">
+                                                    <li><a href="/statistika/ii-sammas/kogumispensioni-paevastatistika/"
+                                class="dropdown-item"
+                                >Eesti</a></li>
+                                                    <li><a href="/ru/%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0/ii-%d1%81%d1%82%d1%83%d0%bf%d0%b5%d0%bd%d1%8c/%d0%b4%d0%bd%d0%b5%d0%b2%d0%bd%d0%b0%d1%8f-%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0-%d0%bd%d0%b0%d0%ba%d0%be%d0%bf%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d0%b9-%d0%bf%d0%b5/"
+                                class="dropdown-item"
+                                >Русский</a></li>
+                                                </ul>
+
+                        <button class="btn" data-button="account" type="button"><a href="https://public.pensionikeskus.ee/public/login.do?locale=eng" target="_blank">My pension account</a></button>
+                        <form action="/en/" method="get" class="d-inline">
+                        <input type="submit" class="submit-hidden" tabindex="-1" />
+                        <div class="input-helper">
+                            <input data-box="search" type="text" name="s" value="" placeholder="Search">
+                            <button type="submit"><img src="/static/images/Search.svg" alt="search"></button>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="mobile-button-helper">
+                        <div class="mobile-menu-button">
+                            <a href="#"><span class="search-mobile-button"></span></a>
+                            <button type="button" class="mobile-menu-btn">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 header-bottom-row">
+                    <nav>
+                        <ul class="nav">
+                            <li  class="font-weight-bold"><a href="/en/my-pension/">My pension</a></li><li  class="font-weight-bold"><a href="/en/pension-system/">Pension system</a></li><li  class=""><a href="/en/suurempension-en/">Increase pension</a></li><li  class=""><a href="/en/calculators/">Calculators</a></li><li  class=""><a href="/en/statistics/" class="active">Statistics</a></li><li  class=""><a href="/en/accounting/">Accounting</a></li><li  class=""><a href="/en/about-us/">About us</a></li>                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu">
+        <ul>
+        <li>
+                    <a href="/en/my-pension/">My pension</a>
+                                    </li><li class="parent">
+                    <a href="/en/pension-system/">Pension system</a>
+                                            <span class="open-child">+</span>
+                        <ul>
+                                                            <li class="parent">
+                                    <a href="/en/i-pillar/">I pillar</a>
+                                    <span class="open-child">+</span>
+                                    <ul>
+                                                                                                                            <li><a href="/en/i-pillar/state-pension/">State pension &#8211; I pillar</a></li>
+                                                                                    <li><a href="/en/i-pillar/parental-pension/">Parental pension</a></li>
+                                                                                    <li><a href="/en/i-pillar/pension-from-foreign-country/">Pension from foreign country</a></li>
+                                                                            </ul>
+                                </li>
+                                                            <li class="parent">
+                                    <a href="/en/ii-pillar/">II pillar</a>
+                                    <span class="open-child">+</span>
+                                    <ul>
+                                                                                                                            <li><a href="/en/ii-pillar/mandatory-funded-pension/">Mandatory funded pension</a></li>
+                                                                                    <li><a href="/en/ii-pillar/joining-the-second-pillar/">Joining the second pillar</a></li>
+                                                                                    <li><a href="/en/ii-pillar/contributions/">Contributions</a></li>
+                                                                                    <li><a href="/en/ii-pillar/change-of-the-funds/">Change of the funds</a></li>
+                                                                                    <li><a href="/en/ii-pillar/pension-investment-account-pik/">Pension investment account (PIK)</a></li>
+                                                                                    <li><a href="/en/ii-pillar/payments/">Payments from II pillar</a></li>
+                                                                                    <li><a href="/en/ii-pillar/succession/">Succession</a></li>
+                                                                                    <li><a href="/en/ii-pillar/mandatory-pension-funds/">Mandatory pension funds</a></li>
+                                                                                    <li><a href="/en/ii-pillar/fund-managers/">Fund managers</a></li>
+                                                                                    <li><a href="/en/ii-pillar/funds-fees/">Funds fees</a></li>
+                                                                                    <li><a href="/en/ii-pillar/funds-risk-level/">Funds risk level</a></li>
+                                                                            </ul>
+                                </li>
+                                                            <li class="parent">
+                                    <a href="/en/iii-pillar/">III pillar</a>
+                                    <span class="open-child">+</span>
+                                    <ul>
+                                                                                                                            <li><a href="/en/iii-pillar/supplementary-funded-pension/">Supplementary funded pension</a></li>
+                                                                                    <li><a href="/en/iii-pillar/contributions/">Contributions</a></li>
+                                                                                    <li><a href="/en/iii-pillar/exchange/">Exchange</a></li>
+                                                                                    <li><a href="/en/iii-pillar/payments/">Payments</a></li>
+                                                                                    <li><a href="/en/iii-pillar/supplementary-pension-funds/">Supplementary pension funds</a></li>
+                                                                                    <li><a href="/en/iii-pillar/fund-managers/">Fund managers</a></li>
+                                                                                    <li><a href="/en/iii-pillar/insurance-companies/">Insurance companies</a></li>
+                                                                                    <li><a href="/en/iii-pillar/insurance-products/">Insurance products</a></li>
+                                                                                    <li><a href="/en/iii-pillar/succession/">Succession (pillar III)</a></li>
+                                                                            </ul>
+                                </li>
+                                                    </ul>
+                                    </li><li>
+                    <a href="/en/suurempension-en/">Increase pension</a>
+                                    </li><li>
+                    <a href="/en/calculators/">Calculators</a>
+                                    </li><li>
+                    <a href="/en/statistics/">Statistics</a>
+                                    </li><li>
+                    <a href="/en/accounting/">Accounting</a>
+                                    </li><li>
+                    <a href="/en/about-us/">About us</a>
+                                    </li>        </ul>
+         <div class="mobile-menu-btns">
+            <div class="account-helper">
+                <a class="btn" data-button="account"  href="https://public.pensionikeskus.ee/public/login.do?locale=eng" target="_blank">My pension account</a>
+            </div>
+                        <a data-toggle="dropdown"
+                data-button="language"
+                class="btn language-switcher"
+                type="button"
+                id="mobile-menu-langs"
+                >English</a>
+            <ul class="dropdown-menu" aria-labelledby="mobile-menu-langs">
+                            <li><a href="/statistika/ii-sammas/kogumispensioni-paevastatistika/"
+                    class="dropdown-item"
+                    >Eesti</a></li>
+                            <li><a href="/ru/%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0/ii-%d1%81%d1%82%d1%83%d0%bf%d0%b5%d0%bd%d1%8c/%d0%b4%d0%bd%d0%b5%d0%b2%d0%bd%d0%b0%d1%8f-%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0-%d0%bd%d0%b0%d0%ba%d0%be%d0%bf%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d0%b9-%d0%bf%d0%b5/"
+                    class="dropdown-item"
+                    >Русский</a></li>
+                        </ul>
+        </div>
+    </div>
+
+    <div class="page-content">
+            <div class="container mobile-side-menu-tglr-wrapper mobile-side-menu-tglr-wrapper--default">
+        <div class="row">
+            <div class="col-12">
+                <div class="mobile-side-menu-tglr">
+                    <span>Statistics</span>
+                </div>
+            </div>    
+        </div>
+    </div>
+
+    <section class="main-site about-site desktop">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="head-holder-helper">
+                        <h1>Statistics</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="main-site mt-0 mb-5">
+
+
+    <div class="container">
+        <div class="row flex-nowrap ">
+            <div class="col custom-col-extras">
+                <ul class="nav flex-column">                <li class="nav-item">
+                    <a href="/en/statistics/ii-pillar/"  class="side-nav-link active-link">II Pillar</a>
+                                                <ul class="nav flex-column custon-submenu active">
+                                                                        <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/funded-pension-daily-statistics/"  class="nav-link active">Funded pension daily statistics</a>
+                                                                                    </li>
+                                                                            <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/epi-daily-statistics/"  class="nav-link">EPI daily statistics</a>
+                                                                                    </li>
+                                                                            <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/epi-charts/"  class="nav-link">EPI charts</a>
+                                                                                    </li>
+                                                                            <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/nav-of-funded-pension/"  class="nav-link">NAV of Funded Pension</a>
+                                                                                    </li>
+                                                                            <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/"  class="nav-link">Value of Assets of Funded Pension</a>
+                                                                                    </li>
+                                                                            <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/no-of-open-pension-accounts/"  class="nav-link">Number of open pension accounts</a>
+                                                                                    </li>
+                                                                            <li class="nav-item custom-menu-item">
+                                            <a href="/en/statistics/ii-pillar/active-investors/"  class="nav-link">Active investors</a>
+                                                                                    </li>
+                                                                </ul>
+                            </li>                <li class="nav-item">
+                    <a href="/en/statistics/iii-pillar/"  class="side-nav-link">III Pillar</a>
+                    </li></ul>            </div>
+
+            <div class="col custom-main-col active custom-main-col--wide">
+                                        <h2 class="mb-4">Funded pension daily statistics</h2>
+                                        <div class="statistics">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="radio">
+              <label class="user-select-none cursor-pointer">
+                <input type="radio" name="term" data-action="changeTerm" value="terms1">
+                3 months, 6 months, Year to date              </label>
+            </div>    
+            <div class="radio">
+              <label class="user-select-none cursor-pointer">
+                <input type="radio" name="term" data-action="changeTerm" value="terms2" checked>
+                2 years, 3 years, 5 years              </label>
+            </div>
+            <div class="radio">
+              <label class="user-select-none cursor-pointer">
+                <input type="radio" name="term" data-action="changeTerm" value="terms3">
+                10 years, 15 years, 20 years              </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+             <div class="checkbox">
+                <label for="show_index_funds" class="user-select-none cursor-pointer">
+                  <input type="checkbox" id="show_index_funds" data-action="applyFilter"> Index funds                </label>
+                <label for="show_actively_managed_funds" class="user-select-none cursor-pointer">
+                  <input type="checkbox" id="show_actively_managed_funds" data-action="applyFilter"> Actively managed funds                </label>
+              </div>
+        </div>
+        <div class="col-md-3">
+              <div class="form-group">
+                <div class="pb-1" data-toggle="tooltip" title="The risk level is in accordance with the risk level specified in the fund&#039;s prospectus.">Risk level</div>
+                <select class="form-control" id="srri" data-action="applyFilter">
+                  <option value="">- select here -</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+              </div>
+        </div>
+    </div>
+
+    <!-- <button class="btn btn-default btn-term_js" type="button">Short term performance</button> -->
+    <!-- <br><br> -->
+
+    <div class="table-responsive mt-1">
+    <table class="table-stats table table-sm table-hover hidden" data-sortlist="[[0,0]]">
+    <thead>
+    <tr class="head">
+        <th data-sorter="text">Fund</th>
+                    <th data-sorter="false" class="date" data-toggle="tooltip" title="Date of data">Date</th>
+                <th data-sorter="num" data-toggle="tooltip" title="Net asset value">NAV</th>
+        <th data-sorter="num" class="nav_daily_change" data-toggle="tooltip" title="Change compared to previous day">±</th>
+        <th data-term="terms1" data-sorter="num" class="term term-terms1">3m</th>
+        <th data-term="terms1" data-sorter="num" class="term term-terms1">6m</th>
+        <th data-term="terms1" data-sorter="num" class="term term-terms1">YTD</th>
+        <th data-term="terms2" data-sorter="num" class="term term-terms2" data-toggle="tooltip" title="Rate of return (net), converted to annual basis. The fund manager&#039;s fees are deducted from the performance.">2y</th>
+        <th data-term="terms2" data-sorter="num" class="term term-terms2" data-toggle="tooltip" title="Rate of return (net), converted to annual basis. The fund manager&#039;s fees are deducted from the performance.">3y</th>
+        <th data-term="terms2" data-sorter="num" class="term term-terms2" data-toggle="tooltip" title="Rate of return (net), converted to annual basis. The fund manager&#039;s fees are deducted from the performance.">5y</th>
+        <th data-term="terms3" data-sorter="num" class="term term-terms3" data-toggle="tooltip" title="Rate of return (net), converted to annual basis. The fund manager&#039;s fees are deducted from the performance.">10y</th>
+        <th data-term="terms3" data-sorter="num" class="term term-terms3" data-toggle="tooltip" title="Rate of return (net), converted to annual basis. The fund manager&#039;s fees are deducted from the performance.">15y</th>
+        <th data-term="terms3" data-sorter="num" class="term term-terms3" data-toggle="tooltip" title="Rate of return (net), converted to annual basis. The fund manager&#039;s fees are deducted from the performance.">20y</th>
+        <th data-sorter="num" class="total_expense_ratio" data-toggle="tooltip" title="Total expense ratio - rate of the fund&#039;s total expenses, calculated on the basis of fees and expenses of the previous year.">TER</th>
+                    <th data-sorter="num" class="investors text-nowrap" data-toggle="tooltip" title="Active investors who currently make contributions to that pension fund and who don&#039;t get pension payments.">Active invest.</th>
+                <th data-sorter="num" class="volume" data-toggle="tooltip" title="Fund net assets indicate net asset value of the unit multiplied by total number of units registered on selected date. In millions.">Net assets</th>
+    </tr>
+    </thead>
+    <tbody class="data">
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/47/">LHV Pensionifond Ettevõtlik</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=47&amp;date_from=06.08.2026&amp;date_to=06.11.2026">2,74955</a></td>
+            <td class="neg">-0,01</td>
+            <td class="neg">-0,67</td>
+            <td class="pos">+0,05</td>
+            <td class="pos">+4,36</td>
+            <td class="pos">+8,72</td>
+            <td class="pos">+9,03</td>
+            <td class="pos">+6,79</td>
+            <td class="pos">+5,76</td>
+            <td class="pos">+5,41</td>
+            <td class="pos">+5,02</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        1,57%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=47&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    35 464</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=47&amp;date_from=06.08.2026&amp;date_to=06.11.2026">821,916</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/73/">LHV Pensionifond Indeks</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=73&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,55044</a></td>
+            <td class="pos">+0,26</td>
+            <td class="neg">-2,70</td>
+            <td class="pos">+1,82</td>
+            <td class="pos">+14,35</td>
+            <td class="pos">+13,49</td>
+            <td class="pos">+17,45</td>
+            <td class="pos">+8,77</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,27%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=73&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    32 914</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=73&amp;date_from=06.08.2026&amp;date_to=06.11.2026">307,913</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/38/">LHV Pensionifond Julge</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=38&amp;date_from=06.08.2026&amp;date_to=06.11.2026">2,57209</a></td>
+            <td class="neg">-0,01</td>
+            <td class="neg">-2,29</td>
+            <td class="neg">-1,35</td>
+            <td class="pos">+5,84</td>
+            <td class="pos">+9,89</td>
+            <td class="pos">+10,15</td>
+            <td class="pos">+7,43</td>
+            <td class="pos">+6,55</td>
+            <td class="pos">+6,13</td>
+            <td class="pos">+5,70</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        1,21%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=38&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    24 152</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=38&amp;date_from=06.08.2026&amp;date_to=06.11.2026">337,043</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="low"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/59/">LHV Pensionifond Rahulik</a>&nbsp;<span class="make-tooltip" title="Conservative">*</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=59&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,41888</a></td>
+            <td class="pos">+0,04</td>
+            <td class="pos">+0,13</td>
+            <td class="pos">+0,51</td>
+            <td class="pos">+1,66</td>
+            <td class="pos">+3,89</td>
+            <td class="pos">+5,28</td>
+            <td class="pos">+3,20</td>
+            <td class="pos">+1,73</td>
+            <td class="pos">+2,30</td>
+            <td class="pos">+3,21</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,53%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=59&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    2 294</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=59&amp;date_from=06.08.2026&amp;date_to=06.11.2026">12,243</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/39/">LHV Pensionifond Tasakaalukas</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=39&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,85483</a></td>
+            <td class="pos">+0,04</td>
+            <td class="pos">+0,27</td>
+            <td class="pos">+0,46</td>
+            <td class="pos">+3,20</td>
+            <td class="pos">+6,38</td>
+            <td class="pos">+6,97</td>
+            <td class="pos">+5,49</td>
+            <td class="pos">+4,03</td>
+            <td class="pos">+4,15</td>
+            <td class="pos">+4,42</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        1,13%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=39&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    7 703</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=39&amp;date_from=06.08.2026&amp;date_to=06.11.2026">121,954</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/57/">Luminor 16-50 pension fund </a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=57&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,94525</a></td>
+            <td class="neg">-0,02</td>
+            <td class="neg">-1,72</td>
+            <td class="pos">+3,98</td>
+            <td class="pos">+11,76</td>
+            <td class="pos">+10,92</td>
+            <td class="pos">+15,48</td>
+            <td class="pos">+7,32</td>
+            <td class="pos">+8,21</td>
+            <td class="pos">+7,41</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        1,08%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=57&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    17 755</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=57&amp;date_from=06.08.2026&amp;date_to=06.11.2026">402,802</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/48/">Luminor 50-56 pension fund</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=48&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,83303</a></td>
+            <td class="pos">+0,02</td>
+            <td class="neg">-1,58</td>
+            <td class="pos">+3,32</td>
+            <td class="pos">+10,07</td>
+            <td class="pos">+9,63</td>
+            <td class="pos">+12,17</td>
+            <td class="pos">+4,87</td>
+            <td class="pos">+5,66</td>
+            <td class="pos">+5,39</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        1,13%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=48&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    8 575</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=48&amp;date_from=06.08.2026&amp;date_to=06.11.2026">203,845</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/49/">Luminor 56+ Pension fund</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=49&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,26177</a></td>
+            <td class="pos">+0,04</td>
+            <td class="neg">-1,38</td>
+            <td class="pos">+1,36</td>
+            <td class="pos">+4,69</td>
+            <td class="pos">+5,73</td>
+            <td class="pos">+7,90</td>
+            <td class="pos">+1,76</td>
+            <td class="pos">+2,64</td>
+            <td class="pos">+3,01</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        1,14%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=49&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    849</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=49&amp;date_from=06.08.2026&amp;date_to=06.11.2026">18,477</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/50/">Luminor 61-65 pension fund</a>&nbsp;<span class="make-tooltip" title="Conservative">*</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=50&amp;date_from=06.08.2026&amp;date_to=06.11.2026">0,94186</a></td>
+            <td class="pos">+0,10</td>
+            <td class="neg">-1,01</td>
+            <td class="pos">+0,02</td>
+            <td class="pos">+0,78</td>
+            <td class="pos">+2,35</td>
+            <td class="pos">+4,19</td>
+            <td class="neg">-0,51</td>
+            <td class="pos">+0,56</td>
+            <td class="pos">+1,37</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,88%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=50&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    2 426</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=50&amp;date_from=06.08.2026&amp;date_to=06.11.2026">13,097</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/86/">Luminor Index Pension fund</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=86&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,61241</a></td>
+            <td class="neg">-0,35</td>
+            <td class="neg">-1,34</td>
+            <td class="pos">+5,06</td>
+            <td class="pos">+13,31</td>
+            <td class="pos">+12,30</td>
+            <td class="pos">+15,95</td>
+            <td class="pos">+7,28</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,27%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=86&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    6 321</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=86&amp;date_from=06.08.2026&amp;date_to=06.11.2026">13,785</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/80/">SEB pension fund 18+</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=80&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,25216</a></td>
+            <td class="neg">-0,41</td>
+            <td class="neg">-2,91</td>
+            <td class="pos">+4,63</td>
+            <td class="pos">+12,70</td>
+            <td class="pos">+11,55</td>
+            <td class="pos">+16,11</td>
+            <td class="pos">+7,96</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,95%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=80&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    22 004</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=80&amp;date_from=06.08.2026&amp;date_to=06.11.2026">280,685</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/61/">SEB pension fund 55+</a>&nbsp;<span>**</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=61&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,81073</a></td>
+            <td class="neg">-0,63</td>
+            <td class="neg">-2,03</td>
+            <td class="pos">+4,28</td>
+            <td class="pos">+10,85</td>
+            <td class="pos">+10,30</td>
+            <td class="pos">+13,28</td>
+            <td class="pos">+6,44</td>
+            <td class="pos">+5,65</td>
+            <td class="pos">+4,80</td>
+            <td class="pos">+3,16</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,99%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=61&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    30 339</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=61&amp;date_from=06.08.2026&amp;date_to=06.11.2026">498,911</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/51/">SEB pension fund 60+</a>&nbsp;<span>**</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=51&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,18509</a></td>
+            <td class="neg">-0,79</td>
+            <td class="neg">-1,01</td>
+            <td class="pos">+2,93</td>
+            <td class="pos">+6,66</td>
+            <td class="pos">+7,07</td>
+            <td class="pos">+9,41</td>
+            <td class="pos">+3,98</td>
+            <td class="pos">+3,15</td>
+            <td class="pos">+2,74</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,90%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=51&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    2 006</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=51&amp;date_from=06.08.2026&amp;date_to=06.11.2026">24,839</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="low"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/60/">SEB pension fund 65+ </a>&nbsp;<span class="make-tooltip" title="Conservative">*</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=60&amp;date_from=06.08.2026&amp;date_to=06.11.2026">0,98806</a></td>
+            <td class="neg">-0,11</td>
+            <td class="neg">-0,74</td>
+            <td class="pos">+0,47</td>
+            <td class="pos">+1,42</td>
+            <td class="pos">+2,69</td>
+            <td class="pos">+4,83</td>
+            <td class="pos">+1,01</td>
+            <td class="pos">+0,76</td>
+            <td class="pos">+0,89</td>
+            <td class="pos">+1,61</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,50%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=60&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    4 622</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=60&amp;date_from=06.08.2026&amp;date_to=06.11.2026">32,832</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/75/">SEB pension fund index</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=75&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,80014</a></td>
+            <td class="neg">-1,55</td>
+            <td class="neg">-1,89</td>
+            <td class="pos">+6,22</td>
+            <td class="pos">+13,97</td>
+            <td class="pos">+12,79</td>
+            <td class="pos">+18,18</td>
+            <td class="pos">+10,28</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,28%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=75&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    40 360</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=75&amp;date_from=06.08.2026&amp;date_to=06.11.2026">462,046</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="medium"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/36/">Swedbank Pension Fund 1960-69 Generation</a>&nbsp;<span>***</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=36&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,29349</a></td>
+            <td class="pos">+0,12</td>
+            <td class="neg">-1,65</td>
+            <td class="pos">+0,42</td>
+            <td class="pos">+3,33</td>
+            <td class="pos">+4,74</td>
+            <td class="pos">+7,41</td>
+            <td class="pos">+3,02</td>
+            <td class="pos">+3,14</td>
+            <td class="pos">+3,19</td>
+            <td class="pos">+2,15</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,74%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=36&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    18 682</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=36&amp;date_from=06.08.2026&amp;date_to=06.11.2026">319,917</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="low"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/58/">Swedbank Pension Fund Conservative</a>&nbsp;<span class="make-tooltip" title="Conservative">*</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=58&amp;date_from=06.08.2026&amp;date_to=06.11.2026">0,90400</a></td>
+            <td class="neg">-0,02</td>
+            <td class="neg">-0,15</td>
+            <td class="pos">+0,32</td>
+            <td class="pos">+0,92</td>
+            <td class="pos">+2,56</td>
+            <td class="pos">+3,92</td>
+            <td class="pos">+0,81</td>
+            <td class="pos">+0,78</td>
+            <td class="pos">+1,20</td>
+            <td class="pos">+1,08</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,47%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=58&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    4 495</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=58&amp;date_from=06.08.2026&amp;date_to=06.11.2026">37,869</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/37/">Swedbank Pension Fund Generation 1970-79</a>&nbsp;<span>***</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=37&amp;date_from=06.08.2026&amp;date_to=06.11.2026">2,20255</a></td>
+            <td class="pos">+0,31</td>
+            <td class="neg">-2,74</td>
+            <td class="pos">+3,15</td>
+            <td class="pos">+11,69</td>
+            <td class="pos">+10,80</td>
+            <td class="pos">+14,47</td>
+            <td class="pos">+7,24</td>
+            <td class="pos">+6,69</td>
+            <td class="pos">+6,03</td>
+            <td class="pos">+4,05</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,74%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=37&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    58 427</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=37&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1 144,210</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/52/">Swedbank Pension Fund Generation 1980-89</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=52&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,99416</a></td>
+            <td class="pos">+0,29</td>
+            <td class="neg">-2,87</td>
+            <td class="pos">+3,26</td>
+            <td class="pos">+12,22</td>
+            <td class="pos">+11,08</td>
+            <td class="pos">+15,14</td>
+            <td class="pos">+7,78</td>
+            <td class="pos">+8,67</td>
+            <td class="pos">+7,64</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,72%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=52&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    45 305</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=52&amp;date_from=06.08.2026&amp;date_to=06.11.2026">672,855</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/74/">Swedbank Pension Fund Generation 1990-99 Index</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=74&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,80531</a></td>
+            <td class="pos">+0,23</td>
+            <td class="neg">-1,35</td>
+            <td class="pos">+5,98</td>
+            <td class="pos">+13,44</td>
+            <td class="pos">+11,41</td>
+            <td class="pos">+17,88</td>
+            <td class="pos">+9,89</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,31%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=74&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    58 149</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=74&amp;date_from=06.08.2026&amp;date_to=06.11.2026">691,333</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="0"
+            data-is_actively_managed="1"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/91/">Swedbank Pension Fund Generation 2000-09</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=91&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,42506</a></td>
+            <td class="pos">+0,34</td>
+            <td class="neg">-3,23</td>
+            <td class="pos">+2,30</td>
+            <td class="pos">+8,83</td>
+            <td class="pos">+8,34</td>
+            <td class="pos">+13,45</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,75%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=91&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    12 361</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=91&amp;date_from=06.08.2026&amp;date_to=06.11.2026">18,535</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/88/">Swedbank Pension Fund Index</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=88&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,57131</a></td>
+            <td class="pos">+0,23</td>
+            <td class="neg">-1,34</td>
+            <td class="pos">+6,00</td>
+            <td class="pos">+13,44</td>
+            <td class="pos">+10,26</td>
+            <td class="pos">+16,03</td>
+            <td class="pos">+8,14</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,27%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=88&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    25 623</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=88&amp;date_from=06.08.2026&amp;date_to=06.11.2026">177,455</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="low"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/76/">Tuleva World Bonds Pension Fund</a>&nbsp;<span class="make-tooltip" title="Conservative">*</span>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=76&amp;date_from=06.08.2026&amp;date_to=06.11.2026">0,61155</a></td>
+            <td class="pos">+0,20</td>
+            <td class="neg">-0,31</td>
+            <td class="pos">+0,28</td>
+            <td class="pos">+0,30</td>
+            <td class="pos">+0,44</td>
+            <td class="pos">+2,25</td>
+            <td class="neg">-2,16</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2026">
+                        0,28%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=76&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    1 453</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=76&amp;date_from=06.08.2026&amp;date_to=06.11.2026">11,568</a></td>
+        </tr>
+    
+        <tr class="data" 
+            data-is_index_fund="1"
+            data-is_actively_managed="0"
+            data-srri="high"
+            >
+            <td class="name"><a href="/en/ii-pillar/mandatory-pension-funds/fid/77/">Tuleva World Stocks Pension Fund</a>            </td>
+            <td>06.11.2026</td>
+            <td><a href="/en/statistics/ii-pillar/nav-of-funded-pension/?f=77&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1,57897</a></td>
+            <td class="neg">-1,24</td>
+            <td class="neg">-1,75</td>
+            <td class="pos">+5,57</td>
+            <td class="pos">+13,02</td>
+            <td class="pos">+13,09</td>
+            <td class="pos">+18,06</td>
+            <td class="pos">+9,92</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td class="">–</td>
+            <td>                    <span class="make-tooltip" title="2025">
+                        0,28%
+                    </span>
+                    </td>
+                            <td>
+                    <a href="/en/statistics/ii-pillar/active-investors/?f=77&amp;date_from=06.08.2026&amp;date_to=06.11.2026">
+                    37 833</a>
+                </td>
+                        <td><a href="/en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=77&amp;date_from=06.08.2026&amp;date_to=06.11.2026">1 140,856</a></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+            <p class="mt-3">* Fund with a conservative strategy</p>
+                <p class="mt-3">** The risk profile of the fund was significantly changed on 02.01.2024, therefore the performance of the fund after 02.01.2024 is no longer comparable to the previous performance.</p>
+                <p class="mt-3">*** Since 02.05.2022 the fund is a lifecycle fund meaning that ratio of instruments carrying equity risk in the Fund´s assets will be over time reduced, meaning that the fund&#039;s past performance was achieved under different conditions than at present.</p>
+        <div class="buttons mt-2">
+                <a href="/en/statistics/ii-pillar/funded-pension-daily-statistics/?download=xls" class="btn btn-default xls download">Download</a>
+    </div>
+</div>
+<div class="main-content-helper mt-4"><!-- placeholder --></div>            </div>
+
+            
+        </div>
+    </div>
+</section>
+
+
+    </div> <!-- //.page -->
+    <div class="mobile-footer">
+        <div class="footer-rights">
+            <p>Copyright © AS Pensionikeskus 2021<br />
+Maakri 19, Tallinn 10145<br />
+info@pensionikeskus.ee</p>
+        </div>
+        <div class="sitemap-toggel-button">
+            <span>Sitemap</span>
+        </div>
+        <div class="mobile-sitemap">
+            <hr>
+            <div class="mobile-language-select">
+                <div class="col lang-col">
+
+                                        <a data-toggle="dropdown"
+                        data-button="language"
+                        class="btn lang-select"
+                        type="button"
+                        id="mobile-sitemap-langs"
+                        >English</a>
+                    <ul class="dropdown-menu" aria-labelledby="mobile-sitemap-langs">
+                                            <li><a href="/statistika/ii-sammas/kogumispensioni-paevastatistika/"
+                            class="dropdown-item"
+                            >Eesti</a></li>
+                                            <li><a href="/ru/%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0/ii-%d1%81%d1%82%d1%83%d0%bf%d0%b5%d0%bd%d1%8c/%d0%b4%d0%bd%d0%b5%d0%b2%d0%bd%d0%b0%d1%8f-%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0-%d0%bd%d0%b0%d0%ba%d0%be%d0%bf%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d0%b9-%d0%bf%d0%b5/"
+                            class="dropdown-item"
+                            >Русский</a></li>
+                                        </ul>
+                </div>
+            </div>
+            <div class="mobile-menu-helper">
+                <div class="mobile-items-helper">
+                    <ul>
+                    <li><a href="/en/my-pension/">My pension</a></li><li><a href="/en/pension-system/">Pension system</a></li><li><a href="/en/pension-reform-2021/">Reform information</a></li><li><a href="/en/i-pillar/">I pillar</a></li><li><a href="/en/ii-pillar/">II pillar</a></li><li><a href="/en/iii-pillar/">III pillar</a></li><li><a href="/en/calculators/">Calculators</a></li>                    </ul>
+                </div>
+                <div class="mobile-items-helper second-mobile-helper">
+                    <ul class="second-mobile-col">
+                    <li><a href="/en/faq/">FAQ</a></li><li><a href="/en/statistics/">Statistics</a></li><li><a href="/en/accounting/">Accounting</a></li><li><a href="/en/news/">News</a></li><li><a href="/en/pension-system/estonian-pension-system-overview/legal-acts/">Legal acts</a></li><li><a href="/en/about-us/">About us</a></li>                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="container">
+            <div class="row footer-first">
+                <div class="d-flex lang-col align-items-center">
+                    <ul class="lang-select d-flex align-items-center">
+                        <li>
+
+                                                        <a data-toggle="dropdown"
+                                data-button="language"
+                                type="button"
+                                id="desktop-langs"
+                                >English</a>
+                            <ul class="dropdown-menu" aria-labelledby="desktop-langs">
+                                                            <li><a href="/statistika/ii-sammas/kogumispensioni-paevastatistika/"
+                                    class="dropdown-item"
+                                    >Eesti</a></li>
+                                                            <li><a href="/ru/%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0/ii-%d1%81%d1%82%d1%83%d0%bf%d0%b5%d0%bd%d1%8c/%d0%b4%d0%bd%d0%b5%d0%b2%d0%bd%d0%b0%d1%8f-%d1%81%d1%82%d0%b0%d1%82%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b0-%d0%bd%d0%b0%d0%ba%d0%be%d0%bf%d0%b8%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d0%b9-%d0%bf%d0%b5/"
+                                    class="dropdown-item"
+                                    >Русский</a></li>
+                                                        </ul>
+
+                        </li>
+                    </ul>
+                </div>
+                <div class="account-col d-flex align-items-center">
+                    <div class="account-helper d-flex align-items-center">
+                        <a class="btn" data-button="account"  href="https://public.pensionikeskus.ee/public/login.do?locale=eng" target="_blank">My pension account</a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row footer-menu">
+                <div class="footer-items">
+                                <div class="footer-items-helper">                        <h5><a href="/en/my-pension/">My pension</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/my-pension/underage/">Underage</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/legal-age-18/">Legal age (18)</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/in-my-20s/">In my 20s</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/in-my-30s/">In my 30s</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/in-my-40s/">In my 40s</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/in-my-50s/">In my 50s</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/in-my-60s/">In my 60s</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/pension-age/">Pension age</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/my-pension/succession/">Succession</a>
+                            </li>
+                                                    </ul>
+                        </div></div><div class="footer-items">
+                                <div class="footer-items-helper">                        <h5><a href="/en/pension-system/">Pension system</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/pension-system/estonian-pension-system-overview/">Estonian pension system overview</a>
+                            </li>
+                                                    </ul>
+                                                <h5><a href="/en/pension-reform-2021/">Reform information</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/pension-reform-2021/for-pension-agreement-clients/">For pension agreement clients</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/pension-reform-2021/6140-2/">Options for submitting an application</a>
+                            </li>
+                                                    </ul>
+                        </div></div><div class="footer-items">
+                                <div class="footer-items-helper">                        <h5><a href="/en/i-pillar/">I pillar</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/i-pillar/state-pension/">State pension &#8211; I pillar</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/i-pillar/parental-pension/">Parental pension</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/i-pillar/pension-from-foreign-country/">Pension from foreign country</a>
+                            </li>
+                                                    </ul>
+                        </div></div><div class="footer-items">
+                                <div class="footer-items-helper">                        <h5><a href="/en/ii-pillar/">II pillar</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/ii-pillar/mandatory-funded-pension/">Mandatory funded pension</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/joining-the-second-pillar/">Joining the second pillar</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/contributions/">Contributions</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/change-of-the-funds/">Change of the funds</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/pension-investment-account-pik/">Pension investment account (PIK)</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/payments/">Payments from II pillar</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/succession/">Succession</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/mandatory-pension-funds/">Mandatory pension funds</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/fund-managers/">Fund managers</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/funds-fees/">Funds fees</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/ii-pillar/funds-risk-level/">Funds risk level</a>
+                            </li>
+                                                    </ul>
+                        </div></div><div class="footer-items">
+                                <div class="footer-items-helper">                        <h5><a href="/en/iii-pillar/">III pillar</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/iii-pillar/supplementary-funded-pension/">Supplementary funded pension</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/contributions/">Contributions</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/exchange/">Exchange</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/payments/">Payments</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/supplementary-pension-funds/">Supplementary pension funds</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/fund-managers/">Fund managers</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/insurance-companies/">Insurance companies</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/insurance-products/">Insurance products</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/iii-pillar/succession/">Succession (pillar III)</a>
+                            </li>
+                                                    </ul>
+                        </div></div><div class="footer-items">
+                                <div class="footer-items-helper">                        <h5><a href="/en/calculators/">Calculators</a></h5>
+                        <ul>
+                                                        <li>
+                                <a href="/en/calculators/my-pension-plan/">My pension plan</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/calculators/retirement-pension-calculator/">Retirement pension calculator</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/calculators/funded-pension-contribution-calculator/">Funded pension contribution calculator</a>
+                            </li>
+                                                        <li>
+                                <a href="/en/calculators/insurance-calculator/">Insurance calculator</a>
+                            </li>
+                                                    </ul>
+                        </div></div>
+
+                <div class="footer-more-links">
+                    <a href="/en/faq/">FAQ</a><a href="/en/statistics/">Statistics</a><a href="/en/accounting/">Accounting</a><a href="/en/news/">News</a><a href="/en/pension-system/estonian-pension-system-overview/legal-acts/">Legal acts</a><a href="/en/about-us/">About us</a>                </div>
+            </div>
+            <div class="row">
+                <div class="footer-rights">
+                    <p>Copyright © AS Pensionikeskus 2021<br />
+Maakri 19, Tallinn 10145<br />
+info@pensionikeskus.ee</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="mobile-search">
+      <div class="mobile-search-content">
+        <form action="/en/" method="get">
+        <input type="text" name="s" value="" placeholder="Search">
+        <button type="submit"><img src="/static/images/Search.svg" alt="search"></button>
+        </form>
+      </div>
+    </div>
+
+
+    <script src="/static/js/jquery-2.2.4.min.16.js"></script>
+    <script src="/static/js/bootstrap/js/bootstrap.bundle.min.16.js"></script>
+    <script src="/static/js/app.16.js"></script>
+    <script>
+    App.lang = 'en';
+    App.page = "page";
+    App.VERSION = '16';
+    App.init();
+    $(function(){
+        App.initReady();
+    });
+    </script>
+
+    <script type="text/javascript" src="/static/js/jquery.tablesorter.min.16.js"></script>
+    <script type="text/javascript" src="/static/js/pens.tablesorter.16.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.columnmanager.min.16.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+
+        var $form = $("#form-stats"),
+            $table = $('table.table-stats'),
+            termCols = {
+                'all': []
+            },
+            $btn_term = $('.btn-term_js'),
+            active_term
+        ;
+
+        //cache
+        $(".head:first th", $table).each(function(i){
+            var term = $(this).attr('data-term');
+            if( term )
+            {
+                if( !termCols.hasOwnProperty(term) ){
+                    termCols[term] = [];
+                }
+                termCols[term].push(i+1);
+                termCols['all'].push(i+1);
+            }
+        });
+
+        var activateTerm = function(term){
+
+            if( !active_term ) //init, hide all cols
+            {
+                $table.columnManager({'colsHidden': termCols['all']});
+            }
+            else //hide active
+            {
+                $table.hideColumns(termCols[active_term]);
+            }
+
+            $table.showColumns(termCols[term]);
+
+            active_term = term;
+        };
+
+        //init
+        activateTerm($('input[name="term"]:checked').val());
+
+        $(document).on('click', '[data-action="changeTerm"]', function(e){
+            var term = $(this).val();
+            activateTerm(term);
+        });
+
+        $(document).on('change', '[data-action="applyFilter"]', function(e){
+            var 
+                show_index_funds = $('#show_index_funds').prop('checked'),
+                show_actively_managed = $('#show_actively_managed_funds').prop('checked'),
+                srri = $('#srri').val(),
+                $trs = $table.find('tr.data')
+            ;
+
+            $trs.each(function(){
+                var $tr = $(this),
+                    hide = false
+                ;
+                
+                if(!show_index_funds || !show_actively_managed){
+                    if(show_index_funds && $tr.data('is_index_fund') != 1){
+                        hide = true;
+                    }
+                    
+                    if(show_actively_managed && $tr.data('is_actively_managed') != 1){
+                        hide = true;
+                    }
+                }
+
+                if(srri && $tr.data('srri') != srri){
+                    hide = true;
+                }
+                $tr.toggleClass('hidden', hide);
+
+            });
+
+        });
+
+        $table.pensTablesorter();
+        $table.removeClass('hidden');
+
+    });
+    </script>
+    <script type="text/javascript">
+(function() {
+				var expirationDate = new Date();
+				expirationDate.setTime( expirationDate.getTime() + 31536000 * 1000 );
+				document.cookie = "pll_language=en; expires=" + expirationDate.toUTCString() + "; path=/; SameSite=Lax";
+			}());
+
+</script>
+<script type="text/javascript" src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3&ns=5&cb=1805870948" async></script></body>
+</html>

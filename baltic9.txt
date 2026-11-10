@@ -1,0 +1,168 @@
+== VSAA 200 246679
+   text:  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag("js", new Date());gtag("set", "developer_id.dMDhkMT", true);gtag("config", "G-5K3WX879G5", {"groups":"default","page_placeholder":"PLACEHOLDER_page_location","allow_ad_personalization_signals":false}); :root {--font-body: 'RobustaTLPro-Regular';--font-heading: 'RobustaTLPro-Medium';--font-heading-bold: 'RobustaTLPro-Bold';--font-heading-weight: normal;--font-heading-bold-weight: normal;} :root {--button-border-radius: 3px} :root {--brand-color: #6BA539;--brand-color01: #3F8603;--logo-color: #6BA539;} #sliding-popup.sliding-popup-top { position: fixed; } .footer_bg_img { background-image: url(https://www.vsaa.gov.lv/files/vsaa-s3/s3fs-public/styles/front_bg/public/front_page_bg_images/vsaa_sajutu-bilde.jpg?itok=RA3H1iVu); } window.a2a_config=window.a2a_config||{};a2a_config.callbacks=[];a2a_config.overlays=[];a2a_config.templates={}; Dalībnieku kustība pa ieguldījumu plāniem atskaites periodā | Valsts sociālās apdrošināšanas aģentūra Pāriet uz lapas saturu Izvēlne Izvēlne Atpakaļ Atpakaļ Par mums Struktūra VSAA Direktors Direktora palīgs Preses sekretāre Datu aizsardzības speciālists Personāla daļa Slepenības režīma nodrošināšanas nodaļa Informācijas tehnoloģiju departaments Tiesvedības daļa Risku vadītājs Fondēto pensiju shēmas administrēšanas daļa Pabalstu metodiskās vadības daļa Pensiju metodiskās vadības daļa Direktora vietnieks Plānu - finanšu daļa Pakalpojumu budžetu uzskaites daļa Saimnieciskās darbības uzskaites daļa Saimnieciskā nodrošinājuma daļa Informācijas sistēmu ekspluatācijas daļa Informācijas sistēmu izstrādes daļa Informācijas tehnoloģiju servisu daļa Informācijas apstrādes nodaļa Direktora vietniece Sabiedrisko attiecību speciālists Starptautisko pakalpojumu nodaļa Iemaksu nodaļa Statistikas daļa Klientu apkalpošanas centri Rīgas pilsētas Latgales nodaļa Rīgas pilsētas Zemgales nodaļa Daugavpils reģionālā nodaļa Jelgavas reģionālā nodaļa Liepājas reģionālā nodaļa Rēzeknes reģionālā nodaļa Valmieras reģionālā nodaļa Ventspils reģionālā nodaļa Vadība Darbības jomas Sociālā apdrošināšana Valsts fondēto pensiju shēmas administrēšana IKT atbalsts Labklājības nozares iestādēm Valsts izdienas pensijas un valsts sociālie pabalsti ES tiesību aktu par sociālā nodrošinājuma sistēmu koordinācija un starptautiskie līgumi VSAA pakalpojumu katalogs Publikācijas un pārskati Publiskais gada pārskats Klientu apmierinātības rādītāji Pārskati par Valsts fondēto pensiju shēmas darbību Normatīvie akti Aģentūras darbību reglamentējošie tiesību akti Administratīvais process Stratēģija VSAA reglaments Citi aģentūras darbību reglamentējošie tiesību akti Trauksmes celšana Ētika Budžets Speciālais budžets Valsts sociālās apdrošināšanas speciālais budžets Valsts pensiju speciālais budžets Nodarbinātības speciālais budžets Darba negadījumu speciālais budžets Invaliditātes, maternitātes un slimības speciālais budžets Valsts sociālās apdrošināšanas aģentūras speciālais b
+   files 24
+   FILE https://www.vsaa.gov.lv/lv/media/8024/download?attachment | 2026.gads
+   FILE https://www.vsaa.gov.lv/lv/media/7074/download?attachment | 2025.gads
+   FILE https://www.vsaa.gov.lv/lv/media/5853/download?attachment | 2024.gads
+   FILE https://www.vsaa.gov.lv/lv/media/4998/download?attachment | 2023.gads
+   FILE https://www.vsaa.gov.lv/lv/media/4048/download?attachment | 2022.gads
+   FILE https://www.vsaa.gov.lv/lv/media/3314/download?attachment | 2021.gads
+   FILE https://www.vsaa.gov.lv/lv/media/1781/download?attachment | 2020.gads
+   FILE https://www.vsaa.gov.lv/lv/media/272/download?attachment | 2019.gads
+   FILE https://www.vsaa.gov.lv/lv/media/273/download?attachment | 2018.gads
+   FILE https://www.vsaa.gov.lv/lv/media/274/download?attachment | 2017.gads
+   FILE https://www.vsaa.gov.lv/lv/media/275/download?attachment | 2016.gads
+   FILE https://www.vsaa.gov.lv/lv/media/276/download?attachment | 2015.gads
+   FILE https://www.vsaa.gov.lv/lv/media/277/download?attachment | 2014.gads
+   FILE https://www.vsaa.gov.lv/lv/media/278/download?attachment | 2013.gads
+   FILE https://www.vsaa.gov.lv/lv/media/279/download?attachment | 2012.gads
+   FILE https://www.vsaa.gov.lv/lv/media/280/download?attachment | 2011.gads
+   FILE https://www.vsaa.gov.lv/lv/media/281/download?attachment | 2010.gads
+   FILE https://www.vsaa.gov.lv/lv/media/282/download?attachment | 2009.gads
+   FILE https://www.vsaa.gov.lv/lv/media/283/download?attachment | 2008.gads
+   FILE https://www.vsaa.gov.lv/lv/media/284/download?attachment | 2007.gads
+   FILE https://www.vsaa.gov.lv/lv/media/285/download?attachment | 2006.gads
+   FILE https://www.vsaa.gov.lv/lv/media/286/download?attachment | 2005.gads
+   FILE https://www.vsaa.gov.lv/lv/media/287/download?attachment | 2004.gads
+   FILE https://www.vsaa.gov.lv/lv/media/288/download?attachment | 2003.gads
+== GOT 200 application/vnd.ms-excel 137728 xls https://www.vsaa.gov.lv/lv/media/8024/download?attachment | 2026.gads
+== GOT 200 application/vnd.ms-excel 228864 xls https://www.vsaa.gov.lv/lv/media/7074/download?attachment | 2025.gads
+== GOT 200 application/vnd.ms-excel 78336 xls https://www.vsaa.gov.lv/lv/media/288/download?attachment | 2003.gads
+== EE III daily xls 200 3942
+    Fund	Date	NAV	±	3m	6m	2y	3y	5y	10y	15y	20y	YTD	TER %	Unit ow.	Net assets
+    LHV Pensionifond Aktiivne III	06.11.2026	2,92010	-0,05	-2,49	-1,69	10,08	10,34	6,73	6,40	6,35	5,16	5,53	1,21	18213	50,215
+    LHV Pensionifond Indeks III	06.11.2026	1,66090	0,25	-2,67	1,79	13,52	17,44	8,79				14,47	0,32	28225	123,434
+    Luminor Future Index pension fund	06.11.2026	1,14417	-0,01	-1,11	4,87							13,38	0,38	1193	2,915
+    Luminor Tulevik 16+ Pension Fund	06.11.2026	3,18731	-0,02	-1,78	3,75	10,91	15,47	7,07	8,92	8,35		11,48	1,16	7366	46,627
+    Luminor Tulevik 55+ Pension Fund	06.11.2026	0,91869	0,05	-1,49	0,86	5,20	6,65	0,81	1,55	2,33		3,87	1,18	1421	4,079
+== EE page 200 70489 iii-pillar/suppl-funded-pension-daily-statistics/
+   menu /en/statistics/ii-pillar/
+   menu /en/statistics/iii-pillar/
+   menu /en/statistics/iii-pillar/insurances-of-suppl-funded-pension/
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=32&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=33&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=34&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=41&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=42&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=43&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=53&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=55&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=72&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=79&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=81&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=84&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=85&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=89&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=90&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/nav-of-suppl-funded-pension/?f=93&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/suppl-funded-pension-daily-statistics/
+   menu /en/statistics/iii-pillar/suppl-funded-pension-daily-statistics/?download=xls
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=32&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=33&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=34&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=41&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=42&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=43&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=53&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=55&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=72&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=79&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=81&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=84&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=85&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=89&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=90&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/value-of-assets-of-suppl-funded-pension/?f=93&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   kw Unit ow.
+   kw holders text-nowrap" data-toggle="tooltip" title="Number of unit owners"
+== EE page 503 0 iii-pillar/
+== EE page 200 86002 ii-pillar/funded-pension-daily-statistics/
+   menu /en/statistics/ii-pillar/
+   menu /en/statistics/ii-pillar/active-investors/
+   menu /en/statistics/ii-pillar/active-investors/?f=36&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=37&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=38&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=39&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=47&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=48&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=49&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=50&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=51&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=52&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=57&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=58&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=59&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=60&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=61&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=73&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=74&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=75&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=76&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=77&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=80&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=86&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=88&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/active-investors/?f=91&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/epi-charts/
+   menu /en/statistics/ii-pillar/epi-daily-statistics/
+   menu /en/statistics/ii-pillar/funded-pension-daily-statistics/
+   menu /en/statistics/ii-pillar/funded-pension-daily-statistics/?download=xls
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=36&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=37&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=38&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=39&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=47&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=48&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=49&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=50&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=51&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=52&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=57&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=58&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=59&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=60&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=61&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=73&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=74&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=75&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=76&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=77&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=80&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=86&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=88&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/nav-of-funded-pension/?f=91&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/no-of-open-pension-accounts/
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=36&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=37&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=38&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=39&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=47&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=48&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=49&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=50&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=51&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=52&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=57&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=58&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=59&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=60&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=61&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=73&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=74&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=75&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=76&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=77&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=80&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=86&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=88&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/ii-pillar/value-of-assets-of-funded-pension/?f=91&amp;date_from=06.08.2026&amp;date_to=06.11.2026
+   menu /en/statistics/iii-pillar/
+== cand 404 0 iii-pillar/number-of-unit-owners/ 
+== cand 404 0 iii-pillar/unit-owners/ 
+== cand 404 0 iii-pillar/number-of-unit-holders/ 
+== cand 404 0 iii-pillar/active-investors/ 
+== cand 404 0 iii-pillar/investors/ 
