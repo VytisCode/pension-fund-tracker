@@ -24102,6 +24102,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-04,GOINDEX,Goindex pasaulio akcijų,1.6135000000000002,39332575.36,
 2026-11-05,GOINDEX,Goindex pasaulio akcijų,1.5821,38716087.87,
 2026-11-06,GOINDEX,Goindex pasaulio akcijų,1.5749,38643453.14,
+2026-11-09,GOINDEX,Goindex pasaulio akcijų,1.5891,39115621.74,
 2022-08-22,GOINDEX,Goindex subalansuotas,1.0,,1.0
 2022-08-23,GOINDEX,Goindex subalansuotas,1.0,,0.9977
 2022-08-24,GOINDEX,Goindex subalansuotas,1.0,,0.9979
@@ -25162,6 +25163,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-04,GOINDEX,Goindex subalansuotas,1.3963,5054982.87,
 2026-11-05,GOINDEX,Goindex subalansuotas,1.3776,4999777.99,
 2026-11-06,GOINDEX,Goindex subalansuotas,1.3761,5022707.1,
+2026-11-09,GOINDEX,Goindex subalansuotas,1.3845,5068358.15,
 2007-10-01,LUMINOR,Luminor ateitis 16–50,0.28962002,,
 2007-10-02,LUMINOR,Luminor ateitis 16–50,0.28962002,,
 2007-10-03,LUMINOR,Luminor ateitis 16–50,0.28962002,,
@@ -41626,7 +41628,8 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-03,SEB,SEB index. Klimato ateitis,1.4713,27283009,164.4448
 2026-11-04,SEB,SEB index. Klimato ateitis,1.4905,27680973,166.5468
 2026-11-05,SEB,SEB index. Klimato ateitis,1.4525,26998458,162.0717
-2026-11-06,SEB,SEB index. Klimato ateitis,1.4512,,
+2026-11-06,SEB,SEB index. Klimato ateitis,1.4512,27015909,162.0404
+2026-11-09,SEB,SEB index. Klimato ateitis,1.4632,,
 2004-10-27,SEB,SEB pensija 18+,0.2896,,
 2004-10-28,SEB,SEB pensija 18+,0.2896,,
 2004-10-29,SEB,SEB pensija 18+,0.2896,,
@@ -47374,7 +47377,8 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-03,SEB,SEB pensija 18+,1.1787,110320969,111.1399
 2026-11-04,SEB,SEB pensija 18+,1.1897,111413551,112.6295
 2026-11-05,SEB,SEB pensija 18+,1.1662,109387405,109.2201
-2026-11-06,SEB,SEB pensija 18+,1.1604,,
+2026-11-06,SEB,SEB pensija 18+,1.1604,108869384,109.2875
+2026-11-09,SEB,SEB pensija 18+,1.1708,,
 2020-04-10,SEB,SEB pensija 50+,1.0,,100.0
 2020-04-13,SEB,SEB pensija 50+,1.0,,100.0
 2020-04-14,SEB,SEB pensija 50+,1.0,,100.0
@@ -49090,7 +49094,8 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-03,SEB,SEB pensija 50+,1.5756,14030505,170.7094
 2026-11-04,SEB,SEB pensija 50+,1.5863,14141204,172.0427
 2026-11-05,SEB,SEB pensija 50+,1.5684,14013882,169.6631
-2026-11-06,SEB,SEB pensija 50+,1.5676,,
+2026-11-06,SEB,SEB pensija 50+,1.5676,14025586,169.7533
+2026-11-09,SEB,SEB pensija 50+,1.5759,,
 2004-10-27,SEB,SEB pensija 58+,0.2896,,
 2004-10-28,SEB,SEB pensija 58+,0.2896,,
 2004-10-29,SEB,SEB pensija 58+,0.2896,,
@@ -54838,7 +54843,8 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-03,SEB,SEB pensija 58+,0.4394,12327696,36.8162
 2026-11-04,SEB,SEB pensija 58+,0.4406,12364353,36.9276
 2026-11-05,SEB,SEB pensija 58+,0.4409,12388875,36.9719
-2026-11-06,SEB,SEB pensija 58+,0.4412,,
+2026-11-06,SEB,SEB pensija 58+,0.4412,12401924,36.9871
+2026-11-09,SEB,SEB pensija 58+,0.4414,,
 2022-04-07,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,
 2022-04-08,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,
 2022-04-11,SWEDBANK,Swedbank Pensijos fondas 18+,1.0,,

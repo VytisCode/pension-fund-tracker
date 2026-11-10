@@ -30,13 +30,17 @@
   "ok": "2026-11-10"
  },
  "eonia": {
-  "ok": "2026-11-09"
+  "ok": "2026-11-10"
  },
  "estr": {
   "ok": "2026-11-10"
  },
  "idx.EURUSD": {
-  "ok": "2026-11-10"
+  "err": "2026-11-10",
+  "kind": "network",
+  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "ok": "2026-11-10",
+  "since": "2026-11-10"
  },
  "idx.EUR_GOV7Y": {
   "ok": "2026-11-10"
@@ -48,7 +52,11 @@
   "ok": "2026-11-10"
  },
  "idx.SP500": {
-  "ok": "2026-11-10"
+  "err": "2026-11-10",
+  "kind": "other",
+  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
+  "ok": "2026-11-10",
+  "since": "2026-11-10"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
