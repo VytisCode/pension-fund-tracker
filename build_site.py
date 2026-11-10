@@ -171,6 +171,67 @@ def build_home_split() -> None:
 
 
 
+def ctry_mgr_data(funds: list, perf: dict, fl: dict) -> None:
+    """„Valdytojas ir fondas“ Latvijai ir Estijai (PERTVARKA-SALYS.md 3 etapas): docs/data_mgr_lv.js, data_mgr_ee.js – Lietuvos mgr.js
+    formatu: AUM (fondų turtas mėnesio pabaigoje iš baltic.py flows, mln. €; II – grupė kaip „Rezultatuose“, III – kategorija),
+    REP (III pakopos mėnesio pabaigos vieneto vertės iš data_bx_*3 duomenų; II – tik mokestis), TOPS (10 didžiausių investicijų)."""
+    from datetime import date as _d
+    E = _d(1970, 1, 1).toordinal()
+    meom = lambda k: _d.fromordinal(_d(k // 12 + (k % 12 == 11), (k % 12 + 1) % 12 + 1, 1).toordinal() - 1).toordinal() - E
+    for c in ("LV", "EE"):
+        if c not in fl:
+            continue
+        gof, meta = {}, {(f["pl"], f["n"]): f for f in funds if f["c"] == c}
+        dec = {}
+        for pl in ("II", "III"):
+            for g in (perf.get((c, pl)) or {}).get("groups", []):
+                for x in g["funds"]:
+                    gof[(pl, x["name"])] = g["id"]
+                    d = [x["d0"]]
+                    for y in x["dd"]:
+                        d.append(d[-1] + y)
+                    dec[(pl, x["name"])] = (d, x["v"], x.get("fee"), x.get("assets"), x.get("assetsDate"))
+        aum = []
+        for pl in ("II", "III"):
+            S = fl[c].get(pl)
+            if not S:
+                continue
+            end = (_d.fromisoformat(S["end"]).toordinal() - E)
+            for f in S["f"]:
+                d, a = [], []
+                for i, x in enumerate(f["a"]):
+                    if x is not None:
+                        d.append(min(end, meom(f["k0"] + i))); a.append(x)
+                aum.append({"pl": pl, "p": f["m"], "g": gof.get((pl, f["n"])), "n": f["n"], "d": d, "a": a})
+        last3 = max((v[0][-1] for k, v in dec.items() if k[0] == "III"), default=0)
+        first3 = min((v[0][0] for k, v in dec.items() if k[0] == "III"), default=0)
+        months = []
+        if last3:
+            k = (_d.fromordinal(first3 + E).year) * 12 + _d.fromordinal(first3 + E).month - 1
+            while meom(k) <= last3 + 31:
+                months.append(meom(k)); k += 1
+        rep = []
+        import bisect
+        for (pl, n), (d, v, fee, na, nad) in sorted(dec.items()):
+            m = meta.get((pl, n), {})
+            r = {"pl": pl, "p": m.get("m"), "n": n, "g": gof.get((pl, n)), "fee": fee}
+            if pl == "III":
+                mv = []
+                for t in months:
+                    i = bisect.bisect_right(d, t) - 1
+                    mv.append(v[i] if i >= 0 and t - d[i] <= 10 else None)
+                r.update({"m": mv, "lv": v[-1], "ld": d[-1], "aum": na, "aumd": nad})
+            rep.append(r)
+        tops = {f"{f['pl']}|{f['n']}": [f.get("topQ"), f["top"]] for f in funds if f["c"] == c and f.get("top")}
+        glbl = {pl: {g["id"]: g.get("lbl") for g in (perf.get((c, pl)) or {}).get("groups", [])} for pl in ("II", "III")}
+        js = ("const AUM=" + json.dumps({"funds": aum, "payouts": []}, ensure_ascii=False, separators=(",", ":")) + ";\n"
+              + "const REP=" + json.dumps({"months": months, "funds": rep}, ensure_ascii=False, separators=(",", ":")) + ";\n"
+              + "const TOPS=" + json.dumps(tops, ensure_ascii=False, separators=(",", ":")) + ";\n"
+              + "const GLBL=" + json.dumps(glbl, ensure_ascii=False, separators=(",", ":")) + ";\n")
+        (DOCS / f"data_mgr_{c.lower()}.js").write_text(js, encoding="utf-8")
+        print(f"docs/data_mgr_{c.lower()}.js: {len(js) / 1024:.0f} KB, AUM {len(aum)}, REP {len(rep)}, TOPS {len(tops)}")
+
+
 def share_gaps(sh: dict, fl: dict) -> None:
     """„Rinkos dalis laike“ (LV/EE) patikimumas (savininkas 2026-11-10: „atrodo neįtikėtinai“): duomenyse yra tik šaltinio dabar rodomi fondai,
     todėl perimtų / uždarytų fondų istorijos nėra. Kiekvienas sujungimas, kurio atiduodančio fondo duomenyse nėra (baltic.py flows „g“),
@@ -218,6 +279,17 @@ def build_ctry_review() -> None:
         t = re.sub(r'<script src="(common\.js\?v=[0-9a-f]+)"></script>', lambda m: f'<script src="{m.group(1)}"></script><script>BXM.c = "{c.upper()}"; BXM.pl = "II"; var CTRY_COPY = "{c.upper()}"; p3Colors();</script>', t, count=1)
         assert f"data_bx_{c}2.js" in t and "CTRY_COPY" in t and "data_aum.js" not in t, c
         (DOCS / f"review_{c}.html").write_text(t, encoding="utf-8")
+        # „Valdytojas ir fondas“ (manager.html, mgr.js) – tos šalies DATA ir data_mgr_{c}.js (ctry_mgr_data)
+        fm = DOCS / f"data_mgr_{c}.js"
+        if not fm.exists():
+            continue
+        hm = hashlib.md5(fm.read_bytes()).hexdigest()[:8]
+        m = (DOCS / "manager.html").read_text(encoding="utf-8")
+        m = re.sub(r'<script src="data\.js\?v=[0-9a-f]+"></script>', f'<script src="data_bx_{c}2.js?v={hd}"></script><script>{dec}</script><script src="data_mgr_{c}.js?v={hm}"></script>', m, count=1)
+        m = re.sub(r'<script src="data_(rep|aum|pf)\.js\?v=[0-9a-f]+"></script>', '', m)
+        m = re.sub(r'<script src="(common\.js\?v=[0-9a-f]+)"></script>', lambda x: f'<script src="{x.group(1)}"></script><script>BXM.c = "{c.upper()}"; BXM.pl = "II"; var CTRY_COPY = "{c.upper()}"; p3Colors();</script>', m, count=1)
+        assert f"data_mgr_{c}.js" in m and "CTRY_COPY" in m and "data_pf.js" not in m, c
+        (DOCS / f"manager_{c}.html").write_text(m, encoding="utf-8")
 
 
 def build_ctry_home() -> None:
@@ -352,6 +424,10 @@ def build_baltic(ver: dict) -> None:
         except Exception as e:
             print("share_gaps: nepavyko:", e)
         print(f"docs/data_bx_flow.js: {len(fj) / 1024:.0f} KB")
+        try:
+            ctry_mgr_data(payload.get("funds") or [], perf, fl)
+        except Exception as e:
+            print("ctry_mgr_data: nepavyko:", e)
     data_js = "const BALTIC=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data_baltic.js").write_text(data_js, encoding="utf-8")
     for n in ("baltic.html", "baltic.js", "bxjr.js"):

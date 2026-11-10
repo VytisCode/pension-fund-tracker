@@ -1826,12 +1826,12 @@ const bxH = (c, tab, pl = 'II') => `baltic.html#c=${c}&pl=${pl}&tab=${tab}`;
 const CTRY_PAGES = {
   index: ['index_lv.html', 'index_ee.html'], review: ['review_lv.html', 'review_ee.html'], ops: [null, null, 's3'], facts: ['facts_lv.html', 'facts_ee.html'],
   performance: ['baltic_lv.html', 'baltic_ee.html'], performance3: ['baltic_lv3.html', 'baltic_ee3.html'],
-  managers: [bxH('LV', 'mg'), bxH('EE', 'mg')], manager: [null, null, 's3'],
+  managers: [bxH('LV', 'mg'), bxH('EE', 'mg')], manager: ['manager_lv.html', 'manager_ee.html'],
   portfolios: [bxH('LV', 'top'), bxH('EE', 'top')], aum: [bxH('LV', 'fl'), bxH('EE', 'fl')],
   reports: [null, null, 'data'], journey: [bxH('LV', 'jr'), bxH('EE', 'jr')], baltic: ['all'], how: ['all'], apie: ['all'],
 };
 function pageCtry(active) {
-  const m = String(active || '').match(/^baltic_(lt|lv|ee)/) || String(active || '').match(/^(?:index|facts|managers|review)_(lv|ee)$/); if (m) return m[1].toUpperCase();
+  const m = String(active || '').match(/^baltic_(lt|lv|ee)/) || String(active || '').match(/^(?:index|facts|managers|review|manager)_(lv|ee)$/); if (m) return m[1].toUpperCase();
   if (active === 'baltic') { let c = null; try { c = new URLSearchParams(location.hash.slice(1)).get('c'); } catch (e) {}
     if (typeof CR !== 'undefined' && CR.c) c = CR.c; return c && c !== 'X' ? c : c === 'X' ? null : 'LT'; }
   return 'LT';
@@ -1845,7 +1845,7 @@ function ctryHref(p, c) {               // puslapio p atitikmuo šalyje c (null 
 }
 const ctryHome = c => ctryHref('index', c) || ctryHref('performance', c);
 function secPage(active) {              // kuriam LT puslapiui (meniu punktui) priklauso dabartinis puslapis
-  const h = String(active || '').match(/^(index|facts|managers|review)_(lv|ee)$/); if (h) return h[1];
+  const h = String(active || '').match(/^(index|facts|managers|review|manager)_(lv|ee)$/); if (h) return h[1];
   const m = String(active || '').match(/^baltic_(lt|lv|ee)(3?)(_ov)?$/); if (m) return m[2] ? 'performance3' : 'performance';
   if (active === 'baltic') {
     let q; try { q = new URLSearchParams(location.hash.slice(1)); } catch (e) { q = new URLSearchParams(); }
