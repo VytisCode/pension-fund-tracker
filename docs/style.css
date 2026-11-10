@@ -962,3 +962,12 @@ div.mgt { cursor: default; }
 .mycl { display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: center; font-size: 13px; } .mycl i { width: 10px; height: 10px; border-radius: 50%; } .mycl span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 table.myt { width: 100%; font-size: 13px; table-layout: fixed; } table.myt td.l { width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } table.myt td { padding: 3px 4px; text-align: right; font-variant-numeric: tabular-nums; } table.myt td.l { text-align: left; } table.myt td.rk { color: var(--text-3, var(--text-2)); } table.myt td.rk.top { color: var(--accent); font-weight: 700; }
 .myc .kd.pos { color: var(--pos, #2f8f5b); font-weight: 600; } .myc .kd.neg { color: var(--neg, #c0503a); font-weight: 600; }
+
+/* Rikiuojamos lentelės ir spalvoti ženkleliai (maketas 7) */
+table.metrics th.srt { cursor: pointer; user-select: none; }
+table.metrics th.srt:hover { color: var(--text); }
+table.metrics th[data-sd="d"]::after { content: ' ↓'; color: var(--accent); }
+table.metrics th[data-sd="a"]::after { content: ' ↑'; color: var(--accent); }
+table.metrics td.pq .pqv { display: inline-block; padding: 1px 7px; border-radius: 7px; }
+table.metrics td.pq-g .pqv { background: color-mix(in srgb, var(--pos, #2f8f5b) 17%, transparent); color: color-mix(in srgb, var(--pos, #2f8f5b) 75%, var(--text)); }
+table.metrics td.pq-r .pqv { background: color-mix(in srgb, var(--neg, #c0503a) 15%, transparent); color: color-mix(in srgb, var(--neg, #c0503a) 80%, var(--text)); }

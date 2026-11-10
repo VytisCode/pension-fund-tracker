@@ -1695,7 +1695,42 @@ function cardHead() {
     t._ch = 1; hd.append(t);
   });
 }
-if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); cardHead(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
+/* Rikiuojamos rodiklių lentelės (maketas 7, savininkas 2026-11-10 „Ok“): paspaudus stulpelio antraštę `table.metrics` eilutės rikiuojamos
+   (antrą kartą – atvirkščiai, trečią – pradinė tvarka). Indeksų ir suvestinės eilutės lieka apačioje; lentelės su keliomis grupėmis (gstart) nerikiuojamos.
+   Pasirinkimas prisimenamas, kol puslapis atidarytas – perpiešus lentelę pritaikomas iš naujo. */
+const SORTS = {};
+const sortNum = td => { const x = (td ? td.textContent : '').replace(/[\s\u00a0\u202f%€]|p\.\s?p\.|pp/g, '').replace('−', '-').replace(',', '.'); const v = parseFloat(x); return isFinite(v) && /^[-+]?[\d.]/.test(x) ? v : null; };
+function sortOk(t) { return t && t.tHead && t.tHead.rows.length === 1 && t.tBodies[0] && t.tBodies[0].rows.length > 2 && !t.querySelector('tr.gstart, [rowspan], thead [colspan]'); }
+function sortApply(t) {
+  const st = SORTS[t.id]; if (!st || !sortOk(t)) return; t._srt = st;
+  const tb = t.tBodies[0], rows = [...tb.rows], fix = r => /\b(idxrow|tot|avg|sum|foot)\b/.test(r.className);
+  rows.forEach((r, i) => { if (r._o == null) r._o = i; });
+  const mv = rows.filter(r => !fix(r)), st0 = rows.filter(fix);
+  mv.sort((a, b) => { if (!st.d) return a._o - b._o; const x = sortNum(a.cells[st.c]), y = sortNum(b.cells[st.c]);
+    if (x == null && y == null) { const p = (a.cells[st.c] || {}).textContent || '', q = (b.cells[st.c] || {}).textContent || ''; return st.d * p.localeCompare(q, T().locale); }
+    if (x == null) return 1; if (y == null) return -1; return st.d * (y - x); });
+  [...mv, ...st0].forEach(r => tb.append(r));
+  [...t.tHead.rows[0].cells].forEach((th, i) => { th.classList.toggle('srt', true); th.dataset.sd = i === st.c && st.d ? (st.d > 0 ? 'd' : 'a') : ''; });
+}
+document.addEventListener('click', e => {
+  const th = e.target.closest && e.target.closest('table.metrics thead th'); if (!th || e.target.closest('button, select, a, input, .info, .ik')) return;
+  const t = th.closest('table'); if (!t.id || !sortOk(t)) return;
+  const c = th.cellIndex, o = SORTS[t.id]; SORTS[t.id] = { c, d: !o || o.c !== c ? 1 : o.d === 1 ? -1 : 0 };
+  sortApply(t);
+});
+function sortScan() { document.querySelectorAll('table.metrics').forEach(t => { if (sortOk(t)) { const ths = t.tHead.rows[0].cells; if (!ths[0].classList.contains('srt')) [...ths].forEach(h => { h.classList.add('srt'); h.title = h.title || (lang === 'lt' ? 'Spustelėkite – rikiuoti' : 'Click to sort'); }); if (SORTS[t.id] && t._srt !== SORTS[t.id]) sortApply(t); } }); }
+/* spalvoti ženkleliai (maketas 7): geriausias ketvirtis grupėje – žalias, silpniausias – raudonas; tik stulpeliai, kur „daugiau“ tikrai „geriau“ */
+function pillQ(t, cols) {
+  if (!t || !t.tBodies[0]) return; const blocks = []; let cur = [];
+  [...t.tBodies[0].rows].forEach(r => { if (r.classList.contains('idxrow')) return; if (r.classList.contains('gstart') && cur.length) { blocks.push(cur); cur = []; } cur.push(r); }); if (cur.length) blocks.push(cur);
+  blocks.forEach(rs => cols.forEach(c => {
+    const vs = rs.map(r => [r.cells[c], sortNum(r.cells[c])]).filter(x => x[1] != null); if (vs.length < 3) return;
+    const k = Math.max(1, Math.round(vs.length / 4)), srt = vs.slice().sort((a, b) => b[1] - a[1]);
+    const mark = (td, c) => { if (!td.querySelector(':scope > .pqv')) td.innerHTML = `<span class="pqv">${td.innerHTML}</span>`; td.classList.add('pq', c); };
+    srt.slice(0, k).forEach(([td]) => mark(td, 'pq-g')); srt.slice(-k).forEach(([td]) => mark(td, 'pq-r'));
+  }));
+}
+if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); cardHead(); sortScan(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
 
 /* ---------- Žodynėlis (auditas #66) ----------
    Užvedus pelę (telefone – palietus) ant lentelės stulpelio ar KPI pavadinimo su terminu rodomas paaiškinimas.

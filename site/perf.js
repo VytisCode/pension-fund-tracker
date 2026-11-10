@@ -761,6 +761,7 @@ function renderFunds() {
       return pt.all.map((s, i) => tr(i === 0, `<td class="n">${rk.map.get(s.f.provider) || ''}</td>${nm(s)}${cell(s.ret, v => pct(v), bestOf('ret', 1))}${cell(s.vol, v => num(v, 2) + pctSfx(), bestOf('vol', -1))}${cell(s.mdd, v => num(v, 2) + pctSfx(), bestOf('mdd', 1))}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), bestOf('cagr', 1))}${cell(s.volAll, v => num(v, 2) + pctSfx(), bestOf('volAll', -1))}${cell(s.mddAll, v => num(v, 2) + pctSfx(), bestOf('mddAll', 1))}`)).join('')
         + idxOf(pt).map(f => { const s = idxStats(f, pt.rng, grpStart(pt.g)); return `<tr class="idxrow"><td class="n"></td>${idxName(f)}${cell(s.ret, v => pct(v), null)}${cell(s.vol, v => num(v, 2) + pctSfx(), null)}${cell(s.mdd, v => num(v, 2) + pctSfx(), null)}<td>${iso(s.inception)}</td>${cell(s.cagr, v => pct(v), null)}${cell(s.volAll, v => num(v, 2) + pctSfx(), null)}${cell(s.mddAll, v => num(v, 2) + pctSfx(), null)}</tr>`; }).join('');
     }).join('') + '</tbody>';
+  pillQ($('tMetrics'), [2, 4, 6, 8]);   // grąža, kritimas, metinė grąža, kritimas nuo pradžios (svyravimas nespalvinamas – „mažiau“ ne visada „geriau“)
 
   renderBars(parts);
   // automatinės išvados kortelių antraštėse (auditas #44) – kai rodoma viena grupė
