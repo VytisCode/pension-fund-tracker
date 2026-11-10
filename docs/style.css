@@ -862,3 +862,20 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 .bk .spark { display: block; width: 100%; height: 34px; margin: 6px 0 8px; color: var(--accent); }
 .hkpi .bk .kico { background: rgba(255,255,255,.16); color: #fff; }
 .hkpi .bk .spark { color: #f1dcae; }
+/* Pradžia (maketas): Lyderių kortelė */
+.ldr .ldhd { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 8px; }
+.ldr .ldhd h2 { margin: 0; flex: 1 1 auto; display: flex; align-items: center; }
+.ldr .ldhd h2 small { font-weight: 500; color: var(--text-3); margin-left: 6px; font-size: 14px; }
+.ldr .kico { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; margin-right: 10px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+table.ldt { width: 100%; border-collapse: collapse; }
+table.ldt th { font-size: 12px; font-weight: 600; color: var(--text-3); text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+table.ldt th.n, table.ldt td.n { text-align: right; font-variant-numeric: tabular-nums; }
+table.ldt th.l, table.ldt td.l { text-align: left; }
+table.ldt td { padding: 9px 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.ldt td.rk { width: 28px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+table.ldt .crown { color: #c9952b; }
+table.ldt .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+table.ldt small { color: var(--text-3); margin-left: 6px; }
+table.ldt .lbar { display: block; height: 4px; margin-top: 7px; border-radius: 4px; background: color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; }
+table.ldt .lbar i { display: block; height: 100%; border-radius: 4px; }
+table.ldt tr.top b { font-weight: 700; }
