@@ -645,3 +645,56 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 .na-card[hidden] { display: none; }
 .na-card .na-box { background: var(--card, var(--bg)); color: var(--text); border-radius: 12px; padding: 18px 20px; max-width: 460px; box-shadow: 0 10px 40px rgba(0,0,0,.25); }
 .na-card h3 { margin: 0 0 8px; font-size: 16px; } .na-card p { margin: 0 0 10px; line-height: 1.45; } .na-card .na-acts { margin: 12px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== Naujas dizainas (bandomasis, 2026-11-10): tas pats turinys, kitas apvalkalas. Įjungia common.js (data-design="v2", Įrankių meniu).
+   Kryptis (savininkas): banko solidumas + Apple ramybė + šiluma – šiltas akmens fonas, baltos kortelės be rėmelių, tamsiai mėlynas rašalas,
+   vienas šriftas (Inter), švelnūs šešėliai. Tik ekranui – spausdinimo dizainai nesikeičia. ===== */
+@media screen {
+  :root[data-design="v2"] {
+    --surface: #f4f2ee; --card: #ffffff; --line: #e6e2db; --text: #15202e; --text-2: #4b5664; --text-3: #7f8790;
+    --grid: #ece9e3; --axis: #b9bcc1; --accent: #1f3a5f; --on-accent: #ffffff; --hover: #eef1f5; --warn: #9a6a1c; --dpos: #2e7d4f; --dneg: #b4472e;
+    --v2-shadow: 0 1px 2px rgba(21,32,46,.04), 0 8px 24px -12px rgba(21,32,46,.16); --v2-gold: #a8792a;
+  }
+  :root[data-design="v2"][data-theme="dark"] {
+    --surface: #14171b; --card: #1c2026; --line: #2b3038; --text: #eef0f2; --text-2: #b5bcc5; --text-3: #8b939d;
+    --grid: #262b32; --axis: #4f5660; --accent: #9db7d9; --on-accent: #0f1a28; --hover: #252c35; --warn: #e0b060; --dpos: #6cc391; --dneg: #ec8a6f;
+    --v2-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6); --v2-gold: #d6ab5e;
+  }
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root[data-design="v2"]:not([data-theme="light"]) {
+    --surface: #14171b; --card: #1c2026; --line: #2b3038; --text: #eef0f2; --text-2: #b5bcc5; --text-3: #8b939d;
+    --grid: #262b32; --axis: #4f5660; --accent: #9db7d9; --on-accent: #0f1a28; --hover: #252c35; --warn: #e0b060; --dpos: #6cc391; --dneg: #ec8a6f;
+    --v2-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6); --v2-gold: #d6ab5e;
+  }
+}
+@media screen {
+  [data-design="v2"] body { -webkit-font-smoothing: antialiased; }
+  [data-design="v2"] :is(h1, h2, h3, .concl, .crumb, .sechero span) { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -.015em; }
+  [data-design="v2"] h2 { font-weight: 650; }
+  /* kortelės: be rėmelių, didesnis apvalinimas, švelnus šešėlis */
+  [data-design="v2"] .card { border-color: transparent; border-radius: 16px; box-shadow: var(--v2-shadow); }
+  [data-design="v2"] .tmpanel, [data-design="v2"] .qpanel, [data-design="v2"] .dlpanel { border-color: transparent; border-radius: 14px; box-shadow: 0 18px 50px -12px rgba(0,0,0,.3); }
+  /* mygtukai ir segmentai – ramūs, „Apple“ tipo pasirinkimas */
+  [data-design="v2"] .btn { border-color: transparent; background: var(--card); border-radius: 9px; box-shadow: 0 1px 2px rgba(21,32,46,.08); }
+  [data-design="v2"] .btn:hover { background: var(--hover); }
+  [data-design="v2"] .seg { border: 0; background: var(--grid); border-radius: 10px; padding: 3px; gap: 2px; overflow: visible; }
+  [data-design="v2"] .seg button, [data-design="v2"] .seg select.segsel { border: 0 !important; border-radius: 8px; font-weight: 500; }
+  [data-design="v2"] .seg button[aria-pressed="true"], [data-design="v2"] .seg select.segsel.active { background: var(--card); color: var(--text); font-weight: 650; box-shadow: 0 1px 3px rgba(0,0,0,.14); }
+  [data-design="v2"] .chip { border-color: transparent; background: var(--grid); border-radius: 999px; }
+  /* skirtukai ir šoninis meniu */
+  [data-design="v2"] .snav { background: color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter: blur(10px); border-bottom-color: transparent; }
+  [data-design="v2"] .snav .subnav a[aria-current="page"], [data-design="v2"] .pnav a[aria-current] { background: var(--card); color: var(--text); border-color: transparent; box-shadow: var(--v2-shadow); }
+  [data-design="v2"] .side .nav > a[aria-current="page"] { background: var(--card); box-shadow: var(--v2-shadow); color: var(--text); }
+  [data-design="v2"] .side .nav > a[aria-current="page"] svg { color: var(--accent); }
+  /* skyriaus nuotrauka: tamsus perėjimas ir baltas tekstas – solidžiau */
+  [data-design="v2"] .sechero { border-radius: 18px; box-shadow: var(--v2-shadow); background-position: center 50%; }
+  [data-design="v2"] .sechero::before { background: linear-gradient(90deg, rgba(14,22,34,.84) 0%, rgba(14,22,34,.58) 42%, rgba(14,22,34,.06) 80%); }
+  [data-design="v2"] .sechero span { color: #fff; font-weight: 700; }
+  [data-design="v2"] .sechero small { color: #e9d3a6; }
+  [data-design="v2"] .sechero p { color: rgba(255,255,255,.86); }
+  [data-design="v2"] .pagebg { opacity: .08; }
+  /* lentelės: ramesnė antraštė, eilutės užvedus */
+  [data-design="v2"] th { color: var(--text-3); font-weight: 600; font-size: 11.5px; letter-spacing: .01em; }
+  [data-design="v2"] tbody tr:hover > td { background-color: color-mix(in srgb, var(--hover) 70%, transparent); }
+}
