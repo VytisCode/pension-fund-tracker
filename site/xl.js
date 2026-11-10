@@ -6,6 +6,8 @@
      s – stilius: 'title' | 'sub' | 'hdr' | 'in' (pradiniai duomenys – mėlyni) | 'calc' (formulė – juoda) | 'res' (rezultatas – paryškintas,
      geltonas fonas) | 'sum' (vidurkio eilutė) | 'note' (paaiškinimas – pilkas) | 'step' (žingsnio aprašas virš stulpelio) | 'link' | 'b' (paryškintas)
    Suderinama su ankstesniu formatu { t: 'n', v, f, z }. */
+// LV/ET: tekstiniai langeliai verčiami tuo pačiu žodynu (common.js tr3); formulėse – tik kabutėse esantys tekstai, kad sutaptų su langeliais
+const xlTr = f => typeof tr3 === 'function' ? f.replace(/"([^"]*)"/g, (m, x) => '"' + tr3(x).replace(/"/g, '""') + '"') : f;
 const XL = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
   const col = n => { let s = ''; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
@@ -52,10 +54,10 @@ const XL = (() => {
           const ref = col(ci) + (ri + 1), s = xf(c.s, c.z);
           if (c.l) links.push({ ref, url: c.l });
           if (c.f) { const v = c.v; const num = typeof v === 'number' && isFinite(v);
-            return `<c r="${ref}" s="${s}"${num ? '' : ' t="str"'}><f>${esc(String(c.f).replace(/^=/, ''))}</f>${v === undefined || v === null ? '' : `<v>${num ? v : esc(v)}</v>`}</c>`; }
+            return `<c r="${ref}" s="${s}"${num ? '' : ' t="str"'}><f>${esc(xlTr(String(c.f).replace(/^=/, '')))}</f>${v === undefined || v === null ? '' : `<v>${num ? v : esc(typeof tr3 === 'function' ? tr3(String(v)) : v)}</v>`}</c>`; }
           if (typeof c.v === 'number') return isFinite(c.v) ? `<c r="${ref}" s="${s}"><v>${c.v}</v></c>` : '';
           if (typeof c.v === 'boolean') return `<c r="${ref}" s="${s}" t="b"><v>${c.v ? 1 : 0}</v></c>`;
-          return `<c r="${ref}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${esc(c.v)}</t></is></c>`;
+          return `<c r="${ref}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${esc(typeof tr3 === 'function' ? tr3(String(c.v)) : c.v)}</t></is></c>`;
         }).join('');
         const ht = sh.o.heights && sh.o.heights[ri];
         return `<row r="${ri + 1}"${ht ? ` ht="${ht}" customHeight="1"` : ''}>${cells}</row>`;

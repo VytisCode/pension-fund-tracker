@@ -1,0 +1,716 @@
+en	lv	et
+% of assets	% no aktīviem	% varadest
+(% from early {N} not shown – funds were just starting and taking over old funds’ assets)	(% no {N}. gada sākuma netiek rādīti – fondi tikai sāka darbu un pārņēma veco fondu aktīvus)	(% alates {N}. aasta algusest ei näidata – fondid alles alustasid ja võtsid üle vanade fondide varad)
+(% not shown – assets at the start were very small)	(% netiek rādīts – aktīvi sākumā bija ļoti mazi)	(% ei näidata – varad olid alguses väga väikesed)
+(Bond funds)	(Obligāciju fondi)	(Võlakirjafondid)
+(Equity funds)	(Akciju fondi)	(Aktsiafondid)
+(fixed part of the fee)	(komisijas fiksētā daļa)	(tasu fikseeritud osa)
+(Mixed funds)	(Jauktie fondi)	(Segafondid)
+(ongoing charges, TER)	(pastāvīgās izmaksas, TER)	(jooksvad tasud, TER)
+(Over {N}% equities)	(Virs {N}% akciju)	(Üle {N}% aktsiaid)
+(Up to {N}% equities)	(Līdz {N}% akciju)	(Kuni {N}% aktsiaid)
+({N}–{N}% equities)	({N}–{N}% akciju)	({N}–{N}% aktsiaid)
+* next to “Since start p.a.” = the fund has a shorter history than the oldest fund in its category, so the average covers a different (shorter) period and is not directly comparable; funds younger than {N} year show no average.	* pie “Kopš sākuma gadā” = fondam ir īsāka vēsture nekā vecākajam fondam tā kategorijā, tāpēc vidējais aptver citu (īsāku) periodu un nav tieši salīdzināms; fondiem, kas jaunāki par {N} gadu, vidējais netiek rādīts.	* „Algusest aastas“ juures = fondi ajalugu on lühem kui oma kategooria vanimal fondil, seega katab keskmine teist (lühemat) perioodi ega ole otseselt võrreldav; alla {N} aasta vanustel fondidel keskmist ei näidata.
++ LB estimate	+ LB aplēse	+ LB hinnang
+: Back to {N}% + {N}% (in {N}–{N} those who applied paid {N}% + {N}% – not modelled here)	: Atpakaļ uz {N}% + {N}% ({N}–{N} pieteikušies maksāja {N}% + {N}% – šeit nav modelēts)	: Tagasi {N}% + {N}% ({N}–{N} maksid avalduse esitanud {N}% + {N}% – siin pole modelleeritud)
+: Back to {N}% + {N}%; since {N} pillar II is voluntary (can leave)	: Atpakaļ uz {N}% + {N}%; kopš {N} II līmenis ir brīvprātīgs (var izstāties)	: Tagasi {N}% + {N}%; alates {N} on II sammas vabatahtlik (võib lahkuda)
+: Crisis: cut to {N}% (month approximate – {M} {N})	: Krīze: samazināts līdz {N}% (mēnesis aptuvens – {M} {N})	: Kriis: vähendati {N}%-ni (kuu ligikaudne – {M} {N})
+: Crisis: state contribution suspended (to {D}), employee only on application (here – not paid)	: Krīze: valsts iemaksa apturēta (līdz {D}), darba ņēmēja – tikai pēc pieteikuma (šeit – nav maksāta)	: Kriis: riigi sissemakse peatati (kuni {D}), töötaja oma ainult avalduse alusel (siin – ei makstud)
+: Own contribution chosen: {N}, {N} or {N}% + state {N}%	: Paša iemaksa pēc izvēles: {N}, {N} vai {N}% + valsts {N}%	: Oma sissemakse valikuline: {N}, {N} või {N}% + riik {N}%
+: Partly restored: state {N}% (approximate – sources differ)	: Daļēji atjaunots: valsts {N}% (aptuveni – avoti atšķiras)	: Osaliselt taastatud: riik {N}% (ligikaudne – allikad erinevad)
+: Pillar II started: employee {N}% + state {N}% out of the {N}% social tax	: Sākās II līmenis: darba ņēmējs {N}% + valsts {N}% no {N}% sociālā nodokļa	: II sammas algas: töötaja {N}% + riik {N}% {N}% sotsiaalmaksust
+: Pillar II started: {N}% out of the {N}% pension social contribution	: Sākās II līmenis: {N}% no {N}% pensiju sociālās iemaksas	: II sammas algas: {N}% {N}% pensionikindlustuse maksest
+: State {N}% suspended to {D}; the missed part was compensated in {N}–{N} (here – in equal parts)	: Valsts {N}% apturēti līdz {D}; nesamaksātā daļa kompensēta {N}–{N} (šeit – vienādās daļās)	: Riigi {N}% peatati kuni {D}; maksmata osa hüvitati {N}–{N} (siin – võrdsetes osades)
+: {N}% (planned to rise to {N}%)	: {N}% (plānots palielināt līdz {N}%)	: {N}% (kavas tõsta {N}%-ni)
+: {N}% ({N} pp moved back to pillar I)	: {N}% ({N} pp pārcelti atpakaļ uz I līmeni)	: {N}% ({N} pp viidi tagasi I sambasse)
+A manager’s figure in a group is the asset-weighted average of its funds there; place among managers in brackets. Returns are not annualised.	Pārvaldītāja rādītājs grupā ir tā fondu vidējais šajā grupā, svērts ar aktīviem; vieta pārvaldītāju vidū – iekavās. Ienesīgums nav izteikts gada izteiksmē.	Fondivalitseja näitaja grupis on tema sealsete fondide varadega kaalutud keskmine; koht fondivalitsejate seas sulgudes. Tootlus ei ole aastane.
+A model participant from the first contribution, future scenarios, fee impact and “Which fund to choose?”.	Modeļa dalībnieks no pirmās iemaksas, nākotnes scenāriji, komisiju ietekme un “Kuru fondu izvēlēties?”.	Näidisosaleja esimesest sissemaksest, tulevikustsenaariumid, tasude mõju ja „Millist fondi valida?“.
+Active investors (pillar II)	Aktīvie ieguldītāji (II līmenis)	Aktiivsed investorid (II sammas)
+After inflation	Pēc inflācijas	Pärast inflatsiooni
+All	Visi	Kõik
+All articles	Visi raksti	Kõik artiklid
+All contributions	Visas iemaksas	Kõik sissemaksed
+all from the social insurance contribution – the participant pays nothing extra	viss no sociālās apdrošināšanas iemaksām – dalībnieks papildus neko nemaksā	kõik sotsiaalkindlustusmaksest – osaleja lisaks midagi ei maksa
+All funds	Visi fondi	Kõik fondid
+All funds of a group by return	Visi grupas fondi pēc ienesīguma	Kõik grupi fondid tootluse järgi
+All groups (managers)	Visas grupas (pārvaldītāji)	Kõik grupid (fondivalitsejad)
+All news →	Visas ziņas →	Kõik uudised →
+All Pillar III funds – key figures	Visi III līmeņa fondi – galvenie rādītāji	Kõik III samba fondid – põhinäitajad
+All quarter facts →	Visi ceturkšņa fakti →	Kõik kvartali faktid →
+All time	Viss laiks	Kogu aeg
+All {N} {P} funds have beaten their group average since the start of the year.	Visi {N} {P} fondi kopš gada sākuma ir pārspējuši savas grupas vidējo.	Kõik {N} {P} fondi on aasta algusest edestanud oma grupi keskmist.
+All {P} funds	Visi {P} fondi	Kõik {P} fondid
+Alternatives	Alternatīvie ieguldījumi	Alternatiivsed investeeringud
+Articles are selected by keywords (pension funds, pillar II/III, sammas, līmenis…), so a few unrelated ones may slip in. Facebook posts cannot be collected automatically – only when the media quote them. The archive is only added to.	Raksti tiek atlasīti pēc atslēgvārdiem (pensiju fondi, II/III līmenis, sammas, pakopa…), tāpēc var iekļūt arī daži nesaistīti. Facebook ierakstus nevar savākt automātiski – tikai tad, ja tos citē mediji. Arhīvs tiek tikai papildināts.	Artiklid valitakse märksõnade järgi (pensionifondid, II/III sammas, līmenis, pakopa…), seega võib sekka sattuda ka mõni asjassepuutumatu. Facebooki postitusi ei saa automaatselt koguda – ainult siis, kui meedia neid tsiteerib. Arhiivi ainult täiendatakse.
+Articles per quarter	Raksti ceturksnī	Artikleid kvartalis
+As of {D} · {P}	Uz {D} · {P}	Seisuga {D} · {P}
+Asset preservation	Aktīvu saglabāšana	Vara säilitamine
+Asset-weighted average:	Ar aktīviem svērtais vidējais:	Varadega kaalutud keskmine:
+Asset-weighted fee (II)	Ar aktīviem svērtā komisija (II)	Varadega kaalutud tasu (II)
+Asset-weighted return – average of the manager’s fund returns weighted by assets. Better half – the fund’s return is among the better half of its country group (only groups with at least {N} funds).	Ar aktīviem svērtais ienesīgums – pārvaldītāja fondu ienesīgumu vidējais, svērts ar aktīviem. Labākā puse – fonda ienesīgums ir labākajā pusē savas valsts grupā (tikai grupas ar vismaz {N} fondiem).	Varadega kaalutud tootlus – fondivalitseja fondide tootluste keskmine, kaalutud varadega. Parem pool – fondi tootlus on oma riigi grupi paremas pooles (ainult vähemalt {N} fondiga grupid).
+Assets	Aktīvi	Varad
+Assets and money	Aktīvi un nauda	Varad ja raha
+Assets and unit values at each month end (manapensija.lv, daily data); earnings within a month assume an even flow.	Aktīvi un daļu vērtības katra mēneša beigās (manapensija.lv, dienas dati); peļņa mēneša ietvaros pieņem vienmērīgu plūsmu.	Varad ja osakuväärtused iga kuu lõpus (manapensija.lv, päevaandmed); kuu sisese tulu puhul eeldatakse ühtlast voogu.
+Assets at end	Aktīvi beigās	Varad lõpus
+Assets at start	Aktīvi sākumā	Varad alguses
+Assets before, m €	Aktīvi pirms, milj. €	Varad enne, mln €
+Assets over {N} years	Aktīvi {N} gadu laikā	Varad {N} aasta jooksul
+Assets – latest known (Latvia – manapensija.lv daily data, {D}).	Aktīvi – pēdējie zināmie (Latvija – manapensija.lv dienas dati, {D}).	Varad – viimased teadaolevad (Läti – manapensija.lv päevaandmed, {D}).
+At year end	Gada beigās	Aasta lõpus
+At year start	Gada sākumā	Aasta alguses
+Average fee	Vidējā komisija	Keskmine tasu
+Average fee:	Vidējā komisija:	Keskmine tasu:
+Average fund	Vidējais fonds	Keskmine fond
+Average fund · Year	Vidējais fonds · Gads	Keskmine fond · Aasta
+Average gross wage, €/month	Vidējā bruto alga, €/mēn.	Keskmine brutopalk, €/kuus
+Average life-cycle fund	Vidējais dzīves cikla fonds	Keskmine elutsüklifond
+Average life-cycle fund · Year	Vidējais dzīves cikla fonds · Gads	Keskmine elutsüklifond · Aasta
+Average old-age pension now: {N} € ({N})	Vidējā vecuma pensija tagad: {N} € ({N})	Keskmine vanaduspension praegu: {N} € ({N})
+Average old-age pension now: {N} € ({N}-Q{N})	Vidējā vecuma pensija tagad: {N} € ({N}-Q{N})	Keskmine vanaduspension praegu: {N} € ({N}-Q{N})
+Average per day, € m	Vidēji dienā, milj. €	Keskmiselt päevas, mln €
+Average per month, € m	Vidēji mēnesī, milj. €	Keskmiselt kuus, mln €
+Average per working day	Vidēji darba dienā	Keskmiselt tööpäevas
+Average wage	Vidējā alga	Keskmine palk
+Average {N}-year return: {M} {N} – {M} {N}	Vidējais {N} gadu ienesīgums: {M} {N} – {M} {N}	Keskmine {N} aasta tootlus: {M} {N} – {M} {N}
+Baltic states →	Baltijas valstis →	Balti riigid →
+Bank of Estonia	Igaunijas Banka	Eesti Pank
+Bank of Latvia	Latvijas Banka	Läti Pank
+Bank of Lithuania	Lietuvas Banka	Leedu Pank
+Bank of Lithuania counts can differ from those published by managers or the association (e.g. participants whose payout is still in progress may still be counted).	Lietuvas Bankas skaitļi var atšķirties no pārvaldītāju vai asociācijas publicētajiem (piem., var tikt ieskaitīti dalībnieki, kuru izmaksa vēl notiek).	Leedu Panga arvud võivad erineda fondivalitsejate või liidu avaldatust (nt võidakse arvestada osalejaid, kelle väljamakse on veel pooleli).
+Bank of Lithuania portfolio reports; all pillar II funds of the manager.	Lietuvas Bankas portfeļu pārskati; visi pārvaldītāja II līmeņa fondi.	Leedu Panga portfelliaruanded; kõik fondivalitseja II samba fondid.
+Bank of Lithuania quarterly data; updated automatically when a new report is published. Each figure can be checked in Excel on the “Quarter facts” tab.	Lietuvas Bankas ceturkšņa dati; tiek atjaunoti automātiski, kad publicēts jauns pārskats. Katru skaitli var pārbaudīt Excel failā cilnē “Ceturkšņa fakti”.	Leedu Panga kvartaliandmed; uuenevad automaatselt uue aruande avaldamisel. Iga arvu saab kontrollida Excelis vahekaardil „Kvartali faktid“.
+Bank of Lithuania quarterly facts, monthly facts, facts for the public, earnings in euros, pillar II vs III, the market over time, funds by group.	Lietuvas Bankas ceturkšņa fakti, mēneša fakti, fakti sabiedrībai, peļņa eiro, II un III līmenis, tirgus laika gaitā, fondi pa grupām.	Leedu Panga kvartali faktid, kuu faktid, faktid avalikkusele, tulu eurodes, II vs III sammas, turg ajas, fondid gruppide kaupa.
+Benchmarks	Etalonindeksi	Võrdlusindeksid
+Best day	Labākā diena	Parim päev
+Between own plans	Starp saviem plāniem	Oma plaanide vahel
+Bond funds	Obligāciju fondi	Võlakirjafondid
+Bond funds – {P}	Obligāciju fondi – {P}	Võlakirjafondid – {P}
+Bonds	Obligācijas	Võlakirjad
+Bonds (incl. bond funds)	Obligācijas (t. sk. obligāciju fondi)	Võlakirjad (sh võlakirjafondid)
+Born {N}–{N}	Dzimuši {N}–{N}	Sündinud {N}–{N}
+Born {N}–{N}: Since start of year, {M} {N}	Dzimuši {N}–{N}: kopš gada sākuma, {M} {N}	Sündinud {N}–{N}: aasta algusest, {M} {N}
+Born {N}–{N}: {N} years, {M} {N}	Dzimuši {N}–{N}: {N} gadi, {M} {N}	Sündinud {N}–{N}: {N} aastat, {M} {N}
+By year	Pa gadiem	Aastate kaupa
+Came from other managers	Atnāca no citiem pārvaldītājiem	Tulid teistelt fondivalitsejatelt
+Came from other plans	Atnāca no citiem plāniem	Tulid teistest plaanidest
+Came mostly from	Galvenokārt atnāca no	Tulid peamiselt
+Capital preservation funds	Kapitāla saglabāšanas fondi	Kapitali säilitamise fondid
+Cards	Kartītes	Kaardid
+Cash and money market	Nauda un naudas tirgus	Raha ja rahaturg
+Category	Kategorija	Kategooria
+Centre Party (EE)	Centra partija (EE)	Keskerakond (EE)
+Change = net assets at the latest date minus net assets at the period start (each manager from its own latest date).	Izmaiņa = neto aktīvi pēdējā datumā mīnus neto aktīvi perioda sākumā (katram pārvaldītājam – no tā pēdējā datuma).	Muutus = puhasvara viimasel kuupäeval miinus puhasvara perioodi alguses (iga fondivalitseja oma viimasest kuupäevast).
+Change in a month	Izmaiņa mēnesī	Muutus kuuga
+Change in assets	Aktīvu izmaiņa	Varade muutus
+Change in net assets · II pillar	Neto aktīvu izmaiņa · II līmenis	Puhasvara muutus · II sammas
+Change in net assets · III pillar	Neto aktīvu izmaiņa · III līmenis	Puhasvara muutus · III sammas
+Change in participants	Dalībnieku skaita izmaiņa	Osalejate arvu muutus
+Change over the last data day	Izmaiņa pēdējā datu dienā	Muutus viimasel andmepäeval
+Change since the start of the year ({D} → {D})	Izmaiņa kopš gada sākuma ({D} → {D})	Muutus aasta algusest ({D} → {D})
+Change, %	Izmaiņa, %	Muutus, %
+Choose what you want to see. The set is saved in this browser; “Share view” copies a link with the same set.	Izvēlieties, ko vēlaties redzēt. Izvēle tiek saglabāta šajā pārlūkā; “Kopīgot skatu” nokopē saiti ar to pašu izvēli.	Valige, mida soovite näha. Valik salvestatakse selles brauseris; „Jaga vaadet“ kopeerib sama valikuga lingi.
+Choosing a fund matters	Fonda izvēle ir svarīga	Fondi valik on oluline
+Click a row to see their statements over time and judge for yourself whether the position changed. Highlighted – words like “proposes”, “criticises”, “supports”, “against”. Positions are not assessed automatically.	Noklikšķiniet uz rindas, lai redzētu izteikumus laika gaitā un paši spriestu, vai nostāja mainījās. Izcelti – vārdi kā “ierosina”, “kritizē”, “atbalsta”, “pret”. Nostājas netiek vērtētas automātiski.	Klõpsake real, et näha väljaütlemisi ajas ja ise hinnata, kas seisukoht muutus. Esile tõstetud – sõnad nagu „teeb ettepaneku“, „kritiseerib“, „toetab“, „vastu“. Seisukohti automaatselt ei hinnata.
+Click a wave to see when it started, peaked and ended and which articles it consisted of.	Noklikšķiniet uz viļņa, lai redzētu, kad tas sākās, sasniedza virsotni un beidzās un no kādiem rakstiem tas sastāvēja.	Klõpsake lainel, et näha, millal see algas, tipnes ja lõppes ning millistest artiklitest see koosnes.
+Click – articles of that period	Noklikšķiniet – šī perioda raksti	Klõpsake – selle perioodi artiklid
+Combined share: {M} {N} – {M} {N}	Kopējā daļa: {M} {N} – {M} {N}	Ühine osa: {M} {N} – {M} {N}
+Commentators	Komentētāji	Kommentaatorid
+Computed automatically from the latest data in each age group; leader / laggard by return over the window.	Aprēķināts automātiski no jaunākajiem datiem katrā vecuma grupā; līderis / atpalicējs pēc ienesīguma izvēlētajā periodā.	Arvutatud automaatselt iga vanusegrupi viimastest andmetest; liider / mahajääja tootluse järgi valitud perioodil.
+Constitutional Court (LT)	Satversmes tiesa (LT)	Konstitutsioonikohus (LT)
+Contribution rate (own + state)	Iemaksu likme (paša + valsts)	Sissemaksemäär (oma + riik)
+Contributions and other flows	Iemaksas un citas plūsmas	Sissemaksed ja muud vood
+Contributions and other flows: {N}	Iemaksas un citas plūsmas: {N}	Sissemaksed ja muud vood: {N}
+Contributions and value over time	Iemaksas un vērtība laika gaitā	Sissemaksed ja väärtus ajas
+Contributions are invested on the {N}th of the following month at that day’s unit value (Latvia – the nearest earlier chart point).	Iemaksas tiek ieguldītas nākamā mēneša {N}. datumā par tās dienas daļas vērtību (Latvijā – tuvākais iepriekšējais grafika punkts).	Sissemaksed investeeritakse järgmise kuu {N}. kuupäeval selle päeva osakuväärtusega (Lätis – lähim varasem graafikupunkt).
+Contributions paid to date, €	Līdz šim iemaksāts, €	Seni sisse makstud, €
+Correction	Korekcija	Korrektsioon
+Counted without AI: positive words (earned, grew, supports, recommends…) minus negative words (lost, criticises, against, risk…) in the headline and description of articles that mention the actor; the whole history of the country is used.	Skaitīts bez MI: pozitīvie vārdi (nopelnīja, pieauga, atbalsta, iesaka…) mīnus negatīvie vārdi (zaudēja, kritizē, pret, risks…) to rakstu virsrakstā un aprakstā, kuros minēts dalībnieks; izmantota visa valsts vēsture.	Loendatud ilma tehisintellektita: positiivsed sõnad (teenis, kasvas, toetab, soovitab…) miinus negatiivsed sõnad (kaotas, kritiseerib, vastu, risk…) nende artiklite pealkirjas ja kirjelduses, mis tegijat mainivad; kasutatakse riigi kogu ajalugu.
+Data starts in {N} (life-cycle funds), so earnings before {N} are not included.	Dati sākas {N}. gadā (dzīves cikla fondi), tāpēc peļņa pirms {N}. gada nav iekļauta.	Andmed algavad {N}. aastal (elutsüklifondid), seega tulu enne {N}. aastat pole arvestatud.
+Date	Datums	Kuupäev
+Day	Diena	Päev
+Days with a gain	Dienas ar peļņu	Tulupäevad
+Died	Miruši	Surnud
+difference:	starpība:	vahe:
+Each fund: month-end unit value ÷ previous month-end − {N}; weights – fund net assets at the start of the month; year to date – monthly returns chained.	Katram fondam: daļas vērtība mēneša beigās ÷ iepriekšējā mēneša beigās − {N}; svari – fonda neto aktīvi mēneša sākumā; kopš gada sākuma – mēnešu ienesīgumi saķēdēti.	Iga fond: osakuväärtus kuu lõpus ÷ eelmise kuu lõpus − {N}; kaalud – fondi puhasvara kuu alguses; aasta algusest – kuutootlused aheldatud.
+Each manager’s participants, assets and market share. Predecessors are counted with today’s manager (Aviva → {P}; DNB → {P}; Finasta, MP Pension Funds Baltic, {P}, SB Asset Management → {P}; Danske Capital → {P}).	Katra pārvaldītāja dalībnieki, aktīvi un tirgus daļa. Priekšteči tiek ieskaitīti pie pašreizējā pārvaldītāja (Aviva → {P}; DNB → {P}; Finasta, MP Pension Funds Baltic, {P}, SB Asset Management → {P}; Danske Capital → {P}).	Iga fondivalitseja osalejad, varad ja turuosa. Eelkäijad arvestatakse praeguse fondivalitseja juurde (Aviva → {P}; DNB → {P}; Finasta, MP Pension Funds Baltic, {P}, SB Asset Management → {P}; Danske Capital → {P}).
+Each row is a topic; shading – articles per week, bars – “waves” (weeks with articles, gaps of up to {N} weeks).	Katra rinda ir tēma; tonējums – raksti nedēļā, joslas – “viļņi” (nedēļas ar rakstiem, pārtraukumi līdz {N} nedēļām).	Iga rida on teema; varjutus – artiklid nädalas, ribad – „lained“ (artiklitega nädalad, vahed kuni {N} nädalat).
+Earned	Nopelnīts	Teenitud
+Earned in today’s euros (after inflation)	Nopelnīts šodienas eiro (pēc inflācijas)	Teenitud tänastes eurodes (pärast inflatsiooni)
+Earned since {N}	Nopelnīts kopš {N}	Teenitud alates {N}
+Earned to date, €	Līdz šim nopelnīts, €	Seni teenitud, €
+EKRE (EE)	EKRE (EE)	EKRE (EE)
+End of Q{N} {N}	{N}. ceturkšņa beigas, {N}	{N}. kvartali lõpp {N}
+Equities	Akcijas	Aktsiad
+Equities (incl. equity funds)	Akcijas (t. sk. akciju fondi)	Aktsiad (sh aktsiafondid)
+Equity	Akciju	Aktsiafondid
+Equity funds	Akciju fondi	Aktsiafondid
+Equity funds – {P}	Akciju fondi – {P}	Aktsiafondid – {P}
+Equity share in strategies	Akciju daļa stratēģijās	Aktsiate osa strateegiates
+Equity share in strategies: {M} {N} – {M} {N}	Akciju daļa stratēģijās: {M} {N} – {M} {N}	Aktsiate osa strateegiates: {M} {N} – {M} {N}
+Estimates used: Average gross wage, €/month {N}-Q{N} = {N}-Q{N}	Izmantotas aplēses: vidējā bruto alga, €/mēn. {N}-Q{N} = {N}-Q{N}	Kasutatud hinnangud: keskmine brutopalk, €/kuus {N}-Q{N} = {N}-Q{N}
+Estimates used: {*}	Izmantotas aplēses: {*}	Kasutatud hinnangud: {*}
+Estonia: largest investments	Igaunija: lielākie ieguldījumi	Eesti: suurimad investeeringud
+Estonia: managers	Igaunija: pārvaldītāji	Eesti: fondivalitsejad
+Estonia: market over time	Igaunija: tirgus laika gaitā	Eesti: turg ajas
+Estonia: overview	Igaunija: pārskats	Eesti: ülevaade
+Estonia: return and place in group	Igaunija: ienesīgums un vieta grupā	Eesti: tootlus ja koht grupis
+Estonia: risk	Igaunija: risks	Eesti: risk
+Estonia: road to retirement	Igaunija: ceļš uz pensiju	Eesti: tee pensionini
+Estonian pillar II and III pension funds (pensionikeskus.ee). Estonia has no official groups, so funds are compared within risk groups.	Igaunijas II un III līmeņa pensiju fondi (pensionikeskus.ee). Igaunijā nav oficiālu grupu, tāpēc fondi tiek salīdzināti riska grupās.	Eesti II ja III samba pensionifondid (pensionikeskus.ee). Eestis ametlikke gruppe pole, seega võrreldakse fonde riskigruppides.
+Estonian pillar II contributions: employee {N}% (from {N} – {N}, {N} or {N}%) and state {N}% out of the {N}% social tax. Retirement age {N} in {N}, linked to life expectancy from {N}. Wages and pensions – Statistics Estonia (quarters).	Igaunijas II līmeņa iemaksas: darba ņēmējs {N}% (no {N} – {N}, {N} vai {N}%) un valsts {N}% no {N}% sociālā nodokļa. Pensionēšanās vecums {N} {N}. gadā, no {N} piesaistīts paredzamajam mūža ilgumam. Algas un pensijas – Igaunijas Statistika (ceturkšņi).	Eesti II samba sissemaksed: töötaja {N}% (alates {N} – {N}, {N} või {N}%) ja riik {N}% {N}% sotsiaalmaksust. Pensioniiga {N} aastal {N}, alates {N} seotud oodatava elueaga. Palgad ja pensionid – Statistikaamet (kvartalid).
+Every day	Katru dienu	Iga päev
+Excel (for analysis)	Excel (analīzei)	Excel (analüüsiks)
+Excel with all calculations	Excel ar visiem aprēķiniem	Excel kõigi arvutustega
+Facts between Bank of Lithuania quarters, from managers’ daily unit values and net assets at month end: the month’s return, leaders in each group, history. Funds are compared only within their group.	Fakti starp Lietuvas Bankas ceturkšņiem no pārvaldītāju dienas daļu vērtībām un neto aktīviem mēneša beigās: mēneša ienesīgums, līderi katrā grupā, vēsture. Fondi tiek salīdzināti tikai savas grupas ietvaros.	Faktid Leedu Panga kvartalite vahel fondivalitsejate päevastest osakuväärtustest ja puhasvarast kuu lõpus: kuu tootlus, liidrid igas grupis, ajalugu. Fonde võrreldakse ainult oma grupi piires.
+Facts between manapensija.lv quarters, from managers’ daily unit values and net assets at month end: the month’s return, leaders in each group, history. Funds are compared only within their group.	Fakti starp ceturkšņiem no plānu dienas daļu vērtībām un neto aktīviem mēneša beigās (manapensija.lv): mēneša ienesīgums, līderi katrā grupā, vēsture. Fondi tiek salīdzināti tikai savas grupas ietvaros.	Faktid kvartalite vahel fondide päevastest osakuväärtustest ja puhasvarast kuu lõpus (manapensija.lv): kuu tootlus, liidrid igas grupis, ajalugu. Fonde võrreldakse ainult oma grupi piires.
+Facts between pensionikeskus.ee quarters, from managers’ daily unit values and net assets at month end: the month’s return, leaders in each group, history. Funds are compared only within their group.	Fakti starp ceturkšņiem no fondu dienas daļu vērtībām un neto aktīviem mēneša beigās (pensionikeskus.ee): mēneša ienesīgums, līderi katrā grupā, vēsture. Fondi tiek salīdzināti tikai savas grupas ietvaros.	Faktid kvartalite vahel fondide päevastest osakuväärtustest ja puhasvarast kuu lõpus (pensionikeskus.ee): kuu tootlus, liidrid igas grupis, ajalugu. Fonde võrreldakse ainult oma grupi piires.
+Facts for the public	Fakti sabiedrībai	Faktid avalikkusele
+Fall and recovery	Kritums un atgūšanās	Langus ja taastumine
+Fastest acceleration	Straujākais paātrinājums	Kiireim kiirenemine
+Fees	Komisijas	Tasud
+Fees are already in unit values. The {N}-year payout is illustrative (value ÷ {N}), not the official pension: in Latvia the capital is added to the state pension or used to buy an annuity, in Estonia – a lump sum, fund pension or annuity.	Komisijas jau iekļautas daļu vērtībās. {N} gadu izmaksa ir ilustratīva (vērtība ÷ {N}), nevis oficiālā pensija: Latvijā kapitāls tiek pievienots valsts pensijai vai par to iegādājas mūža renti, Igaunijā – vienreizēja izmaksa, fondpensija vai annuitāte.	Tasud on juba osakuväärtustes. {N} aasta väljamakse on illustratiivne (väärtus ÷ {N}), mitte ametlik pension: Lätis lisatakse kapital riiklikule pensionile või ostetakse selle eest annuiteet, Eestis – ühekordne väljamakse, fondipension või kindlustusleping (annuiteet).
+Fees in euros	Komisijas eiro	Tasud eurodes
+Fees in euros: {M} {N} – {M} {N}	Komisijas eiro: {M} {N} – {M} {N}	Tasud eurodes: {M} {N} – {M} {N}
+Fees: {M} {N} – {M} {N}	Komisijas: {M} {N} – {M} {N}	Tasud: {M} {N} – {M} {N}
+Flows on reform payout days are payouts (for quarters without daily data – estimated from the Bank of Lithuania quarter-end totals). Start + return + flows + payouts = end, within rounding and gaps in data.	Plūsmas reformas izmaksu dienās ir izmaksas (ceturkšņiem bez dienas datiem – aplēstas no Lietuvas Bankas ceturkšņa beigu kopsummām). Sākums + ienesīgums + plūsmas + izmaksas = beigas, ar noapaļošanas un datu robu precizitāti.	Reformi väljamaksepäevade vood on väljamaksed (päevaandmeteta kvartalitel – hinnatud Leedu Panga kvartalilõpu kogusummadest). Algus + tootlus + vood + väljamaksed = lõpp, ümardamise ja andmelünkade täpsusega.
+For each manager – market share and its trend, participants, investment gain and how its funds did against manapensija.lv group averages. Funds are compared only within their group. “Excel” – every figure as a formula from manapensija.lv data.	Katram pārvaldītājam – tirgus daļa un tās tendence, dalībnieki, ieguldījumu peļņa un kā tā plāniem veicās salīdzinājumā ar grupu vidējiem (manapensija.lv). Plāni tiek salīdzināti tikai savas grupas ietvaros. “Excel” – katrs skaitlis kā formula no manapensija.lv datiem.	Iga fondivalitseja kohta – turuosa ja selle suundumus, osalejad, investeerimistulu ja kuidas tema fondidel läks võrreldes gruppide keskmistega (manapensija.lv). Fonde võrreldakse ainult oma grupi piires. „Excel“ – iga arv valemina manapensija.lv andmetest.
+For each manager – market share and its trend, participants, investment gain and how its funds did against pensionikeskus.ee group averages. Funds are compared only within their group. “Excel” – every figure as a formula from pensionikeskus.ee data.	Katram pārvaldītājam – tirgus daļa un tās tendence, dalībnieki, ieguldījumu peļņa un kā tā fondiem veicās salīdzinājumā ar grupu vidējiem (pensionikeskus.ee). Fondi tiek salīdzināti tikai savas grupas ietvaros. “Excel” – katrs skaitlis kā formula no pensionikeskus.ee datiem.	Iga fondivalitseja kohta – turuosa ja selle suundumus, osalejad, investeerimistulu ja kuidas tema fondidel läks võrreldes gruppide keskmistega (pensionikeskus.ee). Fonde võrreldakse ainult oma grupi piires. „Excel“ – iga arv valemina pensionikeskus.ee andmetest.
+For each manager – market share and its trend, participants, investment gain and how its funds did against the Bank of Lithuania group averages. Funds are compared only within their group. “Excel” – every figure as a formula from the Bank of Lithuania data.	Katram pārvaldītājam – tirgus daļa un tās tendence, dalībnieki, ieguldījumu peļņa un kā tā fondiem veicās salīdzinājumā ar Lietuvas Bankas grupu vidējiem. Fondi tiek salīdzināti tikai savas grupas ietvaros. “Excel” – katrs skaitlis kā formula no Lietuvas Bankas datiem.	Iga fondivalitseja kohta – turuosa ja selle suundumus, osalejad, investeerimistulu ja kuidas tema fondidel läks võrreldes Leedu Panga gruppide keskmistega. Fonde võrreldakse ainult oma grupi piires. „Excel“ – iga arv valemina Leedu Panga andmetest.
+For pillar II in {N} this gives € {N} m, as in the association’s review; {N} figures differ because reform payouts are treated differently.	II līmenim {N}. gadā tas dod {N} milj. €, kā asociācijas pārskatā; {N}. gada skaitļi atšķiras, jo reformas izmaksas tiek uzskaitītas atšķirīgi.	II samba puhul annab see {N}. aastal {N} mln €, nagu liidu ülevaates; {N}. aasta arvud erinevad, sest reformi väljamakseid käsitletakse teisiti.
+From	No	Alates
+From \ To	No \ Uz	Kust \ Kuhu
+Fund	Fonds	Fond
+Fund groups	Fondu grupas	Fondide grupid
+Fund groups · Year	Fondu grupas · Gads	Fondide grupid · Aasta
+Fund return	Fonda ienesīgums	Fondi tootlus
+Funds & ETFs	Fondi un ETF	Fondid ja ETF-id
+Funds are compared only with funds of the same Bank of Lithuania group (life-cycle funds by year of birth; asset-preservation funds with each other). The last row is the Bank of Lithuania asset-weighted group average.	Fondi tiek salīdzināti tikai ar tās pašas Lietuvas Bankas grupas fondiem (dzīves cikla fondi – pēc dzimšanas gada; aktīvu saglabāšanas fondi – savā starpā). Pēdējā rinda ir Lietuvas Bankas ar aktīviem svērtais grupas vidējais.	Fonde võrreldakse ainult sama Leedu Panga grupi fondidega (elutsüklifondid sünniaasta järgi; vara säilitamise fondid omavahel). Viimane rida on Leedu Panga varadega kaalutud grupi keskmine.
+Funds are compared only with funds of the same manapensija.lv group (life-cycle funds by year of birth; asset-preservation funds with each other). The last row is manapensija.lv asset-weighted group average.	Plāni tiek salīdzināti tikai ar tās pašas grupas plāniem (grupas pēc akciju daļas). Pēdējā rinda ir ar aktīviem svērtais grupas vidējais (manapensija.lv).	Fonde võrreldakse ainult sama grupi fondidega (grupid aktsiate osa järgi). Viimane rida on varadega kaalutud grupi keskmine (manapensija.lv).
+Funds are compared only with funds of the same pensionikeskus.ee group (life-cycle funds by year of birth; asset-preservation funds with each other). The last row is pensionikeskus.ee asset-weighted group average.	Fondi tiek salīdzināti tikai ar tās pašas grupas fondiem (riska grupas pēc svārstīguma). Pēdējā rinda ir ar aktīviem svērtais grupas vidējais (pensionikeskus.ee).	Fonde võrreldakse ainult sama grupi fondidega (riskigrupid volatiilsuse järgi). Viimane rida on varadega kaalutud grupi keskmine (pensionikeskus.ee).
+Funds vs group averages	Fondi pret grupu vidējiem	Fondid vs gruppide keskmised
+Funds vs inflation by year	Fondi pret inflāciju pa gadiem	Fondid vs inflatsioon aastate kaupa
+Funds vs minimum wage	Fondi pret minimālo algu	Fondid vs miinimumpalk
+Funds vs pensions	Fondi pret pensijām	Fondid vs pensionid
+Funds vs wages	Fondi pret algām	Fondid vs palgad
+Gain of a fund on a day = its net assets on the previous day × (unit value ÷ previous unit value − {N}). Unit values are after fees.	Fonda peļņa dienā = tā neto aktīvi iepriekšējā dienā × (daļas vērtība ÷ iepriekšējā daļas vērtība − {N}). Daļu vērtības ir pēc komisijām.	Fondi päevatulu = selle puhasvara eelmisel päeval × (osakuväärtus ÷ eelmine osakuväärtus − {N}). Osakuväärtused on pärast tasusid.
+Gain per participant: {M} {N} – {M} {N}	Peļņa uz vienu dalībnieku: {M} {N} – {M} {N}	Tulu osaleja kohta: {M} {N} – {M} {N}
+Gain, € m	Peļņa, milj. €	Tulu, mln €
+Gains in euros	Peļņa eiro	Tulu eurodes
+Gap, pp	Starpība, pp	Vahe, pp
+Generated automatically from the article archive (keywords, no AI). “Show” opens the articles behind the sentence.	Ģenerēts automātiski no rakstu arhīva (atslēgvārdi, bez MI). “Rādīt” atver rakstus, uz kuriem balstīts teikums.	Koostatud automaatselt artiklite arhiivist (märksõnad, ilma tehisintellektita). „Näita“ avab lause aluseks olevad artiklid.
+Good and bad years	Labie un sliktie gadi	Head ja halvad aastad
+Government (EE)	Valdība (EE)	Valitsus (EE)
+Government (LT)	Valdība (LT)	Valitsus (LT)
+Government (LV)	Valdība (LV)	Valitsus (LV)
+Government, politics	Valdība, politika	Valitsus, poliitika
+Greens and Farmers (LV)	Zaļo un Zemnieku savienība (LV)	Rohelised ja Talupojad (LV)
+Group average (weighted)	Grupas vidējais (svērtais)	Grupi keskmine (kaalutud)
+Group averages: Since start of year, {M} {N}	Grupu vidējie: kopš gada sākuma, {M} {N}	Gruppide keskmised: aasta algusest, {M} {N}
+Group averages: {N} years, {M} {N}	Grupu vidējie: {N} gadi, {M} {N}	Gruppide keskmised: {N} aastat, {M} {N}
+Group ranking	Grupas reitings	Grupi pingerida
+Growth of pillar III	III līmeņa izaugsme	III samba kasv
+HHI: {M} {N} – {M} {N}	HHI: {M} {N} – {M} {N}	HHI: {M} {N} – {M} {N}
+High (over {N}%)	Augsts (virs {N}%)	Kõrge (üle {N}%)
+High risk (over {N}%)	Augsts risks (virs {N}%)	Kõrge risk (üle {N}%)
+High risk (over {N}%): {P} Pensionifond Indeks vs. {P} Pension Fund Generation {N}-{N}	Augsts risks (virs {N}%): {P} Pensionifond Indeks pret {P} Pension Fund Generation {N}-{N}	Kõrge risk (üle {N}%): {P} Pensionifond Indeks vs {P} Pension Fund Generation {N}-{N}
+Higher ({N}–{N}%)	Paaugstināts ({N}–{N}%)	Kõrgem ({N}–{N}%)
+Higher = more return per unit of risk. Colour = place within the age group (green = best); funds are compared only with the same age group. “Average place” = the provider’s average place across the chosen groups. On periods shorter than a year the annualised figures are less reliable.	Augstāks = vairāk ienesīguma uz riska vienību. Krāsa = vieta vecuma grupā (zaļa = labākā); fondi tiek salīdzināti tikai ar tās pašas vecuma grupas fondiem. “Vidējā vieta” = pārvaldītāja vidējā vieta izvēlētajās grupās. Periodos, kas īsāki par gadu, gada izteiksmes rādītāji ir mazāk ticami.	Kõrgem = rohkem tootlust riskiühiku kohta. Värv = koht vanusegrupis (roheline = parim); fonde võrreldakse ainult sama vanusegrupiga. „Keskmine koht“ = fondivalitseja keskmine koht valitud gruppides. Alla aasta pikkustel perioodidel on aastased näitajad vähem usaldusväärsed.
+Higher risk ({N}–{N}%)	Paaugstināts risks ({N}–{N}%)	Kõrgem risk ({N}–{N}%)
+How far each fund or manager is above the asset-weighted average	Par cik katrs fonds vai pārvaldītājs pārsniedz ar aktīviem svērto vidējo	Kui palju iga fond või fondivalitseja ületab varadega kaalutud keskmist
+How many euros pension funds earned or lost from investments – per day, month, quarter or year. Contributions, switches and reform payouts are not gains: they change only the assets. Even a small daily return of {N} % is millions of euros for the whole market.	Cik eiro pensiju fondi nopelnīja vai zaudēja no ieguldījumiem – dienā, mēnesī, ceturksnī vai gadā. Iemaksas, pārejas un reformas izmaksas nav peļņa: tās maina tikai aktīvus. Pat neliels dienas ienesīgums {N} % visam tirgum ir miljoni eiro.	Mitu eurot teenisid või kaotasid pensionifondid investeeringutelt – päevas, kuus, kvartalis või aastas. Sissemaksed, vahetused ja reformi väljamaksed ei ole tulu: need muudavad ainult varasid. Isegi väike päevane tootlus {N}% tähendab kogu turule miljoneid eurosid.
+How many pillar II participants moved their savings from one manager to another. Only switches – new participants, deaths and retirements are in the yearly table above.	Cik II līmeņa dalībnieku pārcēla uzkrājumus no viena pārvaldītāja pie cita. Tikai pārejas – jaunie dalībnieki, miršana un pensionēšanās ir gada tabulā augstāk.	Mitu II samba osalejat viis oma säästud ühelt fondivalitsejalt teisele. Ainult vahetused – uued osalejad, surmad ja pensionile jäämised on ülal aastatabelis.
+How much money the funds manage. Daily net assets from the providers; where daily figures are not yet collected, quarter-end values from the Bank of Lithuania portfolio reports are used.	Cik daudz naudas pārvalda fondi. Dienas neto aktīvi no pārvaldītājiem; kur dienas skaitļi vēl netiek vākti, izmantotas ceturkšņa beigu vērtības no Lietuvas Bankas portfeļu pārskatiem.	Kui palju raha fondid haldavad. Päevane puhasvara fondivalitsejatelt; kus päevaandmeid veel ei koguta, kasutatakse Leedu Panga portfelliaruannete kvartalilõpu väärtusi.
+How pillar III is growing alongside the pillar II reform: assets, participants and money flows by manager. Bank of Lithuania quarterly data; in pillar III a person saving in several funds is counted in each fund.	Kā III līmenis aug līdztekus II līmeņa reformai: aktīvi, dalībnieki un naudas plūsmas pa pārvaldītājiem. Lietuvas Bankas ceturkšņa dati; III līmenī cilvēks, kas uzkrāj vairākos fondos, tiek ieskaitīts katrā fondā.	Kuidas III sammas kasvab koos II samba reformiga: varad, osalejad ja rahavood fondivalitsejate kaupa. Leedu Panga kvartaliandmed; III sambas loetakse mitmes fondis koguvat inimest igas fondis.
+How pillar III is growing alongside the pillar II reform: assets, participants and money flows by manager. manapensija.lv quarterly data; in pillar III a person saving in several funds is counted in each fund.	Kā aug III līmenis: aktīvi, dalībnieki un naudas plūsmas pa pārvaldītājiem. manapensija.lv dati; III līmenī cilvēks, kas uzkrāj vairākos plānos, tiek ieskaitīts katrā plānā.	Kuidas kasvab III sammas: varad, osalejad ja rahavood fondivalitsejate kaupa. manapensija.lv andmed; III sambas loetakse mitmes fondis koguvat inimest igas fondis.
+How pillar III is growing alongside the pillar II reform: assets, participants and money flows by manager. pensionikeskus.ee quarterly data; in pillar III a person saving in several funds is counted in each fund.	Kā aug III līmenis: aktīvi, dalībnieki un naudas plūsmas pa pārvaldītājiem. pensionikeskus.ee dati; III līmenī cilvēks, kas uzkrāj vairākos fondos, tiek ieskaitīts katrā fondā.	Kuidas kasvab III sammas: varad, osalejad ja rahavood fondivalitsejate kaupa. pensionikeskus.ee andmed; III sambas loetakse mitmes fondis koguvat inimest igas fondis.
+If paid out over {N} years	Ja izmaksātu {N} gadu laikā	Kui maksta välja {N} aasta jooksul
+II + III	II + III	II + III
+II pillar	II līmenis	II sammas
+III pillar	III līmenis	III sammas
+in a year	gada laikā	aastaga
+In pillar III a person saving in several funds is counted in each fund. The pillar II report for {D} is not available (the Bank of Lithuania link opens the pillar III file).	III līmenī cilvēks, kas uzkrāj vairākos fondos, tiek ieskaitīts katrā fondā. II līmeņa pārskats par {D} nav pieejams (Lietuvas Bankas saite atver III līmeņa failu).	III sambas loetakse mitmes fondis koguvat inimest igas fondis. II samba aruannet seisuga {D} pole saadaval (Leedu Panga link avab III samba faili).
+In Q{N} {N} the funds earned on average about {N} € per participant, since the start of the year about {N} €.	{2}. gada {1}. ceturksnī fondi vidēji nopelnīja aptuveni {3} € uz vienu dalībnieku, kopš gada sākuma – aptuveni {4} €.	{2}. aasta {1}. kvartalis teenisid fondid keskmiselt umbes {3} € osaleja kohta, aasta algusest umbes {4} €.
+In {M} {N} the average return of pillar II funds was negative after {N} months of positive returns in a row.	{2}. gada {1:in} II līmeņa fondu vidējais ienesīgums bija negatīvs pēc {3} pozitīviem mēnešiem pēc kārtas.	{2}. aasta {1:in} oli II samba fondide keskmine tootlus negatiivne pärast {3} järjestikust positiivset kuud.
+Income tax	Ienākuma nodoklis	Tulumaks
+Insights	Atziņas	Tähelepanekud
+Institutions	Iestādes	Asutused
+Institutions, parties, organisations, commentators and managers mentioned in headlines or descriptions, by period.	Iestādes, partijas, organizācijas, komentētāji un pārvaldītāji, kas minēti virsrakstos vai aprakstos, pa periodiem.	Pealkirjades või kirjeldustes mainitud asutused, erakonnad, organisatsioonid, kommentaatorid ja fondivalitsejad perioodide kaupa.
+Investment gain	Ieguldījumu peļņa	Investeerimistulu
+Investment gain and assets	Ieguldījumu peļņa un aktīvi	Investeerimistulu ja varad
+Investment gain in the quarter, € m (est.)	Ieguldījumu peļņa ceturksnī, milj. € (aplēse)	Investeerimistulu kvartalis, mln € (hinnang)
+Investment gain is an estimate: fund quarter return × (assets at quarter start + half the net flow; from Q{N} {N} the whole flow, as reform payouts are made at the start of the quarter).	Ieguldījumu peļņa ir aplēse: fonda ceturkšņa ienesīgums × (aktīvi ceturkšņa sākumā + puse no neto plūsmas; no {2}. gada {1}. ceturkšņa – visa plūsma, jo reformas izmaksas tiek veiktas ceturkšņa sākumā).	Investeerimistulu on hinnang: fondi kvartalitootlus × (varad kvartali alguses + pool netovoost; alates {2}. aasta {1}. kvartalist kogu voog, sest reformi väljamaksed tehakse kvartali alguses).
+Investment gain since year start, € m (est.)	Ieguldījumu peļņa kopš gada sākuma, milj. € (aplēse)	Investeerimistulu aasta algusest, mln € (hinnang)
+Investment gain, € m	Ieguldījumu peļņa, milj. €	Investeerimistulu, mln €
+Investment gain, € m: {M} {N} – {M} {N}	Ieguldījumu peļņa, milj. €: {M} {N} – {M} {N}	Investeerimistulu, mln €: {M} {N} – {M} {N}
+Isamaa (EE)	Isamaa (EE)	Isamaa (EE)
+It includes contributions, payouts and investment returns. A total is shown only when all managers have data for the whole period.	Tā ietver iemaksas, izmaksas un ieguldījumu ienesīgumu. Kopsumma tiek rādīta tikai tad, ja visiem pārvaldītājiem ir dati par visu periodu.	See hõlmab sissemakseid, väljamakseid ja investeerimistootlust. Kogusumma näidatakse ainult siis, kui kõigil fondivalitsejatel on andmed kogu perioodi kohta.
+lagged in {N} of {N} age groups. Largest one-day move:	atpalika {N} no {N} vecuma grupām. Lielākā vienas dienas izmaiņa:	jäi maha {N} vanusegrupis {N}-st. Suurim ühe päeva muutus:
+Largest fall	Lielākais kritums	Suurim langus
+Largest gap in a group	Lielākā starpība grupā	Suurim vahe grupis
+Last	Pēdējais	Viimane
+Last day ({D})	Pēdējā diena ({D})	Viimane päev ({D})
+Last month	Pēdējais mēnesis	Viimane kuu
+Last {N} days	Pēdējās {N} dienas	Viimased {N} päeva
+Latest	Jaunākais	Viimane
+Latest articles that mention the manager	Jaunākie raksti, kuros minēts pārvaldītājs	Viimased artiklid, mis mainivad fondivalitsejat
+Latest pension news	Jaunākās pensiju ziņas	Viimased pensioniuudised
+Latest report ({D}).	Jaunākais pārskats ({D}).	Viimane aruanne ({D}).
+Latvia: largest investments	Latvija: lielākie ieguldījumi	Läti: suurimad investeeringud
+Latvia: managers	Latvija: pārvaldītāji	Läti: fondivalitsejad
+Latvia: market over time	Latvija: tirgus laika gaitā	Läti: turg ajas
+Latvia: overview	Latvija: pārskats	Läti: ülevaade
+Latvia: return and place in group	Latvija: ienesīgums un vieta grupā	Läti: tootlus ja koht grupis
+Latvia: risk	Latvija: risks	Läti: risk
+Latvia: road to retirement	Latvija: ceļš uz pensiju	Läti: tee pensionini
+Latvian pillar II (funded scheme) contributions are part of the {N}% pension social contribution paid by employer and employee; the participant pays nothing extra.	Latvijas II līmeņa (fondētās shēmas) iemaksas ir daļa no {N}% pensiju sociālās iemaksas, ko maksā darba devējs un darba ņēmējs; dalībnieks papildus neko nemaksā.	Läti II samba (kogumisskeemi) sissemaksed on osa tööandja ja töötaja makstavast {N}% pensionikindlustuse maksest; osaleja lisaks midagi ei maksa.
+Latvian pillar II and III pension plans (manapensija.lv). Funds are compared within Latvian groups by equity share.	Latvijas II un III līmeņa pensiju plāni (manapensija.lv). Plāni tiek salīdzināti Latvijas grupās pēc akciju daļas.	Läti II ja III samba pensioniplaanid (manapensija.lv). Fonde võrreldakse Läti gruppides aktsiate osa järgi.
+Latvian values are chart points every {N}–{N} days, so a period may start or end a few days off. Lithuanian history here starts in {N}–{N}; longer results – on the Results page.	Latvijas vērtības ir grafika punkti ik pēc {N}–{N} dienām, tāpēc periods var sākties vai beigties dažas dienas nobīdē. Lietuvas vēsture šeit sākas {N}–{N}; garāki rezultāti – lapā “Rezultāti”.	Läti väärtused on graafiku punktid iga {N}–{N} päeva järel, seega võib periood alata või lõppeda mõne päeva nihkega. Leedu ajalugu algab siin {N}–{N}; pikemad tulemused – lehel „Tulemused“.
+LB estimate	LB aplēse	LB hinnang
+LB estimate, {N} of {N} quarters	LB aplēse, {N} no {N} ceturkšņiem	LB hinnang, {N} kvartalit {N}-st
+Leader	Līderis	Liider
+Leader · Year	Līderis · Gads	Liider · Aasta
+Leaders in all groups: Month, {M} {N}	Līderi visās grupās: mēnesis, {M} {N}	Liidrid kõigis gruppides: kuu, {M} {N}
+Leaders in all groups: Since start of year, {M} {N}	Līderi visās grupās: kopš gada sākuma, {M} {N}	Liidrid kõigis gruppides: aasta algusest, {M} {N}
+Leaders in all groups: {N} months, {M} {N}	Līderi visās grupās: {N} mēneši, {M} {N}	Liidrid kõigis gruppides: {N} kuud, {M} {N}
+Leaders in groups	Līderi grupās	Liidrid gruppides
+led in {N} of {N} age groups.	bija līderis {N} no {N} vecuma grupām.	oli liider {N} vanusegrupis {N}-st.
+Left mostly to	Galvenokārt aizgāja pie	Läksid peamiselt
+Left to other managers	Aizgāja pie citiem pārvaldītājiem	Läksid teistele fondivalitsejatele
+Left to other plans	Aizgāja uz citiem plāniem	Läksid teistesse plaanidesse
+Life-cycle fund: Pillar II fund for a birth-year group: more equities when young, risk reduced automatically towards retirement. Only funds of the same group are compared.	Dzīves cikla fonds: II līmeņa fonds dzimšanas gadu grupai: jaunībā vairāk akciju, tuvojoties pensijai risks automātiski samazinās. Salīdzināti tiek tikai vienas grupas fondi.	Elutsüklifond: II samba fond sünniaastate grupile: noorena rohkem aktsiaid, pensionieale lähenedes risk väheneb automaatselt. Võrreldakse ainult sama grupi fonde.
+Life-cycle groups	Dzīves cikla grupas	Elutsükligrupid
+Life-cycle groups · Year	Dzīves cikla grupas · Gads	Elutsükligrupid · Aasta
+LIPFA (fund association)	LIPFA (fondu asociācija)	LIPFA (fondide liit)
+LIPFA (fund association) and Ministry of Social Security and Labour speak in opposite tones: {N} vs {N} points out of {N} ({N} – only positive).	LIPFA (fondu asociācija) un Sociālās drošības un darba ministrija runā pretējos toņos: {N} pret {N} punktiem no {N} ({N} – tikai pozitīvs).	LIPFA (fondide liit) ning sotsiaalkaitse- ja tööministeerium räägivad vastandlikus toonis: {N} vs {N} punkti {N}-st ({N} – ainult positiivne).
+LIPFA (fund association): in {N} of {N} articles with a tone it is positive – usually encourages and defends.	LIPFA (fondu asociācija): {N} no {N} rakstiem ar toni tas ir pozitīvs – parasti iedrošina un aizstāv.	LIPFA (fondide liit): {N} tooniga artiklis {N}-st on toon positiivne – tavaliselt julgustab ja kaitseb.
+List	Saraksts	Loetelu
+Lithuanian, Latvian and Estonian pension funds side by side: returns, risk, fees, assets, reforms.	Lietuvas, Latvijas un Igaunijas pensiju fondi blakus: ienesīgums, risks, komisijas, aktīvi, reformas.	Leedu, Läti ja Eesti pensionifondid kõrvuti: tootlus, risk, tasud, varad, reformid.
+Low (under {N}%)	Zems (zem {N}%)	Madal (alla {N}%)
+Low risk (volatility under {N}%)	Zems risks (svārstīgums zem {N}%)	Madal risk (volatiilsus alla {N}%)
+Low risk (volatility under {N}%): {N} years, {M} {N}	Zems risks (svārstīgums zem {N}%): {N} gadi, {M} {N}	Madal risk (volatiilsus alla {N}%): {N} aastat, {M} {N}
+Manager	Pārvaldītājs	Fondivalitseja
+Manager across groups	Pārvaldītājs visās grupās	Fondivalitseja kõigis gruppides
+Manager insights	Pārvaldītāju atziņas	Fondivalitsejate tähelepanekud
+Manager insights and market shares; one manager’s summary or one fund’s card: return vs group, fees, assets, portfolio, benchmark.	Pārvaldītāju atziņas un tirgus daļas; viena pārvaldītāja kopsavilkums vai viena fonda kartīte: ienesīgums pret grupu, komisijas, aktīvi, portfelis, etalonindekss.	Fondivalitsejate tähelepanekud ja turuosad; ühe fondivalitseja kokkuvõte või ühe fondi kaart: tootlus vs grupp, tasud, varad, portfell, võrdlusindeks.
+Manager report tables: returns since {N}, monthly returns, KPIs, half-year tables, KID scenarios.	Pārvaldītāju pārskatu tabulas: ienesīgums kopš {N}, mēnešu ienesīgums, KPI, pusgada tabulas, PID scenāriji.	Fondivalitsejate aruannete tabelid: tootlus alates {N}, kuutootlused, KPI-d, poolaasta tabelid, PID stsenaariumid.
+Managers	Pārvaldītāji	Fondivalitsejad
+Managers & funds →	Pārvaldītāji un fondi →	Fondivalitsejad ja fondid →
+Managers (all funds)	Pārvaldītāji (visi fondi)	Fondivalitsejad (kõik fondid)
+Managers in pillars II and III	Pārvaldītāji II un III līmenī	Fondivalitsejad II ja III sambas
+Managers →	Pārvaldītāji →	Fondivalitsejad →
+Managers: average fund	Pārvaldītāji: vidējais fonds	Fondivalitsejad: keskmine fond
+Managers: average life-cycle fund	Pārvaldītāji: vidējais dzīves cikla fonds	Fondivalitsejad: keskmine elutsüklifond
+manapensija.lv counts can differ from those published by managers or the association (e.g. participants whose payout is still in progress may still be counted).	manapensija.lv skaitļi var atšķirties no pārvaldītāju vai asociācijas publicētajiem.	manapensija.lv arvud võivad erineda fondivalitsejate või liidu avaldatust.
+manapensija.lv quarterly data; updated automatically when a new report is published. Each figure can be checked in Excel on the “Quarter facts” tab.	manapensija.lv ceturkšņa dati; tiek atjaunoti automātiski, kad publicēts jauns pārskats. Katru skaitli var pārbaudīt Excel failā cilnē “Ceturkšņa fakti”.	manapensija.lv kvartaliandmed; uuenevad automaatselt uue aruande avaldamisel. Iga arvu saab kontrollida Excelis vahekaardil „Kvartali faktid“.
+manapensija.lv quarterly facts, monthly facts, facts for the public, earnings in euros, pillar II vs III, the market over time, funds by group.	manapensija.lv ceturkšņa fakti, mēneša fakti, fakti sabiedrībai, peļņa eiro, II un III līmenis, tirgus laika gaitā, fondi pa grupām.	manapensija.lv kvartali faktid, kuu faktid, faktid avalikkusele, tulu eurodes, II vs III sammas, turg ajas, fondid gruppide kaupa.
+Market concentration	Tirgus koncentrācija	Turu kontsentratsioon
+Market events	Tirgus notikumi	Turusündmused
+Market facts →	Tirgus fakti →	Turu faktid →
+Market over time →	Tirgus laika gaitā →	Turg ajas →
+Market share	Tirgus daļa	Turuosa
+Market share by assets · {D}	Tirgus daļa pēc aktīviem · {D}	Turuosa varade järgi · {D}
+Market shares	Tirgus daļas	Turuosad
+Max drawdown	Maks. kritums	Maks. langus
+Mergers	Apvienošanas	Ühinemised
+Methodology & sources →	Metodoloģija un avoti →	Metoodika ja allikad →
+Ministry of Finance (EE)	Finanšu ministrija (EE)	Rahandusministeerium (EE)
+Ministry of Finance (LV)	Finanšu ministrija (LV)	Rahandusministeerium (LV)
+Ministry of Social Affairs (EE)	Sociālo lietu ministrija (EE)	Sotsiaalministeerium (EE)
+Ministry of Social Security and Labour	Sociālās drošības un darba ministrija	Sotsiaalkaitse- ja tööministeerium
+Ministry of Social Security and Labour: in {N} of {N} articles with a tone it is negative – usually critical.	Sociālās drošības un darba ministrija: {N} no {N} rakstiem ar toni tas ir negatīvs – parasti kritisks.	Sotsiaalkaitse- ja tööministeerium: {N} tooniga artiklis {N}-st on toon negatiivne – tavaliselt kriitiline.
+Ministry of Welfare (LV)	Labklājības ministrija (LV)	Heaolu ministeerium (LV)
+Mixed	Jauktie	Segafondid
+Mixed funds	Jauktie fondi	Segafondid
+Mixed funds – {P}	Jauktie fondi – {P}	Segafondid – {P}
+Moderate ({N}–{N}%)	Mērens ({N}–{N}%)	Mõõdukas ({N}–{N}%)
+Moderate risk ({N}–{N}%)	Mērens risks ({N}–{N}%)	Mõõdukas risk ({N}–{N}%)
+Money flows	Naudas plūsmas	Rahavood
+Money paid to people leaving pillar II ({N}–{N})	Nauda, kas izmaksāta II līmeni pametušajiem ({N}–{N})	II sambast lahkujatele välja makstud raha ({N}–{N})
+Month	Mēnesis	Kuu
+Month facts	Mēneša fakti	Kuu faktid
+Month return	Mēneša ienesīgums	Kuu tootlus
+Month-end unit values to {D}, not annualised; compared within the same risk category.	Daļu vērtības mēneša beigās līdz {D}, nav izteiktas gada izteiksmē; salīdzinātas tās pašas riska kategorijas ietvaros.	Kuu lõpu osakuväärtused kuni {D}, mitte aastased; võrreldud sama riskikategooria piires.
+Month:	Mēnesis:	Kuu:
+Monthly streak	Mēnešu sērija	Kuude seeria
+Most mentioned in {N} days: Government (LV) ({N}), Ministry of Welfare (LV) ({N}), VSAA (social insurance) ({N}).	Visvairāk minēti {N} dienās: Valdība (LV) ({N}), Labklājības ministrija (LV) ({N}), VSAA (sociālā apdrošināšana) ({N}).	Enim mainitud {N} päeva jooksul: Valitsus (LV) ({N}), Heaolu ministeerium (LV) ({N}), VSAA (sotsiaalkindlustus) ({N}).
+Most mentioned in {N} days: Sodra ({N}), LIPFA (fund association) ({N}), Seimas (parliament) ({N}), Bank of Lithuania ({N}).	Visvairāk minēti {N} dienās: Sodra ({N}), LIPFA (fondu asociācija) ({N}), Seims (parlaments) ({N}), Lietuvas Banka ({N}).	Enim mainitud {N} päeva jooksul: Sodra ({N}), LIPFA (fondide liit) ({N}), Seim (parlament) ({N}), Leedu Pank ({N}).
+Most often first	Visbiežāk pirmie	Kõige sagedamini esimene
+Most often first: {N}	Visbiežāk pirmie: {N}	Kõige sagedamini esimene: {N}
+Net	Neto	Neto
+Net assets at quarter end, all plans of the pillar (Bank of Latvia statistics, table {N}).	Neto aktīvi ceturkšņa beigās, visi līmeņa plāni (Latvijas Bankas statistika, {N}. tabula).	Puhasvara kvartali lõpus, kõik samba plaanid (Läti Panga statistika, tabel {N}).
+Net assets at quarter end, by fund · II pillar	Neto aktīvi ceturkšņa beigās pa fondiem · II līmenis	Puhasvara kvartali lõpus fondide kaupa · II sammas
+Net assets at quarter end, by fund · III pillar	Neto aktīvi ceturkšņa beigās pa fondiem · III līmenis	Puhasvara kvartali lõpus fondide kaupa · III sammas
+Net assets, € m	Neto aktīvi, milj. €	Puhasvara, mln €
+Net contributions: {M} {N} – {M} {N}	Neto iemaksas: {M} {N} – {M} {N}	Netosissemaksed: {M} {N} – {M} {N}
+Net switching	Neto pārejas	Netovahetus
+Net switching, cumulative over the period ({N}-{N} – {N}-{N})	Neto pārejas, kumulatīvi periodā ({N}-{N} – {N}-{N})	Netovahetus, kumulatiivselt perioodil ({N}-{N} – {N}-{N})
+New	Jauni	Uued
+News articles about the pension systems of Lithuania, Latvia and Estonia, collected automatically every day and kept in an archive: insights, a timeline of topics, who speaks about them, what the Seimas is considering, and all articles. Click a headline to open the full article.	Ziņu raksti par Lietuvas, Latvijas un Igaunijas pensiju sistēmām, kas katru dienu tiek apkopoti automātiski un glabāti arhīvā: atziņas, tēmu laika josla, kas par tām runā, ko izskata Seims, un visi raksti. Noklikšķiniet uz virsraksta, lai atvērtu visu rakstu.	Uudisartiklid Leedu, Läti ja Eesti pensionisüsteemide kohta, mis kogutakse automaatselt iga päev ja hoitakse arhiivis: tähelepanekud, teemade ajajoon, kes neist räägib, mida Seim arutab, ja kõik artiklid. Klõpsake pealkirjal, et avada kogu artikkel.
+News on a manager	Ziņas par pārvaldītāju	Uudised fondivalitseja kohta
+News on a manager: {P}	Ziņas par pārvaldītāju: {P}	Uudised fondivalitseja kohta: {P}
+No articles found.	Raksti nav atrasti.	Artikleid ei leitud.
+No first places at the moment: {P}.	Pašlaik bez pirmajām vietām: {P}.	Praegu esikohtadeta: {P}.
+of which reform payouts, m €	t. sk. reformas izmaksas, milj. €	sh reformi väljamaksed, mln €
+One pillar II participant earning the country’s average gross wage (or a chosen share of it): every month their own and the state’s contributions buy units of the chosen fund at real unit values. How much is saved, how much was paid in, and what it earned.	Viens II līmeņa dalībnieks, kas pelna valsts vidējo bruto algu (vai izvēlētu tās daļu): katru mēnesi viņa paša un valsts iemaksas pērk izvēlētā fonda daļas par faktiskajām daļu vērtībām. Cik uzkrāts, cik iemaksāts un cik nopelnīts.	Üks II samba osaleja, kes teenib riigi keskmist brutopalka (või valitud osa sellest): igal kuul ostavad tema enda ja riigi sissemaksed valitud fondi osakuid tegelike osakuväärtustega. Kui palju on kogutud, kui palju sisse makstud ja mida see teenis.
+Only where all {N} take part	Tikai tur, kur piedalās visi {N}	Ainult seal, kus osalevad kõik {N}
+Organisations	Organizācijas	Organisatsioonid
+Over {N}% equities	Virs {N}% akciju	Üle {N}% aktsiaid
+Over {N}% equities: {N} years, {M} {N}	Virs {N}% akciju: {N} gadi, {M} {N}	Üle {N}% aktsiaid: {N} aastat, {M} {N}
+Own contribution from {N}	Paša iemaksa no {N}	Oma sissemakse alates {N}
+Own contributions	Paša iemaksas	Oma sissemaksed
+Own contributions, €	Paša iemaksas, €	Oma sissemaksed, €
+Own dates	Savi datumi	Omad kuupäevad
+p.a. = average annual return (geometric), calculated from unit values like the Bank of Lithuania does. Volatility = annualised standard deviation of monthly returns over the last {N} years. Max drawdown = largest fall from a previous peak since the fund started. Equities = maximum share of risky assets per the Bank of Lithuania ({N} {M} {N}). Click a column header to sort. Bold = best in its category.	Gadā = vidējais gada ienesīgums (ģeometriskais), aprēķināts no daļu vērtībām tāpat kā Lietuvas Bankā. Svārstīgums = mēneša ienesīgumu standartnovirze gada izteiksmē pēdējos {N} gados. Maks. kritums = lielākais kritums no iepriekšējā augstākā punkta kopš fonda sākuma. Akcijas = maksimālā riskanto aktīvu daļa saskaņā ar Lietuvas Banku ({N}. {M:gen} {N}). Noklikšķiniet uz kolonnas virsraksta, lai kārtotu. Treknrakstā = labākais savā kategorijā.	Aastas = keskmine aastatootlus (geomeetriline), arvutatud osakuväärtustest nagu Leedu Pangas. Volatiilsus = kuutootluste aastane standardhälve viimase {N} aasta jooksul. Maks. langus = suurim langus eelmisest tipust alates fondi algusest. Aktsiad = riskantsete varade maksimaalne osa Leedu Panga andmetel ({N}. {M} {N}). Sortimiseks klõpsake veeru päisel. Paksus kirjas = oma kategooria parim.
+Paid in	Iemaksāts	Sisse makstud
+paid in total	kopā izmaksāts	kokku välja makstud
+Paid out, m €	Izmaksāts, milj. €	Välja makstud, mln €
+part of the year	daļa gada	osa aastast
+Participant movements (once a year): {N}	Dalībnieku kustība (reizi gadā): {N}	Osalejate liikumine (kord aastas): {N}
+Participants by group	Dalībnieki pa grupām	Osalejad gruppide kaupa
+Participants by group: {M} {N} – {M} {N}	Dalībnieki pa grupām: {M} {N} – {M} {N}	Osalejad gruppide kaupa: {M} {N} – {M} {N}
+Participants, net assets and asset-weighted returns of the whole pillar at each quarter end since {N}.	Visa līmeņa dalībnieki, neto aktīvi un ar aktīviem svērtais ienesīgums katra ceturkšņa beigās kopš {N}.	Kogu samba osalejad, puhasvara ja varadega kaalutud tootlus iga kvartali lõpus alates {N}.
+Parties	Partijas	Erakonnad
+Payout date(s)	Izmaksas datums(-i)	Väljamakse kuupäev(ad)
+Payouts	Izmaksas	Väljamaksed
+Payouts, % of assets at start	Izmaksas, % no aktīviem sākumā	Väljamaksed, % algusvaradest
+Payouts, annuities	Izmaksas, mūža rentes	Väljamaksed, annuiteedid
+Pension accumulation	Pensiju uzkrāšana	Pensionikogumine
+Pension market at {N} {M} {N}	Pensiju tirgus {3}. gada {1}. {2:loc}	Pensioniturg {1}. {2:loc} {3}
+Pension news	Pensiju ziņas	Pensioniuudised
+pensionikeskus.ee counts can differ from those published by managers or the association (e.g. participants whose payout is still in progress may still be counted).	pensionikeskus.ee skaitļi var atšķirties no pārvaldītāju vai asociācijas publicētajiem.	pensionikeskus.ee arvud võivad erineda fondivalitsejate või liidu avaldatust.
+pensionikeskus.ee quarterly data; updated automatically when a new report is published. Each figure can be checked in Excel on the “Quarter facts” tab.	pensionikeskus.ee ceturkšņa dati; tiek atjaunoti automātiski, kad publicēts jauns pārskats. Katru skaitli var pārbaudīt Excel failā cilnē “Ceturkšņa fakti”.	pensionikeskus.ee kvartaliandmed; uuenevad automaatselt uue aruande avaldamisel. Iga arvu saab kontrollida Excelis vahekaardil „Kvartali faktid“.
+pensionikeskus.ee quarterly facts, monthly facts, facts for the public, earnings in euros, pillar II vs III, the market over time, funds by group.	pensionikeskus.ee ceturkšņa fakti, mēneša fakti, fakti sabiedrībai, peļņa eiro, II un III līmenis, tirgus laika gaitā, fondi pa grupām.	pensionikeskus.ee kvartali faktid, kuu faktid, faktid avalikkusele, tulu eurodes, II vs III sammas, turg ajas, fondid gruppide kaupa.
+Pensions	Pensijas	Pensionid
+Per participant	Uz vienu dalībnieku	Osaleja kohta
+Period: {N}-{N} – {N}-{N}. Plans are grouped by today’s manager; old managers that no longer exist are shown under their own name. When a plan is merged into another or moved to a new manager, VSAA counts its participants as switches – such months show unusually large numbers.	Periods: {N}-{N} – {N}-{N}. Plāni grupēti pēc pašreizējā pārvaldītāja; vecie pārvaldītāji, kas vairs nepastāv, parādīti ar savu nosaukumu. Ja plāns tiek apvienots ar citu vai nodots jaunam pārvaldītājam, VSAA tā dalībniekus uzskaita kā pārejas – šādos mēnešos skaitļi ir neparasti lieli.	Periood: {N}-{N} – {N}-{N}. Plaanid on rühmitatud praeguse fondivalitseja järgi; enam mitte tegutsevad endised fondivalitsejad on näidatud oma nime all. Kui plaan liidetakse teisega või antakse üle uuele fondivalitsejale, loeb VSAA selle osalejad vahetusteks – sellistel kuudel on arvud ebatavaliselt suured.
+Periods end {D}. Colours show the rank within each row (green = best, red = worst). “–” = the fund did not exist at the period start. Hover a cell for dates and unit values. Fund buttons above choose which funds are compared.	Periodi beidzas {D}. Krāsas rāda vietu katrā rindā (zaļa = labākā, sarkana = sliktākā). “–” = fonds perioda sākumā nepastāvēja. Virziet kursoru virs šūnas, lai redzētu datumus un daļu vērtības. Ar fondu pogām augstāk izvēlas, kurus fondus salīdzināt.	Perioodid lõpevad {D}. Värvid näitavad kohta igas reas (roheline = parim, punane = halvim). „–“ = fondi perioodi alguses ei olnud. Kuupäevade ja osakuväärtuste nägemiseks liikuge kursoriga lahtrile. Ülal olevate fondinuppudega valitakse, milliseid fonde võrrelda.
+Pillar	Līmenis	Sammas
+Pillar I	I līmenis	I sammas
+Pillar II	II līmenis	II sammas
+Pillar II active investors:	II līmeņa aktīvie ieguldītāji:	II samba aktiivsed investorid:
+Pillar II and III assets: {M} {N} – {M} {N}	II un III līmeņa aktīvi: {M} {N} – {M} {N}	II ja III samba varad: {M} {N} – {M} {N}
+Pillar II assets	II līmeņa aktīvi	II samba varad
+Pillar II assets per participant: {M} {N} – {M} {N}	II līmeņa aktīvi uz vienu dalībnieku: {M} {N} – {M} {N}	II samba varad osaleja kohta: {M} {N} – {M} {N}
+Pillar II assets: what changed them	II līmeņa aktīvi: kas tos mainīja	II samba varad: mis neid muutis
+Pillar II assets: {M} {N} – {M} {N}	II līmeņa aktīvi: {M} {N} – {M} {N}	II samba varad: {M} {N} – {M} {N}
+Pillar II change in assets: {M} {N} – {M} {N}	II līmeņa aktīvu izmaiņa: {M} {N} – {M} {N}	II samba varade muutus: {M} {N} – {M} {N}
+Pillar II change in participants: {M} {N} – {M} {N}	II līmeņa dalībnieku skaita izmaiņa: {M} {N} – {M} {N}	II samba osalejate arvu muutus: {M} {N} – {M} {N}
+Pillar II funds: return and place in group	II līmeņa fondi: ienesīgums un vieta grupā	II samba fondid: tootlus ja koht grupis
+Pillar II investment gain: {M} {N} – {M} {N}	II līmeņa ieguldījumu peļņa: {M} {N} – {M} {N}	II samba investeerimistulu: {M} {N} – {M} {N}
+Pillar II participants	II līmeņa dalībnieki	II samba osalejad
+Pillar II participants: {M} {N} – {M} {N}	II līmeņa dalībnieki: {M} {N} – {M} {N}	II samba osalejad: {M} {N} – {M} {N}
+Pillar II shares: {M} {N} – {M} {N}	II līmeņa daļas: {M} {N} – {M} {N}	II samba osad: {M} {N} – {M} {N}
+Pillar II weighted month return, %: {M} {N} – {M} {N}	II līmeņa svērtais mēneša ienesīgums, %: {M} {N} – {M} {N}	II samba kaalutud kuutootlus, %: {M} {N} – {M} {N}
+Pillar III	III līmenis	III sammas
+Pillar III (voluntary) pension funds. Unit value histories from the providers (full history from each fund's start where available); returns do not include contribution fees. For information only, not investment advice.	III līmeņa (brīvprātīgie) pensiju fondi. Daļu vērtību vēsture no pārvaldītājiem (pilna vēsture kopš katra fonda sākuma, ja pieejama); ienesīgumā nav ietvertas iemaksu komisijas. Tikai informācijai, nav ieguldījumu padoms.	III samba (vabatahtlikud) pensionifondid. Osakuväärtuste ajalugu fondivalitsejatelt (võimaluse korral täielik ajalugu iga fondi algusest); tootlus ei sisalda sissemaksetasusid. Ainult teavitamiseks, ei ole investeerimisnõuanne.
+Pillar III assets	III līmeņa aktīvi	III samba varad
+Pillar III change in participants: {M} {N} – {M} {N}	III līmeņa dalībnieku skaita izmaiņa: {M} {N} – {M} {N}	III samba osalejate arvu muutus: {M} {N} – {M} {N}
+Pillar III participants	III līmeņa dalībnieki	III samba osalejad
+Pillar III participants: {M} {N} – {M} {N}	III līmeņa dalībnieki: {M} {N} – {M} {N}	III samba osalejad: {M} {N} – {M} {N}
+Pillar III vs pillar II	III līmenis pret II līmeni	III sammas vs II sammas
+Pillar III ÷ pillar II assets, %: {M} {N} – {M} {N}	III līmeņa ÷ II līmeņa aktīvi, %: {M} {N} – {M} {N}	III samba ÷ II samba varad, %: {M} {N} – {M} {N}
+Pillar III: category leaders	III līmenis: kategoriju līderi	III sammas: kategooriate liidrid
+Pillar III: year-to-date leaders	III līmenis: līderi kopš gada sākuma	III sammas: liidrid aasta algusest
+Pillar I…	I līmenis…	I sammas…
+Pillars II and III	II un III līmenis	II ja III sammas
+Pillars II and III together	II un III līmenis kopā	II ja III sammas koos
+Place among managers in brackets. Returns are not annualised.	Vieta pārvaldītāju vidū – iekavās. Ienesīgums nav izteikts gada izteiksmē.	Koht fondivalitsejate seas sulgudes. Tootlus ei ole aastane.
+place {N} of {N} managers	{N}. vieta no {N} pārvaldītājiem	{N}. koht {N} fondivalitseja seas
+Plain-language facts for newsletters and social media: what returns mean in euros, how much funds earn per day and per participant. Funds are compared only within their group. Each card has an Excel file with every figure as a formula.	Vienkāršā valodā izteikti fakti jaunumu vēstulēm un sociālajiem tīkliem: ko ienesīgums nozīmē eiro, cik fondi nopelna dienā un uz vienu dalībnieku. Fondi tiek salīdzināti tikai savas grupas ietvaros. Katrai kartītei ir Excel fails, kurā katrs skaitlis ir formula.	Lihtsas keeles faktid uudiskirjadesse ja sotsiaalmeediasse: mida tootlus eurodes tähendab, kui palju fondid päevas ja osaleja kohta teenivad. Fonde võrreldakse ainult oma grupi piires. Igal kaardil on Exceli fail, kus iga arv on valem.
+Portfolio by asset class (look-through), {D}	Portfelis pēc aktīvu klasēm (caurskatot fondus), {D}	Portfell varaklasside kaupa (fondide läbivaatega), {D}
+Portfolios & assets →	Portfeļi un aktīvi →	Portfellid ja varad →
+Positive months	Pozitīvie mēneši	Positiivsed kuud
+Preservation	Saglabāšana	Säilitamine
+President (LT)	Prezidents (LT)	President (LT)
+Prices and wages	Cenas un algas	Hinnad ja palgad
+Progressives (LV)	Progresīvie (LV)	Progressiivsed (LV)
+Quarter ▾	Ceturksnis ▾	Kvartal ▾
+Quarter-end values from the Bank of Lithuania (no daily data yet): {P} until {D}, {P} until {D}.	Ceturkšņa beigu vērtības no Lietuvas Bankas (dienas datu vēl nav): {P} līdz {D}, {P} līdz {D}.	Kvartalilõpu väärtused Leedu Pangast (päevaandmeid veel pole): {P} kuni {D}, {P} kuni {D}.
+quarterly reports, {D}	ceturkšņa pārskati, {D}	kvartaliaruanded, {D}
+Q{N} {N} (to date)	{2}. g. {1}. cet. (līdz šim)	{2}. a {1}. kv (seni)
+Rank within the group ({N} = best return)	Vieta grupā ({N} = labākais ienesīgums)	Koht grupis ({N} = parim tootlus)
+Ready-to-use facts for news and reviews from manapensija.lv quarterly results reports: whole market, managers and funds. Each card names the period, source and how it was calculated; “Copy” copies the sentence with its source.	Gatavi fakti ziņām un pārskatiem no manapensija.lv ceturkšņa datiem: viss tirgus, pārvaldītāji un fondi. Katrā kartītē norādīts periods, avots un aprēķina veids; “Kopēt” nokopē teikumu kopā ar avotu.	Kasutusvalmis faktid uudisteks ja ülevaadeteks manapensija.lv kvartaliandmetest: kogu turg, fondivalitsejad ja fondid. Igal kaardil on periood, allikas ja arvutusviis; „Kopeeri“ kopeerib lause koos allikaga.
+Ready-to-use facts for news and reviews from pensionikeskus.ee quarterly results reports: whole market, managers and funds. Each card names the period, source and how it was calculated; “Copy” copies the sentence with its source.	Gatavi fakti ziņām un pārskatiem no pensionikeskus.ee ceturkšņa datiem: viss tirgus, pārvaldītāji un fondi. Katrā kartītē norādīts periods, avots un aprēķina veids; “Kopēt” nokopē teikumu kopā ar avotu.	Kasutusvalmis faktid uudisteks ja ülevaadeteks pensionikeskus.ee kvartaliandmetest: kogu turg, fondivalitsejad ja fondid. Igal kaardil on periood, allikas ja arvutusviis; „Kopeeri“ kopeerib lause koos allikaga.
+Ready-to-use facts for news and reviews from the Bank of Lithuania quarterly results reports: whole market, managers and funds. Each card names the period, source and how it was calculated; “Copy” copies the sentence with its source.	Gatavi fakti ziņām un pārskatiem no Lietuvas Bankas ceturkšņa rezultātu pārskatiem: viss tirgus, pārvaldītāji un fondi. Katrā kartītē norādīts periods, avots un aprēķina veids; “Kopēt” nokopē teikumu kopā ar avotu.	Kasutusvalmis faktid uudisteks ja ülevaadeteks Leedu Panga kvartalitulemuste aruannetest: kogu turg, fondivalitsejad ja fondid. Igal kaardil on periood, allikas ja arvutusviis; „Kopeeri“ kopeerib lause koos allikaga.
+Records	Rekordi	Rekordid
+Reform Party (EE)	Reformu partija (EE)	Reformierakond (EE)
+Reform payouts	Reformas izmaksas	Reformi väljamaksed
+Reform payouts by quarter	Reformas izmaksas pa ceturkšņiem	Reformi väljamaksed kvartalite kaupa
+Reform payouts {N}	Reformas izmaksas {N}	Reformi väljamaksed {N}
+Reform payouts, m €	Reformas izmaksas, milj. €	Reformi väljamaksed, mln €
+Reform payouts: {N}	Reformas izmaksas: {N}	Reformi väljamaksed: {N}
+Reform, exits	Reforma, izstāšanās	Reform, lahkumised
+Reports →	Pārskati →	Aruanded →
+Results →	Rezultāti →	Tulemused →
+Retired	Pensionējušies	Pensionile jäänud
+Retirement age {N}. Wages – Central Statistical Bureau (DSV{N}m), pensions – PPP{N}.	Pensionēšanās vecums {N}. Algas – Centrālā statistikas pārvalde (DSV{N}m), pensijas – PPP{N}.	Pensioniiga {N}. Palgad – Läti statistikaamet (DSV{N}m), pensionid – PPP{N}.
+Retirement path →	Ceļš uz pensiju →	Tee pensionini →
+Return	Ienesīgums	Tootlus
+Return = assets × change in unit value; flow = the rest of the daily change in assets.	Ienesīgums = aktīvi × daļas vērtības izmaiņa; plūsma = pārējā aktīvu dienas izmaiņa.	Tootlus = varad × osakuväärtuse muutus; voog = ülejäänud varade päevamuutus.
+Return = change in unit value over the period (from the value on the starting date to the latest common date within each group); it is not annualised. Different providers' unit values differ, so funds are compared by percentage return. Net assets show the latest known value. Data is collected automatically from the providers' websites and APIs; for information only, not investment advice.	Ienesīgums = daļas vērtības izmaiņa periodā (no vērtības sākuma datumā līdz pēdējam kopīgajam datumam katrā grupā); nav izteikts gada izteiksmē. Pārvaldītāju daļu vērtības atšķiras, tāpēc fondi tiek salīdzināti pēc ienesīguma procentos. Neto aktīvi – pēdējā zināmā vērtība. Dati tiek vākti automātiski no pārvaldītāju tīmekļa vietnēm un API; tikai informācijai, nav ieguldījumu padoms.	Tootlus = osakuväärtuse muutus perioodil (alguskuupäeva väärtusest iga grupi viimase ühise kuupäevani); see ei ole aastane. Fondivalitsejate osakuväärtused erinevad, seega võrreldakse fonde protsentuaalse tootluse järgi. Puhasvara näitab viimast teadaolevat väärtust. Andmed kogutakse automaatselt fondivalitsejate veebilehtedelt ja API-dest; ainult teavitamiseks, ei ole investeerimisnõuanne.
+Return from {D} to {D}; the leader and the last fund in each group.	Ienesīgums no {D} līdz {D}; katras grupas līderis un pēdējais fonds.	Tootlus {D} kuni {D}; iga grupi liider ja viimane fond.
+Return of all funds in the group weighted by assets – like the Estonian pension index EPI	Visu grupas fondu ienesīgums, svērts ar aktīviem – līdzīgi kā Igaunijas pensiju indekss EPI	Grupi kõigi fondide varadega kaalutud tootlus – nagu Eesti pensioniindeks EPI
+Return of one fund, its place in the group and a curve	Viena fonda ienesīgums, vieta grupā un līkne	Ühe fondi tootlus, koht grupis ja graafik
+Return of two funds and the difference	Divu fondu ienesīgums un starpība	Kahe fondi tootlus ja vahe
+Return over the period, %	Ienesīgums periodā, %	Tootlus perioodil, %
+Return – change in unit value (fees already deducted), not annualised. Manager return – simple average over the groups of its funds (asset-weighted within a group; asset-weighted overall in the summary). For information only, not investment advice.	Ienesīgums – daļas vērtības izmaiņa (komisijas jau atskaitītas), nav izteikts gada izteiksmē. Pārvaldītāja ienesīgums – vienkāršais vidējais pa tā fondu grupām (grupas iekšienē svērts ar aktīviem; kopsavilkumā – svērts ar aktīviem kopumā). Tikai informācijai, nav ieguldījumu padoms.	Tootlus – osakuväärtuse muutus (tasud juba maha arvatud), mitte aastane. Fondivalitseja tootlus – lihtkeskmine tema fondide gruppide lõikes (grupi sees varadega kaalutud; kokkuvõttes varadega kaalutud tervikuna). Ainult teavitamiseks, ei ole investeerimisnõuanne.
+Return: {N}	Ienesīgums: {N}	Tootlus: {N}
+Returns	Ienesīgums	Tootlus
+Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the simple average of its life-cycle funds (the asset-weighted version is in the summary). For information only, not investment advice.	Ienesīgums ir daļas vērtības izmaiņa (komisijas jau atskaitītas), nav izteikts gada izteiksmē. Pārvaldītāja ienesīgums ir tā dzīves cikla fondu vienkāršais vidējais (ar aktīviem svērtā versija – kopsavilkumā). Tikai informācijai, nav ieguldījumu padoms.	Tootlus on osakuväärtuse muutus (tasud juba maha arvatud), mitte aastane. Fondivalitseja tootlus on tema elutsüklifondide lihtkeskmine (varadega kaalutud versioon on kokkuvõttes). Ainult teavitamiseks, ei ole investeerimisnõuanne.
+Returns are changes in unit value (fees already deducted), not annualised. For information only, not investment advice.	Ienesīgums ir daļas vērtības izmaiņa (komisijas jau atskaitītas), nav izteikts gada izteiksmē. Tikai informācijai, nav ieguldījumu padoms.	Tootlus on osakuväärtuse muutus (tasud juba maha arvatud), mitte aastane. Ainult teavitamiseks, ei ole investeerimisnõuanne.
+Returns are changes in unit value (fees already deducted), not annualised. Funds are compared only within their group. For information only, not investment advice.	Ienesīgums ir daļas vērtības izmaiņa (komisijas jau atskaitītas), nav izteikts gada izteiksmē. Fondi tiek salīdzināti tikai savas grupas ietvaros. Tikai informācijai, nav ieguldījumu padoms.	Tootlus on osakuväärtuse muutus (tasud juba maha arvatud), mitte aastane. Fonde võrreldakse ainult oma grupi piires. Ainult teavitamiseks, ei ole investeerimisnõuanne.
+Review draft (Word)	Pārskata melnraksts (Word)	Ülevaate mustand (Word)
+Riigikogu (parliament)	Riigikogu (parlaments)	Riigikogu (parlament)
+Risk and history	Risks un vēsture	Risk ja ajalugu
+Risk over the long term	Risks ilgtermiņā	Risk pikas perspektiivis
+Rules, sources and assumptions	Noteikumi, avoti un pieņēmumi	Reeglid, allikad ja eeldused
+Saeima (parliament)	Saeima (parlaments)	Saeima (parlament)
+Saved now	Uzkrāts tagad	Kogutud praegu
+Savings in wages and pensions	Uzkrājumi algās un pensijās	Säästud palkades ja pensionides
+Seimas (parliament)	Seims (parlaments)	Seim (parlament)
+Seimas agenda items on pensions, pension accumulation, annuities, the Sodra budget and personal income tax – with the stage (submission, consideration, adoption) and a link to the draft.	Seima darba kārtības jautājumi par pensijām, pensiju uzkrāšanu, mūža rentēm, Sodra budžetu un iedzīvotāju ienākuma nodokli – ar posmu (iesniegšana, izskatīšana, pieņemšana) un saiti uz projektu.	Seimi päevakorrapunktid pensionite, pensionikogumise, annuiteetide, Sodra eelarve ja üksikisiku tulumaksu kohta – koos etapiga (esitamine, arutamine, vastuvõtmine) ja eelnõu lingiga.
+Seimas agenda – pension accumulation (items per week)	Seima darba kārtība – pensiju uzkrāšana (jautājumi nedēļā)	Seimi päevakord – pensionikogumine (punkte nädalas)
+Selected funds…	Izvēlētie fondi…	Valitud fondid…
+Share of assets	Aktīvu daļa	Osa varadest
+Share of members	Dalībnieku daļa	Osa osalejatest
+Share of participants	Dalībnieku daļa	Osa osalejatest
+Show	Rādīt	Näita
+Show {N} more	Rādīt vēl {N}	Näita veel {N}
+Simple facts that are true right now, where a manager is first in the market or in a group – for advertising and the press. Funds are compared only within their group; groups with fewer than {N} funds are left out. “Excel” – every figure as a formula from manapensija.lv data.	Vienkārši fakti, kas ir patiesi tieši tagad, kur pārvaldītājs ir pirmais tirgū vai grupā – reklāmai un presei. Plāni tiek salīdzināti tikai savas grupas ietvaros; grupas ar mazāk nekā {N} plāniem netiek ņemtas vērā. “Excel” – katrs skaitlis kā formula no manapensija.lv datiem.	Lihtsad faktid, mis kehtivad praegu, kus fondivalitseja on turul või grupis esimene – reklaamiks ja ajakirjandusele. Fonde võrreldakse ainult oma grupi piires; alla {N} fondiga grupid jäetakse välja. „Excel“ – iga arv valemina manapensija.lv andmetest.
+Simple facts that are true right now, where a manager is first in the market or in a group – for advertising and the press. Funds are compared only within their group; groups with fewer than {N} funds are left out. “Excel” – every figure as a formula from pensionikeskus.ee data.	Vienkārši fakti, kas ir patiesi tieši tagad, kur pārvaldītājs ir pirmais tirgū vai grupā – reklāmai un presei. Fondi tiek salīdzināti tikai savas grupas ietvaros; grupas ar mazāk nekā {N} fondiem netiek ņemtas vērā. “Excel” – katrs skaitlis kā formula no pensionikeskus.ee datiem.	Lihtsad faktid, mis kehtivad praegu, kus fondivalitseja on turul või grupis esimene – reklaamiks ja ajakirjandusele. Fonde võrreldakse ainult oma grupi piires; alla {N} fondiga grupid jäetakse välja. „Excel“ – iga arv valemina pensionikeskus.ee andmetest.
+Simple facts that are true right now, where a manager is first in the market or in a group – for advertising and the press. Funds are compared only within their group; groups with fewer than {N} funds are left out. “Excel” – every figure as a formula from the Bank of Lithuania data.	Vienkārši fakti, kas ir patiesi tieši tagad, kur pārvaldītājs ir pirmais tirgū vai grupā – reklāmai un presei. Fondi tiek salīdzināti tikai savas grupas ietvaros; grupas ar mazāk nekā {N} fondiem netiek ņemtas vērā. “Excel” – katrs skaitlis kā formula no Lietuvas Bankas datiem.	Lihtsad faktid, mis kehtivad praegu, kus fondivalitseja on turul või grupis esimene – reklaamiks ja ajakirjandusele. Fonde võrreldakse ainult oma grupi piires; alla {N} fondiga grupid jäetakse välja. „Excel“ – iga arv valemina Leedu Panga andmetest.
+Since common inception ({D})	Kopš kopīgā sākuma ({D})	Ühisest algusest ({D})
+Since common inception – {*} ({D})	Kopš kopīgā sākuma – {*} ({D})	Ühisest algusest – {*} ({D})
+Since start of year	Kopš gada sākuma	Aasta algusest
+Since start p.a.	Kopš sākuma gadā	Algusest aastas
+Since the end of the previous month	Kopš iepriekšējā mēneša beigām	Eelmise kuu lõpust
+Since the end of the previous quarter	Kopš iepriekšējā ceturkšņa beigām	Eelmise kvartali lõpust
+Since the start of the year the number of pillar III participants grew by {N} – less than in the same period last year ({N}).	Kopš gada sākuma III līmeņa dalībnieku skaits pieauga par {N} – mazāk nekā tajā pašā periodā pērn ({N}).	Aasta algusest kasvas III samba osalejate arv {N} võrra – vähem kui eelmise aasta samal perioodil ({N}).
+Since the start of the year the number of pillar III participants grew by {N} – more than in the same period last year ({N}).	Kopš gada sākuma III līmeņa dalībnieku skaits pieauga par {N} – vairāk nekā tajā pašā periodā pērn ({N}).	Aasta algusest kasvas III samba osalejate arv {N} võrra – rohkem kui eelmise aasta samal perioodil ({N}).
+Since the start of the year the number of {P}’s pillar III participants fell by {N} (same period last year: {N}).	Kopš gada sākuma {P} III līmeņa dalībnieku skaits samazinājās par {N} (tajā pašā periodā pērn: {N}).	Aasta algusest vähenes {P} III samba osalejate arv {N} võrra (eelmise aasta samal perioodil: {N}).
+Since the start of the year the number of {P}’s pillar III participants grew by {N} (same period last year: {N}).	Kopš gada sākuma {P} III līmeņa dalībnieku skaits pieauga par {N} (tajā pašā periodā pērn: {N}).	Aasta algusest kasvas {P} III samba osalejate arv {N} võrra (eelmise aasta samal perioodil: {N}).
+Since the start of the year the number of {P}’s pillar III participants rose by {N} (same period last year: {N}).	Kopš gada sākuma {P} III līmeņa dalībnieku skaits pieauga par {N} (tajā pašā periodā pērn: {N}).	Aasta algusest kasvas {P} III samba osalejate arv {N} võrra (eelmise aasta samal perioodil: {N}).
+Since the start of the year {N} of {N} funds beat their benchmark.	Kopš gada sākuma {N} no {N} fondiem pārspēja savu etalonindeksu.	Aasta algusest edestas oma võrdlusindeksit {N} fondi {N}-st.
+Since the start of the year {N} of {N} funds earned more than the average of their group (Bank of Lithuania weighted average).	Kopš gada sākuma {N} no {N} fondiem nopelnīja vairāk nekā savas grupas vidējais (Lietuvas Bankas svērtais vidējais).	Aasta algusest teenis {N} fondi {N}-st rohkem kui oma grupi keskmine (Leedu Panga kaalutud keskmine).
+Since the start of the year {N} of {N} funds earned more than the average of their group (manapensija.lv weighted average).	Kopš gada sākuma {N} no {N} fondiem nopelnīja vairāk nekā savas grupas vidējais (manapensija.lv svērtais vidējais).	Aasta algusest teenis {N} fondi {N}-st rohkem kui oma grupi keskmine (manapensija.lv kaalutud keskmine).
+Since the start of the year {N} of {N} funds earned more than the average of their group (pensionikeskus.ee weighted average).	Kopš gada sākuma {N} no {N} fondiem nopelnīja vairāk nekā savas grupas vidējais (pensionikeskus.ee svērtais vidējais).	Aasta algusest teenis {N} fondi {N}-st rohkem kui oma grupi keskmine (pensionikeskus.ee kaalutud keskmine).
+Since the start of the year {P} attracted the most new pillar III participants: {N}.	Kopš gada sākuma visvairāk jaunu III līmeņa dalībnieku piesaistīja {P}: {N}.	Aasta algusest meelitas kõige rohkem uusi III samba osalejaid {P}: {N}.
+Since the start of the year {P}’s best result was in the “Asset preservation” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Aktīvu saglabāšana”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Vara säilitamine“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “Born {N}–{N}” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Dzimuši {N}–{N}”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Sündinud {N}–{N}“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “High risk (over {N}%)” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Augsts risks (virs {N}%)”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Kõrge risk (üle {N}%)“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “Higher risk ({N}–{N}%)” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Paaugstināts risks ({N}–{N}%)”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Kõrgem risk ({N}–{N}%)“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “Low risk (volatility under {N}%)” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Zems risks (svārstīgums zem {N}%)”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Madal risk (volatiilsus alla {N}%)“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “Moderate risk ({N}–{N}%)” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Mērens risks ({N}–{N}%)”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Mõõdukas risk ({N}–{N}%)“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “Over {N}% equities” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Virs {N}% akciju”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Üle {N}% aktsiaid“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “Up to {N}% equities” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “Līdz {N}% akciju”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „Kuni {N}% aktsiaid“: {N}. koht {N}-st.
+Since the start of the year {P}’s best result was in the “{N}–{N}% equities” group: place {N} of {N}.	Kopš gada sākuma {P} labākais rezultāts bija grupā “{N}–{N}% akciju”: {N}. vieta no {N}.	Aasta algusest oli {P} parim tulemus grupis „{N}–{N}% aktsiaid“: {N}. koht {N}-st.
+Since year start	Kopš gada sākuma	Aasta algusest
+Since {*} start ({D})	Kopš {*} sākuma ({D})	Alates {*} algusest ({D})
+Since {N} the average fund’s return over the previous {N} years was positive at all {N} quarter ends.	Kopš {N}. gada vidējā fonda ienesīgums iepriekšējos {N} gados bija pozitīvs visu {N} ceturkšņu beigās.	Alates {N}. aastast oli keskmise fondi eelneva {N} aasta tootlus positiivne kõigi {N} kvartali lõpus.
+Since {N} the average fund’s return over the previous {N} years was positive at {N} of {N} quarter ends.	Kopš {N}. gada vidējā fonda ienesīgums iepriekšējos {N} gados bija pozitīvs {N} no {N} ceturkšņu beigām.	Alates {N}. aastast oli keskmise fondi eelneva {N} aasta tootlus positiivne {N} kvartali lõpus {N}-st.
+Since {N} {M}	Kopš {N}. {M:from}	Alates {N}. {M:from}
+Since {P} start	Kopš {P} sākuma	Alates {P} algusest
+Since {P} start ({D})	Kopš {P} sākuma ({D})	Alates {P} algusest ({D})
+Social Democrats (LSDP)	Sociāldemokrāti (LSDP)	Sotsiaaldemokraadid (LSDP)
+Sodra budget, insurance	Sodra budžets, apdrošināšana	Sodra eelarve, kindlustus
+Source and method	Avots un metode	Allikas ja meetod
+Source: Bank of Lithuania, pillar II and III pension fund results, {D}.	Avots: Lietuvas Banka, II un III līmeņa pensiju fondu rezultāti, {D}.	Allikas: Leedu Pank, II ja III samba pensionifondide tulemused, {D}.
+Source: Bank of Lithuania, pillar II pension fund results, {D}.	Avots: Lietuvas Banka, II līmeņa pensiju fondu rezultāti, {D}.	Allikas: Leedu Pank, II samba pensionifondide tulemused, {D}.
+Source: Bank of Lithuania, pillar III pension fund results, {D}.	Avots: Lietuvas Banka, III līmeņa pensiju fondu rezultāti, {D}.	Allikas: Leedu Pank, III samba pensionifondide tulemused, {D}.
+Source: manapensija.lv (assets and participants of each plan).	Avots: manapensija.lv (katra plāna aktīvi un dalībnieki).	Allikas: manapensija.lv (iga plaani varad ja osalejad).
+Source: manapensija.lv, pillar II and III pension fund results, {D}.	Avots: manapensija.lv, II un III līmeņa pensiju plānu dati, {D}.	Allikas: manapensija.lv, II ja III samba pensionifondide andmed, {D}.
+Source: manapensija.lv, pillar II pension fund results, {D}.	Avots: manapensija.lv, II līmeņa pensiju plānu dati, {D}.	Allikas: manapensija.lv, II samba pensionifondide andmed, {D}.
+Source: manapensija.lv, pillar III pension fund results, {D}.	Avots: manapensija.lv, III līmeņa pensiju plānu dati, {D}.	Allikas: manapensija.lv, III samba pensionifondide andmed, {D}.
+Source: open data of the Office of the Seimas (CC BY {N}), daily.	Avots: Seima kancelejas atvērtie dati (CC BY {N}), katru dienu.	Allikas: Seimi kantselei avaandmed (CC BY {N}), iga päev.
+Source: pensionikeskus.ee (assets and active investors of each fund).	Avots: pensionikeskus.ee (katra fonda aktīvi un aktīvie ieguldītāji).	Allikas: pensionikeskus.ee (iga fondi varad ja aktiivsed investorid).
+Source: pensionikeskus.ee, pillar II and III pension fund results, {D}.	Avots: pensionikeskus.ee, II un III līmeņa pensiju fondu dati, {D}.	Allikas: pensionikeskus.ee, II ja III samba pensionifondide andmed, {D}.
+Source: pensionikeskus.ee, pillar II pension fund results, {D}.	Avots: pensionikeskus.ee, II līmeņa pensiju fondu dati, {D}.	Allikas: pensionikeskus.ee, II samba pensionifondide andmed, {D}.
+Source: pensionikeskus.ee, pillar III pension fund results, {D}.	Avots: pensionikeskus.ee, III līmeņa pensiju fondu dati, {D}.	Allikas: pensionikeskus.ee, III samba pensionifondide andmed, {D}.
+Source: VSAA annual reports on the state funded pension scheme.	Avots: VSAA gada pārskati par valsts fondēto pensiju shēmu.	Allikas: VSAA aastaaruanded riikliku kogumispensioni skeemi kohta.
+Source: VSAA monthly report “Participant movement by investment plan” (published around the {N}th of the following month).	Avots: VSAA ikmēneša pārskats “Dalībnieku kustība pa ieguldījumu plāniem” (publicē ap nākamā mēneša {N}. datumu).	Allikas: VSAA igakuine aruanne „Osalejate liikumine investeerimisplaanide kaupa“ (avaldatakse järgmise kuu {N}. kuupäeva paiku).
+Sources: Google News search (the article’s own address and description are taken from the article page) and RSS feeds of LRT, {N}min, Lrytas, the Ministry of Social Security and Labour, the Ministry of Finance, the Government, LIPFA, ERR, Postimees, Äripäev, Riigikogu, Tuleva, LSM, Dienas Bizness, Diena and TVNET.	Avoti: Google News meklēšana (raksta adrese un apraksts tiek ņemti no raksta lapas) un RSS plūsmas no LRT, {N}min, Lrytas, Sociālās drošības un darba ministrijas, Finanšu ministrijas, valdības, LIPFA, ERR, Postimees, Äripäev, Riigikogu, Tuleva, LSM, Dienas Bizness, Diena un TVNET.	Allikad: Google Newsi otsing (artikli aadress ja kirjeldus võetakse artikli lehelt) ning LRT, {N}min, Lrytase, sotsiaalkaitse- ja tööministeeriumi, rahandusministeeriumi, valitsuse, LIPFA, ERR-i, Postimehe, Äripäeva, Riigikogu, Tuleva, LSM-i, Dienas Biznesi, Diena ja TVNETi RSS-vood.
+Start	Sākums	Algus
+Start of saving	Uzkrāšanas sākums	Kogumise algus
+State contributions	Valsts iemaksas	Riigi sissemaksed
+State contributions, €	Valsts iemaksas, €	Riigi sissemaksed, €
+State incentive	Valsts piemaksa	Riigi lisamakse
+Streak of returns	Ienesīguma sērija	Tootluse seeria
+Strong {N} years	Spēcīgi {N} gadi	Tugevad {N} aastat
+Sum of all funds at month end (pensionikeskus.ee).	Visu fondu summa mēneša beigās (pensionikeskus.ee).	Kõigi fondide summa kuu lõpus (pensionikeskus.ee).
+Sum of the manager’s funds at each month end, € m (daily net assets from the source).	Pārvaldītāja fondu summa katra mēneša beigās, milj. € (dienas neto aktīvi no avota).	Fondivalitseja fondide summa iga kuu lõpus, mln € (päevane puhasvara allikast).
+Sum of the manager’s funds, € m. Points – only days with data: daily since daily assets are collected, before that – Bank of Lithuania quarter-end portfolio totals; periods longer than ~{N} months – last day of each month.	Pārvaldītāja fondu summa, milj. €. Punkti – tikai dienas ar datiem: katru dienu kopš tiek vākti dienas aktīvi, pirms tam – Lietuvas Bankas portfeļu kopsummas ceturkšņa beigās; periodiem, kas garāki par ~{N} mēnešiem, – katra mēneša pēdējā diena.	Fondivalitseja fondide summa, mln €. Punktid – ainult andmetega päevad: igapäevaselt alates päevavarade kogumisest, enne seda – Leedu Panga portfellide kogusummad kvartali lõpus; ~{N} kuust pikematel perioodidel – iga kuu viimane päev.
+Supreme Court, Chancellor (EE)	Augstākā tiesa, tiesībsargs (EE)	Riigikohus, õiguskantsler (EE)
+Supreme Court, Chancellor (EE): in {N} of {N} articles with a tone it is negative – usually critical.	Augstākā tiesa, tiesībsargs (EE): {N} no {N} rakstiem ar toni tas ir negatīvs – parasti kritisks.	Riigikohus, õiguskantsler (EE): {N} tooniga artiklis {N}-st on toon negatiivne – tavaliselt kriitiline.
+Switches between plans of the same manager are counted both as “came” and “left”, so net switching shows the real gain or loss. VSAA publishes these figures once a year; the {N} report is a PDF and is not read yet.	Pārejas starp viena pārvaldītāja plāniem tiek skaitītas gan kā “atnāca”, gan kā “aizgāja”, tāpēc neto pārejas rāda reālo ieguvumu vai zaudējumu. VSAA šos skaitļus publicē reizi gadā; {N}. gada pārskats ir PDF formātā un vēl netiek nolasīts.	Sama fondivalitseja plaanide vahelisi vahetusi loetakse nii „tulid“ kui ka „läksid“ alla, seega näitab netovahetus tegelikku võitu või kaotust. VSAA avaldab need arvud kord aastas; {N}. aasta aruanne on PDF-is ja seda veel ei loeta.
+Switching between managers (every month)	Pārejas starp pārvaldītājiem (katru mēnesi)	Vahetused fondivalitsejate vahel (iga kuu)
+Taxes, reliefs	Nodokļi, atvieglojumi	Maksud, soodustused
+The average quarterly return of pillar II funds has been positive for {N} quarters in a row – since Q{N} {N}.	II līmeņa fondu vidējais ceturkšņa ienesīgums ir bijis pozitīvs {N} ceturkšņus pēc kārtas – kopš {N}. g. {N}. ceturkšņa.	II samba fondide keskmine kvartalitootlus on olnud positiivne {N} kvartalit järjest – alates {N}. aasta {N}. kvartalist.
+The change in assets includes both investment results and money flows (contributions, payouts, switches).	Aktīvu izmaiņa ietver gan ieguldījumu rezultātus, gan naudas plūsmas (iemaksas, izmaksas, pārejas).	Varade muutus hõlmab nii investeerimistulemusi kui ka rahavooge (sissemaksed, väljamaksed, vahetused).
+The change in assets includes both investment results and money flows (contributions, payouts, switches, {N} reform payouts).	Aktīvu izmaiņa ietver gan ieguldījumu rezultātus, gan naudas plūsmas (iemaksas, izmaksas, pārejas, {N}. gada reformas izmaksas).	Varade muutus hõlmab nii investeerimistulemusi kui ka rahavooge (sissemaksed, väljamaksed, vahetused, {N}. aasta reformi väljamaksed).
+The change in net assets over the chosen period (same funds and dates as the chart above) split into the investment return, contributions and other flows (switches between funds and managers), and pension reform payouts. Calendar months.	Neto aktīvu izmaiņa izvēlētajā periodā (tie paši fondi un datumi kā grafikā augstāk), sadalīta ieguldījumu ienesīgumā, iemaksās un citās plūsmās (pārejas starp fondiem un pārvaldītājiem) un pensiju reformas izmaksās. Kalendārie mēneši.	Puhasvara muutus valitud perioodil (samad fondid ja kuupäevad mis ülal graafikul), jaotatud investeerimistootluseks, sissemakseteks ja muudeks voogudeks (vahetused fondide ja fondivalitsejate vahel) ning pensionireformi väljamakseteks. Kalendrikuud.
+The chart is drawn for one age group at a time – pick a group above to see it. The tables below show all funds; ranks and highlighted best values are within each age group.	Grafiks tiek zīmēts vienai vecuma grupai – izvēlieties grupu augstāk. Tabulās zemāk redzami visi fondi; vietas un izceltās labākās vērtības ir katras vecuma grupas ietvaros.	Graafik joonistatakse korraga ühele vanusegrupile – valige grupp ülalt. Allolevad tabelid näitavad kõiki fonde; kohad ja esile tõstetud parimad väärtused on iga vanusegrupi piires.
+The four tables with the unit values used and Excel formulas, so every number can be checked	Četras tabulas ar izmantotajām daļu vērtībām un Excel formulām, lai katru skaitli varētu pārbaudīt	Neli tabelit kasutatud osakuväärtuste ja Exceli valemitega, et iga arvu saaks kontrollida
+The fund’s calendar-year return versus the group’s weighted average – is it consistently ahead	Fonda kalendārā gada ienesīgums salīdzinājumā ar grupas svērto vidējo – vai tas ir pastāvīgi priekšā	Fondi kalendriaasta tootlus võrreldes grupi kaalutud keskmisega – kas see on järjekindlalt ees
+The fund’s fall from its peak within the period	Fonda kritums no augstākā punkta periodā	Fondi langus perioodi tipust
+The manager’s fund return and place in every group	Pārvaldītāja fonda ienesīgums un vieta katrā grupā	Fondivalitseja fondi tootlus ja koht igas grupis
+The manager’s share of assets or members and its change	Pārvaldītāja aktīvu vai dalībnieku daļa un tās izmaiņa	Fondivalitseja osa varadest või osalejatest ja selle muutus
+The manager’s strengths: where it is first or above the weighted average (for marketing)	Pārvaldītāja stiprās puses: kur tas ir pirmais vai virs svērtā vidējā (mārketingam)	Fondivalitseja tugevused: kus ta on esimene või üle kaalutud keskmise (turunduseks)
+The market, manager and pillar figures are sums over funds. Quarters before {M} {N} (pillar II) or without full daily data are estimated from Bank of Lithuania quarterly reports: quarter return × (assets at start + assets at end) ÷ {N} ÷ ({N} + return ÷ {N}). Return over a period – daily returns chained, weighted by assets. Fund-level daily data – the last {N} days.	Tirgus, pārvaldītāju un līmeņu skaitļi ir fondu summas. Ceturkšņi pirms {M} {N} (II līmenis) vai bez pilniem dienas datiem aplēsti no Lietuvas Bankas ceturkšņa pārskatiem: ceturkšņa ienesīgums × (aktīvi sākumā + aktīvi beigās) ÷ {N} ÷ ({N} + ienesīgums ÷ {N}). Perioda ienesīgums – dienas ienesīgumi saķēdēti, svērti ar aktīviem. Fondu dienas dati – pēdējās {N} dienas.	Turu, fondivalitsejate ja sammaste arvud on fondide summad. Kvartalid enne {M} {N} (II sammas) või täielike päevaandmeteta on hinnatud Leedu Panga kvartaliaruannetest: kvartali tootlus × (varad alguses + varad lõpus) ÷ {N} ÷ ({N} + tootlus ÷ {N}). Perioodi tootlus – päevatootlused aheldatud, varadega kaalutud. Fondide päevaandmed – viimased {N} päeva.
+The market, manager and pillar figures are sums over funds. Quarters before {M} {N} (pillar II) or without full daily data are estimated from manapensija.lv quarterly reports: quarter return × (assets at start + assets at end) ÷ {N} ÷ ({N} + return ÷ {N}). Return over a period – daily returns chained, weighted by assets. Fund-level daily data – the last {N} days.	Tirgus, pārvaldītāju un līmeņu skaitļi ir plānu summas. Ceturkšņi pirms {M} {N} (II līmenis) vai bez pilniem dienas datiem aplēsti no manapensija.lv ceturkšņa datiem: ceturkšņa ienesīgums × (aktīvi sākumā + aktīvi beigās) ÷ {N} ÷ ({N} + ienesīgums ÷ {N}). Perioda ienesīgums – dienas ienesīgumi saķēdēti, svērti ar aktīviem. Plānu dienas dati – pēdējās {N} dienas.	Turu, fondivalitsejate ja sammaste arvud on fondide summad. Kvartalid enne {M} {N} (II sammas) või täielike päevaandmeteta on hinnatud manapensija.lv kvartaliandmetest: kvartali tootlus × (varad alguses + varad lõpus) ÷ {N} ÷ ({N} + tootlus ÷ {N}). Perioodi tootlus – päevatootlused aheldatud, varadega kaalutud. Fondide päevaandmed – viimased {N} päeva.
+The market, manager and pillar figures are sums over funds. Quarters before {M} {N} (pillar II) or without full daily data are estimated from pensionikeskus.ee quarterly reports: quarter return × (assets at start + assets at end) ÷ {N} ÷ ({N} + return ÷ {N}). Return over a period – daily returns chained, weighted by assets. Fund-level daily data – the last {N} days.	Tirgus, pārvaldītāju un līmeņu skaitļi ir fondu summas. Ceturkšņi pirms {M} {N} (II līmenis) vai bez pilniem dienas datiem aplēsti no pensionikeskus.ee ceturkšņa datiem: ceturkšņa ienesīgums × (aktīvi sākumā + aktīvi beigās) ÷ {N} ÷ ({N} + ienesīgums ÷ {N}). Perioda ienesīgums – dienas ienesīgumi saķēdēti, svērti ar aktīviem. Fondu dienas dati – pēdējās {N} dienas.	Turu, fondivalitsejate ja sammaste arvud on fondide summad. Kvartalid enne {M} {N} (II sammas) või täielike päevaandmeteta on hinnatud pensionikeskus.ee kvartaliandmetest: kvartali tootlus × (varad alguses + varad lõpus) ÷ {N} ÷ ({N} + tootlus ÷ {N}). Perioodi tootlus – päevatootlused aheldatud, varadega kaalutud. Fondide päevaandmed – viimased {N} päeva.
+The month in history	Mēnesis vēsturē	Kuu ajaloos
+The whole II pillar market, each manager and each fund over the chosen period: how much participants earned from investments, the asset-weighted average return, money flows and payouts under the {N} reform.	Viss II līmeņa tirgus, katrs pārvaldītājs un katrs fonds izvēlētajā periodā: cik dalībnieki nopelnīja no ieguldījumiem, ar aktīviem svērtais vidējais ienesīgums, naudas plūsmas un izmaksas saskaņā ar {N}. gada reformu.	Kogu II samba turg, iga fondivalitseja ja iga fond valitud perioodil: kui palju osalejad investeeringutelt teenisid, varadega kaalutud keskmine tootlus, rahavood ja {N}. aasta reformi väljamaksed.
+The {N} largest investments of each Estonian fund, from the monthly investment reports (pensionikeskus.ee).	Katra Igaunijas fonda {N} lielākie ieguldījumi no ikmēneša ieguldījumu pārskatiem (pensionikeskus.ee).	Iga Eesti fondi {N} suurimat investeeringut igakuistest investeerimisaruannetest (pensionikeskus.ee).
+The {N} largest investments of each Latvian pillar II plan, from the managers’ quarterly reports (manapensija.lv).	Katra Latvijas II līmeņa plāna {N} lielākie ieguldījumi no pārvaldītāju ceturkšņa pārskatiem (manapensija.lv).	Iga Läti II samba plaani {N} suurimat investeeringut fondivalitsejate kvartaliaruannetest (manapensija.lv).
+This is the tone of articles, not a confirmed position – “Show” opens the articles to check. Each article in the list shows ▲/▼ and the words that decided it.	Tas ir rakstu tonis, nevis apstiprināta nostāja – “Rādīt” atver rakstus pārbaudei. Katram rakstam sarakstā redzams ▲/▼ un vārdi, kas to noteica.	See on artiklite toon, mitte kinnitatud seisukoht – „Näita“ avab artiklid kontrollimiseks. Iga loetelu artikli juures on ▲/▼ ja sõnad, mis selle määrasid.
+This month	Šajā mēnesī	Sel kuul
+This period	Šajā periodā	Sel perioodil
+This year	Šogad	Tänavu
+This year {P} was first in its group most often – {N} times of {N} (groups × months); then {P} ({N}), {P} ({N}).	Šogad visbiežāk savā grupā pirmais bija {P} – {N} reizes no {N} (grupas × mēneši); tālāk {P} ({N}), {P} ({N}).	Tänavu oli oma grupis kõige sagedamini esimene {P} – {N} korda {N}-st (grupid × kuud); järgnesid {P} ({N}) ja {P} ({N}).
+This year, average fund	Šogad, vidējais fonds	Tänavu, keskmine fond
+This year, average life-cycle fund	Šogad, vidējais dzīves cikla fonds	Tänavu, keskmine elutsüklifond
+Timeline of topics	Tēmu laika josla	Teemade ajajoon
+Tips: the search box (key /) finds a fund, holding or table; every table and chart has buttons to copy an image (e.g. to Teams or a slide) and download Excel with the calculations; pages are split into tabs under the menu.	Padomi: meklēšanas lauks (taustiņš /) atrod fondu, ieguldījumu vai tabulu; katrai tabulai un grafikam ir pogas attēla kopēšanai (piem., uz Teams vai slaidu) un Excel lejupielādei ar aprēķiniem; lapas sadalītas cilnēs zem izvēlnes.	Nõuanded: otsingukast (klahv /) leiab fondi, investeeringu või tabeli; igal tabelil ja graafikul on nupud pildi kopeerimiseks (nt Teamsi või slaidile) ja arvutustega Exceli allalaadimiseks; lehed on jagatud menüü all vahekaartideks.
+To	Līdz	Kuni
+Tone of statements	Izteikumu tonis	Väljaütlemiste toon
+Too short history	Pārāk īsa vēsture	Liiga lühike ajalugu
+Total	Kopā	Kokku
+Total change	Kopējā izmaiņa	Kogumuutus
+Total change: {N}	Kopējā izmaiņa: {N}	Kogumuutus: {N}
+Two funds	Divi fondi	Kaks fondi
+Unit value change to {D}, not annualised; next to it – place among all funds of the group ({N} = best). Volatility and maximum fall – last {N} years.	Daļas vērtības izmaiņa līdz {D}, nav izteikta gada izteiksmē; blakus – vieta starp visiem grupas fondiem ({N} = labākais). Svārstīgums un maksimālais kritums – pēdējie {N} gadi.	Osakuväärtuse muutus kuni {D}, mitte aastane; kõrval – koht grupi kõigi fondide seas ({N} = parim). Volatiilsus ja maksimaalne langus – viimased {N} aastat.
+Unit value change to {D}, not annualised; next to it – place among the group’s funds ({N} = best). Volatility and maximum fall – last {N} years.	Daļas vērtības izmaiņa līdz {D}, nav izteikta gada izteiksmē; blakus – vieta grupas fondu vidū ({N} = labākais). Svārstīgums un maksimālais kritums – pēdējie {N} gadi.	Osakuväärtuse muutus kuni {D}, mitte aastane; kõrval – koht grupi fondide seas ({N} = parim). Volatiilsus ja maksimaalne langus – viimased {N} aastat.
+Unit value: Price of one fund unit in euros, calculated daily: net assets ÷ number of units.	Daļas vērtība: vienas fonda daļas cena eiro, aprēķina katru dienu: neto aktīvi ÷ daļu skaits.	Osakuväärtus: ühe fondiosaku hind eurodes, arvutatakse iga päev: puhasvara ÷ osakute arv.
+Up to {N}% equities	Līdz {N}% akciju	Kuni {N}% aktsiaid
+Ups and downs of value	Vērtības kāpumi un kritumi	Väärtuse tõusud ja langused
+Ups and downs of value: {M} {N} – {M} {N}	Vērtības kāpumi un kritumi: {M} {N} – {M} {N}	Väärtuse tõusud ja langused: {M} {N} – {M} {N}
+Value at year end, €	Vērtība gada beigās, €	Väärtus aasta lõpus, €
+Value of average fund / Prices (CPI): {M} {N} – {M} {N}	Vidējā fonda vērtība / cenas (PCI): {M} {N} – {M} {N}	Keskmise fondi väärtus / hinnad (THI): {M} {N} – {M} {N}
+Value of average fund / The average net wage: {N} – {N}	Vidējā fonda vērtība / vidējā neto alga: {N} – {N}	Keskmise fondi väärtus / keskmine netopalk: {N} – {N}
+Value of average fund / The average old-age pension: {N} – {N}	Vidējā fonda vērtība / vidējā vecuma pensija: {N} – {N}	Keskmise fondi väärtus / keskmine vanaduspension: {N} – {N}
+Value of average fund / The net minimum wage: {N} – {N}	Vidējā fonda vērtība / neto minimālā alga: {N} – {N}	Keskmise fondi väärtus / netomiinimumpalk: {N} – {N}
+Value of average fund: {M} {N} – {M} {N}	Vidējā fonda vērtība: {M} {N} – {M} {N}	Keskmise fondi väärtus: {M} {N} – {M} {N}
+Value of savings	Uzkrājumu vērtība	Säästude väärtus
+Values	Vērtības	Väärtused
+Versus weighted average	Salīdzinājumā ar svērto vidējo	Võrreldes kaalutud keskmisega
+Versus weighted average · All groups (managers)	Salīdzinājumā ar svērto vidējo · Visas grupas (pārvaldītāji)	Võrreldes kaalutud keskmisega · Kõik grupid (fondivalitsejad)
+Volatility {N} yr	Svārstīgums {N} g.	Volatiilsus {N} a
+Volatility, %	Svārstīgums, %	Volatiilsus, %
+VSAA (social insurance)	VSAA (sociālā apdrošināšana)	VSAA (sotsiaalkindlustus)
+Wage	Alga	Palk
+Week	Nedēļa	Nädal
+weighted by assets: best Goindex, weakest Allianz	svērts ar aktīviem: labākais Goindex, vājākais Allianz	varadega kaalutud: parim Goindex, nõrgim Allianz
+weighted by assets: best {P}, weakest {P}	svērts ar aktīviem: labākais {P}, vājākais {P}	varadega kaalutud: parim {P}, nõrgim {P}
+Weighted return in the quarter	Svērtais ienesīgums ceturksnī	Kaalutud tootlus kvartalis
+Weighted return over {N} year	Svērtais ienesīgums {N} gada laikā	Kaalutud tootlus {N} aasta jooksul
+Weighted return over {N} years	Svērtais ienesīgums {N} gadu laikā	Kaalutud tootlus {N} aasta jooksul
+Weighted return since year start	Svērtais ienesīgums kopš gada sākuma	Kaalutud tootlus aasta algusest
+What a return means	Ko nozīmē ienesīgums	Mida tootlus tähendab
+What changed in portfolios this quarter, what makes managers stand out, buys and sells, fund assets and reform payouts.	Kas šajā ceturksnī mainījās portfeļos, ar ko izceļas pārvaldītāji, pirkumi un pārdevumi, fondu aktīvi un reformas izmaksas.	Mis portfellides selles kvartalis muutus, millega fondivalitsejad eristuvad, ostud ja müügid, fondide varad ja reformi väljamaksed.
+What changed the assets: return, contributions and payouts	Kas mainīja aktīvus: ienesīgums, iemaksas un izmaksas	Mis muutis varasid: tootlus, sissemaksed ja väljamaksed
+What each manager can boast about	Ar ko var lepoties katrs pārvaldītājs	Millega iga fondivalitseja saab uhkustada
+What the Seimas is considering	Ko izskata Seims	Mida Seim arutab
+Where the data come from, how it is calculated, known limitations.	No kurienes nāk dati, kā tie aprēķināti, zināmie ierobežojumi.	Kust andmed pärinevad, kuidas neid arvutatakse, teadaolevad piirangud.
+Who attracts pillar III participants	Kas piesaista III līmeņa dalībniekus	Kes meelitab III samba osalejaid
+Who moved where (rows – left from, columns – came to)	Kas kur pārgāja (rindas – no kurienes aizgāja, kolonnas – kur atnāca)	Kes kuhu liikus (read – kust lahkuti, veerud – kuhu tuldi)
+Who speaks	Kas runā	Kes räägivad
+Whole market	Viss tirgus	Kogu turg
+Whole scheme	Visa shēma	Kogu skeem
+Whole-market index (all life-cycle funds, asset-weighted):	Visa tirgus indekss (visi dzīves cikla fondi, svērti ar aktīviem):	Kogu turu indeks (kõik elutsüklifondid, varadega kaalutud):
+Whole-market returns and ranks by age group, fund comparison chart, risk, calendar years. Pillars II and III.	Visa tirgus ienesīgums un vietas pa vecuma grupām, fondu salīdzinājuma grafiks, risks, kalendārie gadi. II un III līmenis.	Kogu turu tootlused ja kohad vanusegruppide kaupa, fondide võrdlusgraafik, risk, kalendriaastad. II ja III sammas.
+Whose gains:	Kuru peļņa:	Kelle tulu:
+Why we are the best	Kāpēc esam labākie	Miks oleme parimad
+Why we are the best: {P}	Kāpēc esam labākie: {P}	Miks oleme parimad: {P}
+Without a choice, each manager is compared with the median of the others.	Ja nekas nav izvēlēts, katrs pārvaldītājs tiek salīdzināts ar pārējo mediānu.	Kui valikut pole tehtud, võrreldakse iga fondivalitsejat teiste mediaaniga.
+Working days	Darba dienas	Tööpäevad
+Worst day	Sliktākā diena	Halvim päev
+Year	Gads	Aasta
+Year by year	Gads pēc gada	Aasta-aastalt
+Year-to-date leaders	Līderi kopš gada sākuma	Liidrid aasta algusest
+Year…	Gads…	Aasta…
+YTD	Kopš gada sāk.	Aasta algusest
+{*}. For every period: the full-colour column = the largest rise of the unit value from its lowest point within that period (run-up); the pale column below zero = the deepest point the unit value reached within that period below its highest value so far since the start (drawdown – the same dips as on the line view). The first period of a fund can be partial. Click a fund to hide or show it; hover for the figures.	{*}. Katram periodam: piesātinātās krāsas stabiņš = lielākais daļas vērtības kāpums no zemākā punkta šajā periodā (kāpums); bālais stabiņš zem nulles = dziļākais punkts, ko daļas vērtība šajā periodā sasniedza zem līdzšinējās augstākās vērtības kopš sākuma (kritums – tie paši kritumi kā līniju skatā). Fonda pirmais periods var būt nepilns. Noklikšķiniet uz fonda, lai to paslēptu vai parādītu; virziet kursoru, lai redzētu skaitļus.	{*}. Iga perioodi kohta: täisvärvi tulp = osakuväärtuse suurim tõus perioodi madalaimast punktist (tõus); kahvatu tulp alla nulli = sügavaim punkt, kuhu osakuväärtus perioodil langes allapoole senist kõrgeimat väärtust algusest (langus – samad langused mis joonvaates). Fondi esimene periood võib olla osaline. Klõpsake fondil, et see peita või näidata; arvude nägemiseks liikuge kursoriga.
+{*}: data starts {D} – later than the other funds in this group (the fund is newer or earlier history is not available), so long periods and “since inception” figures cover a shorter history.	{*}: dati sākas {D} – vēlāk nekā citiem šīs grupas fondiem (fonds ir jaunāks vai agrākā vēsture nav pieejama), tāpēc garie periodi un rādītāji “kopš darbības sākuma” aptver īsāku vēsturi.	{*}: andmed algavad {D} – hiljem kui selle grupi teistel fondidel (fond on uuem või varasem ajalugu pole saadaval), seega katavad pikad perioodid ja „algusest“ näitajad lühemat ajalugu.
+{*}: monthly returns {D} → {D}; the first and last months may be partial.	{*}: mēnešu ienesīgums {D} → {D}; pirmais un pēdējais mēnesis var būt nepilni.	{*}: kuutootlused {D} → {D}; esimene ja viimane kuu võivad olla osalised.
+{D} Pateikimas	{D} Iesniegšana	{D} Esitamine
+{D} Priėmimas	{D} Pieņemšana	{D} Vastuvõtmine
+{D} Svarstymas	{D} Izskatīšana	{D} Arutamine
+{D} · {N} years	{D} · {N} gadi	{D} · {N} aastat
+{D} – {D}. Generated automatically from the site data.	{D} – {D}. Ģenerēts automātiski no vietnes datiem.	{D} – {D}. Koostatud automaatselt saidi andmetest.
+{M} {N}	{M} {N}	{M} {N}
+{N} % of return now equals	{N} % ienesīguma tagad ir	{N}% tootlust võrdub praegu
+{N} days	{N} dienas	{N} päeva
+{N} funds	{N} fondi	{N} fondi
+{N} funds · {D}	{N} fondi · {D}	{N} fondi · {D}
+{N} largest holdings · {*}	{N} lielākie ieguldījumi · {*}	{N} suurimat investeeringut · {*}
+{N} largest holdings, {D}	{N} lielākie ieguldījumi, {D}	{N} suurimat investeeringut, {D}
+{N} mo	{N} mēn.	{N} kuud
+{N} months	{N} mēneši	{N} kuud
+{N} of {N} articles	{N} no {N} rakstiem	{N} artiklit {N}-st
+{N} of {N} funds above their group’s weighted average over {N} year	{N} no {N} fondiem virs savas grupas svērtā vidējā {N} gada laikā	{N} fondi {N}-st üle oma grupi kaalutud keskmise {N} aasta jooksul
+{N} of {N} funds above their group’s weighted average over {N} years	{N} no {N} fondiem virs savas grupas svērtā vidējā {N} gadu laikā	{N} fondi {N}-st üle oma grupi kaalutud keskmise {N} aasta jooksul
+{N} of {N} funds earned more than {N}% over {N} years – every € {N} invested {N} years ago became more than € {N}.	{N} no {N} fondiem {N} gados nopelnīja vairāk nekā {N}% – katri {N} €, kas ieguldīti pirms {N} gadiem, kļuva par vairāk nekā {N} €.	{N} fondi {N}-st teenisid {N} aastaga üle {N}% – iga {N} aastat tagasi investeeritud {N} € kasvas üle {N} euro.
+{N} pillar II and {N} pillar III funds	{N} II līmeņa un {N} III līmeņa fondi	{N} II samba ja {N} III samba fondi
+{N} year	{N} gads	{N} aasta
+{N} years	{N} gadi	{N} aastat
+{N} yr	{N} g.	{N} a
+{N} yr p.a.	{N} g. gadā	{N} a aastas
+{N} {M} {N}	{3}. gada {1}. {2}	{1}. {2} {3}
+{N} € per month	{N} € mēnesī	{N} € kuus
+{N}% of the average wage	{N}% no vidējās algas	{N}% keskmisest palgast
+{N}-month leaders	{N} mēnešu līderi	{N} kuu liidrid
+{N}-year periods	{N} gadu periodi	{N}-aastased perioodid
+{N}-{N} years	{N}-{N} gadi	{N}-{N} aastat
+{N}-{N} · Estonia: {N}	{N}-{N} · Igaunija: {N}	{N}-{N} · Eesti: {N}
+{N}-{N} · Latvia: {N}	{N}-{N} · Latvija: {N}	{N}-{N} · Läti: {N}
+{N}-{N} · Lithuania: {N}	{N}-{N} · Lietuva: {N}	{N}-{N} · Leedu: {N}
+{N}–{N}% equities	{N}–{N}% akciju	{N}–{N}% aktsiaid
+{N}–{N}. For every period: the full-colour column = the largest rise of the unit value from its lowest point within that period (run-up); the pale column below zero = the deepest point the unit value reached within that period below its highest value so far since the start (drawdown – the same dips as on the line view). The first period of a fund can be partial. Click a fund to hide or show it; hover for the figures.	{N}–{N}. Katram periodam: piesātinātās krāsas stabiņš = lielākais daļas vērtības kāpums no zemākā punkta šajā periodā (kāpums); bālais stabiņš zem nulles = dziļākais punkts, ko daļas vērtība šajā periodā sasniedza zem līdzšinējās augstākās vērtības kopš sākuma (kritums – tie paši kritumi kā līniju skatā). Fonda pirmais periods var būt nepilns. Noklikšķiniet uz fonda, lai to paslēptu vai parādītu; virziet kursoru, lai redzētu skaitļus.	{N}–{N}. Iga perioodi kohta: täisvärvi tulp = osakuväärtuse suurim tõus perioodi madalaimast punktist (tõus); kahvatu tulp alla nulli = sügavaim punkt, kuhu osakuväärtus perioodil langes allapoole senist kõrgeimat väärtust algusest (langus – samad langused mis joonvaates). Fondi esimene periood võib olla osaline. Klõpsake fondil, et see peita või näidata; arvude nägemiseks liikuge kursoriga.
+{N}–{N}: Month, {M} {N}	{N}–{N}: mēnesis, {M} {N}	{N}–{N}: kuu, {M} {N}
+{N}–{N}: {P} vs. {P}	{N}–{N}: {P} pret {P}	{N}–{N}: {P} vs {P}
+{P} and {P} daily assets exist only from {N}; earlier their assets are Bank of Lithuania quarter-end figures, so their earnings and flows are estimates.	{P} un {P} dienas aktīvi ir pieejami tikai no {N}; agrāk to aktīvi ir Lietuvas Bankas ceturkšņa beigu skaitļi, tāpēc to peļņa un plūsmas ir aplēses.	{P} ja {P} päevased varad on olemas alles alates {N}; varem on nende varad Leedu Panga kvartalilõpu arvud, seega on nende tulu ja vood hinnangulised.
+{P} minus each peer	{P} mīnus katrs konkurents	{P} miinus iga konkurent
+{P} · Share of assets	{P} · Aktīvu daļa	{P} · Osa varadest
+{P}’s funds earned more than their group average (Bank of Lithuania) since the start of the year – in {N} of {N} groups, over {N} year – in {N} of {N} groups, over {N} years – in {N} of {N} groups.	{P} fondi nopelnīja vairāk nekā savas grupas vidējais (Lietuvas Banka) kopš gada sākuma – {N} no {N} grupām, {N} gada laikā – {N} no {N} grupām, {N} gadu laikā – {N} no {N} grupām.	{P} fondid teenisid rohkem kui oma grupi keskmine (Leedu Pank) aasta algusest – {N} grupis {N}-st, {N} aasta jooksul – {N} grupis {N}-st, {N} aasta jooksul – {N} grupis {N}-st.
+{P}’s funds earned more than their group average (manapensija.lv) since the start of the year – in {N} of {N} groups, over {N} year – in {N} of {N} groups, over {N} years – in {N} of {N} groups.	{P} plāni nopelnīja vairāk nekā savas grupas vidējais (manapensija.lv) kopš gada sākuma – {N} no {N} grupām, {N} gada laikā – {N} no {N} grupām, {N} gadu laikā – {N} no {N} grupām.	{P} fondid teenisid rohkem kui oma grupi keskmine (manapensija.lv) aasta algusest – {N} grupis {N}-st, {N} aasta jooksul – {N} grupis {N}-st, {N} aasta jooksul – {N} grupis {N}-st.
+{P}’s funds earned more than their group average (pensionikeskus.ee) since the start of the year – in {N} of {N} groups, over {N} year – in {N} of {N} groups, over {N} years – in {N} of {N} groups.	{P} fondi nopelnīja vairāk nekā savas grupas vidējais (pensionikeskus.ee) kopš gada sākuma – {N} no {N} grupām, {N} gada laikā – {N} no {N} grupām, {N} gadu laikā – {N} no {N} grupām.	{P} fondid teenisid rohkem kui oma grupi keskmine (pensionikeskus.ee) aasta algusest – {N} grupis {N}-st, {N} aasta jooksul – {N} grupis {N}-st, {N} aasta jooksul – {N} grupis {N}-st.
+· Bond funds	· Obligāciju fondi	· Võlakirjafondid
+· Equity funds	· Akciju fondi	· Aktsiafondid
+· High risk (over {N}%)	· Augsts risks (virs {N}%)	· Kõrge risk (üle {N}%)
+· Higher risk ({N}–{N}%)	· Paaugstināts risks ({N}–{N}%)	· Kõrgem risk ({N}–{N}%)
+· Low risk (volatility under {N}%)	· Zems risks (svārstīgums zem {N}%)	· Madal risk (volatiilsus alla {N}%)
+· Mixed funds	· Jauktie fondi	· Segafondid
+· Moderate risk ({N}–{N}%)	· Mērens risks ({N}–{N}%)	· Mõõdukas risk ({N}–{N}%)
+· Over {N}% equities	· Virs {N}% akciju	· Üle {N}% aktsiaid
+· Too short history	· Pārāk īsa vēsture	· Liiga lühike ajalugu
+· Up to {N}% equities	· Līdz {N}% akciju	· Kuni {N}% aktsiaid
+· Year	· Gads	· Aasta
+· {M} {N}	· {M} {N}	· {M} {N}
+· {N}–{N}% equities	· {N}–{N}% akciju	· {N}–{N}% aktsiaid
+“Comparisons” = how many rankings the provider took part in (it is left out where its fund did not exist at the period start or has no fresh data; rankings with fewer than {N} providers are skipped), so the maximum is {N} × the number of periods. “{N}st places” = how many of them it won; “% {N}st” and “% {N}st–{N}nd” = share of its comparisons; “Avg. rank” = average position ({N} = best). Each period ends on its group’s latest date. Younger funds (e.g. {P}) take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all {N} take part” keeps just the comparisons in which every manager has a result, so all are compared on the same basis.	“Salīdzinājumi” = cik reitingos pārvaldītājs piedalījās (tas netiek ņemts vērā, ja tā fonds perioda sākumā nepastāvēja vai nav svaigu datu; reitingi ar mazāk nekā {N} pārvaldītājiem izlaisti), tātad maksimums ir {N} × periodu skaits. “{N}. vietas” = cik no tiem tas uzvarēja; “% {N}.” un “% {N}.–{N}.” = daļa no tā salīdzinājumiem; “Vid. vieta” = vidējā vieta ({N} = labākā). Katrs periods beidzas savas grupas pēdējā datumā. Jaunāki fondi (piem., {P}) piedalās mazākā skaitā salīdzinājumu, tāpēc to daļas balstās uz citu kopu. “Tikai tur, kur piedalās visi {N}” atstāj tikai salīdzinājumus, kuros rezultāts ir katram pārvaldītājam, tāpēc visi tiek salīdzināti vienādi.	„Võrdlused“ = mitmes pingereas fondivalitseja osales (see jäetakse välja, kui tema fondi perioodi alguses ei olnud või värskeid andmeid pole; alla {N} osalejaga pingeread jäetakse vahele), seega on maksimum {N} × perioodide arv. „{N}. kohad“ = mitu neist ta võitis; „% {N}.“ ja „% {N}.–{N}.“ = osa tema võrdlustest; „Kesk. koht“ = keskmine koht ({N} = parim). Iga periood lõpeb oma grupi viimasel kuupäeval. Nooremad fondid (nt {P}) osalevad vähemates võrdlustes, seega põhinevad nende osad teisel valimil. „Ainult seal, kus osalevad kõik {N}“ jätab alles vaid võrdlused, kus igal fondivalitsejal on tulemus, nii et kõiki võrreldakse samadel alustel.
+“Fees” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Komisijas” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Tasud“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“Fees”: {D} – {D} · {N} wk. · {N} articles	“Komisijas”: {D} – {D} · {N} ned. · {N} raksti	„Tasud“: {D} – {D} · {N} näd. · {N} artiklit
+“Government, politics” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Valdība, politika” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Valitsus, poliitika“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“Government, politics”: {D} – {D} · {N} wk. · {N} articles	“Valdība, politika”: {D} – {D} · {N} ned. · {N} raksti	„Valitsus, poliitika“: {D} – {D} · {N} näd. · {N} artiklit
+“Payouts, annuities” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Izmaksas, mūža rentes” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Väljamaksed, annuiteedid“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“Payouts, annuities”: {D} – {D} · {N} wk. · {N} articles	“Izmaksas, mūža rentes”: {D} – {D} · {N} ned. · {N} raksti	„Väljamaksed, annuiteedid“: {D} – {D} · {N} näd. · {N} artiklit
+“Reform, exits” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Reforma, izstāšanās” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Reform, lahkumised“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“Reform, exits” is back after a {N}-month pause (first article {D}: “Igaunijā iespējams atjaunot dalību pensiju otrajā līmenī”).	“Reforma, izstāšanās” atgriežas pēc {N} mēnešu pārtraukuma (pirmais raksts {D}: “Igaunijā iespējams atjaunot dalību pensiju otrajā līmenī”).	„Reform, lahkumised“ on tagasi pärast {N}-kuist pausi (esimene artikkel {D}: „Igaunijā iespējams atjaunot dalību pensiju otrajā līmenī“).
+“Reform, exits”: {D} – {D} · {N} wk. · {N} articles	“Reforma, izstāšanās”: {D} – {D} · {N} ned. · {N} raksti	„Reform, lahkumised“: {D} – {D} · {N} näd. · {N} artiklit
+“Returns” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Ienesīgums” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Tootlus“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“Returns”: {D} – {D} · {N} wk. · {N} articles	“Ienesīgums”: {D} – {D} · {N} ned. · {N} raksti	„Tootlus“: {D} – {D} · {N} näd. · {N} artiklit
+“State incentive” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Valsts piemaksa” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Riigi lisamakse“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“State incentive”: {D} – {D} · {N} wk. · {N} articles	“Valsts piemaksa”: {D} – {D} · {N} ned. · {N} raksti	„Riigi lisamakse“: {D} – {D} · {N} näd. · {N} artiklit
+“Taxes, reliefs” has been in the media for {N} weeks in a row (since {D}; {N} articles).	“Nodokļi, atvieglojumi” ir medijos jau {N} nedēļas pēc kārtas (kopš {D}; {N} raksti).	„Maksud, soodustused“ on meedias olnud {N} nädalat järjest (alates {D}; {N} artiklit).
+“Taxes, reliefs”: {D} – {D} · {N} wk. · {N} articles	“Nodokļi, atvieglojumi”: {D} – {D} · {N} ned. · {N} raksti	„Maksud, soodustused“: {D} – {D} · {N} näd. · {N} artiklit
+“–” = the fund did not exist at the start of the period or has no fresh data. Average row: simple average across the age groups where the fund has a value. Asset-weighted row: the same groups, each weighted by the fund’s latest net assets – closer to how the provider’s members’ money as a whole did.	“–” = fonds perioda sākumā nepastāvēja vai nav svaigu datu. Rinda “Vidējais”: vienkāršais vidējais pa vecuma grupām, kurās fondam ir vērtība. Rinda “Svērtais”: tās pašas grupas, katra svērta ar fonda jaunākajiem neto aktīviem – tuvāk tam, kā kopumā veicās pārvaldītāja dalībnieku naudai.	„–“ = fondi perioodi alguses ei olnud või värskeid andmeid pole. Rida „Keskmine“: lihtkeskmine vanusegruppide lõikes, kus fondil on väärtus. Rida „Kaalutud“: samad grupid, igaüks kaalutud fondi viimase puhasvaraga – lähemal sellele, kuidas fondivalitseja osalejate rahal tervikuna läks.
+€ m, month-end assets. Return = assets × unit value change; mergers – assets received from merged funds (detected from the data, as in “Asset change”); contributions and switches – the rest of the change.	milj. €, aktīvi mēneša beigās. Ienesīgums = aktīvi × daļas vērtības izmaiņa; apvienošanas – no apvienotajiem fondiem saņemtie aktīvi (noteikti no datiem, kā sadaļā “Aktīvu izmaiņa”); iemaksas un pārejas – pārējā izmaiņa.	mln €, kuu lõpu varad. Tootlus = varad × osakuväärtuse muutus; ühinemised – ühendatud fondidelt saadud varad (tuvastatud andmetest, nagu jaotises „Varade muutus“); sissemaksed ja vahetused – ülejäänud muutus.
+€ m. Return = assets × unit value change; contributions and switches – the rest of the change; payouts – reform payouts.	milj. €. Ienesīgums = aktīvi × daļas vērtības izmaiņa; iemaksas un pārejas – pārējā izmaiņa; izmaksas – reformas izmaksas.	mln €. Tootlus = varad × osakuväärtuse muutus; sissemaksed ja vahetused – ülejäänud muutus; väljamaksed – reformi väljamaksed.
+€ {N} five years ago	{N} € pirms pieciem gadiem	{N} € viis aastat tagasi
+€ {N} invested at the start of {N} at the average fund return would now be about {N} €, even though some years ({N}, {N}) were negative.	{N} €, kas ieguldīti {N}. gada sākumā ar vidējā fonda ienesīgumu, tagad būtu aptuveni {N} €, lai gan daži gadi ({N}, {N}) bija negatīvi.	{N} €, mis investeeriti {N}. aasta alguses keskmise fondi tootlusega, oleks nüüd umbes {N} €, kuigi mõni aasta ({N}, {N}) oli negatiivne.
+€ {N} since	{N} € kopš	{N} € alates
+★ Eye-catching	★ Uzmanību piesaistoši	★ Silmapaistvad
+★ Highest since {N}	★ Augstākais kopš {N}	★ Kõrgeim alates {N}
+★ Lowest since {N}	★ Zemākais kopš {N}	★ Madalaim alates {N}
+★ One of the largest changes	★ Viena no lielākajām izmaiņām	★ Üks suurimaid muutusi
+⤓ Excel with formulas	⤓ Excel ar formulām	⤓ Excel valemitega

@@ -49,6 +49,94 @@ function addStrings3(lv, et) {          // vertimai į latvių ir estų kalbas; 
     o[k] = v && typeof v === 'object' && !Array.isArray(v) && base && typeof base === 'object' && !Array.isArray(base) ? Object.assign(Object.create(base), own || {}, v) : v; }));
 }
 const T = () => I18N[ulang];
+/* Visų tekstų vertimas į latvių ir estų kalbas (savininkas 2026-11-10: „išversk į visas kalbas visą dashboard“).
+   Kodas tekstus renka LT/EN poromis (`L ? … : …`); LV/ET vartotojui `lang` = 'en', todėl ekrane atsiranda angliškas tekstas.
+   Čia jis pakeičiamas pagal žodyną site/i18n.tsv (stulpeliai en, lv, et; build_site.py → docs/i18n_lv.js, i18n_et.js):
+   – tikslus atitikmuo (tarpai suglaudinti), arba šablonas: skaičiai → {N}, datos → {D}, mėnesių pavadinimai → {M};
+   – verčiami teksto mazgai ir atributai title / placeholder / aria-label / alt, puslapio pavadinimas ir Excel langeliai (xl.js);
+   – ko žodyne nėra – lieka angliškai (tools/i18n_scan.js parodo, ko trūksta). Žodynas kraunamas tik LV/ET kalbai. */
+const TR3 = { d: null, p: null, last: new WeakMap() };
+const TR3_NUM = /(?:(?<![\p{L}\d.,])[+−\-])?(?:\d{1,3}(?:[   ,]\d{3}(?!\d))+|\d+)(?:[.,]\d+)?/gu,
+  TR3_DATE = /\b\d{4}-\d\d-\d\d\b/g,
+  TR3_MON = /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g,
+  TR3_MONS = { lv: { s: ['janv.', 'febr.', 'marts', 'apr.', 'maijs', 'jūn.', 'jūl.', 'aug.', 'sept.', 'okt.', 'nov.', 'dec.'], l: ['janvāris', 'februāris', 'marts', 'aprīlis', 'maijs', 'jūnijs', 'jūlijs', 'augusts', 'septembris', 'oktobris', 'novembris', 'decembris'],
+      gen: ['janvāra', 'februāra', 'marta', 'aprīļa', 'maija', 'jūnija', 'jūlija', 'augusta', 'septembra', 'oktobra', 'novembra', 'decembra'], loc: ['janvārī', 'februārī', 'martā', 'aprīlī', 'maijā', 'jūnijā', 'jūlijā', 'augustā', 'septembrī', 'oktobrī', 'novembrī', 'decembrī'] },
+    et: { s: ['jaan', 'veebr', 'märts', 'apr', 'mai', 'juuni', 'juuli', 'aug', 'sept', 'okt', 'nov', 'dets'], l: ['jaanuar', 'veebruar', 'märts', 'aprill', 'mai', 'juuni', 'juuli', 'august', 'september', 'oktoober', 'november', 'detsember'],
+      gen: ['jaanuari', 'veebruari', 'märtsi', 'aprilli', 'mai', 'juuni', 'juuli', 'augusti', 'septembri', 'oktoobri', 'novembri', 'detsembri'], loc: ['jaanuaril', 'veebruaril', 'märtsil', 'aprillil', 'mail', 'juunil', 'juulil', 'augustil', 'septembril', 'oktoobril', 'novembril', 'detsembril'] } },
+  TR3_ML = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function TR3_ADD(d) {                    // docs/i18n_{lv,et}.js: { angliškas tekstas arba šablonas: vertimas }; {*} – bet koks tekstas (pvz. fondo pavadinimas)
+  TR3.d = TR3.d || new Map(); TR3.w = TR3.w || [];
+  Object.entries(d).forEach(([k, v]) => k.includes('{*}') ? TR3.w.push([new RegExp('^' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\{\\\*\\\}/g, '(.+?)') + '$'), v]) : TR3.d.set(k, v));
+}
+const TR3_MGR = /\b(Allianz|Artea|Goindex|Luminor|SEB|Swedbank|INVL|Citadele|CBL|INDEXO|Indexo|Signet|LHV|Tuleva)\b/g;
+function tr3Key(s) {                     // šablono raktas ir pakeisti fragmentai (eilės tvarka): {D} data, {M} mėnuo, {P} valdytojas, {N} skaičius
+  const toks = [];
+  const k = s.replace(new RegExp(`${TR3_DATE.source}|${TR3_MON.source}|${TR3_MGR.source}|${TR3_NUM.source}`, 'gu'), m => {
+    const t = /^\d{4}-\d\d-\d\d$/.test(m) ? 'D' : TR3_ML.some(x => x === m || x.slice(0, 3) === m) ? 'M' : /^\p{L}/u.test(m) ? 'P' : 'N';
+    toks.push(m); return `{${t}}`; });
+  return [k, toks];
+}
+TR3_MONS.lv.in = TR3_MONS.lv.loc; TR3_MONS.lv.from = TR3_MONS.lv.gen;   // {M:in} – „mėnesį“ (LV vietininkas, ET inesyvas), {M:from} – „nuo“ (LV kilmininkas, ET elatyvas)
+TR3_MONS.et.in = ['jaanuaris', 'veebruaris', 'märtsis', 'aprillis', 'mais', 'juunis', 'juulis', 'augustis', 'septembris', 'oktoobris', 'novembris', 'detsembris'];
+TR3_MONS.et.from = ['jaanuarist', 'veebruarist', 'märtsist', 'aprillist', 'maist', 'juunist', 'juulist', 'augustist', 'septembrist', 'oktoobrist', 'novembrist', 'detsembrist'];
+function tr3Mon(m, f) {                 // mėnuo: {M} – kaip angliškai (trumpas / ilgas), {M:gen} – kilmininkas, {M:loc} – vietininkas (LV „septembrī“, ET „septembril“)
+  const i = TR3_ML.findIndex(x => x === m || x.slice(0, 3) === m), o = TR3_MONS[ulang]; if (i < 0 || !o || m.length < 3) return m;
+  return f && o[f] ? o[f][i] : m.length > 3 || m === 'May' ? o.l[i] : o.s[i]; }
+function tr3(s, deep) {                  // vienas tekstas: vertimas arba tas pats tekstas
+  if (!TR3.d || (ulang !== 'lv' && ulang !== 'et') || typeof s !== 'string' || !/[A-Za-z]{2}/.test(s)) return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/), core = m[2].replace(/\s+/g, ' ');
+  let v = TR3.d.get(core);
+  if (v == null) {
+    const [k, toks] = tr3Key(core);
+    let t = toks.length ? TR3.d.get(k) : null;
+    if (t == null) for (const [re, w] of TR3.w) { const g = k.match(re); if (g) { let j = 1; t = w.replace(/\{\*\}/g, () => g[j++]); break; } }
+    if (t == null) {                    // dalimis: „Šaltinis · Tema“, „Antraštė: SEB“ (valdytojo ar fondo vardas lieka)
+      if (deep) return s;
+      for (const sep of [' · ', ': ', ' – ']) {
+        if (!core.includes(sep)) continue;
+        const ps = core.split(sep), tp = ps.map(x => tr3(x, 1));
+        if (tp.some((x, i) => x !== ps[i])) return m[1] + tp.join(sep) + m[3];
+      }
+      return s;
+    }
+    let i = 0; v = /\{\d+(:\w+)?\}/.test(t) ? t.replace(/\{(\d+)(?::(\w+))?\}/g, (_, n, f) => tr3Mon(toks[n - 1] || '', f))
+      : t.replace(/\{[NDMP](?::(\w+))?\}/g, (_, f) => tr3Mon(toks[i++] || '', f));
+  }
+  return m[1] + v + m[3];
+}
+const TR3_ATTR = ['title', 'placeholder', 'aria-label', 'alt'];
+function tr3El(e) {
+  if (e.closest && e.closest('[translate=no],.notranslate')) return;
+  TR3_ATTR.forEach(a => { const v = e.getAttribute && e.getAttribute(a); if (v) { const t = tr3(v); if (t !== v) e.setAttribute(a, t); } });
+}
+function tr3Text(n) {
+  const p = n.parentElement; if (!p || /^(SCRIPT|STYLE|TEXTAREA|NOSCRIPT)$/.test(p.tagName) || p.closest('[translate=no],.notranslate')) return;
+  const v = n.nodeValue; if (TR3.last.get(n) === v) return;
+  const t = tr3(v); if (t !== v) n.nodeValue = t; TR3.last.set(n, t);
+}
+function tr3Tree(r) {
+  if (!r) return;
+  if (r.nodeType === 3) return tr3Text(r);
+  if (r.nodeType !== 1 && r.nodeType !== 9) return;
+  if (r.nodeType === 1) tr3El(r);
+  const w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT); let n;
+  while ((n = w.nextNode())) n.nodeType === 3 ? tr3Text(n) : tr3El(n);
+}
+function tr3Doc() { if (TR3.d && (ulang === 'lv' || ulang === 'et')) { tr3Tree(document.documentElement); const t = tr3(document.title); if (t !== document.title) document.title = t; } }
+function tr3Load(cb) {                  // žodynas kraunamas tik latvių / estų kalbai; puslapio pradžioje – sinchroniškai (prieš piešiant)
+  if (ulang !== 'lv' && ulang !== 'et') return;
+  if (TR3.lg === ulang) return cb && cb();
+  TR3.d = null; TR3.lg = ulang;
+  const src = `i18n_${ulang}.js?v=${(typeof TR3V !== 'undefined' && TR3V[ulang]) || ''}`;
+  if (document.readyState === 'loading' && !cb) { document.write(`<script src="${src}"><\/script>`); return; }
+  const s = document.createElement('script'); s.src = src; s.onload = () => { tr3Doc(); cb && cb(); }; document.head.append(s);
+}
+if (typeof MutationObserver !== 'undefined') new MutationObserver(ms => {
+  if (!TR3.d || (ulang !== 'lv' && ulang !== 'et')) return;
+  ms.forEach(m => m.type === 'childList' ? m.addedNodes.forEach(tr3Tree) : m.type === 'characterData' ? tr3Text(m.target) : tr3El(m.target));
+}).observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: TR3_ATTR });
+tr3Load();
+addEventListener('DOMContentLoaded', tr3Doc);
 // Vienas skaičių formatas visur (auditas #31): procentai – visada 2 skaitmenys po kablelio, LT – tarpas prieš %
 const pctSfx = () => lang === 'lt' ? ' %' : '%';
 const num = (x, p = 2) => x.toLocaleString(T().locale, { minimumFractionDigits: p, maximumFractionDigits: p });
@@ -241,9 +329,10 @@ function renderHeader(active, onLang) {
     freshRender();
   };
   document.getElementById('lang').addEventListener('change', e => {
-    ulang = ULANGS.includes(e.target.value) ? e.target.value : 'lt'; lang = ulang === 'lt' ? 'lt' : 'en';
+    const was = ulang; ulang = ULANGS.includes(e.target.value) ? e.target.value : 'lt'; lang = ulang === 'lt' ? 'lt' : 'en';
     try { localStorage.setItem('lang', ulang); } catch (er) {}
-    apply(); onLang();
+    if (was === 'lv' || was === 'et') { location.reload(); return; }   // išversti tekstai neatsiverčia atgal – puslapis perkraunamas
+    apply(); onLang(); tr3Load(() => {});
   });
   document.getElementById('theme').addEventListener('click', () => {
     el.dataset.theme = isDark() ? 'light' : 'dark';

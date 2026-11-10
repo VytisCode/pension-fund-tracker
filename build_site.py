@@ -54,6 +54,26 @@ def day_number(iso: str) -> int:
     return (date.fromisoformat(iso) - date(1970, 1, 1)).days
 
 
+def build_i18n() -> str:
+    """LV/ET vertimų žodynas (site/i18n.tsv: en, lv, et) → docs/i18n_lv.js, docs/i18n_et.js; grąžina eilutę `var TR3V` (failų parašai)
+    common.js pradžiai. Žodyną galima taisyti Excel'yje (TSV, UTF-8); tuščias langelis – rodoma angliškai."""
+    rows, hv = {}, {}
+    src = SITE / "i18n.tsv"
+    lines = src.read_text(encoding="utf-8").splitlines() if src.exists() else []
+    for ln in lines[1:]:
+        c = ln.split("\t")
+        if len(c) < 2 or not c[0].strip() or c[0].startswith("#"):
+            continue
+        for i, lg in ((1, "lv"), (2, "et")):
+            if len(c) > i and c[i].strip():
+                rows.setdefault(lg, {})[" ".join(c[0].split())] = c[i].strip()
+    for lg in ("lv", "et"):
+        js = "TR3_ADD(" + json.dumps(rows.get(lg, {}), ensure_ascii=False, separators=(",", ":")) + ");\n"
+        (DOCS / f"i18n_{lg}.js").write_text(js, encoding="utf-8")
+        hv[lg] = hashlib.md5(js.encode("utf-8")).hexdigest()[:8]
+    return "var TR3V = " + json.dumps(hv) + ";\n"
+
+
 def main() -> None:
     funds = {}
     with DATA.open(encoding="utf-8", newline="") as f:
@@ -109,7 +129,7 @@ def main() -> None:
     for name in ("index.html", "overview.html", "performance.html", "apie.html") + assets[:-4] + ("favicon.svg",):
         shutil.copyfile(SITE / name, DOCS / name)
     # Excel rašytuvas (site/xl.js) – pridedamas prie common.js, kad veiktų visuose puslapiuose be papildomo failo
-    (DOCS / "common.js").write_text((SITE / "common.js").read_text(encoding="utf-8") + "\n" + (SITE / "xl.js").read_text(encoding="utf-8"), encoding="utf-8")
+    (DOCS / "common.js").write_text(build_i18n() + (SITE / "common.js").read_text(encoding="utf-8") + "\n" + (SITE / "xl.js").read_text(encoding="utf-8"), encoding="utf-8")
     shutil.copytree(SITE / "fonts", DOCS / "fonts", dirs_exist_ok=True)
     shutil.copytree(SITE / "img", DOCS / "img", dirs_exist_ok=True)       # skyrių nuotraukos (savininko sugeneruotos, 2026-10-21)   # šriftai su lietuviškomis raidėmis (Inter, Source Serif 4; OFL licencija)
     # Naršyklės talpykla: prie failų pridedame turinio parašą (?v=...), kad pakeitimai matytųsi iškart
