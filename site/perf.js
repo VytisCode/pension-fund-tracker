@@ -1483,6 +1483,7 @@ function labelControls() {
   syncSumWin(); syncView();
 }
 function syncAll() {
+  { const pb = $('periodbar'); if (pb) pb.classList.toggle('cust', P.period === 'custom'); }   // naujas dizainas: Nuo/Iki – tik pasirinktam laikotarpiui
   let rs = $('realSeg');   // nominali / reali grąža (patvirtinta idėja „Realioji grąža“, 2026-10-10)
   if (!rs && typeof CPI !== 'undefined') {
     rs = document.createElement('div'); rs.className = 'seg'; rs.id = 'realSeg'; rs.setAttribute('role', 'group');

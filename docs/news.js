@@ -75,6 +75,16 @@ const NWS = { c: NW_C, t: '', q: '', n: 30, p: '', from: '', to: '', a: '', g: '
 const NW_TOPICS = ['reform', 'tax', 'state', 'returns', 'fees', 'payout', 'politics'];
 const NW_CUE = /\b(siūl\w*|ragin\w*|kritik\w*|nepritar\w*|pritar\w*|prieš|atmet\w*|palaik\w*|perspėj\w*|reikalauj\w*|žad\w*|pažad\w*|griežtai|ierosin\w*|aicin\w*|kritiz\w*|atbalst\w*|iebilst\w*|noraid\w*|brīdin\w*|ettepanek\w*|kriti\w*|toeta\w*|vastu|hoiat\w*|nõua\w*|propos\w*|urg\w*|critici\w*|support\w*|oppos\w*|against|warn\w*|reject\w*)/giu;
 const nwTopic = k => T().nw.t[k] || k;
+const NW_ICO = {   // temų piktogramos (savininkas 2026-11-10: patiko ikonos makete)
+  reform: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
+  tax: '<path d="M19 5L5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  state: '<path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-7 10 7z"/>',
+  returns: '<path d="M22 7l-8.5 8.5-5-5L2 17M16 7h6v6"/>',
+  fees: '<path d="M6 2h12v20l-3-2-3 2-3-2-3 2zM9 7h6M9 11h6M9 15h4"/>',
+  payout: '<path d="M20 7H5a2 2 0 0 1 0-4h13v4M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/>',
+  politics: '<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',
+};
+const nwIco = k => NW_ICO[k] ? `<span class="nwico">${svgI(NW_ICO[k], 14)}</span>` : '';
 const nwHas = () => typeof NEWS !== 'undefined' && NEWS && NEWS.length;
 const nwAct = () => typeof NEWS_ACT !== 'undefined' ? NEWS_ACT : [];
 const nwActName = id => { const a = nwAct().find(x => x[0] === id); return a ? (lang === 'lt' ? a[3] : a[4]) : id; };
@@ -96,7 +106,7 @@ const nwMark = s => hEsc(s).replace(NW_CUE, '<mark>$1</mark>');
 const nwCard = (r, cue) => `<article class="nwc"><div class="meta"><span class="flag">${r[1]}</span> ${hEsc(r[0])} · ${hEsc(r[2] || '')}</div>`
   + `${cue ? (tn => tn.v ? ` <span class="nwtone ${tn.v > 0 ? 'p' : 'n'}" title="${hEsc([...tn.p.map(x => '+' + x), ...tn.n.map(x => '−' + x)].join(', '))}">${tn.v > 0 ? '▲' : '▼'} ${T().nw.tone[tn.v > 0 ? 'p' : 'n']}</span>` : '')(nwTone(r)) : ''}`
   + `<h3><a href="${hEsc(r[5])}" target="_blank" rel="noopener noreferrer">${cue ? nwMark(r[3]) : hEsc(r[3])}</a></h3>${r[4] ? `<p>${(cue ? nwMark : hEsc)(r[4].length > 320 ? r[4].slice(0, 317) + '…' : r[4])}</p>` : ''}`
-  + `<div class="tags">${r[6].split(';').filter(Boolean).map(x => `<button type="button" class="chip" data-nwt="${hEsc(x)}">${hEsc(nwTopic(x))}</button>`).join('')}`
+  + `<div class="tags">${r[6].split(';').filter(Boolean).map(x => `<button type="button" class="chip" data-nwt="${hEsc(x)}">${nwIco(x)}${hEsc(nwTopic(x))}</button>`).join('')}`
   + `${(r[7] || '').split(';').filter(Boolean).map(x => `<button type="button" class="chip ac" data-nwa="${hEsc(x)}">${hEsc(nwActName(x))}</button>`).join('')}</div></article>`;
 
 const nwSpan = e => { const d = e.rows.map(r => r[0]).sort(); return [d[0], d[d.length - 1]]; };   // pirmo ir paskutinio straipsnio datos
@@ -189,7 +199,7 @@ function renderNews() {
   document.getElementById('nwBar').innerHTML = `<div class="bar nwbar"><div class="chips">${['LT', 'LV', 'EE'].map(c => chip('c', c, t.c[c])).join('')}<span class="sep"></span>`
     + `${['', '30', '90', '365', 'c'].map(p => chip('p', p, t.per[p])).join('')}${NWS.p === 'c' ? `<label class="nwd">${t.from} <input type="date" id="nwFrom" value="${NWS.from}"></label><label class="nwd">${t.to} <input type="date" id="nwTo" value="${NWS.to}"></label>` : ''}</div>`
     + `<input type="search" id="nwQ" placeholder="${t.search}" value="${hEsc(NWS.q)}"><button type="button" class="btn xl" id="nwXl">${t.xl}</button>`
-    + `<div class="chips">${chip('t', '', t.all)}${NW_TOPICS.map(x => chip('t', x, nwTopic(x))).join('')}</div></div>`;
+    + `<div class="chips">${chip('t', '', t.all)}${NW_TOPICS.map(x => chip('t', x, nwTopic(x)).replace('">', '">' + nwIco(x))).join('')}</div></div>`;
   box.innerHTML = `<section class="card" id="nwIns"></section><section class="card" id="nwTl"></section><section class="card" id="nwAc"></section>`
     + `${typeof SEIMAS !== 'undefined' && SEIMAS.length && NWS.c === 'LT' ? '<section class="card" id="nwSe"></section>' : ''}<section class="card" id="nwLs"></section>`;
   nwDraw();

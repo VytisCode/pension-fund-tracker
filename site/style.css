@@ -823,3 +823,19 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
   [data-design="v2"] :is(section.sec, section.card) div.card { border: 0; box-shadow: none; background: transparent; }
   [data-design="v2"] :is(section.sec, section.card) div.bar { border: 0; background: color-mix(in srgb, var(--hover) 70%, transparent); border-radius: 12px; }
 }
+/* Naujas dizainas – laikotarpių juosta: Nuo/Iki tik „Pasirinktas“; telefone – viena slenkama eilutė */
+@media screen {
+  [data-design="v2"] #periodbar:not(.cust) .dates { display: none; }
+}
+@media screen and (max-width: 700px) {
+  [data-design="v2"] #periods { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+  [data-design="v2"] #periods > * { flex: none; }
+}
+/* Naujas dizainas – Baltijos puslapis: pakopos jungiklis ir skirtukai vienoje eilutėje, skirtukai slenkami (ne dvi eilutės) */
+@media screen {
+  [data-design="v2"] .snav:has(#bxm) { display: flex; align-items: center; gap: 10px; }
+  [data-design="v2"] .snav:has(#bxm) #bxm { flex: none; margin: 0; }
+  [data-design="v2"] .snav:has(#bxm) .pnav { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent); mask-image: linear-gradient(90deg, #000 92%, transparent); }
+  [data-design="v2"] .snav:has(#bxm) .pnav > * { flex: none; }
+}
+.nwico { display: inline-flex; vertical-align: -2px; margin-right: 5px; opacity: .8; }
