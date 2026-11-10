@@ -19,6 +19,7 @@ CHECKED = {
     "attrs": "2026-10-14",      # fondų ir ETF savybės, SFDR (data/fund_attributes.csv)
     "future": "2026-10-14",     # ateities scenarijų prielaidos (site/future.js): Sodros metodika 2025-12-16, LB straipsnis 2026-06-18
     "events": "2026-10-09",     # rinkos įvykių sąrašas (site/events.js)
+    "bx_rates": "2026-10-21",   # LV/EE II pakopos įmokų tarifai (baltic.py JR_RATES)
 }
 
 SOURCES = [
@@ -89,6 +90,52 @@ SOURCES = [
          url="https://www.sodra.lt/apie-skaiciuokle", src_lt="Sodros skaičiuoklės metodika, Lietuvos bankas, EK „Ageing Report“", src_en="Sodra calculator methodology, Bank of Lithuania, EC Ageing Report",
          pages=["journey"], mode="manual", f_lt="kartą per metus", f_en="yearly",
          how_lt="Paprašyti Claude patikrinti, ar Sodra, Lietuvos bankas ar EK paskelbė naujas prielaidas.", how_en="Ask Claude to check for new Sodra, Bank of Lithuania or EC assumptions."),
+    # ---- Baltijos šalys (savininkas 2026-11-10: „sudėliok tvarkingai duomenų šaltinius ir automatizuok“). st – raktas data/source_status.json
+    dict(id="bx_lv", c="LV", st="bx.main", lt="Latvija: II ir III pakopos plānų vieneto vertės", en="Latvia: pillar II and III plan unit values",
+         url="https://www.manapensija.lv/", src_lt="manapensija.lv", src_en="manapensija.lv", pages=["baltic"], mode="auto", f_lt="kasdien", f_en="daily",
+         how_lt="Renkama automatiškai kasdien (tools/fetch_baltic.py). Jei vėluoja daugiau nei savaitę – parašykite Claude: „Latvijos vieneto vertės nesirenka – patikrink fetch_baltic.py“.",
+         how_en="Collected automatically every day. If more than a week late, ask Claude to check fetch_baltic.py."),
+    dict(id="bx_lv_plans", c="LV", st="bx.lv_plans", lt="Latvija: plānų turtas ir dalyviai (kasdien, istorija nuo 2003 m.)", en="Latvia: plan assets and participants (daily, history from 2003)",
+         url="https://www.manapensija.lv/pensiju-2-limena-planu-rezultati", src_lt="manapensija.lv API", src_en="manapensija.lv API", pages=["baltic"], mode="auto", f_lt="kasdien", f_en="daily",
+         how_lt="Renkama automatiškai kasdien (tools/fetch_lv_plans.py). Jei vėluoja – parašykite Claude: „manapensija.lv plānų turtas nesirenka – patikrink fetch_lv_plans.py“.",
+         how_en="Collected automatically every day. If late, ask Claude to check fetch_lv_plans.py."),
+    dict(id="bx_vsaa_m", c="LV", st="bx.vsaa_m", lt="Latvija: II pakopos dalyvių perėjimai tarp plānų (kas mėnesį)", en="Latvia: pillar II switches between plans (monthly)",
+         url="https://www.vsaa.gov.lv/lv/dalibnieku-kustiba-pa-ieguldijumu-planiem-atskaites-perioda", src_lt="VSAA (Valsts sociālās apdrošināšanas aģentūra)", src_en="VSAA (State Social Insurance Agency)",
+         pages=["baltic"], mode="auto", f_lt="kas mėnesį (apie 15 d.)", f_en="monthly (around the 15th)",
+         how_lt="Parsisiunčiama automatiškai kasdien. Jei mėnuo vėluoja – atidarykite nuorodą: jei VSAA failą jau paskelbė, parašykite Claude: „VSAA mėnesio perėjimų failas nesirenka – patikrink fetch_vsaa_switch.py“.",
+         how_en="Downloaded automatically every day. If a month is late, open the link; if VSAA has published it, ask Claude to check fetch_vsaa_switch.py."),
+    dict(id="bx_vsaa", c="LV", st="bx.vsaa", lt="Latvija: II pakopos metinė ataskaita (nauji dalyviai, mirę, išėję į pensiją, turtas metų pabaigoje)", en="Latvia: pillar II annual report (new, deceased, retired participants, year-end assets)",
+         url="https://www.vsaa.gov.lv/lv/parskati-par-valsts-fondeto-pensiju-shemas-darbibu", src_lt="VSAA", src_en="VSAA", pages=["baltic"], mode="auto",
+         f_lt="kartą per metus", f_en="yearly",
+         how_lt="Parsisiunčiama automatiškai (.docx). Jei VSAA paskelbė ataskaitą PDF ar .doc formatu, ji praleidžiama – parašykite Claude: „Perskaityk VSAA metinę ataskaitą <metai> (PDF) į lv_vsaa_moves.csv“.",
+         how_en="Downloaded automatically (.docx). If VSAA publishes it as PDF or .doc it is skipped – ask Claude to read it into lv_vsaa_moves.csv."),
+    dict(id="bx_lv_rep", c="LV", st="bx.lv_rep", lt="Latvija: plānų ketvirčio ataskaitos (10 didžiausių investicijų)", en="Latvia: plans’ quarterly reports (top 10 holdings)",
+         url="https://www.manapensija.lv/", src_lt="manapensija.lv (PDF)", src_en="manapensija.lv (PDF)", pages=["baltic"], mode="auto", f_lt="kas ketvirtį", f_en="quarterly",
+         how_lt="Renkama automatiškai (PDF → tekstas). Jei ketvirtis vėluoja – parašykite Claude: „Latvijos ketvirčio ataskaitos nesirenka – patikrink fetch_lv_reports.py“.",
+         how_en="Collected automatically (PDF → text). If a quarter is late, ask Claude to check fetch_lv_reports.py."),
+    dict(id="bx_lv_lb", c="LV", st="bx.lv_lb", lt="Latvija: visos rinkos turtas (palyginimui)", en="Latvia: whole-market assets (for reconciliation)",
+         url="https://statdb.bank.lv/lb/Data/325", src_lt="Latvijas Banka", src_en="Latvijas Banka", pages=["baltic"], mode="auto", f_lt="kas ketvirtį", f_en="quarterly",
+         how_lt="Renkama automatiškai (naršykle). Jei vėluoja – parašykite Claude: „Latvijas Banka 325 lentelė nesirenka – patikrink fetch_lv_lb.py“.",
+         how_en="Collected automatically (browser). If late, ask Claude to check fetch_lv_lb.py."),
+    dict(id="bx_ee", c="EE", st="bx.main", lt="Estija: II ir III pakopos vieneto vertės, turtas, dalyviai", en="Estonia: pillar II and III unit values, assets, participants",
+         url="https://www.pensionikeskus.ee/en/statistics/", src_lt="pensionikeskus.ee", src_en="pensionikeskus.ee", pages=["baltic"], mode="auto", f_lt="kasdien", f_en="daily",
+         how_lt="Renkama automatiškai kasdien. III pakopos dalyviai skelbiami tik einamajai dienai (kaupiami nuo 2026-11-10) – praleista diena neatkuriama. Jei vėluoja – parašykite Claude: „Estijos duomenys nesirenka – patikrink fetch_baltic.py“.",
+         how_en="Collected automatically every day. Pillar III participants exist only for the current day (stored from 2026-11-10) – a missed day cannot be recovered. If late, ask Claude to check fetch_baltic.py."),
+    dict(id="bx_ee_rep", c="EE", st="bx.ee_rep", lt="Estija: fondų 10 didžiausių investicijų", en="Estonia: funds’ top 10 holdings",
+         url="https://www.pensionikeskus.ee/", src_lt="pensionikeskus.ee mėnesio ataskaitos", src_en="pensionikeskus.ee monthly reports", pages=["baltic"], mode="auto", f_lt="kas mėnesį", f_en="monthly",
+         how_lt="Renkama automatiškai. Jei vėluoja – parašykite Claude: „Estijos fondų ataskaitos nesirenka – patikrink fetch_ee_reports.py“.",
+         how_en="Collected automatically. If late, ask Claude to check fetch_ee_reports.py."),
+    dict(id="bx_hicp", c="X", st="bx.hicp", lt="Baltijos šalys: infliacija (SVKI) realiai grąžai", en="Baltics: inflation (HICP) for real returns",
+         url="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_midx/default/table", src_lt="Eurostat", src_en="Eurostat", pages=["baltic"], mode="auto", f_lt="kas mėnesį", f_en="monthly",
+         how_lt="Renkama automatiškai iš Eurostat.", how_en="Collected automatically from Eurostat."),
+    dict(id="bx_macro", c="X", st="bx.macro", lt="Latvija ir Estija: atlyginimai ir pensijos (Kelias į pensiją)", en="Latvia and Estonia: wages and pensions (Road to retirement)",
+         url="https://data.stat.gov.lv/", src_lt="LV ir EE statistikos tarnybos", src_en="LV and EE statistics offices", pages=["baltic"], mode="auto", f_lt="kas ketvirtį", f_en="quarterly",
+         how_lt="Renkama automatiškai (PxWeb).", how_en="Collected automatically (PxWeb)."),
+    dict(id="bx_rates", c="X", lt="Latvija ir Estija: II pakopos įmokų tarifai (Kelias į pensiją)", en="Latvia and Estonia: pillar II contribution rates (Road to retirement)",
+         url="https://www.manapensija.lv/", src_lt="manapensija.lv, pensionikeskus.ee, įstatymai", src_en="manapensija.lv, pensionikeskus.ee, laws", pages=["baltic"], mode="manual",
+         f_lt="kartą per metus (sausį)", f_en="yearly (January)",
+         how_lt="Parašykite Claude: „Patikrink Latvijos ir Estijos II pakopos įmokų tarifus naujiems metams (baltic.py JR_RATES) ir atnaujink, jei pasikeitė“.",
+         how_en="Ask Claude: “Check the Latvian and Estonian pillar II contribution rates for the new year (baltic.py JR_RATES) and update them if changed”."),
     dict(id="events", lt="Rinkos įvykiai diagramose", en="Market events on charts", url="", src_lt="vieši naujienų šaltiniai", src_en="public news sources",
          pages=["performance"], mode="manual", f_lt="pagal poreikį", f_en="as needed",
          how_lt="Pasiūlyti Claude naują įvykį (data ir trumpas aprašymas).", how_en="Suggest a new event to Claude (date and short description)."),
@@ -127,6 +174,12 @@ MANUAL_BACKUP = ("Rankinis darbas: priminimas svetainės pranešimuose ir vakari
                  "Naudojamos ankstesnės reikšmės, kol neatnaujinta.", "Previous values are used until updated.")
 
 
+BX_BACKUP = ("Bandoma kasdien iš naujo (svetainės pasiekiamos tik iš GitHub serverio); nepavykus – klaida vakariniame laiške ir Baltijos puslapio pranešime.",
+             "Retried every day (the sites are reachable only from the GitHub server); on failure – an error in the evening e-mail and a notice on the Baltic page.",
+             "Rodoma paskutinė gauta diena; istorija nepraradama (tik papildoma), trūkstamos dienos užpildomos vėliau – išskyrus Estijos III pakopos dalyvius.",
+             "The last day received is shown; history is never lost (append only), missing days are filled later – except Estonian pillar III participants.")
+
+
 def _d(s):
     return date.fromisoformat(s[:10])
 
@@ -135,6 +188,59 @@ def _last_row(path, col):
     with open(path, encoding="utf-8", newline="") as f:
         rows = [r[col] for r in csv.DictReader(f) if r.get(col)]
     return max(rows) if rows else None
+
+
+def _tail_date(path, col=0):
+    """Didžiausia data surikiuotame CSV (paskutinė eilutė) – nereikia skaityti viso (kelių MB) failo."""
+    with open(path, "rb") as f:
+        f.seek(max(0, f.seek(0, 2) - 2000))
+        return f.read().decode("utf-8", "ignore").strip().splitlines()[-1].split(",")[col]
+
+
+def _qend_after(d, days):
+    """Kito ketvirčio pabaiga po d + days dienų (kada laukiama naujo ketvirčio)."""
+    y, m = (d.year, d.month + 3) if d.month < 10 else (d.year + 1, d.month - 9)
+    e = date(y, m, 30 if m in (6, 9) else 31)
+    return e + timedelta(days=days)
+
+
+def _bx(k):
+    """Baltijos šaltinių paskutinė data ir kada laukiama naujų: (last, next, fmt) dienomis nuo 1970-01-01."""
+    D = ROOT / "data"
+    dn = lambda d: (d - date(1970, 1, 1)).days
+    if k in ("bx_lv", "bx_lv_plans", "bx_ee"):
+        if k == "bx_lv":
+            with open(D / "baltic_lv_index.csv", encoding="utf-8") as f:
+                d = _d(max(r["date"] for r in csv.DictReader(f)))
+        else:
+            d = _d(_tail_date(D / ("baltic_lv_daily.csv" if k == "bx_lv_plans" else "baltic_ee.csv")))
+        return dn(d), dn(d + timedelta(days=6)), "d"
+    if k == "bx_vsaa_m":
+        y, m = map(int, _tail_date(D / "lv_switch.csv").split("-"))
+        y2, m2 = (y, m + 2) if m <= 10 else (y + 1, m - 10)
+        return dn(date(y, m, 1)), dn(date(y2, m2, 25)), "m"
+    if k == "bx_vsaa":
+        y = int(_last_row(D / "lv_vsaa_moves.csv", "year"))
+        return dn(date(y, 12, 31)), dn(date(y + 2, 9, 30)), "y"
+    if k == "bx_lv_rep":
+        d = _d(_last_row(D / "lv_reports.csv", "quarter")); return dn(d), dn(_qend_after(d, 75)), "d"
+    if k == "bx_lv_lb":
+        d = _d(_last_row(D / "baltic_lv_lb.csv", "quarter")); return dn(d), dn(_qend_after(d, 100)), "d"
+    if k == "bx_ee_rep":
+        d = _d(_last_row(D / "ee_holdings.csv", "date")); return dn(d), dn(d + timedelta(days=31 + 45)), "d"
+    if k == "bx_hicp":
+        y, m = map(int, _last_row(D / "hicp.csv", "month").split("-"))
+        y2, m2 = (y, m + 2) if m <= 10 else (y + 1, m - 10)
+        return dn(date(y, m, 1)), dn(date(y2, m2, 25)), "m"
+    if k == "bx_macro":
+        def per(t):                                       # 2026-06, 2026-Q2, 2026 -> laikotarpio pradžia
+            if "Q" in t:
+                return date(int(t[:4]), 3 * int(t[-1]) - 2, 1)
+            return date(int(t[:4]), int(t[5:7]) if len(t) >= 7 else 1, 1)
+        with open(D / "baltic_macro.csv", encoding="utf-8") as f:
+            d = max(per(r["period"]) for r in csv.DictReader(f) if r["period"])
+        return dn(d), dn(d + timedelta(days=200)), "m"
+    return None, None, "d"
 
 
 def inventory(src: list, top_day: int, today: date | None = None) -> list:
@@ -172,12 +278,16 @@ def inventory(src: list, top_day: int, today: date | None = None) -> list:
                 p = ROOT / "data" / "kid_official.json"
                 docs = [f["doc"] for f in json.loads(p.read_text(encoding="utf-8"))["funds"]]
                 last = dn(_d(max(docs))); nxt = last + 365
+            elif k == "bx_rates":
+                last = dn(_d(CHECKED[k])); nxt = dn(date(_d(CHECKED[k]).year + 1, 1, 31))
+            elif k.startswith("bx_"):
+                last, nxt, fmt = _bx(k)
             elif k in CHECKED:
                 last = dn(_d(CHECKED[k])); nxt = None if k == "events" else last + 365
         except Exception:
             pass
-        r = RELIABILITY.get(k) or (MANUAL_BACKUP if s["mode"] == "manual" else None)
+        r = RELIABILITY.get(k) or (MANUAL_BACKUP if s["mode"] == "manual" else BX_BACKUP if k.startswith("bx_") else None)
         if r:
             s = {**s, "bk_lt": r[0], "bk_en": r[1], "fl_lt": r[2], "fl_en": r[3]}
-        out.append({**s, "last": last, "next": nxt, "fmt": fmt})
+        out.append({"c": "LT", **s, "last": last, "next": nxt, "fmt": fmt})
     return out

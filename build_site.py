@@ -411,6 +411,11 @@ def build_fresh(groups: list, generated: str) -> None:
     payload["man"] = [{k: s.get(k) for k in ("id", "lt", "en", "how_lt", "how_en", "url", "next", "f_lt", "f_en")}
                       for s in inv if s["mode"] == "manual" and s.get("next") is not None and s["next"] <= today + 21]
     payload["urls"] = {s["id"]: s["url"] for s in inv if s.get("url")}
+    # Baltijos automatiniai šaltiniai: pavėlavę (next < šiandien) arba su klaida source_status.json – pranešimai svetainėje
+    st_all = payload.get("st") or {}
+    payload["bxLate"] = [{k: s.get(k) for k in ("id", "lt", "en", "how_lt", "how_en", "url", "last", "next", "fmt", "st", "src_lt", "src_en", "f_lt", "f_en")}
+                         for s in inv if s["id"].startswith("bx_") and s["mode"] == "auto"
+                         and ((s.get("next") is not None and s["next"] < today) or (st_all.get(s.get("st") or "", {}).get("err")))]
     try:
         payload["attrMiss"] = attr_missing()
     except Exception:

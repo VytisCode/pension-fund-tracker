@@ -21,6 +21,7 @@
   .inv th, .inv td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; vertical-align: top; white-space: nowrap; }
   .inv th.l, .inv td.l { text-align: left; white-space: normal; }
   .inv .ok { color: var(--dpos); } .inv .man { color: var(--text-2); font-weight: 600; } .inv .late, .inv tr.lt td { color: var(--dneg); }
+  .inv tr.grp th { background: var(--bg-2, rgba(0,0,0,.04)); font-size: 13px; padding-top: 10px; }
   #sources h3 { margin: 16px 0 6px; font-size: 15px; }
   @media (max-width: 600px) { .doc dl { grid-template-columns: 1fr; gap: 2px; } .doc dd { margin-bottom: 8px; } }
 </style>
@@ -35,8 +36,8 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="common.js?v=2e7b97f2"></script>
-<script src="data_src.js?v=4930cdd9"></script>
+<script src="common.js?v=c951d5d8"></script>
+<script src="data_src.js?v=446990c4"></script>
 <script src="methodology.js?v=00fec0fe"></script>
 <script>
 /* „Apie ir metodika“ (auditas #53, #57): iš kur kiekvienas duomuo, kaip dažnai atnaujinama, formulės, prielaidos, žinomi apribojimai.
@@ -63,11 +64,13 @@ function renderInv() {
   const el = document.getElementById('srcInv'); if (!el || typeof SRCINV === 'undefined') return;
   const lt = lang === 'lt', t = T(), now = Math.floor(Date.now() / DAY);
   const fd = (x, f) => x == null ? '–' : f === 'y' ? iso(x).slice(0, 4) : f === 'm' ? iso(x).slice(0, 7) : iso(x);
-  const pg = ps => ps.map(p => `<a href="${p}.html">${t[navKey(p)] || p}</a>`).join(', ');
+  const pg = ps => ps.map(p => `<a href="${p}.html">${t[navKey(p)] || (p === 'baltic' ? (lt ? 'Baltijos šalys' : 'Baltics') : p)}</a>`).join(', ');
   const src = s => s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${lt ? s.src_lt : s.src_en}</a>` : (lt ? s.src_lt : s.src_en);
   const mode = s => s.mode === 'auto' ? `<span class="ok">${lt ? 'Automatiškai' : 'Automatic'}</span>` : `<span class="man">${lt ? 'Rankiniu būdu' : 'Manual'}</span>`;
-  const due = s => s.next == null ? '–' : s.mode === 'manual' && now > s.next ? `<b class="late">${iso(s.next)} ⚠</b>` : iso(s.next);
-  const rows = SRCINV.map(s => `<tr><td class="l">${lt ? s.lt : s.en}</td><td class="l">${src(s)}</td><td class="l">${pg(s.pages)}</td><td class="l">${mode(s)}<br><small>${lt ? s.f_lt : s.f_en}</small></td><td>${fd(s.last, s.fmt)}</td><td>${due(s)}</td></tr>`).join('');
+  const due = s => s.next == null ? '–' : now > s.next ? `<b class="late">${iso(s.next)} ⚠</b>` : iso(s.next);
+  const CN = { LT: lt ? 'Lietuva' : 'Lithuania', LV: lt ? 'Latvija' : 'Latvia', EE: lt ? 'Estija' : 'Estonia', X: lt ? 'Baltijos šalys – bendri' : 'Baltics – shared' };
+  const grp = c => `<tr class="grp"><th class="l" colspan="6">${CN[c] || c}</th></tr>`;
+  const rows = ['LT', 'LV', 'EE', 'X'].map(c => { const ss = SRCINV.filter(s => (s.c || 'LT') === c); return ss.length ? grp(c) + ss.map(s => `<tr><td class="l">${lt ? s.lt : s.en}</td><td class="l">${src(s)}</td><td class="l">${pg(s.pages)}</td><td class="l">${mode(s)}<br><small>${lt ? s.f_lt : s.f_en}</small></td><td>${fd(s.last, s.fmt)}</td><td>${due(s)}</td></tr>`).join('') : ''; }).join('');
   const man = SRCINV.filter(s => s.mode === 'manual').sort((a, b) => (a.next ?? 1e9) - (b.next ?? 1e9));
   const mrows = man.map(s => `<tr${s.next != null && now > s.next ? ' class="lt"' : ''}><td>${s.next == null ? (lt ? 'pagal poreikį' : 'as needed') : iso(s.next)}${s.next != null && now > s.next ? ' ⚠' : ''}</td><td class="l">${lt ? s.lt : s.en}</td><td class="l">${lt ? s.how_lt : s.how_en}</td></tr>`).join('');
   const nA = SRCINV.filter(s => s.mode === 'auto').length;

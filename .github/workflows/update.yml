@@ -134,7 +134,7 @@ jobs:
         if: always()
         continue-on-error: true
         timeout-minutes: 15
-        run: python -u tools/fetch_baltic.py
+        run: python -u tools/run_src.py bx.main tools/fetch_baltic.py   # būsena -> source_status.json (laiškas, svetainė)
 
       # Latvijos II pakopos plānų ketvirčio ataskaitos (manapensija.lv PDF): turtas, 10 didžiausių investicijų -> data/lv_*.csv (tik papildoma).
       # Kasdien patikrinami nauji ketvirčiai ir apdorojama dalis senesnės istorijos (biudžetas), kol ji užsipildo.
@@ -147,14 +147,14 @@ jobs:
         timeout-minutes: 10
         run: |
           command -v pdftotext >/dev/null || sudo apt-get install -y -q poppler-utils >/dev/null
-          python -u tools/fetch_lv_reports.py --budget 150 --minutes 6
-          python -u tools/fetch_lv_plans.py --budget 300 --minutes 5 || echo "manapensija.lv plānu dienos duomenys nepasiekiami"
-          python -u tools/fetch_vsaa.py || echo "VSAA metinės ataskaitos nepasiekiamos"
-          python -u tools/fetch_vsaa_switch.py || echo "VSAA mėnesinis dalyvių judėjimas nepasiekiamas"
-          python -u tools/fetch_lv_lb.py || echo "Latvijas Banka lentelė nepasiekiama"
-          python -u tools/fetch_ee_reports.py || echo "pensionikeskus ataskaitos nepasiekiamos"
-          python -u tools/fetch_hicp.py || echo "Eurostat SVKI nepasiekiamas"
-          python -u tools/fetch_baltic_macro.py || echo "EE/LV statistika nepasiekiama"
+          python -u tools/run_src.py bx.lv_rep tools/fetch_lv_reports.py --budget 150 --minutes 6
+          python -u tools/run_src.py bx.lv_plans tools/fetch_lv_plans.py --budget 300 --minutes 5
+          python -u tools/run_src.py bx.vsaa tools/fetch_vsaa.py
+          python -u tools/run_src.py bx.vsaa_m tools/fetch_vsaa_switch.py
+          python -u tools/run_src.py bx.lv_lb tools/fetch_lv_lb.py
+          python -u tools/run_src.py bx.ee_rep tools/fetch_ee_reports.py
+          python -u tools/run_src.py bx.hicp tools/fetch_hicp.py
+          python -u tools/run_src.py bx.macro tools/fetch_baltic_macro.py
 
       # Naujienos apie pensijas (LT, LV, EE): Google News ir leidinių RSS -> data/news.csv (tik papildoma)
       - name: Pension news

@@ -638,6 +638,14 @@ function noticesList() {
     out.push({ id: `man-${m.id}`, lvl: over ? 'act' : 'info', title: n.manT(L ? m.lt : m.en), what: n.manWhat(L ? m.f_lt : m.f_en),
       why: over ? n.manOver(iso(m.next)) : n.manDue(iso(m.next)), impact: n.manImpact, todo: L ? m.how_lt : m.how_en, url: m.url, owner: true });
   });
+  // 5b. Baltijos šaltiniai: vėluoja arba rinkimas nepavyko (Baltijos puslapiuose – visiems, kitur – tik savininkui)
+  const onBx = /baltic/.test(location.pathname);
+  (FRESH.bxLate || []).forEach(m => {
+    const L = lang === 'lt', w = m.st ? why(m.st) : '', late = m.next != null && today > m.next, d = m.last == null ? '–' : m.fmt === 'm' ? iso(m.last).slice(0, 7) : m.fmt === 'y' ? iso(m.last).slice(0, 4) : iso(m.last);
+    out.push({ id: `bx-${m.id}-${m.last}`, lvl: w || today - m.next > 14 ? 'act' : 'wait', title: n.lateT(L ? m.lt : m.en, d),
+      what: L ? `${m.src_lt} – ${m.f_lt}` : `${m.src_en} – ${m.f_en}`, why: w || (late ? n.manOver(iso(m.next)) : ''), impact: n.manImpact, todo: L ? m.how_lt : m.how_en, url: m.url,
+      owner: true, ownerOnly: !onBx });
+  });
   // 6. nauji Lietuvos banko failai (paskutinės 21 d.) – žalia juosta, kol paspaudžiama „Supratau“
   (FRESH.lbNew || []).forEach(e => {
     const rev = e.msg.startsWith('pataisyta: '), f = e.msg.replace('pataisyta: ', ''), arch = e.src === 'lb.arch';

@@ -146,7 +146,7 @@ def stale_section(today: str) -> list:
         iso = lambda n: str(datetime(1970, 1, 1).date() + timedelta(days=n))
         late += [{"lt": s["lt"], "last": iso(s["last"]) if s["last"] is not None else "–", "due": iso(s["next"]), "auto": False, "url": s["url"]}
                  for s in sources_list.inventory(build_site.sources(), d0)
-                 if s["id"] in ("pf", "lbr", "fee2", "fee3", "attrs", "future") and s["next"] is not None and d0 > s["next"]]
+                 if s["id"] in ("pf", "lbr", "fee2", "fee3", "attrs", "future", "bx_rates") and s["next"] is not None and d0 > s["next"]]
     except Exception as e:  # noqa: BLE001
         late.append({"lt": "Šaltinių sąrašo patikra", "last": "–", "due": today, "auto": True, "url": repr(e)})
     if not late:
@@ -168,6 +168,25 @@ def lb_new_lines(today: str) -> list:
     return (["", "🆕 Lietuvos bankas paskelbė naujų failų (jau įkelta į svetainę):"] + [f"  • {r['msg']}" for r in rows]) if rows else []
 
 
+def bx_late_lines(today: str) -> list:
+    """Baltijos automatiniai šaltiniai, kurių naujų duomenų laukta anksčiau (sources_list.py bx_*) – kasdien, kol vėluoja,
+    su konkrečia instrukcija (savininkas 2026-11-10)."""
+    try:
+        import build_site
+        import sources_list
+        d0 = (datetime.strptime(today, "%Y-%m-%d").date() - datetime(1970, 1, 1).date()).days
+        iso = lambda n: str(datetime(1970, 1, 1).date() + timedelta(days=n))
+        late = [s for s in sources_list.inventory(build_site.sources(), d0)
+                if s["id"].startswith("bx_") and s["mode"] == "auto" and s["next"] is not None and d0 > s["next"]]
+    except Exception as e:  # noqa: BLE001
+        return ["", f"Baltijos šaltinių patikra nepavyko: {e!r}"]
+    if not late:
+        return []
+    return ["", "Baltijos šaltiniai vėluoja:"] + [
+        f"  ⚠ {s['lt']}: turime iki {iso(s['last']) if s['last'] is not None else '–'}, naujų laukta iki {iso(s['next'])}. {s.get('how_lt', '')} ({s['url']})"
+        for s in late]
+
+
 def source_lines() -> list:
     """Neveikiantys šaltiniai iš data/source_status.json (tie patys, kurie rodomi svetainės pranešimuose)."""
     try:
@@ -175,7 +194,11 @@ def source_lines() -> list:
         st = source_status.load()
     except Exception:  # noqa: BLE001
         return []
-    names = {"site": "Svetainės patikra (puslapiai / lentelės)", "eonia": "EONIA (ECB, iki 2019-10)", "proxy": "Luminor proxy (Proxy-Cheap)", "estr": "€STR (ECB)", "cpi": "VKI (VDA)", "lb": "Lietuvos banko failai"}
+    names = {"site": "Svetainės patikra (puslapiai / lentelės)", "eonia": "EONIA (ECB, iki 2019-10)", "proxy": "Luminor proxy (Proxy-Cheap)", "estr": "€STR (ECB)", "cpi": "VKI (VDA)", "lb": "Lietuvos banko failai",
+             "bx.main": "Latvija ir Estija: vieneto vertės, turtas (manapensija.lv, pensionikeskus.ee)", "bx.lv_plans": "Latvija: plānų turtas ir dalyviai (manapensija.lv API)",
+             "bx.vsaa": "Latvija: VSAA metinė ataskaita", "bx.vsaa_m": "Latvija: VSAA mėnesio perėjimai tarp plānų", "bx.lv_rep": "Latvija: plānų ketvirčio ataskaitos",
+             "bx.lv_lb": "Latvija: Latvijas Banka rinkos suma", "bx.ee_rep": "Estija: fondų mėnesio ataskaitos", "bx.hicp": "Eurostat infliacija (Baltija)",
+             "bx.macro": "LV/EE atlyginimai ir pensijos"}
     why = {"auth": "baigėsi arba neveikia prieiga", "blocked": "šaltinis blokuoja", "network": "nepasiekiamas",
            "format": "pasikeitė puslapis – reikia taisyti", "other": "klaida"}
     out = [f"  ⚠ {names.get(k, k.replace('idx.', 'indeksas ').replace('nav.', ''))}: {why.get(v.get('kind'), 'klaida')} nuo {v.get('since') or v['err']} ({v.get('msg', '')})"
@@ -215,6 +238,9 @@ def build() -> tuple:
     if src:
         actions.append("Neveikia duomenų šaltinis (žr. apačioje).")
     stale = stale_section(today)
+    bxl = bx_late_lines(today)
+    if bxl:
+        actions.append("Vėluoja Baltijos šalių duomenys (žr. apačioje – kiekvienam parašyta, ką daryti).")
     if any("rankiniu būdu" in x for x in stale):
         actions.append("Reikia atnaujinti rankinius duomenis (žr. apačioje).")
     ideas = ideas_section()
@@ -242,7 +268,7 @@ def build() -> tuple:
     if actions:
         body += ["", "Reikia jūsų:"] + [f"  • {a}" for a in actions]
     body += extra
-    if not ok or src or stale or ideas:                  # techninės detalės – tik kai kažkas negerai
+    if not ok or src or stale or ideas or bxl:           # techninės detalės – tik kai kažkas negerai
         body += ["", "── Detalės ──"]
         if not ok:
             body += [f"Laukiama vertė už {expected}.", "II pakopa:"] + lines2 + ["III pakopa:"] + lines3
@@ -250,7 +276,7 @@ def build() -> tuple:
             runs = runs_today(today)
             if runs:
                 body.append(runs)
-        body += src + stale + ideas
+        body += src + bxl + stale + ideas
     body += ["", f"Svetainė: {SITE_URL}"]
     return subject, mask("\n".join(body))
 
