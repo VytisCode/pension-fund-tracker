@@ -603,7 +603,7 @@ function renderOverall() {
 /* ---------- 2. fondų palyginimas ---------- */
 let chartState = null;
 P.mr = 16;                                               // dešinė paraštė: grafikas „susispaudžia“ užvedus pelę, kad tilptų legenda
-function paintChart() { const cs = chartState; if (cs) cs.ctl = drawLineChart($('chart'), cs.series, cs.x0, cs.x1, Object.assign({}, cs.opt, { mr: ($('chart').clientWidth || 0) > 560 ? 150 : 16 })); }
+function paintChart() { const cs = chartState; if (cs) cs.ctl = drawLineChart($('chart'), cs.series, cs.x0, cs.x1, Object.assign({}, cs.opt, { mr: ($('chart').clientWidth || 0) > 560 ? undefined : 16 })); }
 let mrAnim = 0;
 function animateMr(target) {
   cancelAnimationFrame(mrAnim);

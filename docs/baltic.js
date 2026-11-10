@@ -598,7 +598,7 @@ function renderMs() {
     if (pts.length > 1) ser.push({ points: pts, color: c, label: g, provider: g }); });
   const x0 = mEnd(S.m[S.cut || 0]), x1 = mEnd(S.m[S.m.length - 1]), G = S.gap || [];   // cut, gap – build_site.py share_gaps()
   const ev = G.map((g, i) => ({ day: mEnd(g[0]), n: i + 1, title: g[1], text: t.gapE(g[1], num(g[2], 1), num(g[3], 1)) }));
-  drawLineChart($('msCh'), ser.map(s => ({ ...s, points: s.points.filter(p => p[0] >= x0) })), x0, x1, { zero: true, events: ev });
+  drawLineChart($('msCh'), ser.map(s => ({ ...s, points: s.points.filter(p => p[0] >= x0) })), x0, x1, { zero: true, events: ev, fmt: v => pctPlain(v) });
   $('msN').textContent = t.n(t.src[CR.c], CR.c === 'LV' && CR.pl === 'II' && S.lum ? S.lum : '') + (hasInv ? '' : ' ' + t.noInv)
     + (G.length ? ' ' + t.gapN(G[G.length - 1][0], G.map((g, i) => `${i + 1} – ${g[0]}, ${g[1]}, ${num(g[2], 1)} mln. € (${num(g[3], 1)} %)`).join('; ')) : '')
     + (S.cut ? ' ' + t.cutN(S.m[S.cut]) : '');

@@ -971,3 +971,6 @@ table.metrics th[data-sd="a"]::after { content: ' ↑'; color: var(--accent); }
 table.metrics td.pq .pqv { display: inline-block; padding: 1px 7px; border-radius: 7px; }
 table.metrics td.pq-g .pqv { background: color-mix(in srgb, var(--pos, #2f8f5b) 17%, transparent); color: color-mix(in srgb, var(--pos, #2f8f5b) 75%, var(--text)); }
 table.metrics td.pq-r .pqv { background: color-mix(in srgb, var(--neg, #c0503a) 15%, transparent); color: color-mix(in srgb, var(--neg, #c0503a) 80%, var(--text)); }
+
+/* maketas 9: užrašai linijų galuose matomi visada */
+[data-design="v2"] .chart .endlab { opacity: 1; }

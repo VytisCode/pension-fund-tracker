@@ -879,7 +879,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   el.querySelectorAll('svg, p.na').forEach(s => s.remove());
   const nIn = series.length; series = series.filter(r => r.points.length > 1);
   const W = opts.width || el.clientWidth || 600, H = opts.height || Math.max(240, Math.min(340, W * 0.5));
-  const wide = W > 560, labW = () => { const ls = series.filter(r => r.points.length > 1).map(r => String(r.label || labelOf(r.provider) || '').length); return ls.length ? Math.min(Math.round(W * 0.24), Math.round((Math.max(...ls) + 8) * 6.4 + 16)) : 16; };
+  const wide = W > 560, labW = () => { const ls = series.filter(r => r.points.length > 1).map(r => String(r.label || labelOf(r.provider) || '').length); return ls.length ? Math.min(Math.round(W * 0.24), Math.round((Math.max(...ls) + 9) * 7.2 + 14)) : 16; };
   const m = { l: opts.ml ?? 46, r: opts.mr ?? (wide ? labW() : 16), t: opts.events && opts.events.length ? 26 : 10, b: 26 };   // be nurodytos paraštės – vieta užrašams linijų galuose (maketas 9)
   if (!series.length || x1 <= x0) { const t = T(), none = !nIn; el.insertAdjacentHTML('beforeend', `<p class="na state st-empty" role="status">${svgI('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', 22)}<span><b>${none ? t.stNoSel : t.stNoPer}</b><span>${none ? t.stNoSelW : t.stNoPerW}</span></span></p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
@@ -939,7 +939,8 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
     labels.forEach(l => {
       const c = add('circle', { cx: X(x1), cy: Y(l.r.points[l.r.points.length - 1][1]), r: 3.5, fill: sCol(l.r), stroke: 'var(--card)', 'stroke-width': 2 });
       const t = add('text', { class: 'endlab', x: W - m.r + 8, y: l.y + 4, fill: 'var(--text-2)', 'font-size': 12, style: opts.onPick ? 'cursor:pointer' : 'cursor:default' });
-      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider)); t.textContent = sLab(l.r) + ' ';
+      if (opts.onPick) t.addEventListener('click', () => opts.onPick(l.r.provider));
+      { const mx = Math.max(4, Math.floor((m.r - 8) / 7.2) - 9), lb = sLab(l.r); t.textContent = (lb.length > mx ? lb.slice(0, mx - 1).trimEnd() + '…' : lb) + ' '; if (lb.length > mx) add('title', {}, t).textContent = lb; }
       const tv = add('tspan', { 'font-weight': 700, fill: document.documentElement.dataset.design === 'v2' ? sCol(l.r) : 'var(--text)' }, t); const lv = l.r.points[l.r.points.length - 1][1]; tv.textContent = opts.fmt ? opts.fmt(lv) : pct(lv, 1);
       els[l.r.provider].push(c, t);
       t.addEventListener('mouseenter', () => ctl.highlight(l.r.provider)); t.addEventListener('mouseleave', () => ctl.highlight(opts.hl || null));
