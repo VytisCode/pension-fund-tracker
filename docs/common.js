@@ -62,7 +62,7 @@ const groupLabel = g => g.lbl ? g.lbl[lang] || g.lbl.lt : g.id === 'turto' ? T()
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 const isDarkUI = () => { const t = document.documentElement.dataset.theme; return t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches); };
 /* Naujas dizainas (2026-11-10, bandomasis): tas pats turinys, kitas apvalkalas – style.css blokas [data-design="v2"]; įjungiama Įrankių meniu, prisimenama naršyklėje (?design=v2 / ?design=v1) */
-try { const q = new URLSearchParams(location.search).get('design'); if (q) localStorage.setItem('design', q); if (localStorage.getItem('design') === 'v2') document.documentElement.dataset.design = 'v2'; } catch (e) {}
+try { const q = new URLSearchParams(location.search).get('design'); if (q) localStorage.setItem('design', q); if (localStorage.getItem('design') !== 'v1') document.documentElement.dataset.design = 'v2'; } catch (e) { document.documentElement.dataset.design = 'v2'; }   // naujas dizainas – numatytasis (savininkas 2026-11-10); senasis – „Įrankiai“ arba ?design=v1
 document.documentElement.dataset.pl = document.documentElement.dataset.pd = 'w';   // šilta v2 paletė (style.css)
 
 /* „Atnaujinti duomenis“ mygtukas rodomas tik savininko naršyklėje: įjungiama vieną kartą atidarius bet kurį puslapį su ?owner=1

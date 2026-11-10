@@ -2,7 +2,7 @@
 
 Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `noindex`, niekur nereklamuojama). Savininkas Vytis – ne programuotojas, bendrauja lietuviškai. Jei užduotis prieštarauja taisyklėms – sustok ir paklausk.
 
-**Vykdomas projektas (2026-11-10): trys šalys viename dashboard – planas ir būsena `PERTVARKA-SALYS.md`; kiekvienoje gijoje tęsti nuo pirmo nebaigto etapo ir savininkui priminti, kuriame etape esame.** Būsena: 0–3 etapai baigti, 4 etapas (ilgieji LV/ET tekstai, senos „Baltijos šalys“ šalies dalies išėmimas – tik savininkui patvirtinus) PRISTABDYTAS iki dizaino perdarymo pabaigos. Keičiant dizainą išsaugoti: šalies jungiklį (`ctryRender`), `CTRY_PAGES`, pilkus skirtukus (`data-na`, `ctryWhy`), kalbas (`ulang`, `addStrings3`, `TX`/`txNav`).
+**Vykdomas projektas (2026-11-10): trys šalys viename dashboard – planas ir būsena `PERTVARKA-SALYS.md`; kiekvienoje gijoje tęsti nuo pirmo nebaigto etapo ir savininkui priminti, kuriame etape esame.** Būsena: 0–3 etapai baigti, 4 etapas (ilgieji LV/ET tekstai, senos „Baltijos šalys“ šalies dalies išėmimas – tik savininkui patvirtinus) PRISTABDYTAS iki dizaino perdarymo pabaigos. **Dizainas (2026-11-10):** numatytasis – naujas (`style.css` `[data-design="v2"]` blokai, šilta paletė `data-pl/pd="w"`, nuotraukos `CTRY_IMG`/`SEC_IMG2`); senasis – „Įrankiai“ arba `?design=v1`. Naujus stilius rašyti v2 blokuose. Keičiant dizainą išsaugoti: šalies jungiklį (`ctryRender`), `CTRY_PAGES`, pilkus skirtukus (`data-na`, `ctryWhy`), kalbas (`ulang`, `addStrings3`, `TX`/`txNav`).
 
 ## Taisyklės
 
