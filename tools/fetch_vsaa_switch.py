@@ -53,6 +53,8 @@ def period(sh, year, name):
                 return int(m[6]), -int(m[5])
             return None                                                            # metų suvestinė
         m = re.search(r"(\d{4})\.\s*gada\s+([a-zāēīūčšž]+)", t)
+        if m and (sum(t.count(k) for k in LVM) > 1 or not (name.strip().lower()[:3] in MON and len(name.strip()) <= 5)):           # „janvāris – decembris“ – kelių mėnesių suvestinė
+            return None
         if m:
             mm = next((v for k, v in LVM.items() if m[2].startswith(k)), None)
             return (int(m[1]), mm) if mm else None
@@ -96,6 +98,12 @@ def parse(path, year):
             qs[(per[0], -per[1])] = rows
         elif rows:
             out[m] = rows
+    # apsauga: mėnuo, kurio suma didesnė už pusę kitų tų metų mėnesių sumos – tikriausiai metų suvestinė
+    tot = {k: sum(r["n"] for r in v) for k, v in out.items()}
+    for k in list(out):
+        rest = [v for kk, v in tot.items() if kk[:4] == k[:4] and kk != k]
+        if len(rest) >= 6 and tot[k] > 0.5 * sum(rest):
+            print("  praleista (panašu į suvestinę):", path.name, k, tot[k]); out.pop(k)
     # trūkstamas mėnuo (pvz. 2003 m. kovo lapo nėra, yra tik „I cet“) = ketvirtis − kiti du mėnesiai
     for (y, qe), rows in qs.items():
         ms = [f"{y}-{k:02d}" for k in (qe - 2, qe - 1, qe)]

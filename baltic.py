@@ -442,7 +442,7 @@ VSAA_MGR = [("swedbank", "Swedbank"), ("hansa", "Swedbank"), ("seb", "SEB"), ("u
             ("vairo", "Vairo"), ("signet", "Signet"), ("aktīvais plāns", "Signet"), ("norvik", "PNB (Norvik)"), ("pnb", "PNB (Norvik)"),
             ("ablv", "ABLV"), ("index direct", "Index Direct"), ("integrum", "Integrum"),
             # seni (nebesantys) – savo vardu, kai dabartinis valdytojas nežinomas tikrai
-            ("parekss", "CBL"), ("suprema", "Suprema/EVLI"), ("valsts kas", "Valsts kase"), ("baltikums", "Baltikums"), ("optimus", "Optimus"), ("daugava", "Daugava, Gauja, Venta"),
+            ("parekss", "CBL"), ("invalda", "INVL"), ("nord/lb", "Luminor"), ("suprema", "Suprema/EVLI"), ("hipo", "Hipo Fondi"), ("krājfondi", "Krājfondi (LKB)"), ("ge money", "GE Money"), ("btb ", "BTB"), ("valsts kas", "Valsts kase"), ("baltikums", "Baltikums"), ("optimus", "Optimus"), ("daugava", "Daugava, Gauja, Venta"),
             ("gauja", "Daugava, Gauja, Venta"), ('"venta', "Daugava, Gauja, Venta"), ("venta", "Daugava, Gauja, Venta")]
 
 
