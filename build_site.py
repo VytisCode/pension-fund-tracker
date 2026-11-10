@@ -295,7 +295,7 @@ def build_ctry_review() -> None:
 def build_ctry_home() -> None:
     """Trys šalys viename dashboard (PERTVARKA-SALYS.md, 2 etapas): Pradžia ir Rinkos faktai Latvijai ir Estijai – tie patys index.html /
     facts.html (mkt.js), tik su tos šalies duomenimis: DATA – data_bx_lv2.js (Rezultatų duomenys), MKT – data_mkt_lv.js (baltic.py mkt).
-    Lietuviški duomenų failai (journey, rep, earn, news) lieka įkelti, kad kodas veiktų, bet jų skirtukai šalyje pilki (common.js HOME_NA)."""
+    Lietuviški duomenų failai (journey, rep, earn, news) lieka įkelti, kad kodas veiktų, o šalies kopijose juos pakeičia šalies duomenys (data_earn_{c}.js ir kt.); pilkinimas – common.js HOME_NA (dabar tuščias)."""
     dec = 'DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));'
     for page in ("index", "facts"):
         src = (DOCS / f"{page}.html").read_text(encoding="utf-8")

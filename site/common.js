@@ -1865,7 +1865,7 @@ const HOME_NA = {};   // Pradžios / Rinkos faktų skirtukai, kurių šalies duo
 const bxH = (c, tab, pl = 'II') => `baltic.html#c=${c}&pl=${pl}&tab=${tab}`;
 // [LV, EE, priežastis: 'sN' – ruošiama N etape, 'data' – šalies duomenų nėra, 'all' – bendras visoms šalims]
 const CTRY_PAGES = {
-  index: ['index_lv.html', 'index_ee.html'], review: ['review_lv.html', 'review_ee.html'], ops: [null, null, 's3'], facts: ['facts_lv.html', 'facts_ee.html'],
+  index: ['index_lv.html', 'index_ee.html'], review: ['review_lv.html', 'review_ee.html'], ops: [null, null, 'data'], facts: ['facts_lv.html', 'facts_ee.html'],
   performance: ['baltic_lv.html', 'baltic_ee.html'], performance3: ['baltic_lv3.html', 'baltic_ee3.html'],
   managers: [bxH('LV', 'mg'), bxH('EE', 'mg')], manager: ['manager_lv.html', 'manager_ee.html'],
   portfolios: [bxH('LV', 'top'), bxH('EE', 'top')], aum: [bxH('LV', 'fl'), bxH('EE', 'fl')],
@@ -1949,10 +1949,10 @@ function ctryNa(p, c, el) {             // kortelė: kodėl šio puslapio (ar sk
 }
 addStrings({ langLbl: 'Language', ctry: { lbl: 'Country', names: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'What is available for each country', avL: 'The same menu for every country. Where a country does not publish the data, the section is grey; sections being prepared are marked with the stage of the plan.', avNo: 'no data', avSoon: n => `being prepared (stage ${n})`, close: 'Close', openLt: 'Open the Lithuanian version',
   soon: (c, n) => `${c}: this section is being prepared (stage ${n} of the plan). Until then it is shown only for Lithuania.`, noData: c => `${c} does not publish the data needed for this section.`,
-  why: { reports: c => `${c} has no equivalent of the Bank of Lithuania quarterly results files and manager report data this section is built on.` } } }, {
+  why: { reports: c => `${c} has no equivalent of the Bank of Lithuania quarterly results files and manager report data this section is built on.`, ops: c => `The data calendar tracks the Lithuanian sources only. For ${c}, the latest date of every source and when new data is expected are in the table on the “About” page.` } } }, {
   langLbl: 'Kalba', ctry: { lbl: 'Šalis', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Kas yra kiekvienai šaliai', avL: 'Visoms šalims – tas pats meniu. Kur šalis neskelbia duomenų, skiltis pilka; ruošiamos skiltys pažymėtos plano etapu.', avNo: 'nėra duomenų', avSoon: n => `ruošiama (${n} etapas)`, close: 'Uždaryti', openLt: 'Atidaryti Lietuvos versiją',
   soon: (c, n) => `${c}: ši skiltis ruošiama (${n} plano etapas). Kol kas ji rodoma tik Lietuvai.`, noData: c => `${c} neskelbia duomenų, reikalingų šiai skilčiai.`,
-  why: { reports: c => `${c}: nėra Lietuvos banko ketvirčio rezultatų failų ir valdytojų ataskaitų duomenų atitikmens, kuriais remiasi ši skiltis.` } } });
+  why: { reports: c => `${c}: nėra Lietuvos banko ketvirčio rezultatų failų ir valdytojų ataskaitų duomenų atitikmens, kuriais remiasi ši skiltis.`, ops: c => `Duomenų kalendorius seka tik Lietuvos šaltinius. ${c}: kiekvieno šaltinio paskutinė data ir kada laukiama naujų – lentelėje puslapyje „Apie“.` } } });
 const SECTIONS = [
   { id: 'home', icon: 'index', pages: ['index', 'review', 'ops'] },
   { id: 'facts', icon: 'facts', pages: ['facts'] },
@@ -1985,7 +1985,7 @@ addStrings3({
   subNav: { index: 'Tirgus šodien', review: 'Mēneša pārskats', ops: 'Datu kalendārs', performance: 'II līmenis', performance3: 'III līmenis', pillar3: 'III līmenis', facts: 'Tirgus fakti', managers: 'Pārvaldītāji', overview: 'Grupu grafiki', manager: 'Pārvaldītājs un fonds', portfolios: 'Portfeļi', aum: 'Aktīvi (AUM)', reports: 'Pārskati', journey: 'Ceļš uz pensiju', baltic: 'Baltijas valstu salīdzinājums' },
   ctry: { lbl: 'Valsts', names: { LT: 'Lietuva', LV: 'Latvija', EE: 'Igaunija' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Kas pieejams katrai valstij', avL: 'Visām valstīm – viena un tā pati izvēlne. Ja valsts datus nepublicē, sadaļa ir pelēka; gatavotās sadaļas atzīmētas ar plāna posmu.', avNo: 'nav datu', avSoon: n => `tiek gatavots (${n}. posms)`, close: 'Aizvērt', openLt: 'Atvērt Lietuvas versiju',
     soon: (c, n) => `${c}: šī sadaļa tiek gatavota (plāna ${n}. posms). Līdz tam tā ir pieejama tikai Lietuvai.`, noData: c => `${c} nepublicē šai sadaļai vajadzīgos datus.`,
-    why: { reports: c => `${c}: nav Lietuvas Bankas ceturkšņa rezultātu failu un pārvaldītāju pārskatu datu analoga, uz kuriem balstās šī sadaļa.` } } }, {
+    why: { reports: c => `${c}: nav Lietuvas Bankas ceturkšņa rezultātu failu un pārvaldītāju pārskatu datu analoga, uz kuriem balstās šī sadaļa.`, ops: c => `Datu kalendārs seko tikai Lietuvas avotiem. ${c}: katra avota pēdējais datums un kad gaidāmi jauni dati – tabulā lapā “Par”.` } } }, {
   siteTitle: 'Pensionifondid', locale: 'et-EE', langLbl: 'Keel', tools: 'Tööriistad', designNew: 'Uus kujundus (katseline)', designOld: 'Tagasi praegusele kujundusele', themeDark: 'Tume režiim', themeLight: 'Hele režiim',
   qPh: 'Otsi fondi, näitajat või tabelit…', navOps: 'Andmekalender', dlBtn: 'Laadi andmed alla', printCozy: 'Prindi / PDF (nagu ekraanil)', printPlain: 'Prindi / PDF (valge, esitlusteks)',
   sideOpen: 'Ava menüü', sideClose: 'Sulge menüü', sideCollapse: 'Ahenda menüü', sideExpand: 'Laienda menüü', navLbl: 'Jaotise lehed',
@@ -1994,7 +1994,7 @@ addStrings3({
   subNav: { index: 'Turg täna', review: 'Kuu ülevaade', ops: 'Andmekalender', performance: 'II sammas', performance3: 'III sammas', pillar3: 'III sammas', facts: 'Turu faktid', managers: 'Fondivalitsejad', overview: 'Gruppide graafikud', manager: 'Fondivalitseja ja fond', portfolios: 'Portfellid', aum: 'Varad (AUM)', reports: 'Aruanded', journey: 'Tee pensionini', baltic: 'Balti riikide võrdlus' },
   ctry: { lbl: 'Riik', names: { LT: 'Leedu', LV: 'Läti', EE: 'Eesti' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Mis on iga riigi kohta saadaval', avL: 'Kõigil riikidel on sama menüü. Kui riik andmeid ei avalda, on jaotis hall; ettevalmistamisel jaotised on märgitud plaani etapiga.', avNo: 'andmed puuduvad', avSoon: n => `ettevalmistamisel (${n}. etapp)`, close: 'Sulge', openLt: 'Ava Leedu versioon',
     soon: (c, n) => `${c}: see jaotis on ettevalmistamisel (plaani ${n}. etapp). Seni on see saadaval ainult Leedu kohta.`, noData: c => `${c} ei avalda selle jaotise jaoks vajalikke andmeid.`,
-    why: { reports: c => `${c}: puudub Leedu Panga kvartalitulemuste failide ja fondivalitsejate aruannete andmete vaste, millel see jaotis põhineb.` } } });
+    why: { reports: c => `${c}: puudub Leedu Panga kvartalitulemuste failide ja fondivalitsejate aruannete andmete vaste, millel see jaotis põhineb.`, ops: c => `Andmekalender jälgib ainult Leedu allikaid. ${c}: iga allika viimane kuupäev ja millal oodatakse uusi andmeid – tabelis lehel “Teave”.` } } });
 
 // 4 etapas: bendri sąsajos tekstai latviškai ir estiškai (ko nėra – angliškai). Vertimai mašininiai-redaguoti – kolegos gali pataisyti.
 addStrings3({
