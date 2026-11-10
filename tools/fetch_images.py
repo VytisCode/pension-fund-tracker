@@ -9,16 +9,27 @@ from pathlib import Path
 from PIL import Image
 
 IMG = Path(__file__).resolve().parent.parent / "site" / "img"
-# (failo vardas, Unsplash nuotraukos id arba tiesioginis images.unsplash.com adresas)
+# (failo vardas, tiesioginis images.unsplash.com adresas, autorius, puslapis). unsplash.com iš Actions grąžina 401,
+# todėl adresai surinkti iš anksto (napi, 2026-11-10); Unsplash+ (plus.unsplash.com) nuotraukos neįtrauktos:
+# B4iaEyTgd0s (LV), ruooYeijjuc (EE), 22hpkhwWiXU (Kelias į pensiją) – mokamos.
+U = "https://images.unsplash.com/photo-"
 PHOTOS = [
-    ("ctry-lt-1", "pCVeozgbhK8"), ("ctry-lt-2", "vf3rllRAyiM"),
-    ("ctry-lt-3", "https://images.unsplash.com/photo-1620480012482-71e8db98bfea"),
-    ("ctry-lv-1", "B4iaEyTgd0s"), ("ctry-lv-2", "TxQlC_xdW6I"), ("ctry-lv-3", "uft-MemToy0"),
-    ("ctry-ee-1", "byPcCP45G_o"), ("ctry-ee-2", "4AwK3OeU6jQ"), ("ctry-ee-3", "ruooYeijjuc"),
-    # skyrių nuotraukos naujame dizaine (savininkas 2026-11-10)
-    ("sec2-results", "XrIfY_4cK1w"), ("sec2-facts", "qbHOMOKgPI0"), ("sec2-pf", "tuJ3tXSayco"), ("sec2-news", "zMxGeLo-VC8"),
-    ("sec2-mgr", "8UDnSkjGqGU"), ("sec2-aum", "vkQgb1lZZPQ"), ("sec2-aum-2", "zS4lUqLEiNA"), ("sec2-jr", "22hpkhwWiXU"),
-    ("sec2-rep", "3q4V539j_bw"), ("sec2-rep-2", "Ok76F6yW2iA"),
+    ("ctry-lt-1", U + "1761063816232-96f33e695227", "Vitalijs Barilo", "pCVeozgbhK8"),
+    ("ctry-lt-2", U + "1667072464942-14b7c14622e8", "Piotr AMS", "vf3rllRAyiM"),
+    ("ctry-lt-3", U + "1620480012482-71e8db98bfea", "Unsplash", ""),
+    ("ctry-lv-1", U + "1686739366785-e50ee0b7e15a", "Raimond Klavins", "TxQlC_xdW6I"),
+    ("ctry-lv-2", U + "1567669721460-221b82865ee0", "Darya Tryfanava", "uft-MemToy0"),
+    ("ctry-ee-1", U + "1575561003164-f36f2e28a524", "Leo Roomets", "byPcCP45G_o"),
+    ("ctry-ee-2", U + "1576356188000-90fe50405e65", "Julius Jansson", "4AwK3OeU6jQ"),
+    ("sec2-results", U + "1618044733300-9472054094ee", "Markus Spiske", "XrIfY_4cK1w"),
+    ("sec2-facts", U + "1647510283829-fb1ee4ce42cb", "Sortter", "qbHOMOKgPI0"),
+    ("sec2-pf", U + "1579532582937-16c108930bf6", "Annie Spratt", "tuJ3tXSayco"),
+    ("sec2-news", U + "1738739905706-2cc26e57f67d", "Cemrecan Yurtman", "zMxGeLo-VC8"),
+    ("sec2-mgr", U + "1707823942892-3316eeb091a0", "Declan Sun", "8UDnSkjGqGU"),
+    ("sec2-aum", U + "1591081658714-f576fb7ea3ed", "Ivars Utināns", "vkQgb1lZZPQ"),
+    ("sec2-aum-2", U + "1508233620467-f79f1e317a05", "Jack Anstey", "zS4lUqLEiNA"),
+    ("sec2-rep", U + "1631557777232-a2632ae3c67d", "2H Media", "3q4V539j_bw"),
+    ("sec2-rep-2", U + "1544377193-33dcf4d68fb5", "NORTHFOLK", "Ok76F6yW2iA"),
 ]
 UA = {"User-Agent": "Mozilla/5.0 (compatible; dashboard-image-fetch)"}
 
@@ -33,24 +44,10 @@ def get(url, accept=None):
 
 def main(force=False):
     credits = []
-    for name, src in PHOTOS:
+    for name, src, who, pid in PHOTOS:
         out = IMG / f"{name}.jpg"
         try:
-            if src.startswith("http"):
-                url, who, page, ok = src + "?w=2000&q=85&fm=jpg", "Unsplash", src, src.startswith("https://images.unsplash.com/photo-")
-            else:
-                page, who = f"https://unsplash.com/photos/{src}", "Unsplash"
-                try:
-                    meta = json.loads(get(f"https://unsplash.com/napi/photos/{src}", "application/json")[0])
-                    ok = not (meta.get("premium") or meta.get("plus"))
-                    url = meta["urls"]["raw"] + "&w=2000&q=85&fm=jpg"
-                    who, page = meta["user"]["name"], meta["links"]["html"]
-                except Exception:   # napi iš Actions dažnai 401 – tada viešas parsisiuntimo adresas; Unsplash+ nukreipia į plus.unsplash.com
-                    _, _, final = get(f"https://unsplash.com/photos/{src}/download?force=true")
-                    ok = final.startswith("https://images.unsplash.com/photo-")
-                    url = final.split("?")[0] + "?w=2000&q=85&fm=jpg"
-            if not ok:
-                print(f"{name}: {src} – Unsplash+ (mokama), praleidžiama"); continue
+            url, page = src + "?w=2000&q=85&fm=jpg", f"https://unsplash.com/photos/{pid}" if pid else src
             credits.append(f"- `{name}.jpg` – {who}, {page} (Unsplash License)")
             if out.exists() and not force:
                 print(f"{name}: jau yra"); continue
@@ -58,7 +55,7 @@ def main(force=False):
             if "image" not in ctype:
                 print(f"{name}: ne paveikslėlis ({ctype})"); continue
             im = Image.open(io.BytesIO(data)).convert("RGB")
-            w, h = im.size; tw, th = 1600, 600
+            w, h = im.size; tw, th = 1800, 700
             s = max(tw / w, th / h); im = im.resize((round(w * s), round(h * s)), Image.LANCZOS)
             l, t = (im.width - tw) // 2, (im.height - th) // 2
             im.crop((l, t, l + tw, t + th)).save(out, "JPEG", quality=80, optimize=True, progressive=True)
