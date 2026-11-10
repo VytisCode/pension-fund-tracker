@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<link rel="stylesheet" href="style.css?v=dd76affc">
+<link rel="stylesheet" href="style.css?v=ba67a606">
 <style>
   .today { display: grid; gap: 14px; }
   .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
@@ -142,6 +142,7 @@
     <div class="refrow"><div class="seg" id="per" role="group"></div><span class="note" id="perN"></span><span style="flex:1"></span><label for="ref" id="refL"></label><select id="ref"></select><span class="note" id="refN"></span></div>
     <div class="big" id="big"></div>
     <section class="card ldr" data-src="nav" id="ldrC"></section>
+    <section class="card myw" id="myC"></section>
     <section class="card says" data-src="nav"><h2 id="sayH"></h2><div id="say"></div></section>
     <section class="card" data-src="nav"><h2 id="gH"></h2><div class="meta" id="gM"></div><div class="scroll"><table class="glist" id="gT"></table></div><p class="more"><a href="performance.html" id="gMore"></a></p></section>
     <section class="card tdmk" data-src="lbh"><h2 id="tdMkH"></h2><div class="meta" id="tdMkM"></div><div class="kpis" id="tdMkK"></div><ul id="tdMkL"></ul><p class="more" id="tdMkA"></p></section>
@@ -227,17 +228,18 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data_bx_lv2.js?v=c7922988"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_lv2.js?v=1651315e"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="common.js?v=d9b0fc5d"></script><script>BXM.c = "LV"; BXM.pl = "II"; var CTRY_COPY = "LV"; p3Colors();</script>
 
 <script src="data_journey.js"></script>
-<script src="data_rep.js?v=ce17a381"></script>
+<script src="data_rep.js?v=50428453"></script>
 <script src="data_mkt_lv.js?v=86f64ed0"></script>
 <script src="data_earn_lv.js?v=d5f185b1"></script>
 <script src="earn.js?v=db57aa13"></script>
 <script src="data_news.js?v=9ae2d677"></script>
 <script src="news.js?v=f72e6ef1"></script>
 <script src="mkt.js?v=e9346804"></script>
+<script src="mycards.js?v=47a5c4fb"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).
@@ -430,7 +432,7 @@ function render() {
     h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '', gapBars(c), 'performance.html', false, 'gap');
   }
   $('big').innerHTML = h;
-  renderLdr(c, t, P);
+  renderLdr(c, t, P); if (typeof myRender === 'function') myRender();
   { const tx = document.querySelector('.sechero.has-kpi .shtx');   // naujas dizainas (maketas): nuotraukos antraštė – sakinys su tuo pačiu skaičiumi kaip kortelėje
     if (tx) { let hs = tx.querySelector('.hsent'); if (!hs) { hs = document.createElement('div'); hs.className = 'hsent'; tx.prepend(hs); }
       hs.innerHTML = `<em>${t.hC[PCTRY] || t.hC.LT} · ${t.hPl} · ${iso(c.end)}</em><b>${t.hT(t.hPer[PER], c.wAvg == null ? '–' : pct(c.wAvg))}</b><p>${t.hS(mLab(L.id), pct(L.ytd), mLab(W.id), pct(W.ytd))}</p>`; } }

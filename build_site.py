@@ -1112,6 +1112,7 @@ def build_market() -> None:
     shutil.copyfile(SITE / "mkt.js", DOCS / "mkt.js")
     shutil.copyfile(SITE / "earn.js", DOCS / "earn.js")
     shutil.copyfile(SITE / "news.js", DOCS / "news.js")
+    shutil.copyfile(SITE / "mycards.js", DOCS / "mycards.js")
     sys.path.insert(0, str(ROOT / "tools"))
     import fetch_news                   # temos perskaičiuojamos iš antraštės ir aprašo (CSV nekeičiamas)
     news = []                           # naujienų archyvas (tools/fetch_news.py) – naujausi pirmi
@@ -1128,7 +1129,7 @@ def build_market() -> None:
                                         + json.dumps(news_tags.table(), ensure_ascii=False, separators=(",", ":")) + ";\nconst SEIMAS="
                                         + json.dumps(seimas, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     text = (DOCS / "index.html").read_text(encoding="utf-8")
-    for n in ("data_mkt.js", "mkt.js", "data_earn.js", "earn.js", "data_news.js", "news.js"):
+    for n in ("data_mkt.js", "mkt.js", "data_earn.js", "earn.js", "data_news.js", "news.js", "mycards.js"):
         text = text.replace(f'src="{n}"', f'src="{n}?v={hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]}"')
     (DOCS / "index.html").write_text(text, encoding="utf-8")
     print(f"docs/data_mkt.js: {len(data_js) / 1024:.0f} KB, II ketv.: {len(payload['II']['dates'])}, III ketv.: {len(payload['III']['dates'])}")
