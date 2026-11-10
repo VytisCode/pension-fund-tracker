@@ -40,8 +40,29 @@ addStrings({
   noPf: 'Šio ketvirčio portfelių ataskaitos dar nepaskelbtos.',
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
+/* LV/EE kopija (review_lv.html, review_ee.html; PERTVARKA-SALYS.md 3 etapas): DATA.providers – fondai, todėl valdytojo grąža grupėje –
+   jo fondų vidurkis, svertinis turtu; turtas – data_bx_flow.js mėnesio pabaigos (sujungimai įskaičiuoti į valdytojo srautus);
+   III pakopos ir portfelių pokyčių skilčių nėra (kitokios kategorijos, LB portfelių ataskaitų nėra) */
+const CTRY = typeof CTRY_COPY !== 'undefined';
+if (CTRY) addStrings({ s1: (v, up) => `The average fund ${up ? 'rose' : 'fell'} by ${v}.`, s2: (b, bv, w, wv) => `${b} did best (${bv} on average across its fund groups), ${w} did worst (${wv}).`,
+  hMgr: 'Managers: average fund', mMgr: 'A manager’s figure in a group is the asset-weighted average of its funds there; place among managers in brackets. Returns are not annualised.',
+  mAum: '€ m, month-end assets. Return = assets × unit value change; mergers – assets received from merged funds (detected from the data, as in “Asset change”); contributions and switches – the rest of the change.', thPay: 'Mergers',
+  s5: (v, r, fl, pay) => `Pillar II assets changed by ${v}: return ${r}, contributions and switches ${fl}${pay ? `, fund mergers ${pay}` : ''}.` },
+{ s1: (v, up) => `Vidutinis fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`, s2: (b, bv, w, wv) => `Geriausiai sekėsi ${b} (vidutiniškai ${bv} per savo fondų grupes), silpniausiai – ${w} (${wv}).`,
+  hMgr: 'Valdytojai: vidutinis fondas', mMgr: 'Valdytojo rodiklis grupėje – jo fondų vidurkis, svertinis turtu; skliaustuose – vieta tarp valdytojų. Grąža ne metinė.',
+  mAum: 'Mln. €, mėnesio pabaigos turtas. Grąža = turtas × vieneto vertės pokytis; sujungimai – turtas, gautas sujungus fondus (nustatyta iš duomenų, kaip „Turto pokytyje“); įmokos ir perėjimai – likęs pokytis.', thPay: 'Sujungimai',
+  s5: (v, r, fl, pay) => `II pakopos turtas pasikeitė ${v}: grąža ${r}, įmokos ir perėjimai ${fl}${pay ? `, fondų sujungimai ${pay}` : ''}.` });
+const MOF = Object.fromEntries(DATA.providers.map(p => [p.id, p.m || p.id]));
+const fLab = id => labelOf(id), labelM = id => CTRY ? id : labelOf(id), colorM = id => CTRY ? colorOf(DATA.providers.find(p => MOF[p.id] === id).id) : colorOf(id);
+if (CTRY && typeof BXFLOW !== 'undefined') {     // AUM formatas iš mėnesio pabaigos taškų: dm = [mėnuo, grąža, srautas, išmokos]
+  const S = BXFLOW[CTRY_COPY].II, endD = dayOf(S.end);
+  window.AUM = { funds: S.f.map(f => { const d = [], a = [], dm = [];
+    f.a.forEach((x, i) => { if (x == null) return; const k = f.k0 + i; d.push(Math.min(endD, Math.round(Date.UTC(Math.floor(k / 12), k % 12 + 1, 0) / DAY))); a.push(x);
+      if (i > 0 && f.a[i - 1] != null) { const a0 = f.a[i - 1], g = (f.g || {})[k] || 0, r = f.u[i] / f.u[i - 1] - 1, e = r * (a0 + (x - g) / (1 + r)) / 2; dm.push([k, e, x - a0 - e - g, g]); } });
+    return { pl: 'II', p: f.m, n: f.n, d, a, dm }; }) };
+}
 const $ = id => document.getElementById(id);
-const PROVS = DATA.providers.map(p => p.id);
+const PROVS = CTRY ? [...new Set(DATA.providers.map(p => MOF[p.id]))] : DATA.providers.map(p => p.id);
 const LC = DATA.groups.filter(g => g.id !== 'turto'), TURTO = DATA.groups.find(g => g.id === 'turto');
 const mean = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
 const LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1])));
@@ -65,7 +86,10 @@ const pLabel = id => { const b = bounds(id); return b.k === 'q' ? (lang === 'lt'
 function groupRet(g, anchor, end) {      // {provider: grąža} grupėje tarp dviejų dienų (fondai be tos dienos vertės – null)
   const out = {};
   g.funds.forEach(f => { const ie = lastOnOrBefore(f, end); const s = ie >= 0 && end - f.d[ie] <= 7 ? seriesOf(f, anchor, end) : null; out[f.provider] = s ? s.ret : null; });
-  return out;
+  if (!CTRY) return out;
+  const o = {};                          // LV/EE: valdytojo fondų vidurkis grupėje, svertinis turtu
+  g.funds.forEach(f => { const v = out[f.provider]; if (v == null) return; const m = MOF[f.provider], x = o[m] = o[m] || [0, 0, 0, 0], w = f.assets > 0 ? f.assets : 0; x[0] += v * w; x[1] += w; x[2] += v; x[3]++; });
+  return Object.fromEntries(Object.entries(o).map(([m, x]) => [m, x[1] > 0 ? x[0] / x[1] : x[2] / x[3]]));
 }
 function mgrTable(anchor, end) {
   const ytdA = mEnd(new Date(end * DAY).getUTCFullYear() - 1, 12), yoyA = shiftMonths(end, 12);
@@ -92,6 +116,7 @@ function aumTable(b) {                   // valdytojo II pakopos turtas pradžio
 
 /* ---------- III pakopa (mėnesio pabaigos vertės) ---------- */
 function p3Leaders(b) {
+  if (typeof REP === 'undefined') return [];
   const i1 = REP.months.findIndex(d => d === b.end), i0 = REP.months.findIndex(d => d === b.anchor);
   if (i0 < 0 || i1 < 0) return [];
   return ['bond', 'mixed', 'equity'].map(c => { const xs = REP.funds.filter(f => f.pl === 'III' && f.g === c && f.m[i0] && f.m[i1]).map(f => ({ f, v: (f.m[i1] / f.m[i0] - 1) * 100 })).sort((a, b) => b.v - a.v);
@@ -100,7 +125,7 @@ function p3Leaders(b) {
 
 /* ---------- portfelių pokyčiai per ketvirtį (data_pf.js) ---------- */
 function pfChanges(b) {
-  if (b.k !== 'q') return null;
+  if (b.k !== 'q' || typeof PF === 'undefined') return null;
   const qi = PF.quarters.indexOf(iso(b.end));
   if (qi < 1) return [];
   const agg = (p, q) => { const m = new Map(); let t = 0; PF.funds.filter(f => f.pl === 'II' && f.p === labelOf(p)).forEach(f => { for (let i = 0; i < f.r.length; i += 4) if (f.r[i] === q) { m.set(f.r[i + 1], (m.get(f.r[i + 1]) || 0) + f.r[i + 3]); t += f.r[i + 3]; } }); return { m, t }; };
@@ -122,26 +147,26 @@ function render() {
   const b = bounds(SEL), M = mgrTable(b.anchor, b.end), A = aumTable(b), P3 = p3Leaders(b), PFc = pfChanges(b), big = biggestDay(b.anchor, b.end);
   const lab = pLabel(SEL), say = [];
   if (M.avg != null) say.push(t.s1(pctPlain(Math.abs(M.avg)), M.avg >= 0));
-  if (M.rows.length > 1) { const B = M.rows[0], W = M.rows[M.rows.length - 1]; say.push(t.s2(labelOf(B.p), pct(B.per), labelOf(W.p), pct(W.per))); }
+  if (M.rows.length > 1) { const B = M.rows[0], W = M.rows[M.rows.length - 1]; say.push(t.s2(labelM(B.p), pct(B.per), labelM(W.p), pct(W.per))); }
   const gaps = M.groups.map(x => { const e = Object.entries(x.r).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); return e.length > 1 ? { g: x.g, a: e[0], z: e[e.length - 1], gap: e[0][1] - e[e.length - 1][1] } : null; }).filter(Boolean);
   const G = [...gaps].sort((a, b) => b.gap - a.gap)[0];
-  if (G) say.push(t.s3(groupLabel(G.g), labelOf(G.a[0]), labelOf(G.z[0]), num(G.gap, 2)));
+  if (G) say.push(t.s3(groupLabel(G.g), labelM(G.a[0]), labelM(G.z[0]), num(G.gap, 2)));
   if (TURTO) { const r = Object.entries(groupRet(TURTO, b.anchor, b.end)).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); if (r.length) say.push(t.s4(labelOf(r[0][0]), pct(r[0][1]))); }
   if (A.length) { const S = k => A.reduce((s, x) => s + x[k], 0); say.push(t.s5(`${money(S('s1') - S('s0'))} ${lang === 'lt' ? 'mln. €' : '€ m'}`, money(S('r')), money(S('fl')), Math.abs(S('pay')) > 0.05 ? money(S('pay')) : '')); }
-  if (big) say.push(t.s6(`${labelOf(big.f.provider)} ${groupLabel(big.g)}`, iso(big.d), pct(big.v)));
+  if (big) say.push(t.s6(CTRY ? fLab(big.f.provider) : `${labelOf(big.f.provider)} ${groupLabel(big.g)}`, iso(big.d), pct(big.v)));
   P3.forEach(x => say.push(t.s7(t.cat[x.c].toLowerCase(), hEsc(x.xs[0].f.n), pct(x.xs[0].v))));
-  const sw = id => `<i class="sw" style="background:${colorOf(id)}"></i>`;
+  const sw = id => `<i class="sw" style="background:${colorM(id)}"></i>`;
   const kc = (v, k, n) => `<td class="n">${v == null ? '–' : pct(v)}${k ? `<small>(${k})</small>` : ''}</td>`;
   let h = `<section class="card"><h2>${t.title(lab)}</h2><div class="meta">${t.sub(iso(b.anchor), iso(Math.min(b.end, LAST)))}</div></section>`;
   h += `<section class="card says" data-src="nav"><h2>${t.hSay}</h2>${say.map(x => `<p>${x}</p>`).join('')}</section>`;
   h += `<div class="two"><section class="card" data-src="nav"><h2>${t.hMgr}</h2><div class="meta">${t.mMgr}</div><div class="scroll"><table class="rt" id="tM"><thead><tr><th>${t.thMgr}</th><th class="n">${t.thPer}</th><th class="n">${t.thYtd}</th><th class="n">${t.thYoy}</th></tr></thead><tbody>`
-    + M.rows.map(r => `<tr><td>${sw(r.p)}${labelOf(r.p)}</td>${kc(r.per, r.perK)}${kc(r.ytd, r.ytdK)}${kc(r.yoy, r.yoyK)}</tr>`).join('') + `</tbody></table></div></section>`;
+    + M.rows.map(r => `<tr><td>${sw(r.p)}${labelM(r.p)}</td>${kc(r.per, r.perK)}${kc(r.ytd, r.ytdK)}${kc(r.yoy, r.yoyK)}</tr>`).join('') + `</tbody></table></div></section>`;
   h += `<section class="card" data-src="nav"><h2>${t.hGrp}</h2><div class="scroll"><table class="rt" id="tG"><thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th></tr></thead><tbody>`
-    + [...gaps].reverse().map(x => `<tr><td>${groupLabel(x.g)}</td><td>${sw(x.a[0])}${labelOf(x.a[0])}</td><td class="n">${pct(x.a[1])}</td><td>${sw(x.z[0])}${labelOf(x.z[0])}</td><td class="n">${pct(x.z[1])}</td><td class="n">${num(x.gap, 2)}</td></tr>`).join('') + `</tbody></table></div></section></div>`;
+    + [...gaps].reverse().map(x => `<tr><td>${groupLabel(x.g)}</td><td>${sw(x.a[0])}${labelM(x.a[0])}</td><td class="n">${pct(x.a[1])}</td><td>${sw(x.z[0])}${labelM(x.z[0])}</td><td class="n">${pct(x.z[1])}</td><td class="n">${num(x.gap, 2)}</td></tr>`).join('') + `</tbody></table></div></section></div>`;
   if (A.length) {
     const S = k => A.reduce((s, x) => s + x[k], 0), c = v => `<td class="n${v > 0.05 ? ' pos' : v < -0.05 ? ' neg' : ''}">${money(v)}</td>`;
     h += `<section class="card" data-src="aum"><h2>${t.hAum}</h2><div class="meta">${t.mAum}</div><div class="scroll"><table class="rt" id="tA"><thead><tr><th>${t.thMgr}</th><th class="n">${t.thStart}</th><th class="n">${t.thRet}</th><th class="n">${t.thFlow}</th><th class="n">${t.thPay}</th><th class="n">${t.thEnd}</th></tr></thead><tbody>`
-      + A.map(x => `<tr><td>${sw(x.p)}${labelOf(x.p)}</td><td class="n">${num(x.s0, 1)}</td>${c(x.r)}${c(x.fl)}${c(x.pay)}<td class="n">${num(x.s1, 1)}</td></tr>`).join('')
+      + A.map(x => `<tr><td>${sw(x.p)}${labelM(x.p)}</td><td class="n">${num(x.s0, 1)}</td>${c(x.r)}${c(x.fl)}${c(x.pay)}<td class="n">${num(x.s1, 1)}</td></tr>`).join('')
       + `</tbody><tfoot><tr><td>${t.total}</td><td class="n">${num(S('s0'), 1)}</td>${c(S('r'))}${c(S('fl'))}${c(S('pay'))}<td class="n">${num(S('s1'), 1)}</td></tr></tfoot></table></div></section>`;
   }
   if (P3.length) h += `<section class="card" data-src="p3"><h2>${t.hP3}</h2><div class="meta">${t.mP3}</div><div class="scroll"><table class="rt" id="t3"><thead><tr><th>${t.thCat}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th></tr></thead><tbody>`
@@ -156,5 +181,5 @@ function render() {
 }
 $('selR').addEventListener('change', e => { SEL = e.target.value; try { localStorage.setItem('revSel', SEL); } catch (x) {} render(); });
 $('btnPr').addEventListener('click', () => { document.documentElement.dataset.print = 'plain'; setTimeout(() => window.print(), 50); });
-renderHeader('review', render);
+renderHeader(CTRY ? 'review_' + CTRY_COPY.toLowerCase() : 'review', render);
 render();

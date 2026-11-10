@@ -152,6 +152,7 @@ def main() -> None:
     build_home_split()
     try:
         build_ctry_home()
+        build_ctry_review()
     except Exception as e:              # papildoma dalis – jos klaida neturi sustabdyti svetainės
         print("ctry_home: nepavyko:", e)
 
@@ -168,6 +169,24 @@ def build_home_split() -> None:
 
 
 
+
+
+def build_ctry_review() -> None:
+    """Mėnesio apžvalga Latvijai ir Estijai (PERTVARKA-SALYS.md 3 etapas): review.html su tos šalies DATA (data_bx_{c}2.js) ir turtu
+    (data_bx_flow.js); Lietuvos REP / AUM / PF neįkeliami – rev.js tas skiltis praleidžia."""
+    dec = 'DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));'
+    src = (DOCS / "review.html").read_text(encoding="utf-8")
+    ff = DOCS / "data_bx_flow.js"
+    for c in ("lv", "ee"):
+        fd = DOCS / f"data_bx_{c}2.js"
+        if not fd.exists() or not ff.exists():
+            continue
+        hd, hf = (hashlib.md5(x.read_bytes()).hexdigest()[:8] for x in (fd, ff))
+        t = re.sub(r'<script src="data\.js\?v=[0-9a-f]+"></script>', f'<script src="data_bx_{c}2.js?v={hd}"></script><script>{dec}</script><script src="data_bx_flow.js?v={hf}"></script>', src, count=1)
+        t = re.sub(r'<script src="data_(rep|aum|pf)\.js\?v=[0-9a-f]+"></script>', '', t)
+        t = re.sub(r'<script src="(common\.js\?v=[0-9a-f]+)"></script>', lambda m: f'<script src="{m.group(1)}"></script><script>BXM.c = "{c.upper()}"; BXM.pl = "II"; var CTRY_COPY = "{c.upper()}"; p3Colors();</script>', t, count=1)
+        assert f"data_bx_{c}2.js" in t and "CTRY_COPY" in t and "data_aum.js" not in t, c
+        (DOCS / f"review_{c}.html").write_text(t, encoding="utf-8")
 
 
 def build_ctry_home() -> None:
