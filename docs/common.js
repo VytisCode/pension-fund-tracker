@@ -164,8 +164,8 @@ function renderHeader(active, onLang) {
   nav.innerHTML = sec && sec.pages.length > 1 ? `<div class="subnav">${subs(sec).map(p => `<a ${lnk(p)} data-p="${p}"></a>`).join('')}</div>` : '';
   h.after(nav);
   if (sec && SEC_IMG[sec.id]) {          // skyriaus nuotraukų juosta (auditas 2026-10-21: nuotraukos – orientacijai, ne dekoracijai)
-    const st = document.createElement('div'); st.className = 'sechero'; st.style.backgroundImage = `url(img/${document.documentElement.dataset.design === 'v2' && CTRY_IMG[PCTRY] ? CTRY_IMG[PCTRY][sec.id] || CTRY_IMG[PCTRY].home : `sec-${SEC_IMG[sec.id]}`}.jpg)`;
-    st.innerHTML = '<div class="shtx"><span id="secName"></span><p id="secDesc"></p></div>'; nav.before(st); document.body.classList.add('has-hero');
+    const st = document.createElement('div'); st.className = 'sechero'; st.style.backgroundImage = `url(img/${secImg(sec.id, active)}.jpg)`;
+    st.innerHTML = '<div class="shtx"><span id="secName"></span><p id="secDesc"></p></div>'; nav.before(st); document.body.classList.add('has-hero'); document.body.classList.toggle('pg-home', sec.id === 'home');
     const bg = document.createElement('div'); bg.className = 'pagebg'; bg.style.backgroundImage = st.style.backgroundImage; document.body.prepend(bg);   // savininkas 2026-10-21: nuotraukos – ir fono dalis
   }
   const side = document.createElement('aside');
@@ -390,7 +390,14 @@ const paneOn = el => { const p = el && el.closest('[data-tab]'); return p && !p.
    facts.html ir managers.html – index.html kopijos (build_site.py), kiekviename rodomi tik savi skirtukai; kiti lieka DOM'e paslėpti
    (data-off = puslapis, kuriame jie rodomi), o nuoroda į juos (#go=, #tab=) nukreipia į tą puslapį – seni adresai veikia. */
 /* Naujo dizaino šalies nuotraukos (Unsplash licencija; savininkas išrinko 2026-11-10; parsiunčia .github/workflows/fetch_images.yml) – home = viršutinė juosta */
-const CTRY_IMG = {};
+const CTRY_IMG = { LT: 'ctry-lt-1', LV: 'ctry-lv-1', EE: 'ctry-ee-1' };   // Pradžia ir Baltijos palyginimas – šalies panorama
+const SEC_IMG2 = { facts: 'sec2-facts', results: 'sec2-results', mgr: 'sec2-mgr', pf: 'sec2-pf', rep: 'sec2-rep', jr: 'sec-jr', news: 'sec2-news' };
+const PAGE_IMG2 = { aum: 'sec2-aum' };
+function secImg(id, active) {           // naujame dizaine – nauji vaizdai; senajame – kaip buvo
+  if (document.documentElement.dataset.design !== 'v2') return `sec-${SEC_IMG[id]}`;
+  if (id === 'home' || id === 'baltic') return CTRY_IMG[PCTRY] || CTRY_IMG.LT;
+  return PAGE_IMG2[secPage(active)] || SEC_IMG2[id] || `sec-${SEC_IMG[id]}`;
+}
 const SEC_IMG = { home: 'home', facts: 'facts', results: 'results', mgr: 'mgr', pf: 'pf', rep: 'rep', jr: 'jr', baltic: 'home' };   // Baltijos šalims – kol bus Vilniaus, Rygos ir Talino nuotraukos   // site/img/sec-*.jpg – savininko sugeneruotos nuotraukos
 const HOME_PAGES = ['index', 'facts', 'managers'];
 const TAB_HOME = { td: 'index', nw: 'index', qf: 'facts', mf: 'facts', pv: 'facts', eu: 'facts', p23: 'facts', mk: 'facts', fd: 'facts', mg: 'managers' };
@@ -479,6 +486,7 @@ function showTab(k, user) {
   const prev = TAB_CUR; TAB_CUR = k;
   document.querySelectorAll('[data-tab]').forEach(p => { p.hidden = p.dataset.tab !== k; });
   document.body.dataset.ptab = k;
+  { const f = document.querySelector('[data-tab]:not([data-off])'); document.body.classList.toggle('tab-deep', !!f && f.dataset.tab !== k); }   // naujame dizaine – gilesniuose skirtukuose nuotrauka mažesnė
   markTab(); bxBar();
   if (user) { try { localStorage.setItem(tabKey(), k); } catch (e) {} }
   if (prev !== k) {

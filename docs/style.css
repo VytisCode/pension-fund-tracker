@@ -698,3 +698,13 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
   [data-design="v2"] th { color: var(--text-3); font-weight: 600; font-size: 11.5px; letter-spacing: .01em; }
   [data-design="v2"] tbody tr:hover > td { background-color: color-mix(in srgb, var(--hover) 70%, transparent); }
 }
+/* Naujas dizainas – nuotraukos kiekis pagal puslapio paskirtį (savininkas 2026-11-10): Pradžia – vitrina, skyriaus pirmas skirtukas – vidutinė,
+   gilūs analitiniai skirtukai – siaura juosta (vieta duomenims). Nuotraukos niekada ne kortelėse su grafikais ar lentelėmis. */
+@media screen and (min-width: 701px) {
+  [data-design="v2"] .sechero { height: 240px; transition: height .25s ease; }
+  [data-design="v2"] body.pg-home .sechero { height: min(42vh, 400px); align-items: flex-end; padding-bottom: 32px; }
+  [data-design="v2"] body.pg-home .sechero span { font-size: 40px; }
+  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero { height: 112px; }
+  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero p { display: none; }
+  [data-design="v2"] body.tab-deep:not(.pg-home) .sechero span { font-size: 26px; }
+}
