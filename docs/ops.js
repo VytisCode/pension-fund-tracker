@@ -45,7 +45,7 @@ const PROV = Object.fromEntries((OPS.prov || []).map(p => [p.id, p.label]));
 function srcLabel(k) {
   const o = O(), [a, b] = k.split('.');
   if ((a === 'nav' || a === 'p3') && b) return `${o.src[a]} · ${PROV[b] || b.charAt(0) + b.slice(1).toLowerCase()}`;
-  if (a === 'idx' && b) return `${o.src.idx} ${({ MSCI_WORLD: 'MSCI World', MSCI_ACWI: 'MSCI ACWI', SP500: 'S&P 500', SP500_PR: 'S&P 500 (kainų)', EURUSD: 'EUR/USD', EUR_GOV7Y: 'euro obligacijų' })[b] || b}`;
+  if (a === 'idx' && b) return `${o.src.idx} ${({ MSCI_WORLD: 'MSCI World', MSCI_ACWI: 'MSCI ACWI', SP500: 'S&P 500', SP500_PR: lang === 'lt' ? 'S&P 500 (kainų)' : 'S&P 500 (price)', EURUSD: 'EUR/USD', EUR_GOV7Y: lang === 'lt' ? 'euro obligacijų' : 'euro bonds' })[b] || b}`;
   return o.src[k] || o.src[a] || k;
 }
 const EV = (OPS.ev || []).map(([ts, src, ev, dd, n, msg]) => ({ ts, src, ev, dd, n, msg, ...loc(ts) }));
@@ -85,7 +85,7 @@ function renderDay() {
   $('hDay').textContent = o.hDay(SEL);
   if (!ev.length && !up.length) { $('tDay').innerHTML = `<tbody><tr><td>${o.noEv}</td></tr></tbody>`; return; }
   $('tDay').innerHTML = `<thead><tr>${o.th.map((x, i) => `<th${i === 4 ? ' class="n"' : ''}>${x}</th>`).join('')}</tr></thead><tbody>`
-    + ev.map(e => `<tr class="${e.ev === 'fail' ? 'fail' : ''}"><td class="t">${e.hm}</td><td>${hEsc(srcLabel(e.src))}</td><td>${o.ev[e.ev] || e.ev}</td><td class="t">${e.dd || ''}</td><td class="n">${e.n || ''}</td><td>${hEsc(e.msg || '')}</td></tr>`).join('')
+    + ev.map(e => `<tr class="${e.ev === 'fail' ? 'fail' : ''}"><td class="t">${e.hm}</td><td>${hEsc(srcLabel(e.src))}</td><td>${o.ev[e.ev] || e.ev}</td><td class="t">${e.dd || ''}</td><td class="n">${e.n || ''}</td><td>${hEsc(e.ev === 'ok' && e.msg === 'vėl veikia' ? o.ev.ok : e.msg || '')}</td></tr>`).join('')
     + up.map(s => `<tr><td class="t">–</td><td>${hEsc(lang === 'lt' ? s.lt : s.en)}</td><td>${o.ev[s.mode === 'manual' ? 'man' : 'due']}</td><td></td><td></td><td>${hEsc((lang === 'lt' ? s.how_lt : s.how_en) || (lang === 'lt' ? s.f_lt : s.f_en) || '')}${s.url ? ` <a href="${hEsc(s.url)}" target="_blank" rel="noopener">${o.open}</a>` : ''}</td></tr>`).join('') + '</tbody>';
 }
 function renderArr() {

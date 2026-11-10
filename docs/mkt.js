@@ -889,6 +889,7 @@ const YS = 'EOMONTH(DATE(YEAR($B$4),1,1),-1)', YS1 = 'EOMONTH(DATE(YEAR($B$4)-1,
 const yEnd = (d, k) => `${+d.slice(0, 4) - k}-12-31`;
 /* valdytojo stiprybės – grupės, kuriose jo fondas pirmas (lyginama tik grupės viduje) */
 function strengthFact(pl, di, m) {
+  const tx3 = x => typeof tr3 === 'function' ? tr3(x) : x;
   const t = T(), L = lang === 'lt', nb = NB(), parts = [], cm = crM(m), d0 = MKD.d0;
   [['ret_ytd', 'G', 'ytd'], ['ret_1y', 'M', 'r1'], ['ret_3y', 'N', 'r3'], ['ret_5y', 'O', 'r5']].forEach(([k, col, pk]) => {
     const gs = [];
@@ -899,7 +900,7 @@ function strengthFact(pl, di, m) {
       const i = nb.add(`${gl} · ${t.fx.best} · ${t.stP[pk]}`, b, () => `_xlfn.MAXIFS(${MKX.D}!${col}:${col},${byD(d0)},${cg},${cm})`, Zp);
       const j = nb.add(`${gl} · ${t.stMax} · ${t.stP[pk]}`, top, () => `_xlfn.MAXIFS(${MKX.D}!${col}:${col},${byD(d0)},${cg})`, Zp);
       nb.add(`${gl} · ${L ? 'Pirmas (1 = taip)' : 'First (1 = yes)'} · ${t.stP[pk]}`, 1, c => `IF(${c(i)}>=${c(j)},1,0)`, '0'); gs.push(gl); });
-    if (gs.length) parts.push(`${t.stP[pk]} – ${gs.map(g => L ? `„${g}“` : `“${g}”`).join(', ')}`);
+    if (gs.length) parts.push(`${tx3(t.stP[pk])} – ${gs.map(g => L ? `„${g}“` : `“${tx3(g)}”`).join(', ')}`);  // LV/ET: dalys verčiamos atskirai (žodynas i18n.tsv)
   });
   return parts.length ? { h: m, text: t.st(m, parts.join('; ')), calc: t.calcSt, src: t.srcLB(pl, MKT[pl].dates[di]), hl: true, nums: nb.a } : null;
 }

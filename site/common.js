@@ -84,12 +84,13 @@ function tr3Mon(m, f) {                 // mėnuo: {M} – kaip angliškai (trum
   return f && o[f] ? o[f][i] : m.length > 3 || m === 'May' ? o.l[i] : o.s[i]; }
 function tr3(s, deep) {                  // vienas tekstas: vertimas arba tas pats tekstas
   if (!TR3.d || (ulang !== 'lv' && ulang !== 'et') || typeof s !== 'string' || !/[A-Za-z]{2}/.test(s)) return s;
-  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/), core = m[2].replace(/\s+/g, ' ');
+  const m = s.match(/^(\s*(?:• +)?)([\s\S]*?)(\s*)$/), core = m[2].replace(/\s+/g, ' ');
   let v = TR3.d.get(core);
   if (v == null) {
     const [k, toks] = tr3Key(core);
     let t = toks.length ? TR3.d.get(k) : null;
-    if (t == null) for (const [re, w] of TR3.w) { const g = k.match(re); if (g) { let j = 1; t = w.replace(/\{\*\}/g, () => g[j++]); break; } }
+    if (t == null) for (const [re, w] of TR3.w) { const g = k.match(re); if (g) { let j = 1; const sub = x => { const v = TR3.d.get(x); return v != null && !/\{\d/.test(v) ? v : x; };  // {*} viduje – žinomos frazės (pvz. sąrašas „a; b“) irgi verčiamos
+      t = w.replace(/\{\*\}/g, () => { const c = g[j++]; return c.split('; ').map(sub).join('; '); }); break; } }
     if (t == null) {                    // dalimis: „Šaltinis · Tema“, „Antraštė: SEB“ (valdytojo ar fondo vardas lieka)
       if (deep) return s;
       for (const sep of [' · ', ': ', ' – ']) {
@@ -973,7 +974,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   if (!series.length || x1 <= x0) { const t = T(), none = !nIn; el.insertAdjacentHTML('beforeend', `<p class="na state st-empty" role="status">${svgI('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', 22)}<span><b>${none ? t.stNoSel : t.stNoPer}</b><span>${none ? t.stNoSelW : t.stNoPerW}</span></span></p>`); return null; }
   const els = {};                               // provider -> [elementai] paryškinimui
   const V2 = document.documentElement.dataset.design === 'v2', LW = V2 ? 2.4 : 2;   // naujame dizaine – storesnės linijos, ištisinis švelnus tinklelis
-  const sCol = r => r.color || colorOf(r.provider), sLab = r => r.label || labelOf(r.provider);   // eilutė gali turėti savo spalvą / pavadinimą
+  const sCol = r => r.color || colorOf(r.provider), sLab = r => { const x = r.label || labelOf(r.provider); return typeof tr3 === 'function' ? tr3(x) : x; };  // LV/ET – verčiama prieš trumpinant   // eilutė gali turėti savo spalvą / pavadinimą
   el._legend = series.map(r => { let l = ''; try { l = sLab(r); } catch (e) {} return { c: sCol(r), l, d: r.dash || '' }; }).filter(x => x.l);   // PNG legendai (chartPng)
   let lo = opts.zero === false ? Infinity : 0, hi = opts.zero === false ? -Infinity : 0;    // zero: false – ašis neprivalo apimti nulio
   series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
