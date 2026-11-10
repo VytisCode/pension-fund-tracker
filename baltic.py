@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 D = ROOT / "data"
 LT_PROV = {"ALLIANZ": "Allianz", "ARTEA": "Artea", "GOINDEX": "Goindex", "LUMINOR": "Luminor", "SEB": "SEB", "SWEDBANK": "Swedbank"}
-LV_PROV = [("swedbank", "Swedbank"), ("seb", "SEB"), ("cbl", "CBL"), ("invl", "INVL"), ("luminor", "Luminor"), ("indexo", "Indexo")]
+LV_PROV = [("swedbank", "Swedbank"), ("seb", "SEB"), ("cbl", "Citadele"), ("invl", "INVL"), ("luminor", "Luminor"), ("indexo", "Indexo")]
 EE_PROV = ["LHV", "Luminor", "SEB", "Swedbank", "Tuleva"]
 RISK = [(4, "r1"), (8, "r2"), (12, "r3"), (1e9, "r4")]      # 3 m. metinis svyravimas, %: iki 4, 4–8, 8–12, virš 12
 
@@ -437,12 +437,12 @@ def shares():
     return out
 
 
-VSAA_MGR = [("swedbank", "Swedbank"), ("hansa", "Swedbank"), ("seb", "SEB"), ("unilat", "SEB"), ("cbl", "CBL"), ("citadele", "CBL"), ("parex", "CBL"),
+VSAA_MGR = [("swedbank", "Swedbank"), ("hansa", "Swedbank"), ("seb", "SEB"), ("unilat", "SEB"), ("cbl", "Citadele"), ("citadele", "Citadele"), ("parex", "Citadele"),
             ("invl", "INVL"), ("finasta", "INVL"), ("luminor", "Luminor"), ("dnb", "Luminor"), ("nordea", "Luminor"), ("indexo", "Indexo"),
             ("vairo", "Vairo"), ("signet", "Signet"), ("aktīvais plāns", "Signet"), ("norvik", "PNB (Norvik)"), ("pnb", "PNB (Norvik)"),
             ("ablv", "ABLV"), ("index direct", "Index Direct"), ("integrum", "Integrum"),
             # seni (nebesantys) – savo vardu, kai dabartinis valdytojas nežinomas tikrai
-            ("parekss", "CBL"), ("invalda", "INVL"), ("nord/lb", "Luminor"), ("suprema", "Suprema/EVLI"), ("hipo", "Hipo Fondi"), ("krājfondi", "Krājfondi (LKB)"), ("ge money", "GE Money"), ("btb ", "BTB"), ("valsts kas", "Valsts kase"), ("baltikums", "Baltikums"), ("optimus", "Optimus"), ("daugava", "Daugava, Gauja, Venta"),
+            ("parekss", "Citadele"), ("invalda", "INVL"), ("nord/lb", "Luminor"), ("suprema", "Suprema/EVLI"), ("hipo", "Hipo Fondi"), ("krājfondi", "Krājfondi (LKB)"), ("ge money", "GE Money"), ("btb ", "BTB"), ("valsts kas", "Valsts kase"), ("baltikums", "Baltikums"), ("optimus", "Optimus"), ("daugava", "Daugava, Gauja, Venta"),
             ("gauja", "Daugava, Gauja, Venta"), ('"venta', "Daugava, Gauja, Venta"), ("venta", "Daugava, Gauja, Venta")]
 
 
@@ -477,7 +477,7 @@ def vsaa_moves():
 def _vsaa_mgr(nm):
     n = nm.lower().strip()
     if n.startswith("c "):                                  # 2026 m. Citadele plānų pervadinimas („C Universālais plāns 61+“)
-        return "CBL"
+        return "Citadele"
     if "adaptīv" in n and "vairo" not in n:
         return "Indexo"
     # „aktīvais plāns“ (Signet) – tik kai joks kitas valdytojas neatpažintas (pvz. „Optimus aktīvais plāns“ – Optimus)

@@ -73,7 +73,7 @@ ACTORS = [
     ("Artea", "mgr", "", r"\bartea", "Artea", "Artea"), ("Goindex", "mgr", "", r"\bgoindex", "Goindex", "Goindex"),
     ("INVL", "mgr", "", r"(?-i:\bINVL\b)", "INVL", "INVL"), ("LHV", "mgr", "", r"(?-i:\bLHV\b)", "LHV", "LHV"),
     ("Tuleva", "mgr", "", r"\btuleva", "Tuleva", "Tuleva"), ("Citadele", "mgr", "", r"\bcitadel", "Citadele", "Citadele"),
-    ("Indexo", "mgr", "", r"\bindexo", "Indexo", "Indexo"), ("CBL", "mgr", "", r"(?-i:\bCBL\b)", "CBL", "CBL"),
+    ("Indexo", "mgr", "", r"\bindexo", "Indexo", "Indexo"), ("CBL", "mgr", "", r"(?-i:\bCBL\b)", "Citadele (CBL)", "Citadele (CBL)"),
 ]
 _RX = [(a[0], a[2], re.compile(a[3], re.I)) for a in ACTORS]          # santrumpos – (?-i:…), skiria didžiąsias raides
 SOURCE_ACTOR = {"LIPFA": "lipfa", "Finansų ministerija": "finmin", "Vyriausybė": "lrv", "SADM": "sadm", "Riigikogu": "riigikogu", "Tuleva": "Tuleva", "Seimas": "seimas"}
