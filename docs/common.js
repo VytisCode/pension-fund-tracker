@@ -1820,7 +1820,7 @@ if (typeof MutationObserver !== 'undefined') { let ttT; new MutationObserver(() 
 const CTRYS = ['LT', 'LV', 'EE'];
 let PCTRY = 'LT';
 const LANG_NAMES = { lt: 'Lietuvių', en: 'English', lv: 'Latviešu', et: 'Eesti' };
-const HOME_NA = { nw: 's3', eu: 's3', pv: 's3' };   // Pradžios / Rinkos faktų skirtukai, kurių šalies duomenų dar nėra
+const HOME_NA = { eu: 's3', pv: 's3' };   // Pradžios / Rinkos faktų skirtukai, kurių šalies duomenų dar nėra
 const bxH = (c, tab, pl = 'II') => `baltic.html#c=${c}&pl=${pl}&tab=${tab}`;
 // [LV, EE, priežastis: 'sN' – ruošiama N etape, 'data' – šalies duomenų nėra, 'all' – bendras visoms šalims]
 const CTRY_PAGES = {

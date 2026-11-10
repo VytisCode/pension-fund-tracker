@@ -70,7 +70,8 @@ addStrings({ nw: {
   xh: ['Data', 'Šalis', 'Leidinys', 'Antraštė', 'Aprašas', 'Nuoroda', 'Temos', 'Veikėjai (id)'], shW: 'Bangos', shA: 'Veikėjai', shS: 'Seimas',
   xw: ['Tema', 'Pradžia', 'Pabaiga', 'Savaitės', 'Straipsniai', 'Piko savaitė', 'Straipsniai piko savaitę', 'Piko antraštė'], xs: ['Data', 'Darbotvarkės klausimas', 'Stadija', 'Projektas', 'Kategorija', 'Nuoroda', 'Pranešėjai'] } });
 
-const NWS = { c: 'LT', t: '', q: '', n: 30, p: '', from: '', to: '', a: '', g: '', w: null, sc: 'kaupimas', sn: 12 };
+const NW_C = typeof CTRY_COPY !== 'undefined' ? CTRY_COPY : 'LT';   // šalies kopijoje (index_lv/ee) – tos šalies naujienos
+const NWS = { c: NW_C, t: '', q: '', n: 30, p: '', from: '', to: '', a: '', g: '', w: null, sc: 'kaupimas', sn: 12 };
 const NW_TOPICS = ['reform', 'tax', 'state', 'returns', 'fees', 'payout', 'politics'];
 const NW_CUE = /\b(siūl\w*|ragin\w*|kritik\w*|nepritar\w*|pritar\w*|prieš|atmet\w*|palaik\w*|perspėj\w*|reikalauj\w*|žad\w*|pažad\w*|griežtai|ierosin\w*|aicin\w*|kritiz\w*|atbalst\w*|iebilst\w*|noraid\w*|brīdin\w*|ettepanek\w*|kriti\w*|toeta\w*|vastu|hoiat\w*|nõua\w*|propos\w*|urg\w*|critici\w*|support\w*|oppos\w*|against|warn\w*|reject\w*)/giu;
 const nwTopic = k => T().nw.t[k] || k;
@@ -179,7 +180,7 @@ function nwStance() {                                         // visa šalies is
 function renderNews() {
   const t = T().nw, box = document.getElementById('nwBody');
   const lt = document.getElementById('tdNews');
-  if (lt) lt.innerHTML = nwHas() ? `<h2>${t.latest}</h2>${NEWS.filter(r => r[1] === 'LT').slice(0, 5).map(r => nwCard(r)).join('')}<p class="more"><a href="#" data-gonw="1">${t.toAll}</a></p>` : '';
+  if (lt) lt.innerHTML = nwHas() ? `<h2>${t.latest}</h2>${NEWS.filter(r => r[1] === NW_C).slice(0, 5).map(r => nwCard(r)).join('')}<p class="more"><a href="#" data-gonw="1">${t.toAll}</a></p>` : '';
   if (!box) return;
   nwHashQ();
   document.getElementById('nwTitle').textContent = t.title; document.getElementById('nwLead').textContent = t.lead;
