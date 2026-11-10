@@ -84,6 +84,11 @@ const NW_ICO = {   // temų piktogramos (savininkas 2026-11-10: patiko ikonos ma
   payout: '<path d="M20 7H5a2 2 0 0 1 0-4h13v4M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/>',
   politics: '<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',
 };
+const NW_TCOL = { reform: '#8a5a2b', tax: '#7d4f8c', state: '#4f6f9a', returns: '#3f7a4a', fees: '#a0612a', payout: '#2f7f83', politics: '#8d3f3f' };
+/* Pradžios naujienų sąrašas (maketas): spalvota temos ikona, antraštė, šaltinis, data dešinėje */
+const nwRow = r => { const tp = (r[6] || '').split(';').find(x => NW_ICO[x]), c = NW_TCOL[tp] || 'var(--text-3)';
+  return `<a class="nwrow" href="${hEsc(r[5])}" target="_blank" rel="noopener noreferrer"><span class="nwti" style="color:${c};background:color-mix(in srgb, ${c} 14%, transparent)">${svgI(tp ? NW_ICO[tp] : '<path d="M4 4h13v16H6a2 2 0 0 1-2-2zM17 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3"/>', 18)}</span>`
+    + `<span class="nwtx"><b>${hEsc(r[3])}</b><small>${hEsc(r[2] || '')}${tp ? ` · ${hEsc(nwTopic(tp))}` : ''}</small></span><time>${hEsc(String(r[0]).slice(5))}</time></a>`; };
 const nwIco = k => NW_ICO[k] ? `<span class="nwico">${svgI(NW_ICO[k], 14)}</span>` : '';
 const nwHas = () => typeof NEWS !== 'undefined' && NEWS && NEWS.length;
 const nwAct = () => typeof NEWS_ACT !== 'undefined' ? NEWS_ACT : [];
@@ -190,7 +195,7 @@ function nwStance() {                                         // visa šalies is
 function renderNews() {
   const t = T().nw, box = document.getElementById('nwBody');
   const lt = document.getElementById('tdNews');
-  if (lt) lt.innerHTML = nwHas() ? `<h2>${t.latest}</h2>${NEWS.filter(r => r[1] === NW_C).slice(0, 5).map(r => nwCard(r)).join('')}<p class="more"><a href="#" data-gonw="1">${t.toAll}</a></p>` : '';
+  if (lt) lt.innerHTML = nwHas() ? `<h2>${t.latest}</h2><div class="nwrows">${NEWS.filter(r => r[1] === NW_C).slice(0, 6).map(r => nwRow(r)).join('')}</div><p class="more"><a href="#" data-gonw="1">${t.toAll}</a></p>` : '';
   if (!box) return;
   nwHashQ();
   document.getElementById('nwTitle').textContent = t.title; document.getElementById('nwLead').textContent = t.lead;
