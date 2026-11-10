@@ -245,7 +245,7 @@ function renderHeader(active, onLang) {
   document.getElementById('theme').addEventListener('click', () => {
     el.dataset.theme = isDark() ? 'light' : 'dark';
     try { localStorage.setItem('theme', el.dataset.theme); } catch (e) {}
-    apply(); if (typeof onLang === 'function') onLang();   // lentelių spalvos (heatmap) priklauso nuo temos
+    apply(); if (p3Colors.on) p3Colors(); if (typeof onLang === 'function') onLang();   // lentelių spalvos (heatmap) priklauso nuo temos
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
   document.getElementById('designBtn').addEventListener('click', () => {   // grafikai piešiami su spalvomis iš CSS – todėl perkraunama
@@ -1522,10 +1522,12 @@ function kpiIII() {                      // III pakopa iš data3.js (Rezultatai 
 /* III pakopos spalvos: bendrovės prekės ženklo atspalviai, kiekvienam fondui savas (kaip p3.js) */
 function p3Colors() {
   const BR = { ARTEA: [230, 55, 40], GOINDEX: [178, 80, 38], LUMINOR: [276, 52, 52], SEB: [104, 70, 34], SWEDBANK: [22, 100, 54], ALLIANZ: [205, 75, 50],
-    LHV: [210, 10, 30], TULEVA: [190, 70, 40], CITADELE: [350, 65, 45], INVL: [215, 70, 32], SIGNET: [40, 85, 42], INDEXO: [165, 55, 36], ABLV: [300, 40, 45], BLUEORANGE: [28, 85, 50] }, SH = [0, 14, -10, 24, -18, 7], seen = {};
+    LHV: [210, 10, 30], TULEVA: [190, 70, 40], CITADELE: [350, 65, 45], CBL: [350, 65, 45], INVL: [215, 70, 32], SIGNET: [40, 85, 42], INDEXO: [165, 55, 36], ABLV: [300, 40, 45], BLUEORANGE: [28, 85, 50] }, SH = [0, 14, -10, 24, -18, 7], seen = {};
   const hue = b => { let x = 0; for (const ch of b || '') x = (x * 31 + ch.charCodeAt(0)) % 360; return [x, 55, 45]; };   // nežinomas valdytojas – pastovi spalva
+  p3Colors.on = true; const dk = isDarkUI();   // tamsioje temoje – šviesesni atspalviai (tamsūs ženklai, pvz. LHV, INVL, ant tamsaus fono nesimato)
   DATA.providers.forEach((p, i) => { const [h, s, l] = BR[p.brand] || hue(p.brand); const k = seen[p.brand] = (seen[p.brand] ?? -1) + 1;
-    document.documentElement.style.setProperty(`--s${i + 1}`, `hsl(${h} ${s}% ${Math.max(22, Math.min(74, l + SH[k % SH.length]))}%)`); });
+    const L = l + SH[k % SH.length] + (dk ? 18 : 0);
+    document.documentElement.style.setProperty(`--s${i + 1}`, `hsl(${h} ${s}% ${Math.max(dk ? 48 : 22, Math.min(dk ? 82 : 74, L))}%)`); });
 }
 function kpiII() {                       // II pakopa iš data.js („Rezultatai“, „Apžvalga“)
   const fs = DATA.groups.flatMap(g => g.funds), last = Math.max(...fs.map(f => f.d[f.d.length - 1]));

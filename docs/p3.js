@@ -34,7 +34,8 @@ const SHADE = [0, 14, -10, 24, -18, 7];
   const seen = {};
   DATA.providers.forEach((p, i) => {
     const [h, s, l] = BRAND[p.brand]; const k = seen[p.brand] = (seen[p.brand] ?? -1) + 1;
-    document.documentElement.style.setProperty(`--s${i + 1}`, `hsl(${h} ${s}% ${Math.max(22, Math.min(74, l + SHADE[k % SHADE.length]))}%)`);
+    const dk = isDarkUI(), L = l + SHADE[k % SHADE.length] + (dk ? 18 : 0);   // tamsioje temoje – šviesesni atspalviai
+    document.documentElement.style.setProperty(`--s${i + 1}`, `hsl(${h} ${s}% ${Math.max(dk ? 48 : 22, Math.min(dk ? 82 : 74, L))}%)`);
   });
 })();
 
