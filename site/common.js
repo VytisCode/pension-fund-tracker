@@ -62,7 +62,8 @@ const groupLabel = g => g.lbl ? g.lbl[lang] || g.lbl.lt : g.id === 'turto' ? T()
 try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 const isDarkUI = () => { const t = document.documentElement.dataset.theme; return t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches); };
 /* Naujas dizainas (2026-11-10, bandomasis): tas pats turinys, kitas apvalkalas – style.css blokas [data-design="v2"]; įjungiama Įrankių meniu, prisimenama naršyklėje (?design=v2 / ?design=v1) */
-try { const q = new URLSearchParams(location.search).get('design'); if (q) localStorage.setItem('design', q); if (localStorage.getItem('design') !== 'v1') document.documentElement.dataset.design = 'v2'; } catch (e) { document.documentElement.dataset.design = 'v2'; }   // naujas dizainas – numatytasis (savininkas 2026-11-10); senasis – „Įrankiai“ arba ?design=v1
+document.documentElement.dataset.design = 'v2';   // vienintelis dizainas (savininkas 2026-11-10: bandomojo jungiklio ir senojo dizaino nereikia)
+try { localStorage.removeItem('design'); } catch (e) {}
 document.documentElement.dataset.pl = document.documentElement.dataset.pd = 'w';   // šilta v2 paletė (style.css)
 
 /* „Atnaujinti duomenis“ mygtukas rodomas tik savininko naršyklėje: įjungiama vieną kartą atidarius bet kurį puslapį su ?owner=1
@@ -147,7 +148,6 @@ function renderHeader(active, onLang) {
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
-        <button class="btn" type="button" id="designBtn"></button>
         <a class="btn" id="opsLink" href="ops.html"></a>
         <a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a>
         <div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div></div></div>
@@ -210,7 +210,6 @@ function renderHeader(active, onLang) {
       const sd = document.getElementById('secDesc'); if (sd && cs) sd.textContent = t.secDesc[cs.id] || '';
       document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
     document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
-    document.getElementById('designBtn').textContent = '✦ ' + (el.dataset.design === 'v2' ? t.designOld : t.designNew);
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
     const lb = document.getElementById('lang');
     lb.value = ulang; lb.title = t.langLbl; lb.setAttribute('aria-label', t.langLbl);
@@ -248,10 +247,6 @@ function renderHeader(active, onLang) {
     apply(); if (p3Colors.on) p3Colors(); if (typeof onLang === 'function') onLang();   // lentelių spalvos (heatmap) priklauso nuo temos
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
-  document.getElementById('designBtn').addEventListener('click', () => {   // grafikai piešiami su spalvomis iš CSS – todėl perkraunama
-    try { localStorage.setItem('design', el.dataset.design === 'v2' ? 'v1' : 'v2'); } catch (e) {}
-    location.reload();
-  });
   tmb.addEventListener('click', () => tmShow(tmp.hidden));
   const dlb = document.getElementById('dlBtn'), dlp = document.getElementById('dlPanel');
   dlb.addEventListener('click', () => { dlp.hidden = !dlp.hidden; dlb.setAttribute('aria-expanded', !dlp.hidden); if (!dlp.hidden) dlRender(); });
