@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<link rel="stylesheet" href="style.css?v=789a82e1">
+<link rel="stylesheet" href="style.css?v=6248d73f">
 <style>
   .today { display: grid; gap: 14px; }
   .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
@@ -24,6 +24,7 @@
   .mb .t { height: 8px; position: relative; }
   .mb .t i { position: absolute; top: 0; height: 8px; border-radius: 2px; }
   .mb .t::before { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px solid var(--axis); }
+  .mb.pos { grid-template-columns: minmax(74px, auto) 1fr auto; } .mb.pos .t::before { display: none; } .mb.pos > span:first-child, .mb.pos > span:nth-child(3n+1) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mb .n { text-align: right; font-variant-numeric: tabular-nums; }
   .says p { margin: 0 0 6px; }
   .says p:last-child { margin: 0; }
@@ -223,11 +224,11 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data_bx_lv2.js?v=0c0d2428"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
-<script src="common.js?v=734f9f59"></script><script>BXM.c = "LV"; BXM.pl = "II"; var CTRY_COPY = "LV"; p3Colors();</script>
+<script src="data_bx_lv2.js?v=2e26fba0"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="common.js?v=89ceaadd"></script><script>BXM.c = "LV"; BXM.pl = "II"; var CTRY_COPY = "LV"; p3Colors();</script>
 
 <script src="data_journey.js"></script>
-<script src="data_rep.js?v=c8055bd0"></script>
+<script src="data_rep.js?v=d408d6ee"></script>
 <script src="data_mkt_lv.js?v=86f64ed0"></script>
 <script src="data_earn_lv.js?v=d5f185b1"></script>
 <script src="earn.js?v=db57aa13"></script>
@@ -391,6 +392,18 @@ function renderLdr(c, t, P) {
 }
 document.addEventListener('click', e => { const b = e.target.closest('#ldrC [data-ld]'); if (!b) return; LDM = b.dataset.ld; render(); });
 document.addEventListener('change', e => { if (e.target.id !== 'ldG') return; LDG = e.target.value; render(); });
+function barsPos(rows) {                  // teigiamos juostos nuo nulio (turto dalis, skirtumas grupėje): [pavadinimas, spalva, reikšmė, tekstas]
+  const m = Math.max(...rows.map(r => r[2]), 0.01);
+  return `<div class="mb pos">${rows.map(([l, col, v, tx]) => `<span>${hEsc(l)}</span><span class="t"><i style="background:${col};width:${v / m * 100}%;left:0"></i></span><span class="n">${tx}</span>`).join('')}</div>`;
+}
+function aumBars(c) {                     // savininkas 2026-11-10: tuščios kortelės – „daugiau info apie tą pačią temą“: turtas pagal valdytoją (tie patys fondai kaip sumai)
+  const by = {}; DATA.groups.flatMap(g => g.funds).filter(f => f.assets && f.assetsDate >= c.end - 10).forEach(f => { const k = CTRY ? MOF[f.provider] : f.provider; by[k] = (by[k] || 0) + f.assets; });
+  return barsPos(Object.entries(by).sort((a, b) => b[1] - a[1]).map(([p, v]) => [mLab(p), mCol(p), v, `${num(v / c.aum * 100, 1)} %`]));
+}
+function gapBars(c) {                     // skirtumas tarp geriausio ir prasčiausio kiekvienoje grupėje
+  const pp = lang === 'lt' ? 'p. p.' : 'pp';
+  return barsPos(c.groups.filter(g => g.gap != null).map(g => [groupLabel(g.g).replace(/\s*\(.*$/, ''), 'rgba(255,255,255,.6)', g.gap, `${num(g.gap, 2)} ${pp}`]));
+}
 const money = v => v >= 1e9 ? `${num(v / 1e9, 2)} ${T().bn}` : `${num(v / 1e6, 1)} ${T().mn}`;
 function render() {
   const t = T(), c = compute(), $ = id => document.getElementById(id);
@@ -404,14 +417,14 @@ function render() {
   const card = (l, v, s, extra = '', href = 'performance.html', hl = false, ic = '') => `<div class="bk${hl ? ' hl' : ''}"><span class="l">${ic ? `<span class="kico">${svgI(KICO[ic], 15)}</span>` : ''}${l}</span><span class="v">${v}</span><span class="s">${s}</span>${extra}<a class="more" href="${href}">${t.more}</a></div>`;
   let h = card(t.kLead(P), `${mLab(L.id)} ${pct(L.ytd)}`, t.kLeadS(mLab(W.id), pct(W.ytd)), bars(c.byY, 'ytd'), 'performance.html', false, 'lead');
   h += card(t.kWeek(P), c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(mLab(B.id), mLab(Wk.id)) : '', sparkAvg() + bars(c.byW, 'wk'), 'performance.html', false, 'avg');
-  h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), '', 'aum.html', false, 'aum');
+  h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), aumBars(c), 'aum.html', false, 'aum');
   const R = REF && c.mgr.find(m => m.id === REF);
   if (R) {
     const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd));
     h += card(t.kRef(mLab(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true, 'ref');
   } else {
     const G = c.groups.filter(g => g.gap != null).sort((a, b) => b.gap - a.gap)[0];
-    h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '', '', 'performance.html', false, 'gap');
+    h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '', gapBars(c), 'performance.html', false, 'gap');
   }
   $('big').innerHTML = h;
   renderLdr(c, t, P);

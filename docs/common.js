@@ -1565,7 +1565,7 @@ function chartTitle(box) {                  // artimiausia antraštė prieš len
   let h = null;
   for (let n = box; n && n !== document.body && !h; n = n.parentElement) {
     for (let p = n.previousElementSibling; p && !h; p = p.previousElementSibling) {
-      if (isH(p)) h = p; else if (p.querySelectorAll) { const hs = [...p.querySelectorAll('h2, h3, .group-h')].filter(isH); if (hs.length && !p.querySelector('table, svg')) h = hs[hs.length - 1]; }
+      if (isH(p)) h = p; else if (p.querySelectorAll) { const hs = [...p.querySelectorAll('h2, h3, .group-h')].filter(isH); if (hs.length && (p.classList.contains('chd') || !p.querySelector('table, svg'))) h = hs[hs.length - 1]; }
     }
   }
   if (h) { h = h.cloneNode(true); h.querySelectorAll('button, select, .info, .ik, .gbadge').forEach(n => n.remove()); }
@@ -1604,9 +1604,9 @@ function chartPng(box) {
 function savePng(blob, box) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (chartTitle(box).replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 60) || 'grafikas') + '.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
 function chartTools() {
   document.querySelectorAll('.chart, .riskmap, .mchart').forEach(box => {
-    if (!box.querySelector('svg') || box.querySelector(':scope > .ctools')) return;
+    if (!box.querySelector('svg') || box.querySelector(':scope > .ctools') || (box._ctl && box._ctl.isConnected)) return;
     if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
-    const t = document.createElement('div'); t.className = 'ctools';
+    const t = document.createElement('div'); t.className = 'ctools'; box._ctl = t; t._tgt = box;
     const card = box.closest('section, .card'), ctbl = box._xl ? null : card && [...card.querySelectorAll('table')].find(x => x.rows.length > 1 || x.hidden);
     t.innerHTML = `<button type="button" class="btn ico" data-a="cp" title="${T().cpImg}" aria-label="${T().cpImg}">⧉</button><button type="button" class="btn ico" data-a="png" title="${T().pngImg}" aria-label="${T().pngImg}">⤓</button>`
       + (box._xl || ctbl ? `<button type="button" class="btn ico xl" data-a="xl" title="${T().tXl}" aria-label="${T().tXl}">Excel</button>` : '');
@@ -1646,7 +1646,51 @@ function kpiDecor() {
     if (sm && !sm.querySelector('.kd')) sm.innerHTML = sm.innerHTML.replace(/^\s*([+−-]\s?[\d\s.,]+(?:&nbsp;)?(?:%|p\.\s?p\.|pp|mln\.|mlrd\.)?(?:\s?€)?)/, (m0, x) => `<span class="kd ${/^\s*[−-]/.test(x) ? 'neg' : 'pos'}">${x}</span>`);
   });
 }
-if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
+/* Vienoda kortelės antraštė (maketas, savininkas 2026-11-10 „3. Patinka“): ikona + mažas temos užrašas + pavadinimas + laikotarpio eilutė,
+   o tos lentelės / grafiko įrankiai (⧉ ⊞ Excel) – toje pačioje eilutėje dešinėje. Pavadinimo tekstas nekeičiamas (PNG, Excel, paieška). */
+const CH_CAT = [
+  [/vieta|rank|reiting|lyder|leader|vieta|vietas|koht|edetabel/i, '<path d="M4 18h16M5 18l-1-9 5 4 3-7 3 7 5-4-1 9"/>', ['Reitingas', 'Ranking', 'Reitings', 'Edetabel']],
+  [/rizik|risk|svyrav|volatil|kritim|drawdown|nuokryp/i, '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/>', ['Rizika', 'Risk', 'Risks', 'Risk']],
+  [/rinkos dal|market share|tirgus daļ|turuosa/i, '<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>', ['Rinkos dalis', 'Market share', 'Tirgus daļa', 'Turuosa']],
+  [/dalyv|particip|dalībniek|osalej|perėjim|switch/i, KPI_ICO[0][1], ['Dalyviai', 'Members', 'Dalībnieki', 'Osalejad']],
+  [/mokest|fee|kaštai|komisij|tasu|išlaid|ter\b/i, KPI_ICO[4][1], ['Mokesčiai', 'Fees', 'Komisijas', 'Tasud']],
+  [/portfel|pozicij|holding|sudėt|investicij|vertybin|obligacij|akcij|bond|equit|alternat/i, KPI_ICO[5][1], ['Portfelis', 'Portfolio', 'Portfelis', 'Portfell']],
+  [/grąž|return|ienesīg|tootl|kilim|run-?up|sharpe/i, KPI_ICO[2][1], ['Grąža', 'Return', 'Ienesīgums', 'Tootlus']],
+  [/turt|aktyv|asset|aktīv|vara|aum|įmok|contribut|sraut|flow/i, KPI_ICO[3][1], ['Turtas', 'Assets', 'Aktīvi', 'Varad']],
+  [/palygin|compar|salīdz|võrdl|skirtum/i, '<path d="M12 3v18M5 21h14M6 8l-3 6a3 3 0 0 0 6 0zM18 8l-3 6a3 3 0 0 0 6 0zM4 7h16"/>', ['Palyginimas', 'Comparison', 'Salīdzinājums', 'Võrdlus']],
+];
+const CH_BETWEEN = '.cap, .meta, .note, .seg, .tools, .ovpick, .ctrl, .ldsel, p, label, select';
+function cardHead() {
+  if (document.documentElement.dataset.design !== 'v2') return;
+  document.querySelectorAll('.chd > .ttools, .chd > .ctools').forEach(t => { if (t._tgt && !t._tgt.isConnected) t.remove(); });   // lentelė perpiešta – senus įrankius išmesti
+  document.querySelectorAll('.ttools, .ctools').forEach(t => {
+    if (t._ch || !t.isConnected || t.parentElement.closest('.chd')) return;
+    const blk = t.classList.contains('ctools') ? t.parentElement : t;
+    let ttl = null, n = blk.previousElementSibling;
+    if (!n && t.classList.contains('ttools')) { const hp = blk.parentElement; if (hp && hp.children.length <= 2 && !hp.matches('section, .card')) n = hp.previousElementSibling; }   // įrankiai su lentele apgaubti (tinklelis)
+    for (let i = 0; n && i < 4; i++, n = n.previousElementSibling) {
+      if (n.matches('h2, h3, .group-h') && n.textContent.trim()) { ttl = n; break; }
+      if (n.matches('.chd')) break;
+      if (n.matches('.ldhd')) { t._ch = 1; n.append(t); return; }   // lyderių kortelė turi savo antraštę
+      if (!n.matches(CH_BETWEEN) || n.querySelector('table, svg:not(.info svg)')) break;
+    }
+    if (!ttl) { t._ch = 1; return; }
+    let hd = ttl.parentElement.matches('.chtx') ? ttl.parentElement.parentElement : null;
+    if (hd) { const old = hd.querySelector(':scope > .ttools, :scope > .ctools'); if (old && old._tgt && old._tgt.isConnected) { t._ch = 1; return; } if (old) old.remove(); }   // vienas pavadinimas – vieni įrankiai
+    else {
+      hd = document.createElement('div'); hd.className = 'chd'; ttl.before(hd);
+      const tx = document.createElement('div'); tx.className = 'chtx'; hd.append(tx);
+      const tt = ttl.textContent, cat = CH_CAT.find(([re]) => re.test(tt));
+      const L = { lt: 0, en: 1, lv: 2, et: 3 }[typeof ulang === 'string' ? ulang : lang] ?? 1;
+      hd.insertAdjacentHTML('afterbegin', `<i class="chico" aria-hidden="true">${svgI(cat ? cat[1] : '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>', 15)}</i>`);
+      if (cat) tx.insertAdjacentHTML('afterbegin', `<span class="cheb">${cat[2][L]}</span>`);
+      tx.append(ttl); const nx = hd.nextElementSibling;
+      if (nx && nx.matches('.cap, .meta') && !nx.querySelector('table, svg, select, button')) tx.append(nx);
+    }
+    t._ch = 1; hd.append(t);
+  });
+}
+if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); cardHead(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
 
 /* ---------- Žodynėlis (auditas #66) ----------
    Užvedus pelę (telefone – palietus) ant lentelės stulpelio ar KPI pavadinimo su terminu rodomas paaiškinimas.
@@ -1855,7 +1899,7 @@ function tableTools() {
     if (tbl._tt || tbl.hidden || tbl.closest('.ntc, .ttools, header, .fresh, .fmore') || tbl.rows.length < 2) return;
     tbl._tt = true; if (!tbl.id) tbl.id = 'tbl' + (++TBL_N);
     const host = tbl.closest('.scroll') || tbl;
-    const t = document.createElement('div'); t.className = 'ttools';
+    const t = document.createElement('div'); t.className = 'ttools'; t._tgt = tbl;
     t.innerHTML = `<button type="button" class="btn ico" data-a="img" title="${T().tCpImg}" aria-label="${T().tCpImg}">⧉</button>`
       + `<button type="button" class="btn ico" data-a="tbl" title="${T().tCpTbl}" aria-label="${T().tCpTbl}">⊞</button>`
       + `<button type="button" class="btn ico xl" data-a="xl" title="${T().tXl}" aria-label="${T().tXl}">Excel</button>`;

@@ -900,3 +900,17 @@ table.ldt tr.top b { font-weight: 700; }
 .nwrow .nwtx b { font-weight: 600; font-size: 14.5px; line-height: 1.35; }
 .nwrow .nwtx small { color: var(--text-3); font-size: 12.5px; }
 .nwrow time { flex: none; color: var(--text-3); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+/* Vienoda kortelės antraštė (maketas 3): ikona + temos užrašas + pavadinimas + laikotarpis, įrankiai dešinėje toje pačioje eilutėje */
+@media screen {
+  [data-design="v2"] .chd { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 8px; min-width: 0; }
+  [data-design="v2"] .chd:first-child { margin-top: 0; }
+  [data-design="v2"] .chico { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-style: normal; margin-top: 1px; }
+  [data-design="v2"] .chtx { flex: 1 1 auto; min-width: 0; }
+  [data-design="v2"] .chd .chtx > h2, [data-design="v2"] .chd .chtx > h3, [data-design="v2"] section.sec .chd .chtx > .group-h, [data-design="v2"] .chd .chtx > .group-h { margin: 0; padding-top: 0; }
+  [data-design="v2"] .chtx > .cap, [data-design="v2"] .chtx > .meta { margin: 2px 0 0; }
+  [data-design="v2"] .cheb { display: block; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3, var(--text-2)); line-height: 1.3; margin-bottom: 1px; }
+  [data-design="v2"] .chd > .ttools, [data-design="v2"] .chd > .ctools { position: static; flex: 0 0 auto; margin: 0 0 0 auto; opacity: .6; }
+  [data-design="v2"] section:hover .chd > .ctools, [data-design="v2"] .card:hover .chd > .ctools, [data-design="v2"] .chd > .ctools:focus-within { opacity: 1; }
+  @media (max-width: 640px) { [data-design="v2"] .chd { flex-wrap: wrap; } [data-design="v2"] .chd > .ttools, [data-design="v2"] .chd > .ctools { margin-left: 38px; } }
+}
