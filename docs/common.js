@@ -1623,7 +1623,30 @@ function chartTools() {
     box.append(t);
   });
 }
-if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(chartTools, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
+/* KPI plytelės (maketas, savininkas 2026-11-10: „ir faktų kortelėms, ir kitur“): ikona pagal pavadinimą, pokytis žalias/raudonas */
+const KPI_ICO = [
+  [/dalyv|particip|dalībniek|osalej|investuotoj|investor|liikm/i, '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3 3 0 0 1 0 6M18 14c2 .7 3 2.8 3 6"/>'],
+  [/prieaug|inflow|pieaug|juurdekasv/i, '<path d="M12 19V5M5 12l7-7 7 7"/>'],
+  [/grąž|return|ienesīg|tootl/i, '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/>'],
+  [/turt|asset|aktīv|vara|aum/i, '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>'],
+  [/mokest|fee|kaštai|komisij|tasu/i, '<path d="M19 5L5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>'],
+  [/pozicij|position|vertybin|securit|popier|instrument/i, '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'],
+  [/fond|fund|plān|plaan/i, '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>'],
+  [/ataskait|report|pārskat|aruann|data|date|iki|nuo|since|until|istorij|history|mėnes|month|ketv|quarter/i, '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+];
+function kpiDecor() {
+  if (document.documentElement.dataset.design !== 'v2') return;
+  document.querySelectorAll('.kpi').forEach(k => {
+    if (k._kd || k.closest('.hkpi')) return; const lab = k.querySelector(':scope > span'); if (!lab || !lab.textContent.trim()) return; k._kd = true;
+    const hit = KPI_ICO.find(([re]) => re.test(lab.textContent));
+    if (hit) lab.insertAdjacentHTML('afterbegin', `<i class="kico" aria-hidden="true">${svgI(hit[1], 14)}</i>`);
+    const lt = lab.textContent.trim(), fm = [...document.querySelectorAll('.fmini')].find(x => { const sp = x.querySelector('span'); return sp && sp.textContent.split(':')[0].trim() === lt; });   // tas pats rodiklis faktų kortelėje – jo kreivė
+    if (fm && fm.querySelector('svg')) { const sv = fm.querySelector('svg').cloneNode(true); sv.classList.add('kspark'); k.append(sv); }
+    const sm = k.querySelector(':scope > small');
+    if (sm && !sm.querySelector('.kd')) sm.innerHTML = sm.innerHTML.replace(/^\s*([+−-]\s?[\d\s.,]+(?:&nbsp;)?(?:%|p\.\s?p\.|pp|mln\.|mlrd\.)?(?:\s?€)?)/, (m0, x) => `<span class="kd ${/^\s*[−-]/.test(x) ? 'neg' : 'pos'}">${x}</span>`);
+  });
+}
+if (typeof MutationObserver !== 'undefined') { let ctT; new MutationObserver(() => { clearTimeout(ctT); ctT = setTimeout(() => { chartTools(); kpiDecor(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true }); }
 
 /* ---------- Žodynėlis (auditas #66) ----------
    Užvedus pelę (telefone – palietus) ant lentelės stulpelio ar KPI pavadinimo su terminu rodomas paaiškinimas.
