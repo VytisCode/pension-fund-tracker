@@ -299,3 +299,15 @@ fund_id,pillar,date,rank,name,weight,first_seen
 91,II,2026-09-30,8,Microsoft Corp,2.2,2026-10-21
 91,II,2026-09-30,9,Taiwan Semiconductor Manufacturing Co Ltd ADR,2.0,2026-10-21
 91,II,2026-09-30,10,QUALCOMM Inc,1.7,2026-10-21
+76,II,2026-10-30,1,BlackRock BGIF - Global Government Bond Index - X2,25.1,2026-11-10
+76,II,2026-10-30,2,BlackRock FIDF - Euro Credit Bond Index Fund - Flexible,24.55,2026-11-10
+76,II,2026-10-30,3,BlackRock FIDF - Euro Government Bond Index Fund - Flexible,24.49,2026-11-10
+76,II,2026-10-30,4,BlackRock BGIF - Euro Aggregate Bond Index Fund - X2,24.0,2026-11-10
+77,II,2026-10-30,1,BlackRock ISF - Developed World ESG Screened Index,29.52,2026-11-10
+77,II,2026-10-30,2,Xtrackers MSCI World Screened UCITS ETF 1C,29.48,2026-11-10
+77,II,2026-10-30,3,Amundi MSCI World Screened UCITS ETF,29.46,2026-11-10
+77,II,2026-10-30,4,iShares Emerging Market Screened Equity Index Fund (IE),11.49,2026-11-10
+81,III,2026-10-30,1,Xtrackers MSCI World Screened UCITS ETF 1C,29.5,2026-11-10
+81,III,2026-10-30,2,Amundi MSCI World Screened UCITS ETF,29.48,2026-11-10
+81,III,2026-10-30,3,BlackRock ISF - Developed World ESG Screened Index,29.16,2026-11-10
+81,III,2026-10-30,4,iShares Emerging Market Screened Equity Index Fund (IE),11.67,2026-11-10
