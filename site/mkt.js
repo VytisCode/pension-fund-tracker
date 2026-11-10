@@ -893,7 +893,7 @@ function pvFacts() {
       const a = nb.add(`${g.gl} · ${N.best} (${fundOf(pl, g.b)[0]}) · ${t.th5y.toLowerCase()}, %`, rb, () => `_xlfn.MAXIFS(${MKX.D}!O:O,${byD(d0)},${cg})`, Zp), b = nb.add(`${g.gl} · ${N.worst} (${fundOf(pl, g.w)[0]}) · ${t.th5y.toLowerCase()}, %`, rw, () => `_xlfn.MINIFS(${MKX.D}!O:O,${byD(d0)},${cg})`, Zp);
       const ea = nb.add(`${N.best} · ${N.e}`, e(rb), c => `1000*(1+${c(a)}/100)^5`, Zi), eb = nb.add(`${N.worst} · ${N.e}`, e(rw), c => `1000*(1+${c(b)}/100)^5`, Zi); nb.add(N.diff, e(rb) - e(rw), c => `${c(ea)}-${c(eb)}`, Zi);
       out.push({ h: N.fcH, text: N.fc(g.gl, fundOf(pl, g.b)[0], pctPlain(rb), fundOf(pl, g.w)[0], pctPlain(rw), mEurs(e(rb)), mEurs(e(rw)), mEurs(e(rb) - e(rw))), calc: N.calcFc, src, nums: nb.a, tp: 'ret', ex: () => ({ k: 'ret', pl, h: '5y', eur: true, g: g.gi }) }); } }
-  out.push(...pvMore(), ...pvWages());
+  out.push(...pvMore(), ...(MKT.c ? [] : pvWages()));   // LV/EE: Lietuvos atlyginimų ir pensijų duomenys netinka (šalies – vėliau, baltic_macro.csv)
   return out;
 }
 /* sudėtingesni faktai visuomenei (savininkas 2026-10-19: „jų reiktų daugiau ir labiau sofistikuotų“): ilgo laikotarpio grandininė grąža,
