@@ -545,3 +545,5 @@ ts,src,ev,dd,n,msg
 2026-11-10T13:00,p3.LUMINOR,new,2026-11-09,5,
 2026-11-10T13:00,bx.lv_lb,ok,,,vėl veikia
 2026-11-10T13:28,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-10T15:27,idx.EURUSD,fail,,,network: TimeoutError: The read operation timed out
+2026-11-10T15:27,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
