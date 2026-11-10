@@ -6,7 +6,11 @@
   "ok": "2026-11-10"
  },
  "bx.lv_lb": {
-  "ok": "2026-11-10"
+  "err": "2026-11-10",
+  "kind": "other",
+  "msg": "Traceback (most recent call last): (išėjimo kodas 1)",
+  "ok": "2026-11-10",
+  "since": "2026-11-10"
  },
  "bx.lv_plans": {
   "ok": "2026-11-10"
@@ -36,11 +40,7 @@
   "ok": "2026-11-10"
  },
  "idx.EURUSD": {
-  "err": "2026-11-10",
-  "kind": "network",
-  "msg": "HTTPError: HTTP Error 504: Gateway Time-out",
-  "ok": "2026-11-10",
-  "since": "2026-11-10"
+  "ok": "2026-11-10"
  },
  "idx.EUR_GOV7Y": {
   "ok": "2026-11-10"
@@ -52,11 +52,7 @@
   "ok": "2026-11-10"
  },
  "idx.SP500": {
-  "err": "2026-11-10",
-  "kind": "other",
-  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
-  "ok": "2026-11-10",
-  "since": "2026-11-10"
+  "ok": "2026-11-10"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",

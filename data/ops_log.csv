@@ -535,3 +535,8 @@ ts,src,ev,dd,n,msg
 2026-11-10T12:03,p3.SEB,new,2026-11-09,8,
 2026-11-10T12:03,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
 2026-11-10T12:03,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-10T12:27,nav.ARTEA,new,2026-11-09,8,
+2026-11-10T12:27,p3.ARTEA,new,2026-11-09,5,
+2026-11-10T12:27,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-10T12:27,idx.EURUSD,ok,,,vėl veikia
+2026-11-10T12:27,idx.SP500,ok,,,vėl veikia
