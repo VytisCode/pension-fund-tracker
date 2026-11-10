@@ -547,3 +547,5 @@ ts,src,ev,dd,n,msg
 2026-11-10T13:28,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-10T15:27,idx.EURUSD,fail,,,network: TimeoutError: The read operation timed out
 2026-11-10T15:27,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-10T15:57,idx.EURUSD,ok,,,vėl veikia
+2026-11-10T15:57,idx.SP500,ok,,,vėl veikia
