@@ -63,8 +63,7 @@ try { const t = localStorage.getItem('theme'); if (t) document.documentElement.d
 const isDarkUI = () => { const t = document.documentElement.dataset.theme; return t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches); };
 /* Naujas dizainas (2026-11-10, bandomasis): tas pats turinys, kitas apvalkalas – style.css blokas [data-design="v2"]; įjungiama Įrankių meniu, prisimenama naršyklėje (?design=v2 / ?design=v1) */
 try { const q = new URLSearchParams(location.search).get('design'); if (q) localStorage.setItem('design', q); if (localStorage.getItem('design') === 'v2') document.documentElement.dataset.design = 'v2'; } catch (e) {}
-try { const u = new URLSearchParams(location.search), d = document.documentElement.dataset;   // šiltos paletės (bandymui): ?pl=l1..l5, ?pd=d1..d5
-  ['pl', 'pd'].forEach(k => { const q = u.get(k); if (q) localStorage.setItem('v2' + k, q); d[k] = localStorage.getItem('v2' + k) || (k === 'pl' ? 'l1' : 'd1'); }); } catch (e) { document.documentElement.dataset.pl = 'l1'; document.documentElement.dataset.pd = 'd1'; }
+document.documentElement.dataset.pl = document.documentElement.dataset.pd = 'w';   // šilta v2 paletė (style.css)
 
 /* „Atnaujinti duomenis“ mygtukas rodomas tik savininko naršyklėje: įjungiama vieną kartą atidarius bet kurį puslapį su ?owner=1
    (išjungiama ?owner=0). Tai tik paslėpimas, ne apsauga: paleisti atnaujinimą GitHub'e vis tiek gali tik savininkas. */
