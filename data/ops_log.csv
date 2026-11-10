@@ -540,7 +540,8 @@ ts,src,ev,dd,n,msg
 2026-11-10T12:27,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-10T12:27,idx.EURUSD,ok,,,vėl veikia
 2026-11-10T12:27,idx.SP500,ok,,,vėl veikia
-2026-11-10T13:17,nav.ALLIANZ,new,2026-11-09,8,
-2026-11-10T13:17,nav.LUMINOR,new,2026-11-09,8,
-2026-11-10T13:17,p3.LUMINOR,new,2026-11-09,5,
-2026-11-10T13:17,bx.lv_lb,ok,,,vėl veikia
+2026-11-10T13:00,nav.ALLIANZ,new,2026-11-09,8,
+2026-11-10T13:00,nav.LUMINOR,new,2026-11-09,8,
+2026-11-10T13:00,p3.LUMINOR,new,2026-11-09,5,
+2026-11-10T13:00,bx.lv_lb,ok,,,vėl veikia
+2026-11-10T13:28,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
