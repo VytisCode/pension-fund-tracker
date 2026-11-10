@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<link rel="stylesheet" href="style.css?v=1bb98265">
+<link rel="stylesheet" href="style.css?v=7537b9ad">
 <style>
   .today { display: grid; gap: 14px; }
   .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
@@ -222,11 +222,11 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data_bx_ee2.js?v=93b1eea0"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_ee2.js?v=fdc2ae9d"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="common.js?v=967b1154"></script><script>BXM.c = "EE"; BXM.pl = "II"; var CTRY_COPY = "EE"; p3Colors();</script>
 
 <script src="data_journey.js"></script>
-<script src="data_rep.js?v=b9985e65"></script>
+<script src="data_rep.js?v=c315a06d"></script>
 <script src="data_mkt_ee.js?v=0f054e8b"></script>
 <script src="data_earn_ee.js?v=c566d855"></script>
 <script src="earn.js?v=db57aa13"></script>
@@ -240,6 +240,8 @@
    papildomai – svertinis pagal fondų paskutinius grynuosius aktyvus (eilutė „Svertinis pagal aktyvus“). */
 if (location.hash.length > 1 && !/^#(go|nwq|tab)=/.test(location.hash)) location.replace('performance.html' + location.hash);   // seni adresai su #… veda į „Rezultatus“ (#go= – paieškos nuorodos į Pradžios skirtukus)
 addStrings({
+  hC: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia' }, hPl: 'Pillar II', hPer: { d: 'over the last day', w: 'over the week', mtd: 'since the start of the month', qtd: 'since the start of the quarter', ytd: 'since the start of the year' },
+  hT: (p, v) => `Average life-cycle fund ${p}: ${v}`, hS: (l, lv, w, wv) => `Leader ${l} ${lv}, last ${w} ${wv}`,
   refL: 'Reference manager:', refNone: 'not chosen', refNote: 'Without a choice, each manager is compared with the median of the others.',
   per: { d: 'Day', w: 'Week', mtd: 'Month', qtd: 'Quarter', ytd: 'Year' }, perN: (a, b) => `${a} → ${b}`, perTip: { d: 'Change over the last data day', w: 'Last 7 days', mtd: 'Since the end of the previous month', qtd: 'Since the end of the previous quarter', ytd: 'Since 31 December' },
   kLead: p => `Leader · ${p}`, kLeadS: (w, v) => `last: ${w} ${v}`, kWeek: p => `Average life-cycle fund · ${p}`, kWeekS: (b, w) => `weighted by assets: best ${b}, weakest ${w}`,
@@ -265,6 +267,8 @@ addStrings({
     ['apie.html', 'Methodology & sources', 'Where the data come from, how it is calculated, known limitations.']],
   foot: 'Returns are changes in unit value (fees already deducted), not annualised. A manager’s return is the simple average of its life-cycle funds (the asset-weighted version is in the summary). For information only, not investment advice.',
 }, {
+  hC: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija' }, hPl: 'II pakopa', hPer: { d: 'per paskutinę dieną', w: 'per savaitę', mtd: 'nuo mėnesio pradžios', qtd: 'nuo ketvirčio pradžios', ytd: 'nuo metų pradžios' },
+  hT: (p, v) => `Vidutinis gyvenimo ciklo fondas ${p}: ${v}`, hS: (l, lv, w, wv) => `Pirmauja ${l} ${lv}, paskutinis – ${w} ${wv}`,
   refL: 'Lyginamasis valdytojas:', refNone: 'nepasirinktas', refNote: 'Nepasirinkus kiekvienas valdytojas lyginamas su kitų mediana.',
   per: { d: 'Diena', w: 'Savaitė', mtd: 'Mėnuo', qtd: 'Ketvirtis', ytd: 'Metai' }, perN: (a, b) => `${a} → ${b}`, perTip: { d: 'Pokytis per paskutinę duomenų dieną', w: 'Paskutinės 7 dienos', mtd: 'Nuo praėjusio mėnesio pabaigos', qtd: 'Nuo praėjusio ketvirčio pabaigos', ytd: 'Nuo gruodžio 31 d.' },
   kLead: p => `Lyderis · ${p}`, kLeadS: (w, v) => `paskutinis: ${w} ${v}`, kWeek: p => `Vidutinis gyvenimo ciklo fondas · ${p}`, kWeekS: (b, w) => `pagal turtą: geriausiai ${b}, silpniausiai ${w}`,
@@ -290,15 +294,15 @@ addStrings({
     ['apie.html', 'Metodika ir šaltiniai', 'Iš kur duomenys, kaip skaičiuojama, žinomi apribojimai.']],
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo gyvenimo ciklo fondų vidurkis (svertinis pagal turtą – santraukoje). Informacinė medžiaga, ne investavimo rekomendacija.',
 });
-addStrings3({ period: "Periods:", srcIrreg: "Atjaunina, kad Lietuvas Banka publicē jaunu failu", dlSrcT: "Šī faila datu avoti", dlMade: "Fails izveidots", dlPer: "Periods", dlSite: "Vietne", kpQ: "Jaunākais portfeļa pārskats", kpPos: "Pozīcijas tajā", kpSecs: "Dažādi vērtspapīri", kpLb: "Lietuvas Bankas rezultāti", tdTitle: "Šodien", qfTitle: "Ceturkšņa fakti", mkTitle: "Tirgus laikā", mgTitle: "Pārvaldītāji", fdTitle: "Fondi pa grupām", pl: "Līmenis", q: "Ceturkšņa beigas", hl: "Izcelt pārvaldītāju", hlNone: "viss tirgus", grp: "Grupa", grpAll: "visas grupas", sortBy: "Kārtot pēc", show: "Rādīt", copy: "Kopēt", copied: "Nokopēts", copyAll: "Kopēt visus faktus", how: "Kā:", kYtd: "Svērtais ienesīgums kopš gada sākuma", kGain: "Ieguldījumu peļņa ceturksnī (aplēse)", thInd: "Rādītājs", thNow: "Ceturkšņa beigas", thPrevQ: "Iepr. ceturksnis", thPrevY: "Pirms gada", thDq: "Izmaiņa ceturksnī", thDy: "Izmaiņa gadā", thDate: "Ceturkšņa beigas", thPart: "Dalībnieki", thNav: "Aktīvi, milj. €", thPer: "Uz dalībnieku, €", thYtd: "Kopš gada sākuma", thQ: "Ceturksnis", th1y: "1 gads", th3y: "3 gadi", th5y: "5 gadi", thGcf: "Kopš sākuma (gadā)", thBm: "Etalons, kopš gada sākuma", thRisky: "Riskantie aktīvi", thGain: "Peļņa ceturksnī, milj. € (aplēse)", thMgr: "Pārvaldītājs", thFunds: "Fondi", thShare: "Daļa", thFund: "Fonds", thAvg: "Grupas vidējais", thTot: "Kopā", thGroup: "Grupa", gpTitle: "Dalībnieki pa grupām", gpLead: "Dalībnieki katrā grupā pēdējos ceturkšņos.", mgChart: "Tirgus daļa laikā", fdNone: "Šajā ceturksnī nav fondu.", stH: "Stiprās puses", stMax: "Labākais grupā", fmore: "Vairāk: grafiks un skaitļi", fNoCh: "Skaitļi aiz fakta", fcFrom: "No", fcTo: "Līdz", fcAll: "Visi", fcTitleH: "Noklikšķiniet, lai labotu grafika virsrakstu (tas nonāk attēlā)", fcLegH: "Noklikšķiniet uz līnijas nosaukuma, lai to paslēptu vai parādītu", refL: "Atsauces pārvaldītājs:", refNone: "nav izvēlēts", kAum: "II līmeņa aktīvi", kGap: "Lielākā starpība grupā", more: "Vairāk →", sayH: "Īsumā", thG: "Grupa", thLead: "Līderis", thLast: "Pēdējais", thGap: "Starpība, pp", bn: "mljrd. €", mn: "milj. €", guH: "Ko jūs šeit atradīsiet" },
-  { period: "Periood:", srcIrreg: "Uuendatakse, kui Leedu Pank avaldab uue faili", dlSrcT: "Selle faili andmeallikad", dlMade: "Fail loodud", dlPer: "Periood", dlSite: "Sait", kpQ: "Viimane portfelliaruanne", kpPos: "Positsioone selles", kpSecs: "Erinevaid väärtpabereid", kpLb: "Leedu Panga tulemused", tdTitle: "Täna", qfTitle: "Kvartali faktid", mkTitle: "Turg ajas", mgTitle: "Fondivalitsejad", fdTitle: "Fondid gruppide kaupa", pl: "Sammas", q: "Kvartali lõpp", hl: "Tõsta esile fondivalitseja", hlNone: "kogu turg", grp: "Grupp", grpAll: "kõik grupid", sortBy: "Sorteeri", show: "Näita", copy: "Kopeeri", copied: "Kopeeritud", copyAll: "Kopeeri kõik faktid", how: "Kuidas:", kYtd: "Kaalutud tootlus aasta algusest", kGain: "Investeerimistulu kvartalis (hinnang)", thInd: "Näitaja", thNow: "Kvartali lõpp", thPrevQ: "Eelm. kvartal", thPrevY: "Aasta tagasi", thDq: "Muutus kvartalis", thDy: "Muutus aastas", thDate: "Kvartali lõpp", thPart: "Osalejad", thNav: "Varad, mln €", thPer: "Osaleja kohta, €", thYtd: "Aasta algusest", thQ: "Kvartal", th1y: "1 aasta", th3y: "3 aastat", th5y: "5 aastat", thGcf: "Algusest (aastas)", thBm: "Võrdlusindeks, aasta algusest", thRisky: "Riskantsed varad", thGain: "Tulu kvartalis, mln € (hinnang)", thMgr: "Fondivalitseja", thFunds: "Fondid", thShare: "Osakaal", thFund: "Fond", thAvg: "Grupi keskmine", thTot: "Kokku", thGroup: "Grupp", gpTitle: "Osalejad gruppide kaupa", gpLead: "Osalejad igas grupis viimastel kvartalitel.", mgChart: "Turuosa ajas", fdNone: "Selles kvartalis fonde pole.", stH: "Tugevused", stMax: "Parim grupis", fmore: "Rohkem: graafik ja arvud", fNoCh: "Fakti taga olevad arvud", fcFrom: "Alates", fcTo: "Kuni", fcAll: "Kõik", fcTitleH: "Klõpsa graafiku pealkirja muutmiseks (see läheb pildile)", fcLegH: "Klõpsa joone nimel, et see peita või näidata", refL: "Võrdlusfondivalitseja:", refNone: "pole valitud", kAum: "II samba varad", kGap: "Suurim vahe grupis", more: "Rohkem →", sayH: "Lühidalt", thG: "Grupp", thLead: "Liider", thLast: "Viimane", thGap: "Vahe, pp", bn: "mld €", mn: "mln €", guH: "Mida siit leiad" });   // 4 etapas: LV/ET antraštės ir stulpeliai (ilgesni tekstai – kol kas angliškai)
+addStrings3({ hC: { LT: "Lietuva", LV: "Latvija", EE: "Igaunija" }, hPl: "II līmenis", hPer: { d: "pēdējā dienā", w: "nedēļā", mtd: "kopš mēneša sākuma", qtd: "kopš ceturkšņa sākuma", ytd: "kopš gada sākuma" }, hT: (p, v) => `Vidējais fonds ${p}: ${v}`, hS: (l, lv, w, wv) => `Vadībā ${l} ${lv}, pēdējais – ${w} ${wv}`, period: "Periods:", srcIrreg: "Atjaunina, kad Lietuvas Banka publicē jaunu failu", dlSrcT: "Šī faila datu avoti", dlMade: "Fails izveidots", dlPer: "Periods", dlSite: "Vietne", kpQ: "Jaunākais portfeļa pārskats", kpPos: "Pozīcijas tajā", kpSecs: "Dažādi vērtspapīri", kpLb: "Lietuvas Bankas rezultāti", tdTitle: "Šodien", qfTitle: "Ceturkšņa fakti", mkTitle: "Tirgus laikā", mgTitle: "Pārvaldītāji", fdTitle: "Fondi pa grupām", pl: "Līmenis", q: "Ceturkšņa beigas", hl: "Izcelt pārvaldītāju", hlNone: "viss tirgus", grp: "Grupa", grpAll: "visas grupas", sortBy: "Kārtot pēc", show: "Rādīt", copy: "Kopēt", copied: "Nokopēts", copyAll: "Kopēt visus faktus", how: "Kā:", kYtd: "Svērtais ienesīgums kopš gada sākuma", kGain: "Ieguldījumu peļņa ceturksnī (aplēse)", thInd: "Rādītājs", thNow: "Ceturkšņa beigas", thPrevQ: "Iepr. ceturksnis", thPrevY: "Pirms gada", thDq: "Izmaiņa ceturksnī", thDy: "Izmaiņa gadā", thDate: "Ceturkšņa beigas", thPart: "Dalībnieki", thNav: "Aktīvi, milj. €", thPer: "Uz dalībnieku, €", thYtd: "Kopš gada sākuma", thQ: "Ceturksnis", th1y: "1 gads", th3y: "3 gadi", th5y: "5 gadi", thGcf: "Kopš sākuma (gadā)", thBm: "Etalons, kopš gada sākuma", thRisky: "Riskantie aktīvi", thGain: "Peļņa ceturksnī, milj. € (aplēse)", thMgr: "Pārvaldītājs", thFunds: "Fondi", thShare: "Daļa", thFund: "Fonds", thAvg: "Grupas vidējais", thTot: "Kopā", thGroup: "Grupa", gpTitle: "Dalībnieki pa grupām", gpLead: "Dalībnieki katrā grupā pēdējos ceturkšņos.", mgChart: "Tirgus daļa laikā", fdNone: "Šajā ceturksnī nav fondu.", stH: "Stiprās puses", stMax: "Labākais grupā", fmore: "Vairāk: grafiks un skaitļi", fNoCh: "Skaitļi aiz fakta", fcFrom: "No", fcTo: "Līdz", fcAll: "Visi", fcTitleH: "Noklikšķiniet, lai labotu grafika virsrakstu (tas nonāk attēlā)", fcLegH: "Noklikšķiniet uz līnijas nosaukuma, lai to paslēptu vai parādītu", refL: "Atsauces pārvaldītājs:", refNone: "nav izvēlēts", kAum: "II līmeņa aktīvi", kGap: "Lielākā starpība grupā", more: "Vairāk →", sayH: "Īsumā", thG: "Grupa", thLead: "Līderis", thLast: "Pēdējais", thGap: "Starpība, pp", bn: "mljrd. €", mn: "milj. €", guH: "Ko jūs šeit atradīsiet" },
+  { hC: { LT: "Leedu", LV: "Läti", EE: "Eesti" }, hPl: "II sammas", hPer: { d: "viimasel päeval", w: "nädalaga", mtd: "kuu algusest", qtd: "kvartali algusest", ytd: "aasta algusest" }, hT: (p, v) => `Keskmine fond ${p}: ${v}`, hS: (l, lv, w, wv) => `Juhib ${l} ${lv}, viimane – ${w} ${wv}`, period: "Periood:", srcIrreg: "Uuendatakse, kui Leedu Pank avaldab uue faili", dlSrcT: "Selle faili andmeallikad", dlMade: "Fail loodud", dlPer: "Periood", dlSite: "Sait", kpQ: "Viimane portfelliaruanne", kpPos: "Positsioone selles", kpSecs: "Erinevaid väärtpabereid", kpLb: "Leedu Panga tulemused", tdTitle: "Täna", qfTitle: "Kvartali faktid", mkTitle: "Turg ajas", mgTitle: "Fondivalitsejad", fdTitle: "Fondid gruppide kaupa", pl: "Sammas", q: "Kvartali lõpp", hl: "Tõsta esile fondivalitseja", hlNone: "kogu turg", grp: "Grupp", grpAll: "kõik grupid", sortBy: "Sorteeri", show: "Näita", copy: "Kopeeri", copied: "Kopeeritud", copyAll: "Kopeeri kõik faktid", how: "Kuidas:", kYtd: "Kaalutud tootlus aasta algusest", kGain: "Investeerimistulu kvartalis (hinnang)", thInd: "Näitaja", thNow: "Kvartali lõpp", thPrevQ: "Eelm. kvartal", thPrevY: "Aasta tagasi", thDq: "Muutus kvartalis", thDy: "Muutus aastas", thDate: "Kvartali lõpp", thPart: "Osalejad", thNav: "Varad, mln €", thPer: "Osaleja kohta, €", thYtd: "Aasta algusest", thQ: "Kvartal", th1y: "1 aasta", th3y: "3 aastat", th5y: "5 aastat", thGcf: "Algusest (aastas)", thBm: "Võrdlusindeks, aasta algusest", thRisky: "Riskantsed varad", thGain: "Tulu kvartalis, mln € (hinnang)", thMgr: "Fondivalitseja", thFunds: "Fondid", thShare: "Osakaal", thFund: "Fond", thAvg: "Grupi keskmine", thTot: "Kokku", thGroup: "Grupp", gpTitle: "Osalejad gruppide kaupa", gpLead: "Osalejad igas grupis viimastel kvartalitel.", mgChart: "Turuosa ajas", fdNone: "Selles kvartalis fonde pole.", stH: "Tugevused", stMax: "Parim grupis", fmore: "Rohkem: graafik ja arvud", fNoCh: "Fakti taga olevad arvud", fcFrom: "Alates", fcTo: "Kuni", fcAll: "Kõik", fcTitleH: "Klõpsa graafiku pealkirja muutmiseks (see läheb pildile)", fcLegH: "Klõpsa joone nimel, et see peita või näidata", refL: "Võrdlusfondivalitseja:", refNone: "pole valitud", kAum: "II samba varad", kGap: "Suurim vahe grupis", more: "Rohkem →", sayH: "Lühidalt", thG: "Grupp", thLead: "Liider", thLast: "Viimane", thGap: "Vahe, pp", bn: "mld €", mn: "mln €", guH: "Mida siit leiad" });   // 4 etapas: LV/ET antraštės ir stulpeliai (ilgesni tekstai – kol kas angliškai)
 if (typeof CTRY_COPY !== 'undefined') addStrings({   // LV/EE: grupės – rizikos (akcijų dalies) grupės, ne gimimo metai; valdytojas – jo fondų vidurkis grupėje
-  kWeek: p => `Average fund · ${p}`, gH: p => `Fund groups · ${p}`,
+  kWeek: p => `Average fund · ${p}`, gH: p => `Fund groups · ${p}`, hT: (p, v) => `Average fund ${p}: ${v}`,
   s1: (l, lv, w, wv) => `${PERS().lead} ${l} has done best: on average ${lv} across the ${LC.length} fund groups (a manager's figure in a group is the asset-weighted average of its funds there); ${w} has done worst (${wv}).`,
   s2: (v, up) => `${PERS().lead} the average fund is ${up ? 'up' : 'down'} ${v}.`,
   foot: 'Return – change in unit value (fees already deducted), not annualised. Manager return – simple average over the groups of its funds (asset-weighted within a group; asset-weighted overall in the summary). For information only, not investment advice.'
 }, {
-  kWeek: p => `Vidutinis fondas · ${p}`, gH: p => `Fondų grupės · ${p}`,
+  kWeek: p => `Vidutinis fondas · ${p}`, gH: p => `Fondų grupės · ${p}`, hT: (p, v) => `Vidutinis fondas ${p}: ${v}`,
   s1: (l, lv, w, wv) => `${PERS().lead} geriausiai sekasi ${l}: vidutiniškai ${lv} per ${LC.length} fondų grupes (valdytojo rodiklis grupėje – jo fondų vidurkis, svertinis turtu); silpniausiai – ${w} (${wv}).`,
   s2: (v, up) => `${PERS().lead} vidutinis fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`,
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo grupių vidurkis (grupėje – fondų vidurkis, svertinis turtu; santraukoje – svertinis pagal turtą). Informacinė medžiaga, ne investavimo rekomendacija.'
@@ -352,6 +356,18 @@ function bars(list, key) {              // mažos horizontalios juostos: nulis p
   const m = Math.max(...list.map(x => Math.abs(x[key])), 0.01);
   return `<div class="mb">${list.map(x => { const w = Math.abs(x[key]) / m * 50; return `<span>${mLab(x.id)}</span><span class="t"><i style="background:${mCol(x.id)};width:${w}%;left:${x[key] >= 0 ? 50 : 50 - w}%"></i></span><span class="n">${pct(x[key])}</span>`; }).join('')}</div>`;
 }
+function sparkAvg() {                    // naujas dizainas (maketas): vidutinio fondo kelias per laikotarpį – maža kreivė KPI plytelėje (tie patys fondai kaip skaičiui)
+  const m = new Map(); let n = 0;
+  LC.forEach(g => { const { end, overallLast } = groupEnd(g), a = anchorOf(PER, end);
+    g.funds.forEach(f => { if (f.d[f.d.length - 1] < overallLast - 5) return; const sr = seriesOf(f, a, end); if (!sr) return; n++;
+      sr.points.forEach(([d, v]) => { const x = m.get(d) || [0, 0]; x[0] += v; x[1]++; m.set(d, x); }); }); });
+  const pts = [...m.entries()].filter(([, x]) => x[1] >= n * 0.8).sort((a, b) => a[0] - b[0]).map(([d, x]) => [d, x[0] / x[1]]);
+  if (pts.length < 4) return '';
+  const x0 = pts[0][0], x1 = pts[pts.length - 1][0], ys = pts.map(p => p[1]), lo = Math.min(...ys), hi = Math.max(...ys), W = 200, H = 34;
+  const P = pts.map(([d, v], i) => `${i ? 'L' : 'M'}${((d - x0) / ((x1 - x0) || 1) * W).toFixed(1)} ${(H - 3 - (v - lo) / ((hi - lo) || 1) * (H - 6)).toFixed(1)}`).join('');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${P}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>`;
+}
+const KICO = { lead: '<path d="M2 18h20M4 18l-2-11 6 4 4-7 4 7 6-4-2 11"/>', avg: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/>', aum: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>', gap: '<path d="M8 3v18M16 3v18M3 8l5-5 5 5M11 16l5 5 5-5"/>', ref: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>' };
 const money = v => v >= 1e9 ? `${num(v / 1e9, 2)} ${T().bn}` : `${num(v / 1e6, 1)} ${T().mn}`;
 function render() {
   const t = T(), c = compute(), $ = id => document.getElementById(id);
@@ -362,19 +378,22 @@ function render() {
   $('per').innerHTML = Object.keys(t.per).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === PER}" title="${t.perTip[k]}">${t.per[k]}</button>`).join('');
   $('perN').textContent = t.perN(iso(c.anchor), iso(c.end));
   const L = c.byY[0], W = c.byY[c.byY.length - 1], B = c.byW[0], Wk = c.byW[c.byW.length - 1];
-  const card = (l, v, s, extra = '', href = 'performance.html', hl = false) => `<div class="bk${hl ? ' hl' : ''}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span>${extra}<a class="more" href="${href}">${t.more}</a></div>`;
-  let h = card(t.kLead(P), `${mLab(L.id)} ${pct(L.ytd)}`, t.kLeadS(mLab(W.id), pct(W.ytd)), bars(c.byY, 'ytd'));
-  h += card(t.kWeek(P), c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(mLab(B.id), mLab(Wk.id)) : '', bars(c.byW, 'wk'));
-  h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), '', 'aum.html');
+  const card = (l, v, s, extra = '', href = 'performance.html', hl = false, ic = '') => `<div class="bk${hl ? ' hl' : ''}"><span class="l">${ic ? `<span class="kico">${svgI(KICO[ic], 15)}</span>` : ''}${l}</span><span class="v">${v}</span><span class="s">${s}</span>${extra}<a class="more" href="${href}">${t.more}</a></div>`;
+  let h = card(t.kLead(P), `${mLab(L.id)} ${pct(L.ytd)}`, t.kLeadS(mLab(W.id), pct(W.ytd)), bars(c.byY, 'ytd'), 'performance.html', false, 'lead');
+  h += card(t.kWeek(P), c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(mLab(B.id), mLab(Wk.id)) : '', sparkAvg() + bars(c.byW, 'wk'), 'performance.html', false, 'avg');
+  h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), '', 'aum.html', false, 'aum');
   const R = REF && c.mgr.find(m => m.id === REF);
   if (R) {
     const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd));
-    h += card(t.kRef(mLab(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true);
+    h += card(t.kRef(mLab(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true, 'ref');
   } else {
     const G = c.groups.filter(g => g.gap != null).sort((a, b) => b.gap - a.gap)[0];
-    h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '');
+    h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '', '', 'performance.html', false, 'gap');
   }
   $('big').innerHTML = h;
+  { const tx = document.querySelector('.sechero.has-kpi .shtx');   // naujas dizainas (maketas): nuotraukos antraštė – sakinys su tuo pačiu skaičiumi kaip kortelėje
+    if (tx) { let hs = tx.querySelector('.hsent'); if (!hs) { hs = document.createElement('div'); hs.className = 'hsent'; tx.prepend(hs); }
+      hs.innerHTML = `<em>${t.hC[PCTRY] || t.hC.LT} · ${t.hPl} · ${iso(c.end)}</em><b>${t.hT(t.hPer[PER], c.wAvg == null ? '–' : pct(c.wAvg))}</b><p>${t.hS(mLab(L.id), pct(L.ytd), mLab(W.id), pct(W.ytd))}</p>`; } }
   $('sayH').textContent = t.sayH;
   const s = [t.s1(mLab(L.id), pct(L.ytd), mLab(W.id), pct(W.ytd))];
   if (c.byYW.length > 1) { const a = c.byYW[0], b = c.byYW[c.byYW.length - 1]; s.push(t.s1w(mLab(a.id), pct(a.ytdW), mLab(b.id), pct(b.ytdW))); }

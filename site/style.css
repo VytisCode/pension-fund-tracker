@@ -848,3 +848,17 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 
 /* logotipas ir sistemos tamsioje temoje (be pasirinktos temos) */
 @media screen and (prefers-color-scheme: dark) { [data-design="v2"]:not([data-theme="light"]) .brand::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 23l6-6 5 4 9-11' fill='none' stroke='%231c1714' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%231c1714'/%3E%3C/svg%3E"); } }
+/* Pradžia (maketas): antraštė-sakinys ant nuotraukos */
+@media screen {
+  [data-design="v2"] .sechero .hsent ~ #secName, [data-design="v2"] .sechero .hsent ~ #secDesc { display: none; }
+  [data-design="v2"] .sechero .hsent em { display: block; font-style: normal; font-size: 12px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: rgba(255,255,255,.78); }
+  [data-design="v2"] .sechero .hsent b { display: block; margin: 6px 0 4px; font-size: clamp(22px, 2.6vw, 34px); line-height: 1.15; font-weight: 700; letter-spacing: -.015em; color: #fff; }
+  [data-design="v2"] .sechero .hsent p { margin: 0; font-size: 15px; color: rgba(255,255,255,.86); }
+  [data-design="v2"] body.tab-deep .sechero .hsent { display: none; }
+  [data-design="v2"] body.tab-deep .sechero .hsent ~ #secName { display: block; }
+}
+/* Pradžia (maketas): KPI plytelių ikonos ir kreivė */
+.bk .kico { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-right: 8px; border-radius: 7px; vertical-align: -7px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.bk .spark { display: block; width: 100%; height: 34px; margin: 6px 0 8px; color: var(--accent); }
+.hkpi .bk .kico { background: rgba(255,255,255,.16); color: #fff; }
+.hkpi .bk .spark { color: #f1dcae; }
