@@ -105,7 +105,7 @@ def ee():
             snap.append({"snapshot_date": TODAY, "pillar": pl, "fund": r.get("Fund", "").strip(), "date": d, "nav": num(r.get("NAV")),
                          "r3m": num(r.get("3m")), "r6m": num(r.get("6m")), "r1y": num(r.get("1y")), "r3y": num(r.get("3y")),
                          "r5y": num(r.get("5y")), "r10y": num(r.get("10y")), "r15y": num(r.get("15y")), "r20y": num(r.get("20y")),
-                         "ytd": num(r.get("YTD")), "ter": num(r.get("TER %")), "investors": num(r.get("Active invest.")),
+                         "ytd": num(r.get("YTD")), "ter": num(r.get("TER %")), "investors": num(r.get("Active invest.") or r.get("Unit ow.")),
                          "net_assets_m": num(r.get("Net assets"))})
         for fid in ids:
             for k, path in kinds.items():
@@ -127,6 +127,12 @@ def ee():
                     m = meta.setdefault((pl, fid), {"pillar": pl, "fund_id": fid, "isin": l[3], "fund": l[1].strip(), "first": l[0], "last": l[0]})
                     m["first"], m["last"], m["fund"] = min(m["first"], l[0]), max(m["last"], l[0]), l[1].strip()
                 time.sleep(0.5)
+    # III pakopos dalyviai (vienetų savininkai, „Unit ow.“) skelbiami tik dienos suvestinėje (istorijos nėra) – įrašomi kasdien nuo 2026-11-10
+    nm = {(m["pillar"], m["fund"].strip().lower()): fid for (p_, fid), m in meta.items()}
+    for x in snap:
+        fid = nm.get((x["pillar"], x["fund"].lower()))
+        if x["pillar"] == "III" and fid and x["investors"] and x["date"]:
+            rows.setdefault((x["date"], "III", fid), {"date": x["date"], "pillar": "III", "fund_id": fid})["investors"] = int(x["investors"])
     merge(OUT / "baltic_ee.csv", ["date", "pillar", "fund_id"], rows.values(), ["date", "pillar", "fund_id", "nav", "net_assets", "investors"])
     with (OUT / "baltic_ee_meta.csv").open("w", encoding="utf-8", newline="") as fh:   # aprašai – visada naujausi
         w = csv.DictWriter(fh, ["pillar", "fund_id", "isin", "fund", "first", "last"]); w.writeheader(); w.writerows(sorted(meta.values(), key=lambda m: (m["pillar"], m["fund_id"])))

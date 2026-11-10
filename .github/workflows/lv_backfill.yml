@@ -27,12 +27,16 @@ jobs:
         with:
           python-version: "3.12"
       - name: Backfill
-        run: python -u tools/fetch_lv_plans.py --budget "${{ inputs.budget }}" --minutes 60
+        run: |
+          pip install -q xlrd
+          python -u tools/fetch_vsaa_switch.py || echo "VSAA mėnesinis judėjimas nepavyko"
+          python -u tools/fetch_lv_plans.py --budget "${{ inputs.budget }}" --minutes 60
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/baltic_lv_daily.csv data/lv_daily_state.json
+          git add data/lv_switch.csv data/lv_switch_files.json 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m "data: LV plānu istorija $(TZ=Europe/Vilnius date '+%Y-%m-%d %H:%M')"
           for i in 1 2 3 4; do git pull --rebase -X theirs origin main && git push && exit 0; sleep $((i*10)); done
