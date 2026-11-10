@@ -543,7 +543,7 @@ addStrings({ ms: {
   bs: { t: 'Baltic pension market', l: 'Lithuania, Latvia and Estonia: market size, change since the start of the year and managers – each country with its latest available data.',
   mT: 'Markets', mH: ['Market', 'Data as of', 'Assets, € m', 'Change since year start, € m', 'Change', 'Participants', 'Managers', 'Largest manager'],
   gT: 'Managers across the Baltics', k: { na: 'Assets, € m', sh: 'Market share' }, tot: 'Total', all: 'Baltics, total',
-  n: 'Latvian pillar III – only open pension funds (closed funds are not on manapensija.lv). Estonian pillar III – participants by fund are not published. Lithuania – quarter-end data of the Bank of Lithuania; the fall of Lithuanian pillar II assets in 2026 is the reform (people leaving the pillar and taking money out).' } }, { ms: {
+  n: 'Latvian pillar III – only open pension funds (closed funds are not on manapensija.lv). Estonian pillar III – participants by fund (unit owners) are only shown for the current day, so they are collected from 10 November 2026; there is no earlier history. Lithuania – quarter-end data of the Bank of Lithuania; the fall of Lithuanian pillar II assets in 2026 is the reform (people leaving the pillar and taking money out).' } }, { ms: {
   t: 'Rinkos dalis laike', l: 'Kiekvieno valdytojo dalis šalies pakopos rinkoje kiekvieno mėnesio pabaigoje (Lietuva – kiekvieno ketvirčio, LB duomenys).',
   k: { na: 'Pagal turtą', inv: 'Pagal dalyvius' },
   n: (f, est) => `Šaltinis: ${f}.${est ? ' Latvija: „Luminor plāns 53-58“ manapensija.lv sąraše nėra – jo turtas paimtas iš ketvirčio ataskaitos ir tarp ketvirčių perskaičiuotas pagal plāno vieneto vertę (apytiksliai). Jo turtas iki ${est} nežinomas, todėl iki tol Latvijos suma ir Luminor dalis per mažos (apie 8 % rinkos).' : ''}`,
@@ -555,7 +555,7 @@ addStrings({ ms: {
   bs: { t: 'Baltijos pensijų rinka', l: 'Lietuva, Latvija ir Estija: rinkos dydis, pokytis nuo metų pradžios ir valdytojai – kiekviena šalis su naujausiais turimais duomenimis.',
   mT: 'Rinkos', mH: ['Rinka', 'Duomenys', 'Turtas, mln. €', 'Pokytis nuo metų pradžios, mln. €', 'Pokytis', 'Dalyviai', 'Valdytojų', 'Didžiausias valdytojas'],
   gT: 'Valdytojai visose Baltijos šalyse', k: { na: 'Turtas, mln. €', sh: 'Rinkos dalis' }, tot: 'Iš viso', all: 'Baltijos šalys iš viso',
-  n: 'Latvijos III pakopa – tik atvirieji pensijų fondai (uždarųjų manapensija.lv nėra). Estijos III pakopa – dalyvių pagal fondą neskelbia. Lietuva – LB ketvirčio pabaigos duomenys; Lietuvos II pakopos turto sumažėjimas 2026 m. – reforma (dalyviai išeina ir atsiima pinigus).' } });
+  n: 'Latvijos III pakopa – tik atvirieji pensijų fondai (uždarųjų manapensija.lv nėra). Estijos III pakopa – dalyviai pagal fondą (vienetų savininkai) skelbiami tik einamajai dienai, todėl renkami nuo 2026-11-10; ankstesnės istorijos nėra. Lietuva – LB ketvirčio pabaigos duomenys; Lietuvos II pakopos turto sumažėjimas 2026 m. – reforma (dalyviai išeina ir atsiima pinigus).' } });
 let MSK = 'na', BSK = 'na';
 const shOf = (c, pl) => (BALTIC.sh || {})[c] && BALTIC.sh[c][pl];
 const mEnd = m => Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0) / DAY;
@@ -628,6 +628,64 @@ function renderMv() {
   $('mvN').textContent = t.n;
 }
 $('mvSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MVY = +b.dataset.y; renderMv(); });
+
+/* ---------- Latvija, II pakopa: dalyvių perėjimai tarp valdytojų kas mėnesį (VSAA „Dalībnieku kustība pa ieguldījumu plāniem“,
+   nuo 2003-01; BALTIC.sw – baltic.py lv_switch(); kolegės BC šaltinis 2026-11-10) ---------- */
+addStrings({ sw: { t: 'Switching between managers (every month)', l: 'How many pillar II participants moved their savings from one manager to another. Only switches – new participants, deaths and retirements are in the yearly table above.',
+  p: { m: 'Last month', ytd: 'Since year start', 12: 'Last 12 months' }, y: 'Year…',
+  h: ['Manager', 'Came from other managers', 'Left to other managers', 'Net', 'Between own plans', 'Came mostly from', 'Left mostly to'],
+  cT: 'Net switching, cumulative over the period', mT: 'Who moved where (rows – left from, columns – came to)', from: 'From \\ To', tot: 'Total',
+  n: (a, b) => `Source: VSAA monthly report “Participant movement by investment plan” (published around the 15th of the following month). Period: ${a} – ${b}. Plans are grouped by today’s manager; old managers that no longer exist are shown under their own name. When a plan is merged into another or moved to a new manager, VSAA counts its participants as switches – such months show unusually large numbers.` } },
+  { sw: { t: 'Dalyvių perėjimai tarp valdytojų (kas mėnesį)', l: 'Kiek II pakopos dalyvių perkėlė santaupas iš vieno valdytojo pas kitą. Tik perėjimai – nauji dalyviai, mirę ir išėję į pensiją yra metinėje lentelėje aukščiau.',
+  p: { m: 'Paskutinis mėnuo', ytd: 'Nuo metų pradžios', 12: 'Paskutiniai 12 mėn.' }, y: 'Metai…',
+  h: ['Valdytojas', 'Atėjo iš kitų valdytojų', 'Išėjo pas kitus', 'Grynasis', 'Tarp savo plānų', 'Daugiausia atėjo iš', 'Daugiausia išėjo pas'],
+  cT: 'Grynasis perėjimas, sukaupta per laikotarpį', mT: 'Kas kur perėjo (eilutės – iš kurio išėjo, stulpeliai – pas kurį atėjo)', from: 'Iš \\ Į', tot: 'Iš viso',
+  n: (a, b) => `Šaltinis: VSAA mėnesinė ataskaita „Dalībnieku kustība pa ieguldījumu plāniem“ (skelbiama apie kito mėnesio 15 d.). Laikotarpis: ${a} – ${b}. Plānai sugrupuoti pagal valdytoją; nebesantys seni valdytojai rodomi savo vardu. Kai plānas sujungiamas su kitu ar perduodamas kitam valdytojui, VSAA jo dalyvius skaičiuoja kaip perėjusius – tokie mėnesiai rodo neįprastai didelius skaičius.` } });
+let SWP = 'ytd';
+function swRange(S) {
+  const n = S.m.length, last = S.m[n - 1], y = last.slice(0, 4);
+  if (SWP === 'm') return [n - 1, n - 1];
+  if (SWP === '12') return [Math.max(0, n - 12), n - 1];
+  if (SWP === 'ytd') return [S.m.findIndex(m => m.slice(0, 4) === y), n - 1];
+  const yy = SWP.slice(2), i0 = S.m.findIndex(m => m.slice(0, 4) === yy); let i1 = i0; S.m.forEach((m, i) => { if (m.slice(0, 4) === yy) i1 = i; });
+  return [i0, i1];
+}
+function renderSw() {
+  const S = BALTIC.sw, on = CR.c === 'LV' && CR.pl === 'II' && S && S.m && S.m.length;
+  $('swC').hidden = !on; if (!on) return;
+  const t = T().sw, G = S.g, n = G.length;
+  $('swT').textContent = t.t; $('swL').textContent = t.l;
+  $('swSeg').innerHTML = ['m', 'ytd', '12'].map(k => `<button type="button" data-p="${k}" aria-pressed="${k === SWP}">${t.p[k]}</button>`).join('');
+  const ys = [...new Set(S.m.map(m => m.slice(0, 4)))].reverse();
+  $('swY').innerHTML = `<option value="">${t.y}</option>` + ys.map(y => `<option value="y:${y}"${SWP === 'y:' + y ? ' selected' : ''}>${y}</option>`).join('');
+  const [i0, i1] = swRange(S);
+  const mx = Array.from({ length: n }, () => new Array(n).fill(0)), own = new Array(n).fill(0);
+  for (let i = i0; i <= i1; i++) { S.x[i].forEach(([a, b, v]) => { mx[a][b] += v; }); S.own[i].forEach(([g, v]) => { own[g] += v; }); }
+  const inn = G.map((_, j) => mx.reduce((s, r) => s + r[j], 0)), out = G.map((_, i) => mx[i].reduce((s, v) => s + v, 0));
+  const act = G.map((_, i) => i).filter(i => inn[i] || out[i] || own[i]).sort((a, b) => (inn[b] - out[b]) - (inn[a] - out[a]));
+  const f0 = v => num(v, 0), fs = v => (v < 0 ? '−' : v > 0 ? '+' : '') + num(Math.abs(v), 0);
+  const top = (arr) => { let k = -1; arr.forEach((v, i) => { if (v > 0 && (k < 0 || v > arr[k])) k = i; }); return k < 0 ? '–' : `${hEsc(G[k])} (${f0(arr[k])})`; };
+  const col = new Map(act.map((g, i) => [g, PAL[i % PAL.length]]));
+  $('swTbl').innerHTML = `<thead><tr>${t.h.map((h, j) => `<th${j && j < 5 ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
+    + act.map(i => `<tr><td class="nm"><i class="dot" style="background:${col.get(i)}"></i><b>${hEsc(G[i])}</b></td><td class="n">${f0(inn[i])}</td><td class="n">${f0(out[i])}</td><td class="n ${sgn(inn[i] - out[i])}">${fs(inn[i] - out[i])}</td><td class="n">${f0(own[i])}</td><td>${top(mx.map(r => r[i]))}</td><td>${top(mx[i])}</td></tr>`).join('')
+    + `<tr class="tot"><td class="nm"><b>${t.tot}</b></td><td class="n">${f0(inn.reduce((a, b) => a + b, 0))}</td><td class="n">${f0(out.reduce((a, b) => a + b, 0))}</td><td class="n">–</td><td class="n">${f0(own.reduce((a, b) => a + b, 0))}</td><td></td><td></td></tr></tbody>`;
+  // sukauptas grynasis perėjimas
+  let c0 = i0; if (i1 - c0 < 1) c0 = Math.max(0, i1 - 11);
+  $('swCT').textContent = `${t.cT} (${S.m[c0]} – ${S.m[i1]})`;
+  const ser = act.map(g => { let c = 0; const pts = [[mEnd(S.m[c0]) - 30, 0]];
+    for (let i = c0; i <= i1; i++) { S.x[i].forEach(([a, b, v]) => { if (b === g) c += v; if (a === g) c -= v; }); pts.push([mEnd(S.m[i]), c]); }
+    return { points: pts, color: col.get(g), label: G[g], provider: G[g] }; });
+  drawLineChart($('swCh'), ser, mEnd(S.m[c0]) - 30, mEnd(S.m[i1]), { axisUnit: '', fmt: v => fs(Math.round(v)) });
+  // matrica
+  $('swMT').textContent = t.mT;
+  const cols = act.slice().sort((a, b) => G[a].localeCompare(G[b]));
+  $('swMx').innerHTML = `<thead><tr><th>${t.from}</th>${cols.map(j => `<th class="n">${hEsc(G[j])}</th>`).join('')}<th class="n">${t.tot}</th></tr></thead><tbody>`
+    + cols.map(i => `<tr><td class="nm"><b>${hEsc(G[i])}</b></td>${cols.map(j => `<td class="n">${i === j ? '<span class="note">' + (own[i] ? f0(own[i]) : '–') + '</span>' : mx[i][j] ? f0(mx[i][j]) : '–'}</td>`).join('')}<td class="n"><b>${f0(out[i])}</b></td></tr>`).join('')
+    + `<tr class="tot"><td class="nm"><b>${t.tot}</b></td>${cols.map(j => `<td class="n"><b>${f0(inn[j])}</b></td>`).join('')}<td class="n"><b>${f0(out.reduce((a, b) => a + b, 0))}</b></td></tr></tbody>`;
+  $('swN').textContent = t.n(S.m[i0], S.m[i1]);
+}
+$('swSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; SWP = b.dataset.p; renderSw(); });
+$('swY').addEventListener('change', e => { if (e.target.value) { SWP = e.target.value; renderSw(); } });
 
 function renderBs() {
   const T0 = T(), b = T0.bs;
@@ -791,7 +849,7 @@ function render() {
   BXM.c = CR.c; BXM.pl = CR.pl;
   document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderMv(); renderTop(); if (CR.pl === 'II') renderJr(); }
+  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderMv(); renderSw(); renderTop(); if (CR.pl === 'II') renderJr(); }
   $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
   const ks = modeTabs();
