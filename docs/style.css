@@ -708,3 +708,20 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
   [data-design="v2"] body.tab-deep:not(.pg-home) .sechero p { display: none; }
   [data-design="v2"] body.tab-deep:not(.pg-home) .sechero span { font-size: 26px; }
 }
+/* Naujas dizainas – 2 žingsnis (savininkas: „mažai kas pasikeitė“): skyriai kaip kortelės, kompaktiška pranešimų eilutė */
+@media screen {
+  [data-design="v2"] section.sec:not([hidden]) { background: var(--card); border-radius: 18px; box-shadow: var(--v2-shadow); padding: 24px 26px 20px; margin-top: 18px; }
+  [data-design="v2"] section.sec > h2:first-child { font-size: 20px; margin-bottom: 2px; }
+  [data-design="v2"] section.sec .card { box-shadow: none; border: 1px solid var(--line); border-radius: 14px; }
+  [data-design="v2"] section.sec .group-h { color: var(--text); font-size: 14.5px; margin-top: 22px; }
+  [data-design="v2"] .two { gap: 28px; }
+  [data-design="v2"] .two .stick table thead th, [data-design="v2"] .sec > .stick table thead th,
+  [data-design="v2"] .two .stickbox table thead th, [data-design="v2"] .sec > .stickbox table thead th,
+  [data-design="v2"] .two .freeze table td:first-child, [data-design="v2"] .sec > .freeze table td:first-child { background: var(--card); }
+  /* pranešimai – viena eilutė, užvedus ar paspaudus – visi */
+  [data-design="v2"] .ntcbar { flex-wrap: nowrap; border: 0; border-radius: 12px; padding: 7px 8px 7px 14px; font-size: 13px; background: var(--card); box-shadow: var(--v2-shadow); }
+  [data-design="v2"] .ntcbar.nb-new { background: var(--card); box-shadow: inset 3px 0 0 var(--dpos), var(--v2-shadow); }
+  [data-design="v2"] .ntcbar span { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  [data-design="v2"] .ntcbar:hover span, [data-design="v2"] .ntcbar:focus-within span { white-space: normal; }
+  [data-design="v2"] .ntcbar button { border: 0; background: var(--grid); border-radius: 8px; flex: none; }
+}
