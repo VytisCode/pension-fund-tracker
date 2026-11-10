@@ -738,7 +738,7 @@ function renderMgr() {
       return `<tr${m === MS.mgr ? ' class="hl"' : ''}><td class="l"><i class="sw" style="background:${mkColor(m)}"></i>${m}</td><td>${x.nf}</td><td>${mInt(x.part)}</td><td>${mShare(x.part, T0.part)}</td><td class="${mCls(q && x.part - q.part)}">${q ? mSInt(x.part - q.part) : '–'}</td><td class="${mCls(y && x.part - y.part)}">${y ? mSInt(x.part - y.part) : '–'}</td>`
         + `<td>${num(x.nav, 1)}</td><td>${mShare(x.nav, T0.nav)}</td><td title="${q ? dpp(sh(x.nav, T0.nav), sh(q.nav, Tq.nav)) : ''}">${q ? mRel(x.nav, q.nav) : '–'}</td><td>${y ? mRel(x.nav, y.nav) : '–'}</td>${pl === 'II' ? `<td>${x.part ? mInt(x.nav * 1e6 / x.part) : '–'}</td>` : ''}</tr>`; }).join('')
     + `<tr class="tot"><td class="l">${t.thTot}</td><td>${T0.nf}</td><td>${mInt(T0.part)}</td><td>100 %</td><td>${Tq.ok && Tq.part ? mSInt(T0.part - Tq.part) : '–'}</td><td></td><td>${num(T0.nav, 1)}</td><td>100 %</td><td>${Tq.ok && Tq.nav ? mRel(T0.nav, Tq.nav) : '–'}</td><td></td>${pl === 'II' ? `<td>${T0.part ? mInt(T0.nav * 1e6 / T0.part) : '–'}</td>` : ''}</tr></tbody>`;
-  renderMgrTiles(t, pl, di, list);
+  renderMgrTiles(t, pl, di, list); renderMgrYtd(pl, di, list);
   { const sb = document.getElementById('mgShB'); if (sb) {   // savininkas 2026-11-10: LT neturėjo „Rinkos dalis pagal turtą“ kaip LV ir EE
     document.getElementById('mgShT').textContent = `${lang === 'lt' ? 'Rinkos dalis pagal turtą' : 'Market share by assets'} · ${MS.d}`;
     sb.innerHTML = T0.nav ? `<div class="shbar">${list.filter(([, x]) => x.nav).map(([m, x]) => `<span style="width:${x.nav / T0.nav * 100}%;background:${mkColor(m)}" title="${hEsc(m)} ${mShare(x.nav, T0.nav)}"></span>`).join('')}</div>`
@@ -753,6 +753,22 @@ function renderMgr() {
 }
 /* Valdytojų plytelės (maketas 6, savininkas 2026-11-10: „tiek kortelių, kiek valdytojų, ir valdikliai“): po vieną kiekvienam šalies valdytojui –
    rinkos dalis, jos pokytis per ketvirtį ar metus, turtas ir dalyviai, maža dalies kreivė (12 ketvirčių). Paspaudus – valdytojas paryškinamas visame skirtuke. */
+/* Pokytis nuo metų pradžios – ta pati lentelė kaip LV ir EE (savininkas 2026-11-10: „nesuvienodintos skiltys“); metų pradžia – praėjusių metų gruodžio 31 d. ketvirtis */
+function renderMgrYtd(pl, di, list) {
+  const tb = document.getElementById('mgYTbl'); if (!tb) return;
+  const d = MS.d, y0 = `${+d.slice(0, 4) - 1}-12-31`, d0 = dIdx(pl, y0), LT = lang === 'lt';
+  const H = LT ? ['Valdytojas', 'Turtas metų pradžioje, mln. €', 'Turtas dabar, mln. €', 'Pokytis, mln. €', 'Pokytis', 'Rinkos dalis', 'Dalies pokytis, p. p.', 'Dalyviai', 'Dalyvių pokytis', 'Turtas vienam dalyviui, €']
+    : ['Manager', 'Assets at year start, € m', 'Assets now, € m', 'Change, € m', 'Change', 'Market share', 'Share change, p.p.', 'Participants', 'Participants change', 'Assets per participant, €'];
+  document.getElementById('mgYT').textContent = `${LT ? 'Pokytis nuo metų pradžios' : 'Change since the start of the year'} (${y0} → ${d})`;
+  if (d0 < 0 || d0 === di) { tb.innerHTML = ''; document.getElementById('mgYN').textContent = ''; return; }
+  const M0 = byMgr(pl, d0), T0 = totals(pl, d0), T1 = totals(pl, di), f1 = v => v == null ? '–' : num(v, 1), sg = v => v == null ? '' : v > 0 ? ' up' : v < 0 ? ' down' : '';
+  const fs = (v, k) => v == null ? '–' : (v < 0 ? '−' : '+') + num(Math.abs(v), k);
+  const row = (nm, a, b, s0, s1, tot) => { const dv = a && b ? b.nav - a.nav : null, sh = s1.nav ? b.nav / s1.nav * 100 : null, sh0 = a && s0.nav ? a.nav / s0.nav * 100 : null, dp = a && b ? b.part - a.part : null;
+    return `<tr${tot ? ' class="tot"' : ''}><td class="l">${tot ? '' : `<i class="sw" style="background:${mkColor(nm)}"></i>`}${hEsc(nm)}</td><td>${f1(a && a.nav)}</td><td>${f1(b.nav)}</td><td class="${sg(dv)}">${fs(dv, 1)}</td><td class="${sg(dv)}">${a ? mRel(b.nav, a.nav) : '–'}</td>`
+      + `<td>${tot ? '100 %' : sh == null ? '–' : pctPlain(sh, 2)}</td><td class="${tot ? '' : sg(sh - sh0)}">${tot || sh == null || sh0 == null ? '–' : fs(sh - sh0, 2)}</td><td>${b.part ? mInt(b.part) : '–'}</td><td class="${sg(dp)}">${dp == null || !b.part ? '–' : fs(dp, 0)}</td><td>${b.part ? mInt(b.nav * 1e6 / b.part) : '–'}</td></tr>`; };
+  tb.innerHTML = `<thead><tr>${H.map((h, i) => `<th${i ? '' : ' class="l"'}>${h}</th>`).join('')}</tr></thead><tbody>${list.map(([m, x]) => row(m, M0[m], x, T0, T1)).join('')}${row(T().thTot, T0, T1, T0, T1, true)}</tbody>`;
+  document.getElementById('mgYN').textContent = LT ? `Turto pokytis apima ir investicijų rezultatą, ir pinigų srautus (įmokas, išmokas, perėjimus${payoutQ(d) ? ', 2026 m. reformos išmokas' : ''}).` : `The change in assets includes both investment results and money flows (contributions, payouts, switches${payoutQ(d) ? ', 2026 reform payouts' : ''}).`;
+}
 function renderMgrTiles(t, pl, di, list) {
   const box = document.getElementById('mgTiles'); if (!box) return;
   const k = MS.tsh === 'part' ? 'part' : 'nav', back = MS.tcmp === 'q' ? 3 : 12, dc = dIdx(pl, qBack(MS.d, back));
