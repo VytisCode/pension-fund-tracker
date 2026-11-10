@@ -222,11 +222,11 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data.js?v=15d27efe"></script>
-<script src="common.js?v=0b9d73e4"></script>
+<script src="data.js?v=70b87795"></script>
+<script src="common.js?v=6374cf01"></script>
 <script src="data_cpi.js?v=870ec578"></script>
 <script src="data_journey.js"></script>
-<script src="data_rep.js?v=d3851e2c"></script>
+<script src="data_rep.js?v=6cf7c314"></script>
 <script src="data_mkt.js?v=8c3b65a2"></script>
 <script src="data_earn.js?v=34b251c9"></script>
 <script src="earn.js?v=128cc993"></script>
@@ -290,10 +290,31 @@ addStrings({
     ['apie.html', 'Metodika ir šaltiniai', 'Iš kur duomenys, kaip skaičiuojama, žinomi apribojimai.']],
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo gyvenimo ciklo fondų vidurkis (svertinis pagal turtą – santraukoje). Informacinė medžiaga, ne investavimo rekomendacija.',
 });
+if (typeof CTRY_COPY !== 'undefined') addStrings({   // LV/EE: grupės – rizikos (akcijų dalies) grupės, ne gimimo metai; valdytojas – jo fondų vidurkis grupėje
+  kWeek: p => `Average fund · ${p}`, gH: p => `Fund groups · ${p}`,
+  s1: (l, lv, w, wv) => `${PERS().lead} ${l} has done best: on average ${lv} across the ${LC.length} fund groups (a manager's figure in a group is the asset-weighted average of its funds there); ${w} has done worst (${wv}).`,
+  s2: (v, up) => `${PERS().lead} the average fund is ${up ? 'up' : 'down'} ${v}.`,
+  foot: 'Return – change in unit value (fees already deducted), not annualised. Manager return – simple average over the groups of its funds (asset-weighted within a group; asset-weighted overall in the summary). For information only, not investment advice.'
+}, {
+  kWeek: p => `Vidutinis fondas · ${p}`, gH: p => `Fondų grupės · ${p}`,
+  s1: (l, lv, w, wv) => `${PERS().lead} geriausiai sekasi ${l}: vidutiniškai ${lv} per ${LC.length} fondų grupes (valdytojo rodiklis grupėje – jo fondų vidurkis, svertinis turtu); silpniausiai – ${w} (${wv}).`,
+  s2: (v, up) => `${PERS().lead} vidutinis fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`,
+  foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Valdytojo grąža – paprastas jo grupių vidurkis (grupėje – fondų vidurkis, svertinis turtu; santraukoje – svertinis pagal turtą). Informacinė medžiaga, ne investavimo rekomendacija.'
+});
 const meanOf = xs => { const a = xs.filter(x => x != null); return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null; };
 const medianOf = xs => { const a = xs.filter(x => x != null).sort((x, y) => x - y); if (!a.length) return null; const k = a.length >> 1; return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2; };
 const LC = DATA.groups.filter(g => g.id !== 'turto'), TURTO = DATA.groups.find(g => g.id === 'turto');
 const PROVS = DATA.providers.map(p => p.id);
+/* šalies kopijoje (index_lv/ee) DATA.providers – fondai (grupėje keli to paties valdytojo planai), todėl valdytojų kortelės ir
+   „Lyginamasis valdytojas“ – valdytojo fondų grupėje vidurkis, svertinis turtu; grupių lentelė lieka fondų lygmens */
+const CTRY = typeof CTRY_COPY !== 'undefined', MOF = Object.fromEntries(DATA.providers.map(p => [p.id, p.m || p.id]));
+const MIDS = CTRY ? [...new Set(DATA.providers.map(p => MOF[p.id]))] : PROVS;
+const mLab = id => CTRY ? id : labelOf(id), mCol = id => CTRY ? colorOf(DATA.providers.find(p => MOF[p.id] === id).id) : colorOf(id);
+function mOut(r) {                     // {valdytojas: [grąža, turtas]} grupėje
+  const o = {};
+  r.g.funds.forEach(f => { const v = r.out[f.provider], m = MOF[f.provider]; if (v == null) return; const x = o[m] = o[m] || [0, 0, 0, 0]; const a = f.assets > 0 ? f.assets : 0; x[0] += v * a; x[1] += a; x[2] += v; x[3]++; });
+  return Object.fromEntries(Object.entries(o).map(([m, x]) => [m, [x[1] > 0 ? x[0] / x[1] : x[2] / x[3], x[1]]]));
+}
 let REF = '', PER = 'ytd';
 try { const p = localStorage.getItem('homePer'); if (['d', 'w', 'mtd', 'qtd', 'ytd'].includes(p)) PER = p; } catch (e) {}
 const PERS = () => ({ lead: T().lead[PER] });
@@ -301,7 +322,7 @@ const PERS = () => ({ lead: T().lead[PER] });
    7 d., praėjusio mėnesio / ketvirčio / metų pabaiga */
 function anchorOf(per, end) { const e = new Date(end * DAY), y = e.getUTCFullYear(), m = e.getUTCMonth();
   return per === 'd' ? end - 1 : per === 'w' ? end - 7 : per === 'mtd' ? Math.round(Date.UTC(y, m, 0) / DAY) : per === 'qtd' ? Math.round(Date.UTC(y, m - m % 3, 0) / DAY) : Math.round(Date.UTC(y - 1, 11, 31) / DAY); }
-try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); if (PROVS.includes(s.mref)) REF = s.mref; } catch (e) {}
+try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); if (MIDS.includes(s.mref)) REF = s.mref; } catch (e) {}
 function saveRef() { try { const s = JSON.parse(localStorage.getItem('perfState') || '{}'); s.mref = REF; localStorage.setItem('perfState', JSON.stringify(s)); } catch (e) {} }
 
 function groupRets(g, per) {            // {provider: grąža %} grupėje; neatnaujinti (>5 d.) fondai – null
@@ -313,12 +334,13 @@ function groupRets(g, per) {            // {provider: grąža %} grupėje; neatn
 }
 function compute() {
   const ytd = LC.map(g => ({ g, ...groupRets(g, PER) })), wk = ytd;
-  const wMean = (p, rows = ytd) => { let s = 0, w = 0; rows.forEach(r => { const v = r.out[p], f = r.g.funds.find(x => x.provider === p); if (v != null && f && f.assets > 0) { s += v * f.assets; w += f.assets; } }); return w > 0 ? s / w : null; };
-  const mgr = PROVS.map(p => ({ id: p, ytd: meanOf(ytd.map(r => r.out[p])), ytdW: wMean(p), wk: wMean(p) })).filter(m => m.ytd != null);
+  const mo = ytd.map(mOut);
+  const wMean = p => { let s = 0, w = 0; mo.forEach(o => { const x = o[p]; if (x && x[1] > 0) { s += x[0] * x[1]; w += x[1]; } }); return w > 0 ? s / w : null; };
+  const mgr = MIDS.map(p => ({ id: p, ytd: meanOf(mo.map(o => o[p] ? o[p][0] : null)), ytdW: wMean(p), wk: wMean(p) })).filter(m => m.ytd != null);
   const byYW = mgr.filter(m => m.ytdW != null).sort((a, b) => b.ytdW - a.ytdW);
   const byY = [...mgr].sort((a, b) => b.ytd - a.ytd), byW = [...mgr].filter(m => m.wk != null).sort((a, b) => b.wk - a.wk);
   const end = Math.max(...ytd.map(r => r.end));
-  const groups = ytd.map(r => { const xs = Object.entries(r.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); return { g: r.g, xs, gap: xs.length > 1 ? xs[0][1] - xs[xs.length - 1][1] : null, out: r.out }; });
+  const groups = ytd.map(r => { const xs = Object.entries(r.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]); return { g: r.g, xs, gap: xs.length > 1 ? xs[0][1] - xs[xs.length - 1][1] : null, out: r.out, mo: mOut(r) }; });
   const allW = wk.flatMap(r => Object.values(r.out)).filter(v => v != null);
   const live = DATA.groups.flatMap(g => g.funds).filter(f => f.assets && f.assetsDate >= end - 10);
   const tu = TURTO ? Object.entries(groupRets(TURTO, PER).out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]) : [];
@@ -326,46 +348,46 @@ function compute() {
 }
 function bars(list, key) {              // mažos horizontalios juostos: nulis per vidurį
   const m = Math.max(...list.map(x => Math.abs(x[key])), 0.01);
-  return `<div class="mb">${list.map(x => { const w = Math.abs(x[key]) / m * 50; return `<span>${labelOf(x.id)}</span><span class="t"><i style="background:${colorOf(x.id)};width:${w}%;left:${x[key] >= 0 ? 50 : 50 - w}%"></i></span><span class="n">${pct(x[key])}</span>`; }).join('')}</div>`;
+  return `<div class="mb">${list.map(x => { const w = Math.abs(x[key]) / m * 50; return `<span>${mLab(x.id)}</span><span class="t"><i style="background:${mCol(x.id)};width:${w}%;left:${x[key] >= 0 ? 50 : 50 - w}%"></i></span><span class="n">${pct(x[key])}</span>`; }).join('')}</div>`;
 }
 const money = v => v >= 1e9 ? `${num(v / 1e9, 2)} ${T().bn}` : `${num(v / 1e6, 1)} ${T().mn}`;
 function render() {
   const t = T(), c = compute(), $ = id => document.getElementById(id);
   const sel = $('ref');
-  sel.innerHTML = `<option value="">${t.refNone}</option>` + c.byY.map(m => `<option value="${m.id}">${labelOf(m.id)}</option>`).join(''); sel.value = REF;
+  sel.innerHTML = `<option value="">${t.refNone}</option>` + c.byY.map(m => `<option value="${m.id}">${mLab(m.id)}</option>`).join(''); sel.value = REF;
   $('refL').textContent = t.refL; $('refN').textContent = REF ? '' : t.refNote;
   const P = t.per[PER];
   $('per').innerHTML = Object.keys(t.per).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === PER}" title="${t.perTip[k]}">${t.per[k]}</button>`).join('');
   $('perN').textContent = t.perN(iso(c.anchor), iso(c.end));
   const L = c.byY[0], W = c.byY[c.byY.length - 1], B = c.byW[0], Wk = c.byW[c.byW.length - 1];
   const card = (l, v, s, extra = '', href = 'performance.html', hl = false) => `<div class="bk${hl ? ' hl' : ''}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span>${extra}<a class="more" href="${href}">${t.more}</a></div>`;
-  let h = card(t.kLead(P), `${labelOf(L.id)} ${pct(L.ytd)}`, t.kLeadS(labelOf(W.id), pct(W.ytd)), bars(c.byY, 'ytd'));
-  h += card(t.kWeek(P), c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(labelOf(B.id), labelOf(Wk.id)) : '', bars(c.byW, 'wk'));
+  let h = card(t.kLead(P), `${mLab(L.id)} ${pct(L.ytd)}`, t.kLeadS(mLab(W.id), pct(W.ytd)), bars(c.byY, 'ytd'));
+  h += card(t.kWeek(P), c.wAvg == null ? '–' : pct(c.wAvg), B ? t.kWeekS(mLab(B.id), mLab(Wk.id)) : '', bars(c.byW, 'wk'));
   h += card(t.kAum, money(c.aum), t.kAumS(c.nAum, iso(c.aumD)), '', 'aum.html');
   const R = REF && c.mgr.find(m => m.id === REF);
   if (R) {
     const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd));
-    h += card(t.kRef(labelOf(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true);
+    h += card(t.kRef(mLab(R.id)), pct(R.ytd), t.kRefS(k, c.byY.length, (d >= 0 ? '+' : '−') + num(Math.abs(d), 2)), '', 'performance.html', true);
   } else {
     const G = c.groups.filter(g => g.gap != null).sort((a, b) => b.gap - a.gap)[0];
     h += card(t.kGap, G ? `${num(G.gap, 2)} ${lang === 'lt' ? 'p. p.' : 'pp'}` : '–', G ? t.kGapS(groupLabel(G.g), labelOf(G.xs[0][0]), labelOf(G.xs[G.xs.length - 1][0])) : '');
   }
   $('big').innerHTML = h;
   $('sayH').textContent = t.sayH;
-  const s = [t.s1(labelOf(L.id), pct(L.ytd), labelOf(W.id), pct(W.ytd))];
-  if (c.byYW.length > 1) { const a = c.byYW[0], b = c.byYW[c.byYW.length - 1]; s.push(t.s1w(labelOf(a.id), pct(a.ytdW), labelOf(b.id), pct(b.ytdW))); }
+  const s = [t.s1(mLab(L.id), pct(L.ytd), mLab(W.id), pct(W.ytd))];
+  if (c.byYW.length > 1) { const a = c.byYW[0], b = c.byYW[c.byYW.length - 1]; s.push(t.s1w(mLab(a.id), pct(a.ytdW), mLab(b.id), pct(b.ytdW))); }
   if (c.wAvg != null) s.push(t.s2(pctPlain(Math.abs(c.wAvg)), c.wAvg >= 0));
   if (DATA.mkt && DATA.mkt.all) {           // visos rinkos indeksas, svertinis pagal turtą (kaip Estijos EPI)
     const x = DATA.mkt.all, d = [x.d0]; x.dd.forEach(v => d.push(d[d.length - 1] + v)); const f = { d, v: x.v }, ia = lastOnOrBefore(f, c.anchor), ie = lastOnOrBefore(f, c.end);
     if (ia >= 0 && ie > ia) { const r = (f.v[ie] / f.v[ia] - 1) * 100; s.push(lang === 'lt' ? `Visos rinkos indeksas (visi gyvenimo ciklo fondai, svertinis pagal turtą): <b>${pct(r)}</b>.` : `Whole-market index (all life-cycle funds, asset-weighted): <b>${pct(r)}</b>.`); }
   }
-  if (R) { const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd)); s.push(t.s3r(labelOf(R.id), d, k, c.byY.length)); }
+  if (R) { const k = c.byY.indexOf(R) + 1, d = R.ytd - medianOf(c.mgr.filter(m => m !== R).map(m => m.ytd)); s.push(t.s3r(mLab(R.id), d, k, c.byY.length)); }
   else if (c.tu.length) s.push(t.s3(labelOf(c.tu[0][0]), pct(c.tu[0][1])));
   $('say').innerHTML = s.map(x => `<p>${x}</p>`).join('');
   $('gH').textContent = t.gH(P); $('gM').textContent = t.gM(iso(c.anchor), iso(c.end)); $('gMore').textContent = t.more;
   const sw = id => `<i style="background:${colorOf(id)}"></i>`;
-  $('gT').innerHTML = `<thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th>${R ? `<th class="n">${labelOf(REF)}</th>` : ''}</tr></thead><tbody>`
-    + [...c.groups].reverse().map(g => { const a = g.xs[0], b = g.xs[g.xs.length - 1]; return `<tr><td>${groupLabel(g.g)}</td><td>${sw(a[0])}${labelOf(a[0])}</td><td class="n">${pct(a[1])}</td><td>${sw(b[0])}${labelOf(b[0])}</td><td class="n">${pct(b[1])}</td><td class="n">${num(g.gap, 2)}</td>${R ? `<td class="n">${g.out[REF] == null ? '–' : pct(g.out[REF])}</td>` : ''}</tr>`; }).join('') + '</tbody>';
+  $('gT').innerHTML = `<thead><tr><th>${t.thG}</th><th>${t.thLead}</th><th class="n"></th><th>${t.thLast}</th><th class="n"></th><th class="n">${t.thGap}</th>${R ? `<th class="n">${mLab(REF)}</th>` : ''}</tr></thead><tbody>`
+    + [...c.groups].reverse().map(g => { const a = g.xs[0], b = g.xs[g.xs.length - 1]; return `<tr><td>${groupLabel(g.g)}</td><td>${sw(a[0])}${labelOf(a[0])}</td><td class="n">${pct(a[1])}</td><td>${sw(b[0])}${labelOf(b[0])}</td><td class="n">${pct(b[1])}</td><td class="n">${num(g.gap, 2)}</td>${R ? `<td class="n">${g.mo[REF] == null ? '–' : pct(g.mo[REF][0])}</td>` : ''}</tr>`; }).join('') + '</tbody>';
   cardify($('gT'));
   $('guH').textContent = t.guH; $('guN').textContent = t.guN;
   const GIMG = { 'facts.html': 'facts', 'performance.html': 'results', 'managers.html': 'mgr', 'portfolios.html': 'pf', 'reports.html': 'rep', 'journey.html': 'jr' };   // skyrių nuotraukos (savininkas 2026-10-21)

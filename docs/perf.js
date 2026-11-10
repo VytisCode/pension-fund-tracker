@@ -1476,7 +1476,7 @@ function labelControls() {
   $('btnAdv').innerHTML = T().advBtn;
   { const bm = $('btnMore'), card = $('chartCard'); bm.textContent = lang === 'lt' ? '⚙ Daugiau nustatymų' : '⚙ More settings';   // retai naudojami nustatymai suskleisti (savininkas 2026-10-16: „per daug painus“)
     bm.onclick = () => { const on = !card.classList.contains('more'); card.classList.toggle('more', on); bm.setAttribute('aria-pressed', on); }; }
-  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => x.id === 'hMarket' ? MKT : x.id !== 'insTitle' || !(IS3 || PX)));   // vidinė navigacija (auditas #43)
+  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => x.id === 'hMarket' ? MKT : x.id !== 'insTitle' || (PX ? PX.pl === 'II' : !IS3)));   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {
@@ -1505,7 +1505,7 @@ if (IS3) {   // III pakopa: Sharpe matricos (grupės × valdytojai) nėra – Sh
   addStrings({ thFund: 'Fund' }, { thFund: 'Fondas' });
 }
 if (PX) {   // Baltijos šalys: „Visa rinka“ ir „Rinkos įžvalgos“ – baltic.html (vienodai visoms šalims); Lietuvos įvykiai kitoms šalims netinka
-  ['insTitle'].concat(MKT ? [] : ['hMarket']).forEach(id => { const sm = $(id) && $(id).closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; } });
+  (PX.pl === 'II' ? [] : ['insTitle']).concat(MKT ? [] : ['hMarket']).forEach(id => { const sm = $(id) && $(id).closest('section'); if (sm) { sm.removeAttribute('data-tab'); sm.hidden = true; } });
   if (MKT) { const sm = $('hMarket').closest('section'); sm.hidden = false; sm.setAttribute('data-tab', 'market'); }
   if (PX.c !== 'LT') {                                  // LV/EE grupės – ne amžiaus, o rizikos / akcijų dalies: tekstuose „amžiaus grupė“ → „grupė“
     const fix = x => typeof x === 'string' ? x.replace(/amžiaus (grup)/g, '$1').replace(/Amžiaus grup/g, 'Grup').replace(/\bage (group)/g, '$1').replace(/\bAge group/g, 'Group') : x;

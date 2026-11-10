@@ -394,7 +394,7 @@ function bxTabs(c, pl) {
   return [[pp, 'market', 'Visa rinka', 'Whole market'], [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
     b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', 'Kilimas ir kritimas', 'Run-up and drawdown'],
     b('cr', pl === 'III' ? 'Visi fondai – rodikliai' : 'Visi fondai', pl === 'III' ? 'All funds – key figures' : 'All funds'), b('ov', 'Apžvalga', 'Overview'),
-    [pp + '_ov', '', pl === 'II' ? 'Grupių grafikai' : 'Kategorijų grafikai', pl === 'II' ? 'Group charts' : 'Category charts'], ...(pl === 'II' ? [na('Rinkos įžvalgos', 'Market insights', 's2')] : [])];
+    [pp + '_ov', '', pl === 'II' ? 'Grupių grafikai' : 'Kategorijų grafikai', pl === 'II' ? 'Group charts' : 'Category charts'], ...(pl === 'II' ? [[pp, 'ins', 'Rinkos įžvalgos', 'Market insights']] : [])];
 }
 const tabGroupOf = page => page && page.startsWith('baltic') ? bxTabs(BXM.c, BXM.pl) : TAB_GROUP[page];
 function bxBar() {                        // šalies ir pakopos juosta (nuorodos): perjungus šalį lieka tas pats skirtukas

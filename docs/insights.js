@@ -51,6 +51,13 @@ addStrings({
     xls: 'Excel', xSheets: ['Valdytojai', 'Fondai', 'Išmokos', 'Mėnesių duomenys'],
   },
 });
+if (typeof PLX !== 'undefined' && PLX.c !== 'LT') {   // LV/EE: kiti duomenys ir nėra reformos išmokų
+  const src = PLX.c === 'LV' ? 'manapensija.lv' : 'pensionikeskus.ee';
+  Object.assign(I18N.en.in, { lead: 'The whole II pillar market, each manager and each fund over the chosen period: how much participants earned from investments, the asset-weighted average return and net money flows.',
+    note: `Assets and unit values at each month end (${src}, daily data); earnings within a month assume an even flow. Fund mergers are not counted as flows (separated as in “Asset change”). Shown from 2019, like the Lithuanian view.` });
+  Object.assign(I18N.lt.in, { lead: 'Visa II pakopos rinka, kiekvienas valdytojas ir fondas pasirinktu laikotarpiu: kiek dalyviai uždirbo iš investicijų, turtu svertinė vidutinė grąža ir grynieji pinigų srautai.',
+    note: `Turtas ir vieneto vertė kiekvieno mėnesio pabaigoje (${src}, kasdieniai duomenys); uždarbis mėnesio viduje skaičiuojamas laikant srautą tolygiu. Fondų sujungimai į srautus neįskaičiuoti (atskirti kaip „Turto pokytyje“). Rodoma nuo 2019 m., kaip Lietuvos vaizde.` });
+}
 
 const IN = { per: 'ytd', grp: '', to: '', loaded: false, F: null };      // to: '' = naujausi duomenys, kitaip ISO data
 try { const s = JSON.parse(localStorage.getItem('insState') || '{}'); if (s.per) IN.per = s.per; if (typeof s.grp === 'string') IN.grp = s.grp; if (typeof s.to === 'string') IN.to = s.to; } catch (e) {}
@@ -75,15 +82,29 @@ function inPrepare() {
       const d0 = f.d[i - 1], d1 = f.d[i], a0 = f.a[i - 1], a1 = f.a[i], u0 = uv(d0), u1 = uv(d1);
       if (u0 == null || u1 == null) continue;
       const r = u1 / u0 - 1, e = d1 - d0 <= 7 ? a0 * r : r * (a0 + a1 / (1 + r)) / 2;
-      iv.push([d0, d1, e, a1 - a0 - e, (payDay[inKey(f.n)] || {})[d1] || 0]);
+      iv.push([d0, d1, e, a1 - a0 - e - ((f.mg || {})[d1] || 0), (payDay[inKey(f.n)] || {})[d1] || 0]);   // mg – LV/EE fondų sujungimai (ne srautas)
     }
     return { n: f.n, p: f.p, g: f.g, d: f.d, a: f.a, u, iv };
   });
 }
+/* LV/EE (baltic_lv.html, baltic_ee.html): turtas ir vieneto vertė mėnesio pabaigoje iš data_bx_flow.js (baltic.py flows) → AUM formatas;
+   grupė – „Rezultatų“ grupės pavadinimas, valdytojas – DATA.providers m; reformos išmokų nėra */
+const inBx = () => typeof PLX !== 'undefined' && PLX.c !== 'LT';
+function inBxAum() {
+  const S = BXFLOW[PLX.c][PLX.pl], endD = dayOf(S.end), gOf = {}, mOf = {};
+  DATA.groups.forEach(g => g.funds.forEach(f => { gOf[f.name] = groupLabel(g); mOf[f.name] = (DATA.providers.find(p => p.id === f.provider) || {}).m; }));
+  const funds = S.f.filter(f => gOf[f.n]).map(f => { const d = [], a = [];
+    f.a.forEach((x, i) => { if (x == null) return; const k = f.k0 + i; d.push(Math.min(endD, Math.round(Date.UTC(Math.floor(k / 12), k % 12 + 1, 0) / DAY))); a.push(x); });
+    const mg = {};
+    f.a.forEach((x, i) => { const k = f.k0 + i, v = (f.g || {})[k]; if (x != null && v) mg[Math.min(endD, Math.round(Date.UTC(Math.floor(k / 12), k % 12 + 1, 0) / DAY))] = v; });
+    return { pl: 'II', p: mOf[f.n] || f.m, g: gOf[f.n], n: f.n, d, a, mg }; });
+  return { funds, payouts: [], generated: JDATA.generated };
+}
 function inLoad() {
   if (IN.loaded) return Promise.resolve();
   return new Promise((ok, no) => {
-    const s = document.createElement('script'); s.src = 'data_aum.js?v=' + encodeURIComponent(JDATA.generated);
+    const s = document.createElement('script'); s.src = inBx() ? 'data_bx_flow.js?v=' + encodeURIComponent(JDATA.generated) : 'data_aum.js?v=' + encodeURIComponent(JDATA.generated);
+    if (inBx()) { s.onload = () => { window.AUM = inBxAum(); IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = () => { s.remove(); no(); }; document.head.appendChild(s); return; }
     s.onload = () => { IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = () => { s.remove(); no(); }; document.head.appendChild(s);
   });
 }
@@ -171,6 +192,11 @@ function renderInsights() {
   box.querySelector('[data-ins="to"]').addEventListener('change', e => { const v = e.target.value; if (v === 'custom') { IN.toCustom = true; IN.to = iso(end); } else { IN.toCustom = false; IN.to = v; } inSave(); renderInsights(); });
   const tD = box.querySelector('[data-ins="toD"]'); if (tD) tD.addEventListener('change', e => { if (e.target.value) { IN.to = e.target.value; inSave(); renderInsights(); } });
   box.querySelector('[data-ins="grp"]').addEventListener('change', e => { IN.grp = e.target.value; inSave(); renderInsights(); });
+  if (inBx()) {                          // LV/EE: reformos išmokų nėra – jų stulpeliai, KPI ir lentelė nerodomi
+    const kk = box.querySelectorAll('.kpis .kpi'); if (kk.length > 4) kk[4].remove();
+    [['insM', 2], ['insF', 1]].forEach(([id, n]) => box.querySelectorAll(`#${id} tr`).forEach(tr => { for (let i = 0; i < n; i++) tr.lastElementChild && tr.lastElementChild.remove(); }));
+    const tp = box.querySelector('#insP'), sc = tp && tp.closest('section'); if (sc) { const h = sc.previousElementSibling; if (h && h.tagName === 'H3') h.remove(); sc.remove(); }
+  }
   IN.last = { a, b, rows, byM, tot, payQ };
 }
 
