@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<link rel="stylesheet" href="style.css?v=6248d73f">
+<link rel="stylesheet" href="style.css?v=dd76affc">
 <style>
   .today { display: grid; gap: 14px; }
   .refrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
@@ -209,7 +209,9 @@
     <h2 class="sec" id="mgTitle"></h2>
     <p class="lead" id="mgLead"></p>
     <div id="mgBar"></div>
+    <div class="mgtw"><div class="mgtc"><div class="seg" id="mgTsh" role="group"></div><div class="seg" id="mgTcmp" role="group"></div></div><div class="mgtiles" id="mgTiles"></div></div>
     <section class="card" data-src="lbh"><div class="scroll"><table class="at" id="mgT"></table></div><p class="note" id="mgNote"></p></section>
+    <section class="card" data-src="lbh"><h2 id="mgShT"></h2><div id="mgShB"></div></section>
     <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="miTitle" style="margin:0 0 4px"></h2><p class="meta" id="miLead" style="margin:0"></p></div><button type="button" class="btn xl" id="miXl" data-xall="miCards"></button></div><div class="facts" id="miCards"></div></section>
     <section class="card" data-src="lbh"><div class="factbar" style="justify-content:space-between;align-items:flex-start;gap:12px"><div><h2 id="brTitle" style="margin:0 0 4px"></h2><p class="meta" id="brLead" style="margin:0"></p></div><button type="button" class="btn xl" id="brXl" data-xall="brCards"></button></div><div class="facts" id="brCards"></div><p class="note" id="brNote"></p></section>
     <section class="card" data-src="lbh"><h2 id="mgChart"></h2><div class="seg" id="mgSeg" role="group"></div><div class="chart" id="mgChartBox"></div><div class="legend chips" id="mgLegend" style="margin-top:6px"></div></section>
@@ -224,17 +226,17 @@
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="data_bx_ee2.js?v=ca446e2d"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
-<script src="common.js?v=89ceaadd"></script><script>BXM.c = "EE"; BXM.pl = "II"; var CTRY_COPY = "EE"; p3Colors();</script>
+<script src="data_bx_ee2.js?v=3e5791af"></script><script>DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="common.js?v=d9b0fc5d"></script><script>BXM.c = "EE"; BXM.pl = "II"; var CTRY_COPY = "EE"; p3Colors();</script>
 
 <script src="data_journey.js"></script>
-<script src="data_rep.js?v=d408d6ee"></script>
+<script src="data_rep.js?v=db6cd51e"></script>
 <script src="data_mkt_ee.js?v=0f054e8b"></script>
 <script src="data_earn_ee.js?v=c566d855"></script>
 <script src="earn.js?v=db57aa13"></script>
 <script src="data_news.js?v=9ae2d677"></script>
 <script src="news.js?v=f72e6ef1"></script>
-<script src="mkt.js?v=8e9f4b2c"></script>
+<script src="mkt.js?v=57046c42"></script>
 <script>
 /* Pradžios puslapis „Šiandien trumpai“ (auditas #42). Lyginamąjį valdytoją visada renkasi vartotojas, pagrindinio nėra
    (savininko sprendimas 2026-10-14); pasirinkimas bendras su „Rezultatų“ puslapiu (perfState.mref).

@@ -520,9 +520,14 @@ function renderMg() {
     return `<td class="n${k === 'wr' ? ' ' + sgn(v) : ''}">${k === 'na' ? num(v, 1) : k === 'inv' ? num(v, 0) : k === 'n' ? v : k === 'top' ? `${v[0]} / ${v[1]}` : pctPlain(v)}</td>`; };
   $('mgTbl').innerHTML = `<thead><tr>${cols.map(k => `<th${k === 'm' ? '' : ' class="n"'}>${k === 'wr' ? `${m.h.wr}, ${t.hz[MGH].toLowerCase()}` : m.h[k]}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${cols.map(k => cell(r, k)).join('')}</tr>`).join('')}</tbody>`;
   $('mgN').textContent = m.n(d, CR.c === 'LV');
-  $('mgShT').textContent = m.shT;
-  $('mgSh').innerHTML = tot ? `<div class="shbar">${rows.filter(r => r.na).map((r, i) => `<span style="width:${r.sh}%;background:${PAL[i % PAL.length]}" title="${hEsc(r.m)} ${pctPlain(r.sh)}"></span>`).join('')}</div>`
-    + `<div class="sel">${rows.filter(r => r.na).map((r, i) => `<span class="chip"><i style="background:${PAL[i % PAL.length]}"></i>${hEsc(r.m)} <b>${pctPlain(r.sh)}</b></span>`).join('')}</div>` : `<p class="note">${m.noNa}</p>`;
+  { const S = shOf(CR.c, CR.pl);   // tie patys mėnesio skaičiai kaip plytelėse ir „Rinkos dalis laike“ (vienas rodiklis – vienas skaičius)
+    if (S && S.m.length) { const i1 = S.m.length - 1, A = shAt(S, i1, 'na'), col = mgColor(S), gs = [...col.keys()].filter(g => A.o[g]);
+      if (A.s) { $('mgShT').textContent = `${m.shT} · ${S.m[i1]}`;
+        $('mgSh').innerHTML = `<div class="shbar">${gs.map(g => `<span style="width:${A.o[g] / A.s * 100}%;background:${col.get(g)}" title="${hEsc(g)} ${pctPlain(A.o[g] / A.s * 100)}"></span>`).join('')}</div>`
+          + `<div class="sel">${gs.map(g => `<span class="chip"><i style="background:${col.get(g)}"></i>${hEsc(g)} <b>${pctPlain(A.o[g] / A.s * 100)}</b></span>`).join('')}</div>`; } } else S0(); }
+  function S0() { $('mgShT').textContent = m.shT;
+  $('mgSh').innerHTML = tot ? `<div class="shbar">${rows.filter(r => r.na).map((r, i) => `<span style="width:${r.sh}%;background:${brandCol(r.m) || PAL[i % PAL.length]}" title="${hEsc(r.m)} ${pctPlain(r.sh)}"></span>`).join('')}</div>`
+    + `<div class="sel">${rows.filter(r => r.na).map((r, i) => `<span class="chip"><i style="background:${brandCol(r.m) || PAL[i % PAL.length]}"></i>${hEsc(r.m)} <b>${pctPlain(r.sh)}</b></span>`).join('')}</div>` : `<p class="note">${m.noNa}</p>`; }
   $('mgBrT').textContent = m.brT;
   $('mgBr').innerHTML = rows.map(r => { const b = brag.get(r.m);
     return `<section class="card"><h3>${hEsc(r.m)}</h3>${b.length ? `<ul>${b.slice(0, 6).map(x => `<li>${hEsc(m.br(x.g, x.f, BRH[x.h][lang] || BRH[x.h].lt, fmtP(x.v), x.n))}</li>`).join('')}${b.length > 6 ? `<li class="note">+${b.length - 6}</li>` : ''}</ul>` : `<p class="note">${m.brNone}</p>`}</section>`; }).join('');
@@ -578,7 +583,7 @@ function ytdIdx(S) {                                      // [metų pradžios (p
 }
 function mgColor(S) {                                     // ta pati spalva valdytojui grafike ir lentelėje: pagal dabartinį dydį
   const last = shAt(S, S.m.length - 1, 'na').o;
-  return new Map(Object.keys(S.mg).sort((a, b) => (last[b] || 0) - (last[a] || 0) || a.localeCompare(b)).map((g, i) => [g, PAL[i % PAL.length]]));
+  return new Map(Object.keys(S.mg).sort((a, b) => (last[b] || 0) - (last[a] || 0) || a.localeCompare(b)).map((g, i) => [g, brandCol(g) || PAL[i % PAL.length]]));   // prekės ženklo spalva
 }
 function renderMs() {
   const t = T().ms, S = shOf(CR.c, CR.pl);
@@ -614,6 +619,31 @@ function renderMs() {
   $('myN').textContent = t.yN(S.m[i0], S.m[i1]);
 }
 $('msSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; MSK = b.dataset.k; renderMs(); });
+/* Valdytojų plytelės (maketas 6, savininkas 2026-11-10: „tiek kortelių, kiek valdytojų, ir valdikliai“) – tie patys BALTIC.sh skaičiai kaip grafike ir lentelėje */
+addStrings({ mt: { cmp: { m: 'Change in a month', ytd: 'Change since year start', y: 'Change in a year' }, part: 'participants', mn: '€ m' } },
+  { mt: { cmp: { m: 'Pokytis per mėnesį', ytd: 'Pokytis nuo metų pradžios', y: 'Pokytis per metus' }, part: 'dalyviai', mn: 'mln. €' } });
+let MTK = 'na', MTC = 'y';
+function renderMt() {
+  const box = $('mtTiles'), S = shOf(CR.c, CR.pl), t = T(); if (!box) return;
+  if (!S || !S.m.length) { box.innerHTML = ''; $('mtSh').innerHTML = ''; $('mtCmp').innerHTML = ''; return; }
+  const hasInv = Object.values(S.mg).some(x => x.inv.some(v => v)); if (!hasInv) MTK = 'na';
+  const q = S.f === 'Q', i1 = S.m.length - 1, back = { m: q ? 1 : 1, y: q ? 4 : 12 }, i0 = MTC === 'ytd' ? ytdIdx(S)[0] : i1 - back[MTC];
+  $('mtSh').innerHTML = (hasInv ? ['na', 'inv'] : ['na']).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === MTK}">${t.ms.k[k]}</button>`).join('');
+  $('mtCmp').innerHTML = (q ? ['ytd', 'y'] : ['m', 'ytd', 'y']).map(k => `<button type="button" data-k="${k}" aria-pressed="${k === MTC}">${t.mt.cmp[k]}</button>`).join('');
+  const col = mgColor(S), A1 = shAt(S, i1, MTK), A0 = i0 >= 0 ? shAt(S, i0, MTK) : null, N1 = shAt(S, i1, 'na'), P1 = shAt(S, i1, 'inv'), pp = lang === 'lt' ? 'p. p.' : 'pp';
+  const gs = [...col.keys()].filter(g => A1.o[g] != null);
+  box.style.setProperty('--n', Math.min(gs.length, 6));
+  box.innerHTML = gs.map(g => {
+    const sh = A1.s ? A1.o[g] / A1.s * 100 : null, sh0 = A0 && A0.s && A0.o[g] != null ? A0.o[g] / A0.s * 100 : null, d = sh != null && sh0 != null ? sh - sh0 : null;
+    const pts = []; for (let i = Math.max(0, i1 - (q ? 11 : 35)); i <= i1; i++) { const a = shAt(S, i, MTK); if (a.s && a.o[g] != null) pts.push(a.o[g] / a.s * 100); }
+    let sp = ''; if (pts.length > 2) { const lo = Math.min(...pts), hi = Math.max(...pts), W = 120, H = 26;
+      sp = `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${pts.map((v, i) => `${i ? 'L' : 'M'}${(i / (pts.length - 1) * W).toFixed(1)} ${(H - 3 - (v - lo) / ((hi - lo) || 1) * (H - 6)).toFixed(1)}`).join('')}" fill="none" stroke="${col.get(g)}" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>`; }
+    return `<div class="mgt"><span class="mgn"><i class="sw" style="background:${col.get(g)}"></i>${hEsc(g)}</span><b class="mgv">${sh == null ? '–' : pctPlain(sh, 1)}</b>`
+      + `<span class="mgd"><span class="kd ${d == null ? '' : d < 0 ? 'neg' : 'pos'}">${d == null ? '–' : `${d >= 0 ? '+' : '−'}${num(Math.abs(d), 2)} ${pp}`}</span> ${t.mt.cmp[MTC].toLowerCase()}</span>${sp}`
+      + `<small>${N1.o[g] != null ? `${num(N1.o[g], 0)} ${t.mt.mn}` : ''}${P1.o[g] ? `<br>${num(P1.o[g], 0)} ${t.mt.part}` : ''}</small></div>`; }).join('');
+}
+$('mtSh').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MTK = b.dataset.k; renderMt(); });
+$('mtCmp').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MTC = b.dataset.k; renderMt(); });
 
 /* ---------- Latvija, II pakopa: dalyvių judėjimas pagal valdytoją (VSAA metinės ataskaitos, BALTIC.mv; kolegės „Participant movements“) ---------- */
 addStrings({ mv: { t: 'Participant movements (once a year)', h: ['Manager', 'At year start', 'New', 'Came from other plans', 'Left to other plans', 'Net switching', 'Died', 'Retired', 'Correction', 'At year end', 'Change'],
@@ -674,7 +704,7 @@ function renderSw() {
   const act = G.map((_, i) => i).filter(i => inn[i] || out[i] || own[i]).sort((a, b) => (inn[b] - out[b]) - (inn[a] - out[a]));
   const f0 = v => num(v, 0), fs = v => (v < 0 ? '−' : v > 0 ? '+' : '') + num(Math.abs(v), 0);
   const top = (arr) => { let k = -1; arr.forEach((v, i) => { if (v > 0 && (k < 0 || v > arr[k])) k = i; }); return k < 0 ? '–' : `${hEsc(G[k])} (${f0(arr[k])})`; };
-  const col = new Map(act.map((g, i) => [g, PAL[i % PAL.length]]));
+  const col = new Map(act.map((g, i) => [g, brandCol(G[g]) || PAL[i % PAL.length]]));   // prekės ženklo spalva
   $('swTbl').innerHTML = `<thead><tr>${t.h.map((h, j) => `<th${j && j < 5 ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
     + act.map(i => `<tr><td class="nm"><i class="dot" style="background:${col.get(i)}"></i><b>${hEsc(G[i])}</b></td><td class="n">${f0(inn[i])}</td><td class="n">${f0(out[i])}</td><td class="n ${sgn(inn[i] - out[i])}">${fs(inn[i] - out[i])}</td><td class="n">${f0(own[i])}</td><td>${top(mx.map(r => r[i]))}</td><td>${top(mx[i])}</td></tr>`).join('')
     + `<tr class="tot"><td class="nm"><b>${t.tot}</b></td><td class="n">${f0(inn.reduce((a, b) => a + b, 0))}</td><td class="n">${f0(out.reduce((a, b) => a + b, 0))}</td><td class="n">–</td><td class="n">${f0(own.reduce((a, b) => a + b, 0))}</td><td></td><td></td></tr></tbody>`;
@@ -1020,7 +1050,7 @@ function render() {
   BXM.c = CR.c; BXM.pl = CR.pl;
   document.title = `${CR.c === 'X' ? t.bx.modes.X : `${t.c[CR.c]} · ${t.pl(CR.pl)}`} · ${t.navBaltic} · ${t.siteTitle}`;
   $('xlBtn').textContent = t.xl;
-  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMs(); renderMv(); renderSw(); renderTop(); if (TAB_CUR === 'fl' || typeof BXFLOW !== 'undefined') renderFl(); if (CR.pl === 'II') renderJr(); }
+  if (CR.c === 'X') { renderX(); renderBs(); renderHm(); renderCmp(); renderRf(); } else { renderOv(); renderCr(); renderMg(); renderMt(); renderMs(); renderMv(); renderSw(); renderTop(); if (TAB_CUR === 'fl' || typeof BXFLOW !== 'undefined') renderFl(); if (CR.pl === 'II') renderJr(); }
   $('mtT').textContent = t.bx.mt; $('mtB').innerHTML = MT[lang];
   $('foot').textContent = t.srcLine;
   const ks = modeTabs();

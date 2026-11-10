@@ -56,7 +56,6 @@
   .ovg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 14px; } .ovg .card h3 { margin: 0 0 6px; font-size: 16px; display: flex; gap: 8px; align-items: center; } .ovg #kp1 .card p { margin: 6px 0; font-size: 14px; color: var(--text-2); } .ovg #kp1 .card b { color: var(--text); }
   @media (max-width: 900px) { .ovg { grid-template-columns: 1fr; } }
   #mtD summary { cursor: pointer; font-weight: 600; font-size: 15px; } #mtD[open] summary { margin-bottom: 8px; }
-  .shbar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 6px 0 10px; } .shbar span { display: block; min-width: 2px; }
   .sel .chip i, .chip i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
   .crt tr.hl td { outline: 2px solid var(--accent); outline-offset: -2px; }
   #mgBr ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; } #mgBr h3 { margin: 0; font-size: 15px; }
@@ -90,6 +89,7 @@
     <div data-tab="mg">
       <h2 class="sec" id="mgT"></h2>
       <p class="lead" id="mgL"></p>
+      <div class="mgtw"><div class="mgtc"><div class="seg" id="mtSh" role="group"></div><div class="seg" id="mtCmp" role="group"></div></div><div class="mgtiles" id="mtTiles"></div></div>
       <section class="card"><div class="seg" id="mgSeg" role="group"></div><div class="scroll" style="margin-top:10px"><table class="bt" id="mgTbl"></table></div><p class="note" id="mgN"></p></section>
       <section class="card"><h2 id="mgShT"></h2><div id="mgSh"></div></section>
       <section class="card"><h2 id="msT"></h2><p class="note" id="msL" style="margin-top:0"></p><div class="seg" id="msSeg" role="group"></div><div class="chart" id="msCh" style="margin-top:10px"></div><p class="note" id="msN"></p></section>

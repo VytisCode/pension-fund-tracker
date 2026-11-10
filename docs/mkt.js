@@ -4,7 +4,8 @@
    Fondai lyginami tik LB grupės viduje (gyvenimo ciklo – pagal gimimo metus; turto išsaugojimo – tarpusavyje). */
 const MK_ORDER = ['r1', 'r2', 'r3', 'r4', 'e30', 'e75', 'e100', 'zz', '2003-2009', '1996-2002', '1989-1995', '1982-1988', '1975-1981', '1968-1974', '1961-1967', '1954-1960', 'turto', 'gc', 'akc', 'vid', 'maz', 'kons', 'mis', 'obl'];
 const MK_PROV = ['Allianz', 'Artea', 'Goindex', 'Luminor', 'SEB', 'Swedbank', 'ERGO'];
-const mkColor = p => { const i = MK_PROV.indexOf(p); return i >= 0 && i < 6 ? `var(--s${i + 1})` : 'var(--text-3)'; };
+const mkColor = p => { const i = MK_PROV.indexOf(p); return (MKT.c && brandCol(p)) || (i >= 0 && i < 6 ? `var(--s${i + 1})` : brandCol(p) || 'var(--text-3)'); };   // LV/EE – prekės ženklo spalva pagal pavadinimą (savininkas 2026-11-10)
+const MKP = () => MKT.c ? [...new Set(['II', 'III'].flatMap(pl => MKT[pl] ? MKT[pl].funds.map(f => f[0]) : []))] : MK_PROV;   // šalies valdytojai
 const MK_MON = { lt: ['sausio', 'vasario', 'kovo', 'balandžio', 'gegužės', 'birželio', 'liepos', 'rugpjūčio', 'rugsėjo', 'spalio', 'lapkričio', 'gruodžio'],
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] };
 const ROMAN = ['I', 'II', 'III', 'IV'];
@@ -182,7 +183,7 @@ const mCls = v => v == null ? '' : v > 0 ? ' up' : v < 0 ? ' down' : '';
 /* ---------- valdikliai ---------- */
 function mkBar(extra = '') {
   const t = T(), p = P(), opt = (v, l, cur) => `<option value="${v}"${v === cur ? ' selected' : ''}>${hEsc(l)}</option>`;
-  const mgrs = MK_PROV.filter(m => p.funds.some(f => f[0] === m) && Object.keys(byMgr(MS.pl, dIdx(MS.pl, MS.d))).includes(m));
+  const mgrs = MKP().filter(m => p.funds.some(f => f[0] === m) && Object.keys(byMgr(MS.pl, dIdx(MS.pl, MS.d))).includes(m));
   return `<div class="bar mkbar"><span class="seg" role="group" aria-label="${t.pl}">${['II', 'III'].map(x => `<button type="button" data-pl="${x}" aria-pressed="${x === MS.pl}">${x} ${lang === 'lt' ? 'pakopa' : 'pillar'}</button>`).join('')}</span>`
     + `<label class="field">${t.q} <select data-k="d">${[...p.dates].reverse().map(d => opt(d, t.dq(d), MS.d)).join('')}</select></label>`
     + `<label class="field">${t.hl} <select data-k="mgr">${opt('', t.hlNone, MS.mgr)}${mgrs.map(m => opt(m, m, MS.mgr)).join('')}</select></label>${extra}</div>`;
@@ -737,14 +738,44 @@ function renderMgr() {
       return `<tr${m === MS.mgr ? ' class="hl"' : ''}><td class="l"><i class="sw" style="background:${mkColor(m)}"></i>${m}</td><td>${x.nf}</td><td>${mInt(x.part)}</td><td>${mShare(x.part, T0.part)}</td><td class="${mCls(q && x.part - q.part)}">${q ? mSInt(x.part - q.part) : '–'}</td><td class="${mCls(y && x.part - y.part)}">${y ? mSInt(x.part - y.part) : '–'}</td>`
         + `<td>${num(x.nav, 1)}</td><td>${mShare(x.nav, T0.nav)}</td><td title="${q ? dpp(sh(x.nav, T0.nav), sh(q.nav, Tq.nav)) : ''}">${q ? mRel(x.nav, q.nav) : '–'}</td><td>${y ? mRel(x.nav, y.nav) : '–'}</td>${pl === 'II' ? `<td>${x.part ? mInt(x.nav * 1e6 / x.part) : '–'}</td>` : ''}</tr>`; }).join('')
     + `<tr class="tot"><td class="l">${t.thTot}</td><td>${T0.nf}</td><td>${mInt(T0.part)}</td><td>100 %</td><td>${Tq.ok && Tq.part ? mSInt(T0.part - Tq.part) : '–'}</td><td></td><td>${num(T0.nav, 1)}</td><td>100 %</td><td>${Tq.ok && Tq.nav ? mRel(T0.nav, Tq.nav) : '–'}</td><td></td>${pl === 'II' ? `<td>${T0.part ? mInt(T0.nav * 1e6 / T0.part) : '–'}</td>` : ''}</tr></tbody>`;
+  renderMgrTiles(t, pl, di, list);
+  { const sb = document.getElementById('mgShB'); if (sb) {   // savininkas 2026-11-10: LT neturėjo „Rinkos dalis pagal turtą“ kaip LV ir EE
+    document.getElementById('mgShT').textContent = `${lang === 'lt' ? 'Rinkos dalis pagal turtą' : 'Market share by assets'} · ${MS.d}`;
+    sb.innerHTML = T0.nav ? `<div class="shbar">${list.filter(([, x]) => x.nav).map(([m, x]) => `<span style="width:${x.nav / T0.nav * 100}%;background:${mkColor(m)}" title="${hEsc(m)} ${mShare(x.nav, T0.nav)}"></span>`).join('')}</div>`
+      + `<div class="sel shsel">${list.filter(([, x]) => x.nav).map(([m, x]) => `<span class="chip"><i style="background:${mkColor(m)}"></i>${hEsc(m)} <b>${mShare(x.nav, T0.nav)}</b></span>`).join('')}</div>` : ''; } }
   document.getElementById('mgSeg').innerHTML = Object.keys(t.shOf).map(x => `<button type="button" data-sh="${x}" aria-pressed="${x === MS.sh}">${t.shOf[x]}</button>`).join('');
   const el = document.getElementById('mgChartBox');
   if (el.closest('[hidden]')) return;
-  const ds = MKT[pl].dates, ser = MK_PROV.map(m => ({ provider: m, color: mkColor(m), label: m, points: ds.map((d, i) => { const x = byMgr(pl, i)[m], T1 = totals(pl, i); return x && T1[MS.sh] ? [dayOf(d), x[MS.sh] / T1[MS.sh] * 100] : null; }).filter(Boolean) })).filter(s => s.points.length > 1);
+  const ds = MKT[pl].dates, ser = MKP().map(m => ({ provider: m, color: mkColor(m), label: m, points: ds.map((d, i) => { const x = byMgr(pl, i)[m], T1 = totals(pl, i); return x && T1[MS.sh] ? [dayOf(d), x[MS.sh] / T1[MS.sh] * 100] : null; }).filter(Boolean) })).filter(s => s.points.length > 1);
   ser.forEach(s => { if (MS.mgr && s.provider !== MS.mgr) s.color = `color-mix(in srgb, ${s.color} 30%, transparent)`; });
   drawLineChart(el, ser, dayOf(ds[0]), dayOf(ds[ds.length - 1]), { fmt: v => pctPlain(v, 1), mr: el.clientWidth > 560 ? 90 : 16 });
   document.getElementById('mgLegend').innerHTML = ser.map(s => `<span class="chip"><i style="background:${mkColor(s.provider)}"></i>${s.provider}</span>`).join(' ');
 }
+/* Valdytojų plytelės (maketas 6, savininkas 2026-11-10: „tiek kortelių, kiek valdytojų, ir valdikliai“): po vieną kiekvienam šalies valdytojui –
+   rinkos dalis, jos pokytis per ketvirtį ar metus, turtas ir dalyviai, maža dalies kreivė (12 ketvirčių). Paspaudus – valdytojas paryškinamas visame skirtuke. */
+function renderMgrTiles(t, pl, di, list) {
+  const box = document.getElementById('mgTiles'); if (!box) return;
+  const k = MS.tsh === 'part' ? 'part' : 'nav', back = MS.tcmp === 'q' ? 3 : 12, dc = dIdx(pl, qBack(MS.d, back));
+  const T0 = totals(pl, di), Tc = totals(pl, dc), Mc = byMgr(pl, dc), pp = lang === 'lt' ? 'p. p.' : 'pp';
+  const hasPart = T0.part > 0;
+  document.getElementById('mgTsh').innerHTML = (hasPart ? ['nav', 'part'] : ['nav']).map(x => `<button type="button" data-tsh="${x}" aria-pressed="${x === k}">${t.shOf[x]}</button>`).join('');
+  document.getElementById('mgTcmp').innerHTML = [['q', t.thDq], ['y', t.thDy]].map(([x, l]) => `<button type="button" data-tcmp="${x}" aria-pressed="${(MS.tcmp === 'q') === (x === 'q')}">${l}</button>`).join('');
+  const ds = MKT[pl].dates, from = Math.max(0, di - 11);
+  box.innerHTML = list.map(([m, x]) => {
+    const sh = T0[k] ? x[k] / T0[k] * 100 : null, c = Mc[m], shc = c && Tc[k] ? c[k] / Tc[k] * 100 : null, d = sh != null && shc != null ? sh - shc : null;
+    const pts = []; for (let i = from; i <= di; i++) { const y = byMgr(pl, i)[m], tt = totals(pl, i); if (y && tt[k]) pts.push(y[k] / tt[k] * 100); }
+    let sp = ''; if (pts.length > 2) { const lo = Math.min(...pts), hi = Math.max(...pts), W = 120, H = 26;
+      sp = `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${pts.map((v, i) => `${i ? 'L' : 'M'}${(i / (pts.length - 1) * W).toFixed(1)} ${(H - 3 - (v - lo) / ((hi - lo) || 1) * (H - 6)).toFixed(1)}`).join('')}" fill="none" stroke="${mkColor(m)}" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>`; }
+    return `<button type="button" class="mgt${m === MS.mgr ? ' on' : ''}" data-tm="${hEsc(m)}" aria-pressed="${m === MS.mgr}"><span class="mgn"><i class="sw" style="background:${mkColor(m)}"></i>${hEsc(m)}</span>`
+      + `<b class="mgv">${sh == null ? '–' : pctPlain(sh, 1)}</b><span class="mgd"><span class="kd ${d == null ? '' : d < 0 ? 'neg' : 'pos'}">${d == null ? '–' : `${d >= 0 ? '+' : '−'}${num(Math.abs(d), 2)} ${pp}`}</span> ${(MS.tcmp === 'q' ? t.thDq : t.thDy).toLowerCase()}</span>${sp}`
+      + `<small>${num(x.nav, 0)} ${T().mn || 'mln. €'} · ${x.nf} ${t.thFunds.toLowerCase()}${x.part ? `<br>${mInt(x.part)} ${t.thPart.toLowerCase()}` : ''}</small></button>`; }).join('');
+  box.style.setProperty('--n', Math.min(list.length, 6));
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('#mgTsh [data-tsh], #mgTcmp [data-tcmp], #mgTiles [data-tm]'); if (!a) return;
+  if (a.dataset.tsh) MS.tsh = a.dataset.tsh; else if (a.dataset.tcmp) MS.tcmp = a.dataset.tcmp; else MS.mgr = MS.mgr === a.dataset.tm ? '' : a.dataset.tm;
+  mkSave(); if (a.dataset.tm) mkRender(); else renderMgr();
+});
 document.addEventListener('click', e => { const b = e.target.closest('#mgSeg [data-sh]'); if (b) { MS.sh = b.dataset.sh; mkSave(); renderMgr(); } });
 
 /* ---------- fondai pagal grupes ---------- */
@@ -1148,7 +1179,7 @@ function chartSpec(f, box) {
   if (f.sp !== undefined) return f.sp;                  // faktas su savo grafiku (mėnesio faktai)
   const t = T(), S = t.fSer, pl = box.dataset.pl || MS.pl, h = f.h, F = t.f, X = t.fx, V = t.pv, Q = t.p23;
   const one = (l, fn, u, p = pl) => ({ u, lines: [{ l, pl: p, fn }] }), mg = (p, k, ms) => ({ u: 'pct', lines: ms.map(m => ({ l: m, pl: p, fn: di => shareAt(p, di, m, k), c: mkColor(m) })) });
-  if (box.id === 'miCards' || (f.hl && MK_PROV.includes(h) && box.id !== 'p23Mgr')) return { u: 'pct', lines: [{ l: `${h} · ${S.shN}`, pl, fn: di => shareAt(pl, di, h, 'nav'), c: mkColor(h) }, { l: `${h} · ${S.shP}`, pl, fn: di => shareAt(pl, di, h, 'part'), c: 'var(--text-3)' }] };
+  if (box.id === 'miCards' || (f.hl && MKP().includes(h) && box.id !== 'p23Mgr')) return { u: 'pct', lines: [{ l: `${h} · ${S.shN}`, pl, fn: di => shareAt(pl, di, h, 'nav'), c: mkColor(h) }, { l: `${h} · ${S.shP}`, pl, fn: di => shareAt(pl, di, h, 'part'), c: 'var(--text-3)' }] };
   if (box.id === 'p23Mgr') { const m = f.h; return { u: 'int', lines: [{ l: `${m} · ${S.p3}`, pl: 'III', fn: di => (byMgr('III', di)[m] || {}).part || null, c: mkColor(m) }] }; }
   const map = {
     [F.navH]: () => one(S.nav, di => totals(pl, di).nav || null, 'mn'), [X.recH]: () => one(S.nav, di => totals(pl, di).nav || null, 'mn'), [X.grH]: () => one(S.nav, di => totals(pl, di).nav || null, 'mn'),
@@ -2073,7 +2104,7 @@ const EXK = {
     } },
   /* grąžos grupėse ir grupės fonduose: sp = { pl, h?, g?, eur? } */
   ret: {
-    init(sp) { return { at: atIdx(sp.pl, MS.d), h: sp.h || 'ytd', g: sp.g ?? '', ms: new Set(MK_PROV) }; },
+    init(sp) { return { at: atIdx(sp.pl, MS.d), h: sp.h || 'ytd', g: sp.g ?? '', ms: new Set(MKP()) }; },
     run(sp, o) {
       const t = T(), E = t.ex, pl = sp.pl, di = o.at, d = MKT[pl].dates[di], key = 'ret_' + o.h, gs = groupsAt(pl, di), ALL = lang === 'lt' ? 'Visi fondai' : 'All funds';
       const hz = ['ytd', '1y', '3y', '5y', '10y', '15y', 'gcf'].filter(h => MA['ret_' + h] != null && gs.concat([-1]).some(g => { const a = avgOf(pl, di, g); return a && a[MA['ret_' + h]] != null; }));

@@ -914,3 +914,27 @@ table.ldt tr.top b { font-weight: 700; }
   [data-design="v2"] section:hover .chd > .ctools, [data-design="v2"] .card:hover .chd > .ctools, [data-design="v2"] .chd > .ctools:focus-within { opacity: 1; }
   @media (max-width: 640px) { [data-design="v2"] .chd { flex-wrap: wrap; } [data-design="v2"] .chd > .ttools, [data-design="v2"] .chd > .ctools { margin-left: 38px; } }
 }
+
+/* Valdytojų plytelės (maketas 6) */
+.mgtw { display: grid; gap: 10px; }
+.mgtc { display: flex; flex-wrap: wrap; gap: 8px; }
+.mgtc .seg:empty { display: none; }
+.mgtiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 12px; }
+@media (min-width: 1100px) { .mgtiles { grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); } }
+.mgt { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); min-width: 0; transition: border-color .15s, box-shadow .15s; }
+.mgt:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.mgt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mgt.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.mgt .mgn { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--text-2); }
+.mgt .mgn .sw { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.mgt .mgv { font-size: 26px; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--text); margin-top: 4px; }
+.mgt .mgd { font-size: 12px; color: var(--text-3, var(--text-2)); }
+.mgt .kd.pos { color: var(--pos, #2f8f5b); font-weight: 600; } .mgt .kd.neg { color: var(--neg, #b5452f); font-weight: 600; }
+.mgt .spark { width: 100%; height: 26px; margin: 4px 0 2px; }
+.mgt small { font-size: 11.5px; color: var(--text-3, var(--text-2)); }
+@media screen { [data-design="v2"] .mgt { border: 0; box-shadow: var(--v2-shadow); border-radius: 16px; } [data-design="v2"] .mgt.on { box-shadow: 0 0 0 2px var(--accent) inset, var(--v2-shadow); } }
+div.mgt { cursor: default; }
+
+/* Rinkos dalis pagal turtą – viena juosta (LT, LV, EE vienodai) */
+.shbar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 6px 0 10px; } .shbar span { display: block; min-width: 2px; }
+.shsel { display: flex; flex-wrap: wrap; gap: 6px; }
