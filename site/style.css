@@ -977,3 +977,4 @@ table.metrics td.pq-r .pqv { background: color-mix(in srgb, var(--neg, #c0503a) 
 .mybars.dv .t::before { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px solid var(--axis, var(--line)); }
 .mybars .n.pos { color: var(--pos, #2f8f5b); font-weight: 600; } .mybars .n.neg { color: var(--neg, #c0503a); font-weight: 600; }
 ul.mybr { margin: 4px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.45; display: grid; gap: 4px; }
+table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.myt th { font-size: 11px; font-weight: 600; color: var(--text-3, var(--text-2)); text-align: right; padding: 2px 4px; } table.myt th.l { text-align: left; }

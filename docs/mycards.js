@@ -12,8 +12,8 @@ const MYS = {
     T: { fund: ['Fondo grąža', 'Vieno fondo grąža, vieta grupėje ir kreivė'], mgr: ['Valdytojas visose grupėse', 'Valdytojo fondų grąža ir vieta kiekvienoje grupėje'],
       grp: ['Grupės reitingas', 'Visi grupės fondai pagal grąžą'], cmp: ['Du fondai', 'Dviejų fondų grąža ir skirtumas'], dd: ['Didžiausias kritimas', 'Fondo kritimas nuo piko per laikotarpį'],
       share: ['Rinkos dalis', 'Valdytojo turto ar dalyvių dalis ir pokytis'], reform: ['Reformos išmokos', 'Kiek išmokėta išeinantiems iš II pakopos (2026–2027)'], news: ['Naujienos apie valdytoją', 'Naujausi straipsniai, kuriuose minimas valdytojas'],
-      peer: ['Prieš svertinį vidurkį', 'Kiek kiekvienas fondas ar valdytojas lenkia turtu svertinį vidurkį'], brag: ['Kodėl mes geriausi', 'Valdytojo stiprybės: kur jis pirmas ar virš svertinio vidurkio (marketingui)'] },
-    wAvg: 'Turtu svertinis vidurkis', allG: 'Visos grupės (valdytojai)', b1: (g, p) => `geriausias grupėje ${g} per ${p}`, bW: (g, p, d) => `virš grupės ${g} svertinio vidurkio per ${p} (${d})`, bDD: (g, p) => `mažiausias kritimas grupėje ${g} per ${p}`, bCnt: (n, m, p) => `${n} iš ${m} fondų – virš savo grupės svertinio vidurkio per ${p}`, bNone: 'Šiais laikotarpiais nėra kuo pasigirti – pabandykite kitą valdytoją.', pw: { ytd: 'šiuos metus', '1y': '1 metus', '3y': '3 metus', '5y': '5 metus' },
+      peer: ['Prieš svertinį vidurkį', 'Kiek kiekvienas fondas ar valdytojas lenkia turtu svertinį vidurkį'], yrs: ['Metai po metų', 'Fondo kalendorinių metų grąža prieš grupės svertinį vidurkį – ar lenkia nuosekliai'], brag: ['Kodėl mes geriausi', 'Valdytojo stiprybės: kur jis pirmas ar virš svertinio vidurkio (marketingui)'] },
+    wAvg: 'Turtu svertinis vidurkis', allG: 'Visos grupės (valdytojai)', b1: (g, p) => `geriausias grupėje ${g} per ${p}`, bW: (g, p, d) => `virš grupės ${g} svertinio vidurkio per ${p} (${d})`, bDD: (g, p) => `mažiausias kritimas grupėje ${g} per ${p}`, bCnt: (n, m, p) => `${n} iš ${m} fondų – virš savo grupės svertinio vidurkio per ${p}`, yH: ['Metai', 'Fondas', 'Svertinis vid.', 'Skirtumas', 'Vieta'], yBeat: (n, m) => `Lenkė svertinį vidurkį ${n} iš ${m} metų`, bNone: 'Šiais laikotarpiais nėra kuo pasigirti – pabandykite kitą valdytoją.', pw: { ytd: 'šiuos metus', '1y': '1 metus', '3y': '3 metus', '5y': '5 metus' },
     place: (k, n) => `${k} vieta iš ${n} grupėje`, med: 'grupės mediana', diff: 'skirtumas', ddNow: 'dabar nuo piko', ddMax: 'didžiausias kritimas', peak: 'pikas',
     shNav: 'Turto dalis', shPart: 'Dalyvių dalis', shY: 'per metus', paid: 'išmokėta iš viso', ofA: 'turto', q: 'ketv.', noNews: 'Straipsnių nerasta.', noData: 'Duomenų nėra.' },
   en: { h: 'My cards', lead: 'Choose what you want to see. The set is saved in this browser; “Share view” copies a link with the same set.',
@@ -24,8 +24,8 @@ const MYS = {
     T: { fund: ['Fund return', 'Return of one fund, its place in the group and a curve'], mgr: ['Manager across groups', 'The manager’s fund return and place in every group'],
       grp: ['Group ranking', 'All funds of a group by return'], cmp: ['Two funds', 'Return of two funds and the difference'], dd: ['Largest fall', 'The fund’s fall from its peak within the period'],
       share: ['Market share', 'The manager’s share of assets or members and its change'], reform: ['Reform payouts', 'Money paid to people leaving pillar II (2026–2027)'], news: ['News on a manager', 'Latest articles that mention the manager'],
-      peer: ['Versus weighted average', 'How far each fund or manager is above the asset-weighted average'], brag: ['Why we are the best', 'The manager’s strengths: where it is first or above the weighted average (for marketing)'] },
-    wAvg: 'Asset-weighted average', allG: 'All groups (managers)', b1: (g, p) => `best in group ${g} over ${p}`, bW: (g, p, d) => `above the weighted average of ${g} over ${p} (${d})`, bDD: (g, p) => `smallest fall in group ${g} over ${p}`, bCnt: (n, m, p) => `${n} of ${m} funds above their group’s weighted average over ${p}`, bNone: 'Nothing to highlight in these periods – try another manager.', pw: { ytd: 'this year', '1y': '1 year', '3y': '3 years', '5y': '5 years' },
+      peer: ['Versus weighted average', 'How far each fund or manager is above the asset-weighted average'], yrs: ['Year by year', 'The fund’s calendar-year return versus the group’s weighted average – is it consistently ahead'], brag: ['Why we are the best', 'The manager’s strengths: where it is first or above the weighted average (for marketing)'] },
+    wAvg: 'Asset-weighted average', allG: 'All groups (managers)', b1: (g, p) => `best in group ${g} over ${p}`, bW: (g, p, d) => `above the weighted average of ${g} over ${p} (${d})`, bDD: (g, p) => `smallest fall in group ${g} over ${p}`, bCnt: (n, m, p) => `${n} of ${m} funds above their group’s weighted average over ${p}`, yH: ['Year', 'Fund', 'Weighted avg', 'Difference', 'Place'], yBeat: (n, m) => `Ahead of the weighted average in ${n} of ${m} years`, bNone: 'Nothing to highlight in these periods – try another manager.', pw: { ytd: 'this year', '1y': '1 year', '3y': '3 years', '5y': '5 years' },
     place: (k, n) => `${k} of ${n} in the group`, med: 'group median', diff: 'difference', ddNow: 'now from peak', ddMax: 'largest fall', peak: 'peak',
     shNav: 'Share of assets', shPart: 'Share of members', shY: 'in a year', paid: 'paid in total', ofA: 'of assets', q: 'Q', noNews: 'No articles found.', noData: 'No data.' },
   lv: { h: 'Manas kartītes', add: '+ Pievienot kartīti', share: 'Dalīties ar skatu', shared: 'Saite nokopēta', reset: 'Atiestatīt', lib: 'Kartīšu bibliotēka', close: 'Aizvērt',
@@ -37,7 +37,7 @@ const MYS = {
 };
 const myT = () => { const u = typeof ulang === 'string' ? ulang : lang, b = u === 'lt' ? MYS.lt : MYS.en, x = MYS[u] || {}; return { ...b, ...x, P: { ...b.P, ...(x.P || {}) } }; };
 const MY_C = typeof CTRY_COPY !== 'undefined' ? CTRY_COPY : 'LT', MY_KEY = 'myCards_' + MY_C;
-const MY_TYPES = ['fund', 'mgr', 'grp', 'cmp', 'peer', 'brag', 'dd', 'share', ...(MY_C === 'LT' ? ['reform'] : []), 'news'];
+const MY_TYPES = ['fund', 'mgr', 'grp', 'cmp', 'peer', 'brag', 'yrs', 'dd', 'share', ...(MY_C === 'LT' ? ['reform'] : []), 'news'];
 const MY_PERS = ['d', 'w', 'mtd', 'qtd', 'ytd', '1y', '3y', '5y'];
 const myGroups = () => DATA.groups;
 /* III pakopos fondai (tik LT; savininkas 2026-11-10: „mėgstu lyginti SEB index. Klimato ateitis su SEB 1996“) – data3.js įkeliamas tik kai reikia */
@@ -154,6 +154,18 @@ const MY_R = {
     const cnt = nT ? `<span class="mys">${t.bCnt(nA, nT, pw['1y'])}</span>` : '';
     return [`${t.T.brag[0]}: ${hEsc(m)}`, myMgrSel(i, c, t), out.length ? `${cnt}<ul class="mybr">${out.slice(0, 7).map(x => `<li>${x[2]}</li>`).join('')}</ul>${out.length > 7 ? `<small class="mym">+${out.length - 7}</small>` : ''}` : `${cnt}<p class="note">${t.bNone}</p>`];
   },
+  yrs(c, i, t) {
+    const x = myFund(c.f); if (!x) return ['', '', t.noData];
+    const { end, overallLast } = groupEnd(x.g), y1 = new Date(end * DAY).getUTCFullYear(), rows = [];
+    for (let y = y1; y >= y1 - 6; y--) {
+      const a = Math.round(Date.UTC(y - 1, 11, 31) / DAY), b = y === y1 ? end : Math.round(Date.UTC(y, 11, 31) / DAY);
+      const out = x.g.funds.map(f => { const sr = f.d[f.d.length - 1] >= overallLast - 5 || y < y1 ? seriesOf(f, a, b) : null; return sr && f.d[0] <= a + 7 ? { f, s: sr } : null; }).filter(Boolean).sort((p, q) => q.s.ret - p.s.ret);
+      const me = out.find(o => o.f === x.f); if (!me) continue; const wa = myWA(out);
+      rows.push([y === y1 ? `${y}*` : String(y), me.s.ret, wa, me.s.ret - wa, out.indexOf(me) + 1, out.length]); }
+    const yh = t.yH || MYS.en.yH, nb = rows.filter(r => r[3] > 0).length;
+    return [hEsc(x.f.name), myFundSel(i, 'f', c, t, t.fund),
+      rows.length ? `<span class="mys">${(t.yBeat || MYS.en.yBeat)(nb, rows.length)}</span><table class="myt yrs"><thead><tr>${yh.map((h, j) => `<th${j ? '' : ' class="l"'}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr><td class="l">${r[0]}</td><td>${pct(r[1])}</td><td>${pct(r[2])}</td><td>${myKd(r[3], ' ' + myPP())}</td><td class="rk${r[4] === 1 ? ' top' : ''}">${r[4]} / ${r[5]}</td></tr>`).join('')}</tbody></table><small class="mym">* ${t.P.ytd.toLowerCase()} (${iso(Math.round(Date.UTC(y1 - 1, 11, 31) / DAY))} → ${iso(end)})</small>` : t.noData];
+  },
   dd(c, i, t) {
     const x = myFund(c.f); if (!x) return ['', '', t.noData];
     const me = myRets(x.g, c.p || '1y').out.find(o => o.f === x.f); if (!me) return [hEsc(x.f.name), myFundSel(i, 'f', c, t, t.fund) + myPerSel(i, { p: c.p || '1y' }, t), t.noData];
@@ -191,7 +203,7 @@ function myNeedAum() { if (MY_AUM) return; MY_AUM = 1; const s = document.create
 function myRender() {
   const el = document.getElementById('myC'); if (!el) return;
   const t = myT(); if (!MY) MY = myDefaults();
-  if (MY.some(c => ['fund', 'cmp', 'dd'].includes(c.t))) myNeed3();
+  if (MY.some(c => ['fund', 'cmp', 'dd', 'yrs'].includes(c.t))) myNeed3();
   const ico = (b, l, a) => `<button type="button" class="btn ico" data-mya="${a}" title="${l}" aria-label="${l}">${b}</button>`;
   el.innerHTML = `<div class="myhd"><h2>${t.h}</h2><span style="flex:1"></span><button type="button" class="btn" data-mya="lib">${t.add}</button><button type="button" class="btn" data-mya="share">${t.share}</button><button type="button" class="btn" data-mya="reset">${t.reset}</button></div>`
     + (t.lead ? `<p class="meta">${t.lead}</p>` : '')
