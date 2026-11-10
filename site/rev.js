@@ -40,6 +40,8 @@ addStrings({
   noPf: 'Šio ketvirčio portfelių ataskaitos dar nepaskelbtos.',
   foot: 'Grąža – vieneto vertės pokytis (mokesčiai jau atskaityti), ne metinė. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
+addStrings3({ selR: "Periods:", optM: "Mēneši", optQ: "Ceturkšņi", pr: "🖶 Drukāt / PDF", hSay: "Galvenais", thYoy: "12 mēneši", hGrp: "Grupas: līderis un pēdējais fonds periodā", thStart: "Sākums", thRet: "Ienesīgums", thFlow: "Iemaksas un pārejas", thEnd: "Beigas", total: "Kopā", hP3: "III līmenis: līderi pa kategorijām", mP3: "Mēneša beigu daļu vērtības." },
+  { selR: "Periood:", optM: "Kuud", optQ: "Kvartalid", pr: "🖶 Prindi / PDF", hSay: "Põhipunktid", thYoy: "12 kuud", hGrp: "Grupid: liider ja viimane fond perioodil", thStart: "Algus", thRet: "Tootlus", thFlow: "Sissemaksed ja vahetused", thEnd: "Lõpp", total: "Kokku", hP3: "III sammas: liidrid kategooriate kaupa", mP3: "Kuu lõpu osakuväärtused." });   // 4 etapas: LV/ET antraštės ir stulpeliai (ilgesni tekstai – kol kas angliškai)
 /* LV/EE kopija (review_lv.html, review_ee.html; PERTVARKA-SALYS.md 3 etapas): DATA.providers – fondai, todėl valdytojo grąža grupėje –
    jo fondų vidurkis, svertinis turtu; turtas – data_bx_flow.js mėnesio pabaigos (sujungimai įskaičiuoti į valdytojo srautus);
    III pakopos ir portfelių pokyčių skilčių nėra (kitokios kategorijos, LB portfelių ataskaitų nėra) */

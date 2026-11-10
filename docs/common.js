@@ -327,6 +327,27 @@ function setConcl(hid, html) {
 }
 /* Vidinė puslapio navigacija (auditas #43): antra lipnios navigacijos eilutė su nuorodomis į skyrius; paryškinamas matomas skyrius.
    items – [{ id: antraštės id, label }]; kviečiama iš naujo pakeitus kalbą. Nieko neslepia – tik greitas perėjimas. */
+/* LV/ET skirtukų pavadinimai (4 etapas): skirtukų sąrašuose tekstai saugomi LT/EN poromis – latviui ir estui verčiama pagal angliškąjį. */
+const TX = { lv: { 'Whole market': 'Viss tirgus', 'Leaders & moves': 'Līderi un izmaiņas', 'Fund comparison': 'Fondu salīdzinājums', Risk: 'Risks', 'Years & months': 'Gadi un mēneši',
+    'Group charts': 'Grupu grafiki', 'Market insights': 'Tirgus atziņas', 'Category charts': 'Kategoriju grafiki', 'All funds – key figures': 'Visi fondi – rādītāji', 'Pension news': 'Pensiju ziņas',
+    'Month facts': 'Mēneša fakti', 'Gains in euros': 'Peļņa eiro', 'Facts for the public': 'Fakti sabiedrībai', 'Pillars II and III': 'II un III līmenis', 'Quarter overview': 'Ceturkšņa pārskats',
+    'Buys and sells': 'Pirkumi un pārdevumi', Alternatives: 'Alternatīvie', 'Peer comparison': 'Salīdzinājums grupā', Similarity: 'Līdzība', 'Fund portfolio': 'Fonda portfelis', Assets: 'Aktīvi',
+    'What changed assets': 'Kas mainīja aktīvus', 'Change in assets': 'Aktīvu izmaiņa', 'Quarter ends': 'Ceturkšņu beigas', 'Reform payouts': 'Reformas izmaksas', 'Returns since 2019': 'Ienesīgums kopš 2019',
+    'Monthly returns': 'Mēnešu ienesīgums', 'Performance KPI': 'Rezultātu KPI', 'Half-year tables': 'Pusgada tabulas', 'KID scenarios': 'PID scenāriji', 'My pension': 'Mana pensija', Future: 'Nākotne',
+    Comparisons: 'Salīdzinājumi', Calculation: 'Aprēķins', 'Fee impact': 'Komisiju ietekme', 'Which fund?': 'Kuru fondu izvēlēties?', Sources: 'Avoti', 'II pillar': 'II līmenis', 'III pillar': 'III līmenis',
+    Overview: 'Pārskats', 'All funds': 'Visi fondi', 'Risk map & drawdown': 'Riska karte un kritums', Managers: 'Pārvaldītāji', 'Asset change': 'Aktīvu izmaiņa', 'Largest investments': 'Lielākie ieguldījumi',
+    'Road to retirement': 'Ceļš uz pensiju', 'Run-up and drawdown': 'Kāpums un kritums', 'Similar risk': 'Līdzīgs risks', 'Calendar-year returns': 'Kalendāro gadu ienesīgums', Reforms: 'Reformas', 'Baltic market': 'Baltijas tirgus' },
+  et: { 'Whole market': 'Kogu turg', 'Leaders & moves': 'Liidrid ja muutused', 'Fund comparison': 'Fondide võrdlus', Risk: 'Risk', 'Years & months': 'Aastad ja kuud',
+    'Group charts': 'Gruppide graafikud', 'Market insights': 'Turu tähelepanekud', 'Category charts': 'Kategooriate graafikud', 'All funds – key figures': 'Kõik fondid – näitajad', 'Pension news': 'Pensioniuudised',
+    'Month facts': 'Kuu faktid', 'Gains in euros': 'Tulu eurodes', 'Facts for the public': 'Faktid avalikkusele', 'Pillars II and III': 'II ja III sammas', 'Quarter overview': 'Kvartali ülevaade',
+    'Buys and sells': 'Ostud ja müügid', Alternatives: 'Alternatiivid', 'Peer comparison': 'Võrdlus grupis', Similarity: 'Sarnasus', 'Fund portfolio': 'Fondi portfell', Assets: 'Varad',
+    'What changed assets': 'Mis muutis varasid', 'Change in assets': 'Varade muutus', 'Quarter ends': 'Kvartalite lõpud', 'Reform payouts': 'Reformi väljamaksed', 'Returns since 2019': 'Tootlus alates 2019',
+    'Monthly returns': 'Kuutootlused', 'Performance KPI': 'Tulemuste KPI', 'Half-year tables': 'Poolaasta tabelid', 'KID scenarios': 'PID stsenaariumid', 'My pension': 'Minu pension', Future: 'Tulevik',
+    Comparisons: 'Võrdlused', Calculation: 'Arvutus', 'Fee impact': 'Tasude mõju', 'Which fund?': 'Millist fondi valida?', Sources: 'Allikad', 'II pillar': 'II sammas', 'III pillar': 'III sammas',
+    Overview: 'Ülevaade', 'All funds': 'Kõik fondid', 'Risk map & drawdown': 'Riskikaart ja langus', Managers: 'Fondivalitsejad', 'Asset change': 'Varade muutus', 'Largest investments': 'Suurimad investeeringud',
+    'Road to retirement': 'Tee pensionini', 'Run-up and drawdown': 'Tõus ja langus', 'Similar risk': 'Sarnane risk', 'Calendar-year returns': 'Kalendriaastate tootlus', Reforms: 'Reformid', 'Baltic market': 'Balti turg' } };
+const tx = s => (TX[ulang] && TX[ulang][s]) || s;
+function txNav() { if (TX[ulang]) document.querySelectorAll('#snav a, #snav .seg a').forEach(a => { const v = TX[ulang][a.textContent.trim()]; if (v) a.textContent = v; }); }
 function addSubnav(items) {
   const nav = document.getElementById('snav'); if (!nav) return;
   let pn = nav.querySelector('.pnav');
@@ -349,6 +370,7 @@ function addSubnav(items) {
   pn.classList.toggle('tabs', hasTabs());
   if (hasTabs()) { if (!TAB_CUR) showTab(tabStart(), false); else markTab(); } else pnSpy();
   scrollEdges(pn);
+  txNav();
 }
 /* ---------- Puslapio skirtukai (savininkas 2026-10-16: „per daug painus“): ilgas puslapis padalijamas į dalis [data-tab],
    rodoma viena; vidinė navigacija (pnav) tampa skirtukais. Pasirinkimas įsimenamas; paieška (#go=) atidaro reikiamą skirtuką. ---------- */
@@ -406,6 +428,7 @@ function bxBar() {                        // šalies ir pakopos juosta (nuorodos
     return `${e[0]}.html#tab=${e[1]}${e[0] === 'baltic' ? `&c=${c}&pl=${pl}` : ''}`; };
   void CN; if (typeof ctryRender === 'function') ctryRender(document.body.dataset.page);   // šalis – antraštės jungiklyje (2026-11-10)
   el.innerHTML = (BXM.c === 'X' ? '' : `<div class="seg" role="group">${['II', 'III'].map(p => `<a href="${href(BXM.c, p)}" aria-pressed="${BXM.pl === p}">${p} ${L ? 'pakopa' : 'pillar'}</a>`).join('')}</div>`);
+  txNav();
 }
 function groupTabs(pn) {
   const page = document.body.dataset.page, G = tabGroupOf(page); if (!G) return;
@@ -1954,6 +1977,77 @@ addStrings3({
   ctry: { lbl: 'Riik', names: { LT: 'Leedu', LV: 'Läti', EE: 'Eesti' }, src: { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' }, avT: 'Mis on iga riigi kohta saadaval', avL: 'Kõigil riikidel on sama menüü. Kui riik andmeid ei avalda, on jaotis hall; ettevalmistamisel jaotised on märgitud plaani etapiga.', avNo: 'andmed puuduvad', avSoon: n => `ettevalmistamisel (${n}. etapp)`, close: 'Sulge', openLt: 'Ava Leedu versioon',
     soon: (c, n) => `${c}: see jaotis on ettevalmistamisel (plaani ${n}. etapp). Seni on see saadaval ainult Leedu kohta.`, noData: c => `${c} ei avalda selle jaotise jaoks vajalikke andmeid.`,
     why: { reports: c => `${c}: puudub Leedu Panga kvartalitulemuste failide ja fondivalitsejate aruannete andmete vaste, millel see jaotis põhineb.` } } });
+
+// 4 etapas: bendri sąsajos tekstai latviškai ir estiškai (ko nėra – angliškai). Vertimai mašininiai-redaguoti – kolegos gali pataisyti.
+addStrings3({
+  refresh: 'Atjaunot datus', naTip: 'Nav vērtības: fonds šajā periodā vēl nepastāvēja vai dati netiek publicēti', theme: 'Tēma', period: 'Periods',
+  navIndex: 'Tirgus šodien', printed: 'izdrukāts', printSrc: 'avoti un metodoloģija – lapa “Par”', navApie: 'Par', navManager: 'Pārvaldītājs un fonds', navReview: 'Mēneša pārskats',
+  srcPfx: 'Avots:', srcMeth: 'Metodoloģija →', navOverview: 'Grupu grafiki', navPerformance: 'Rezultāti un salīdzinājums', navPillar3: 'III līmenis', navPortfolios: 'Portfeļi',
+  navAum: 'Aktīvi', navReports: 'Pārskati', navJourney: 'Ceļš uz pensiju', navHow: 'Kā tas darbojas',
+  thProvider: 'Pārvaldītājs', thReturn: 'Ienesīgums', thUnit: 'Daļas vērtība', thAssets: 'Neto aktīvi, milj. €', dataUntil: 'Dati līdz', updated: 'atjaunināts', freshLbl: 'Jaunākā vērtība:',
+  foldMore: 'Kā lasīt ▾', foldLess: 'Rādīt mazāk ▴', stLoading: 'Ielādē datus…', stErrT: 'Neizdevās ielādēt datus',
+  stErrW: 'Datu fails neielādējās (tīkla traucējums vai vietne tiek atjaunināta). Pārējā lapa darbojas.', stRetry: 'Mēģināt vēlreiz',
+  stNoSel: 'Nav izvēlēts neviens fonds', stNoSelW: 'Augšā izvēlieties vismaz vienu fondu, lai uzzīmētu grafiku.', stNoPer: 'Šim periodam nav datu',
+  stNoPerW: 'Izvēlētie fondi šajā periodā vēl nepastāvēja vai vērtības netiek publicētas. Izvēlieties garāku periodu vai citus datumus.',
+  lateLbl: 'kavējas:', freshMore: 'Rādīt katra pārvaldītāja jaunākās vērtības datumu', srcLbl: 'Citi dati:', srcLateLbl: 'nokavēts:', freshOk: 'Aktuāli',
+  noNew: 'nav jaunu datu', noData: 'Šim periodam nepietiek datu.', chartLabel: 'Ienesīgums izvēlētajā periodā', born: 'Dzimuši', turto: 'Izmaksa',
+  freshLate: n => `${n} darba dien${n === 1 ? 'a' : 'as'} aiz jaunākajiem datiem – šī pārvaldītāja ienesīgums var trūkt vai būt vecāks`,
+  allFresh: n => `visi ${n} pārvaldītāji aktuāli`, srcBy: d => `nākamie līdz ${d}`, srcNext: d => `Jauni dati gaidāmi līdz ${d} (aptuveni)`,
+  notShown: l => `Grafikā nav parādīti (sākuši darbu vēlāk par perioda sākumu): ${l}. Izvēlieties īsāku periodu, lai tos redzētu.`,
+  periods: { '1d': '1 d.', '1w': '1 ned.', '1m': '1 mēn.', '3m': '3 mēn.', '6m': '6 mēn.', ytd: 'Šogad', '1y': '1 gads', '3y': '3 gadi', '5y': '5 gadi', max: 'Visa vēsture', custom: 'Izvēlēts' },
+  qPlace: 'Ceturksnis', yPlace: 'Gads', rdMode: 'Skats', rdBars: 'Stabiņi', rdLine: 'Līnija', rdGran: { m: 'Mēneši', q: 'Ceturkšņi', y: 'Gadi' },
+  rdStart: 'No', rdIncep: 'Fonda sākums', rdDate: 'Izvēlēts datums', rdFund: 'Fonds', rdAllDd: 'Visi fondi – tikai kritums', rdUp: 'Lielākais kāpums', rdDn: 'Lielākais kritums',
+  rdCum: 'Kopējais ienesīgums', rdDdLine: 'Kritums no maksimuma', rdQ: (y, q) => `${y} ${q}. cet.`,
+  rdCapLine: (g, f) => `${g} · ${f}. Kopējais ienesīgums = daļas vērtības izmaiņa kopš sākuma; kritums = cik daļas vērtība ir zem līdzšinējā maksimuma (0 % = jauns maksimums).`,
+  rdCapAll: g => `${g}. Katra līnija = cik fonda daļas vērtība ir zem līdzšinējā maksimuma (0 % = jauns maksimums). Noklikšķiniet uz fonda, lai to paslēptu vai parādītu.`,
+  kpFunds: 'Fondi', kpMgrs: 'Pārvaldītāji', kpAssets: 'Neto aktīvi', kpFrom: 'Vēsture no', kpLc: 'Dzīves cikla fondi kopš', kpUntil: 'Dati līdz', kpBn: 'mljrd. €', kpMn: 'milj. €',
+  kpII: 'II līmenis', kpIII: 'III līmenis', kpYtd: 'II līmeņa izmaiņa šogad', kpMonth: 'Pēdējā mēneša beigas',
+  cpImg: 'Kopēt attēlu', cpDone: 'Nokopēts', cpFail: 'Šī pārlūkprogramma neļauj kopēt – PNG tika lejupielādēts', pngImg: 'Lejupielādēt PNG',
+  tCpImg: 'Kopēt kā attēlu (Teams, e-pasts)', tCpTbl: 'Kopēt kā tabulu (ielīmēt Excel vai Teams)', tXl: 'Excel ar aprēķiniem un avotiem', tDone: 'Nokopēts ✓',
+  tFail: 'Šī pārlūkprogramma neļauj kopēt – fails tika lejupielādēts',
+  secDesc: { home: 'Kas šodien notiek pensiju fondu tirgū', facts: 'Galvenie tirgus skaitļi ar avotiem un Excel formulām', results: 'II un III līmeņa fondu ienesīgums, risks un salīdzinājums grupās',
+    mgr: 'Pārvaldītāju tirgus daļas, fondi un sasniegumi', pf: 'Kur fondi investē un cik daudz pārvalda', rep: 'Pārvaldītāju pārskati un komisijas', jr: 'Cik var uzkrāt un kāda var būt pensija',
+    baltic: 'Lietuvas, Latvijas un Igaunijas pensiju fondi vienuviet' },
+  qCat: 'Katalogs – ko var atrast', qFound: q => `Atrasts: “${q}”`, qNone: 'Nekas netika atrasts. Mēģiniet citu vārdu – vai pārlūkojiet katalogu.', qOpen: 'Atvērt →',
+  qKind: { t: 'Tabula', g: 'Grafiks', x: 'Teksts', c: 'Kalkulators', p: 'Profils', d: 'Termins', m: 'Metodoloģija', f: 'Fonds', s: 'Ieguldījums', n: 'Raksts' },
+  qNews: q => `Visi raksti ar “${q}” →`, qHint: 'Padoms: nospiediet /, lai meklētu',
+  dlWhat: 'Ko lejupielādēt', dlPillar: 'Līmenis', dlMgr: 'Pārvaldītājs', dlFund: 'Fonds', dlAll: 'Visi', dlFrom: 'No', dlTo: 'Līdz', dlPerAll: 'tukšs = visa vēsture',
+  dlGo: 'Lejupielādēt (.xlsx)', dlBusy: 'Sagatavo…', dlFail: 'Neizdevās sagatavot failu (nav interneta?).', dlYes: 'jā', dlNo: 'nē',
+}, {
+  refresh: 'Värskenda andmeid', naTip: 'Väärtus puudub: fondi selles perioodis veel ei olnud või andmeid ei avaldata', theme: 'Teema', period: 'Periood',
+  navIndex: 'Turg täna', printed: 'prinditud', printSrc: 'allikad ja metoodika – leht “Teave”', navApie: 'Teave', navManager: 'Fondivalitseja ja fond', navReview: 'Kuu ülevaade',
+  srcPfx: 'Allikas:', srcMeth: 'Metoodika →', navOverview: 'Gruppide graafikud', navPerformance: 'Tulemused ja võrdlus', navPillar3: 'III sammas', navPortfolios: 'Portfellid',
+  navAum: 'Varad', navReports: 'Aruanded', navJourney: 'Tee pensionini', navHow: 'Kuidas see töötab',
+  thProvider: 'Fondivalitseja', thReturn: 'Tootlus', thUnit: 'Osaku väärtus', thAssets: 'Puhasvara, mln €', dataUntil: 'Andmed kuni', updated: 'uuendatud', freshLbl: 'Viimane väärtus:',
+  foldMore: 'Kuidas lugeda ▾', foldLess: 'Näita vähem ▴', stLoading: 'Andmete laadimine…', stErrT: 'Andmeid ei õnnestunud laadida',
+  stErrW: 'Andmefail ei laadinud (võrguhäire või saiti uuendatakse). Ülejäänud leht töötab.', stRetry: 'Proovi uuesti',
+  stNoSel: 'Ühtegi fondi pole valitud', stNoSelW: 'Graafiku joonistamiseks vali ülal vähemalt üks fond.', stNoPer: 'Selle perioodi kohta andmed puuduvad',
+  stNoPerW: 'Valitud fonde selles perioodis veel ei olnud või väärtusi ei avaldata. Vali pikem periood või muud kuupäevad.',
+  lateLbl: 'hilineb:', freshMore: 'Näita iga fondivalitseja viimase väärtuse kuupäeva', srcLbl: 'Muud andmed:', srcLateLbl: 'hilinenud:', freshOk: 'Ajakohane',
+  noNew: 'uusi andmeid pole', noData: 'Selle perioodi kohta pole piisavalt andmeid.', chartLabel: 'Tootlus valitud perioodil', born: 'Sündinud', turto: 'Väljamakse',
+  freshLate: n => `${n} tööpäev${n === 1 ? '' : 'a'} uusimatest andmetest maas – selle fondivalitseja tootlus võib puududa või olla vanem`,
+  allFresh: n => `kõik ${n} fondivalitsejat ajakohased`, srcBy: d => `järgmised hiljemalt ${d}`, srcNext: d => `Uusi andmeid oodatakse hiljemalt ${d} (ligikaudu)`,
+  notShown: l => `Graafikul ei näidata (alustasid hiljem kui perioodi algus): ${l}. Nende nägemiseks vali lühem periood.`,
+  periods: { '1d': '1 p', '1w': '1 näd', '1m': '1 kuu', '3m': '3 kuud', '6m': '6 kuud', ytd: 'Tänavu', '1y': '1 aasta', '3y': '3 aastat', '5y': '5 aastat', max: 'Kogu ajalugu', custom: 'Valitud' },
+  qPlace: 'Kvartal', yPlace: 'Aasta', rdMode: 'Vaade', rdBars: 'Tulbad', rdLine: 'Joon', rdGran: { m: 'Kuud', q: 'Kvartalid', y: 'Aastad' },
+  rdStart: 'Alates', rdIncep: 'Fondi algus', rdDate: 'Valitud kuupäev', rdFund: 'Fond', rdAllDd: 'Kõik fondid – ainult langus', rdUp: 'Suurim tõus', rdDn: 'Suurim langus',
+  rdCum: 'Kogutootlus', rdDdLine: 'Langus tipust', rdQ: (y, q) => `${y} ${q}. kv`,
+  rdCapLine: (g, f) => `${g} · ${f}. Kogutootlus = osaku väärtuse muutus algusest; langus = kui palju on osaku väärtus allpool senist tippu (0 % = uus tipp).`,
+  rdCapAll: g => `${g}. Iga joon = kui palju on fondi osaku väärtus allpool senist tippu (0 % = uus tipp). Fondi peitmiseks või näitamiseks klõpsa sellel.`,
+  kpFunds: 'Fondid', kpMgrs: 'Fondivalitsejad', kpAssets: 'Puhasvara', kpFrom: 'Ajalugu alates', kpLc: 'Elutsüklifondid alates', kpUntil: 'Andmed kuni', kpBn: 'mld €', kpMn: 'mln €',
+  kpII: 'II sammas', kpIII: 'III sammas', kpYtd: 'II samba muutus tänavu', kpMonth: 'Viimane kuu lõpp',
+  cpImg: 'Kopeeri pilt', cpDone: 'Kopeeritud', cpFail: 'See brauser ei luba kopeerida – PNG laaditi alla', pngImg: 'Laadi alla PNG',
+  tCpImg: 'Kopeeri pildina (Teams, e-post)', tCpTbl: 'Kopeeri tabelina (kleebi Excelisse või Teamsi)', tXl: 'Excel arvutuste ja allikatega', tDone: 'Kopeeritud ✓',
+  tFail: 'See brauser ei luba kopeerida – fail laaditi alla',
+  secDesc: { home: 'Mis toimub täna pensionifondide turul', facts: 'Peamised turunäitajad koos allikate ja Exceli valemitega', results: 'II ja III samba fondide tootlus, risk ja võrdlus gruppides',
+    mgr: 'Fondivalitsejate turuosad, fondid ja saavutused', pf: 'Kuhu fondid investeerivad ja kui palju nad haldavad', rep: 'Fondivalitsejate aruanded ja tasud', jr: 'Kui palju saab koguda ja milline võib olla pension',
+    baltic: 'Leedu, Läti ja Eesti pensionifondid ühes kohas' },
+  qCat: 'Kataloog – mida leida saab', qFound: q => `Leitud: “${q}”`, qNone: 'Midagi ei leitud. Proovi muud sõna – või sirvi kataloogi.', qOpen: 'Ava →',
+  qKind: { t: 'Tabel', g: 'Graafik', x: 'Tekst', c: 'Kalkulaator', p: 'Profiil', d: 'Mõiste', m: 'Metoodika', f: 'Fond', s: 'Investeering', n: 'Artikkel' },
+  qNews: q => `Kõik artiklid sõnaga “${q}” →`, qHint: 'Vihje: otsimiseks vajuta /',
+  dlWhat: 'Mida alla laadida', dlPillar: 'Sammas', dlMgr: 'Fondivalitseja', dlFund: 'Fond', dlAll: 'Kõik', dlFrom: 'Alates', dlTo: 'Kuni', dlPerAll: 'tühi = kogu ajalugu',
+  dlGo: 'Laadi alla (.xlsx)', dlBusy: 'Valmistan ette…', dlFail: 'Faili ei õnnestunud ette valmistada (internet puudub?).', dlYes: 'jah', dlNo: 'ei',
+});
 
 // [skyrius, puslapis, go (id arba antraštės pradžia), rūšis, Excel, LT pavadinimas, LT – ką pamatysi, EN pavadinimas, EN aprašymas, papildomi žodžiai]
 const CATALOG = [
