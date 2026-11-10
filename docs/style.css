@@ -746,11 +746,11 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 /* Naujas dizainas – šilta paletė (savininko pasirinkimas 2026-11-10): šviesi „Molis + alyvuogė“, tamsi „Kakava + šalavijas“ (medžio ruda, netolygus fonas).
    data-pl/data-pd="w" nustato common.js (padidina specifiškumą virš bazinių v2 spalvų). */
 @media screen {
-  :root[data-design="v2"][data-pl="w"] { --surface: #ebe0d2; --card: #f8f1e7; --line: #dfd1c0; --text: #2e211b; --text-2: #5f4c42; --text-3: #8d7a6e; --grid: #e8dccd; --axis: #dfd1c0; --accent: #3f5a3c; --on-accent: #ffffff; --hover: #f2e8dc; --v2-side: #f2e8db; --v2-glow: rgba(255,190,150,.32); --v2-shadow: 0 1px 2px rgba(60,40,15,.06), 0 12px 30px -16px rgba(60,40,15,.28); }
-  :root[data-design="v2"][data-pd="w"][data-theme="dark"] { --surface: #1c1714; --card: #29211b; --line: #3c3229; --text: #ece4d8; --text-2: #c7baa8; --text-3: #968876; --grid: #322922; --axis: #3c3229; --accent: #9fbf8f; --on-accent: #1d140d; --hover: #332a23; --v2-side: #171310; --v2-glow: rgba(190,220,150,.07); --v2-shadow: 0 0 0 1px rgba(255,235,210,.05), 0 14px 34px -14px rgba(0,0,0,.75); color-scheme: dark; }
+  :root[data-design="v2"][data-pl="w"] { --s1: #2b8de0; --s2: #5166cf; --s3: #14b3ad; --s4: #a050d6; --s5: #3f9f1a; --s6: #ff7a2a; --surface: #ebe0d2; --card: #f8f1e7; --line: #dfd1c0; --text: #2e211b; --text-2: #5f4c42; --text-3: #8d7a6e; --grid: #e8dccd; --axis: #dfd1c0; --accent: #3f5a3c; --on-accent: #ffffff; --hover: #f2e8dc; --v2-side: #f2e8db; --v2-glow: rgba(255,190,150,.32); --v2-shadow: 0 1px 2px rgba(60,40,15,.06), 0 12px 30px -16px rgba(60,40,15,.28); }
+  :root[data-design="v2"][data-pd="w"][data-theme="dark"] { --s1: #2b8de0; --s2: #5166cf; --s3: #14b3ad; --s4: #a050d6; --s5: #3f9f1a; --s6: #ff7a2a; --surface: #1c1714; --card: #29211b; --line: #3c3229; --text: #ece4d8; --text-2: #c7baa8; --text-3: #968876; --grid: #322922; --axis: #3c3229; --accent: #9fbf8f; --on-accent: #1d140d; --hover: #332a23; --v2-side: #171310; --v2-glow: rgba(190,220,150,.07); --v2-shadow: 0 0 0 1px rgba(255,235,210,.05), 0 14px 34px -14px rgba(0,0,0,.75); color-scheme: dark; }
 }
 @media screen and (prefers-color-scheme: dark) {
-  :root[data-design="v2"][data-pd="w"]:not([data-theme="light"]) { --surface: #1c1714; --card: #29211b; --line: #3c3229; --text: #ece4d8; --text-2: #c7baa8; --text-3: #968876; --grid: #322922; --axis: #3c3229; --accent: #9fbf8f; --on-accent: #1d140d; --hover: #332a23; --v2-side: #171310; --v2-glow: rgba(190,220,150,.07); --v2-shadow: 0 0 0 1px rgba(255,235,210,.05), 0 14px 34px -14px rgba(0,0,0,.75); color-scheme: dark; }
+  :root[data-design="v2"][data-pd="w"]:not([data-theme="light"]) { --s1: #2b8de0; --s2: #5166cf; --s3: #14b3ad; --s4: #a050d6; --s5: #3f9f1a; --s6: #ff7a2a; --surface: #1c1714; --card: #29211b; --line: #3c3229; --text: #ece4d8; --text-2: #c7baa8; --text-3: #968876; --grid: #322922; --axis: #3c3229; --accent: #9fbf8f; --on-accent: #1d140d; --hover: #332a23; --v2-side: #171310; --v2-glow: rgba(190,220,150,.07); --v2-shadow: 0 0 0 1px rgba(255,235,210,.05), 0 14px 34px -14px rgba(0,0,0,.75); color-scheme: dark; }
 }
 @media screen {
   /* netolygus, „gyvas“ fonas: šilta šviesa viršuje kairėje, šešėlis kampe */
@@ -798,3 +798,28 @@ a.na, .side .nav a.na, .subnav a.na { opacity: .45; cursor: help; }
 }
 @media screen { [data-design="v2"] .sechero.has-kpi .shtx { align-self: flex-start; max-width: 60%; margin: 0; } [data-design="v2"] .hkpi { font-size: 14px; } }
 @media screen { [data-design="v2"] .hkpi a { color: #f1dcae; } [data-design="v2"] .hkpi a:hover { color: #fff; } }
+
+/* Naujas dizainas – plačios lentelės: visada matoma plona slinkties juosta (kad būtų aišku, jog lentelė tęsiasi) */
+@media screen {
+  [data-design="v2"] :is(.scroll, .tablewrap, .nwmxw)::-webkit-scrollbar { height: 9px; width: 9px; }
+  [data-design="v2"] :is(.scroll, .tablewrap, .nwmxw)::-webkit-scrollbar-track { background: color-mix(in srgb, var(--line) 45%, transparent); border-radius: 9px; }
+  [data-design="v2"] :is(.scroll, .tablewrap, .nwmxw)::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--text-3) 70%, transparent); border-radius: 9px; }
+  [data-design="v2"] :is(.scroll, .tablewrap, .nwmxw)::-webkit-scrollbar-thumb:hover { background: var(--text-2); }
+  [data-design="v2"] .snav .subnav { border-top: 0; }
+}
+/* Naujas dizainas – logotipo ženklas paletės akcento spalva; pranešimų juostoje vietoje jaustuko – taškas */
+@media screen {
+  [data-design="v2"] .brand img { display: none; }
+  [data-design="v2"] .brand::before { content: ''; flex: none; width: 28px; height: 28px; border-radius: 8px; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 23l6-6 5 4 9-11' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%23fff'/%3E%3C/svg%3E") center / 100% no-repeat; }
+  [data-design="v2"][data-theme="dark"] .brand::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 23l6-6 5 4 9-11' fill='none' stroke='%231c1714' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%231c1714'/%3E%3C/svg%3E"); }
+  [data-design="v2"] .ntcbar .nbi { font-size: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); vertical-align: 1px; margin-right: 2px; }
+}
+@media screen and (max-width: 520px) { [data-design="v2"] .brand::before { width: 24px; height: 24px; } }
+/* Naujas dizainas – vieno skirtuko juosta nieko neperjungia, todėl nerodoma */
+@media screen { [data-design="v2"] .snav .pnav:not(:has(> a:nth-of-type(2))) { display: none; } }
+@media screen { [data-design="v2"] .seg:empty { display: none; } }
+/* Naujas dizainas – be „kortelės kortelėje“: vidiniai rėmeliai nuimami, pasirinkimų juosta – švelnus fonas */
+@media screen {
+  [data-design="v2"] :is(section.sec, section.card) div.card { border: 0; box-shadow: none; background: transparent; }
+  [data-design="v2"] :is(section.sec, section.card) div.bar { border: 0; background: color-mix(in srgb, var(--hover) 70%, transparent); border-radius: 12px; }
+}

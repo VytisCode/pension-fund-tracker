@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
 <meta name="description" content="Lithuanian pension funds: one manager's report tables">
-<link rel="stylesheet" href="style.css?v=7cd99483">
+<link rel="stylesheet" href="style.css?v=8165e814">
 <style>
   h2.sec { margin: 26px 0 4px; font-size: 19px; }
   p.lead { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 920px; }
@@ -20,6 +20,8 @@
   table.rt tr.tot td { border-top: 2px solid var(--line); font-weight: 700; }
   table.rt td.bl, table.rt th.bl { border-left: 1px solid var(--line); }
   table.rt td.hc { color: #1a1a19; }
+  :root[data-theme="dark"] table.rt td.hc { color: #f1ece4; }   /* tamsi tema: šviesus tekstas ant tamsių heat spalvų */
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) table.rt td.hc { color: #f1ece4; } }
   table.rt td.hc.b { font-weight: 700; }
   table.rt td.na { color: var(--text-3); }
   .good { background: #b9e3a6; color: #1a1a19; } .bad { background: #f4b0aa; color: #1a1a19; }
@@ -79,8 +81,8 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="common.js?v=f0f1ed1d"></script>
-<script src="data_rep.js?v=e7d71d6e"></script>
+<script src="common.js?v=e086bac6"></script>
+<script src="data_rep.js?v=93a7182c"></script>
 <script src="hy.js?v=c6995352"></script>
 <script src="kid.js?v=bec48f2e"></script>
 <script src="rep.js?v=fc41a882"></script>

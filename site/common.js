@@ -780,7 +780,7 @@ function newBar(list) {
   let bar = document.getElementById('ntcNew');
   if (!show.length) { if (bar) bar.remove(); return; }
   if (!bar) { bar = document.createElement('div'); bar.id = 'ntcNew'; bar.className = 'ntcbar nb-new'; bar.setAttribute('role', 'status'); const h = document.querySelector('header'); (h || document.body).after(bar); }
-  bar.innerHTML = `<span>🆕 ${show.map(x => x.url ? `<a href="${hEsc(x.url)}">${hEsc(x.title)}</a>` : hEsc(x.title)).join(' · ')}</span><button type="button" class="nb-hide">${n.barSeen}</button>`;
+  bar.innerHTML = `<span><i class="nbi">🆕</i> ${show.map(x => x.url ? `<a href="${hEsc(x.url)}">${hEsc(x.title)}</a>` : hEsc(x.title)).join(' · ')}</span><button type="button" class="nb-hide">${n.barSeen}</button>`;
   bar.querySelector('.nb-hide').onclick = () => {
     try { const ids = list.filter(x => x.lvl === 'new').map(x => x.id); localStorage.setItem('ntcSeen', JSON.stringify([...seen.filter(i => ids.includes(i)), ...show.map(x => x.id)])); } catch (e) {}
     bar.remove();
