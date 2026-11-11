@@ -1609,6 +1609,7 @@ const kpMoney = eur => eur >= 1e9 ? `${num(eur / 1e9, 2)} ${T().kpBn}` : `${num(
 function kpiRow(items) {
   let el = document.getElementById('kpis');
   if (!el) { el = document.createElement('div'); el.className = 'kpis'; el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  el.className = 'kpis'; el.style.margin = '';
   el.innerHTML = items.filter(Boolean).map(([k, v, s]) => `<div class="kpi"><span>${k}</span><b>${v}</b>${s ? `<small>${s}</small>` : ''}</div>`).join('');
 }
 function kpiIII() {                      // III pakopa iš data3.js (Rezultatai › III pakopa)
@@ -2494,8 +2495,8 @@ const EC = { cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, i
   xl: { lt: 'Excel su formulėmis', en: 'Excel with formulas', lv: 'Excel ar formulām', et: 'Excel valemitega' } };
 const ecT = k => EC[k][ulang] || EC[k].en;
 const ecIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
-const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01);
-  return `<div class="hgbars">${rows.map(([n, col, v, tx], i) => `<div class="r${i ? '' : ' top'}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
+const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01), hi = rows.some(r => r[4]);   // r[4] – paryškinta eilutė (kitaip – pirma)
+  return `<div class="hgbars">${rows.map(([n, col, v, tx, h], i) => `<div class="r${(hi ? h : !i) ? ' top' : ''}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
 const ecCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
   <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button>${o.xt ? `<button type="button" class="btn ico" data-jg="xl" data-xt="${o.xt}" title="${ecT('xl')}" aria-label="Excel">X</button>` : ''}<button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button></span></header>
   <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;

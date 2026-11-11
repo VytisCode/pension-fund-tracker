@@ -266,6 +266,54 @@ function pfHTML(pf, sub) {
     <section class="card" data-src="pf"><h2>${t.hTop(pf.q)}</h2><div class="scroll"><table class="mt" id="mgrTop"><thead><tr><th class="n">#</th><th>${t.thPos}</th><th>${t.thType}</th><th class="n">${t.thW}</th></tr></thead><tbody>${top}</tbody></table></div></section></div>`;
 }
 
+/* ---------- Edge kortelės valdytojo suvestinės viršuje (vietoj KPI juostos): kiekviena – klausimas, didelis skaičius ir visų valdytojų juostos
+   (pasirinktas valdytojas paryškintas). Lyginami valdytojai, ne fondai: rinkos dalis, vidutinė gyvenimo ciklo fondų grąža (kaip KPI), svertinis mokestis, III pakopos turtas. ---------- */
+const MGC = {
+  q: { lt: [n => `Kokią II pakopos rinkos dalį valdo ${n}?`, n => `Kaip ${n} gyvenimo ciklo fondams sekasi šiais metais?`, n => `Kiek kainuoja ${n} II pakopos fondai?`, n => `Kiek ${n} valdo III pakopoje?`],
+    en: [n => `What share of the pillar II market does ${n} manage?`, n => `How are ${n}’s life-cycle funds doing this year?`, n => `How much do ${n}’s pillar II funds cost?`, n => `How much does ${n} manage in pillar III?`],
+    lv: [n => `Kādu II līmeņa tirgus daļu pārvalda ${n}?`, n => `Kā ${n} fondiem veicas šogad?`, n => `Cik maksā ${n} II līmeņa plāni?`, n => `Cik ${n} pārvalda III līmenī?`],
+    et: [n => `Kui suure osa II samba turust haldab ${n}?`, n => `Kuidas ${n} fondidel sel aastal läheb?`, n => `Kui palju maksavad ${n} II samba fondid?`, n => `Kui palju haldab ${n} III sambas?`] },
+  ey: { lt: ['Rinka', 'Grąža', 'Mokesčiai', 'III pakopa'], en: ['Market', 'Return', 'Fees', 'Pillar III'], lv: ['Tirgus', 'Ienesīgums', 'Komisijas', 'III līmenis'], et: ['Turg', 'Tootlus', 'Tasud', 'III sammas'] },
+  i: { lt: ['Valdytojo II pakopos fondų grynieji aktyvai ÷ visų valdytojų II pakopos fondų grynieji aktyvai tą pačią dieną.',
+      'Valdytojo gyvenimo ciklo fondų grąžų nuo metų pradžios paprastas vidurkis (kiekvienoje grupėje vienas fondas), palyginti su kitais valdytojais. Grąža – iš vieneto verčių, jau po mokesčių. Excel – II pakopos fondų lentelė su formulėmis.',
+      'Valdytojo II pakopos fondų valdymo mokesčiai (LB ataskaita), sverti fondų grynaisiais aktyvais.',
+      'Valdytojo III pakopos fondų grynųjų aktyvų suma.'],
+    en: ['Net assets of the manager’s pillar II funds ÷ net assets of all managers’ pillar II funds on the same day.',
+      'Simple average of the year-to-date returns of the manager’s life-cycle funds (one fund per group), compared with other managers. Returns come from unit values, already net of fees. Excel – the pillar II fund table with formulas.',
+      'Management fees of the manager’s pillar II funds (LB report), weighted by fund net assets.',
+      'Sum of net assets of the manager’s pillar III funds.'] },
+  rk: { lt: (k, n) => `${k} vieta iš ${n} valdytojų`, en: (k, n) => `place ${k} of ${n} managers`, lv: (k, n) => `${k}. vieta no ${n} pārvaldītājiem`, et: (k, n) => `${k}. koht ${n} fondivalitseja seas` },
+};
+MGC.rkc = { lt: (k, n) => `${k} vieta iš ${n} pagal mažiausią mokestį`, en: (k, n) => `place ${k} of ${n} by lowest fee`, lv: (k, n) => `${k}. vieta no ${n} pēc zemākās komisijas`, et: (k, n) => `${k}. koht ${n}-st madalaima tasu järgi` };
+const mgcT = k => MGC[k][ulang] || MGC[k].en;
+function mgCards(o) {
+  const { p, cut, live, aAll, ytdM, yNow, pay, feeW } = o, t = T();
+  let el = document.getElementById('kpis');
+  if (!el) { el = document.createElement('div'); el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  try {
+    const Q = mgcT('q').slice(), E = mgcT('ey'), I = mgcT('i'), me = mLab(p), out = [];
+    if (CTRY) Q[1] = { lt: n => `Kaip ${n} fondams sekasi šiais metais?`, en: n => `How are ${n}’s funds doing this year?` }[ulang] || (ulang === 'lt' || ulang === 'en' ? Q[1] : mgcT('q')[1]);   // LV/EE – vidutinis fondas, ne gyvenimo ciklo
+    const bars = (rows, f) => ecBars(rows.map(r => [mLab(r.q), r.q === p ? mCol(r.q) : 'color-mix(in srgb, ' + mCol(r.q) + ' 45%, transparent)', r.v, f(r.v), r.q === p]));
+    const aII = q => cut ? (sumAt(aumFs(q, 'II'), cut, 92) || 0) * 1e6 : live.filter(f => own(f, q)).reduce((s, f) => s + f.assets, 0);
+    const tot = cut ? (sumAt(aumFs(null, 'II'), cut, 92) || 0) * 1e6 : aAll;
+    if (tot) { const sh = PROVS.map(q => ({ q, v: aII(q) / tot * 100 })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), m = sh.find(x => x.q === p);
+      if (m) out.push(ecCard({ sz: 'w', img: 'sec2-mgr.jpg', ic: 'building-bank', ey: E[0], q: Q[0](hEsc(me)), big: fmt(m.v, 1) + pctSfx(), sub: `${kpMoney(aII(p))} · ${mgcT('rk')(sh.indexOf(m) + 1, sh.length)}${pay ? ` · ${t.kPay(yNow)}: −${kpMoney(-pay * 1e6).replace(/^−/, '')}` : ''}`, info: I[0], xt: 'aumT',
+        vis: bars(sh, v => fmt(v, 1) + pctSfx()) })); }
+    const mY = ytdM.find(x => x.q === p);
+    if (mY) out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey: E[1], q: Q[1](hEsc(me)), big: pct(mY.v), sub: mgcT('rk')(ytdM.indexOf(mY) + 1, ytdM.length), info: I[1], xt: 't2',
+      vis: bars(ytdM, v => pct(v)) }));
+    if (feeW != null) { const fw = PROVS.map(q => { let s = 0, w = 0; fundsII(q).forEach(x => { const r = repOf('II', q, kII(x)), f = live.find(y => y === x.f); if (r && r.fee != null && f) { s += r.fee * f.assets; w += f.assets; } }); return { q, v: w ? s / w : null }; }).filter(x => x.v != null).sort((a, b) => a.v - b.v);
+      const m = fw.find(x => x.q === p); if (m) out.push(ecCard({ sz: 'w', ic: 'money-hand', ey: E[2], q: Q[2](hEsc(me)), big: fmt(m.v, 2) + pctSfx(), sub: `${t.kFee} · ${mgcT('rkc')(1 + fw.filter(x => +x.v.toFixed(2) < +m.v.toFixed(2)).length, fw.length)}`, info: I[2], xt: 't2',
+        vis: bars(fw, v => fmt(v, 2) + pctSfx()) })); }
+    const a3 = q => cut ? (sumAt(aumFs(q, 'III'), cut, 92) || 0) * 1e6 : fundsIII(q).reduce((s, f) => s + (f.aum || 0), 0);
+    const r3 = PROVS.map(q => ({ q, v: a3(q) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), m3 = r3.find(x => x.q === p);
+    if (m3) out.push(ecCard({ sz: 'w', ic: 'savings', ey: E[3], q: Q[3](hEsc(me)), big: kpMoney(m3.v), sub: mgcT('rk')(r3.indexOf(m3) + 1, r3.length), info: I[3], xt: 't3',
+      vis: bars(r3, v => kpMoney(v)) }));
+    if (out.length < 2) return false;
+    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); return true;
+  } catch (e) { console.warn(e); return false; }
+}
+
 /* ---------- valdytojo suvestinė ---------- */
 function renderManager() {
   const t = T(), p = ST.p, ii = fundsII(p), iii = fundsIII(p);
@@ -278,7 +326,7 @@ function renderManager() {
   const me = ytdM.find(x => x.q === p);
   const feeW = (() => { let s = 0, w = 0; ii.forEach(x => { const r = repOf('II', p, kII(x)), f = mine.find(y => y === x.f); if (r && r.fee != null && f) { s += r.fee * f.assets; w += f.assets; } }); return w ? s / w : null; })();
   const yNow = new Date((cut || last) * DAY).getUTCFullYear(), pay = AUM.payouts.filter(e => e.p === p && e.q.startsWith(yNow + '-')).reduce((s, e) => s + e.flow, 0);
-  kpiRow([[t.kII, kpMoney(aII), iso(aD)], aAll && [t.kShare, fmt(aII / aAll * 100, 1) + pctSfx()],
+  if (!mgCards({ p, cut, last, live, aAll, ytdM, yNow, pay, feeW })) kpiRow([[t.kII, kpMoney(aII), iso(aD)], aAll && [t.kShare, fmt(aII / aAll * 100, 1) + pctSfx()],
     me && [t.kYtd, pct(me.v), t.kYtdS(ytdM.indexOf(me) + 1, ytdM.length)], feeW != null && [t.kFee, fmt(feeW, 2) + pctSfx()],
     pay ? [t.kPay(yNow), kpMoney(-pay * 1e6).replace(/^/, '−')] : null, iii.length && [t.kIII, kpMoney(aIII)]]);
   let h = '';
