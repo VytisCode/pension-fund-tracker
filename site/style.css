@@ -999,3 +999,13 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 [data-embed] .ntcbar, [data-embed] footer, [data-embed] .printhead, [data-embed] .menu-btn { display: none !important; }
 [data-embed] body { padding-left: 0 !important; padding-top: 0 !important; }
 [data-embed] .wrap { max-width: none; padding: 16px 22px 40px; }
+
+/* tamsi tema: heatmap ir pokyčių skaičių kontrastas (2026-11-11; „Vienas fondas – visi mėnesiai“ turėjo tamsų tekstą ant tamsaus fono) */
+:root[data-theme="dark"] { --pos: #74c995; --neg: #f0937a; }
+:root[data-theme="dark"] .hm td { color: #f1ece4; }
+:root[data-theme="dark"] .down, :root[data-theme="dark"] #insBody .down, :root[data-theme="dark"] table.qt td .pfsub.down { color: #f0937a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --pos: #74c995; --neg: #f0937a; }
+  :root:not([data-theme="light"]) .hm td { color: #f1ece4; }
+  :root:not([data-theme="light"]) .down, :root:not([data-theme="light"]) #insBody .down, :root:not([data-theme="light"]) table.qt td .pfsub.down { color: #f0937a; }
+}

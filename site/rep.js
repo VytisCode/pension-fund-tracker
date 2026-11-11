@@ -207,7 +207,7 @@ const ref = c => c && c.n ? c : null;
 function heat(v, scale) {
   if (v == null) return '';
   const t = Math.min(1, Math.abs(v) / scale);
-  if (isDarkUI()) return `background:${v >= 0 ? `hsl(145,30%,${15 + 21 * t}%)` : `hsl(12,42%,${16 + 22 * t}%)`}`;
+  if (isDarkUI()) return `background:${v >= 0 ? `hsl(145,30%,${14 + 17 * t}%)` : `hsl(12,42%,${15 + 18 * t}%)`}`;
   return `background:${v >= 0 ? `hsl(142,26%,${93 - 44 * t}%)` : `hsl(15,50%,${92 - 35 * t}%)`}`;
 }
 const pc = (v, p = 2) => v == null ? '–' : `${v < 0 ? '−' : ''}${num(Math.abs(v), 2)}${pctSfx()}`;

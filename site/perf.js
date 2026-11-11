@@ -893,7 +893,7 @@ function renderMonthsTable(parts, ALL, nm, tr) {
 }
 function heatColor(v) {
   const t = Math.min(1, Math.abs(v) / 6);
-  if (isDarkUI()) return v >= 0 ? `hsl(145,30%,${15 + 21 * t}%)` : `hsl(12,42%,${16 + 22 * t}%)`;   // tamsioje temoje – tamsūs atspalviai, kad šviesus tekstas būtų įskaitomas
+  if (isDarkUI()) return v >= 0 ? `hsl(145,30%,${14 + 17 * t}%)` : `hsl(12,42%,${15 + 18 * t}%)`;   // tamsioje temoje – tamsūs atspalviai, kad šviesus tekstas būtų įskaitomas
   return v >= 0 ? `hsl(142,26%,${93 - 44 * t}%)` : `hsl(15,50%,${92 - 35 * t}%)`;   // šalavijo žalia / molio raudona (auditas #39)
 }
 function renderHeatmap(g, ALL) {
