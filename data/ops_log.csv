@@ -558,3 +558,6 @@ ts,src,ev,dd,n,msg
 2026-11-11T11:39,nav.SWEDBANK,new,2026-11-10,8,
 2026-11-11T11:39,p3.SWEDBANK,new,2026-11-10,6,
 2026-11-11T11:39,bx.lv_lb,ok,,,vėl veikia
+2026-11-11T12:01,nav.GOINDEX,new,2026-11-10,8,
+2026-11-11T12:01,p3.GOINDEX,new,2026-11-10,2,
+2026-11-11T12:01,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out

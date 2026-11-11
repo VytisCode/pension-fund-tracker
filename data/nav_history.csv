@@ -29896,6 +29896,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 1961-1967,1.2683,9404091.07,
 2026-11-06,GOINDEX,Goindex pensija 1961-1967,1.2678,9400525.02,
 2026-11-09,GOINDEX,Goindex pensija 1961-1967,1.2708,9428774.97,
+2026-11-10,GOINDEX,Goindex pensija 1961-1967,1.2694,9410432.91,
 2022-08-22,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1968-1974,1.0,,1.0
@@ -30957,6 +30958,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 1968-1974,1.5835,32350182.83,
 2026-11-06,GOINDEX,Goindex pensija 1968-1974,1.5752,32180651.24,
 2026-11-09,GOINDEX,Goindex pensija 1968-1974,1.5879,32404452.23,
+2026-11-10,GOINDEX,Goindex pensija 1968-1974,1.5928,32504792.58,
 2022-08-22,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1975-1981,1.0,,1.0
@@ -32018,6 +32020,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 1975-1981,1.6028,49656355.6,
 2026-11-06,GOINDEX,Goindex pensija 1975-1981,1.5944,49398213.45,
 2026-11-09,GOINDEX,Goindex pensija 1975-1981,1.6087,49816847.24,
+2026-11-10,GOINDEX,Goindex pensija 1975-1981,1.6139999999999999,50015873.32,
 2022-08-22,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1982-1988,1.0,,1.0
@@ -33079,6 +33082,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 1982-1988,1.6099999999999999,52582045.01,
 2026-11-06,GOINDEX,Goindex pensija 1982-1988,1.6018,52317917.83,
 2026-11-09,GOINDEX,Goindex pensija 1982-1988,1.6162,52808916.45,
+2026-11-10,GOINDEX,Goindex pensija 1982-1988,1.6215000000000002,53047941.31,
 2022-08-22,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1989-1995,1.0,,1.0
@@ -34140,6 +34144,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 1989-1995,1.6007,41042377.63,
 2026-11-06,GOINDEX,Goindex pensija 1989-1995,1.5927,40851618.67,
 2026-11-09,GOINDEX,Goindex pensija 1989-1995,1.6069,41230050.53,
+2026-11-10,GOINDEX,Goindex pensija 1989-1995,1.6122,41372688.41,
 2022-08-22,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensija 1996-2002,1.0,,1.0
@@ -35201,6 +35206,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 1996-2002,1.6044,22883351.73,
 2026-11-06,GOINDEX,Goindex pensija 1996-2002,1.5962,22774934.75,
 2026-11-09,GOINDEX,Goindex pensija 1996-2002,1.6104,22977686.49,
+2026-11-10,GOINDEX,Goindex pensija 1996-2002,1.6158000000000001,23053908.85,
 2025-01-02,GOINDEX,Goindex pensija 2003-2009,1.0,1093916,1.0
 2025-01-03,GOINDEX,Goindex pensija 2003-2009,1.0,1095326,1.0072
 2025-01-06,GOINDEX,Goindex pensija 2003-2009,1.0022,1097778,1.0032
@@ -35668,6 +35674,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensija 2003-2009,1.2192,4402299.62,
 2026-11-06,GOINDEX,Goindex pensija 2003-2009,1.2133,4381071.04,
 2026-11-09,GOINDEX,Goindex pensija 2003-2009,1.2242,4422376.21,
+2026-11-10,GOINDEX,Goindex pensija 2003-2009,1.2281,4436483.66,
 2022-08-22,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
 2022-08-24,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0,,1.0
@@ -36729,6 +36736,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-05,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0906,1493197.9,
 2026-11-06,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0905,1530943.84,
 2026-11-09,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.0911,1543233.74,
+2026-11-10,GOINDEX,Goindex pensijų turto išsaugojimo fondas,1.089,1598322.83,
 2019-01-02,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
 2019-01-03,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
 2019-01-04,LUMINOR,Luminor 1961-1967 tikslinės grupės pensijų fondas,1.0,,
