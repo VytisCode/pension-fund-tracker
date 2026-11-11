@@ -1,9 +1,4 @@
-laukiama diena: 2026-11-10
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
-SWEDBANK: gauta 6 eil., nauja/pakeista 6; viskas iki 2026-11-10
-LUMINOR: gauta 5 eil., nauja/pakeista 0; dar trūksta: Luminor ateitis 58+, Luminor ateitis 50–58, Luminor ateitis 16–50, Luminor tvari ateitis index, Luminor ateitis akcijų index
-SEB: fondų puslapių nuorodos rastos 0: –
-SEB SEB index. Klimato ateitis: istorijos CSV 1266 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+ateitis: istorijos CSV 1266 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 18+: istorijos CSV 5749 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 50+: istorijos CSV 1717 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 58+: istorijos CSV 5072 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
@@ -237,6 +232,14 @@ SWEDBANK: jau atnaujinta iki 2026-11-10
 LUMINOR: jau atnaujinta iki 2026-11-10
 
 III pakopa – Vilnius: 2026-11-11 17:26, laukiama diena: 2026-11-10
+SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please ru
+SWEDBANK: jau atnaujinta iki 2026-11-10
+LUMINOR: jau atnaujinta iki 2026-11-10
+
+III pakopa – Vilnius: 2026-11-11 17:56, laukiama diena: 2026-11-10
 SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
 ╔════════════════════════════════════════════════════════════╗
 ║ Looks like Playwright was just installed or updated.       ║
