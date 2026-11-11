@@ -119,6 +119,23 @@ function renderKpis() {
   const o = O(), t = todayLoc(), now = dayNum(t), evT = byDay[t] || [], f7 = new Set(EV.filter(e => e.ev === 'fail' && dayNum(e.day) > now - 7).map(e => e.src));
   const nx = UP.filter(s => s.next >= now).sort((a, b) => a.next - b.next)[0], man = UP.filter(s => s.mode === 'manual' && s.next <= now + 30);
   const k = (l, v, s) => `<div class="k"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+  if (typeof ecCard === 'function') { try {   // Edge kortelės (klausimas + skaičius + juostos); kitaip – senieji langeliai
+    const OC = { lt: ['Ką šiandien gavome?', 'Ar kas nors sugedo per savaitę?', 'Ko laukiame artimiausiai?', 'Kokių rankinių darbų laukia per 30 d.?'], en: ['What arrived today?', 'Did anything break this week?', 'What are we waiting for next?', 'Which manual tasks are due in 30 days?'],
+      lv: ['Ko šodien saņēmām?', 'Vai šonedēļ kaut kas salūza?', 'Ko gaidām tuvākajā laikā?', 'Kādi manuāli darbi gaidāmi 30 dienās?'], et: ['Mis täna saabus?', 'Kas sel nädalal midagi katki läks?', 'Mida järgmisena ootame?', 'Millised käsitsi tööd on 30 päeva jooksul?'] };
+    const Q = OC[ulang] || OC.en, ey = lang === 'lt' ? 'Duomenys' : 'Data', nm = x => hEsc(lang === 'lt' ? x.lt : x.en), out = [];
+    const days = []; for (let i = 6; i >= 0; i--) { const d = iso(now - i); days.push([d, (byDay[d] || []).filter(e => e.ev === 'new').length, EV.filter(e => e.ev === 'fail' && e.day === d).length]); }
+    out.push(ecCard({ k: 'op0', sz: 'w', img: 'sec2-rep.jpg', ic: 'calendar-ltr', ey, q: Q[0], big: String(evT.filter(e => e.ev === 'new').length), sub: `${o.kToday} · ${o.kTodayS(evT.length)}`, info: lang === 'lt' ? 'Nauji duomenys (įvykis „new“) iš duomenų žurnalo kiekvieną dieną; juostos – paskutinės 7 dienos.' : 'New data (event “new”) from the data log each day; bars – the last 7 days.',
+      vis: ecBars(days.slice().reverse().map(([d, n]) => [d, 'rgba(255,255,255,.8)', n, String(n)])) }));
+    const fc = [...f7].map(src => [srcLabel(src), EV.filter(e => e.src === src && e.ev === 'fail' && dayNum(e.day) > now - 7).length]).sort((a, b) => b[1] - a[1]);
+    out.push(ecCard({ k: 'op1', sz: 'w', ic: f7.size ? 'arrow-trending-down' : 'target-arrow', ey, q: Q[1], big: f7.size ? String(f7.size) : (lang === 'lt' ? 'Ne' : 'No'), cls: f7.size ? 'down' : 'up', sub: `${o.kFail} · ${o.kFailS(f7.size)}`, info: lang === 'lt' ? 'Šaltiniai, kurių rinkiklis per 7 dienas bent kartą nepavyko (įvykis „fail“); dažniausiai kitas paleidimas pavyksta.' : 'Sources whose collector failed at least once in 7 days (event “fail”); usually the next run succeeds.',
+      vis: fc.length ? ecBars(fc.slice(0, 6).map(([l, n]) => [l, 'var(--dneg)', n, String(n)])) : ecBars(days.slice().reverse().map(([d, , f]) => [d, 'var(--dpos)', f, String(f)])) }));
+    const nxs = UP.filter(s => s.next >= now).sort((a, b) => a.next - b.next).slice(0, 5);
+    if (nxs.length) out.push(ecCard({ k: 'op2', sz: 'w', ic: 'calendar-ltr', ey, q: Q[2], big: nxs[0].due, cls: 'sm', sub: nm(nxs[0]), info: lang === 'lt' ? 'Artimiausios datos, kada šaltinis turėtų paskelbti naujų duomenų (pagal ankstesnį ritmą ir tvarkaraštį).' : 'Nearest dates when a source should publish new data (from its past rhythm and schedule).',
+      vis: `<div class="fgle" style="flex-direction:column;gap:4px">${nxs.slice(1).map(s => `<span>${s.due}<b>${nm(s)}</b></span>`).join('')}</div>` }));
+    out.push(ecCard({ k: 'op3', sz: 'w', ic: 'people', ey, q: Q[3], big: String(man.length), sub: o.kManS(man.length), info: lang === 'lt' ? 'Rankiniu būdu atnaujinami šaltiniai, kurių data – per artimiausias 30 dienų arba jau praėjo.' : 'Manually updated sources due within 30 days or already overdue.',
+      vis: man.length ? `<div class="fgle" style="flex-direction:column;gap:4px">${man.slice(0, 5).map(s => `<span>${s.due}${s.over ? ' ⚠' : ''}<b>${nm(s)}</b></span>`).join('')}</div>` : '' }));
+    $('kpis').className = 'hg jg'; $('kpis').innerHTML = out.join(''); return;
+  } catch (e) { console.warn(e); $('kpis').className = 'kpis'; } }
   $('kpis').innerHTML = k(o.kToday, evT.filter(e => e.ev === 'new').length, o.kTodayS(evT.length)) + k(o.kFail, f7.size, o.kFailS(f7.size))
     + k(o.kNext, nx ? nx.due : '–', nx ? hEsc(lang === 'lt' ? nx.lt : nx.en) : '') + k(o.kMan, man.length, o.kManS(man.length));
 }
