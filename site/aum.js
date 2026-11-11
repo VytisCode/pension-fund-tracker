@@ -510,12 +510,52 @@ function aumTabs() {                      // skirtukai (savininkas 2026-10-16: �
   addSubnav([['chTitle', L ? 'Turtas' : 'Assets'], ['dcTitle', L ? 'Kas keitė turtą' : 'What changed assets'], ['gtTitle', L ? 'Turto pokytis' : 'Change in assets'],
     ['qtTitle', L ? 'Ketvirčių pabaigose' : 'Quarter ends'], ['poTitle', L ? 'Reformos išmokos' : 'Reform payouts']].map(([id, label]) => ({ id, label })));
 }
+/* Edge kortelės viršuje (vietoj skaičių juostos): turtas, pokytis nuo metų pradžios, reformos išmokos ir III pakopos dydis – pagal valdytojus. Pokytis = turto skirtumas (apima investicijų rezultatą, išmokas ir kitą pokytį). */
+const AUC = {
+  q: { lt: ['Kiek turto valdo II pakopos fondai?', 'Kaip pasikeitė II pakopos turtas nuo metų pradžios?', 'Kiek išmokėta pagal pensijų reformą?', 'Kokio dydžio III pakopa, palyginti su II?'],
+    en: ['How much do pillar II funds manage?', 'How did pillar II assets change since the start of the year?', 'How much has been paid out under the pension reform?', 'How big is pillar III compared with pillar II?'],
+    lv: ['Cik aktīvu pārvalda II līmeņa fondi?', 'Kā mainījās II līmeņa aktīvi kopš gada sākuma?', 'Cik izmaksāts saskaņā ar pensiju reformu?', 'Cik liels ir III līmenis salīdzinājumā ar II?'],
+    et: ['Kui palju vara haldavad II samba fondid?', 'Kuidas muutus II samba vara aasta algusest?', 'Kui palju on pensionireformi alusel välja makstud?', 'Kui suur on III sammas võrreldes II-ga?'] },
+  ey: { lt: 'Turtas', en: 'Assets', lv: 'Aktīvi', et: 'Varad' },
+  i: { lt: ['Valdytojų II pakopos fondų grynųjų aktyvų suma paskutinę dieną (valdytojų skelbiami fondų aktyvai).',
+      'Turtas dabar − turtas praėjusių metų pabaigoje. Pokytis apima investicijų rezultatą, reformos išmokas ir kitą pokytį (įmokos, kitos išmokos, perėjimai kartu – atskirai neskelbiami). Kas kiek prisidėjo – skirtukas „Kas keitė turtą“.',
+      'Pensijų reformos išmokos (vienkartinis turto išsiėmimas) iš valdytojų fondų šiais metais, pagal ketvirčius; dalis – įvertis iš turto pokyčio išmokų dieną.',
+      'II ir III pakopos fondų grynieji aktyvai paskutinę dieną.'],
+    en: ['Sum of net assets of the managers’ pillar II funds on the latest day (fund assets published by managers).',
+      'Assets now − assets at the end of last year. The change includes investment results, reform payouts and other change (contributions, other payouts and switches together – not published separately). Who contributed how much – tab “What changed assets”.',
+      'Pension-reform payouts (one-off withdrawal of savings) from the managers’ funds this year, by quarter; partly estimated from the asset change on payout days.',
+      'Net assets of pillar II and III funds on the latest day.'] },
+  of2: { lt: 'II pakopos dydžio', en: 'of pillar II', lv: 'no II līmeņa', et: 'II sambast' },
+};
+const aucT = k => AUC[k][ulang] || AUC[k].en;
+function aumCards(last, y0, yr) {
+  let el = document.getElementById('kpis');
+  if (!el) { el = document.createElement('div'); el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  try {
+    const at = (pl, m, day) => AUM.funds.filter(f => f.pl === pl && (!m || f.p === m)).reduce((s, f) => { const i = lastOnOrBefore(f, day); return s + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
+    const Q = aucT('q'), I = aucT('i'), ey = aucT('ey'), M = Object.keys(MLABEL), mn = v => kpMoney(Math.abs(v) * 1e6), sg = v => (v >= 0 ? '+' : '−') + mn(v), out = [];
+    const a2 = M.map(m => ({ m, v: at('II', m, last), v0: at('II', m, y0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), t2 = a2.reduce((s, x) => s + x.v, 0), t20 = a2.reduce((s, x) => s + x.v0, 0);
+    if (!t2) { el.innerHTML = ''; return false; }
+    out.push(ecCard({ k: 'au0', sz: 'w', img: 'sec2-aum.jpg', ic: 'building-bank', ey, q: Q[0], big: mn(t2), sub: iso(last), info: I[0], xt: 'gtTable',
+      vis: ecBars(a2.map(x => [MLABEL[x.m], colorOf(x.m), x.v, `${mn(x.v)} · ${num(x.v / t2 * 100, 1)} %`])) }));
+    if (t20) { const ch = a2.filter(x => x.v0 > 0).map(x => ({ m: x.m, d: x.v - x.v0, r: (x.v / x.v0 - 1) * 100 })).sort((a, b) => a.d - b.d);
+      out.push(ecCard({ k: 'au1', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: sg(t2 - t20), cls: t2 >= t20 ? 'up' : 'down', sub: `${pct((t2 / t20 - 1) * 100)} · ${iso(y0)} → ${iso(last)}`, info: I[1], xt: 'gtTable',
+        vis: ecBars(ch.map(x => [MLABEL[x.m], x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, `${sg(x.d)} · ${pct(x.r)}`])) })); }
+    const po = M.map(m => ({ m, v: -AUM.payouts.filter(p => p.p === m && p.q.startsWith(String(yr))).reduce((s, p) => s + p.flow, 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), tp = po.reduce((s, x) => s + x.v, 0);
+    if (tp) out.push(ecCard({ k: 'au2', sz: 'w', ic: 'money-hand', ey, q: Q[2], big: '−' + mn(tp), sub: T().kpPay(yr), info: I[2], xt: 'poTable',
+      vis: ecBars(po.map(x => [MLABEL[x.m], colorOf(x.m), x.v, '−' + mn(x.v)])) }));
+    const t3 = at('III', null, last);
+    if (t3) out.push(ecCard({ k: 'au3', sz: 'w', ic: 'savings', ey, q: Q[3], big: mn(t3), sub: `${num(t3 / t2 * 100, 1)} % ${aucT('of2')} · ${iso(last)}`, info: I[3],
+      vis: ecBars([[T().kpII, 'var(--s1)', t2, mn(t2)], [T().kpIII, 'var(--s4)', t3, mn(t3)]]) }));
+    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return true;
+  } catch (e) { console.warn(e); return false; }
+}
 function renderAllParts() {
   const last = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), y0 = Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY);
   const tot = (pl, day) => AUM.funds.filter(f => f.pl === pl).reduce((s, f) => { const i = lastOnOrBefore(f, day); return s + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
   const t2 = tot('II', last), t2y = tot('II', y0), t3 = tot('III', last), yr = new Date(last * DAY).getUTCFullYear();
   const pay = AUM.payouts.filter(p => p.q.startsWith(String(yr))).reduce((s, p) => s + p.flow, 0);
-  kpiRow([[T().kpII, kpMoney(t2 * 1e6), iso(last)], t3 ? [T().kpIII, kpMoney(t3 * 1e6), iso(last)] : null,
+  if (!aumCards(last, y0, yr)) kpiRow([[T().kpII, kpMoney(t2 * 1e6), iso(last)], t3 ? [T().kpIII, kpMoney(t3 * 1e6), iso(last)] : null,
     t2y ? [T().kpYtd, kpMoney(Math.abs(t2 - t2y) * 1e6).replace(/^/, t2 >= t2y ? '+' : '−'), pct((t2 / t2y - 1) * 100)] : null,
     pay ? [T().kpPay(yr), kpMoney(Math.abs(pay) * 1e6).replace(/^/, '−')] : null]);
   document.getElementById('sub').textContent = `${T().navAum} · ${T().updated} ${AUM.generated}`;
