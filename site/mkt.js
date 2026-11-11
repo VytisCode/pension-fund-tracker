@@ -840,7 +840,7 @@ addStrings({
     gW: x => x >= 1.2 ? `${num(x, 1)} times as much as in` : x <= 0.8 ? 'less than in' : 'about as much as in',
     calcG: 'Participants (sum over funds) at quarter end − at the end of last year; the same period a year earlier.',
     fH: 'Change apart from investments', f: (a, b) => `Over the quarter, apart from investment results, pillar III assets ${a >= 0 ? 'grew' : 'fell'} by about ${mMn(Math.abs(a))} and pillar II assets ${b >= 0 ? 'grew' : 'fell'} by about ${mMn(Math.abs(b))}. This is a residual (change in assets − investment gain): the data do not show contributions, payouts and switches separately.`, calcF: 'Change apart from investments = change in assets − investment gain (a residual, as in “Change in assets”; contributions, payouts and switches are not published separately).',
-    lH: 'Who attracts pillar III participants', l: (m, n, s) => `Since the start of the year ${m} attracted the most new pillar III participants: ${mInt(n)}${s ? `, or ${s} of the net growth` : ''}.`, calcL: 'Manager’s pillar III participants now − at the end of last year.',
+    lH: 'Where pillar III participants grew most', l: (m, n, s) => `Since the start of the year the number of participants in ${m} pillar III funds grew the most: by ${mInt(n)}${s ? `, or ${s} of the net growth` : ''}. This is a net change (joined minus left); the data do not show separately how many joined and how many left.`, calcL: 'Manager’s pillar III participants now − at the end of last year.',
     aH: 'Fastest acceleration', a: list => `Compared with the same period last year, pillar III participant growth since the start of the year accelerated most at ${list}.`, calcA: 'Participant growth since the start of the year ÷ growth in the same period last year; managers with growth in both periods.',
     cH: 'Pillars II and III together', c: list => `Taking pillars II and III together, the largest managers by assets are ${list}.`, calcC: 'Manager’s pillar II + III assets ÷ all pillar II + III assets.',
     m1: (m, a, b, w) => `Since the start of the year the number of ${m}’s pillar III participants ${a >= 0 ? 'grew' : 'fell'} by ${mInt(Math.abs(a))} (same period last year: ${b == null ? '–' : (b < 0 ? '−' : '') + mInt(Math.abs(b))}${w ? `; ${w}` : ''}).`,
@@ -871,7 +871,7 @@ addStrings({
     gW: x => x >= 1.2 ? `${num(x, 1)} karto daugiau nei` : x <= 0.8 ? 'mažiau nei' : 'panašiai kaip',
     calcG: 'Dalyviai (suma per fondus) ketvirčio pabaigoje − praėjusių metų pabaigoje; tas pats laikotarpis prieš metus.',
     fH: 'Pokytis be investicijų', f: (a, b) => `Per ketvirtį, neskaičiuojant investicijų rezultato, III pakopos turtas ${a >= 0 ? 'padidėjo' : 'sumažėjo'} apie ${mMn(Math.abs(a))}, o II pakopos – ${b >= 0 ? 'padidėjo' : 'sumažėjo'} apie ${mMn(Math.abs(b))}. Tai likutis (turto pokytis − investicinis prieaugis): įmokų, išmokų ir perėjimų atskirai šie duomenys neparodo.`, calcF: 'Pokytis be investicijų = turto pokytis − investicinis prieaugis (likutis, kaip „Turto pokytis“; įmokos, išmokos ir perėjimai atskirai neskelbiami).',
-    lH: 'Kas pritraukia III pakopos dalyvių', l: (m, n, s) => `Nuo metų pradžios daugiausia naujų III pakopos dalyvių pritraukė ${m} – ${mInt(n)}${s ? `, arba ${s} viso grynojo prieaugio` : ''}.`, calcL: 'Valdytojo III pakopos dalyviai dabar − praėjusių metų pabaigoje.',
+    lH: 'Kur labiausiai augo III pakopos dalyviai', l: (m, n, s) => `Nuo metų pradžios labiausiai išaugo ${m} III pakopos fondų dalyvių skaičius – ${mInt(n)}${s ? `, arba ${s} viso grynojo prieaugio` : ''}. Tai grynasis pokytis (atėję minus išėję): kiek žmonių atėjo ir kiek išėjo atskirai, šie duomenys neparodo.`, calcL: 'Valdytojo III pakopos dalyviai dabar − praėjusių metų pabaigoje.',
     aH: 'Labiausiai paspartėjo', a: list => `Palyginti su tuo pačiu laikotarpiu pernai, nuo metų pradžios III pakopos dalyvių augimas labiausiai paspartėjo šių valdytojų fonduose: ${list}.`, calcA: 'Dalyvių prieaugis nuo metų pradžios ÷ prieaugis per tą patį laikotarpį pernai; valdytojai, kurių dalyvių daugėjo abiem laikotarpiais.',
     cH: 'II ir III pakopa kartu', c: list => `Sudėjus II ir III pakopas, daugiausia turto valdo ${list}.`, calcC: 'Valdytojo II + III pakopos turtas ÷ visas II + III pakopos turtas.',
     m1: (m, a, b, w) => `Nuo metų pradžios ${m} III pakopos fondų dalyvių ${a >= 0 ? 'padaugėjo' : 'sumažėjo'} ${mInt(Math.abs(a))} (per tą patį laikotarpį pernai – ${b == null ? '–' : (b < 0 ? '−' : '') + mInt(Math.abs(b))}${w ? `; ${w}` : ''}).`,
@@ -1130,7 +1130,7 @@ function p23Facts() {
     nb.add(`${X.rH} · ${t.thPrevY.toLowerCase()}`, Ty3.nav / Ty2.nav, c => `${c(i2)}/${c(j2)}`, Zr); void r;
     add(X.rH, X.r(pctPlain(T3.nav / T2.nav * 100, 1), pctPlain(Ty3.nav / Ty2.nav * 100, 1)), X.calcR, nb); }
   const ytdP = (k, m) => { const x = byMgr('III', k); return m ? (x[m] ? x[m].part : null) : totals('III', k).part; };
-  if (e3 >= 0 && e31 >= 0 && y3 >= 0) {
+  if (e3 >= 0 && e31 >= 0 && y3 >= 0 && T3.part > 0 && totals('III', e3).part > 0 && totals('III', y3).part > 0 && totals('III', e31).part > 0) {
     const a = T3.part - totals('III', e3).part, b = totals('III', y3).part - totals('III', e31).part, nb = NB();
     const i0 = nb.add(`III · ${I.part}${' · ' + t.thNow.toLowerCase()}`, T3.part, () => p3(d0), Zi), i1 = nb.add(`III · ${I.part} · ${X.ys}`, totals('III', e3).part, () => p3(YS), Zi);
     const ia = nb.add(`${t.thDy.split(' ')[0]} · ${X.ytd}`, a, c => `${c(i0)}-${c(i1)}`, Zi);
@@ -1150,7 +1150,7 @@ function p23Facts() {
   if (e3 >= 0 && e31 >= 0 && y3 >= 0) {
     const ms = Object.keys(byMgr('III', a3)), ch = ms.map(m => ({ m, a: ytdP(a3, m) - (ytdP(e3, m) || 0), b: ytdP(y3, m) != null && ytdP(e31, m) != null ? ytdP(y3, m) - ytdP(e31, m) : null }));
     const totA = T3.part - totals('III', e3).part, top = [...ch].sort((x, y) => y.a - x.a)[0];
-    { const nb = NB(), i = nb.add(`${top.m} · III · ${I.part}`, ytdP(a3, top.m), () => p3(d0, top.m), Zi), j = nb.add(`${top.m} · III · ${I.part} · ${X.ys}`, ytdP(e3, top.m) || 0, () => p3(YS, top.m), Zi);
+    if (top && top.a > 0 && ytdP(e3, top.m) != null) { const nb = NB(), i = nb.add(`${top.m} · III · ${I.part}`, ytdP(a3, top.m), () => p3(d0, top.m), Zi), j = nb.add(`${top.m} · III · ${I.part} · ${X.ys}`, ytdP(e3, top.m) || 0, () => p3(YS, top.m), Zi);
       const k = nb.add(`${top.m} · ${X.ytd}`, top.a, c => `${c(i)}-${c(j)}`, Zi), i2 = nb.add(`III · ${I.part}`, T3.part, () => p3(d0), Zi), j2 = nb.add(`III · ${I.part} · ${X.ys}`, totals('III', e3).part, () => p3(YS), Zi);
       const k2 = nb.add(`III · ${X.ytd}`, totA, c => `${c(i2)}-${c(j2)}`, Zi); if (totA > 0 && top.a > 0) nb.add(L ? 'Dalis' : 'Share', top.a / totA, c => `${c(k)}/${c(k2)}`, Zr);
       add(X.lH, X.l(top.m, top.a, totA > 0 && top.a > 0 ? pctPlain(top.a / totA * 100, 1) : ''), X.calcL, nb); }
@@ -1374,7 +1374,7 @@ function factTool(el) {
 /* Edge stiliaus faktų kortelės (savininkas 2026-11-11: „Rinkos faktus perdaryti taip pat“): temos ikona (Fluent UI System Icons, MIT),
    didelis skaičius – pirmas sakinio skaičius su vienetu (tas pats tekstas, kuris kopijuojamas – jokio naujo skaičiavimo), po juo mini grafikas ir sakinys */
 const FACT_IC = { ret: 'arrow-trending', nav: 'savings', part: 'people', risk: 'gauge', life: 'money-hand', mgr: 'building-bank', p3: 'chart-multiple', fee: 'book-coins', other: 'info' };
-const FACT_NUM = /(?<![(\d,.\u00a0\u202f\u2212]|\d[ \u00a0\u202f])[−+]?\d[\d \u00a0\u202f.,]*(?:\s?(?:%|p\. p\.|pp|mlrd\. €|mln\. €|bn €|m €|€|karto|times|reizes|korda))(?![\w])|(?<![\d,.\u00a0\u202f])\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?![\d,])/;
+const FACT_NUM = /(?<![(\d,.\u00a0\u202f\u2212]|\d[ \u00a0\u202f])[−+]?\d[\d \u00a0\u202f.,]*(?:\s?(?:%|p\. p\.|pp|mlrd\. €|mln\. €|bn €|m €|€|karto|times|reizes|korda))(?![\w])|(?<![\d,.\u00a0\u202f])\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?!\d|,\d)/;
 // Didelis skaičius kortelėje – sakinio atsakymas, ne pavyzdžio įvestis: praleidžiami iliustraciniai 1 000 € / 100 € / 100 %, ribos („daugiau nei 50 %“),
 // „nuo X iki Y“ rodoma kaip intervalas, „sumažėjo 849,9 mln. €“ – su minusu, „28 iš 48“ – kaip santykis; kur skaičius vienas neatsako (kelių valdytojų sąrašai) – nerodomas.
 const FACT_OF = /\b\d+ (?:vietą )?(?:iš|of) \d+\b/g, FACT_ILL = new Set(['1 000 €', '100 €', '100 %', '1\u00a0000 €', '100\u00a0€', '100\u00a0%']);
@@ -1462,7 +1462,7 @@ const FQ = {   // raktas T() kelyje → klausimas [lt, en, lv, et]; „konteiner
   'p23.rH': ['Kokio dydžio III pakopa, palyginti su II?', 'How big is pillar III compared with II?', 'Cik liels ir III līmenis salīdzinājumā ar II?', 'Kui suur on III sammas võrreldes II-ga?'],
   'p23.gH': ['Kiek padaugėjo III pakopos dalyvių?', 'How many new pillar III participants?', 'Cik pieauga III līmeņa dalībnieku?', 'Kui palju lisandus III samba osalejaid?'],
   'p23.fH': ['Kiek turtas pasikeitė ne dėl investicijų?', 'How much did assets change apart from investments?', 'Cik aktīvi mainījās ne ieguldījumu dēļ?', 'Kui palju muutus vara muul põhjusel kui investeeringud?'],
-  'p23.lH': ['Kas pritraukia daugiausia naujų dalyvių?', 'Who attracts the most new participants?', 'Kurš piesaista visvairāk jaunu dalībnieku?', 'Kes meelitab kõige rohkem uusi osalejaid?'],
+  'p23.lH': ['Kurio valdytojo dalyvių skaičius augo labiausiai?', 'Whose participant numbers grew the most?', 'Kura pārvaldītāja dalībnieku skaits pieauga visvairāk?', 'Kelle osalejate arv kasvas kõige rohkem?'],
   'p23.aH': ['Kurių valdytojų augimas paspartėjo?', 'Whose growth accelerated the most?', 'Kuru pārvaldītāju izaugsme paātrinājās?', 'Kelle kasv kiirenes kõige rohkem?'],
   'p23.cH': ['Kas valdo daugiausia abiejose pakopose?', 'Who holds the most across both pillars?', 'Kuram ir visvairāk abos līmeņos?', 'Kellel on mõlemas sambas kõige rohkem?'],
 };
@@ -1947,7 +1947,7 @@ addStrings({ mf: { title: 'Month facts', lead: 'Facts between Bank of Lithuania 
   hR: 'Month return', tR: (m, w, p, n, y) => `${m} the average (asset-weighted) return of pillar II funds was ${w}, and ${p} of ${n} funds rose in value. Since the start of the year the return is ${y}.`,
   cR: 'Each fund: month-end unit value ÷ previous month-end − 1; weights – fund net assets at the start of the month; year to date – monthly returns chained.',
   hG: 'Investment gain and assets', tG: (m, up, g, a, da, fl) => `${m} pillar II funds ${g >= 0 ? `earned an investment gain of about ${mMn(g)}` : `made an investment loss of about ${mMn(-g)}`}. At month end they managed ${mMn(a)}, ${mMn(Math.abs(da))} ${da >= 0 ? 'more' : 'less'} than a month earlier; the remaining ${fl < 0 ? '−' : '+'}${mMn(Math.abs(fl))} is money moved by participants (contributions, payouts, switches together).`,
-  cG: 'Gain = Σ fund return × assets at the start of the month; contributions, switches and payouts = change in assets − gain.',
+  cG: 'Gain = Σ fund return × assets at the start of the month; other change (contributions, switches and payouts together; not published separately) = change in assets − gain.',
   hL: 'Leaders in groups', tL: (m, xs) => `${m} the best return in each group: ${xs}.`, cL: 'Highest month return within each group (funds compared only within their group).',
   hS: 'Largest gap in a group', tS: (g, a, pa, b, pb, v, m) => `${m} the gap between funds was largest in the “${g}” group: ${a} returned ${pa} and ${b} ${pb}, a difference of ${v} pp.`, cS: 'Highest minus lowest month return within a group.',
   hY: 'Year-to-date leaders', tY: (m, xs) => `Year-to-date leaders (${m}): ${xs}.`, cY: 'Unit value at month end ÷ value on 31 December − 1, highest within each group.',
@@ -1973,7 +1973,7 @@ addStrings({ mf: { title: 'Month facts', lead: 'Facts between Bank of Lithuania 
   hR: 'Mėnesio grąža', tR: (m, w, p, n, y) => `${m} II pakopos fondų vidutinė (pagal turtą svertinė) grąža buvo ${w}, vertė padidėjo ${p} iš ${n} fondų. Nuo metų pradžios grąža siekia ${y}.`,
   cR: 'Kiekvieno fondo: vieneto vertė mėnesio pabaigoje ÷ ankstesnio mėnesio pabaigos vertė − 1; svoriai – fondų grynieji aktyvai mėnesio pradžioje; nuo metų pradžios – mėnesių grąžos sujungtos grandine.',
   hG: 'Prieaugis ir turtas', tG: (m, up, g, a, da, fl) => `${m} II pakopos fondai ${g >= 0 ? `uždirbo apie ${mMn(g)} investicinio prieaugio` : `patyrė apie ${mMn(-g)} investicinių nuostolių`}. Mėnesio pabaigoje jie valdė ${mMn(a)} – ${mMn(Math.abs(da))} ${da >= 0 ? 'daugiau' : 'mažiau'} nei prieš mėnesį; likęs pokytis (${fl < 0 ? '−' : '+'}${mMn(Math.abs(fl))}) – dalyvių pinigų judėjimas (įmokos, išmokos, perėjimai kartu).`,
-  cG: 'Prieaugis = Σ fondo grąža × turtas mėnesio pradžioje; įmokos, perėjimai ir išmokos = turto pokytis − prieaugis.',
+  cG: 'Prieaugis = Σ fondo grąža × turtas mėnesio pradžioje; kitas pokytis (įmokos, perėjimai ir išmokos kartu; atskirai neskelbiami) = turto pokytis − prieaugis.',
   hL: 'Lyderiai grupėse', tL: (m, xs) => `${m} grupių lyderiai: ${xs}.`, cL: 'Didžiausia mėnesio grąža kiekvienoje grupėje (fondai lyginami tik savo grupėje).',
   hS: 'Didžiausias skirtumas grupėje', tS: (g, a, pa, b, pb, v, m) => `${m} didžiausias grąžų skirtumas buvo grupėje „${g}“: ${a} fondo grąža – ${pa}, ${b} – ${pb}, skirtumas – ${v} p. p.`, cS: 'Didžiausia minus mažiausia mėnesio grąža grupėje.',
   hY: 'Nuo metų pradžios lyderiai', tY: (m, xs) => `Nuo metų pradžios lyderiai (${m}): ${xs}.`, cY: 'Vieneto vertė mėnesio pabaigoje ÷ vertė gruodžio 31 d. − 1, didžiausia kiekvienoje grupėje.',
@@ -2446,7 +2446,7 @@ function exOf(f, box) {
     [V.ppH]: () => ({ k: 'flow', pl, u: 'eur', ytd: true, w: L ? 'prieaugis vienam dalyviui' : 'gain per participant', lab: L ? 'Prieaugis vienam dalyviui' : 'Gain per participant',
       ser: [{ l: L ? 'Prieaugis vienam dalyviui, €' : 'Gain per participant, €', c: 'var(--s4)', fn: di => { const g = gainAt(pl, di), x = totals(pl, di); return g != null && x.part ? g * 1e6 / x.part : null; } }] }),
     [X.flowH]: () => ({ k: 'flow', pl, u: 'mn', w: L ? 'turto pokyčio dalys' : 'parts of the change in assets', lab: L ? `${pl} pakopos turto pokytis` : `Pillar ${pl} change in assets`,
-      ser: [{ l: t.fSer.gain, sl: L ? 'investicinis prieaugis' : 'investment gain', c: 'var(--s4)', fn: di => gainAt(pl, di) }, { l: t.fSer.flow, sl: L ? 'įmokų ir išmokų balansas' : 'net contributions', c: 'var(--s1)', fn: di => flowAt(pl, di) }] }),
+      ser: [{ l: t.fSer.gain, sl: L ? 'investicinis prieaugis' : 'investment gain', c: 'var(--s4)', fn: di => gainAt(pl, di) }, { l: t.fSer.flow, sl: L ? 'kitas pokytis (įmokos, išmokos, perėjimai kartu)' : 'other change (contributions, payouts, switches together)', c: 'var(--s1)', fn: di => flowAt(pl, di) }] }),
     [F.mgrH]: () => ({ ...share(pl, 'nav'), view: 'snap', dy: 1 }), [F.chgH]: () => ({ ...dPart(pl), n: 1, view: 'q', ms: mgrsAt(pl, atIdx(pl, MS.d)) }),
     [X.concH]: () => ({ k: 'lvl', pl, u: 'int', dy: 5, cagr: false, w: L ? 'rinkos koncentracijos indeksas (HHI)' : 'the market concentration index (HHI)', lab: 'HHI',
       fn: di => { const T0 = totals(pl, di); return T0.nav ? Object.values(byMgr(pl, di)).reduce((s, x) => s + (x.nav / T0.nav * 100) ** 2, 0) : null; } }),

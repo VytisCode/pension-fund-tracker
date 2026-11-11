@@ -13,6 +13,7 @@ Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `
 5. **Svetimų repozitorijų neliesti:** `VytisCode/Daily-LT-funds-NAV-data-collector`, `fundsautomationbot-oss/Daily-LT-funds-NAV-data-collector` – tik skaityti.
 6. **Istorinių duomenų** (`data/*.csv`) niekada netrinti ir neperrašyti; papildyti tik tuščius laukus.
 7. Kai reikia savininko veiksmų – žingsnis po žingsnio, paprastai, kad galėtų padaryti telefonu.
+8. **Teiginiai – tik tai, ką rodo duomenys (savininkas 2026-11-11).** Kiekvienas sakinys kortelėse, laiškuose ir Excel turi būti teisingas, neklaidinantis ir paremtas turimais tos šalies duomenimis. Lietuvoje įmokų, išmokų ir perėjimų duomenų nėra: turto pokytis − investicinis prieaugis = tik likutis („pokytis be investicijų“), ne „įmokos viršijo išmokas“; dalyvių skaičiaus pokytis = grynasis (atėję − išėję), ne „pritraukė naujų dalyvių“ ar „naujų pinigų“. Prieš rašant LV/EE – patikrinti, ar ta šalis tokius duomenis turi (pvz. LV VSAA perėjimai).
 
 ## Ką Claude daro pats / tik siūlo (savininko sprendimas 2026-10-16)
 

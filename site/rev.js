@@ -8,12 +8,12 @@ addStrings({
   s2: (b, bv, w, wv) => `${b} did best (${bv} on average across its life-cycle funds), ${w} did worst (${wv}).`,
   s3: (g, a, b, v) => `The largest gap was in the ${g} group: ${a} and ${b} differ by ${v} pp.`,
   s4: (p, v) => `Among asset-preservation funds ${p} led (${v}).`,
-  s5: (v, r, fl, pay) => `Pillar II assets changed by ${v}: return ${r}, contributions and switches ${fl}${pay ? `, reform payouts ${pay}` : ''}.`,
+  s5: (v, r, fl, pay) => `Pillar II assets changed by ${v}: return ${r}, other change (contributions, payouts, switches together) ${fl}${pay ? `, reform payouts ${pay}` : ''}.`,
   s6: (f, d, v) => `The largest one-day move: ${f} ${v} on ${d}.`,
   s7: (c, f, v) => `Pillar III, ${c}: ${f} led (${v}).`,
   hMgr: 'Managers: average life-cycle fund', mMgr: 'Place among managers in brackets. Returns are not annualised.', thMgr: 'Manager', thPer: 'This period', thYtd: 'Since start of year', thYoy: '12 months',
   hGrp: 'Groups: leader and last fund in the period', thG: 'Group', thLead: 'Leader', thLast: 'Last', thGap: 'Gap, pp',
-  hAum: 'Pillar II assets: what changed them', mAum: '€ m. Return = assets × unit value change; contributions and switches – the rest of the change; payouts – reform payouts.',
+  hAum: 'Pillar II assets: what changed them', mAum: '€ m. Return = assets × unit value change; other change (contributions, payouts and switches together, not published separately) – the rest of the change; payouts – reform payouts.',
   thStart: 'Start', thRet: 'Return', thFlow: 'Contributions & switches', thPay: 'Payouts', thEnd: 'End', total: 'Total',
   hP3: 'Pillar III: leaders by category', mP3: 'Month-end unit values.', thCat: 'Category', cat: { bond: 'Bonds', mixed: 'Mixed', equity: 'Equity' },
   hPf: q => `Portfolio changes in the quarter (${q})`, mPf: 'All pillar II funds of the manager together; change in share of the portfolio, pp; new holdings – securities not held at the previous quarter end.',
@@ -27,12 +27,12 @@ addStrings({
   s2: (b, bv, w, wv) => `Geriausiai sekėsi ${b} (vidutiniškai ${bv} per gyvenimo ciklo fondus), silpniausiai – ${w} (${wv}).`,
   s3: (g, a, b, v) => `Didžiausias skirtumas – ${g} grupėje: ${a} ir ${b} skiriasi ${v} p. p.`,
   s4: (p, v) => `Tarp turto išsaugojimo fondų pirmavo ${p} (${v}).`,
-  s5: (v, r, fl, pay) => `II pakopos turtas pasikeitė ${v}: grąža ${r}, įmokos ir perėjimai ${fl}${pay ? `, reformos išmokos ${pay}` : ''}.`,
+  s5: (v, r, fl, pay) => `II pakopos turtas pasikeitė ${v}: grąža ${r}, kitas pokytis (įmokos, išmokos, perėjimai kartu) ${fl}${pay ? `, reformos išmokos ${pay}` : ''}.`,
   s6: (f, d, v) => `Didžiausias vienos dienos pokytis: ${f} ${v} (${d}).`,
   s7: (c, f, v) => `III pakopa, ${c}: pirmavo ${f} (${v}).`,
   hMgr: 'Valdytojai: vidutinis gyvenimo ciklo fondas', mMgr: 'Skliaustuose – vieta tarp valdytojų. Grąža ne metinė.', thMgr: 'Valdytojas', thPer: 'Šis laikotarpis', thYtd: 'Nuo metų pradžios', thYoy: '12 mėn.',
   hGrp: 'Grupės: laikotarpio lyderis ir paskutinis', thG: 'Grupė', thLead: 'Lyderis', thLast: 'Paskutinis', thGap: 'Skirtumas, p. p.',
-  hAum: 'II pakopos turtas: kas jį pakeitė', mAum: 'Mln. €. Grąža = turtas × vieneto vertės pokytis; įmokos ir perėjimai – likęs pokytis; išmokos – reformos išmokos.',
+  hAum: 'II pakopos turtas: kas jį pakeitė', mAum: 'Mln. €. Grąža = turtas × vieneto vertės pokytis; kitas pokytis (įmokos, išmokos ir perėjimai kartu, atskirai neskelbiami) – likęs pokytis; išmokos – reformos išmokos.',
   thStart: 'Pradžia', thRet: 'Grąža', thFlow: 'Įmokos ir perėjimai', thPay: 'Išmokos', thEnd: 'Pabaiga', total: 'Iš viso',
   hP3: 'III pakopa: lyderiai pagal kategoriją', mP3: 'Mėnesio pabaigos vieneto vertės.', thCat: 'Kategorija', cat: { bond: 'Obligacijų', mixed: 'Mišrūs', equity: 'Akcijų' },
   hPf: q => `Portfelių pokyčiai per ketvirtį (${q})`, mPf: 'Visi valdytojo II pakopos fondai kartu; dalies portfelyje pokytis, p. p.; naujos pozicijos – vertybiniai popieriai, kurių nebuvo praėjusio ketvirčio pabaigoje.',
@@ -48,12 +48,12 @@ addStrings3({ selR: "Periods:", optM: "Mēneši", optQ: "Ceturkšņi", pr: "🖶
 const CTRY = typeof CTRY_COPY !== 'undefined';
 if (CTRY) addStrings({ s1: (v, up) => `The average fund ${up ? 'rose' : 'fell'} by ${v}.`, s2: (b, bv, w, wv) => `${b} did best (${bv} on average across its fund groups), ${w} did worst (${wv}).`,
   hMgr: 'Managers: average fund', mMgr: 'A manager’s figure in a group is the asset-weighted average of its funds there; place among managers in brackets. Returns are not annualised.',
-  mAum: '€ m, month-end assets. Return = assets × unit value change; mergers – assets received from merged funds (detected from the data, as in “Asset change”); contributions and switches – the rest of the change.', thPay: 'Mergers',
-  s5: (v, r, fl, pay) => `Pillar II assets changed by ${v}: return ${r}, contributions and switches ${fl}${pay ? `, fund mergers ${pay}` : ''}.` },
+  mAum: '€ m, month-end assets. Return = assets × unit value change; mergers – assets received from merged funds (detected from the data, as in “Asset change”); other change (contributions, payouts and switches together, not published separately) – the rest of the change.', thPay: 'Mergers',
+  s5: (v, r, fl, pay) => `Pillar II assets changed by ${v}: return ${r}, other change (contributions, payouts, switches together) ${fl}${pay ? `, fund mergers ${pay}` : ''}.` },
 { s1: (v, up) => `Vidutinis fondas ${up ? 'pakilo' : 'nukrito'} ${v}.`, s2: (b, bv, w, wv) => `Geriausiai sekėsi ${b} (vidutiniškai ${bv} per savo fondų grupes), silpniausiai – ${w} (${wv}).`,
   hMgr: 'Valdytojai: vidutinis fondas', mMgr: 'Valdytojo rodiklis grupėje – jo fondų vidurkis, svertinis turtu; skliaustuose – vieta tarp valdytojų. Grąža ne metinė.',
-  mAum: 'Mln. €, mėnesio pabaigos turtas. Grąža = turtas × vieneto vertės pokytis; sujungimai – turtas, gautas sujungus fondus (nustatyta iš duomenų, kaip „Turto pokytyje“); įmokos ir perėjimai – likęs pokytis.', thPay: 'Sujungimai',
-  s5: (v, r, fl, pay) => `II pakopos turtas pasikeitė ${v}: grąža ${r}, įmokos ir perėjimai ${fl}${pay ? `, fondų sujungimai ${pay}` : ''}.` });
+  mAum: 'Mln. €, mėnesio pabaigos turtas. Grąža = turtas × vieneto vertės pokytis; sujungimai – turtas, gautas sujungus fondus (nustatyta iš duomenų, kaip „Turto pokytyje“); kitas pokytis (įmokos, išmokos ir perėjimai kartu, atskirai neskelbiami) – likęs pokytis.', thPay: 'Sujungimai',
+  s5: (v, r, fl, pay) => `II pakopos turtas pasikeitė ${v}: grąža ${r}, kitas pokytis (įmokos, išmokos, perėjimai kartu) ${fl}${pay ? `, fondų sujungimai ${pay}` : ''}.` });
 const MOF = Object.fromEntries(DATA.providers.map(p => [p.id, p.m || p.id]));
 const fLab = id => labelOf(id), labelM = id => CTRY ? id : labelOf(id), colorM = id => CTRY ? colorOf(DATA.providers.find(p => MOF[p.id] === id).id) : colorOf(id);
 if (CTRY && typeof BXFLOW !== 'undefined') {     // AUM formatas iš mėnesio pabaigos taškų: dm = [mėnuo, grąža, srautas, išmokos]
