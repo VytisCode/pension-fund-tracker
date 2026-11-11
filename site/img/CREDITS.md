@@ -16,3 +16,7 @@
 - `sec2-aum-2.jpg` – Jack Anstey, https://unsplash.com/photos/zS4lUqLEiNA (Unsplash License)
 - `sec2-rep.jpg` – 2H Media, https://unsplash.com/photos/3q4V539j_bw (Unsplash License)
 - `sec2-rep-2.jpg` – NORTHFOLK, https://unsplash.com/photos/Ok76F6yW2iA (Unsplash License)
+
+## Ikonos (`ic/`)
+
+Fluent UI System Icons (Regular, 24 px), Microsoft Corporation, https://github.com/microsoft/fluentui-system-icons – MIT License. Paimta iš npm paketo `@iconify-json/fluent` 1.2.61 (vieną kartą, saugoma repo).

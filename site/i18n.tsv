@@ -2102,8 +2102,6 @@ Weight change, pp	Svara izmaiņa, pp	Kaalu muutus, pp
 Weight in the portfolio at each quarter end, %	Svars portfelī katra ceturkšņa beigās, %	Kaal portfellis iga kvartali lõpus, %
 Weight, %	Svars, %	Kaal, %
 Weighted average only over holdings where the value is known: Σ(share × value) ÷ Σ share. YTM and duration shown when bonds > {N} %.	Svērtais vidējais tikai pozīcijām, kurām vērtība zināma: Σ(daļa × vērtība) ÷ Σ daļa. YTM un durācija rādīta, ja obligāciju > {N} %.	Kaalutud keskmine ainult positsioonide üle, mille väärtus on teada: Σ(osakaal × väärtus) ÷ Σ osakaal. YTM ja kestust näidatakse, kui võlakirju on > {N} %.
-weighted by assets: best Goindex, weakest Allianz	svērts ar aktīviem: labākais Goindex, vājākais Allianz	varadega kaalutud: parim Goindex, nõrgim Allianz
-weighted by assets: best {P}, weakest {P}	svērts ar aktīviem: labākais {P}, vājākais {P}	varadega kaalutud: parim {P}, nõrgim {P}
 Weighted duration of direct bonds and bond funds, years	Tiešo obligāciju un obligāciju fondu svērtā durācija, gadi	Otsevõlakirjade ja võlakirjafondide kaalutud duratsioon, aastat
 Weighted return	Svērtais ienesīgums	Kaalutud tootlus
 Weighted return in the quarter	Svērtais ienesīgums ceturksnī	Kaalutud tootlus kvartalis
@@ -2388,3 +2386,6 @@ YTM × share	YTM × daļa	YTM × osakaal
 ⤓ Excel	⤓ Excel	⤓ Excel
 ⤓ Excel with all calculations	⤓ Excel ar visiem aprēķiniem	⤓ Excel kõigi arvutustega
 ⤓ Excel with formulas	⤓ Excel ar formulām	⤓ Excel valemitega
+
+Number: simple average of all life-cycle funds. Bars: each manager's funds, weighted by fund assets (bigger fund counts more) – best {P}, weakest {P}	Skaitlis – visu dzīves cikla fondu vienkāršais vidējais. Joslas – katra pārvaldītāja fondu ienesīgums, svērts ar fondu aktīviem (lielāks fonds sver vairāk): labākais {P}, vājākais {P}	Arv – kõigi elutsüklifondide lihtkeskmine. Ribad – iga fondivalitseja fondide tootlus, kaalutud fondide varadega (suurem fond kaalub rohkem): parim {P}, nõrgim {P}
+Number: simple average of all funds. Bars: each manager's funds, weighted by fund assets (bigger fund counts more) – best {P}, weakest {P}	Skaitlis – visu fondu vienkāršais vidējais. Joslas – katra pārvaldītāja fondu ienesīgums, svērts ar fondu aktīviem (lielāks fonds sver vairāk): labākais {P}, vājākais {P}	Arv – kõigi fondide lihtkeskmine. Ribad – iga fondivalitseja fondide tootlus, kaalutud fondide varadega (suurem fond kaalub rohkem): parim {P}, nõrgim {P}
