@@ -66,18 +66,18 @@ def serve():
 
 
 def check_slides(browser, base: str) -> list:
-    """Pristatymas (present.js SLIDES): kiekvienos skaidrės puslapis turi atsidaryti be JS klaidų ir turėti nurodytą skirtuką –
+    """Pristatymas (present.js SLIDES): kiekvienos skaidrės puslapis turi atsidaryti be JS klaidų, turėti nurodytą skirtuką ir elementus, į kuriuos rodo komentarai –
     taip sužinome, jei pakeitus puslapį skaidrė nebetiktų (LT, nes komentarai rašyti pagal LT puslapius)."""
     out = []
     pg = browser.new_page(viewport={"width": 1300, "height": 900})
     try:
         pg.goto(base + "present.html", wait_until="load", timeout=60000)
-        slides = pg.evaluate("SLIDES.filter(s => !s.text).map(s => [s.id, slideUrl(s, 'LT')])")
+        slides = pg.evaluate("SLIDES.filter(s => !s.text).map(s => [s.id, slideUrl(s, 'LT'), (s.b || []).map(b => b.q).filter(Boolean)])")
     except Exception as e:  # noqa: BLE001
         pg.close()
         return [f"present.html: skaidrių sąrašas neperskaitytas ({e.__class__.__name__})"]
     pg.close()
-    for sid, url in slides:
+    for sid, url, qs in slides:
         if not url:
             out.append(f"pristatymas {sid}: nėra puslapio")
             continue
@@ -87,9 +87,13 @@ def check_slides(browser, base: str) -> list:
         pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)[:120]))
         try:
             pg.goto(base + url, wait_until="load", timeout=60000)
-            pg.wait_for_timeout(1200)
+            pg.wait_for_timeout(2000)
             if tab and not pg.locator(f'[data-tab="{tab}"]').count():
                 out.append(f"pristatymas {sid}: puslapyje nebėra skirtuko „{tab}“ (pataisyti site/present.js SLIDES)")
+            # komentarų rodyklės: elementas, į kurį rodoma, turi būti (kitaip komentaras rodomas be rodyklės)
+            lost = [q for q in qs if not pg.evaluate("q => { const e = document.querySelector(q); return !!(e && e.getClientRects().length); }", q)]
+            if lost:
+                out.append(f"pristatymas {sid}: rodyklė neranda {', '.join(lost)} (pataisyti site/present.js SLIDES)")
         except Exception as e:  # noqa: BLE001
             out.append(f"pristatymas {sid}: neatsidarė ({e.__class__.__name__})")
         out += [f"pristatymas {sid}: JS klaida – {x}" for x in errs[:2]]
