@@ -168,6 +168,7 @@ const PS_TX = {
   notes: { lt: 'Komentarai', en: 'Notes', lv: 'Komentāri', et: 'Märkmed' },
   grid: { lt: 'Skaidrės', en: 'Slides', lv: 'Slaidi', et: 'Slaidid' },
   full: { lt: 'Visas ekranas', en: 'Full screen', lv: 'Pilnekrāns', et: 'Täisekraan' },
+  exit: { lt: 'Išeiti', en: 'Exit', lv: 'Iziet', et: 'Välju' },
   why: { lt: 'Kodėl tai svarbu', en: 'Why it matters', lv: 'Kāpēc tas ir svarīgi', et: 'Miks see on oluline' },
   open: { lt: 'Atidaryti šį puslapį atskirai', en: 'Open this page separately', lv: 'Atvērt šo lapu atsevišķi', et: 'Ava see leht eraldi' },
   loading: { lt: 'Kraunamas tikras puslapis…', en: 'Loading the live page…', lv: 'Ielādē īsto lapu…', et: 'Laadin päris lehte…' },
@@ -178,10 +179,10 @@ const PS_TX = {
   toolOn: { lt: 'Įrankis įjungtas: puslapio mygtukai nespaudžiami (Esc – išjungti, ratukas – slinkti)', en: 'Tool on: page buttons are locked (Esc to turn off, wheel to scroll)', lv: 'Rīks ieslēgts: lapas pogas bloķētas (Esc – izslēgt, ritenītis – ritināt)', et: 'Tööriist sees: lehe nupud lukus (Esc – välja, ratas – keri)' },
   toolOff: { lt: 'Įrankis išjungtas: puslapis vėl valdomas', en: 'Tool off: the page is interactive again', lv: 'Rīks izslēgts: lapa atkal vadāma', et: 'Tööriist väljas: leht on taas kasutatav' },
   helpT: { lt: 'Klavišai', en: 'Keys', lv: 'Taustiņi', et: 'Klahvid' },
-  keys: { lt: [['→  tarpas  PageDown', 'kitas komentaras, po paskutinio – kita skaidrė (tinka pristatymų pultelis)'], ['←  PageUp', 'atgal'], ['A', 'rodyti visus skaidrės komentarus'], ['H', 'slėpti / rodyti komentarus ant vaizdo'], ['Home / End', 'pirma / paskutinė'], ['F', 'visas ekranas'], ['L', 'lazerinė rodyklė'], ['D', 'piešti ant ekrano (C – išvalyti)'], ['S', 'prožektorius'], ['Esc', 'išjungti įrankį'], ['N', 'šoninis komentarų skydelis'], ['G', 'visų skaidrių tinklelis'], ['B', 'juodas ekranas'], ['+  −  0', 'mastelis'], ['?', 'ši pagalba']],
-    en: [['→  Space  PageDown', 'next note, after the last one – next slide (clickers work)'], ['←  PageUp', 'back'], ['A', 'show all notes of the slide'], ['H', 'hide / show notes on the view'], ['Home / End', 'first / last'], ['F', 'full screen'], ['L', 'laser pointer'], ['D', 'draw on screen (C – clear)'], ['S', 'spotlight'], ['Esc', 'turn the tool off'], ['N', 'side notes panel'], ['G', 'all slides'], ['B', 'black screen'], ['+  −  0', 'zoom'], ['?', 'this help']],
-    lv: [['→  atstarpe  PageDown', 'nākamais komentārs, pēc pēdējā – nākamais slaids (der pults)'], ['←  PageUp', 'atpakaļ'], ['A', 'rādīt visus slaida komentārus'], ['H', 'slēpt / rādīt komentārus uz skata'], ['Home / End', 'pirmais / pēdējais'], ['F', 'pilnekrāns'], ['L', 'lāzera rādītājs'], ['D', 'zīmēt uz ekrāna (C – notīrīt)'], ['S', 'prožektors'], ['Esc', 'izslēgt rīku'], ['N', 'sānu komentāru panelis'], ['G', 'visi slaidi'], ['B', 'melns ekrāns'], ['+  −  0', 'mērogs'], ['?', 'šī palīdzība']],
-    et: [['→  tühik  PageDown', 'järgmine märkus, pärast viimast – järgmine slaid (pult töötab)'], ['←  PageUp', 'tagasi'], ['A', 'näita kõiki slaidi märkusi'], ['H', 'peida / näita märkusi vaatel'], ['Home / End', 'esimene / viimane'], ['F', 'täisekraan'], ['L', 'laserkursor'], ['D', 'joonista ekraanile (C – puhasta)'], ['S', 'prožektor'], ['Esc', 'lülita tööriist välja'], ['N', 'külgmine märkmete paneel'], ['G', 'kõik slaidid'], ['B', 'must ekraan'], ['+  −  0', 'suurendus'], ['?', 'see abi']] },
+  keys: { lt: [['→  tarpas  PageDown', 'kitas komentaras, po paskutinio – kita skaidrė (tinka pristatymų pultelis)'], ['←  PageUp', 'atgal'], ['A', 'rodyti visus skaidrės komentarus'], ['H', 'slėpti / rodyti komentarus ant vaizdo'], ['Home / End', 'pirma / paskutinė'], ['F', 'visas ekranas'], ['L', 'lazerinė rodyklė'], ['D', 'piešti ant ekrano (C – išvalyti)'], ['S', 'prožektorius'], ['Esc', 'išjungti įrankį'], ['N', 'šoninis komentarų skydelis'], ['G', 'visų skaidrių tinklelis'], ['B', 'juodas ekranas'], ['+  −  0', 'mastelis'], ['?', 'ši pagalba'], ['Q', 'išeiti – į skaidrėje rodomą puslapį']],
+    en: [['→  Space  PageDown', 'next note, after the last one – next slide (clickers work)'], ['←  PageUp', 'back'], ['A', 'show all notes of the slide'], ['H', 'hide / show notes on the view'], ['Home / End', 'first / last'], ['F', 'full screen'], ['L', 'laser pointer'], ['D', 'draw on screen (C – clear)'], ['S', 'spotlight'], ['Esc', 'turn the tool off'], ['N', 'side notes panel'], ['G', 'all slides'], ['B', 'black screen'], ['+  −  0', 'zoom'], ['?', 'this help'], ['Q', 'exit – to the page shown on the slide']],
+    lv: [['→  atstarpe  PageDown', 'nākamais komentārs, pēc pēdējā – nākamais slaids (der pults)'], ['←  PageUp', 'atpakaļ'], ['A', 'rādīt visus slaida komentārus'], ['H', 'slēpt / rādīt komentārus uz skata'], ['Home / End', 'pirmais / pēdējais'], ['F', 'pilnekrāns'], ['L', 'lāzera rādītājs'], ['D', 'zīmēt uz ekrāna (C – notīrīt)'], ['S', 'prožektors'], ['Esc', 'izslēgt rīku'], ['N', 'sānu komentāru panelis'], ['G', 'visi slaidi'], ['B', 'melns ekrāns'], ['+  −  0', 'mērogs'], ['?', 'šī palīdzība'], ['Q', 'iziet – uz slaidā rādīto lapu']],
+    et: [['→  tühik  PageDown', 'järgmine märkus, pärast viimast – järgmine slaid (pult töötab)'], ['←  PageUp', 'tagasi'], ['A', 'näita kõiki slaidi märkusi'], ['H', 'peida / näita märkusi vaatel'], ['Home / End', 'esimene / viimane'], ['F', 'täisekraan'], ['L', 'laserkursor'], ['D', 'joonista ekraanile (C – puhasta)'], ['S', 'prožektor'], ['Esc', 'lülita tööriist välja'], ['N', 'külgmine märkmete paneel'], ['G', 'kõik slaidid'], ['B', 'must ekraan'], ['+  −  0', 'suurendus'], ['?', 'see abi'], ['Q', 'välju – slaidil näidatud lehele']] },
   endPts: { lt: ['Duomenys renkami kasdien automatiškai, be rankinio darbo.', 'Kiekvienas skaičius – su šaltiniu ir Excel formule.', 'Fondai lyginami tik su panašios rizikos fondais.', 'Trys šalys, II ir III pakopa, keturios kalbos – vienoje vietoje.'],
     en: ['Data are collected automatically every day, without manual work.', 'Every number comes with a source and an Excel formula.', 'Funds are compared only with similar-risk funds.', 'Three countries, pillars II and III, four languages – in one place.'],
     lv: ['Dati tiek vākti automātiski katru dienu, bez roku darba.', 'Katram skaitlim – avots un Excel formula.', 'Fondus salīdzina tikai ar līdzīga riska fondiem.', 'Trīs valstis, 2. un 3. līmenis, četras valodas – vienuviet.'],
@@ -331,6 +332,11 @@ function stepCnt() {
 }
 function next() { const n = nSteps(SLIDES[PS.i]); if (!ANN.hide && ANN.step < n) { ANN.step++; annFocus(); stepCnt(); } else if (PS.i < SLIDES.length - 1) show(PS.i + 1); }
 function prev() { if (!ANN.hide && ANN.step > 0) { ANN.step--; annFocus(); stepCnt(); } else if (PS.i > 0) show(PS.i - 1, true, true); }
+function exitPres() {                   // išeiti – į tą patį tikrą puslapį, kuris rodomas skaidrėje (įžangoje / pabaigoje – į Pradžią)
+  const sl = SLIDES[PS.i], u = slideUrl(sl, PS.c);
+  const go = () => { location.href = u ? u.replace(/([?&])embed=1&?/, '$1').replace(/\?(#|$)/, '$1') : (ctryHome(PS.c) || 'index.html'); };
+  if (document.fullscreenElement) document.exitFullscreen().then(go, go); else go();
+}
 function toggleNotes() { const on = $('ps').classList.toggle('nonotes'); try { localStorage.setItem('psNotes', on ? '0' : '1'); } catch (e) {} setTimeout(layout, 30); }
 function annFocus() {                   // naujausio komentaro elementas – į matomą sritį
   const sl = SLIDES[PS.i], b = sl.b && sl.b[ANN.step - 1], el = b && annTarget(b.q);
@@ -402,7 +408,7 @@ function onKey(e, inFrame) {
   if (k === 'Home') return go(() => show(0));
   if (k === 'End') return go(() => show(SLIDES.length - 1));
   const l = k.toLowerCase(), act = { f: fullscreen, l: () => setTool('laser'), d: () => setTool('pen'), s: () => setTool('spot'),
-    c: () => { INK.strokes = []; drawInk(); }, n: toggleNotes, a: () => { ANN.hide = false; ANN.step = nSteps(SLIDES[PS.i]); annDraw(); stepCnt(); }, h: () => { ANN.hide = !ANN.hide; annDraw(); stepCnt(); }, g: () => overlay('psGrid'), '?': () => overlay('psHelp'),
+    q: exitPres, c: () => { INK.strokes = []; drawInk(); }, n: toggleNotes, a: () => { ANN.hide = false; ANN.step = nSteps(SLIDES[PS.i]); annDraw(); stepCnt(); }, h: () => { ANN.hide = !ANN.hide; annDraw(); stepCnt(); }, g: () => overlay('psGrid'), '?': () => overlay('psHelp'),
     b: () => $('psBlack').classList.toggle('on'), '+': () => zoom(1.1), '=': () => zoom(1.1), '-': () => zoom(1 / 1.1), '0': () => { PS.zoom = 1; layout(); },
     escape: () => { if (anyOverlay()) { overlay('psGrid', false); overlay('psHelp', false); } else if ($('psBlack').classList.contains('on')) $('psBlack').classList.remove('on'); else if (PS.tool) setTool(PS.tool); } }[l];
   if (act) { e.preventDefault(); act(); }
@@ -419,7 +425,7 @@ function helpHTML() {
 function chrome() {                     // užrašai pagal kalbą
   $('psBrand').textContent = PL(PS_TX.brand);
   document.querySelectorAll('.ps-tool[data-t]').forEach(b => { const kk = { laser: 'L', pen: 'D', spot: 'S' }[b.dataset.t]; b.innerHTML = `${escP(PL(PS_TX[b.dataset.t]))} <kbd>${kk}</kbd>`; });
-  document.querySelectorAll('.ps-tool[data-a]').forEach(b => { const a = b.dataset.a, kk = { notes: 'N', grid: 'G', full: 'F' }[a]; if (kk) b.innerHTML = `${escP(PL(PS_TX[a]))} <kbd>${kk}</kbd>`; });
+  document.querySelectorAll('.ps-tool[data-a]').forEach(b => { const a = b.dataset.a, kk = { notes: 'N', grid: 'G', full: 'F', exit: 'Q' }[a]; if (kk) b.innerHTML = `${escP(PL(PS_TX[a]))} <kbd>${kk}</kbd>`; });
   $('psCtry').innerHTML = CTRYS.map(c => `<button type="button" data-c="${c}" aria-pressed="${c === PS.c}">${c}</button>`).join('');
   $('psLang').innerHTML = ULANGS.map(l => `<option value="${l}"${l === ulang ? ' selected' : ''}>${l.toUpperCase()}</option>`).join('');
   $('psBar').innerHTML = SLIDES.map((s, k) => `<button type="button" data-go="${k}" title="${k + 1}. ${escP(PL(s.t))}"></button>`).join('');
@@ -441,7 +447,7 @@ function init() {
     const g = e.target.closest('[data-go]'); if (g) { overlay('psGrid', false); show(+g.dataset.go); return; }
     const t = e.target.closest('.ps-tool[data-t]'); if (t) { setTool(t.dataset.t); t.blur(); return; }
     const a = e.target.closest('.ps-tool[data-a]');
-    if (a) { a.blur(); ({ prev, next, full: fullscreen, grid: () => overlay('psGrid'), help: () => overlay('psHelp'), notes: toggleNotes })[a.dataset.a](); return; }
+    if (a) { a.blur(); ({ prev, next, full: fullscreen, grid: () => overlay('psGrid'), help: () => overlay('psHelp'), notes: toggleNotes, exit: exitPres })[a.dataset.a](); return; }
     const cb = e.target.closest('#psCtry button[data-c]');
     if (cb && cb.dataset.c !== PS.c) { PS.c = cb.dataset.c; try { localStorage.setItem('ctry', PS.c); } catch (er) {} resetFrames(); chrome(); show(PS.i); }
     if (e.target.classList && e.target.classList.contains('ps-ov')) overlay(e.target.id, false);
