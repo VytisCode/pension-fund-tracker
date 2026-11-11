@@ -6,11 +6,7 @@
   "ok": "2026-11-11"
  },
  "bx.lv_lb": {
-  "err": "2026-11-11",
-  "kind": "other",
-  "msg": "Traceback (most recent call last): (išėjimo kodas 1)",
-  "ok": "2026-11-11",
-  "since": "2026-11-11"
+  "ok": "2026-11-11"
  },
  "bx.lv_plans": {
   "ok": "2026-11-11"

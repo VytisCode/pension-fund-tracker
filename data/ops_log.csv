@@ -576,3 +576,6 @@ ts,src,ev,dd,n,msg
 2026-11-11T13:30,nav.ALLIANZ,new,2026-11-10,8,
 2026-11-11T13:30,idx.EUR_GOV7Y,ok,,,vėl veikia
 2026-11-11T17:08,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-11T18:53,nav.SEB,new,2026-11-10,8,
+2026-11-11T18:53,p3.SEB,new,2026-11-10,8,
+2026-11-11T18:53,bx.lv_lb,ok,,,vėl veikia
