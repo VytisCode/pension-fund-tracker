@@ -33,7 +33,7 @@ const SLIDES = [
     t: { lt: 'Šiandien', en: 'Today', lv: 'Šodien', et: 'Täna' },
     b: [{ q: '#per', lt: 'Laikotarpis – diena, savaitė, mėnuo, ketvirtis, metai: visi skaičiai persiskaičiuoja iš karto.', en: 'Period – day, week, month, quarter, year: every number recalculates at once.', lv: 'Periods – diena, nedēļa, mēnesis, ceturksnis, gads: visi skaitļi pārrēķinās uzreiz.', et: 'Periood – päev, nädal, kuu, kvartal, aasta: kõik numbrid arvutatakse kohe ümber.' },
       { q: '#ref', lt: 'Lyginamasis valdytojas pasirenkamas; kol nepasirinktas – lyginama su kitų valdytojų mediana.', en: 'The reference manager is chosen freely; until chosen, results are compared with the median of the others.', lv: 'Salīdzināmo pārvaldītāju izvēlas brīvi; kamēr nav izvēlēts – salīdzina ar pārējo mediānu.', et: 'Võrdlusfondivalitseja valitakse vabalt; kuni valimata – võrreldakse teiste mediaaniga.' },
-      { q: '#big', lt: 'Keturi pagrindiniai skaičiai: lyderis, vidutinis fondas, pakopos turtas ir didžiausias skirtumas grupėje.', en: 'Four key numbers: the leader, the average fund, pillar assets and the largest gap within a group.', lv: 'Četri galvenie skaitļi: līderis, vidējais fonds, līmeņa aktīvi un lielākā atšķirība grupā.', et: 'Neli põhinumbrit: liider, keskmine fond, samba varad ja suurim vahe grupis.' }],
+      { q: '#hg||#big', lt: 'Kortelės – kiekviena atsako į vieną klausimą: kiek uždirbo dalyvio euras, kas pirmauja, kiek sukaupta, kur didžiausi skirtumai.', en: 'Cards – each answers one question: what the participant’s euro earned, who leads, how much is saved, where the gaps are.', lv: 'Kartītes – katra atbild uz vienu jautājumu: cik nopelnīja dalībnieka eiro, kas ir līderis, cik uzkrāts, kur ir lielākās atšķirības.', et: 'Kaardid – igaüks vastab ühele küsimusele: mida teenis osaleja euro, kes on liider, kui palju on kogutud, kus on suurimad erinevused.' }],
     w: { lt: 'Vienas žvilgsnis atsako, kaip rinkai sekėsi ir kur yra kiekvienas valdytojas; atnaujinama kiekvieną darbo dieną.', en: 'One glance answers how the market did and where each manager stands; updated every working day.', lv: 'Viens skatiens atbild, kā tirgum veicās un kur atrodas katrs pārvaldītājs; atjaunināts katru darba dienu.', et: 'Üks pilk vastab, kuidas turul läks ja kus iga fondivalitseja asub; uueneb igal tööpäeval.' } },
   { id: 'my', s: 'home', p: 'index', h: 'tab=td',
     t: { lt: 'Mano kortelės', en: 'My cards', lv: 'Manas kartītes', et: 'Minu kaardid' },
@@ -322,7 +322,7 @@ const curFrame = () => [...PS.frames.values()].find(f => f.classList.contains('o
 const pScale = () => Math.min(1, $('psStage').clientWidth / 1280) * PS.zoom;
 function annTarget(q) {
   const f = curFrame(); if (!f || !q || !f.dataset.ready) return null;
-  try { const el = f.contentDocument.querySelector(q); return el && el.getClientRects().length ? el : null; } catch (e) { return null; }
+  try { for (const x of q.split('||')) { const el = f.contentDocument.querySelector(x); if (el && el.getClientRects().length) return el; } return null; } catch (e) { return null; }   // „a||b“ – pirmas matomas (Pradžia: kortelių tinklelis arba senos plytelės)
 }
 function annSoon() { if (!ANN.raf) ANN.raf = requestAnimationFrame(() => { ANN.raf = 0; annDraw(); }); }
 function stepCnt() {

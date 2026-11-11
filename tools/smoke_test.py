@@ -91,7 +91,7 @@ def check_slides(browser, base: str) -> list:
             if tab and not pg.locator(f'[data-tab="{tab}"]').count():
                 out.append(f"pristatymas {sid}: puslapyje nebėra skirtuko „{tab}“ (pataisyti site/present.js SLIDES)")
             # komentarų rodyklės: elementas, į kurį rodoma, turi būti (kitaip komentaras rodomas be rodyklės)
-            lost = [q for q in qs if not pg.evaluate("q => { const e = document.querySelector(q); return !!(e && e.getClientRects().length); }", q)]
+            lost = [q for q in qs if not pg.evaluate("q => q.split('||').some(x => { const e = document.querySelector(x); return !!(e && e.getClientRects().length); })", q)]
             if lost:
                 out.append(f"pristatymas {sid}: rodyklė neranda {', '.join(lost)} (pataisyti site/present.js SLIDES)")
         except Exception as e:  # noqa: BLE001

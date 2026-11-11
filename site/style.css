@@ -1069,3 +1069,19 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hgreet span { margin-top: 0; font-size: 14px; }
 .hgc.ph .mb .n, .hgc.ph .mb span { color: #fff; }
 .hgc.ph .mb { grid-template-columns: 100px minmax(0, 1fr) 72px; gap: 7px 8px; font-size: 13px; } .hgc.ph .mb .t i { height: 9px; }
+/* kortelės įrankiai, (i) ir išskleidimas */
+.hgh .hgt { display: inline-flex; gap: 2px; margin-left: 6px; opacity: .0; transition: opacity .15s; }
+.hgh .per + .hgt { margin-left: 6px; } .hgh .ey + .hgt { margin-left: auto; }
+.hgc:hover .hgt, .hgc:focus-within .hgt, .hgc.open .hgt { opacity: 1; }
+@media (hover: none) { .hgh .hgt { opacity: 1; } }
+.hgt .btn.ico { min-width: 26px; height: 26px; padding: 0 6px; font-size: 12px; border-radius: 7px; }
+.hgc.ph .hgt .btn { background: rgba(255, 255, 255, .16); color: #fff; border-color: rgba(255, 255, 255, .3); }
+.hginfo { margin: 2px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--hover); font-size: 12.5px; line-height: 1.45; color: var(--text-2); }
+.hgc.ph .hginfo { background: rgba(0, 0, 0, .45); color: #fff; }
+.hgdet { display: none; } .hgc.open .hgdet { display: block; margin-top: 12px; }
+.hgc.open { grid-column: 1 / -1 !important; grid-row: auto !important; }
+.hgc.open .hgv { max-width: 760px; }
+.hgpar { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--text-2); flex-wrap: wrap; }
+.hgc.ph .hgdet table { color: #fff; } .hgc.ph .hgdet th, .hgc.ph .hgdet td { border-color: rgba(255, 255, 255, .2); color: #fff; }
+.hgc.ph.open { background-size: cover; } .hgc.ph .hgpar { color: #fff; }
+.hgdet td:first-child, .hgdet th:first-child { text-align: left; } .hgdet .ttools, .hgdet .chd { display: none; }
