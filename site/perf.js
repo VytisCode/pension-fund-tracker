@@ -661,7 +661,7 @@ function pcRender() {
     }
     let h = out.join('');   // 4 kortelės – 2 × 2 (visos plačios), 3 – nuotraukos kortelė dviejų aukščių + dvi plačios
     if (out.length === 4) h = h.replace('class="hgc fg l ph"', 'class="hgc fg w ph"');
-    el.innerHTML = h;
+    el.innerHTML = h; ecFold(el);
   } catch (e) { console.warn(e); el.innerHTML = ''; }
 }
 

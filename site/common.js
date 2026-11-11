@@ -1608,7 +1608,7 @@ const kpMoney = eur => eur >= 1e9 ? `${num(eur / 1e9, 2)} ${T().kpBn}` : `${num(
 function kpiRow(items) {
   let el = document.getElementById('kpis');
   if (!el) { el = document.createElement('div'); el.className = 'kpis'; el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
-  el.className = 'kpis'; el.style.margin = '';
+  el.className = 'kpis'; el.style.margin = ''; delete el.dataset.fold; if (el.previousElementSibling && el.previousElementSibling.classList.contains('ecfold')) el.previousElementSibling.hidden = true;
   el.innerHTML = items.filter(Boolean).map(([k, v, s]) => `<div class="kpi"><span>${k}</span><b>${v}</b>${s ? `<small>${s}</small>` : ''}</div>`).join('');
 }
 function kpiIII() {                      // III pakopa iš data3.js (Rezultatai › III pakopa)
@@ -2499,6 +2499,16 @@ const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.
 const ecCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
   <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button>${o.xt ? `<button type="button" class="btn ico" data-jg="xl" data-xt="${o.xt}" title="${ecT('xl')}" aria-label="Excel">X</button>` : ''}<button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button></span></header>
   <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
+/* Analitiniuose puslapiuose kortelės neturi trukdyti įrankiams (savininkas 2026-11-11): mygtukas „Suskleisti korteles“ – viena eilutė su dideliais skaičiais; būsena įsimenama visiems puslapiams */
+const ECF = { f: { lt: 'Suskleisti korteles', en: 'Collapse cards', lv: 'Sakļaut kartītes', et: 'Ahenda kaardid' }, u: { lt: 'Išskleisti korteles', en: 'Expand cards', lv: 'Izvērst kartītes', et: 'Laienda kaardid' } };
+function ecFold(el) {
+  if (!el) return; let on = false; try { on = localStorage.getItem('ecFold') === '1'; } catch (e) {}
+  el.classList.toggle('fold', on);
+  let bar = el.previousElementSibling; if (!bar || !bar.classList.contains('ecfold')) { bar = document.createElement('div'); bar.className = 'ecfold'; bar.innerHTML = '<button type="button" class="btn"></button>'; el.before(bar);
+    bar.firstChild.onclick = () => { const v = !el.classList.contains('fold'); try { localStorage.setItem('ecFold', v ? '1' : '0'); } catch (e) {} document.querySelectorAll('.hg.jg[data-fold]').forEach(ecFold); }; }
+  el.dataset.fold = '1'; bar.hidden = !el.children.length;
+  bar.firstChild.textContent = (on ? '▾ ' : '▴ ') + (ECF[on ? 'u' : 'f'][ulang] || ECF[on ? 'u' : 'f'].en);
+}
 /* Edge kortelių įrankiai puslapiuose be home.js (journey, apie): data-jg = cp / png / i */
 document.addEventListener('click', async e => {
   const b = e.target.closest('.hgc [data-jg]'); if (!b) return; const card = b.closest('.hgc'), a = b.dataset.jg;

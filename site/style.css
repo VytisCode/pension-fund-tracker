@@ -1153,3 +1153,12 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hwday .ln i { position: absolute; top: 4px; bottom: 4px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--accent); }
 .hwday .ax { position: relative; height: 16px; font-size: 10.5px; color: var(--text-2); } .hwday .ax span { position: absolute; top: 2px; transform: translateX(-50%); }
 .hwday .ax span:first-child { transform: none; } .hwday .ax span:last-child { transform: translateX(-100%); }
+/* Suskleidžiamos kortelės analitiniuose puslapiuose (ecFold): viena eilutė – klausimas ir didelis skaičius */
+.ecfold { display: flex; justify-content: flex-end; margin: 6px 0 -6px; }
+.ecfold .btn { font-size: 12.5px; padding: 3px 10px; }
+.hg.fold { grid-auto-rows: auto; gap: 10px; }
+.hg.fold > .hgc { grid-column: span 1 !important; grid-row: auto !important; min-height: 0; padding: 10px 14px; gap: 2px; }
+.hg.fold .hgv, .hg.fold .hgs, .hg.fold .hginfo, .hg.fold .hgh { display: none !important; }
+.hg.fold .hgq { font-size: 13px !important; margin: 0 !important; } .hg.fold .hgb { font-size: 22px !important; margin: 0 !important; line-height: 1.2; }
+.hg.fold .hgc.ph::before { background: rgba(25, 18, 12, .72); }
+@media (max-width: 620px) { .hg.fold { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hg.fold > * { grid-column: auto !important; } }

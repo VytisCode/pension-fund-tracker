@@ -1315,7 +1315,7 @@ function pfCards(q1) {
       out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey, q: Q4[1], big: pfPP(c.d), sub: `${esc(c.m)}: ${pc(c.a)} → ${pc(c.b)} · ${qLabel(q0)} → ${ql}${RF && c.x != null ? ` · ${pfcT('ref')} ${pfPP(c.x)}` : ''}`, info: I, xt: 'ovChg',
         vis: ecBars(ch.map(x => [x.m, x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, pfPP(x.d)])) })); }
     out.push(card(2, 'alt', { ic: 'building-bank' }), card(3, 'cash', { ic: 'savings' }));
-    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join('');
+    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el);
   } catch (e) { console.warn(e); }
 }
 function renderOverview() {

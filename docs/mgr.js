@@ -310,7 +310,7 @@ function mgCards(o) {
     if (m3) out.push(ecCard({ sz: 'w', ic: 'savings', ey: E[3], q: Q[3](hEsc(me)), big: kpMoney(m3.v), sub: mgcT('rk')(r3.indexOf(m3) + 1, r3.length), info: I[3], xt: 't3',
       vis: bars(r3, v => kpMoney(v)) }));
     if (out.length < 2) return false;
-    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); return true;
+    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return true;
   } catch (e) { console.warn(e); return false; }
 }
 
