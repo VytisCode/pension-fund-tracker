@@ -1,17 +1,17 @@
 {
- "2026-11-10": {
+ "2026-11-11": {
   "GOINDEX": 1,
-  "GOINDEX@": 798,
-  "LUMINOR": 2,
-  "LUMINOR@": 902,
-  "P3_LUMINOR": 2,
-  "P3_LUMINOR@": 903,
-  "P3_SEB": 2,
-  "P3_SEB@": 829,
+  "GOINDEX@": 799,
+  "LUMINOR": 1,
+  "LUMINOR@": 799,
+  "P3_LUMINOR": 1,
+  "P3_LUMINOR@": 800,
+  "P3_SEB": 1,
+  "P3_SEB@": 799,
   "P3_SWEDBANK": 1,
   "P3_SWEDBANK@": 799,
-  "SEB": 2,
-  "SEB@": 829,
+  "SEB": 1,
+  "SEB@": 797,
   "SWEDBANK": 1,
   "SWEDBANK@": 797
  }
