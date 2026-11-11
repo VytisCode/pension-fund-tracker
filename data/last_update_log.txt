@@ -163,7 +163,7 @@ SEB SEB pensija 18+: istorijos CSV 5749 eil., tušti laukai (indeksas, aktyvai) 
 SEB SEB pensija 50+: istorijos CSV 1717 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 58+: istorijos CSV 5072 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 
-Vilnius: 2026-11-11 14:04, laukiama diena: 2026-11-10
+Vilnius: 2026-11-11 14:21, laukiama diena: 2026-11-10
   ! Artea pensija 2003-2009: netinkama data 2026-10-23 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-26 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-27 – praleista
@@ -216,17 +216,17 @@ ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-11-10
 ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 GOINDEX: jau atnaujinta iki 2026-11-10
 
-III pakopa – Vilnius: 2026-11-11 14:05, laukiama diena: 2026-11-10
+III pakopa – Vilnius: 2026-11-11 14:21, laukiama diena: 2026-11-10
 ARTEA: gauta 23053 eil., nauja/pakeista 5; viskas iki 2026-11-10
 GOINDEX: jau atnaujinta iki 2026-11-10
 
-Vilnius: 2026-11-11 14:05, laukiama diena: 2026-11-10
+Vilnius: 2026-11-11 14:21, laukiama diena: 2026-11-10
 SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 SWEDBANK: jau atnaujinta iki 2026-11-10
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
 GOINDEX: jau atnaujinta iki 2026-11-10
 
-III pakopa – Vilnius: 2026-11-11 14:06, laukiama diena: 2026-11-10
+III pakopa – Vilnius: 2026-11-11 14:22, laukiama diena: 2026-11-10
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-11-10
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)

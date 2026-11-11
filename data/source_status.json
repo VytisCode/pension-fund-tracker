@@ -30,7 +30,11 @@
   "ok": "2026-11-11"
  },
  "eonia": {
-  "ok": "2026-11-11"
+  "err": "2026-11-11",
+  "kind": "network",
+  "msg": "TimeoutError: The read operation timed out",
+  "ok": "2026-11-11",
+  "since": "2026-11-11"
  },
  "estr": {
   "ok": "2026-11-11"
