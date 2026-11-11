@@ -193,10 +193,47 @@ function renderOv() {
   $('eeCh').innerHTML = '';
   drawLineChart($('eeCh'), ser, Math.min(...xs), Math.max(...xs), { zero: true, axisUnit: '', fmt: v => num(v, 0) });
 }
+/* Edge kortelės „Šalių palyginimo“ viršuje: šalys lyginamos tik panašios rizikos grupėje (kaip lentelė „Panaši rizika“), turtas ir fondų skaičius – faktai. */
+const XC = {
+  q: { lt: ['Kurios šalies didelės rizikos fondams sekasi geriausiai?', 'Kurios šalies mažos rizikos fondams sekasi geriausiai?', 'Kiek turto II pakopos fonduose kiekvienoje šalyje?', 'Kiek fondų kiekvienoje šalyje?'],
+    en: ['In which country do high-risk funds do best?', 'In which country do low-risk funds do best?', 'How much do pillar II funds hold in each country?', 'How many funds does each country have?'],
+    lv: ['Kurā valstī augsta riska fondiem veicas vislabāk?', 'Kurā valstī zema riska fondiem veicas vislabāk?', 'Cik aktīvu ir II līmeņa fondos katrā valstī?', 'Cik fondu ir katrā valstī?'],
+    et: ['Millise riigi kõrge riskiga fondidel läheb kõige paremini?', 'Millise riigi madala riskiga fondidel läheb kõige paremini?', 'Kui palju vara on II samba fondides igas riigis?', 'Mitu fondi on igas riigis?'] },
+  ey: { lt: 'Šalys', en: 'Countries', lv: 'Valstis', et: 'Riigid' },
+  med: { lt: 'fondų grąžos mediana', en: 'median fund return', lv: 'fondu ienesīguma mediāna', et: 'fondide tootluse mediaan' },
+  nf: { lt: n => `${n} fond.`, en: n => `${n} funds`, lv: n => `${n} fondi`, et: n => `${n} fondi` },
+  per: { lt: 'Laikotarpis:', en: 'Period:', lv: 'Periods:', et: 'Periood:' },
+  i: { lt: ['Lyginama tik panašios rizikos grupėje: fondai suskirstyti pagal svyravimą (daugiau nei 12 % per metus). Grąža – iš vieneto verčių, jau po mokesčių; mediana – vidurinė grupės fondų reikšmė. Ta pati lentelė – „Panaši rizika“ žemiau.',
+      'Mažos rizikos grupė – fondai, kurių svyravimas mažesnis nei 4 % per metus.', 'II pakopos fondų grynieji aktyvai (Latvijoje – iš ketvirčio ataskaitų, jei dienos duomenų nėra).', 'Veikiantys II ir III pakopos fondai mūsų duomenyse.'],
+    en: ['Compared only within a similar-risk group: funds are grouped by volatility (over 12% a year). Returns come from unit values, net of fees; median – the middle value of the group’s funds. Same table – “Similar risk” below.',
+      'Low-risk group – funds with volatility under 4% a year.', 'Net assets of pillar II funds (in Latvia from quarterly reports when daily data are missing).', 'Active pillar II and III funds in our data.'] },
+};
+const xcT = k => XC[k][ulang] || XC[k].en;
+function xCards(act) {
+  const el = $('xCards'); if (!el) return;
+  try {
+    const t = T(), Q = xcT('q'), I = xcT('i'), ey = xcT('ey'), C = ['LT', 'LV', 'EE'], col = { LT: 'var(--s1)', LV: 'var(--s2)', EE: 'var(--s3)' }, out = [];
+    const more = `<span class="lbl">${xcT('per')}</span>` + ['ytd', 'y1', 'y3', 'y5', 'y10'].map(h => `<button type="button" class="btn" data-ecclick='#rkSeg button[data-h="${h}"]' aria-pressed="${h === RKH}">${hEsc(t.hz[h])}</button>`).join('');
+    const rk = (r, i, img) => { const xs = C.map(c => { const v = act.filter(f => f.c === c && f.risk === r).map(f => ret(f, RKH)).filter(x => x != null); return v.length ? { c, v: median(v), n: v.length } : null; }).filter(Boolean).sort((a, b) => b.v - a.v);
+      if (xs.length < 2) return '';
+      return ecCard({ k: 'xc' + i, more, sz: 'w', img, ic: i ? 'scales' : 'trophy', ey, q: Q[i], big: `${hEsc(t.c[xs[0].c])} · ${fmtP(xs[0].v)}`, cls: 'sm', sub: `${hEsc(t.rg[r])} · ${xcT('med')} · ${hEsc(t.hz[RKH])}`, info: I[i], xt: 'rkTbl',
+        vis: ecBars(xs.map(x => [`${t.c[x.c]} (${xcT('nf')(x.n)})`, x.v >= 0 ? col[x.c] : 'var(--dneg)', x.v, fmtP(x.v)])) }); };
+    out.push(rk('r4', 0, 'sec2-results.jpg'), rk('r1', 1));
+    const na = C.map(c => ({ c, v: act.filter(f => f.c === c && f.pl === 'II').reduce((s, f) => s + (f.na || 0), 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+    const mn = v => v >= 1000 ? `${num(v / 1000, 2)} ${lang === 'lt' ? 'mlrd. €' : 'bn €'}` : `${num(v, 0)} ${lang === 'lt' ? 'mln. €' : 'm €'}`;
+    if (na.length) out.push(ecCard({ k: 'xc2', sz: 'w', ic: 'building-bank', ey, q: Q[2], big: mn(na.reduce((s, x) => s + x.v, 0)), sub: na.map(x => t.c[x.c]).join(' · '), info: I[2],
+      vis: ecBars(na.map(x => [t.c[x.c], col[x.c], x.v, mn(x.v)])) }));
+    const nf = C.map(c => ({ c, a: act.filter(f => f.c === c && f.pl === 'II').length, b: act.filter(f => f.c === c && f.pl === 'III').length }));
+    out.push(ecCard({ k: 'xc3', sz: 'w', ic: 'data-pie', ey, q: Q[3], big: String(nf.reduce((s, x) => s + x.a + x.b, 0)), sub: nf.map(x => `${t.c[x.c]} ${x.a} + ${x.b}`).join(' · ') + ' (II + III)', info: I[3],
+      vis: ecBars(nf.map(x => [`${t.c[x.c]} · II`, col[x.c], x.a, String(x.a)]).concat(nf.map(x => [`${t.c[x.c]} · III`, `color-mix(in srgb, ${col[x.c]} 50%, transparent)`, x.b, String(x.b)]))) }));
+    el.className = 'hg jg'; el.style.margin = '10px 0 18px'; el.innerHTML = out.join(''); ecFold(el);
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
+}
 function renderX() {
   const t = T(), act = BX.filter(f => !f.closed);
   $('xT').textContent = t.bx.xT; $('xL').textContent = t.bx.xL;
   $('kp').innerHTML = ['LT', 'LV', 'EE'].map(c => countryCard(c, act)).join('');
+  xCards(act);
   $('rkT').textContent = t.rkT; $('rkN').textContent = t.rkN; $('rkSeg').innerHTML = hzSeg();
   $('rkTbl').innerHTML = `<thead><tr><th>${t.thRisk}</th>${['LT', 'LV', 'EE'].map(c => `<th class="n">${t.c[c]}</th>`).join('')}</tr></thead><tbody>`
     + ['r1', 'r2', 'r3', 'r4'].map(r => `<tr><td>${rgHtml({ risk: r })} ${hEsc(t.rg[r])}</td>${['LT', 'LV', 'EE'].map(c => {
