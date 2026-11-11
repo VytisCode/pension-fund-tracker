@@ -1284,6 +1284,40 @@ function ovOutliers(qi) {
   });
   const per = {}; return out.sort((a, b) => b.sc - a.sc).filter(x => { const k = x.f.p; per[k] = (per[k] || 0) + 1; return per[k] <= 2; }).slice(0, 10);   // ne daugiau 2 vienam valdytojui – įvairovei
 }
+/* Edge kortelės viršuje (vietoj datų ir skaičių juostos): pasirinktos pakopos ir ketvirčio valdytojų portfelio struktūra iš to paties mgrMix, kaip lentelė „Kas pasikeitė“. */
+const PFC = {
+  q: { lt: ['Kas daugiausiai investuoja į akcijas?', 'Kas per ketvirtį labiausiai pakeitė akcijų dalį?', 'Kas daugiausiai investuoja į alternatyvas?', 'Kas daugiausiai laiko pinigais?'],
+    en: ['Who invests the most in equities?', 'Who changed the equity share the most this quarter?', 'Who invests the most in alternatives?', 'Who holds the most cash?'],
+    lv: ['Kurš visvairāk iegulda akcijās?', 'Kurš ceturksnī visvairāk mainīja akciju daļu?', 'Kurš visvairāk iegulda alternatīvajos ieguldījumos?', 'Kuram ir visvairāk naudas?'],
+    et: ['Kes investeerib kõige rohkem aktsiatesse?', 'Kes muutis kvartalis aktsiate osa kõige rohkem?', 'Kes investeerib kõige rohkem alternatiividesse?', 'Kellel on kõige rohkem raha?'] },
+  ey: { lt: 'Portfelis', en: 'Portfolio', lv: 'Portfelis', et: 'Portfell' },
+  pf: { lt: 'portfelio', en: 'of portfolio', lv: 'no portfeļa', et: 'portfellist' },
+  ref: { lt: 'be išmokų rezervo', en: 'ex payout reserve', lv: 'bez izmaksu rezerves', et: 'väljamaksete reservita' },
+  i: { lt: 'Valdytojo pasirinktos pakopos fondų pozicijų dalys, svertinės pagal fondų turtą, „pro fondus“ (ETF ir fondų turinys pagal jų savybes); LB ketvirčio portfelių ataskaitos. Excel – lentelė „Kas pasikeitė“ su skaičiavimais.',
+    en: 'Shares of the manager’s funds’ positions in the selected pillar, weighted by fund assets, look-through (ETF and fund contents by their attributes); Bank of Lithuania quarterly portfolio reports. Excel – the “What changed” table with calculations.' },
+};
+const pfPP = d => `${pp(d)} ${ulang === 'en' ? 'pp' : ulang === 'et' ? 'p.p.' : 'p. p.'}`;
+const pfcT = k => PFC[k][ulang] || PFC[k].en;
+function pfCards(q1) {
+  let el = document.getElementById('kpis');
+  if (!el) { el = document.createElement('div'); el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  try {
+    const q0 = q1 - 1, Q4 = pfcT('q'), ey = pfcT('ey'), I = pfcT('i'), pc = v => `${num(v, 1)} %`, ql = qLabel(q1);
+    const rows = MGRS.map(m => ({ m, a: mgrMix(m, q0), b: mgrMix(m, q1) })).filter(x => x.b);
+    if (rows.length < 2) { el.className = ''; el.innerHTML = ''; return; }
+    const top = k => rows.filter(x => x.b[k] != null).sort((x, y) => y.b[k] - x.b[k]);
+    const card = (i, k, o = {}) => { const r = top(k); if (!r.length) return '';
+      return ecCard({ sz: 'w', img: o.img, ic: o.ic, ey, q: Q4[i], big: `${esc(r[0].m)} · ${pc(r[0].b[k])}`, cls: 'sm', sub: `${pfcT('pf')} · ${ql}`, info: I, xt: 'ovChg',
+        vis: ecBars(r.map(x => [x.m, colorOf(x.m), x.b[k], pc(x.b[k])])) }); };
+    const out = [card(0, 'eq', { img: 'sec2-pf.jpg', ic: 'data-pie' })];
+    const ch = rows.filter(x => x.a && x.a.eq != null && x.b.eq != null).map(x => ({ m: x.m, a: x.a.eq, b: x.b.eq, d: x.b.eq - x.a.eq, x: x.a.eqX != null && x.b.eqX != null ? x.b.eqX - x.a.eqX : null })).sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
+    if (ch.length) { const c = ch[0], RF = inReform(q1) || inReform(q0);
+      out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey, q: Q4[1], big: pfPP(c.d), sub: `${esc(c.m)}: ${pc(c.a)} → ${pc(c.b)} · ${qLabel(q0)} → ${ql}${RF && c.x != null ? ` · ${pfcT('ref')} ${pfPP(c.x)}` : ''}`, info: I, xt: 'ovChg',
+        vis: ecBars(ch.map(x => [x.m, x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, pfPP(x.d)])) })); }
+    out.push(card(2, 'alt', { ic: 'building-bank' }), card(3, 'cash', { ic: 'savings' }));
+    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join('');
+  } catch (e) { console.warn(e); }
+}
 function renderOverview() {
   const o = OT(), q1 = OV.q, q0 = q1 - 1;
   document.getElementById('ovTitle').textContent = o.title; document.getElementById('ovLead').textContent = o.lead;
@@ -1308,7 +1342,7 @@ function renderOverview() {
   document.getElementById('ovOutN').textContent = o.outNote;
   document.getElementById('ovOut').querySelectorAll('.ovg').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; OV.sel = FUNDS.filter(f => f.pl === OV.pl && ogOf(f) === x.g && f.q[q1]).map(f => f.c); ovSave(); renderCompare(); openPane('ovCmpH'); });
   document.getElementById('ovOut').querySelectorAll('.ovo').forEach(b => b.onclick = () => { const x = outs[+b.dataset.i]; ST.fund = x.f.c; ST.fq = x.f.q[q1] ? q1 : x.f.last; ST.pos = null; ST.ft = 'all'; save(); renderFund(); openPane('fcTitle'); });
-  renderCompare();
+  renderCompare(); pfCards(q1);
 }
 function renderCompare() {
   const o = OT(), q1 = OV.q, live = FUNDS.filter(f => f.pl === OV.pl && f.q[q1]);
@@ -1340,7 +1374,7 @@ function renderCompare() {
 }
 function renderAll() {
   const qi = NQ - 1, live = FUNDS.filter(f => f.q[qi]), secs = new Set(live.flatMap(f => [...f.q[qi].keys()])).size;
-  kpiRow([[T().kpQ, Q[qi]], [T().kpFunds, live.length], [T().kpPos, num(live.reduce((s, f) => s + f.q[qi].size, 0), 0)], [T().kpSecs, num(secs, 0)], [T().kpFrom, Q[0]]]);
+  if (0) kpiRow([[T().kpQ, Q[qi]], [T().kpFunds, live.length], [T().kpPos, num(live.reduce((s, f) => s + f.q[qi].size, 0), 0)], [T().kpSecs, num(secs, 0)], [T().kpFrom, Q[0]]]);
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
   ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'smTitle', 'smLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
   renderOverview(); renderTopChanges(); renderAlt(); renderPeers(); renderSim(); renderFund();
