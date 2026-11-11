@@ -205,11 +205,55 @@ function renderNews() {
     + `${['', '30', '90', '365', 'c'].map(p => chip('p', p, t.per[p])).join('')}${NWS.p === 'c' ? `<label class="nwd">${t.from} <input type="date" id="nwFrom" value="${NWS.from}"></label><label class="nwd">${t.to} <input type="date" id="nwTo" value="${NWS.to}"></label>` : ''}</div>`
     + `<input type="search" id="nwQ" placeholder="${t.search}" value="${hEsc(NWS.q)}"><button type="button" class="btn xl" id="nwXl">${t.xl}</button>`
     + `<div class="chips">${chip('t', '', t.all)}${NW_TOPICS.map(x => chip('t', x, nwTopic(x)).replace('">', '">' + nwIco(x))).join('')}</div></div>`;
-  box.innerHTML = `<section class="card" id="nwIns"></section><section class="card" id="nwTl"></section><section class="card" id="nwAc"></section>`
+  box.innerHTML = `<div id="nwCards"></div><section class="card" id="nwIns"></section><section class="card" id="nwTl"></section><section class="card" id="nwAc"></section>`
     + `${typeof SEIMAS !== 'undefined' && SEIMAS.length && NWS.c === 'LT' ? '<section class="card" id="nwSe"></section>' : ''}<section class="card" id="nwLs"></section>`;
   nwDraw();
 }
-function nwDraw() { nwInsCard(); nwTimeline(); nwActors(); nwSeimas(); nwList(); }
+/* Edge kortelės naujienų viršuje: kiek rašoma, apie ką, kas kalba, Seimas (LT) arba leidiniai (LV/EE). Skaičiuojami tik mūsų surinkti straipsniai. */
+const NC = {
+  q: { lt: ['Kiek rašoma apie pensijas?', 'Apie ką dažniausiai rašoma?', 'Kas dažniausiai kalba?', 'Kada Seimas svarsto pensijų klausimus?', 'Kurie leidiniai rašo daugiausia?'],
+    en: ['How much is written about pensions?', 'What is written about most?', 'Who speaks most often?', 'When does the Seimas discuss pension issues?', 'Which outlets write the most?'],
+    lv: ['Cik daudz raksta par pensijām?', 'Par ko raksta visbiežāk?', 'Kurš runā visbiežāk?', 'Kad Seims apspriež pensiju jautājumus?', 'Kuri izdevumi raksta visvairāk?'],
+    et: ['Kui palju kirjutatakse pensionidest?', 'Millest kirjutatakse kõige rohkem?', 'Kes räägib kõige sagedamini?', 'Millal arutab Seim pensioniküsimusi?', 'Millised väljaanded kirjutavad kõige rohkem?'] },
+  ey: { lt: 'Naujienos', en: 'News', lv: 'Ziņas', et: 'Uudised' },
+  d30: { lt: (a, b) => `straipsnių per 30 d. · ankstesnes 30 d. – ${b}`, en: (a, b) => `articles in 30 days · previous 30 days – ${b}`, lv: (a, b) => `raksti 30 dienās · iepriekšējās 30 dienās – ${b}`, et: (a, b) => `artiklit 30 päevaga · eelmised 30 päeva – ${b}` },
+  nx: { lt: 'artimiausias klausimas', en: 'next item', lv: 'nākamais jautājums', et: 'järgmine küsimus' }, ls: { lt: 'paskutinis klausimas', en: 'latest item', lv: 'pēdējais jautājums', et: 'viimane küsimus' },
+  wk: { lt: 'sav. nuo', en: 'week of', lv: 'nedēļa no', et: 'nädal alates' },
+  art: { lt: 'straipsnių pasirinktame laikotarpyje', en: 'articles in the selected period', lv: 'raksti izvēlētajā periodā', et: 'artiklit valitud perioodis' },
+  i: { lt: 'Skaičiuojami tik mūsų automatiškai surinkti straipsniai (Google News ir leidinių bei organizacijų RSS), ne visa žiniasklaida. Temos ir veikėjai nustatomi pagal raktinius žodžius, be AI.',
+    en: 'Only articles we collect automatically (Google News and outlets’ and organisations’ RSS) are counted, not all media. Topics and actors are detected by keywords, without AI.' },
+  iS: { lt: 'Seimo darbotvarkių klausimai apie pensijas ir pensijų kaupimą (LRS atviri duomenys; Sodros biudžeto ir GPM klausimai neįtraukti); juostos – klausimų skaičius per mėnesį.', en: 'Seimas agenda items on pensions and pension savings (Seimas open data; Sodra budget and income-tax items excluded); bars – items per month.' },
+};
+const ncT = k => NC[k][ulang] || NC[k].en;
+function nwCardsDraw() {
+  const el = document.getElementById('nwCards'); if (!el) return;
+  try {
+    const Q = ncT('q'), ey = ncT('ey'), I = ncT('i'), now = nwNow(), out = [];
+    const cR = NEWS.filter(r => r[1] === NWS.c), dd = r => dayOf(r[0]);
+    const a = cR.filter(r => dd(r) > now - 30).length, b = cR.filter(r => dd(r) > now - 60 && dd(r) <= now - 30).length;
+    const wk = []; for (let k = 7; k >= 0; k--) { const e = now - k * 7, s0 = e - 6; wk.push({ s0, n: cR.filter(r => dd(r) >= s0 && dd(r) <= e).length }); }
+    out.push(ecCard({ k: 'nc0', sz: 'w', img: 'sec2-news.jpg', ic: 'calendar-ltr', ey, q: Q[0], big: String(a), sub: ncT('d30')(a, b), info: I,
+      vis: ecBars(wk.slice().reverse().map(x => [`${ncT('wk')} ${iso(x.s0).slice(5)}`, 'rgba(255,255,255,.8)', x.n, String(x.n)])) }));
+    const rows = nwRows(), cnt = (f) => { const m = new Map(); rows.forEach(r => f(r).forEach(x => x && m.set(x, (m.get(x) || 0) + 1))); return [...m.entries()].sort((x, y) => y[1] - x[1]); };
+    const tp = cnt(r => r[6].split(';'));
+    if (tp.length) out.push(ecCard({ k: 'nc1', sz: 'w', ic: 'chart-multiple', ey, q: Q[1], big: hEsc(nwTopic(tp[0][0])), cls: 'sm', sub: `${tp[0][1]} ${ncT('art')} (${rows.length})`, info: I,
+      visAll: ecBars(tp.map(([x, n]) => [nwTopic(x), 'var(--s1)', n, String(n)])), vis: ecBars(tp.slice(0, 6).map(([x, n]) => [nwTopic(x), 'var(--s1)', n, String(n)])) }));
+    const ac = cnt(r => (r[7] || '').split(';'));
+    if (ac.length) out.push(ecCard({ k: 'nc2', sz: 'w', ic: 'people', ey, q: Q[2], big: hEsc(nwActName(ac[0][0])), cls: 'sm', sub: `${ac[0][1]} ${ncT('art')}`, info: I,
+      visAll: ecBars(ac.slice(0, 20).map(([x, n]) => [nwActName(x), 'var(--s4)', n, String(n)])), vis: ecBars(ac.slice(0, 6).map(([x, n]) => [nwActName(x), 'var(--s4)', n, String(n)])) }));
+    if (NWS.c === 'LT' && typeof SEIMAS !== 'undefined' && SEIMAS.some(r => r[4] === 'kaupimas' || r[4] === 'pensijos')) {
+      const SP = SEIMAS.filter(r => r[4] === 'kaupimas' || r[4] === 'pensijos');   // tik pensijų ir kaupimo klausimai (ne Sodros biudžetas, ne GPM)
+      const fut = SP.filter(r => dayOf(r[0]) >= now).sort((x, y) => x[0].localeCompare(y[0])), lastS = SP.slice().sort((x, y) => y[0].localeCompare(x[0]))[0], r0 = fut[0] || lastS;
+      const ms = []; for (let k = 5; k >= 0; k--) { const d = new Date(now * DAY); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); const m = d.toISOString().slice(0, 7); ms.push([m, SP.filter(r => r[0].startsWith(m)).length]); }
+      out.push(ecCard({ k: 'nc3', sz: 'w', ic: 'building-bank', ey, q: Q[3], big: hEsc(r0[0]), cls: 'sm', sub: hEsc(`${ncT(fut[0] ? 'nx' : 'ls')} · ${r0[2] || ''} · ${r0[1].length > 110 ? r0[1].slice(0, 107) + '…' : r0[1]}`), info: ncT('iS'),
+        vis: ecBars(ms.reverse().map(([m, n]) => [m, 'var(--s2)', n, String(n)])) }));
+    } else { const so = cnt(r => [r[2]]);
+      if (so.length) out.push(ecCard({ k: 'nc3', sz: 'w', ic: 'book-coins', ey, q: Q[4], big: hEsc(so[0][0]), cls: 'sm', sub: `${so[0][1]} ${ncT('art')}`, info: I,
+        vis: ecBars(so.slice(0, 6).map(([x, n]) => [x, 'var(--s2)', n, String(n)])) })); }
+    el.className = 'hg jg'; el.style.margin = '0 0 16px'; el.innerHTML = out.join('');
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
+}
+function nwDraw() { nwCardsDraw(); nwInsCard(); nwTimeline(); nwActors(); nwSeimas(); nwList(); }
 function nwInsCard() {
   const t = T().nw, el = document.getElementById('nwIns'); if (!el) return;
   const ins = nwInsights(); el._ins = ins;
