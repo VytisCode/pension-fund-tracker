@@ -1365,7 +1365,7 @@ function factTool(el) {
     + `<span class="seg"><button type="button" data-fv="cards" aria-pressed="${FU.view !== 'list'}">${U.vCards}</button><button type="button" data-fv="list" aria-pressed="${FU.view === 'list'}">${U.vList}</button></span>`;
   tb.onclick = e => { const a = e.target.closest('[data-ff]'), v = e.target.closest('[data-fv]');
     if (a) { FU.f[id] = a.dataset.ff; fuSave(); factTool(el); }
-    if (v) { FU.view = v.dataset.fv; fuSave(); document.querySelectorAll('.facts').forEach(b => { b.classList.toggle('flist', FU.view === 'list'); if (b.previousElementSibling && b.previousElementSibling.classList.contains('ftool')) factTool(b); }); } };
+    if (v) { FU.view = v.dataset.fv; fuSave(); document.querySelectorAll('.facts').forEach(b => { b.classList.toggle('flist', FU.view === 'list'); if (b.previousElementSibling && b.previousElementSibling.classList.contains('ftool')) { if (b._facts && b.dataset.title != null && !b._byM) factCards(b, b._facts, b.dataset.title, b.dataset.pl); else factTool(b); } }); } };
   el.classList.toggle('flist', FU.view === 'list');
   const arts = [...el.children]; let shown = 0;
   arts.forEach((a, i) => { const f = fs[i]; if (!f) return; const ok = !cur || (cur === '*' ? f._hot : f._tp === cur); a.hidden = !ok; if (ok) shown++; a.style.order = cur === '*' && f._hot ? String(-Math.round(f._hot.s * 10)) : ''; });
@@ -1378,7 +1378,7 @@ const FACT_NUM = /(?<![(\d,.\u00a0\u202f\u2212]|\d[ \u00a0\u202f])[−+]?\d[\d \
 // Didelis skaičius kortelėje – sakinio atsakymas, ne pavyzdžio įvestis: praleidžiami iliustraciniai 1 000 € / 100 € / 100 %, ribos („daugiau nei 50 %“),
 // „nuo X iki Y“ rodoma kaip intervalas, „sumažėjo 849,9 mln. €“ – su minusu, „28 iš 48“ – kaip santykis; kur skaičius vienas neatsako (kelių valdytojų sąrašai) – nerodomas.
 const FACT_OF = /\b\d+ (?:iš|of) \d+\b/g, FACT_ILL = new Set(['1 000 €', '100 €', '100 %', '1\u00a0000 €', '100\u00a0€', '100\u00a0%']);
-function factBig(f) {
+function factBigS(f) {
   const t = T(), F = t.f || {}, P = t.pv || {}, P3 = t.p23 || {};
   if ([F.chgH, P3.aH].includes(f.h)) return '';
   let s = f.text || '';
@@ -1396,13 +1396,129 @@ function factBig(f) {
     if (r) { const b = r[1].trim(), u = (b.match(/[^\d\s\u00a0\u202f.,−+]+.*$/) || [''])[0], a = u && v.endsWith(u) ? v.slice(0, -u.length).trim() : v;
       v = `${a}–${b}`; }
     else if (c.u && !/^[−+]/.test(v) && (/(sumažėj|nukrit|decreas|fell|drop|shrank|loss(?:es)? of(?: about)?)[^.\d]{0,12}$/i.test(pre) || /(kritimas|fall|drawdown)\b[^.\d]{0,40}$/i.test(pre) || /^\s*(?:investicinių\s+)?(nuostol|of investment loss|loss)/i.test(post))) v = '−' + v;
-    return `<div class="fbig">${hEsc(v)}</div>`;
+    return v;
   }
   return '';
 }
+const factBigL = v => ulang === 'lv' ? v.replace(/(\d) of (\d)/, '$1 no $2') : ulang === 'et' ? v.replace(/(\d) of (\d)/, '$1 / $2') : v;
+const factBig = f => { const v = factBigS(f); return v ? `<div class="fbig">${hEsc(v)}</div>` : ''; };
+/* ---------- Edge stiliaus faktų tinklelis (savininkas 2026-11-11: „pamėgink padaryti tuo edge stiliumi“, kaip Pradžioje) ----------
+   Kiekvienas faktas – kortelė, atsakanti į vieną klausimą: klausimas + didelis skaičius + trumpas sakinys + diagrama, parinkta pagal duomenis
+   (plotas laike, juostos, „X iš Y“ taškai, nuolydis prieš/dabar, žiedas dalims). Pirmas skyriaus faktas – didelė kortelė su nuotrauka.
+   Įrankiai: ⧉ (visas sakinys + šaltinis), ⤓ PNG, Excel (fakto įrodymų failas su formulėmis), (i) šaltinis ir skaičiavimas, ⤢ / „Plačiau“ – visas tekstas ir
+   „Daugiau: grafikas ir skaičiai“ su keičiamais parametrais. Sąrašo vaizdas – senasis. */
+const FQ = {   // raktas T() kelyje → klausimas [lt, en, lv, et]; „konteineris:raktas“ – kai ta pati antraštė reiškia ką kita
+  'f.navH': ['Kiek turto valdo fondai?', 'How much do the funds manage?', 'Cik daudz aktīvu pārvalda fondi?', 'Kui palju vara fondid haldavad?'],
+  'dlCols.part': ['Kiek žmonių kaupia?', 'How many people are saving?', 'Cik cilvēku uzkrāj?', 'Kui palju inimesi kogub?'],
+  'f.retH': ['Kiek fondai uždirbo šiais metais?', 'How much have funds earned this year?', 'Cik fondi nopelnījuši šogad?', 'Kui palju on fondid sel aastal teeninud?'],
+  'f.gainH': ['Kiek eurų uždirbo investicijos?', 'How many euros did investments earn?', 'Cik eiro nopelnīja ieguldījumi?', 'Mitu eurot investeeringud teenisid?'],
+  'fx.flowH': ['Kodėl pasikeitė turtas?', 'Why did assets change?', 'Kāpēc mainījās aktīvi?', 'Miks vara muutus?'],
+  'f.perH': ['Kiek sukaupė vienas dalyvis?', 'How much has one participant saved?', 'Cik uzkrājis viens dalībnieks?', 'Kui palju on üks osaleja kogunud?'],
+  'pvCards:f.perH': ['Kiek uždirbo vienas dalyvis?', 'How much did one participant earn?', 'Cik nopelnīja viens dalībnieks?', 'Kui palju teenis üks osaleja?'],
+  'f.lcH': ['Kurios grupės uždirbo daugiausia?', 'Which groups earned the most?', 'Kuras grupas nopelnīja visvairāk?', 'Millised rühmad teenisid kõige rohkem?'],
+  'fx.beatH': ['Kiek fondų lenkia savo grupę?', 'How many funds beat their group?', 'Cik fondu pārspēj savu grupu?', 'Mitu fondi edestab oma rühma?'],
+  'fx.bmH': ['Kiek fondų lenkia savo indeksą?', 'How many funds beat their benchmark?', 'Cik fondu pārspēj savu etalonu?', 'Mitu fondi edestab oma võrdlusindeksit?'],
+  'f.mgrH': ['Kas didžiausias valdytojas?', 'Who is the largest manager?', 'Kurš ir lielākais pārvaldītājs?', 'Kes on suurim fondivalitseja?'],
+  'fx.concH': ['Kiek rinkos valdo trys didieji?', 'How much of the market do the big three hold?', 'Cik lielu tirgus daļu pārvalda trīs lielākie?', 'Kui suure osa turust haldavad kolm suurimat?'],
+  'f.chgH': ['Kaip keitėsi dalyviai pas valdytojus?', 'How did participants change by manager?', 'Kā mainījās dalībnieki pa pārvaldītājiem?', 'Kuidas muutus osalejate arv fondivalitsejati?'],
+  'fx.recH': ['Koks turto rekordas?', 'What is the asset record?', 'Kāds ir aktīvu rekords?', 'Milline on vara rekord?'],
+  'fx.grH': ['Kaip augo turtas per 5 metus?', 'How did assets grow over 5 years?', 'Kā auga aktīvi 5 gados?', 'Kuidas kasvas vara 5 aastaga?'],
+  'f.bothH': ['Kiek valdo II ir III pakopa kartu?', 'How much do pillars II and III hold together?', 'Cik kopā pārvalda II un III līmenis?', 'Kui palju haldavad II ja III sammas koos?'],
+  'nf.rkH': ['Kiek akcijų fondų strategijose?', 'How much equity do the strategies hold?', 'Cik akciju ir fondu stratēģijās?', 'Kui palju aktsiaid on fondide strateegiates?'],
+  'nf.sdH': ['Kurių fondų vertė svyruoja labiausiai?', 'Whose value swings the most?', 'Kuru fondu vērtība svārstās visvairāk?', 'Milliste fondide väärtus kõigub enim?'],
+  'nf.feH': ['Kiek kainuoja fondai?', 'What do the funds cost?', 'Cik maksā fondi?', 'Kui palju fondid maksavad?'],
+  'nf.skH': ['Kiek ketvirčių tęsiasi serija?', 'How long is the quarterly streak?', 'Cik ilga ir ceturkšņu sērija?', 'Kui pikk on kvartalite seeria?'],
+  'nf.pgH': ['Kurioje grupėje daugiausia dalyvių?', 'Which group has the most participants?', 'Kurā grupā ir visvairāk dalībnieku?', 'Millises rühmas on kõige rohkem osalejaid?'],
+  'mf.hR': ['Kaip sekėsi šį mėnesį?', 'How did this month go?', 'Kā veicās šomēnes?', 'Kuidas sel kuul läks?'],
+  'mf.hG': ['Kiek uždirbta ar prarasta per mėnesį?', 'How much was gained or lost this month?', 'Cik nopelnīts vai zaudēts mēnesī?', 'Kui palju kuu jooksul teeniti või kaotati?'],
+  'mf.hL': ['Kas pirmavo grupėse šį mėnesį?', 'Who led the groups this month?', 'Kurš vadīja grupas šomēnes?', 'Kes juhtis rühmi sel kuul?'],
+  'mf.hS': ['Kur skirtumas tarp fondų didžiausias?', 'Where is the gap between funds largest?', 'Kur atšķirība starp fondiem ir lielākā?', 'Kus on fondide vahe suurim?'],
+  'mf.hY': ['Kas pirmauja nuo metų pradžios?', 'Who leads year to date?', 'Kurš vada kopš gada sākuma?', 'Kes juhib aasta algusest?'],
+  'mf.hW': ['Kas dažniausiai būna pirmas?', 'Who is first most often?', 'Kurš visbiežāk ir pirmais?', 'Kes on kõige sagedamini esimene?'],
+  'mf.hH': ['Kelintas šis mėnuo istorijoje?', 'Where does this month rank in history?', 'Kuru vietu šis mēnesis ieņem vēsturē?', 'Mitmendal kohal on see kuu ajaloos?'],
+  'mf.hP': ['Kiek mėnesių buvo pliuse?', 'How many months were positive?', 'Cik mēneši bija plusā?', 'Mitu kuud oli plussis?'],
+  'nf.m12H': ['Kas pirmauja per 12 mėnesių?', 'Who leads over 12 months?', 'Kurš vada 12 mēnešos?', 'Kes juhib 12 kuu jooksul?'],
+  'nf.msH': ['Kiek mėnesių tęsiasi serija?', 'How long is the monthly streak?', 'Cik ilga ir mēnešu sērija?', 'Kui pikk on kuude seeria?'],
+  'mf.h3': ['Kas pirmauja III pakopoje šį mėnesį?', 'Who leads pillar III this month?', 'Kurš vada III līmenī šomēnes?', 'Kes juhib III sammast sel kuul?'],
+  'mf.h3y': ['Kas pirmauja III pakopoje nuo metų pradžios?', 'Who leads pillar III year to date?', 'Kurš vada III līmenī kopš gada sākuma?', 'Kes juhib III sammast aasta algusest?'],
+  'pv.k1H': ['Kiek dabar vertas prieš 5 metus įdėtas 1 000 €?', 'What is €1,000 invested 5 years ago worth now?', 'Cik tagad vērti pirms 5 gadiem ieguldīti 1 000 €?', 'Kui palju on 5 aastat tagasi investeeritud 1000 € nüüd väärt?'],
+  'pv.dblH': ['Ką reiškia grąžos procentas?', 'What does a return percentage mean?', 'Ko nozīmē ienesīguma procents?', 'Mida tähendab tootluse protsent?'],
+  'pv.hiH': ['Kiek fondų turėjo stiprius 5 metus?', 'How many funds had a strong 5 years?', 'Cik fondiem bija spēcīgi 5 gadi?', 'Mitmel fondil olid tugevad 5 aastat?'],
+  'pv.dayH': ['Kiek fondai uždirba per dieną?', 'How much do funds earn per day?', 'Cik fondi nopelna dienā?', 'Kui palju fondid päevas teenivad?'],
+  'nf.feeH': ['Kiek mokesčių dalyvis sumoka per metus?', 'How much does a participant pay in fees a year?', 'Cik maksu dalībnieks samaksā gadā?', 'Kui palju tasusid osaleja aastas maksab?'],
+  'nf.fcH': ['Kiek lemia fondo pasirinkimas?', 'How much does the choice of fund matter?', 'Cik svarīga ir fonda izvēle?', 'Kui palju fondi valik loeb?'],
+  'pv2.cumH': ['Kiek uždirbta nuo 2015 m.?', 'How much has been earned since 2015?', 'Cik nopelnīts kopš 2015. gada?', 'Kui palju on teenitud alates 2015?'],
+  'pv2.yrH': ['Kiek metų buvo pliuse?', 'How many years were positive?', 'Cik gadi bija plusā?', 'Mitu aastat oli plussis?'],
+  'pv2.chH': ['Kiek išaugo 100 € nuo pradžios?', 'What did €100 grow to?', 'Līdz cik izauga 100 €?', 'Milleks kasvas 100 €?'],
+  'pv2.ddH': ['Koks buvo didžiausias kritimas?', 'What was the biggest fall?', 'Kāds bija lielākais kritums?', 'Milline oli suurim langus?'],
+  'pv2.reH': ['Ar fondai aplenkė infliaciją?', 'Did funds beat inflation?', 'Vai fondi pārspēja inflāciju?', 'Kas fondid edestasid inflatsiooni?'],
+  'pv2.r3H': ['Ar 3 metų laikotarpiai buvo pliuse?', 'Were 3-year periods positive?', 'Vai 3 gadu periodi bija plusā?', 'Kas 3-aastased perioodid olid plussis?'],
+  'pv2.rkH': ['Ką duoda rizika ilgame laikotarpyje?', 'What does risk give over the long term?', 'Ko dod risks ilgtermiņā?', 'Mida annab risk pikas perspektiivis?'],
+  'pv3.wH': ['Kas augo greičiau – fondai ar atlyginimai?', 'What grew faster – funds or wages?', 'Kas auga ātrāk – fondi vai algas?', 'Mis kasvas kiiremini – fondid või palgad?'],
+  'pv3.pH': ['Kas augo greičiau – fondai ar pensijos?', 'What grew faster – funds or pensions?', 'Kas auga ātrāk – fondi vai pensijas?', 'Mis kasvas kiiremini – fondid või pensionid?'],
+  'pv3.mH': ['Kas augo greičiau – fondai ar MMA?', 'What grew faster – funds or the minimum wage?', 'Kas auga ātrāk – fondi vai minimālā alga?', 'Mis kasvas kiiremini – fondid või miinimumpalk?'],
+  'pv3.iH': ['Kiek metų fondai aplenkė infliaciją?', 'In how many years did funds beat inflation?', 'Cik gadus fondi pārspēja inflāciju?', 'Mitmel aastal edestasid fondid inflatsiooni?'],
+  'pv3.eH': ['Kiek atlyginimų sukaupė dalyvis?', 'How many salaries has a participant saved?', 'Cik algu uzkrājis dalībnieks?', 'Mitu palka on osaleja kogunud?'],
+  'p23.rH': ['Kokio dydžio III pakopa, palyginti su II?', 'How big is pillar III compared with II?', 'Cik liels ir III līmenis salīdzinājumā ar II?', 'Kui suur on III sammas võrreldes II-ga?'],
+  'p23.gH': ['Kiek padaugėjo III pakopos dalyvių?', 'How many new pillar III participants?', 'Cik pieauga III līmeņa dalībnieku?', 'Kui palju lisandus III samba osalejaid?'],
+  'p23.fH': ['Kur plaukia pinigai?', 'Where is the money flowing?', 'Kur plūst nauda?', 'Kuhu raha liigub?'],
+  'p23.lH': ['Kas pritraukia daugiausia naujų dalyvių?', 'Who attracts the most new participants?', 'Kurš piesaista visvairāk jaunu dalībnieku?', 'Kes meelitab kõige rohkem uusi osalejaid?'],
+  'p23.aH': ['Kurių valdytojų augimas paspartėjo?', 'Whose growth accelerated the most?', 'Kuru pārvaldītāju izaugsme paātrinājās?', 'Kelle kasv kiirenes kõige rohkem?'],
+  'p23.cH': ['Kas valdo daugiausia abiejose pakopose?', 'Who holds the most across both pillars?', 'Kuram ir visvairāk abos līmeņos?', 'Kellel on mõlemas sambas kõige rohkem?'],
+};
+const FG_IMG = { qfCards: 'sec2-facts.jpg', mfCards: 'sec2-results.jpg', pvCards: 'sec2-aum.jpg', p23Cards: 'sec2-mgr.jpg' };
+const FG_S = { lt: ['Plačiau', 'Suskleisti', 'Išskleisti'], en: ['More', 'Collapse', 'Expand'], lv: ['Vairāk', 'Sakļaut', 'Izvērst'], et: ['Rohkem', 'Ahenda', 'Laienda'] };
+function factQ(f, id) {
+  const t = T(), li = Math.max(0, ['lt', 'en', 'lv', 'et'].indexOf(ulang)), hit = path => { const [a, b] = path.split('.'); return t[a] && t[a][b] === f.h; };
+  const ks = Object.keys(FQ), k = ks.find(x => x.startsWith(id + ':') && hit(x.slice(id.length + 1))) || ks.find(x => !x.includes(':') && hit(x));
+  return k ? FQ[k][li] : f.h;
+}
+function fgVis(f, el, big) {
+  let x = null; try { x = exDefault(f, el, false); } catch (e) { return { k: 'none', h: '' }; }
+  const of = /(\d+)\s(?:iš|of)\s(\d+)/.exec(big || '');
+  if (of && +of[2] <= 60 && +of[1] <= +of[2]) {      // „X iš Y“ – Y taškų, X nuspalvinti
+    return { k: 'waffle', h: `<div class="fgw" role="img" aria-label="${hEsc(big)}">${Array.from({ length: +of[2] }, (_, i) => `<i${i < +of[1] ? ' class="on"' : ''}></i>`).join('')}</div>` }; }
+  const ch = x && x.r.ch; if (!ch) return { k: 'none', h: '' };
+  const cap = `<span class="fgcap">${hEsc(x.r.title || '')}</span>`;
+  if (ch.t === 'line') { const ss = ch.ser.filter(z => z.pts.length > 1);
+    if (ss.length === 1 && typeof hgLine === 'function') return { k: 'line', h: hgLine(ss[0].pts) + cap };
+    return { k: 'line', h: miniSvg(ch) + `<span class="fgleg">${ss.slice(0, 4).map(z => `<i style="background:${z.c}"></i>${hEsc(z.l)}`).join('')}</span>` + cap }; }
+  if (ch.t === 'hbar' && typeof hgBars === 'function') {
+    const rows = ch.rows.filter(r => r.v != null && isFinite(r.v)).slice(0, 8), cnt = rows.every(r => Number.isInteger(r.v)) && !/%/.test(big || '');
+    return { k: 'bars', n: rows.length, h: hgBars(rows.map(r => [r.l, r.m ? mkColor(r.m) : r.c, r.v, cnt ? String(r.v) : pctPlain(r.v)])) + cap }; }
+  if (ch.t === 'cols') {
+    if (ch.ser.length === 2 && ch.cats.length >= 2 && ch.cats.length <= 6 && ch.cats.every(c => MK_PROV.includes(c) || brandCol(c)) && typeof hgSlope === 'function' && ch.ser.every(z => z.v.every(v => v != null)))   // prieš → dabar
+      return { k: 'slope', h: hgSlope(ch.cats.map((c, i) => [c, mkColor(c), ch.ser[0].v[i], ch.ser[1].v[i]]), hEsc(ch.ser[0].l), hEsc(ch.ser[1].l)) + cap };
+    if (ch.cats.length === 1 && ch.ser.length > 1) { const vs = ch.ser.map(z => z.v[0]);
+      if (vs.every(v => v >= 0) && typeof hgDonut === 'function') return { k: 'donut', h: hgDonut(ch.ser.map(z => [z.l, mkColor(z.l), z.v[0]]).sort((a, b) => b[2] - a[2]), '') + cap };
+      if (typeof hgBars === 'function') return { k: 'bars', n: vs.length, h: hgBars(ch.ser.map(z => [z.l, mkColor(z.l), z.v[0], mInt(z.v[0])]).sort((a, b) => Math.abs(b[2]) - Math.abs(a[2]))) + cap }; }
+    return { k: 'cols', n: ch.cats.length, h: miniSvg(ch) + cap }; }
+  return { k: 'none', h: miniSvg(ch) + cap };
+}
+function fgCard(f, i, el) {
+  const t = T(), U = t.fu, S = FG_S[ulang] || FG_S.en, big0 = factBigS(f), v = fgVis(f, el, big0), big = factBigL(big0), op = el._open === i, img = !i && !op && FG_IMG[el.id];
+  let sz = img ? 'l' : v.k === 'waffle' ? 's' : v.k === 'slope' || v.k === 'donut' ? 't' : v.k === 'bars' ? (v.n >= 5 ? 't' : 's') : v.k === 'line' ? 'w' : v.k === 'cols' && v.n >= 8 ? 'w' : 's';
+  if (f._hot && sz === 's') sz = 'w';
+  const s1 = (f.text.match(/^.*?(?<!\s(?:m|d|mln|mlrd|ketv|y|p|mėn|proc))[.!?](?=\s+[A-ZĄČĘĖĮŠŲŪŽ„(]|$)/) || [f.text])[0], tp = U.tp[f._tp] || '';
+  return `<article class="hgc fg ${sz}${img ? ' ph' : ''}${op ? ' open' : ''}${f.hl ? ' hl' : ''}" data-tp="${f._tp}" data-i="${i}"${img ? ` style="--ph:url(img/${img})"` : ''}>
+  <header class="hgh"><span class="hgic" style="--ic:url(img/ic/${FACT_IC[f._tp] || 'info'}.svg)" aria-hidden="true"></span><span class="ey" title="${hEsc(tp)}">${hEsc(f.h)}</span>${f._hot ? `<span class="fhot" title="${hEsc(U.tip)}">★ ${hEsc(f._hot.l)}</span>` : ''}
+    <span class="hgt"><button type="button" class="btn ico" data-fact="${i}" title="${t.copy}" aria-label="${t.copy}">⧉</button>${v.h ? `<button type="button" class="btn ico" data-h="png" title="PNG" aria-label="PNG">⤓</button>` : ''}<button type="button" class="btn ico xl" data-fx="${i}" title="${t.tXl}">Excel</button><button type="button" class="btn ico" data-h="i" title="${U.src}" aria-label="${U.src}" aria-expanded="false">i</button><button type="button" class="btn ico" data-fop="${i}" title="${op ? S[1] : S[2]}" aria-label="${op ? S[1] : S[2]}" aria-expanded="${op}">${op ? '×' : '⤢'}</button></span></header>
+  <h3 class="hgq">${hEsc(factQ(f, el.id))}</h3>${big ? `<div class="hgb">${hEsc(big)}</div>` : ''}${op || img ? '' : `<p class="hgs">${boldNums(s1)}</p>`}
+  <p class="hginfo" hidden>${hEsc(f.src)} ${t.how} ${hEsc(f.calc)}</p>
+  <div class="hgv">${v.h}</div>${op || img ? `<p class="fgtx">${boldNums(f.text)}</p>` : ''}${op ? `<details class="fmore" data-i="${i}"><summary>${t.fmore}</summary><div class="fxb"></div></details>` : ''}
+  <button type="button" class="hgm fgm" data-fop="${i}">${op ? S[1] : S[0]} <span class="hgic" style="--ic:url(img/ic/arrow-right.svg)" aria-hidden="true"></span></button></article>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-fop]'); if (!b) return; const el = b.closest('.facts'); if (!el) return;
+  const i = +b.dataset.fop; el._open = el._open === i ? null : i; factCards(el, el._facts, el.dataset.title, el.dataset.pl);
+  const c = el.querySelector(`.hgc[data-i="${i}"]`); if (c) { c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const d = c.querySelector('details.fmore'); if (d) d.open = true; }
+});
 function factCards(el, fs, title, pl) {
   const t = T(), U = t.fu; el._facts = fs; el.dataset.title = title; el.dataset.pl = pl;
   fs.forEach(f => { f._tp = topicOf(f); f._hot = hotOf(f, el); });
+  if (FU.view !== 'list' && typeof hgLine !== 'function' && document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => factCards(el, el._facts, el.dataset.title, el.dataset.pl), { once: true }); }
+  const grid = FU.view !== 'list'; el.classList.toggle('hg', grid); el.classList.toggle('fgrid', grid);
+  if (grid) { el.innerHTML = fs.map((f, i) => fgCard(f, i, el)).join(''); factTool(el); return; }
   el.innerHTML = fs.map((f, i) => `<article class="fact${f.hl ? ' hl' : ''}${f._hot ? ' hot' : ''}" data-tp="${f._tp}"><div class="ftop"><span class="fic" style="--ic:url(img/ic/${FACT_IC[f._tp] || 'info'}.svg)" aria-hidden="true"></span><span class="ftp">${U.tp[f._tp].toLowerCase() === f.h.toLowerCase() ? '' : hEsc(U.tp[f._tp])}</span>${f._hot ? `<span class="fhot" title="${hEsc(U.tip)}">★ ${hEsc(f._hot.l)}</span>` : ''}</div>`
     + `<span class="fh">${hEsc(f.h)}</span>${factBig(f)}${miniOf(f, el)}<p>${boldNums(f.text)}</p><details class="fsrc"><summary>${U.src}</summary><small>${hEsc(f.src)} ${t.how} ${hEsc(f.calc)}</small></details>`
     + `<details class="fmore" data-i="${i}"><summary>${t.fmore}</summary><div class="fxb"></div></details><div class="fbtn"><button type="button" class="btn" data-fact="${i}">${t.copy}</button><button type="button" class="btn xl" data-fx="${i}" title="${t.tXl}">${t.fx.xl}</button></div></article>`).join('');
