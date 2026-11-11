@@ -1377,7 +1377,7 @@ const FACT_IC = { ret: 'arrow-trending', nav: 'savings', part: 'people', risk: '
 const FACT_NUM = /(?<![(\d,.\u00a0\u202f\u2212]|\d[ \u00a0\u202f])[−+]?\d[\d \u00a0\u202f.,]*(?:\s?(?:%|p\. p\.|pp|mlrd\. €|mln\. €|bn €|m €|€|karto|times|reizes|korda))(?![\w])|(?<![\d,.\u00a0\u202f])\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?![\d,])/;
 // Didelis skaičius kortelėje – sakinio atsakymas, ne pavyzdžio įvestis: praleidžiami iliustraciniai 1 000 € / 100 € / 100 %, ribos („daugiau nei 50 %“),
 // „nuo X iki Y“ rodoma kaip intervalas, „sumažėjo 849,9 mln. €“ – su minusu, „28 iš 48“ – kaip santykis; kur skaičius vienas neatsako (kelių valdytojų sąrašai) – nerodomas.
-const FACT_OF = /\b\d+ (?:iš|of) \d+\b/g, FACT_ILL = new Set(['1 000 €', '100 €', '100 %', '1\u00a0000 €', '100\u00a0€', '100\u00a0%']);
+const FACT_OF = /\b\d+ (?:vietą )?(?:iš|of) \d+\b/g, FACT_ILL = new Set(['1 000 €', '100 €', '100 %', '1\u00a0000 €', '100\u00a0€', '100\u00a0%']);
 function factBigS(f) {
   const t = T(), F = t.f || {}, P = t.pv || {}, P3 = t.p23 || {};
   if ([F.chgH, P3.aH].includes(f.h)) return '';
@@ -1390,7 +1390,7 @@ function factBigS(f) {
   for (const c of cand) {
     const pre = s.slice(Math.max(0, c.i - 60), c.i), post = s.slice(c.i + c.v.length);
     if (c.u && FACT_ILL.has(c.v.replace(/[\u202f]/g, ' '))) continue;
-    if (/(daugiau nei|mažiau nei|virš|more than|less than|over)\s*$/i.test(pre)) continue;
+    if (/(daugiau nei|mažiau nei|virš|iki|more than|less than|over|under|below|above)\s*$/i.test(pre)) continue;
     let v = c.v;
     const r = c.u && /(?:^|\s)(nuo|from)\s*$/i.test(pre) && new RegExp('^\\s*(?:\\([^)]*\\)\\s*)?(?:iki|to)\\s+(' + FACT_NUM.source + ')').exec(post);
     if (r) { const b = r[1].trim(), u = (b.match(/[^\d\s\u00a0\u202f.,−+]+.*$/) || [''])[0], a = u && v.endsWith(u) ? v.slice(0, -u.length).trim() : v;
@@ -1468,20 +1468,92 @@ const FQ = {   // raktas T() kelyje → klausimas [lt, en, lv, et]; „konteiner
 };
 const FG_IMG = { qfCards: 'sec2-facts.jpg', mfCards: 'sec2-results.jpg', pvCards: 'sec2-aum.jpg', p23Cards: 'sec2-mgr.jpg' };
 const FG_S = { lt: ['Plačiau', 'Suskleisti', 'Išskleisti'], en: ['More', 'Collapse', 'Expand'], lv: ['Vairāk', 'Sakļaut', 'Izvērst'], et: ['Rohkem', 'Ahenda', 'Laienda'] };
-function factQ(f, id) {
-  const t = T(), li = Math.max(0, ['lt', 'en', 'lv', 'et'].indexOf(ulang)), hit = path => { const [a, b] = path.split('.'); return t[a] && t[a][b] === f.h; };
-  const ks = Object.keys(FQ), k = ks.find(x => x.startsWith(id + ':') && hit(x.slice(id.length + 1))) || ks.find(x => !x.includes(':') && hit(x));
-  return k ? FQ[k][li] : f.h;
+function fKey(f, id) {
+  const t = T(), hit = path => { const [a, b] = path.split('.'); return t[a] && t[a][b] === f.h; }, ks = Object.keys(FQ);
+  const k = ks.find(x => x.startsWith(id + ':') && hit(x.slice(id.length + 1))) || ks.find(x => !x.includes(':') && hit(x));
+  return k || '';
+}
+function factQ(f, id) { const k = fKey(f, id), li = Math.max(0, ['lt', 'en', 'lv', 'et'].indexOf(ulang)); return k ? FQ[k][li] : f.h; }
+/* Diagramos su užrašais (savininkas 2026-11-11: geros kortelės – kur matosi kas ir kiek; stulpeliai be užrašų nieko nepaaiškina) */
+const FG_L = {
+  wf: { lt: ['Prieš ketvirtį', 'Uždirbo', 'Įmokos − išmokos', 'Dabar'], en: ['Quarter ago', 'Earned', 'Contributions − payouts', 'Now'], lv: ['Pirms ceturkšņa', 'Nopelnīts', 'Iemaksas − izmaksas', 'Tagad'], et: ['Kvartal tagasi', 'Teenitud', 'Sissemaksed − väljamaksed', 'Nüüd'] },
+  wfm: { lt: 'Prieš mėnesį', en: 'Month ago', lv: 'Pirms mēneša', et: 'Kuu tagasi' },
+  ya: { lt: ['Prieš metus', 'Dabar'], en: ['Year ago', 'Now'], lv: ['Pirms gada', 'Tagad'], et: ['Aasta tagasi', 'Nüüd'] },
+  day: { lt: 'Uždirbta per dieną, mln. € (ketvirčio vidurkis)', en: 'Earned per day, m € (quarter average)', lv: 'Nopelnīts dienā, milj. € (ceturkšņa vidējais)', et: 'Teenitud päevas, mln € (kvartali keskmine)' },
+  ytd: { lt: 'Nuo metų pr.', en: 'Year to date', lv: 'Kopš gada sāk.', et: 'Aasta algusest' },
+  rk: { lt: 'Visi mėnesiai nuo blogiausio iki geriausio; šis mėnuo paryškintas', en: 'All months from worst to best; this month highlighted', lv: 'Visi mēneši no sliktākā līdz labākajam; šis mēnesis izcelts', et: 'Kõik kuud halvimast parimani; see kuu on esile tõstetud' },
+  wfc: { lt: 'Turto pokytis, mln. €', en: 'Change in assets, m €', lv: 'Aktīvu izmaiņa, milj. €', et: 'Vara muutus, mln €' },
+  acc: { lt: 'Kiek kartų sparčiau nei pernai', en: 'Times faster than last year', lv: 'Cik reizes ātrāk nekā pērn', et: 'Mitu korda kiiremini kui mullu' },
+};
+const fgL = k => { const o = FG_L[k]; return o[ulang] || o.en; };
+const FG_QM = { Mar: 1, Jun: 2, Sep: 3, Dec: 4 };
+const fgQ = c => { c = String(c); let m = /^(\d{4}) (I{1,3}|IV) ketv\.$/.exec(c); if (m) return [+m[1], ['I', 'II', 'III', 'IV'].indexOf(m[2]) + 1];
+  if ((m = /^(\d{4}) Q(\d)$/.exec(c))) return [+m[1], +m[2]]; if ((m = /^Q(\d) (\d{4})$/.exec(c))) return [+m[2], +m[1]];
+  if ((m = /^(Mar|Jun|Sep|Dec) (\d{4})$/.exec(c))) return [+m[2], FG_QM[m[1]]]; return null; };
+const fgQL = (y, q) => lang === 'lt' ? `${['I', 'II', 'III', 'IV'][q - 1]} '${String(y).slice(2)}` : `Q${q} '${String(y).slice(2)}`;
+const fgCat = c => { const q = fgQ(c); if (q) return fgQL(...q); c = String(c); let m;
+  if ((m = /^(\d{4})-(\d{2})$/.exec(c))) return `${m[2]}/${m[1].slice(2)}`; return c.length > 10 ? c.slice(0, 9) + '…' : c; };
+const fgFmt = u => v => v == null || !isFinite(v) ? '' : u === 'int' || u === 'eur' ? mInt(v) : u === 'pct' ? num(v, Math.abs(v) < 10 ? 2 : 1) : num(v, Math.abs(v) < 10 ? 2 : Math.abs(v) < 1000 ? 1 : 0);
+// stulpeliai su reikšmėmis ir datomis; n > 8 – užrašomos tik paskutinė, didžiausia ir mažiausia reikšmė
+function fgCols(cats, sers, fmt, o = {}) {
+  const n = cats.length, W = o.W || (n > 6 ? 640 : 320), H = o.H || (W > 320 ? 150 : 140), top = 16, bot = 18, ns = sers.length;
+  const vs = sers.flatMap(x => x.v).filter(v => v != null && isFinite(v)); if (!vs.length) return '';
+  const lo = Math.min(0, ...vs), hi = Math.max(0, ...vs), Y = v => top + (hi - v) / ((hi - lo) || 1) * (H - top - bot), bw = W / n, w1 = Math.min(46, bw * 0.72 / ns), all = n <= 8 && ns === 1;
+  const keep = new Set(); if (!all) sers.forEach((x, j) => { const ix = x.v.map((v, i) => [v, i]).filter(p => p[0] != null); if (!ix.length) return; keep.add(j + ':' + ix[ix.length - 1][1]); if (ns > 1) return;
+    keep.add(j + ':' + ix.reduce((a, b) => b[0] > a[0] ? b : a)[1]); keep.add(j + ':' + ix.reduce((a, b) => b[0] < a[0] ? b : a)[1]); });
+  let g = `<line x1="0" x2="${W}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" class="z"/>`;
+  cats.forEach((c, i) => { const x0 = i * bw + (bw - w1 * ns) / 2;
+    sers.forEach((x, j) => { const v = x.v[i]; if (v == null || !isFinite(v)) return; const col = o.col ? o.col(v, i, j) : x.c, xx = x0 + j * w1, y = Math.min(Y(0), Y(v)), h = Math.max(1.5, Math.abs(Y(v) - Y(0)));
+      g += `<rect x="${xx.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(2, w1 - 2).toFixed(1)}" height="${h.toFixed(1)}" rx="2" style="fill:${col}"${o.hi === i ? ' class="hl"' : ''}/>`;
+      if (o.lab ? o.lab.has(i) : all || keep.has(j + ':' + i)) g += `<text x="${Math.min(W - 22, Math.max(22, xx + w1 / 2 - 1)).toFixed(1)}" y="${(v >= 0 ? y - 4 : y + h + 11).toFixed(1)}" text-anchor="middle" class="v">${svgEsc(fmt(v))}</text>`.replace(/y="[^"]*"/, `y="${(v >= 0 ? y - 4 : Y(0) - 4).toFixed(1)}"`); });
+    if (n <= 12 || i % Math.ceil(n / 12) === 0 || i === n - 1) g += `<text x="${(i * bw + bw / 2).toFixed(1)}" y="${H - 3}" text-anchor="middle" class="c">${svgEsc(o.cat ? o.cat(c) : fgCat(c))}</text>`; });
+  const leg = ns > 1 ? `<span class="fgleg">${sers.map(x => `<i style="background:${x.c}"></i>${hEsc(x.l)}`).join('')}</span>` : '';
+  return `<svg class="fgsv" viewBox="0 0 ${W} ${H}" role="img" aria-hidden="true">${g}</svg>${leg}`;
+}
+// krioklys: pradžia + uždirbta + srautai = pabaiga
+function fgFall(a, gain, flow, b, lab, fmt) {
+  const W = 320, H = 150, top = 16, bot = 30, pts = [a, a + gain, a + gain + flow, b], lo = Math.min(...pts) * 0.9, hi = Math.max(...pts) * 1.02, Y = v => top + (hi - v) / ((hi - lo) || 1) * (H - top - bot), bw = W / 4, w = 46;
+  const bars = [[0, a, 'color-mix(in srgb, var(--text-2) 38%, transparent)', a], [a, a + gain, gain >= 0 ? 'var(--dpos)' : 'var(--dneg)', gain], [a + gain, a + gain + flow, flow >= 0 ? 'var(--dpos)' : 'var(--dneg)', flow], [0, b, 'var(--accent)', b]];
+  let g = '';
+  bars.forEach(([p, q, col, v], i) => { const x = i * bw + (bw - w) / 2, y0 = i === 0 || i === 3 ? H - bot : Y(Math.max(p, q)), y1 = i === 0 || i === 3 ? Y(q) : Y(Math.min(p, q)), yt = Math.min(y0, y1), h = Math.max(2, Math.abs(y1 - y0));
+    g += `<rect x="${x}" y="${yt.toFixed(1)}" width="${w}" height="${h.toFixed(1)}" rx="2" style="fill:${col}"/>`;
+    if (i < 3) g += `<line x1="${x + w}" x2="${x + bw}" y1="${Y(i === 0 ? a : i === 1 ? a + gain : a + gain + flow).toFixed(1)}" y2="${Y(i === 0 ? a : i === 1 ? a + gain : a + gain + flow).toFixed(1)}" class="z"/>`;
+    g += `<text x="${x + w / 2}" y="${(yt - 4).toFixed(1)}" text-anchor="middle" class="v">${(i === 1 || i === 2) && v > 0 ? '+' : ''}${svgEsc(fmt(v))}</text>`;
+    const ws = lab[i].split(' '), l1 = ws.length > 2 ? ws.slice(0, Math.ceil(ws.length / 2)).join(' ') : lab[i], l2 = ws.length > 2 ? ws.slice(Math.ceil(ws.length / 2)).join(' ') : '';
+    g += `<text x="${i * bw + bw / 2}" y="${H - 16}" text-anchor="middle" class="c">${svgEsc(l1)}</text>${l2 ? `<text x="${i * bw + bw / 2}" y="${H - 4}" text-anchor="middle" class="c">${svgEsc(l2)}</text>` : ''}`; });
+  return `<svg class="fgsv" viewBox="0 0 ${W} ${H}" role="img" aria-hidden="true">${g}</svg>`;
+}
+const fgQDays = c => { const q = fgQ(c); if (!q) return null; const [y, k] = q; return (Date.UTC(y, k * 3, 1) - Date.UTC(y, k * 3 - 3, 1)) / 864e5; };
+// kortelėms, kurių bendra diagrama neatsako į klausimą – sava
+function fgOwn(f, el, x, key) {
+  const ch = x && x.r.ch, nv = l => { const n = f.nums.find(z => z.l.startsWith(l)); return n ? n.v : null; }, N = i => f.nums[i] && f.nums[i].v;
+  if (key === 'fx.flowH' && f.nums.length >= 5) { const [a, g, fl, b] = [N(1), N(3), N(4), N(0)]; if ([a, g, fl, b].every(v => v != null)) return { k: 'fall', h: fgFall(a, g, fl, b, fgL('wf'), fgFmt('mn')) + `<span class="fgcap">${hEsc(fgL('wfc'))}</span>` }; }
+  if (key === 'mf.hG' && f.nums.length >= 4) { const [a, g, fl, b] = [N(2), N(0), N(3), N(1)], L = fgL('wf').slice(); L[0] = fgL('wfm'); if ([a, g, fl, b].every(v => v != null)) return { k: 'fall', h: fgFall(a, g, fl, b, L, fgFmt('mn')) + `<span class="fgcap">${hEsc(fgL('wfc'))}</span>` }; }
+  if (key === 'f.perH' && f.nums.length >= 6 && N(2) != null && N(5) != null) {
+    const L = fgL('ya'); return { k: 'cols', n: 2, h: fgCols([L[0], L[1]], [{ l: '', c: 'var(--accent)', v: [N(5), N(2)] }], v => mInt(v) + ' €', { col: (v, i) => i ? 'var(--accent)' : 'color-mix(in srgb, var(--text-2) 38%, transparent)', cat: c => c, W: 320 }) }; }
+  if (key === 'pv.dayH' && ch && ch.t === 'cols') { const d = ch.cats.map(fgQDays); if (d.every(Boolean)) { const per = ch.ser[0].v.map((v, i) => v == null ? null : v / d[i]), ytd = N(2);
+    return { k: 'cols', n: 4, h: fgCols([...ch.cats, fgL('ytd')], [{ l: '', c: 'var(--s4)', v: [...per, ytd] }], v => num(v, 2), { col: (v, i) => i === per.length ? 'var(--accent)' : v >= 0 ? 'var(--dpos)' : 'var(--dneg)', cat: c => c === fgL('ytd') ? c : fgCat(c), W: 320 }) + `<span class="fgcap">${hEsc(fgL('day'))}</span>` }; } }
+  if (key === 'p23.fH' && ch && ch.t === 'cols' && typeof hgBars === 'function') { const i = ch.cats.length - 1;
+    return { k: 'bars', n: ch.ser.length, h: hgBars(ch.ser.map(z => [z.l, z.v[i] >= 0 ? 'var(--dpos)' : 'var(--dneg)', z.v[i], (z.v[i] > 0 ? '+' : '') + fgFmt('mn')(z.v[i]) + ' mln. €'])) + `<span class="fgcap">${hEsc(x.r.title || '')}: ${hEsc(fgCat(ch.cats[i]))}</span>` }; }
+  if (key === 'mf.hH' && ch && ch.t === 'cols' && ch.ser[0]) { const v = ch.ser[0].v, last = v.length - 1, srt = v.map((z, i) => [z, i]).filter(p => p[0] != null).sort((a, b) => a[0] - b[0]);
+    const pos = srt.findIndex(p => p[1] === last);
+    return { k: 'cols', n: 12, h: fgCols(srt.map(() => ''), [{ l: '', c: 'var(--s1)', v: srt.map(p => p[0]) }], v => pctPlain(v), { col: (z, i) => i === pos ? '#d69e2e' : z >= 0 ? 'color-mix(in srgb, var(--dpos) 45%, transparent)' : 'color-mix(in srgb, var(--dneg) 45%, transparent)', cat: () => '', W: 640, H: 120, lab: new Set([pos, 0, srt.length - 1]) }) + `<span class="fgcap">${hEsc(fgL('rk'))}</span>` }; }
+  if (key === 'p23.aH' && typeof hgBars === 'function') { const rs = f.nums.filter(z => /Santykis|Ratio|ratio/.test(z.l) && z.v != null).map(z => [z.l.split(' · ')[0], z.v]).sort((a, b) => b[1] - a[1]);
+    if (rs.length) return { k: 'bars', n: rs.length, h: hgBars(rs.map(([m, v]) => [m, mkColor(m), v, num(v, 1) + '×'])) + `<span class="fgcap">${hEsc(fgL('acc'))}</span>` }; }
+  return null;
 }
 function fgVis(f, el, big) {
   let x = null; try { x = exDefault(f, el, false); } catch (e) { return { k: 'none', h: '' }; }
-  const of = /(\d+)\s(?:iš|of)\s(\d+)/.exec(big || '');
+  const own = fgOwn(f, el, x, fKey(f, el.id)); if (own) return own;
+  const of = /^(\d+)\s(?:iš|of)\s(\d+)$/.exec(big || '');
   if (of && +of[2] <= 60 && +of[1] <= +of[2]) {      // „X iš Y“ – Y taškų, X nuspalvinti
     return { k: 'waffle', h: `<div class="fgw" role="img" aria-label="${hEsc(big)}">${Array.from({ length: +of[2] }, (_, i) => `<i${i < +of[1] ? ' class="on"' : ''}></i>`).join('')}</div>` }; }
   const ch = x && x.r.ch; if (!ch) return { k: 'none', h: '' };
   const cap = `<span class="fgcap">${hEsc(x.r.title || '')}</span>`;
   if (ch.t === 'line') { const ss = ch.ser.filter(z => z.pts.length > 1);
-    if (ss.length === 1 && typeof hgLine === 'function') return { k: 'line', h: hgLine(ss[0].pts) + cap };
+    if (ss.length === 1 && typeof hgLine === 'function') { const P = ss[0].pts, a = P[0], b = P[P.length - 1], fm = fgFmt(ch.u === 'mn' || ch.u === 'pct' || ch.u === 'int' || ch.u === 'eur' ? ch.u : ''),
+      dl = d => { const t = new Date(d * 864e5); return fgQL(t.getUTCFullYear(), Math.floor(t.getUTCMonth() / 3) + 1); };
+      return { k: 'line', h: hgLine(P) + `<div class="fgle"><span>${dl(a[0])}<b>${hEsc(fm(a[1]))}</b></span><span>${dl(b[0])}<b>${hEsc(fm(b[1]))}</b></span></div>` + cap }; }
     return { k: 'line', h: miniSvg(ch) + `<span class="fgleg">${ss.slice(0, 4).map(z => `<i style="background:${z.c}"></i>${hEsc(z.l)}`).join('')}</span>` + cap }; }
   if (ch.t === 'hbar' && typeof hgBars === 'function') {
     const rows = ch.rows.filter(r => r.v != null && isFinite(r.v)).slice(0, 8), cnt = rows.every(r => Number.isInteger(r.v)) && !/%/.test(big || '');
@@ -1492,7 +1564,8 @@ function fgVis(f, el, big) {
     if (ch.cats.length === 1 && ch.ser.length > 1) { const vs = ch.ser.map(z => z.v[0]);
       if (vs.every(v => v >= 0) && typeof hgDonut === 'function') return { k: 'donut', h: hgDonut(ch.ser.map(z => [z.l, mkColor(z.l), z.v[0]]).sort((a, b) => b[2] - a[2]), '') + cap };
       if (typeof hgBars === 'function') return { k: 'bars', n: vs.length, h: hgBars(ch.ser.map(z => [z.l, mkColor(z.l), z.v[0], mInt(z.v[0])]).sort((a, b) => Math.abs(b[2]) - Math.abs(a[2]))) + cap }; }
-    return { k: 'cols', n: ch.cats.length, h: miniSvg(ch) + cap }; }
+    const k0 = Math.max(0, ch.cats.length - 12), cats = ch.cats.slice(k0), sers = ch.ser.slice(0, 2).map(z => ({ ...z, v: z.v.slice(k0) }));
+    return { k: 'cols', n: cats.length, h: fgCols(cats, sers, fgFmt(ch.u), { col: ch.sign && sers.length === 1 ? v => v >= 0 ? 'var(--dpos)' : 'var(--dneg)' : null }) + cap }; }
   return { k: 'none', h: miniSvg(ch) + cap };
 }
 function fgCard(f, i, el) {
