@@ -72,6 +72,7 @@ const NODES = [
   ['o_nw', 4, 'out', 'nw', 'Naujienos', 'Įžvalgos, temų banga, Seimas', 'News', 'Insights, topic waves, Seimas', '', '', 'index#tab=nw', 'Kas ir kada kalba apie pensijas.', 'Who talks about pensions and when.'],
   ['o_mail', 4, 'out', 'ops II III nw', 'Vakarinis laiškas', 'Trumpai: kaip sekėsi, ar reikia veiksmo; platesnis – kas mėnesį, ketvirtį, gavus portfelius', 'Evening e-mail', 'Short: how it went, is action needed; longer monthly, quarterly and on new portfolios', 'kasdien vakare', 'every evening', 'daily_report.py, report_market.py', 'Kasdien – keli sakiniai žmogiška kalba: kaip vakar sekėsi fondams, ar pasikeitė metų lyderis, ar kuris valdytojas elgėsi kitaip, viena naujiena ir ar reikia savininko veiksmo. Pirmame mėnesio laiške – mėnesio apžvalga, ketvirčio pradžioje – ketvirčio, gavus naujus LB portfelius – ką fondai pirko ir pardavė. Techninės detalės – tik kai kažkas negerai.', 'Daily – a few plain sentences: how funds did, whether the year leader changed, any manager behaving differently, one news item and whether the owner must act. Monthly, quarterly and new-portfolio e-mails add a longer section. Technical details only when something is wrong.'],
   ['o_ops', 4, 'out', 'ops', 'Duomenų kalendorius', 'Kas atkeliavo ir ko laukiama', 'Data calendar', 'What arrived and what is due', '', '', 'ops', 'Kiekvieno šaltinio įvykiai kalendoriuje ir laukiamos datos.', 'Each source’s events on a calendar and expected dates.'],
+  ['o_pres', 4, 'out', 'II III bx', 'Pristatymas', 'Skaidrės iš tikrų puslapių, rodyklė', 'Presentation', 'Slides from live pages, pointer', '', '', 'present', 'Visų funkcijų apžvalga skaidrėmis: kiekviena skaidrė – tikras šios dienos puslapis su trumpais komentarais; lazeris, piešimas, prožektorius.', 'A slide walkthrough of all features: each slide is a live page of today with short notes; laser, drawing, spotlight.'],
 ];
 const EDGES = [
   ['s_mgr', 'c_nav'], ['s_mgr', 'c_p3'], ['s_own', 'c_imp'], ['s_lb', 'c_lb'], ['s_sec', 'c_sec'], ['s_ms', 'c_ms'], ['s_mac', 'c_mac'], ['s_bx', 'c_bx'], ['s_nw', 'c_nw'],
@@ -79,7 +80,7 @@ const EDGES = [
   ['c_nav', 'd_ops'], ['c_p3', 'd_ops'], ['c_lb', 'd_ops'], ['c_bx', 'd_ops'],
   ['d_nav', 'b_build'], ['d_p3', 'b_build'], ['d_lb', 'b_build'], ['d_pf', 'b_build'], ['d_mac', 'b_build'], ['d_bx', 'b_build'], ['d_nw', 'b_build'], ['d_ops', 'b_build'],
   ['b_build', 'b_test'], ['b_dev', 'b_build'],
-  ['b_build', 'o_lt'], ['b_build', 'o_pf'], ['b_build', 'o_rep'], ['b_build', 'o_bx'], ['b_build', 'o_nw'], ['b_build', 'o_ops'],
+  ['b_build', 'o_lt'], ['b_build', 'o_pf'], ['b_build', 'o_rep'], ['b_build', 'o_bx'], ['b_build', 'o_nw'], ['b_build', 'o_ops'], ['b_build', 'o_pres'],
   ['b_test', 'o_mail'], ['d_ops', 'o_mail'], ['d_nav', 'o_mail'], ['d_p3', 'o_mail'], ['d_nw', 'o_mail'],
 ];
 // pristatymo režimas: žingsniai po vieną giją
