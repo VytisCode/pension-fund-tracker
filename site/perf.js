@@ -639,28 +639,31 @@ function pcRender() {
     if (!gs.length) { el.innerHTML = ''; return; }
     const per = periodText(), out = [], ey = pcT('ey'), Q = pcT('q'), I = pcT('i'), pp = pcT('pp'), multi = gs.filter(x => x.it.length >= 2);
     const P1 = v => fmtP(v, 1), col = v => v >= 0 ? 'var(--dpos)' : 'var(--dneg)';
+    const PB = ['1m', 'ytd', '1y', '3y', '5y'].filter(id => $('periods').querySelector(`button[data-id="${id}"]`));
+    const more = `<span class="lbl">${hEsc(T().period || '')}:</span>` + PB.map(id => `<button type="button" class="btn" data-ecclick='#periods button[data-id="${id}"]' aria-pressed="${P.period === id}">${hEsc(T().periods[id])}</button>`).join('');
     if ((!IS3 || (PX && PX.pl === 'II')) && multi.length >= 2) {   // LV/EE: grupėje keli valdytojo fondai – skaičiuojama pagal valdytoją
       const cnt = {}, pc = {}; multi.forEach(x => { const n = labelOf(x.it[0].p); cnt[n] = (cnt[n] || 0) + 1; pc[n] = pc[n] || x.it[0].p; });
       const rk = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
-      out.push(ecCard({ sz: 'l', img: 'sec2-results.jpg', ic: 'trophy', ey, q: Q[0], big: hEsc(rk.filter(x => x[1] === rk[0][1]).map(x => x[0]).join(' · ')), cls: rk.length > 1 && rk[1][1] === rk[0][1] ? 'sm' : '', sub: `${(rk.length > 1 && rk[1][1] === rk[0][1] ? pcT('tie') : pcT('lead'))(rk[0][1], multi.length)} · ${hEsc(per)}`, info: I[0], xt: 'tRet',
+      out.push(ecCard({ k: 'pc0', more, sz: 'l', img: 'sec2-results.jpg', ic: 'trophy', ey, q: Q[0], big: hEsc(rk.filter(x => x[1] === rk[0][1]).map(x => x[0]).join(' · ')), cls: rk.length > 1 && rk[1][1] === rk[0][1] ? 'sm' : '', sub: `${(rk.length > 1 && rk[1][1] === rk[0][1] ? pcT('tie') : pcT('lead'))(rk[0][1], multi.length)} · ${hEsc(per)}`, info: I[0], xt: 'tRet',
         vis: ecBars(rk.map(([n, k]) => [n, colorOf(pc[n]), k, `${k} ${pcT('gr')}`])) }));
     }
     const all = gs.flatMap(x => x.it), np = all.filter(x => x.r > 0).length;
-    out.push(ecCard({ sz: out.length ? 'w' : 'l', img: out.length ? '' : 'sec2-results.jpg', ic: 'data-pie', ey, q: Q[1], big: `${np} ${pcT('of')} ${all.length}`, sub: `${pcT('pos')} · ${hEsc(per)}`, info: I[1], xt: 'tRet',
+    out.push(ecCard({ k: 'pc1', more, sz: out.length ? 'w' : 'l', img: out.length ? '' : 'sec2-results.jpg', ic: 'data-pie', ey, q: Q[1], big: `${np} ${pcT('of')} ${all.length}`, sub: `${pcT('pos')} · ${hEsc(per)}`, info: I[1], xt: 'tRet',
       vis: ecBars([[pcT('up'), 'var(--dpos)', np, String(np)], [pcT('dn'), 'var(--dneg)', all.length - np, String(all.length - np)]]) }));
     if (multi.length) {
       const sp = multi.map(x => ({ g: x.g, a: x.it[0], b: x.it[x.it.length - 1], d: x.it[0].r - x.it[x.it.length - 1].r })).sort((a, b) => b.d - a.d), m = sp[0];
       out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey, q: Q[2], big: `${num(m.d, 1)} ${pp}`, sub: `${hEsc(groupLabel(m.g))}: ${pcT('vs')(`${hEsc(labelOf(m.a.p))} ${P1(m.a.r)}`, `${hEsc(labelOf(m.b.p))} ${P1(m.b.r)}`)}`, info: I[2], xt: 'tRet',
-        vis: ecBars(sp.slice(0, 6).map(x => [groupLabel(x.g), 'var(--s1)', x.d, `${num(x.d, 1)} ${pp}`])) }));
+        vis: ecBars(sp.slice(0, 6).map(x => [groupLabel(x.g), 'var(--s1)', x.d, `${num(x.d, 1)} ${pp}`])), k: 'pc2', more,
+        visAll: ecBars(sp.map(x => [`${groupLabel(x.g)}: ${labelOf(x.a.p)} − ${labelOf(x.b.p)}`, 'var(--s1)', x.d, `${num(x.d, 1)} ${pp}`])) }));
     }
     if (gs.length >= 2) {
       const md = a => { const v = a.map(x => x.r).sort((x, y) => x - y), n = v.length; return n % 2 ? v[(n - 1) / 2] : (v[n / 2 - 1] + v[n / 2]) / 2; };
       const gm = gs.map(x => ({ g: x.g, v: md(x.it) })).sort((a, b) => b.v - a.v);
       out.push(ecCard({ sz: 'w', ic: 'chart-multiple', ey, q: Q[3], big: P1(gm[0].v), sub: `${hEsc(groupLabel(gm[0].g))} · ${pcT('med')}`, info: I[3], xt: 'tRet',
-        vis: ecBars(gm.slice(0, 6).map(x => [groupLabel(x.g), col(x.v), x.v, P1(x.v)])) }));
+        vis: ecBars(gm.slice(0, 6).map(x => [groupLabel(x.g), col(x.v), x.v, P1(x.v)])), k: 'pc3', more, visAll: ecBars(gm.map(x => [groupLabel(x.g), col(x.v), x.v, P1(x.v)])) }));
     }
     let h = out.join('');   // 4 kortelės – 2 × 2 (visos plačios), 3 – nuotraukos kortelė dviejų aukščių + dvi plačios
-    if (out.length === 4) h = h.replace('class="hgc fg l ph"', 'class="hgc fg w ph"');
+    if (out.length === 4) h = h.replace('class="hgc fg l ph"', 'class="hgc fg w ph"').replace('data-sz="l"', 'data-sz="w"');
     el.innerHTML = h; ecFold(el);
   } catch (e) { console.warn(e); el.innerHTML = ''; }
 }

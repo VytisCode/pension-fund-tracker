@@ -1305,14 +1305,16 @@ function pfCards(q1) {
     const q0 = q1 - 1, Q4 = pfcT('q'), ey = pfcT('ey'), I = pfcT('i'), pc = v => `${num(v, 1)} %`, ql = qLabel(q1);
     const rows = MGRS.map(m => ({ m, a: mgrMix(m, q0), b: mgrMix(m, q1) })).filter(x => x.b);
     if (rows.length < 2) { el.className = ''; el.innerHTML = ''; return; }
+    const more = `<label class="lbl">${hEsc(OT().q)}</label><select data-ecsel="ovQ">${Q.map((_, i) => i).filter(i => i >= 1).reverse().map(i => `<option value="${i}"${i === q1 ? ' selected' : ''}>${qLabel(i)}</option>`).join('')}</select>`
+      + ` <span class="lbl">${hEsc(OT().pl)}</span>` + ['II', 'III'].map(v => `<button type="button" class="btn" data-ecclick='[data-seg="ovPl"] button[data-v="${v}"]' aria-pressed="${OV.pl === v}">${v}</button>`).join('');
     const top = k => rows.filter(x => x.b[k] != null).sort((x, y) => y.b[k] - x.b[k]);
     const card = (i, k, o = {}) => { const r = top(k); if (!r.length) return '';
-      return ecCard({ sz: 'w', img: o.img, ic: o.ic, ey, q: Q4[i], big: `${esc(r[0].m)} · ${pc(r[0].b[k])}`, cls: 'sm', sub: `${pfcT('pf')} · ${ql}`, info: I, xt: 'ovChg',
+      return ecCard({ k: 'pf' + i, more, sz: 'w', img: o.img, ic: o.ic, ey, q: Q4[i], big: `${esc(r[0].m)} · ${pc(r[0].b[k])}`, cls: 'sm', sub: `${pfcT('pf')} · ${ql}`, info: I, xt: 'ovChg',
         vis: ecBars(r.map(x => [x.m, colorOf(x.m), x.b[k], pc(x.b[k])])) }); };
     const out = [card(0, 'eq', { img: 'sec2-pf.jpg', ic: 'data-pie' })];
     const ch = rows.filter(x => x.a && x.a.eq != null && x.b.eq != null).map(x => ({ m: x.m, a: x.a.eq, b: x.b.eq, d: x.b.eq - x.a.eq, x: x.a.eqX != null && x.b.eqX != null ? x.b.eqX - x.a.eqX : null })).sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
     if (ch.length) { const c = ch[0], RF = inReform(q1) || inReform(q0);
-      out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey, q: Q4[1], big: pfPP(c.d), sub: `${esc(c.m)}: ${pc(c.a)} → ${pc(c.b)} · ${qLabel(q0)} → ${ql}${RF && c.x != null ? ` · ${pfcT('ref')} ${pfPP(c.x)}` : ''}`, info: I, xt: 'ovChg',
+      out.push(ecCard({ k: 'pf1', more, sz: 'w', ic: 'arrow-trending', ey, q: Q4[1], big: pfPP(c.d), sub: `${esc(c.m)}: ${pc(c.a)} → ${pc(c.b)} · ${qLabel(q0)} → ${ql}${RF && c.x != null ? ` · ${pfcT('ref')} ${pfPP(c.x)}` : ''}`, info: I, xt: 'ovChg',
         vis: ecBars(ch.map(x => [x.m, x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, pfPP(x.d)])) })); }
     out.push(card(2, 'alt', { ic: 'building-bank' }), card(3, 'cash', { ic: 'savings' }));
     el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el);

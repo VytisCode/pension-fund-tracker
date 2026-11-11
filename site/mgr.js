@@ -293,21 +293,22 @@ function mgCards(o) {
   try {
     const Q = mgcT('q').slice(), E = mgcT('ey'), I = mgcT('i'), me = mLab(p), out = [];
     if (CTRY) Q[1] = { lt: n => `Kaip ${n} fondams sekasi šiais metais?`, en: n => `How are ${n}’s funds doing this year?` }[ulang] || (ulang === 'lt' || ulang === 'en' ? Q[1] : mgcT('q')[1]);   // LV/EE – vidutinis fondas, ne gyvenimo ciklo
+    const more = `<label class="lbl">${hEsc(t.selP || '')}</label><select data-ecsel="selP">${PROVS.map(q => `<option value="${q}"${q === p ? ' selected' : ''}>${hEsc(mLab(q))}</option>`).join('')}</select>`;
     const bars = (rows, f) => ecBars(rows.map(r => [mLab(r.q), r.q === p ? mCol(r.q) : 'color-mix(in srgb, ' + mCol(r.q) + ' 45%, transparent)', r.v, f(r.v), r.q === p]));
     const aII = q => cut ? (sumAt(aumFs(q, 'II'), cut, 92) || 0) * 1e6 : live.filter(f => own(f, q)).reduce((s, f) => s + f.assets, 0);
     const tot = cut ? (sumAt(aumFs(null, 'II'), cut, 92) || 0) * 1e6 : aAll;
     if (tot) { const sh = PROVS.map(q => ({ q, v: aII(q) / tot * 100 })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), m = sh.find(x => x.q === p);
-      if (m) out.push(ecCard({ sz: 'w', img: 'sec2-mgr.jpg', ic: 'building-bank', ey: E[0], q: Q[0](hEsc(me)), big: fmt(m.v, 1) + pctSfx(), sub: `${kpMoney(aII(p))} · ${mgcT('rk')(sh.indexOf(m) + 1, sh.length)}${pay ? ` · ${t.kPay(yNow)}: −${kpMoney(-pay * 1e6).replace(/^−/, '')}` : ''}`, info: I[0], xt: 'aumT',
+      if (m) out.push(ecCard({ k: 'mg0', more, sz: 'w', img: 'sec2-mgr.jpg', ic: 'building-bank', ey: E[0], q: Q[0](hEsc(me)), big: fmt(m.v, 1) + pctSfx(), sub: `${kpMoney(aII(p))} · ${mgcT('rk')(sh.indexOf(m) + 1, sh.length)}${pay ? ` · ${t.kPay(yNow)}: −${kpMoney(-pay * 1e6).replace(/^−/, '')}` : ''}`, info: I[0], xt: 'aumT',
         vis: bars(sh, v => fmt(v, 1) + pctSfx()) })); }
     const mY = ytdM.find(x => x.q === p);
-    if (mY) out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey: E[1], q: Q[1](hEsc(me)), big: pct(mY.v), sub: mgcT('rk')(ytdM.indexOf(mY) + 1, ytdM.length), info: I[1], xt: 't2',
+    if (mY) out.push(ecCard({ k: 'mg1', more, sz: 'w', ic: 'arrow-trending', ey: E[1], q: Q[1](hEsc(me)), big: pct(mY.v), sub: mgcT('rk')(ytdM.indexOf(mY) + 1, ytdM.length), info: I[1], xt: 't2',
       vis: bars(ytdM, v => pct(v)) }));
     if (feeW != null) { const fw = PROVS.map(q => { let s = 0, w = 0; fundsII(q).forEach(x => { const r = repOf('II', q, kII(x)), f = live.find(y => y === x.f); if (r && r.fee != null && f) { s += r.fee * f.assets; w += f.assets; } }); return { q, v: w ? s / w : null }; }).filter(x => x.v != null).sort((a, b) => a.v - b.v);
-      const m = fw.find(x => x.q === p); if (m) out.push(ecCard({ sz: 'w', ic: 'money-hand', ey: E[2], q: Q[2](hEsc(me)), big: fmt(m.v, 2) + pctSfx(), sub: `${t.kFee} · ${mgcT('rkc')(1 + fw.filter(x => +x.v.toFixed(2) < +m.v.toFixed(2)).length, fw.length)}`, info: I[2], xt: 't2',
+      const m = fw.find(x => x.q === p); if (m) out.push(ecCard({ k: 'mg2', more, sz: 'w', ic: 'money-hand', ey: E[2], q: Q[2](hEsc(me)), big: fmt(m.v, 2) + pctSfx(), sub: `${t.kFee} · ${mgcT('rkc')(1 + fw.filter(x => +x.v.toFixed(2) < +m.v.toFixed(2)).length, fw.length)}`, info: I[2], xt: 't2',
         vis: bars(fw, v => fmt(v, 2) + pctSfx()) })); }
     const a3 = q => cut ? (sumAt(aumFs(q, 'III'), cut, 92) || 0) * 1e6 : fundsIII(q).reduce((s, f) => s + (f.aum || 0), 0);
     const r3 = PROVS.map(q => ({ q, v: a3(q) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), m3 = r3.find(x => x.q === p);
-    if (m3) out.push(ecCard({ sz: 'w', ic: 'savings', ey: E[3], q: Q[3](hEsc(me)), big: kpMoney(m3.v), sub: mgcT('rk')(r3.indexOf(m3) + 1, r3.length), info: I[3], xt: 't3',
+    if (m3) out.push(ecCard({ k: 'mg3', more, sz: 'w', ic: 'savings', ey: E[3], q: Q[3](hEsc(me)), big: kpMoney(m3.v), sub: mgcT('rk')(r3.indexOf(m3) + 1, r3.length), info: I[3], xt: 't3',
       vis: bars(r3, v => kpMoney(v)) }));
     if (out.length < 2) return false;
     el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return true;

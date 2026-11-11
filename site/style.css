@@ -1162,3 +1162,9 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hg.fold .hgq { font-size: 13px !important; margin: 0 !important; } .hg.fold .hgb { font-size: 22px !important; margin: 0 !important; line-height: 1.2; }
 .hg.fold .hgc.ph::before { background: rgba(25, 18, 12, .72); }
 @media (max-width: 620px) { .hg.fold { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hg.fold > * { grid-column: auto !important; } }
+/* Išskleidžiamos kortelės (ecCard o.k): išskleista – per visą plotį, visos eilutės ir parametrai */
+.hgc .ecall, .hgc .ecmore { display: none; } .hgc.open .ecall { display: block; } .hgc.open .ecshort { display: none; } .hgc.open .ecmore { display: flex; }
+.ecmore { flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-size: 13px; }
+.ecmore .lbl { color: var(--muted); margin-right: 4px; } .ecmore .btn[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hgc.ph .ecmore .lbl { color: rgba(255, 255, 255, .8); }
+.hg.fold .ecmore, .hg.fold .ecall { display: none !important; }

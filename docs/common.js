@@ -2492,14 +2492,15 @@ function pairBook(o) {
 
 /* Bendros Edge kortelės (journey, Rezultatai ir kt.): ecCard({ sz, img, ic, ey, q, big, sub, info, vis, xt }) – xt = lentelės id, kurios Excel įrodymų failą atsisiunčia ⤓ Excel */
 const EC = { cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, inf: { lt: 'Kaip skaičiuojama', en: 'How it is calculated', lv: 'Kā aprēķina', et: 'Kuidas arvutatakse' },
-  xl: { lt: 'Excel su formulėmis', en: 'Excel with formulas', lv: 'Excel ar formulām', et: 'Excel valemitega' } };
+  xl: { lt: 'Excel su formulėmis', en: 'Excel with formulas', lv: 'Excel ar formulām', et: 'Excel valemitega' }, ex: { lt: 'Išskleisti / suskleisti', en: 'Expand / collapse', lv: 'Izvērst / sakļaut', et: 'Laienda / ahenda' } };
 const ecT = k => EC[k][ulang] || EC[k].en;
 const ecIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
 const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01), hi = rows.some(r => r[4]);   // r[4] – paryškinta eilutė (kitaip – pirma)
   return `<div class="hgbars">${rows.map(([n, col, v, tx, h], i) => `<div class="r${(hi ? h : !i) ? ' top' : ''}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
-const ecCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
-  <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="xl"${o.xt ? ` data-xt="${o.xt}"` : ''}${o.xf ? ` data-xf="${o.xf}"` : ''} title="${ecT('xl')}" aria-label="Excel">X</button><button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button></span></header>
-  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
+const EC_OPEN = new Set();   // išskleistos kortelės (o.k) – išlieka perpiešiant
+const ecCard = o => `<article class="hgc fg ${o.k && EC_OPEN.has(o.k) ? 'f open' : o.sz}${o.img ? ' ph' : ''}"${o.k ? ` data-k="${o.k}" data-sz="${o.sz}"` : ''}${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
+  <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="xl"${o.xt ? ` data-xt="${o.xt}"` : ''}${o.xf ? ` data-xf="${o.xf}"` : ''} title="${ecT('xl')}" aria-label="Excel">X</button><button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button>${o.k && (o.visAll || o.more) ? `<button type="button" class="btn ico" data-jg="ex" title="${ecT('ex')}" aria-label="${ecT('ex')}">⤢</button>` : ''}</span></header>
+  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv${o.visAll ? ' ecshort' : ''}">${o.vis}</div>${o.visAll ? `<div class="hgv ecall">${o.visAll}</div>` : ''}${o.more ? `<div class="ecmore">${o.more}</div>` : ''}</article>`;
 /* Analitiniuose puslapiuose kortelės neturi trukdyti įrankiams (savininkas 2026-11-11): mygtukas „Suskleisti korteles“ – viena eilutė su dideliais skaičiais; būsena įsimenama visiems puslapiams */
 const ECF = { f: { lt: 'Suskleisti korteles', en: 'Collapse cards', lv: 'Sakļaut kartītes', et: 'Ahenda kaardid' }, u: { lt: 'Išskleisti korteles', en: 'Expand cards', lv: 'Izvērst kartītes', et: 'Laienda kaardid' } };
 function ecFold(el) {
@@ -2526,10 +2527,14 @@ async function ecXl(card) {
   XL.sheet(wb, L ? 'Kortelė' : 'Card', rows, { cols: [44, 18, 16] });
   await XL.save(wb, `${tx('.hgq').replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 50)}_${iso(Math.floor(Date.now() / DAY))}.xlsx`);
 }
+document.addEventListener('click', e => { const b = e.target.closest('.hgc [data-ecclick]'); if (!b) return; const t = document.querySelector(b.dataset.ecclick); if (t) t.click(); });
+document.addEventListener('change', e => { const s = e.target.closest('.hgc select[data-ecsel]'); if (!s) return; const t = document.getElementById(s.dataset.ecsel); if (t) { t.value = s.value; t.dispatchEvent(new Event('change', { bubbles: true })); } });
 /* Edge kortelių įrankiai puslapiuose be home.js (journey, apie): data-jg = cp / png / i */
 document.addEventListener('click', async e => {
   const b = e.target.closest('.hgc [data-jg]'); if (!b) return; const card = b.closest('.hgc'), a = b.dataset.jg;
   if (a === 'i') { const p = card.querySelector('.hginfo'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', !p.hidden); return; }
+  if (a === 'ex') { const k = card.dataset.k, on = !card.classList.contains('open'); if (on) EC_OPEN.add(k); else EC_OPEN.delete(k);
+    card.classList.toggle('open', on); card.classList.toggle('f', on); card.classList.toggle(card.dataset.sz, !on); if (on) card.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
   if (a === 'xl') { b.disabled = true; try { const tb = b.dataset.xt && document.getElementById(b.dataset.xt), fn = b.dataset.xf && window[b.dataset.xf];
       if (tb) await tableBook(tb); else if (typeof fn === 'function') await fn(); else await ecXl(card); } catch (x) { console.warn(x); } finally { b.disabled = false; } return; }
   if (a === 'cp') { const txt = [card.querySelector('.ey'), card.querySelector('.hgq'), card.querySelector('.hgb'), card.querySelector('.hgs')].filter(Boolean).map(n => n.textContent.trim()).join(' – ');
