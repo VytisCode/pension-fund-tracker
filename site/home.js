@@ -19,7 +19,7 @@ addStrings({
     share: (a, b) => `Share of pillar assets, ${a} → ${b}`,
   },
   hgEy: { mk: 'Market', ld: 'Leaders', as: 'Assets', er: 'Earnings', br: 'Direction', gp: 'Gaps', pt: 'Participants', sh: 'Market shares' },
-  hgHi: h => h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening', hgHiS: (c, d) => `${c} · pillar II · data to ${d}`, hgMore: 'More', hgLess: 'less', hgMoreC: 'more', hgDay: 'day', hgMon: 'Months',
+  hgHiS: (c, d) => `${c} · pillar II · data to ${d}`, hgMore: 'More', hgLess: 'less', hgMoreC: 'more', hgDay: 'day', hgMon: 'Months',
 }, {
   hgQ: { avg: 'Kaip sekasi vidutiniam fondui?', lead: 'Kas pirmauja?', aum: 'Kiek sukaupta?', earn: 'Kiek fondai uždirbo eurais?',
     pos: 'Kiek fondų kyla?', gap: 'Kur didžiausi skirtumai?', part: 'Kiek dalyvių?', share: 'Kas augino rinkos dalį?' },
@@ -34,14 +34,15 @@ addStrings({
     share: (a, b) => `Dalis pakopos turto, ${a} → ${b}`,
   },
   hgEy: { mk: 'Rinka', ld: 'Lyderiai', as: 'Turtas', er: 'Uždarbis', br: 'Kryptis', gp: 'Skirtumai', pt: 'Dalyviai', sh: 'Rinkos dalys' },
-  hgHi: h => h < 12 ? 'Labas rytas' : h < 18 ? 'Laba diena' : 'Labas vakaras', hgHiS: (c, d) => `${c} · II pakopa · duomenys iki ${d}`, hgMore: 'Plačiau', hgLess: 'mažiau', hgMoreC: 'daugiau', hgDay: 'diena', hgMon: 'Mėnesiai',
+  hgHiS: (c, d) => `${c} · II pakopa · duomenys iki ${d}`, hgMore: 'Plačiau', hgLess: 'mažiau', hgMoreC: 'daugiau', hgDay: 'diena', hgMon: 'Mėnesiai',
 });
 
+const HG_SRC = { LV: 'manapensija.lv', EE: 'pensionikeskus.ee' };   // dalyvių šaltinis šalies kopijoje (ne Lietuvos bankas – savininkas pastebėjo 2026-11-11)
 if (typeof CTRY_COPY !== 'undefined') addStrings({   // LV/EE: grupės – rizikos (akcijų dalies) grupės; ketvirčio duomenys – ne Lietuvos banko
   hgS: { ...I18N.en.hgS, avg: (l, w) => `Leader ${l}, last ${w}. Simple average of all funds.`, lead: n => `Managers by average return across ${n} fund groups`,
-    gap: 'Best and weakest fund in each fund group, %', part: (d, ch) => `Quarter end ${d} · ${ch} over the year` } }, {
+    gap: 'Best and weakest fund in each fund group, %', part: (d, ch) => `${HG_SRC[CTRY_COPY] || ''}, ${d} · ${ch} over the year` } }, {
   hgS: { ...I18N.lt.hgS, avg: (l, w) => `Pirmauja ${l}, paskutinis – ${w}. Paprastas visų fondų vidurkis.`, lead: n => `Valdytojai pagal vidutinę grąžą ${n} fondų grupėse`,
-    gap: 'Geriausias ir silpniausias fondas kiekvienoje fondų grupėje, %', part: (d, ch) => `Ketvirčio pabaiga ${d} · per metus ${ch}` } });
+    gap: 'Geriausias ir silpniausias fondas kiekvienoje fondų grupėje, %', part: (d, ch) => `${HG_SRC[CTRY_COPY] || ''}, ${d} · per metus ${ch}` } });
 
 const HG_ON = (() => { let v = null; try { const q = new URLSearchParams(location.search).get('nauja'); if (q != null) localStorage.setItem('homeV3', q === '0' ? '0' : '1'); v = localStorage.getItem('homeV3'); } catch (e) {} return v === '1'; })();
 const hgIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
@@ -97,13 +98,11 @@ function hgRender() {
   if (!HG_ON) return;
   const t = T(), c = compute(), P = t.per[PER], g = document.getElementById('hg'); if (!g) return;
   const L = c.byY[0], Wn = c.byY[c.byY.length - 1], pp = lang === 'lt' ? 'p. p.' : 'pp', out = [];
-  // 1. vidutinis fondas – nuotrauka + mini linija
-  const avgPts = (() => { const m = new Map(); let n = 0;
-    LC.forEach(gr => { const { end, overallLast } = groupEnd(gr), a = anchorOf(PER, end);
-      gr.funds.forEach(f => { if (f.d[f.d.length - 1] < overallLast - 5) return; const sr = seriesOf(f, a, end); if (!sr) return; n++; sr.points.forEach(([d, v]) => { const x = m.get(d) || [0, 0]; x[0] += v; x[1]++; m.set(d, x); }); }); });
-    return [...m.entries()].filter(([, x]) => x[1] >= n * 0.8).sort((a, b) => a[0] - b[0]).map(([d, x]) => [d, x[0] / x[1]]); })();
-  out.push(hgCard({ sz: 'l', img: 'sec2-results.jpg', ic: 'arrow-trending', ey: t.hgEy.mk, per: P, q: t.hgQ.avg,
-    big: c.wAvg == null ? '–' : pct(c.wAvg), sub: t.hgS.avg(`${mLab(L.id)} ${pct(L.ytd)}`, `${mLab(Wn.id)} ${pct(Wn.ytd)}`), vis: hgLine(avgPts, 520, 90), href: 'performance.html' }));
+  // 1. kiek uždirbo vidutinis dalyvio euras – nuotrauka + palyginimas su infliacija ir €STR
+  { const E = euroCmp(t, c, ['#ffffff', '#f3a487', 'rgba(255,255,255,.55)']), real = E.inf && E.pe != null ? pct(((1 + E.pe / 100) / (1 + E.inf.v / 100) - 1) * 100) : null;
+    out.push(hgCard({ sz: 'l', img: 'sec2-results.jpg', ic: 'arrow-trending', ey: t.hgEy.mk, per: P, q: t.kEu(P).replace(/ · .*$/, ''),
+      big: E.pe == null ? '–' : pct(E.pe), sub: [real && t.kEuReal(real), t.kEuS.replace(/\.\s.*$/, '.')].filter(Boolean).join(' · '),
+      vis: E.html + `<p class="hgs">${[E.inf ? t.kEuIN(E.inf.m) : t.kEuNo, E.es != null ? '€STR – ECB' : ''].filter(Boolean).join(' · ')}</p>`, href: 'performance.html' })); }
   // 2. lyderis – juostos
   out.push(hgCard({ sz: 't', ic: 'trophy', ey: t.hgEy.ld, per: P, q: t.hgQ.lead, big: mLab(L.id), sub: `${pct(L.ytd)} · ${t.hgS.lead(LC.length)}`,
     vis: hgBars(c.byY.map(m => [mLab(m.id), mCol(m.id), m.ytd, pct(m.ytd)])), href: 'performance.html#tab=sum' }));
@@ -135,9 +134,9 @@ function hgRender() {
       out.push(hgCard({ sz: 'w', ic: 'data-pie', ey: t.hgEy.sh, per: `${ds[pdi]} → ${d}`, q: t.hgQ.share, big: top ? `${top[0]} ${top[3] - top[2] >= 0 ? '+' : '−'}${num(Math.abs(top[3] - top[2]), 2)} ${pp}` : '–', sub: t.hgS.share(ds[pdi], d), vis: hgSlope(rows, ds[pdi].slice(0, 7), d.slice(0, 7)), href: 'managers.html#tab=mg' })); }
   }
   g.innerHTML = out.join('');
-  { const tx = document.querySelector('.sechero.has-kpi .shtx');   // nuotraukos juosta – trumpas pasisveikinimas (kaip Edge), skaičiai – kortelėse
+  { const tx = document.querySelector('.sechero.has-kpi .shtx');   // nuotraukos juosta – tik šalis, pakopa ir duomenų data; skaičiai – kortelėse
     if (tx) { let hi = tx.querySelector('.hgreet'); if (!hi) { hi = document.createElement('div'); hi.className = 'hgreet'; tx.prepend(hi); }
-      hi.innerHTML = `<b>${t.hgHi(new Date().getHours())}</b><span>${t.hgHiS(t.hC[PCTRY] || t.hC.LT, iso(c.end))}</span>`; } }
+      hi.innerHTML = `<span>${t.hgHiS(t.hC[PCTRY] || t.hC.LT, iso(c.end))}</span>`; } }   // be pasisveikinimo (savininkas: „Laba diena“ naudos neduoda)
   // esamos kortelės (nieko nenumetame): Lyderiai, Trumpai, naujienos, Lietuvos banko faktai, grupių lentelė – į tą patį tinklelį
   [['ldrC', 'w'], ['tdNews', 'w'], [document.querySelector('.says'), 'w'], [document.querySelector('.tdmk'), 'w'], [document.getElementById('gT') && document.getElementById('gT').closest('section'), 'f']]
     .forEach(([el, sz]) => { el = typeof el === 'string' ? document.getElementById(el) : el; if (!el) return; el.classList.add('hgx', sz); g.appendChild(el); });
