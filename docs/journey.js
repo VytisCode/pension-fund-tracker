@@ -413,18 +413,18 @@ const jgBars = ecBars, jgCard = ecCard;
 function jgCards(L, t, gcls) {
   const Q = JG.q[ulang] || JG.q.en, ey = `${plL(P.pl)} · ${dots(P.asof)}`, pts = (SIM.rows || []).filter(r => r.val != null && isFinite(r.val)).map(r => [r.d, r.val]);
   const r0 = pts[0], gain = L.val - L.st, out = [];
-  out.push(jgCard({ sz: 'l', img: 'sec-jr.jpg', ic: 'savings', ey, q: Q[0], big: eur(L.val, 0), sub: `${t.kContrib}: ${eur(L.st, 0)} · ${t.srcName.r}: ${gain >= 0 ? '+' : '−'}${eur(Math.abs(gain), 0)}`,
+  out.push(jgCard({ xf: 'download', sz: 'l', img: 'sec-jr.jpg', ic: 'savings', ey, q: Q[0], big: eur(L.val, 0), sub: `${t.kContrib}: ${eur(L.st, 0)} · ${t.srcName.r}: ${gain >= 0 ? '+' : '−'}${eur(Math.abs(gain), 0)}`,
     info: `${t.kAssets} – ${hEsc(L.fund || '')}, ${dots(L.d)}. ${t.kAssets} = ${t.kContrib.toLowerCase()} + ${t.srcName.r.toLowerCase()}.`,
     vis: jgLine(pts) + (r0 ? `<div class="fgle"><span>${dots(r0[0])}<b>${eur(r0[1], 0)}</b></span><span>${dots(L.d)}<b>${eur(L.val, 0)}</b></span></div>` : '')
       + jgBars([[t.kContrib, 'rgba(255,255,255,.75)', L.st, eur(L.st, 0)], [t.srcName.r, gain >= 0 ? SCOL.r : 'var(--dneg)', gain, `${gain >= 0 ? '+' : '−'}${eur(Math.abs(gain), 0)}`]]) }));
   const II = P.pl === 'III' ? null : (SIM.parts ? SIM.parts[0] : SIM).last, III = P.pl === 'II' ? null : (SIM.parts ? SIM.parts[1] : SIM).last;   // kaip renderSchema: III pakopoje sv = darbdavio įmokos
   const src = [['s', SCOL.s, II && II.ss], ['d', SCOL.d, (II ? II.sd : 0) + (III ? III.sd : 0)], ['v', SCOL.v, II && II.sv], ['e', SCOL.e, III && III.sv]].filter(x => x[2] > 0);
-  out.push(jgCard({ sz: 'w', ic: 'money-hand', ey, q: Q[1], big: eur(L.st, 0), sub: src.map(x => `${t.srcName[x[0]]} ${num(x[2] / L.st * 100, 0)} %`).join(' · '), info: `${t.kContrib}: ${src.map(x => `${t.srcName[x[0]]} ${eur(x[2], 0)}`).join(' + ')}.`,
+  out.push(jgCard({ xf: 'download', sz: 'w', ic: 'money-hand', ey, q: Q[1], big: eur(L.st, 0), sub: src.map(x => `${t.srcName[x[0]]} ${num(x[2] / L.st * 100, 0)} %`).join(' · '), info: `${t.kContrib}: ${src.map(x => `${t.srcName[x[0]]} ${eur(x[2], 0)}`).join(' + ')}.`,
     vis: jgBars(src.map(x => [t.srcName[x[0]], x[1], x[2], eur(x[2], 0)])) }));
-  out.push(jgCard({ sz: 's', ic: 'scales', ey, q: Q[2], big: `<span class="${gcls}">${L.gainE >= 0 ? '+' : '−'}${eur(Math.abs(L.gainE), 0)}</span>`, sub: `${t.kGainP}: ${pc(L.gainP)}`,
+  out.push(jgCard({ xf: 'download', sz: 's', ic: 'scales', ey, q: Q[2], big: `<span class="${gcls}">${L.gainE >= 0 ? '+' : '−'}${eur(Math.abs(L.gainE), 0)}</span>`, sub: `${t.kGainP}: ${pc(L.gainP)}`,
     info: `${t.kReal} – ${t.kContrib.toLowerCase()} ${eur(L.st, 0)}, ${lang === 'lt' ? 'perskaičiuotos šiandienos kainomis pagal VKI' : 'restated in today’s prices with the CPI'}. ${t.kGainE} = ${t.kAssets.toLowerCase()} − ${t.kReal.toLowerCase()}.`,
     vis: jgBars([[t.kReal, 'color-mix(in srgb, var(--text-2) 38%, transparent)', L.realSum, eur(L.realSum, 0)], [t.kAssets, L.gainE >= 0 ? 'var(--dpos)' : 'var(--dneg)', L.val, eur(L.val, 0)]]) }));
-  if (L.pen != null && L.ann != null) out.push(jgCard({ sz: 's', ic: 'target-arrow', ey, q: Q[3], big: `+${eur(L.ann, 0)}${jgT('mo')}`, sub: `${jgT('rr')}: ${pc(L.rr0)} ${jgT('wo')} → ${pc(L.rr1)} ${jgT('wi')}`,
+  if (L.pen != null && L.ann != null) out.push(jgCard({ xf: 'download', sz: 's', ic: 'target-arrow', ey, q: Q[3], big: `+${eur(L.ann, 0)}${jgT('mo')}`, sub: `${jgT('rr')}: ${pc(L.rr0)} ${jgT('wo')} → ${pc(L.rr1)} ${jgT('wi')}`,
     info: `${t.kAnn}; ${t.kState(SIM.penY)}; ${t.kTotal}: ${eur(L.tot, 0)}${jgT('mo')}.`,
     vis: jgBars([[t.kState(SIM.penY), 'var(--s1)', L.pen, eur(L.pen, 0)], [t.kAnn, 'var(--accent)', L.ann, '+' + eur(L.ann, 0)], [t.kTotal, 'var(--s4)', L.tot, eur(L.tot, 0)]]) }));
   return out.join('');

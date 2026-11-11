@@ -2497,7 +2497,7 @@ const ecIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hid
 const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01), hi = rows.some(r => r[4]);   // r[4] – paryškinta eilutė (kitaip – pirma)
   return `<div class="hgbars">${rows.map(([n, col, v, tx, h], i) => `<div class="r${(hi ? h : !i) ? ' top' : ''}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
 const ecCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
-  <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button>${o.xt ? `<button type="button" class="btn ico" data-jg="xl" data-xt="${o.xt}" title="${ecT('xl')}" aria-label="Excel">X</button>` : ''}<button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button></span></header>
+  <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="xl"${o.xt ? ` data-xt="${o.xt}"` : ''}${o.xf ? ` data-xf="${o.xf}"` : ''} title="${ecT('xl')}" aria-label="Excel">X</button><button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button></span></header>
   <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
 /* Analitiniuose puslapiuose kortelės neturi trukdyti įrankiams (savininkas 2026-11-11): mygtukas „Suskleisti korteles“ – viena eilutė su dideliais skaičiais; būsena įsimenama visiems puslapiams */
 const ECF = { f: { lt: 'Suskleisti korteles', en: 'Collapse cards', lv: 'Sakļaut kartītes', et: 'Ahenda kaardid' }, u: { lt: 'Išskleisti korteles', en: 'Expand cards', lv: 'Izvērst kartītes', et: 'Laienda kaardid' } };
@@ -2509,11 +2509,28 @@ function ecFold(el) {
   el.dataset.fold = '1'; bar.hidden = !el.children.length;
   bar.firstChild.textContent = (on ? '▾ ' : '▴ ') + (ECF[on ? 'u' : 'f'][ulang] || ECF[on ? 'u' : 'f'].en);
 }
+/* Kortelės be atskiros lentelės Excel: klausimas, atsakymas, paaiškinimas ir grafiko eilutės (mėlyni – svetainės pradiniai skaičiai), suma ir dalys – formulės */
+async function ecXl(card) {
+  const L = lang === 'lt', tx = q => { const n = card.querySelector(q); return n ? n.textContent.trim() : ''; }, wb = XL.book();
+  const rows = [[{ v: tx('.hgq'), s: 'title' }], [{ v: tx('.hgb'), s: 'b' }], [{ v: tx('.hgs'), s: 'sub' }], [{ v: tx('.hginfo'), s: 'note' }], [],
+    [{ v: L ? 'Eilutė' : 'Row', s: 'hdr' }, { v: L ? 'Reikšmė' : 'Value', s: 'hdr' }, { v: L ? 'Dalis nuo sumos' : 'Share of total', s: 'hdr' }]];
+  const br = [...card.querySelectorAll('.hgbars .r')].map(r => [r.querySelector('.n') ? r.querySelector('.n').textContent.trim() : '', r.querySelector('b') ? r.querySelector('b').textContent.trim() : '']);
+  if (!br.length) card.querySelectorAll('.hgv li, .fgle span').forEach(x => br.push([x.textContent.trim(), '']));
+  const r0 = rows.length + 1, r1 = r0 + br.length - 1;
+  const cv = br.map(([, v]) => { const c = xlCellOf(v); return c && typeof c === 'object' ? c : { v: c }; }), tot = cv.reduce((a, o) => a + (typeof o.v === 'number' ? o.v : 0), 0);
+  br.forEach(([n], i) => { const o = cv[i]; rows.push([{ v: n, s: 'b' }, { ...o, s: 'in' }, br.length > 1 && typeof o.v === 'number' && tot ? { t: 'n', f: `B${r0 + i}/SUM($B$${r0}:$B$${r1})`, v: o.v / tot, z: '0.0%', s: 'calc' } : null]); });
+  if (br.length > 1) rows.push([{ v: L ? 'Suma' : 'Total', s: 'sum' }, { t: 'n', f: `SUM(B${r0}:B${r1})`, v: tot, z: (cv[0] && cv[0].z) || undefined, s: 'sum' }]);
+  rows.push([], [{ v: L ? 'Mėlyni skaičiai – svetainės pradiniai duomenys (šaltinis nurodytas paaiškinime ir puslapyje); juodi – Excel formulės.' : 'Blue numbers – the site’s source figures (source in the explanation and on the page); black – Excel formulas.', s: 'note' }],
+    [{ v: location.href, l: location.href, s: 'link' }]);
+  XL.sheet(wb, L ? 'Kortelė' : 'Card', rows, { cols: [44, 18, 16] });
+  await XL.save(wb, `${tx('.hgq').replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 50)}_${iso(Math.floor(Date.now() / DAY))}.xlsx`);
+}
 /* Edge kortelių įrankiai puslapiuose be home.js (journey, apie): data-jg = cp / png / i */
 document.addEventListener('click', async e => {
   const b = e.target.closest('.hgc [data-jg]'); if (!b) return; const card = b.closest('.hgc'), a = b.dataset.jg;
   if (a === 'i') { const p = card.querySelector('.hginfo'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', !p.hidden); return; }
-  if (a === 'xl') { const tb = document.getElementById(b.dataset.xt); if (!tb) return; b.disabled = true; try { await tableBook(tb); } finally { b.disabled = false; } return; }
+  if (a === 'xl') { b.disabled = true; try { const tb = b.dataset.xt && document.getElementById(b.dataset.xt), fn = b.dataset.xf && window[b.dataset.xf];
+      if (tb) await tableBook(tb); else if (typeof fn === 'function') await fn(); else await ecXl(card); } catch (x) { console.warn(x); } finally { b.disabled = false; } return; }
   if (a === 'cp') { const txt = [card.querySelector('.ey'), card.querySelector('.hgq'), card.querySelector('.hgb'), card.querySelector('.hgs')].filter(Boolean).map(n => n.textContent.trim()).join(' – ');
     try { await navigator.clipboard.writeText(txt); b.textContent = '✓'; setTimeout(() => { b.textContent = '⧉'; }, 1500); } catch (x) { prompt('', txt); } return; }
   if (a === 'png') { const box = card.querySelector('.hgv'); try { savePng(await chartPng(box), box); } catch (x) {} }
