@@ -1352,7 +1352,7 @@ function miniSvg(ch) {
 function miniOf(f, box) { let x = null; try { x = exDefault(f, box, false); } catch (e) { return ''; } if (!x || !x.r.ch) return '';
   const g = miniSvg(x.r.ch); return g ? `<div class="fmini">${g}<span>${hEsc(x.r.title)}</span></div>` : ''; }
 /* skaičiai su vienetais paryškinami (greitam peržvelgimui); tekstas kopijuojamas be žymų */
-const boldNums = s => hEsc(s).replace(/(?<![(\d,.  −])−?\d[\d  .,]*(?:\s?(?:%|p\. p\.|pp|mlrd\. €|mln\. €|bn €|m €|€|karto))(?![\w])/g, m => `<b>${m}</b>`);
+const boldNums = s => hEsc(s).replace(/(?<![(\d,.\u00a0\u202f\u2212]|\d[ \u00a0\u202f])−?\d[\d \u00a0\u202f.,]*(?:\s?(?:%|p\. p\.|pp|mlrd\. €|mln\. €|bn €|m €|€|karto))(?![\w])/g, m => `<b>${m}</b>`);
 const FU = { view: matchMedia('(max-width: 640px)').matches ? 'list' : 'cards', f: {} };
 try { Object.assign(FU, JSON.parse(localStorage.getItem('factUi') || '{}')); } catch (e) {}
 const fuSave = () => { try { localStorage.setItem('factUi', JSON.stringify(FU)); } catch (e) {} };
@@ -1371,11 +1371,40 @@ function factTool(el) {
   arts.forEach((a, i) => { const f = fs[i]; if (!f) return; const ok = !cur || (cur === '*' ? f._hot : f._tp === cur); a.hidden = !ok; if (ok) shown++; a.style.order = cur === '*' && f._hot ? String(-Math.round(f._hot.s * 10)) : ''; });
   let na = el.querySelector(':scope > p.na'); if (!shown) { if (!na) { na = document.createElement('p'); na.className = 'na'; el.append(na); } na.textContent = U.none; } else if (na) na.remove();
 }
+/* Edge stiliaus faktų kortelės (savininkas 2026-11-11: „Rinkos faktus perdaryti taip pat“): temos ikona (Fluent UI System Icons, MIT),
+   didelis skaičius – pirmas sakinio skaičius su vienetu (tas pats tekstas, kuris kopijuojamas – jokio naujo skaičiavimo), po juo mini grafikas ir sakinys */
+const FACT_IC = { ret: 'arrow-trending', nav: 'savings', part: 'people', risk: 'gauge', life: 'money-hand', mgr: 'building-bank', p3: 'chart-multiple', fee: 'book-coins', other: 'info' };
+const FACT_NUM = /(?<![(\d,.\u00a0\u202f\u2212]|\d[ \u00a0\u202f])[−+]?\d[\d \u00a0\u202f.,]*(?:\s?(?:%|p\. p\.|pp|mlrd\. €|mln\. €|bn €|m €|€|karto|times|reizes|korda))(?![\w])|(?<![\d,.\u00a0\u202f])\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?![\d,])/;
+// Didelis skaičius kortelėje – sakinio atsakymas, ne pavyzdžio įvestis: praleidžiami iliustraciniai 1 000 € / 100 € / 100 %, ribos („daugiau nei 50 %“),
+// „nuo X iki Y“ rodoma kaip intervalas, „sumažėjo 849,9 mln. €“ – su minusu, „28 iš 48“ – kaip santykis; kur skaičius vienas neatsako (kelių valdytojų sąrašai) – nerodomas.
+const FACT_OF = /\b\d+ (?:iš|of) \d+\b/g, FACT_ILL = new Set(['1 000 €', '100 €', '100 %', '1\u00a0000 €', '100\u00a0€', '100\u00a0%']);
+function factBig(f) {
+  const t = T(), F = t.f || {}, P = t.pv || {}, P3 = t.p23 || {};
+  if ([F.chgH, P3.aH].includes(f.h)) return '';
+  let s = f.text || '';
+  if (f.h === P.dblH) s = s.replace(/^[^.]*\.\s*/, '');           // pirmas sakinys – „100 % grąža reiškia…“ pavyzdys
+  const re = new RegExp(FACT_NUM.source + (lang === 'en' ? '|(?<![\\d.,])\\d{1,3}(?:,\\d{3})+(?![\\d,]|\\.\\d)' : ''), 'g'), cand = [];
+  for (let m; (m = re.exec(s));) cand.push({ i: m.index, v: m[0].trim(), u: 1 });
+  for (let m; (m = FACT_OF.exec(s));) cand.push({ i: m.index, v: m[0] });
+  cand.sort((a, b) => a.i - b.i);
+  for (const c of cand) {
+    const pre = s.slice(Math.max(0, c.i - 60), c.i), post = s.slice(c.i + c.v.length);
+    if (c.u && FACT_ILL.has(c.v.replace(/[\u202f]/g, ' '))) continue;
+    if (/(daugiau nei|mažiau nei|virš|more than|less than|over)\s*$/i.test(pre)) continue;
+    let v = c.v;
+    const r = c.u && /(?:^|\s)(nuo|from)\s*$/i.test(pre) && new RegExp('^\\s*(?:\\([^)]*\\)\\s*)?(?:iki|to)\\s+(' + FACT_NUM.source + ')').exec(post);
+    if (r) { const b = r[1].trim(), u = (b.match(/[^\d\s\u00a0\u202f.,−+]+.*$/) || [''])[0], a = u && v.endsWith(u) ? v.slice(0, -u.length).trim() : v;
+      v = `${a}–${b}`; }
+    else if (c.u && !/^[−+]/.test(v) && (/(sumažėj|nukrit|decreas|fell|drop|shrank|loss(?:es)? of(?: about)?)[^.\d]{0,12}$/i.test(pre) || /(kritimas|fall|drawdown)\b[^.\d]{0,40}$/i.test(pre) || /^\s*(?:investicinių\s+)?(nuostol|of investment loss|loss)/i.test(post))) v = '−' + v;
+    return `<div class="fbig">${hEsc(v)}</div>`;
+  }
+  return '';
+}
 function factCards(el, fs, title, pl) {
   const t = T(), U = t.fu; el._facts = fs; el.dataset.title = title; el.dataset.pl = pl;
   fs.forEach(f => { f._tp = topicOf(f); f._hot = hotOf(f, el); });
-  el.innerHTML = fs.map((f, i) => `<article class="fact${f.hl ? ' hl' : ''}${f._hot ? ' hot' : ''}" data-tp="${f._tp}"><div class="ftop"><span class="ftp">${U.tp[f._tp].toLowerCase() === f.h.toLowerCase() ? '' : hEsc(U.tp[f._tp])}</span>${f._hot ? `<span class="fhot" title="${hEsc(U.tip)}">★ ${hEsc(f._hot.l)}</span>` : ''}</div>`
-    + `<span class="fh">${hEsc(f.h)}</span>${miniOf(f, el)}<p>${boldNums(f.text)}</p><details class="fsrc"><summary>${U.src}</summary><small>${hEsc(f.src)} ${t.how} ${hEsc(f.calc)}</small></details>`
+  el.innerHTML = fs.map((f, i) => `<article class="fact${f.hl ? ' hl' : ''}${f._hot ? ' hot' : ''}" data-tp="${f._tp}"><div class="ftop"><span class="fic" style="--ic:url(img/ic/${FACT_IC[f._tp] || 'info'}.svg)" aria-hidden="true"></span><span class="ftp">${U.tp[f._tp].toLowerCase() === f.h.toLowerCase() ? '' : hEsc(U.tp[f._tp])}</span>${f._hot ? `<span class="fhot" title="${hEsc(U.tip)}">★ ${hEsc(f._hot.l)}</span>` : ''}</div>`
+    + `<span class="fh">${hEsc(f.h)}</span>${factBig(f)}${miniOf(f, el)}<p>${boldNums(f.text)}</p><details class="fsrc"><summary>${U.src}</summary><small>${hEsc(f.src)} ${t.how} ${hEsc(f.calc)}</small></details>`
     + `<details class="fmore" data-i="${i}"><summary>${t.fmore}</summary><div class="fxb"></div></details><div class="fbtn"><button type="button" class="btn" data-fact="${i}">${t.copy}</button><button type="button" class="btn xl" data-fx="${i}" title="${t.tXl}">${t.fx.xl}</button></div></article>`).join('');
   factTool(el);
 }

@@ -1085,3 +1085,20 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hgc.ph .hgdet table { color: #fff; } .hgc.ph .hgdet th, .hgc.ph .hgdet td { border-color: rgba(255, 255, 255, .2); color: #fff; }
 .hgc.ph.open { background-size: cover; } .hgc.ph .hgpar { color: #fff; }
 .hgdet td:first-child, .hgdet th:first-child { text-align: left; } .hgdet .ttools, .hgdet .chd { display: none; }
+
+/* ---------- Rinkos faktai: Edge stiliaus faktų kortelės (2026-11-11, mkt.js factCards) ---------- */
+.facts { grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)) !important; grid-auto-flow: row dense; gap: 16px !important; }
+.facts > .fact { border-radius: 18px; padding: 16px 18px 14px; gap: 6px; background: var(--card); box-shadow: 0 1px 2px rgba(60, 40, 20, .05), 0 6px 22px rgba(60, 40, 20, .06); transition: transform .18s ease, box-shadow .18s ease; }
+.facts > .fact:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(60, 40, 20, .06), 0 14px 34px rgba(60, 40, 20, .10); }
+@media (min-width: 900px) { .facts > .fact.hot { grid-column: span 2; } }
+.facts > .fact .ftop { justify-content: flex-start; gap: 8px; }
+.facts > .fact .ftop .fhot { margin-left: auto; }
+.facts > .fact .ftp { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--text-2); }
+.fic { width: 30px; height: 30px; flex: none; border-radius: 9px; background: color-mix(in srgb, var(--accent) 13%, transparent); position: relative; }
+.fic::after { content: ''; position: absolute; inset: 6px; background: var(--accent); -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+.facts > .fact .fh { font-size: 16px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--text); margin-top: 2px; }
+.fbig { font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--text); }
+.facts > .fact p { font-size: 13.5px; color: var(--text-2); }
+.facts > .fact p b { color: var(--text); }
+.facts > .fact .fmini { order: 0; }
+.facts.flist > .fact .fbig { display: none; }
