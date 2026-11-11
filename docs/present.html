@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Pristatymas</title>
+<link rel="stylesheet" href="style.css?v=6533f831">
+<style>
+  /* Pristatymas (savininkas 2026-11-11): skaidrė = tikras svetainės puslapis (?embed=1) + komentarai; rodyklė, piešimas, prožektorius */
+  html, body { height: 100%; }
+  body.ps-body { margin: 0; padding: 0 !important; overflow: hidden; background: var(--surface); color: var(--text); }
+  .ps { display: grid; grid-template-rows: auto 1fr auto; height: 100vh; }
+  .ps-top { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--card); min-width: 0; }
+  .ps-top .brand { display: flex; align-items: center; gap: 8px; font-weight: 650; white-space: nowrap; color: var(--text); text-decoration: none; }
+  .ps-top .ttl { flex: 1; min-width: 0; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ps-top .seg2 { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .ps-top .seg2 button { font: inherit; font-size: 13px; border: 0; background: none; color: var(--text-2); padding: 4px 10px; cursor: pointer; }
+  .ps-top .seg2 button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+  .ps-tool { font: inherit; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); background: var(--card); color: var(--text-2);
+    border-radius: 8px; padding: 4px 9px; cursor: pointer; white-space: nowrap; }
+  .ps-tool:hover { background: var(--hover); color: var(--text); }
+  .ps-tool[aria-pressed="true"] { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .ps-tool kbd { font: 11px/1 inherit; color: var(--text-3); border: 1px solid var(--line); border-radius: 4px; padding: 2px 4px; }
+  .ps-top select { font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); padding: 3px 6px; }
+  .ps-cnt { font-variant-numeric: tabular-nums; color: var(--text-3); font-size: 13px; white-space: nowrap; }
+  .ps-main { display: grid; grid-template-columns: 1fr var(--nw, 360px); min-height: 0; }
+  .ps.nonotes .ps-main { --nw: 0px; }
+  .ps.nonotes .ps-notes { display: none; }
+  .ps-stage { position: relative; overflow: hidden; background: var(--surface); }
+  .ps-stage iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: var(--surface); visibility: hidden; }
+  .ps-stage iframe.on { visibility: visible; }
+  .ps-load { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-3); font-size: 14px; pointer-events: none; }
+  .ps-ink { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+  .ps-stage.tool .ps-ink { pointer-events: auto; }
+  .ps-stage.t-laser .ps-ink, .ps-stage.t-spot .ps-ink { cursor: none; }
+  .ps-stage.t-pen .ps-ink { cursor: crosshair; }
+  .ps-spot { position: absolute; inset: 0; z-index: 4; pointer-events: none; display: none; }
+  .ps-stage.t-spot .ps-spot { display: block; }
+  .ps-black { position: absolute; inset: 0; z-index: 8; background: #000; display: none; }
+  .ps-black.on { display: block; }
+  .ps-notes { border-left: 1px solid var(--line); background: var(--card); padding: 22px 22px 18px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+  .ps-notes .eb { font-size: 11.5px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .ps-notes h2 { margin: 0; font-size: 26px; line-height: 1.2; font-family: "Source Serif 4", Georgia, serif; font-weight: 600; }
+  .ps-notes ul { margin: 0; padding-left: 20px; display: grid; gap: 9px; font-size: 16px; line-height: 1.45; color: var(--text); }
+  .ps-notes .why { margin-top: 4px; border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 14.5px; line-height: 1.45; color: var(--text-2); }
+  .ps-notes .why b { color: var(--text); display: block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+  .ps-notes .cnote { font-size: 13px; color: var(--text-3); }
+  .ps-notes .open { margin-top: auto; font-size: 13px; color: var(--text-3); }
+  .ps-notes .open a { color: var(--accent); }
+  .ps-bar { display: flex; gap: 3px; padding: 6px 14px 8px; background: var(--card); border-top: 1px solid var(--line); }
+  .ps-bar button { flex: 1; height: 7px; border: 0; padding: 0; border-radius: 4px; background: var(--line); cursor: pointer; }
+  .ps-bar button.done { background: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+  .ps-bar button.cur { background: var(--accent); }
+  /* teksto skaidrės (įžanga, pabaiga, šalies duomenų nėra) */
+  .ps-text { position: absolute; inset: 0; overflow: auto; padding: 6vh 6vw; display: none; }
+  .ps-text.on { display: block; }
+  .ps-text h1 { font-family: "Source Serif 4", Georgia, serif; font-size: clamp(30px, 4vw, 54px); line-height: 1.1; margin: 0 0 10px; font-weight: 600; }
+  .ps-text .sub { font-size: 18px; color: var(--text-2); margin: 0 0 28px; }
+  .ps-agenda { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .ps-agenda button { text-align: left; font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 12px; padding: 12px 14px; cursor: pointer; }
+  .ps-agenda button:hover { background: var(--hover); }
+  .ps-agenda button b { display: block; font-size: 15px; } .ps-agenda button span { font-size: 13px; color: var(--text-3); }
+  .ps-pill { display: inline-block; font-size: 12px; color: var(--text-3); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; margin: 0 6px 6px 0; }
+  .ps-na { max-width: 720px; margin: 10vh auto; border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 22px 24px; font-size: 16px; line-height: 1.5; }
+  /* tinklelis (G) ir pagalba (?) */
+  .ps-ov { position: fixed; inset: 0; z-index: 40; background: color-mix(in srgb, var(--surface) 96%, transparent); overflow: auto; padding: 28px 4vw; display: none; }
+  .ps-ov.on { display: block; }
+  .ps-ov h3 { margin: 0 0 14px; }
+  .ps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+  .ps-grid button { text-align: left; font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+  .ps-grid button:hover { background: var(--hover); }
+  .ps-grid button.cur { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .ps-grid i { font-style: normal; font-size: 12px; color: var(--text-3); display: block; }
+  .ps-keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; max-width: 620px; font-size: 15px; }
+  .ps-keys kbd { font: 13px/1.4 inherit; border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--card); white-space: nowrap; }
+  .ps-toast { position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 50; background: var(--text); color: var(--surface); padding: 7px 14px; border-radius: 999px; font-size: 13.5px; opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .ps-toast.on { opacity: .92; }
+  @media (max-width: 1000px) { .ps-main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; } .ps-notes { border-left: 0; border-top: 1px solid var(--line); max-height: 34vh; } .ps-top .hidem { display: none; } }
+</style>
+</head>
+<body class="ps-body">
+<div class="ps" id="ps">
+  <div class="ps-top">
+    <a class="brand" href="index.html" id="psHome"><img src="favicon.svg" width="24" height="24" alt=""><span id="psBrand"></span></a>
+    <span class="ttl" id="psTtl"></span>
+    <span class="seg2" id="psCtry" role="group"></span>
+    <select id="psLang" aria-label="Kalba"></select>
+    <button class="ps-tool hidem" type="button" data-t="laser"></button>
+    <button class="ps-tool hidem" type="button" data-t="pen"></button>
+    <button class="ps-tool hidem" type="button" data-t="spot"></button>
+    <button class="ps-tool hidem" type="button" data-a="notes"></button>
+    <button class="ps-tool" type="button" data-a="grid"></button>
+    <button class="ps-tool" type="button" data-a="full"></button>
+    <button class="ps-tool hidem" type="button" data-a="help">?</button>
+    <button class="ps-tool" type="button" data-a="prev" aria-label="←">←</button>
+    <span class="ps-cnt" id="psCnt"></span>
+    <button class="ps-tool" type="button" data-a="next" aria-label="→">→</button>
+  </div>
+  <div class="ps-main">
+    <div class="ps-stage" id="psStage">
+      <div class="ps-load" id="psLoad"></div>
+      <div class="ps-text" id="psText"></div>
+      <div class="ps-spot" id="psSpot"></div>
+      <canvas class="ps-ink" id="psInk"></canvas>
+      <div class="ps-black" id="psBlack"></div>
+    </div>
+    <aside class="ps-notes" id="psNotes" aria-live="polite"></aside>
+  </div>
+  <div class="ps-bar" id="psBar"></div>
+</div>
+<div class="ps-ov" id="psGrid"></div>
+<div class="ps-ov" id="psHelp"></div>
+<div class="ps-toast" id="psToast"></div>
+<script src="common.js?v=9144d07e"></script>
+<script src="present.js?v=c9e7335a"></script>
+</body>
+</html>

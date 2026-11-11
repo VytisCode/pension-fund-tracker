@@ -155,6 +155,10 @@ const isDarkUI = () => { const t = document.documentElement.dataset.theme; retur
 document.documentElement.dataset.design = 'v2';   // vienintelis dizainas (savininkas 2026-11-10: bandomojo jungiklio ir senojo dizaino nereikia)
 try { localStorage.removeItem('design'); } catch (e) {}
 document.documentElement.dataset.pl = document.documentElement.dataset.pd = 'w';   // šilta v2 paletė (style.css)
+/* Pristatymas (savininkas 2026-11-11, present.html + present.js): ?embed=1 – puslapis be meniu, antraštės, nuotraukos ir poraštės,
+   tiesiai nurodytame skirtuke; taip pristatymo skaidrė rodo tikrą, šios dienos puslapį (nieko nedubliuojant). Stiliai – style.css [data-embed]. */
+const EMBED = /[?&]embed=1(&|$)/.test(location.search);
+if (EMBED) document.documentElement.dataset.embed = '1';
 
 /* „Atnaujinti duomenis“ mygtukas rodomas tik savininko naršyklėje: įjungiama vieną kartą atidarius bet kurį puslapį su ?owner=1
    (išjungiama ?owner=0). Tai tik paslėpimas, ne apsauga: paleisti atnaujinimą GitHub'e vis tiek gali tik savininkas. */
@@ -238,7 +242,7 @@ function renderHeader(active, onLang) {
     <div class="srch"><svg class="qico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" autocomplete="off" aria-expanded="false" aria-controls="qPanel"><kbd>/</kbd><div class="qpanel" id="qPanel" hidden></div></div>
     <div class="top-tools"><div class="tmwrap"><button class="btn" type="button" id="tmBtn" aria-expanded="false" aria-haspopup="true"></button>
       <div class="tmpanel" id="tmPanel" hidden><div class="tm-acts" id="tmActs"></div>
-        <a class="btn" id="opsLink" href="ops.html"></a>
+        <a class="btn" id="opsLink" href="ops.html"></a><a class="btn" id="presLink" href="present.html"></a>
         <a class="btn" id="refresh" hidden href="https://github.com/VytisCode/pension-fund-tracker/actions/workflows/update.yml" target="_blank" rel="noopener">↻ <span></span></a>
         <div class="dlwrap"><button class="btn" type="button" id="dlBtn" aria-expanded="false"></button><div class="dlpanel" id="dlPanel" hidden></div></div></div></div>
       <select class="btn ico langsel" id="lang">${ULANGS.map(l => `<option value="${l}">${l.toUpperCase()}</option>`).join('')}</select><button class="btn ico" type="button" id="theme"></button></div></div>
@@ -303,7 +307,7 @@ function renderHeader(active, onLang) {
       const sh = document.getElementById('secName'); if (sh) sh.innerHTML = `${sn}${pn && pn !== sn && cs.pages.length > 1 ? ` <small>${pn}</small>` : ''}`;
       const sd = document.getElementById('secDesc'); if (sd && cs) sd.textContent = t.secDesc[cs.id] || '';
       document.getElementById('crumb').innerHTML = sn ? `<span>${sn}</span>${pn && pn !== sn && cs.pages.length > 1 ? `<span>${pn}</span>` : ''}` : ''; }
-    document.getElementById('opsLink').textContent = '🗓 ' + t.navOps;
+    document.getElementById('opsLink').textContent = '🗓 ' + t.navOps; { const pl = document.getElementById('presLink'); if (pl) { pl.textContent = '▶ ' + ({ lt: 'Pristatymas', en: 'Presentation', lv: 'Prezentācija', et: 'Esitlus' }[ulang] || 'Presentation'); pl.href = 'present.html' + (PCTRY && PCTRY !== 'LT' ? '#c=' + PCTRY : ''); } }
     const rb = document.getElementById('refresh'); rb.title = t.refreshTip; rb.querySelector('span').textContent = t.refresh; rb.hidden = !isOwner();
     const lb = document.getElementById('lang');
     lb.value = ulang; lb.title = t.langLbl; lb.setAttribute('aria-label', t.langLbl);

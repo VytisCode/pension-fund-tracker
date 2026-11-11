@@ -164,6 +164,14 @@ def main() -> None:
         v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]
         text = text.replace(f'src="{n}"', f'src="{n}?v={v}"').replace(f'href="{n}"', f'href="{n}?v={v}"')
     (DOCS / "how.html").write_text(text, encoding="utf-8")
+    # Pristatymas (savininkas 2026-11-11): skaidrės = tikri puslapiai rėmelyje (?embed=1) + komentarai – site/present.html + present.js
+    for n in ("present.html", "present.js"):
+        shutil.copyfile(SITE / n, DOCS / n)
+    text = (DOCS / "present.html").read_text(encoding="utf-8")
+    for n in ("style.css", "common.js", "present.js"):
+        v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]
+        text = text.replace(f'src="{n}"', f'src="{n}?v={v}"').replace(f'href="{n}"', f'href="{n}?v={v}"')
+    (DOCS / "present.html").write_text(text, encoding="utf-8")
     text = (DOCS / "ops.html").read_text(encoding="utf-8")
     for n in ("style.css", "common.js", "data_ops.js", "ops.js"):
         v = ver.get(n) or hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8]

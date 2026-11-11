@@ -993,3 +993,9 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
   table.ldt td.l, table.ldt td.l b, table.ldt td.l small { white-space: normal; overflow-wrap: anywhere; }
   table.ldt small { display: block; margin-left: 17px; }
 }
+
+/* Pristatymas (2026-11-11): puslapis skaidrėje (?embed=1) – be meniu, antraštės, nuotraukos ir poraštės */
+[data-embed] #top, [data-embed] .side, [data-embed] .side-scrim, [data-embed] .snav, [data-embed] .sechero:not(.has-kpi), [data-embed] body:not([data-ptab="td"]) .sechero, [data-embed] .sechero .shtx, [data-embed] .pagebg,
+[data-embed] .ntcbar, [data-embed] footer, [data-embed] .printhead, [data-embed] .menu-btn { display: none !important; }
+[data-embed] body { padding-left: 0 !important; padding-top: 0 !important; }
+[data-embed] .wrap { max-width: none; padding: 16px 22px 40px; }

@@ -49,6 +49,7 @@ CHECKS = {
     "ops.html": [],
     "how.html": [(".nd", 25)],
     "apie.html": [],
+    "present.html": [("#psBar button", 15)],
 }
 
 LANG_PAGES = ["index.html", "index_lv.html", "baltic_lv.html", "manager_ee.html", "review_lv.html"]
@@ -62,6 +63,38 @@ def serve():
     srv = socketserver.TCPServer(("127.0.0.1", 0), handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return srv
+
+
+def check_slides(browser, base: str) -> list:
+    """Pristatymas (present.js SLIDES): kiekvienos skaidrės puslapis turi atsidaryti be JS klaidų ir turėti nurodytą skirtuką –
+    taip sužinome, jei pakeitus puslapį skaidrė nebetiktų (LT, nes komentarai rašyti pagal LT puslapius)."""
+    out = []
+    pg = browser.new_page(viewport={"width": 1300, "height": 900})
+    try:
+        pg.goto(base + "present.html", wait_until="load", timeout=60000)
+        slides = pg.evaluate("SLIDES.filter(s => !s.text).map(s => [s.id, slideUrl(s, 'LT')])")
+    except Exception as e:  # noqa: BLE001
+        pg.close()
+        return [f"present.html: skaidrių sąrašas neperskaitytas ({e.__class__.__name__})"]
+    pg.close()
+    for sid, url in slides:
+        if not url:
+            out.append(f"pristatymas {sid}: nėra puslapio")
+            continue
+        tab = dict(x.split("=", 1) for x in url.split("#", 1)[1].split("&") if "=" in x).get("tab") if "#" in url else None
+        pg = browser.new_page(viewport={"width": 1300, "height": 900})
+        errs = []
+        pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)[:120]))
+        try:
+            pg.goto(base + url, wait_until="load", timeout=60000)
+            pg.wait_for_timeout(1200)
+            if tab and not pg.locator(f'[data-tab="{tab}"]').count():
+                out.append(f"pristatymas {sid}: puslapyje nebėra skirtuko „{tab}“ (pataisyti site/present.js SLIDES)")
+        except Exception as e:  # noqa: BLE001
+            out.append(f"pristatymas {sid}: neatsidarė ({e.__class__.__name__})")
+        out += [f"pristatymas {sid}: JS klaida – {x}" for x in errs[:2]]
+        pg.close()
+    return out
 
 
 def main() -> int:
@@ -108,6 +141,7 @@ def main() -> int:
                     problems.append(f"{page_name_l}: neatsidarė ({e.__class__.__name__})")
                 problems += [f"{page_name_l}: JS klaida – {x}" for x in errs[:3]]
                 pg.close()
+            problems += check_slides(browser, base)
             browser.close()
     finally:
         srv.shutdown()
