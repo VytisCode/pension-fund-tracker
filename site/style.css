@@ -1144,3 +1144,12 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .fg.ph .hgh .fhot { background: rgba(255, 255, 255, .22); color: #fff; }
 .fgle { display: flex; justify-content: space-between; margin-top: 4px; font-size: 12px; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .fgle b { margin-left: 6px; color: var(--text); font-weight: 600; } .fg.ph .fgle, .fg.ph .fgle b { color: #fff; }
+.fg.s .hgbars .r { grid-template-columns: minmax(0, 1fr) auto; row-gap: 3px; } .fg.s .hgbars .n { grid-column: 1 / -1; white-space: normal; overflow: visible; }
+.fg.s .hgbars .t { grid-column: 1; }
+.hgb.sm { font-size: 26px; }
+.hwsrc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; font-size: 13px; }
+.hwsrc li { padding-left: 14px; position: relative; } .hwsrc li::before { content: ''; position: absolute; left: 0; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .7; }
+.hwday { margin-top: 6px; } .hwday .ln { position: relative; height: 22px; border-radius: 6px; background: var(--hover); }
+.hwday .ln i { position: absolute; top: 4px; bottom: 4px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--accent); }
+.hwday .ax { position: relative; height: 16px; font-size: 10.5px; color: var(--text-2); } .hwday .ax span { position: absolute; top: 2px; transform: translateX(-50%); }
+.hwday .ax span:first-child { transform: none; } .hwday .ax span:last-child { transform: translateX(-100%); }

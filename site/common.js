@@ -2487,3 +2487,12 @@ function pairBook(o) {
   add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
   return { sheets: XLSX_SHIM.toXL(wb), own: true };
 }
+
+/* Edge kortelių įrankiai puslapiuose be home.js (journey, apie): data-jg = cp / png / i */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('.hgc [data-jg]'); if (!b) return; const card = b.closest('.hgc'), a = b.dataset.jg;
+  if (a === 'i') { const p = card.querySelector('.hginfo'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', !p.hidden); return; }
+  if (a === 'cp') { const txt = [card.querySelector('.ey'), card.querySelector('.hgq'), card.querySelector('.hgb'), card.querySelector('.hgs')].filter(Boolean).map(n => n.textContent.trim()).join(' – ');
+    try { await navigator.clipboard.writeText(txt); b.textContent = '✓'; setTimeout(() => { b.textContent = '⧉'; }, 1500); } catch (x) { prompt('', txt); } return; }
+  if (a === 'png') { const box = card.querySelector('.hgv'); try { savePng(await chartPng(box), box); } catch (x) {} }
+});

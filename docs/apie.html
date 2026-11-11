@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
-<link rel="stylesheet" href="style.css?v=61946206">
+<link rel="stylesheet" href="style.css?v=929d514d">
 <style>
   .doc { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: 980px; }
   .toc { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
@@ -31,13 +31,14 @@
   <header id="top"></header>
   <main class="doc">
     <section class="card"><h2 id="h0"></h2><p id="lead"></p><nav class="toc" id="toc"></nav></section>
+    <div id="apCards" class="hg jg" style="margin:14px 0"></div>
     <div id="srcInv" style="margin:14px 0"></div>
     <div class="doc" id="secs"></div>
   <section class="card" id="ctryAvail" style="margin-top:16px"></section>
   </main>
   <footer id="foot"></footer>
 </div>
-<script src="common.js?v=2db6f783"></script>
+<script src="common.js?v=8a27db49"></script>
 <script src="data_src.js?v=deba5112"></script>
 <script src="methodology.js?v=00fec0fe"></script>
 <script>
@@ -57,8 +58,37 @@ function render() {
   $('secs').innerHTML = d.secs.map(s => { const l = lastOf(s); return `<section class="card" id="${s.id}"><h2>${s.h}</h2><dl><dt>${d.src}</dt><dd>${s.src}</dd><dt>${d.upd}</dt><dd>${s.upd}</dd>${l ? `<dt>${d.last}</dt><dd>${l}</dd>` : ''}<dt>${d.calc}</dt><dd>${s.calc}</dd><dt>${d.lim}</dt><dd><ul>${s.lim.map(x => `<li>${x}</li>`).join('')}</ul></dd></dl></section>`; }).join('')
     + `<section class="card" id="limits"><h2>${d.limits}</h2><ul>${d.limitsL.map(x => `<li>${x}</li>`).join('')}</ul></section>`
     + `<section class="card" id="glossary"><h2>${lang === 'lt' ? 'Žodynėlis' : 'Glossary'}</h2><p class="note">${lang === 'lt' ? 'Tie patys paaiškinimai rodomi užvedus pelę (telefone – palietus) ant punktyru pabrauktų lentelių stulpelių pavadinimų.' : 'The same explanations appear when hovering over (on a phone – tapping) the dotted-underlined column names in tables.'}</p><dl>${GLOSS.map(g => glossText(g)).sort((a, b) => a[0].localeCompare(b[0], T().locale)).map(([h, x]) => `<dt>${h}</dt><dd>${x}</dd>`).join('')}</dl></section>`;
-  renderInv();
+  renderInv(); renderApCards();
   if (location.hash) { const el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }
+}
+/* Edge stiliaus kortelės viršuje (savininkas 2026-11-11): tie patys SRCINV duomenys kaip lentelėje žemiau */
+const AP = {
+  q: { lt: ['Iš kur imami duomenys?', 'Kiek atnaujinama automatiškai?', 'Ar duomenys laiku?', 'Ko laukiame toliau?'], en: ['Where do the data come from?', 'How much is updated automatically?', 'Are the data on time?', 'What is expected next?'],
+    lv: ['No kurienes ņemti dati?', 'Cik atjaunina automātiski?', 'Vai dati ir laikā?', 'Ko gaidām tālāk?'], et: ['Kust andmed pärinevad?', 'Kui palju uuendatakse automaatselt?', 'Kas andmed on õigel ajal?', 'Mida oodata järgmisena?'] },
+  src: { lt: 'duomenų šaltiniai', en: 'data sources', lv: 'datu avoti', et: 'andmeallikat' }, of: { lt: 'iš', en: 'of', lv: 'no', et: '/' },
+  ok: { lt: 'Visi laiku', en: 'All on time', lv: 'Visi laikā', et: 'Kõik õigel ajal' }, late: { lt: 'vėluoja', en: 'late', lv: 'kavējas', et: 'hilineb' },
+  ey: { lt: 'Duomenys', en: 'Data', lv: 'Dati', et: 'Andmed' }, man: { lt: 'rankiniu būdu', en: 'manual', lv: 'manuāli', et: 'käsitsi' },
+  more: { lt: 'Visas sąrašas', en: 'Full list', lv: 'Pilns saraksts', et: 'Täielik nimekiri' },
+  cn: { lt: { LT: 'Lietuva', LV: 'Latvija', EE: 'Estija', X: 'Bendri' }, en: { LT: 'Lithuania', LV: 'Latvia', EE: 'Estonia', X: 'Shared' }, lv: { LT: 'Lietuva', LV: 'Latvija', EE: 'Igaunija', X: 'Kopīgi' }, et: { LT: 'Leedu', LV: 'Läti', EE: 'Eesti', X: 'Ühised' } },
+  cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, inf: { lt: 'Kaip skaičiuojama', en: 'How it is calculated', lv: 'Kā aprēķina', et: 'Kuidas arvutatakse' },
+};
+const apT = k => AP[k][ulang] || AP[k].en;
+function renderApCards() {
+  const el = document.getElementById('apCards'); if (!el || typeof SRCINV === 'undefined') return;
+  const lt = lang === 'lt', now = Math.floor(Date.now() / DAY), N = SRCINV.length, auto = SRCINV.filter(s => s.mode === 'auto'), late = SRCINV.filter(s => s.next != null && now > s.next);
+  const nm = s => lt ? s.lt : s.en, Q = AP.q[ulang] || AP.q.en, CN = AP.cn[ulang] || AP.cn.en;
+  const bars = rows => { const m = Math.max(...rows.map(r => r[2]), 1); return `<div class="hgbars">${rows.map(([n, c, v, tx], i) => `<div class="r${i ? '' : ' top'}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${v / m * 100}%;background:${c}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
+  const card = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}><header class="hgh"><span class="hgic" style="--ic:url(img/ic/${o.ic}.svg)" aria-hidden="true"></span><span class="ey">${apT('ey')}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${apT('cp')}" aria-label="${apT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="i" title="${apT('inf')}" aria-label="${apT('inf')}">i</button></span></header>`
+    + `<h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div><a class="hgm" href="#sources">${apT('more')} →</a></article>`;
+  const byC = ['LT', 'LV', 'EE', 'X'].map(c => [CN[c], SRCINV.filter(s => (s.c || 'LT') === c).length]).filter(x => x[1]);
+  const nxt = SRCINV.filter(s => s.next != null && now <= s.next).sort((a, b) => a.next - b.next).slice(0, 4);
+  el.innerHTML = card({ sz: 'l', img: 'sec2-rep.jpg', ic: 'globe', q: Q[0], big: String(N), sub: apT('src') + ': ' + byC.map(x => `${x[0]} ${x[1]}`).join(' · '), info: lt ? 'Kiekvienas šaltinis – viena eilutė lentelėje „Duomenų šaltiniai ir atnaujinimas“.' : 'Each source is one row of the table “Data sources and updates”.',
+      vis: bars(byC.map((x, i) => [x[0], ['#fff', 'rgba(255,255,255,.8)', 'rgba(255,255,255,.65)', 'rgba(255,255,255,.5)'][i], x[1], String(x[1])])) })
+    + card({ sz: 'w', ic: 'arrow-swap', q: Q[1], big: `${auto.length} ${apT('of')} ${N}`, sub: `${N - auto.length} – ${apT('man')}`, info: lt ? 'Automatiškai – surenka kasdienis paleidimas be žmogaus; rankiniu būdu – reikia įkelti failą.' : 'Automatic – collected by the daily run without a person; manual – a file has to be uploaded.',
+      vis: `<div class="fgw" role="img" aria-label="${auto.length}/${N}">${[...SRCINV].sort((a, b) => (b.mode === 'auto') - (a.mode === 'auto')).map(s => `<i${s.mode === 'auto' ? ' class="on"' : ''} title="${hEsc(nm(s))}"></i>`).join('')}</div>` })
+    + card({ sz: 's', ic: late.length ? 'arrow-trending-down' : 'target-arrow', q: Q[2], big: late.length ? `${late.length} ${apT('late')}` : apT('ok'), cls: late.length ? 'down' : 'up', sub: late.map(nm).slice(0, 3).join(', '), info: lt ? 'Vėluoja – laukiamų naujų duomenų data jau praėjo.' : 'Late – the expected date of new data has passed.', vis: `<div class="hgpr"><i style="width:${(N - late.length) / N * 100}%"></i></div><p class="hgs" style="margin-top:6px">${N - late.length} ${apT('of')} ${N}</p>` })
+    + card({ sz: 's', ic: 'calendar-ltr', q: Q[3], big: nxt[0] ? iso(nxt[0].next) : '–', cls: 'sm', sub: nxt[0] ? nm(nxt[0]) : '', info: lt ? 'Artimiausios laukiamų naujų duomenų datos.' : 'The nearest expected dates of new data.',
+      vis: nxt.length > 1 ? `<div class="fgle" style="flex-direction:column;gap:4px">${nxt.slice(1).map(s => `<span>${iso(s.next)}<b>${hEsc(nm(s))}</b></span>`).join('')}</div>` : '' });
 }
 /* Visų duomenų šaltinių sąrašas ir rankinio atnaujinimo tvarkaraštis (data_src.js, sudaro build_site.py iš sources_list.py) */
 function renderInv() {

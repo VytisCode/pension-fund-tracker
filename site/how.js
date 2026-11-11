@@ -107,13 +107,39 @@ function activeSet() {
   if (THR) return new Set(NODES.filter(n => n[3].split(' ').includes(THR)).map(n => n[0]));
   return null;
 }
+/* Edge stiliaus kortelės (savininkas 2026-11-11): tie patys keturi skaičiai kaip buvusiose plytelėse + diagrama su užrašais */
+const HW = {
+  q: { lt: ['Iš kiek šaltinių renkami duomenys?', 'Kas atlieka darbą?', 'Kiek tai kainuoja?', 'Kaip dažnai atnaujinama?'], en: ['How many sources feed the data?', 'Who does the work?', 'What does it cost?', 'How often is it updated?'],
+    lv: ['No cik avotiem vāc datus?', 'Kas veic darbu?', 'Cik tas maksā?', 'Cik bieži atjaunina?'], et: ['Mitmest allikast andmeid kogutakse?', 'Kes tööd teeb?', 'Kui palju see maksab?', 'Kui tihti uuendatakse?'] },
+  ey: { lt: 'Kaip tai veikia', en: 'How it works', lv: 'Kā tas darbojas', et: 'Kuidas see töötab' },
+  cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, inf: { lt: 'Paaiškinimas', en: 'Explanation', lv: 'Skaidrojums', et: 'Selgitus' },
+  mo: { lt: '/ mėn.', en: '/ month', lv: '/ mēn.', et: '/ kuus' }, day: { lt: 'per darbo dieną', en: 'per business day', lv: 'darba dienā', et: 'tööpäevas' },
+  of: { lt: 'iš', en: 'of', lv: 'no', et: '/' }, auto: { lt: 'žingsnių daro kodas be AI', en: 'steps done by code without AI', lv: 'soļus veic kods bez AI', et: 'sammu teeb kood ilma AI-ta' },
+};
+const hwT = k => HW[k][ulang] || HW[k].en;
+function howCards(nSrc, nCode, t) {
+  const l = L(), Q = HW.q[ulang] || HW.q.en, kc = { ext: '#7a6f64', code: 'var(--accent)', ai: 'var(--ai, #8a5cc2)', man: 'var(--warn, #c98a1b)', out: '#3c6fb0' };
+  const cnt = Object.keys(KINDS).map(k => [k, NODES.filter(n => n[2] === k).length]).filter(x => x[1]), mx = Math.max(...cnt.map(x => x[1]));
+  const bars = rows => `<div class="hgbars">${rows.map(([n, c, v, tx], i) => `<div class="r${i ? '' : ' top'}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${v / mx * 100}%;background:${c}"></i></span><b>${tx}</b></div>`).join('')}</div>`;
+  const card = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}><header class="hgh"><span class="hgic" style="--ic:url(img/ic/${o.ic}.svg)" aria-hidden="true"></span><span class="ey">${hwT('ey')}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${hwT('cp')}" aria-label="${hwT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="i" title="${hwT('inf')}" aria-label="${hwT('inf')}">i</button></span></header>`
+    + `<h3 class="hgq">${o.q}</h3><div class="hgb">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
+  const src = NODES.filter(n => n[1] === 0).map(n => l ? n[4] : n[6]);
+  // darbo dienos laiko juosta 0–24 val.: rytinis paleidimas ~6:40 ir kas 30 min. 13–19 val.
+  const runs = [6 + 40 / 60, ...Array.from({ length: 13 }, (_, i) => 13 + i / 2)], X = h => (h / 24 * 100).toFixed(2);
+  const day = `<div class="hwday"><div class="ln">${runs.map(h => `<i style="left:${X(h)}%"></i>`).join('')}</div><div class="ax">${[0, 6, 12, 18, 24].map(h => `<span style="left:${X(h)}%">${h}:00</span>`).join('')}</div></div>`;
+  return card({ sz: 'l', img: 'sec-home.jpg', ic: 'globe', q: Q[0], big: String(nSrc), sub: t('šaltinių grupių', 'source groups'), info: src.join(', ') + '.',
+      vis: `<ul class="hwsrc">${src.map(x => `<li>${hEsc(x)}</li>`).join('')}</ul>` })
+    + card({ sz: 'w', ic: 'people', q: Q[1], big: `${(cnt.find(x => x[0] === 'code') || [0, 0])[1]} ${hwT('of')} ${NODES.length}`, sub: `${hwT('auto')} · ${nCode} ${t('automatinių rinkiklių', 'automatic collectors')}`, info: t('Kiekvienas schemos žingsnis pagal tai, kas jį atlieka.', 'Each step of the diagram by who does it.'),
+      vis: bars(cnt.map(([k, n]) => [l ? KINDS[k][0] : KINDS[k][1], kc[k], n, String(n)])) })
+    + card({ sz: 's', ic: 'book-coins', q: Q[2], big: `~3,3 € ${hwT('mo')}`, sub: t('proxy + Claude Pro prenumerata', 'proxy + Claude Pro subscription'), info: t('Duomenų rinkimas, svetainė ir laiškai – nemokamos paslaugos; mokama tik už proxy (Luminor) ir Claude Pro.', 'Data collection, the site and e-mails use free services; only the proxy (Luminor) and Claude Pro are paid.'), vis: '' })
+    + card({ sz: 's', ic: 'calendar-ltr', q: Q[3], big: '~12×', sub: `${hwT('day')} · ${t('rytinis pasivijimas ~6:40, kas 30 min. 13–19 val.', 'morning catch-up ~6:40, every 30 min 13–19h')}`, info: t('Svetainė perkuriama tik pasikeitus duomenims.', 'The site is rebuilt only when data change.'), vis: day });
+}
 function render() {
   const l = L(), t = (lt, en) => l ? lt : en;
   $('lead').textContent = t('Šis puslapis parodo, kaip veikia visas įrankis: iš kur ateina kiekvienas skaičius, kas jį surenka ir apdoroja, kur dirba kodas be dirbtinio intelekto, kur – Claude (AI), o kur reikia žmogaus. Tinka pristatymui: spauskite korteles arba „Toliau“.',
     'This page shows how the whole tool works: where each number comes from, who collects and processes it, where code runs without AI, where Claude (AI) helps and where a human is needed. Made for presentations: click cards or “Next”.');
   const nSrc = NODES.filter(n => n[1] === 0).length, nCode = NODES.filter(n => n[2] === 'code' && n[1] === 1).length;
-  $('kpis').innerHTML = [[nSrc, t('šaltinių grupių', 'source groups')], [nCode, t('automatinių rinkiklių', 'automatic collectors')], ['~3,3 €', t('per mėn. proxy + Claude Pro prenumerata', 'a month for the proxy + Claude Pro subscription')], ['~12×', t('paleidimų per darbo dieną', 'runs per business day')]]
-    .map(([v, s]) => `<div class="k"><b>${v}</b><span>${s}</span></div>`).join('');
+  $('kpis').className = 'hg jg'; $('kpis').innerHTML = howCards(nSrc, nCode, t);
   $('hFlow').textContent = t('Duomenų gijos', 'Data threads');
   $('threads').innerHTML = `<span class="lbl">${t('Gija:', 'Thread:')}</span>` + [['', t('Visos', 'All')], ...THREADS.map(([k, a, b]) => [k, l ? a : b])]
     .map(([k, s]) => `<button type="button" class="chipb" data-t="${k}" aria-pressed="${THR === k && !SEL}">${s}</button>`).join('');

@@ -388,11 +388,58 @@ let SIM = null, P = null;
 const payL = p => T().payLong[p] || T().payPct(p);
 const plL = pl => pl === 'II' ? T().pl2 : pl === 'III' ? T().pl3 : T().plBothL;
 
+/* ---------- Edge stiliaus kortelės (savininkas 2026-11-11: Pradžios kortelių principas visur – klausimas, didelis skaičius, diagrama su užrašais) ----------
+   Tie patys SIM.last skaičiai, kaip buvusiose KPI plytelėse (viena metrika – vienas apibrėžimas); Excel – sekcijos antraštės mygtukas. ?nauja=0 – senos plytelės. */
+const JG_ON = (() => { try { const q = new URLSearchParams(location.search).get('nauja'); if (q != null) localStorage.setItem('homeV3', q === '0' ? '0' : '1'); return localStorage.getItem('homeV3') !== '0'; } catch (e) { return true; } })();
+const JG = {
+  q: { lt: ['Kiek sukaupėte?', 'Kas įmokėjo pinigus?', 'Ar santaupos aplenkė infliaciją?', 'Kiek kaupimas pridės prie pensijos?'],
+    en: ['How much have you saved?', 'Who paid in the money?', 'Did your savings beat inflation?', 'How much will saving add to your pension?'],
+    lv: ['Cik esat uzkrājis?', 'Kas iemaksāja naudu?', 'Vai uzkrājumi pārspēja inflāciju?', 'Cik uzkrājums pievienos pensijai?'],
+    et: ['Kui palju olete kogunud?', 'Kes raha sisse maksis?', 'Kas säästud edestasid inflatsiooni?', 'Kui palju kogumine pensionile lisab?'] },
+  mo: { lt: ' / mėn.', en: ' / month', lv: ' / mēn.', et: ' / kuus' },
+  cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, inf: { lt: 'Kaip skaičiuojama', en: 'How it is calculated', lv: 'Kā aprēķina', et: 'Kuidas arvutatakse' },
+  rr: { lt: 'Pakeitimo norma', en: 'Replacement rate', lv: 'Aizvietojuma likme', et: 'Asendusmäär' }, wo: { lt: 'be kaupimo', en: 'without savings', lv: 'bez uzkrājuma', et: 'kogumiseta' }, wi: { lt: 'su kaupimu', en: 'with savings', lv: 'ar uzkrājumu', et: 'kogumisega' },
+};
+const jgT = k => { const o = JG[k]; return o[ulang] || o.en; };
+const jgIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
+function jgLine(pts, W = 640, H = 90) {
+  if (!pts || pts.length < 3) return '';
+  const x0 = pts[0][0], x1 = pts[pts.length - 1][0], ys = pts.map(p => p[1]), lo = Math.min(0, ...ys), hi = Math.max(...ys);
+  const X = x => ((x - x0) / ((x1 - x0) || 1) * W).toFixed(1), Y = y => (H - 4 - (y - lo) / ((hi - lo) || 1) * (H - 10)).toFixed(1);
+  const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${X(x)} ${Y(y)}`).join('');
+  return `<svg class="hgl" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" class="z"/><path d="${d}L${W} ${H}L0 ${H}Z" class="a"/><path d="${d}" class="l"/></svg>`;
+}
+const jgBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01);
+  return `<div class="hgbars">${rows.map(([n, col, v, tx], i) => `<div class="r${i ? '' : ' top'}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
+const jgCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
+  <header class="hgh">${jgIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${jgT('cp')}" aria-label="${jgT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="i" title="${jgT('inf')}" aria-label="${jgT('inf')}" aria-expanded="false">i</button></span></header>
+  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
+function jgCards(L, t, gcls) {
+  const Q = JG.q[ulang] || JG.q.en, ey = `${plL(P.pl)} · ${dots(P.asof)}`, pts = (SIM.rows || []).filter(r => r.val != null && isFinite(r.val)).map(r => [r.d, r.val]);
+  const r0 = pts[0], gain = L.val - L.st, out = [];
+  out.push(jgCard({ sz: 'l', img: 'sec-jr.jpg', ic: 'savings', ey, q: Q[0], big: eur(L.val, 0), sub: `${t.kContrib}: ${eur(L.st, 0)} · ${t.srcName.r}: ${gain >= 0 ? '+' : '−'}${eur(Math.abs(gain), 0)}`,
+    info: `${t.kAssets} – ${hEsc(L.fund || '')}, ${dots(L.d)}. ${t.kAssets} = ${t.kContrib.toLowerCase()} + ${t.srcName.r.toLowerCase()}.`,
+    vis: jgLine(pts) + (r0 ? `<div class="fgle"><span>${dots(r0[0])}<b>${eur(r0[1], 0)}</b></span><span>${dots(L.d)}<b>${eur(L.val, 0)}</b></span></div>` : '')
+      + jgBars([[t.kContrib, 'rgba(255,255,255,.75)', L.st, eur(L.st, 0)], [t.srcName.r, gain >= 0 ? SCOL.r : 'var(--dneg)', gain, `${gain >= 0 ? '+' : '−'}${eur(Math.abs(gain), 0)}`]]) }));
+  const II = P.pl === 'III' ? null : (SIM.parts ? SIM.parts[0] : SIM).last, III = P.pl === 'II' ? null : (SIM.parts ? SIM.parts[1] : SIM).last;   // kaip renderSchema: III pakopoje sv = darbdavio įmokos
+  const src = [['s', SCOL.s, II && II.ss], ['d', SCOL.d, (II ? II.sd : 0) + (III ? III.sd : 0)], ['v', SCOL.v, II && II.sv], ['e', SCOL.e, III && III.sv]].filter(x => x[2] > 0);
+  out.push(jgCard({ sz: 'w', ic: 'money-hand', ey, q: Q[1], big: eur(L.st, 0), sub: src.map(x => `${t.srcName[x[0]]} ${num(x[2] / L.st * 100, 0)} %`).join(' · '), info: `${t.kContrib}: ${src.map(x => `${t.srcName[x[0]]} ${eur(x[2], 0)}`).join(' + ')}.`,
+    vis: jgBars(src.map(x => [t.srcName[x[0]], x[1], x[2], eur(x[2], 0)])) }));
+  out.push(jgCard({ sz: 's', ic: 'scales', ey, q: Q[2], big: `<span class="${gcls}">${L.gainE >= 0 ? '+' : '−'}${eur(Math.abs(L.gainE), 0)}</span>`, sub: `${t.kGainP}: ${pc(L.gainP)}`,
+    info: `${t.kReal} – ${t.kContrib.toLowerCase()} ${eur(L.st, 0)}, ${lang === 'lt' ? 'perskaičiuotos šiandienos kainomis pagal VKI' : 'restated in today’s prices with the CPI'}. ${t.kGainE} = ${t.kAssets.toLowerCase()} − ${t.kReal.toLowerCase()}.`,
+    vis: jgBars([[t.kReal, 'color-mix(in srgb, var(--text-2) 38%, transparent)', L.realSum, eur(L.realSum, 0)], [t.kAssets, L.gainE >= 0 ? 'var(--dpos)' : 'var(--dneg)', L.val, eur(L.val, 0)]]) }));
+  if (L.pen != null && L.ann != null) out.push(jgCard({ sz: 's', ic: 'target-arrow', ey, q: Q[3], big: `+${eur(L.ann, 0)}${jgT('mo')}`, sub: `${jgT('rr')}: ${pc(L.rr0)} ${jgT('wo')} → ${pc(L.rr1)} ${jgT('wi')}`,
+    info: `${t.kAnn}; ${t.kState(SIM.penY)}; ${t.kTotal}: ${eur(L.tot, 0)}${jgT('mo')}.`,
+    vis: jgBars([[t.kState(SIM.penY), 'var(--s1)', L.pen, eur(L.pen, 0)], [t.kAnn, 'var(--accent)', L.ann, '+' + eur(L.ann, 0)], [t.kTotal, 'var(--s4)', L.tot, eur(L.tot, 0)]]) }));
+  return out.join('');
+}
 function renderKpis() {
   const L = SIM.last, t = T(), yAs = yearOf(P.asof);
   const gcls = L.gainE >= 0 ? 'up' : 'down';
   document.getElementById('sumTitle').innerHTML = `${t.sumTitle} <span style="font-weight:400;font-size:13px;color:var(--text-3)">· ${plL(P.pl)} · ${dots(P.asof)}</span>${ik('sum')}${xbtn()}<a class="srclink" href="#srcTitle">${t.srcLink} ↓</a>`;
-  document.getElementById('kpiA').innerHTML = kpi(t.kAssets, eur(L.val, 0), '', 'hl') + kpi(t.kContrib, eur(L.st, 0)) + kpi(t.kReal, eur(L.realSum, 0))
+  const el = document.getElementById('kpiA');
+  if (JG_ON) { el.className = 'hg jg'; el.innerHTML = jgCards(L, t, gcls); }
+  else el.innerHTML = kpi(t.kAssets, eur(L.val, 0), '', 'hl') + kpi(t.kContrib, eur(L.st, 0)) + kpi(t.kReal, eur(L.realSum, 0))
     + kpi(t.kGainE, `<span class="${gcls}">${L.gainE >= 0 ? '+' : '−'}${eur(Math.abs(L.gainE), 0)}</span>`) + kpi(t.kGainP, `<span class="${gcls}">${pc(L.gainP)}</span>`);
   renderSchema();
 }
