@@ -862,7 +862,7 @@ function renderFunds() {
 
   XS.roll = { parts, ALL };
   renderMonthsTable(parts, ALL, nm, tr); renderYM();
-  renderRiskMap(); renderDrawdown();          // „Grąža palyginti su grupės vidurkiu“ pašalinta (savininkas 2026-10-16: dubliuoja palyginimą su konkurentais)
+  renderRiskMap(); renderDrawdown(); riskCards(parts); ymCards();          // „Grąža palyginti su grupės vidurkiu“ pašalinta (savininkas 2026-10-16: dubliuoja palyginimą su konkurentais)
   if (IS3) renderRanksByPeriod(gs, ALL); else [$('hQP'), $('c_tQP'), $('tQP') && $('tQP').closest('.card')].forEach(e => { if (e) e.hidden = true; });   // II pakopa – „Bendrame reitinge“
   renderHeatmap(ALL ? byId(P.hmGroup) : gs[0], ALL); renderAdvanced(parts, ALL);
   markGroup();
@@ -870,6 +870,57 @@ function renderFunds() {
 }
 /* grąžos ir rizikos žemėlapis: savi laikotarpio, amžiaus grupių ir tiekėjų pasirinkimai; spalva – tiekėjas */
 const RM = { per: null, groups: null, provs: null };
+/* Rizikos ir „Metai ir mėnesiai“ skirtukų kortelės – tik pasirinktai grupei (lyginama grupės viduje), virš įrankių; suskleidžiamos kaip ir kitos */
+const RC = {
+  q: { lt: ['Kuris grupės fondas svyruoja mažiausiai?', 'Kuris grupės fondas mažiausiai krito?', 'Kas dažniausiai buvo grupės lyderis kalendoriniais metais?', 'Kiek kalendorinių metų grupės fondai uždirbo?'],
+    en: ['Which fund in the group is the least volatile?', 'Which fund in the group fell the least?', 'Who led the group most often in calendar years?', 'In how many calendar years did the group’s funds make money?'],
+    lv: ['Kurš grupas fonds svārstās vismazāk?', 'Kurš grupas fonds kritās vismazāk?', 'Kurš kalendārajos gados visbiežāk bija grupas līderis?', 'Cik kalendārajos gados grupas fondi nopelnīja?'],
+    et: ['Milline rühma fond kõigub kõige vähem?', 'Milline rühma fond langes kõige vähem?', 'Kes juhtis rühma kalendriaastatel kõige sagedamini?', 'Mitmel kalendriaastal rühma fondid teenisid?'] },
+  ey: { lt: 'Rizika', en: 'Risk', lv: 'Risks', et: 'Risk' }, ey2: { lt: 'Metai', en: 'Years', lv: 'Gadi', et: 'Aastad' },
+  vol: { lt: 'metinis svyravimas', en: 'annual volatility', lv: 'gada svārstīgums', et: 'aastane volatiilsus' }, dd: { lt: 'didžiausias kritimas', en: 'largest drawdown', lv: 'lielākais kritums', et: 'suurim langus' },
+  yl: { lt: (k, n) => `pirmavo ${k} iš ${n} metų`, en: (k, n) => `led in ${k} of ${n} years`, lv: (k, n) => `līderis ${k} no ${n} gadiem`, et: (k, n) => `juhtis ${k} aastal ${n}-st` },
+  yp: { lt: 'metų, kai grupės fondų grąžos mediana buvo teigiama', en: 'years with a positive median fund return in the group', lv: 'gadi ar pozitīvu grupas fondu ienesīguma mediānu', et: 'aastat, mil rühma fondide tootluse mediaan oli positiivne' },
+  of: { lt: 'iš', en: 'of', lv: 'no', et: '/' }, gr: { lt: 'm.', en: 'y', lv: 'g.', et: 'a' },
+  i: { lt: ['Metinis svyravimas – dienos grąžų standartinis nuokrypis × √252, pasirinktu laikotarpiu (kaip lentelėje „Rizika“).', 'Didžiausias kritimas – didžiausias vieneto vertės sumažėjimas nuo buvusios aukščiausios reikšmės pasirinktu laikotarpiu.',
+      'Kiekvienais pilnais kalendoriniais metais – grupės fondas su didžiausia metų grąža (vieneto vertė gruodžio 31 d. ÷ ankstesnių metų gruodžio 31 d.).', 'Kiekvienų pilnų kalendorinių metų grupės fondų grąžų mediana.'],
+    en: ['Annual volatility – standard deviation of daily returns × √252 over the selected period (as in the “Risk” table).', 'Largest drawdown – the largest fall of the unit value from its previous peak over the selected period.',
+      'In each full calendar year – the group fund with the highest return (unit value on 31 Dec ÷ previous 31 Dec).', 'Median return of the group’s funds in each full calendar year.'] },
+};
+const rcT = k => RC[k][ulang] || RC[k].en;
+function rcBox(id) { const el = $(id); if (!el) return null; el.className = 'hg jg'; el.style.margin = '6px 0 16px'; return el; }
+function riskCards(parts) {
+  const el = rcBox('rkCards'); if (!el) return;
+  try {
+    if (P.group === 'all' || !parts.length) { el.innerHTML = ''; ecFold(el); return; }
+    const p = parts[0], g = p.g, Q = rcT('q'), I = rcT('i'), ey = rcT('ey'), gl = hEsc(groupLabel(g)), per = hEsc(periodText()), out = [];
+    const v = p.all.filter(x => x.vol != null).sort((a, b) => a.vol - b.vol);
+    if (v.length >= 2) out.push(ecCard({ k: 'rk0', sz: 'w', ic: 'scales', ey, q: Q[0], big: `${hEsc(labelOf(v[0].f.provider))} · ${num(v[0].vol, 1)} %`, cls: 'sm', sub: `${gl} · ${rcT('vol')} · ${per}`, info: I[0], xt: 'rmTable',
+      vis: ecBars(v.map(x => [labelOf(x.f.provider), colorOf(x.f.provider), x.vol, `${num(x.vol, 1)} %`])) }));
+    const d = p.all.filter(x => x.mdd != null).sort((a, b) => b.mdd - a.mdd);
+    if (d.length >= 2) out.push(ecCard({ k: 'rk1', sz: 'w', ic: 'arrow-trending-down', ey, q: Q[1], big: `${hEsc(labelOf(d[0].f.provider))} · ${num(d[0].mdd, 1)} %`, cls: 'sm', sub: `${gl} · ${rcT('dd')} · ${per}`, info: I[1], xt: 'rmTable',
+      vis: ecBars(d.map(x => [labelOf(x.f.provider), 'var(--dneg)', Math.abs(x.mdd), `${num(x.mdd, 1)} %`])) }));
+    el.innerHTML = out.join(''); ecFold(el);
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
+}
+function ymCards() {
+  const el = rcBox('ymCards'); if (!el) return;
+  try {
+    if (P.group === 'all') { el.innerHTML = ''; ecFold(el); return; }
+    const g = byId(P.group), Q = rcT('q'), I = rcT('i'), ey = rcT('ey2'), gl = hEsc(groupLabel(g)), out = [], last = Math.max(...g.funds.map(f => f.d[f.d.length - 1]));
+    const ye = y => Math.round(Date.UTC(y, 11, 31) / DAY), y1 = new Date(last * DAY).getUTCFullYear() - 1, yrs = [];
+    for (let y = y1; y >= 1990; y--) { const it = g.funds.map(f => { const a = lastOnOrBefore(f, ye(y - 1)), b = lastOnOrBefore(f, ye(y)); return a >= 0 && b > a && ye(y - 1) - f.d[a] <= 7 && ye(y) - f.d[b] <= 7 ? { p: f.provider, r: (f.v[b] / f.v[a] - 1) * 100 } : null; }).filter(Boolean);
+      if (it.length < 2) { if (yrs.length) break; continue; } it.sort((a, b) => b.r - a.r); const vs = it.map(x => x.r).sort((a, b) => a - b), n = vs.length; yrs.push({ y, top: it[0], med: n % 2 ? vs[(n - 1) / 2] : (vs[n / 2 - 1] + vs[n / 2]) / 2 }); }
+    if (yrs.length >= 2) {
+      const cnt = {}; yrs.forEach(x => { const n = labelOf(x.top.p); cnt[n] = cnt[n] || { k: 0, p: x.top.p }; cnt[n].k++; }); const rk = Object.entries(cnt).sort((a, b) => b[1].k - a[1].k);
+      out.push(ecCard({ k: 'ym0', sz: 'w', ic: 'trophy', ey, q: Q[2], big: hEsc(rk.filter(x => x[1].k === rk[0][1].k).map(x => x[0]).join(' · ')), cls: 'sm', sub: `${gl} · ${rcT('yl')(rk[0][1].k, yrs.length)} (${yrs[yrs.length - 1].y}–${yrs[0].y})`, info: I[2], xt: 'tCal',
+        vis: ecBars(rk.map(([n, o]) => [n, colorOf(o.p), o.k, `${o.k} ${rcT('gr')}`])) }));
+      const np = yrs.filter(x => x.med > 0).length;
+      out.push(ecCard({ k: 'ym1', sz: 'w', ic: 'calendar-ltr', ey, q: Q[3], big: `${np} ${rcT('of')} ${yrs.length}`, sub: `${gl} · ${rcT('yp')}`, info: I[3], xt: 'tCal',
+        vis: ecBars(yrs.slice(0, 8).map(x => [String(x.y), x.med >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.med, fmtP(x.med, 1)])), visAll: ecBars(yrs.map(x => [String(x.y), x.med >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.med, fmtP(x.med, 1)])) }));
+    }
+    el.innerHTML = out.join(''); ecFold(el);
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
+}
 function renderRiskMap() {
   $('hRisk').innerHTML = T().hRisk + ik('riskmap');
   RM.per = P.period; RM.groups = new Set(DATA.groups.map(g => g.id)); RM.provs = new Set(DATA.providers.map(p => p.id));   // laikotarpis – bendras viršuje (vienas laikotarpio pasirinkimas puslapyje)
