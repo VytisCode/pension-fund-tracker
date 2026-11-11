@@ -1,18 +1,4 @@
- netinkama data 2026-10-28 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-29 – praleista
-  ! Artea pensija 1982-1988: netinkama data 2026-10-30 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-26 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-27 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-28 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-29 – praleista
-  ! Artea pensija 1989-1995: netinkama data 2026-10-30 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-22 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-26 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-27 – praleista
-  ! Artea pensija 1996-2002: netinkama data 2026-10-28 – praleista
+002: netinkama data 2026-10-28 – praleista
   ! Artea pensija 1996-2002: netinkama data 2026-10-29 – praleista
   ! Artea pensija 1996-2002: netinkama data 2026-10-30 – praleista
   ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-22 – praleista
@@ -233,6 +219,22 @@ LUMINOR: jau atnaujinta iki 2026-11-10
 GOINDEX: jau atnaujinta iki 2026-11-10
 
 III pakopa – Vilnius: 2026-11-11 15:17, laukiama diena: 2026-11-10
+SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+SWEDBANK: jau atnaujinta iki 2026-11-10
+LUMINOR: jau atnaujinta iki 2026-11-10
+SEB: fondų puslapių nuorodos rastos 0: –
+SEB SEB index. Klimato ateitis: istorijos CSV 1266 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 18+: istorijos CSV 5749 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 50+: istorijos CSV 1717 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 58+: istorijos CSV 5072 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+
+Vilnius: 2026-11-11 15:46, laukiama diena: 2026-11-10
+SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+SWEDBANK: jau atnaujinta iki 2026-11-10
+LUMINOR: jau atnaujinta iki 2026-11-10
+GOINDEX: jau atnaujinta iki 2026-11-10
+
+III pakopa – Vilnius: 2026-11-11 15:47, laukiama diena: 2026-11-10
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-11-10
 LUMINOR: jau atnaujinta iki 2026-11-10
