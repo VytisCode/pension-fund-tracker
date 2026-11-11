@@ -401,7 +401,7 @@ const JG = {
   rr: { lt: 'Pakeitimo norma', en: 'Replacement rate', lv: 'Aizvietojuma likme', et: 'Asendusmäär' }, wo: { lt: 'be kaupimo', en: 'without savings', lv: 'bez uzkrājuma', et: 'kogumiseta' }, wi: { lt: 'su kaupimu', en: 'with savings', lv: 'ar uzkrājumu', et: 'kogumisega' },
 };
 const jgT = k => { const o = JG[k]; return o[ulang] || o.en; };
-const jgIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
+const jgIc = ecIc;
 function jgLine(pts, W = 640, H = 90) {
   if (!pts || pts.length < 3) return '';
   const x0 = pts[0][0], x1 = pts[pts.length - 1][0], ys = pts.map(p => p[1]), lo = Math.min(0, ...ys), hi = Math.max(...ys);
@@ -409,11 +409,7 @@ function jgLine(pts, W = 640, H = 90) {
   const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${X(x)} ${Y(y)}`).join('');
   return `<svg class="hgl" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" class="z"/><path d="${d}L${W} ${H}L0 ${H}Z" class="a"/><path d="${d}" class="l"/></svg>`;
 }
-const jgBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01);
-  return `<div class="hgbars">${rows.map(([n, col, v, tx], i) => `<div class="r${i ? '' : ' top'}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
-const jgCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
-  <header class="hgh">${jgIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${jgT('cp')}" aria-label="${jgT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="i" title="${jgT('inf')}" aria-label="${jgT('inf')}" aria-expanded="false">i</button></span></header>
-  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
+const jgBars = ecBars, jgCard = ecCard;
 function jgCards(L, t, gcls) {
   const Q = JG.q[ulang] || JG.q.en, ey = `${plL(P.pl)} · ${dots(P.asof)}`, pts = (SIM.rows || []).filter(r => r.val != null && isFinite(r.val)).map(r => [r.d, r.val]);
   const r0 = pts[0], gain = L.val - L.st, out = [];

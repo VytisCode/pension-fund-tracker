@@ -478,6 +478,7 @@ function markGroup() {
     b.textContent = g; b.title = lang === 'lt' ? 'Grupė – keisti „Fondų palyginimo“ viršuje' : 'Group – change at the top of “Fund comparison”'; });
 }
 function renderMarket() {
+  pcRender();
   $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
   $('hRelM').innerHTML = T().hRelM + ik('relm'); $('hAnnM').innerHTML = T().hAnnM + ik('annm');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
@@ -598,6 +599,70 @@ function renderOverall() {
   const bFirst = Math.max(...list.map(x => x.first / x.cmp)), bTop2 = Math.max(...list.map(x => x.top2 / x.cmp)), bAvg = Math.min(...list.map(x => x.avg));
   $('tOv').innerHTML = `<thead><tr>${th(T().thRank, 'overall')}<th style="text-align:left">${T().thFund}</th><th>${T().thCmp}</th><th>${T().thFirst}</th><th>${T().thFirstPct}</th><th>${T().thTop2}</th><th>${T().thAvgRank}</th></tr></thead><tbody>`
     + list.map((x, i) => `<tr><td class="n">${i + 1}</td><td class="name"><span class="sw" style="background:${colorOf(x.id)}"></span>${labelOf(x.id)}</td><td>${x.cmp}</td><td>${x.first}</td><td class="${x.first / x.cmp === bFirst ? 'best' : ''}">${num(x.first / x.cmp * 100, 2)}${pctSfx()}</td><td class="${x.top2 / x.cmp === bTop2 ? 'best' : ''}">${num(x.top2 / x.cmp * 100, 2)}${pctSfx()}</td><td class="${x.avg === bAvg ? 'best' : ''}">${num(x.avg, 2)}</td></tr>`).join('') + '</tbody>';
+}
+
+/* ---------- Edge kortelės „Visa rinka“ viršuje (savininkas 2026-11-11: analitiniuose puslapiuose – 3–4 klausimų kortelės virš lentelių).
+   Visi skaičiai – to paties pasirinkto laikotarpio grąžos, kaip lentelėje „Grąža“ (rangeFor, seriesOf); lyginama tik grupės viduje.
+   ⤓ Excel – lentelės „Grąža“ įrodymų failas (vieneto vertės → formulės). ---------- */
+const PC = {
+  q: { lt: ['Kas dažniausiai pirmauja grupėse?', 'Kiek fondų uždirbo per laikotarpį?', 'Kurioje grupėje skirtumas didžiausias?', 'Kurioje grupėje fondams sekėsi geriausiai?'],
+    en: ['Who leads in the most groups?', 'How many funds made money over the period?', 'Which group has the widest gap?', 'In which group did funds do best?'],
+    lv: ['Kurš visbiežāk ir līderis grupās?', 'Cik fondu nopelnīja periodā?', 'Kurā grupā atšķirība ir vislielākā?', 'Kurā grupā fondiem veicās vislabāk?'],
+    et: ['Kes juhib kõige rohkemates rühmades?', 'Mitu fondi teenis perioodil tulu?', 'Millises rühmas on vahe suurim?', 'Millises rühmas läks fondidel kõige paremini?'] },
+  ey: { lt: 'Grąža', en: 'Return', lv: 'Ienesīgums', et: 'Tootlus' },
+  lead: { lt: (k, n) => `pirmauja ${k} iš ${n} grupių`, en: (k, n) => `leads in ${k} of ${n} groups`, lv: (k, n) => `līderis ${k} no ${n} grupām`, et: (k, n) => `juhib ${k} rühmas ${n}-st` },
+  tie: { lt: (k, n) => `lygiosios: kiekvienas pirmauja ${k} iš ${n} grupių`, en: (k, n) => `a tie: each leads in ${k} of ${n} groups`, lv: (k, n) => `neizšķirts: katrs ir līderis ${k} no ${n} grupām`, et: (k, n) => `viik: igaüks juhib ${k} rühmas ${n}-st` },
+  gr: { lt: 'gr.', en: 'gr.', lv: 'gr.', et: 'r.' },
+  of: { lt: 'iš', en: 'of', lv: 'no', et: '/' },
+  pos: { lt: 'fondų grąža teigiama', en: 'funds with a positive return', lv: 'fondu ar pozitīvu ienesīgumu', et: 'fondil on positiivne tootlus' },
+  up: { lt: 'Pliuse', en: 'Positive', lv: 'Plusā', et: 'Plussis' }, dn: { lt: 'Minuse', en: 'Negative', lv: 'Mīnusā', et: 'Miinuses' },
+  pp: { lt: 'p. p.', en: 'pp', lv: 'p. p.', et: 'p.p.' },
+  vs: { lt: (a, b) => `${a} prieš ${b}`, en: (a, b) => `${a} vs ${b}`, lv: (a, b) => `${a} pret ${b}`, et: (a, b) => `${a} vs ${b}` },
+  med: { lt: 'grupės fondų grąžos mediana', en: 'median fund return in the group', lv: 'grupas fondu ienesīguma mediāna', et: 'rühma fondide tootluse mediaan' },
+  i: { lt: ['Kiekvienoje grupėje lyderis – fondas su didžiausia grąža per pasirinktą laikotarpį; skaičiuojama, kiek grupių kiekvienas valdytojas pirmauja. Fondai, ilgiau nei 5 d. neatnaujinę duomenų, neįtraukiami. Excel – lentelės „Grąža“ failas su formulėmis.',
+      'Fondų, kurių grąža per pasirinktą laikotarpį didesnė už nulį, skaičius iš visų grupių fondų. Grąža – iš vieneto verčių, jau po valdymo mokesčių.',
+      'Skirtumas = geriausio ir blogiausio grupės fondo grąža, procentiniais punktais, tuo pačiu laikotarpiu.',
+      'Kiekvienos grupės fondų grąžų mediana (vidurinė reikšmė, nesvertinė). Grupės turi skirtingą riziką, todėl tai ne fondų palyginimas tarp grupių, o kaip sekėsi rinkos daliai.'],
+    en: ['In each group the leader is the fund with the highest return over the selected period; the card counts how many groups each manager leads. Funds not updated for more than 5 days are excluded. Excel – the “Return” table file with formulas.',
+      'Number of funds whose return over the selected period is above zero, out of all funds in the groups. Returns come from unit values, already net of management fees.',
+      'Gap = return of the best minus the worst fund in the group, in percentage points, over the same period.',
+      'Median return of the funds in each group (the middle value, unweighted). Groups carry different risk, so this is not a comparison of funds across groups but how each part of the market did.'] },
+};
+const pcT = k => PC[k][ulang] || PC[k].en;
+function pcRender() {
+  const el = $('pcCards'); if (!el) return;
+  try {
+    const gs = [];
+    DATA.groups.forEach(g => { if (g.id === 'zz') return; const rng = rangeFor(g), it = [];   // zz – „Per trumpa istorija“ (EE), ne grupė
+      g.funds.forEach(f => { if (isStale(f, rng.overallLast)) return; const s = seriesOf(f, rng.anchor, rng.end); if (s && s.ret != null && isFinite(s.ret)) it.push({ p: f.provider, r: s.ret }); });
+      if (it.length) { it.sort((a, b) => b.r - a.r); gs.push({ g, it }); } });
+    if (!gs.length) { el.innerHTML = ''; return; }
+    const per = periodText(), out = [], ey = pcT('ey'), Q = pcT('q'), I = pcT('i'), pp = pcT('pp'), multi = gs.filter(x => x.it.length >= 2);
+    const P1 = v => fmtP(v, 1), col = v => v >= 0 ? 'var(--dpos)' : 'var(--dneg)';
+    if ((!IS3 || (PX && PX.pl === 'II')) && multi.length >= 2) {   // LV/EE: grupėje keli valdytojo fondai – skaičiuojama pagal valdytoją
+      const cnt = {}, pc = {}; multi.forEach(x => { const n = labelOf(x.it[0].p); cnt[n] = (cnt[n] || 0) + 1; pc[n] = pc[n] || x.it[0].p; });
+      const rk = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
+      out.push(ecCard({ sz: 'l', img: 'sec2-results.jpg', ic: 'trophy', ey, q: Q[0], big: hEsc(rk.filter(x => x[1] === rk[0][1]).map(x => x[0]).join(' · ')), cls: rk.length > 1 && rk[1][1] === rk[0][1] ? 'sm' : '', sub: `${(rk.length > 1 && rk[1][1] === rk[0][1] ? pcT('tie') : pcT('lead'))(rk[0][1], multi.length)} · ${hEsc(per)}`, info: I[0], xt: 'tRet',
+        vis: ecBars(rk.map(([n, k]) => [n, colorOf(pc[n]), k, `${k} ${pcT('gr')}`])) }));
+    }
+    const all = gs.flatMap(x => x.it), np = all.filter(x => x.r > 0).length;
+    out.push(ecCard({ sz: out.length ? 'w' : 'l', img: out.length ? '' : 'sec2-results.jpg', ic: 'data-pie', ey, q: Q[1], big: `${np} ${pcT('of')} ${all.length}`, sub: `${pcT('pos')} · ${hEsc(per)}`, info: I[1], xt: 'tRet',
+      vis: ecBars([[pcT('up'), 'var(--dpos)', np, String(np)], [pcT('dn'), 'var(--dneg)', all.length - np, String(all.length - np)]]) }));
+    if (multi.length) {
+      const sp = multi.map(x => ({ g: x.g, a: x.it[0], b: x.it[x.it.length - 1], d: x.it[0].r - x.it[x.it.length - 1].r })).sort((a, b) => b.d - a.d), m = sp[0];
+      out.push(ecCard({ sz: 'w', ic: 'arrow-trending', ey, q: Q[2], big: `${num(m.d, 1)} ${pp}`, sub: `${hEsc(groupLabel(m.g))}: ${pcT('vs')(`${hEsc(labelOf(m.a.p))} ${P1(m.a.r)}`, `${hEsc(labelOf(m.b.p))} ${P1(m.b.r)}`)}`, info: I[2], xt: 'tRet',
+        vis: ecBars(sp.slice(0, 6).map(x => [groupLabel(x.g), 'var(--s1)', x.d, `${num(x.d, 1)} ${pp}`])) }));
+    }
+    if (gs.length >= 2) {
+      const md = a => { const v = a.map(x => x.r).sort((x, y) => x - y), n = v.length; return n % 2 ? v[(n - 1) / 2] : (v[n / 2 - 1] + v[n / 2]) / 2; };
+      const gm = gs.map(x => ({ g: x.g, v: md(x.it) })).sort((a, b) => b.v - a.v);
+      out.push(ecCard({ sz: 'w', ic: 'chart-multiple', ey, q: Q[3], big: P1(gm[0].v), sub: `${hEsc(groupLabel(gm[0].g))} · ${pcT('med')}`, info: I[3], xt: 'tRet',
+        vis: ecBars(gm.slice(0, 6).map(x => [groupLabel(x.g), col(x.v), x.v, P1(x.v)])) }));
+    }
+    let h = out.join('');   // 4 kortelės – 2 × 2 (visos plačios), 3 – nuotraukos kortelė dviejų aukščių + dvi plačios
+    if (out.length === 4) h = h.replace('class="hgc fg l ph"', 'class="hgc fg w ph"');
+    el.innerHTML = h;
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
 }
 
 /* ---------- 2. fondų palyginimas ---------- */

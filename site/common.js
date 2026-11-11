@@ -2488,10 +2488,21 @@ function pairBook(o) {
   return { sheets: XLSX_SHIM.toXL(wb), own: true };
 }
 
+/* Bendros Edge kortelės (journey, Rezultatai ir kt.): ecCard({ sz, img, ic, ey, q, big, sub, info, vis, xt }) – xt = lentelės id, kurios Excel įrodymų failą atsisiunčia ⤓ Excel */
+const EC = { cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, inf: { lt: 'Kaip skaičiuojama', en: 'How it is calculated', lv: 'Kā aprēķina', et: 'Kuidas arvutatakse' },
+  xl: { lt: 'Excel su formulėmis', en: 'Excel with formulas', lv: 'Excel ar formulām', et: 'Excel valemitega' } };
+const ecT = k => EC[k][ulang] || EC[k].en;
+const ecIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
+const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01);
+  return `<div class="hgbars">${rows.map(([n, col, v, tx], i) => `<div class="r${i ? '' : ' top'}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
+const ecCard = o => `<article class="hgc fg ${o.sz}${o.img ? ' ph' : ''}"${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
+  <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button>${o.xt ? `<button type="button" class="btn ico" data-jg="xl" data-xt="${o.xt}" title="${ecT('xl')}" aria-label="Excel">X</button>` : ''}<button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button></span></header>
+  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv">${o.vis}</div></article>`;
 /* Edge kortelių įrankiai puslapiuose be home.js (journey, apie): data-jg = cp / png / i */
 document.addEventListener('click', async e => {
   const b = e.target.closest('.hgc [data-jg]'); if (!b) return; const card = b.closest('.hgc'), a = b.dataset.jg;
   if (a === 'i') { const p = card.querySelector('.hginfo'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', !p.hidden); return; }
+  if (a === 'xl') { const tb = document.getElementById(b.dataset.xt); if (!tb) return; b.disabled = true; try { await tableBook(tb); } finally { b.disabled = false; } return; }
   if (a === 'cp') { const txt = [card.querySelector('.ey'), card.querySelector('.hgq'), card.querySelector('.hgb'), card.querySelector('.hgs')].filter(Boolean).map(n => n.textContent.trim()).join(' – ');
     try { await navigator.clipboard.writeText(txt); b.textContent = '✓'; setTimeout(() => { b.textContent = '⧉'; }, 1500); } catch (x) { prompt('', txt); } return; }
   if (a === 'png') { const box = card.querySelector('.hgv'); try { savePng(await chartPng(box), box); } catch (x) {} }
