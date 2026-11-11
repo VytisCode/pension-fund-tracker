@@ -1,11 +1,4 @@
- 2026-10-22 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-23 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-26 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-27 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-28 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-29 – praleista
-  ! Artea pensija 2003-2009: netinkama data 2026-10-30 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-22 – praleista
+ma data 2026-10-22 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-23 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-26 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-10-27 – praleista
@@ -242,6 +235,14 @@ SWEDBANK: jau atnaujinta iki 2026-11-10
 LUMINOR: jau atnaujinta iki 2026-11-10
 
 III pakopa – Vilnius: 2026-11-11 18:26, laukiama diena: 2026-11-10
+SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please ru
+SWEDBANK: jau atnaujinta iki 2026-11-10
+LUMINOR: jau atnaujinta iki 2026-11-10
+
+III pakopa – Vilnius: 2026-11-11 18:55, laukiama diena: 2026-11-10
 SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
 ╔════════════════════════════════════════════════════════════╗
 ║ Looks like Playwright was just installed or updated.       ║
