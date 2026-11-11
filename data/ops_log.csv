@@ -573,3 +573,5 @@ ts,src,ev,dd,n,msg
 2026-11-11T13:00,idx.EURUSD,ok,,,vėl veikia
 2026-11-11T13:00,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 504: Gateway Time-out
 2026-11-11T13:00,idx.SP500,ok,,,vėl veikia
+2026-11-11T13:30,nav.ALLIANZ,new,2026-11-10,8,
+2026-11-11T13:30,idx.EUR_GOV7Y,ok,,,vėl veikia
