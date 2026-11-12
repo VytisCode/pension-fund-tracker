@@ -2497,10 +2497,14 @@ const ecT = k => EC[k][ulang] || EC[k].en;
 const ecIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
 const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01), hi = rows.some(r => r[4]);   // r[4] – paryškinta eilutė (kitaip – pirma)
   return `<div class="hgbars">${rows.map(([n, col, v, tx, h], i) => `<div class="r${(hi ? h : !i) ? ' top' : ''}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
+const EC_SL = {};   // slankikliai kortelėse: rakto → { lab(i), on(i) }
+const ecSl = o => { EC_SL[o.k] = o.sl; return `<div class="ecsl"><input type="range" min="0" max="${o.sl.n - 1}" step="1" value="${o.sl.v}" data-ecsl="${o.k}" aria-label="${hEsc(o.sl.aria || '')}"><div class="ecslv"><span>${hEsc(o.sl.lab(0))}</span><b>${hEsc(o.sl.lab(o.sl.v))}</b><span>${hEsc(o.sl.lab(o.sl.n - 1))}</span></div></div>`; };
+document.addEventListener('input', e => { const r = e.target.closest('input[data-ecsl]'); if (!r) return; const sl = EC_SL[r.dataset.ecsl]; if (!sl) return; const b = r.parentNode.querySelector('.ecslv b'); if (b) b.textContent = sl.lab(+r.value);
+  clearTimeout(sl._t); sl._t = setTimeout(() => sl.on(+r.value), 60); });
 const EC_OPEN = new Set();   // išskleistos kortelės (o.k) – išlieka perpiešiant
 const ecCard = o => `<article class="hgc fg ${o.k && EC_OPEN.has(o.k) ? 'f open' : o.sz}${o.img ? ' ph' : ''}"${o.k ? ` data-k="${o.k}" data-sz="${o.sz}"` : ''}${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
   <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="xl"${o.xt ? ` data-xt="${o.xt}"` : ''}${o.xf ? ` data-xf="${o.xf}"` : ''} title="${ecT('xl')}" aria-label="Excel">X</button><button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button>${o.k && (o.visAll || o.more) ? `<button type="button" class="btn ico" data-jg="ex" title="${ecT('ex')}" aria-label="${ecT('ex')}">⤢</button>` : ''}</span></header>
-  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv${o.visAll ? ' ecshort' : ''}">${o.vis}</div>${o.visAll ? `<div class="hgv ecall">${o.visAll}</div>` : ''}${o.more ? `<div class="ecmore">${o.more}</div>` : ''}</article>`;
+  <h3 class="hgq">${o.q}</h3><div class="hgb${o.cls ? ' ' + o.cls : ''}">${o.big}</div>${o.sub ? `<p class="hgs">${o.sub}</p>` : ''}${o.ctl ? `<div class="ecctl">${o.ctl}</div>` : ''}${o.sl ? ecSl(o) : ''}<p class="hginfo" hidden>${o.info}</p><div class="hgv${o.visAll ? ' ecshort' : ''}">${o.vis}</div>${o.visAll ? `<div class="hgv ecall">${o.visAll}</div>` : ''}${o.more ? `<div class="ecmore">${o.more}</div>` : ''}</article>`;
 /* Analitiniuose puslapiuose kortelės neturi trukdyti įrankiams (savininkas 2026-11-11): mygtukas „Suskleisti korteles“ – viena eilutė su dideliais skaičiais; būsena įsimenama visiems puslapiams */
 const ECF = { f: { lt: 'Suskleisti korteles', en: 'Collapse cards', lv: 'Sakļaut kartītes', et: 'Ahenda kaardid' }, u: { lt: 'Išskleisti korteles', en: 'Expand cards', lv: 'Izvērst kartītes', et: 'Laienda kaardid' } };
 function ecFold(el) {
@@ -2508,7 +2512,7 @@ function ecFold(el) {
   el.classList.toggle('fold', on);
   let bar = el.previousElementSibling; if (!bar || !bar.classList.contains('ecfold')) { bar = document.createElement('div'); bar.className = 'ecfold'; bar.innerHTML = '<button type="button" class="btn"></button>'; el.before(bar);
     bar.firstChild.onclick = () => { const v = !el.classList.contains('fold'); try { localStorage.setItem('ecFold', v ? '1' : '0'); } catch (e) {} document.querySelectorAll('.hg.jg[data-fold]').forEach(ecFold); }; }
-  el.dataset.fold = '1'; bar.hidden = !el.children.length;
+  el.dataset.fold = '1'; el.classList.add('an'); bar.hidden = !el.children.length;
   bar.firstChild.textContent = (on ? '▾ ' : '▴ ') + (ECF[on ? 'u' : 'f'][ulang] || ECF[on ? 'u' : 'f'].en);
 }
 /* Kortelės be atskiros lentelės Excel: klausimas, atsakymas, paaiškinimas ir grafiko eilutės (mėlyni – svetainės pradiniai skaičiai), suma ir dalys – formulės */

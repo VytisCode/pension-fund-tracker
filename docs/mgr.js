@@ -298,7 +298,7 @@ function mgCards(o) {
     const aII = q => cut ? (sumAt(aumFs(q, 'II'), cut, 92) || 0) * 1e6 : live.filter(f => own(f, q)).reduce((s, f) => s + f.assets, 0);
     const tot = cut ? (sumAt(aumFs(null, 'II'), cut, 92) || 0) * 1e6 : aAll;
     if (tot) { const sh = PROVS.map(q => ({ q, v: aII(q) / tot * 100 })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), m = sh.find(x => x.q === p);
-      if (m) out.push(ecCard({ k: 'mg0', more, sz: 'w', img: 'sec2-mgr.jpg', ic: 'building-bank', ey: E[0], q: Q[0](hEsc(me)), big: fmt(m.v, 1) + pctSfx(), sub: `${kpMoney(aII(p))} · ${mgcT('rk')(sh.indexOf(m) + 1, sh.length)}${pay ? ` · ${t.kPay(yNow)}: −${kpMoney(-pay * 1e6).replace(/^−/, '')}` : ''}`, info: I[0], xt: 'aumT',
+      if (m) out.push(ecCard({ k: 'mg0', ctl: more, sz: 'w', img: 'sec2-mgr.jpg', ic: 'building-bank', ey: E[0], q: Q[0](hEsc(me)), big: fmt(m.v, 1) + pctSfx(), sub: `${kpMoney(aII(p))} · ${mgcT('rk')(sh.indexOf(m) + 1, sh.length)}${pay ? ` · ${t.kPay(yNow)}: −${kpMoney(-pay * 1e6).replace(/^−/, '')}` : ''}`, info: I[0], xt: 'aumT',
         vis: bars(sh, v => fmt(v, 1) + pctSfx()) })); }
     const mY = ytdM.find(x => x.q === p);
     if (mY) out.push(ecCard({ k: 'mg1', more, sz: 'w', ic: 'arrow-trending', ey: E[1], q: Q[1](hEsc(me)), big: pct(mY.v), sub: mgcT('rk')(ytdM.indexOf(mY) + 1, ytdM.length), info: I[1], xt: 't2',

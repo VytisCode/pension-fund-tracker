@@ -1168,3 +1168,22 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .ecmore .lbl { color: var(--muted); margin-right: 4px; } .ecmore .btn[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
 .hgc.ph .ecmore .lbl { color: rgba(255, 255, 255, .8); }
 .hg.fold .ecmore, .hg.fold .ecall { display: none !important; }
+/* Analitiniai puslapiai (savininkas 2026-11-12: kortelės neturi užimti viso ekrano): viena eilutė iki 4 siaurų kortelių, po 4 juostas; ⤢ – per visą plotį */
+.hg.an { grid-auto-rows: auto; gap: 12px; }
+.hg.an > .hgc { grid-column: span 1 !important; grid-row: auto !important; padding: 12px 14px 12px; gap: 4px; }
+.hg.an > .hgc.open { grid-column: 1 / -1 !important; }
+.hg.an .hgq { font-size: 13.5px !important; margin-top: 2px !important; } .hg.an .hgb { font-size: 24px !important; margin-top: 0 !important; } .hg.an .hgb.sm { font-size: 18px !important; }
+.hg.an .hgs { font-size: 12px; line-height: 1.35; } .hg.an .hgh .ey { font-size: 10.5px; } .hg.an .hgic { width: 22px; height: 22px; }
+.hg.an .hgbars { gap: 3px; } .hg.an .hgbars .r { font-size: 12px; grid-template-columns: minmax(0, 1fr) 70px auto; }
+.hg.an > .hgc:not(.open) .hgbars .r:nth-child(n+5) { display: none; }
+.hg.an > .hgc:not(.open) .fgle span:nth-child(n+4) { display: none; }
+.hg.an > .hgc.ph .hgv { margin-top: 6px; }
+.ecctl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; margin: 2px 0 4px; }
+.ecctl select, .ecmore select { font-size: 12.5px; padding: 2px 6px; max-width: 100%; }
+.hgc.ph .ecctl select { background: rgba(255, 255, 255, .9); color: #2a2019; }
+.ecsl { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 2px; font-size: 12px; }
+.ecsl input[type=range] { width: 100%; accent-color: var(--accent); }
+.ecsl .ecslv { display: flex; justify-content: space-between; color: var(--text-3); }
+.hgc.ph .ecsl .ecslv { color: rgba(255, 255, 255, .8); } .hgc.ph .ecsl input[type=range] { accent-color: #fff; }
+@media (max-width: 1100px) { .hg.an { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.hg.an > .hgc:not(.open) .hgbars .r.top:nth-child(n+5) { display: grid; }
