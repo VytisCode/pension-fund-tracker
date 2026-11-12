@@ -1029,10 +1029,40 @@ function rfStats() {
   const pc = (S, i) => (S.part[i] / S.part[S.base] - 1) * 100, fs = (S, i) => S.flow[i] / S.na[S.base] * 100;
   return { L, E, li, lm, ei, en, pc, fs };
 }
+const RFC = {
+  q: { lt: ['Kiek dalyvių neteko II pakopa?', 'Kiek turto grynai išėjo iš fondų?', 'Kiek daugiausiai turto neteko Estija?', 'Kiek dalyvių Estijoje mažiau dabar?'],
+    en: ['How many participants did pillar II lose?', 'How much money left the funds (net)?', 'What was Estonia’s largest asset loss?', 'How many fewer participants does Estonia have now?'],
+    lv: ['Cik dalībnieku zaudēja II līmenis?', 'Cik aktīvu neto aizplūda no fondiem?', 'Cik daudz aktīvu maksimāli zaudēja Igaunija?', 'Par cik mazāk dalībnieku Igaunijā ir tagad?'],
+    et: ['Kui palju osalejaid kaotas II sammas?', 'Kui palju vara fondidest netona lahkus?', 'Kui palju vara kaotas Eesti kõige rohkem?', 'Kui palju vähem osalejaid on Eestis praegu?'] },
+  m: { lt: m => `po ${m} reformos mėn.`, en: m => `after ${m} reform months`, lv: m => `pēc ${m} reformas mēnešiem`, et: m => `${m} reformikuu järel` },
+  ee: { lt: 'Estijos dalyvių skaičius mažėja pavėluotai (išmokos – po kelių mėnesių)', en: 'Estonia’s participant count falls with a delay (payouts months later)', lv: 'Igaunijas dalībnieku skaits samazinās ar nobīdi (izmaksas pēc vairākiem mēnešiem)', et: 'Eesti osalejate arv väheneb viitega (väljamaksed mitu kuud hiljem)' },
+  pk: { lt: 'didžiausias grynasis srautas', en: 'largest net outflow', lv: 'lielākā neto aizplūde', et: 'suurim netoväljavool' }, nw: { lt: 'grynasis srautas nuo reformos', en: 'net flow since the reform', lv: 'neto plūsma kopš reformas', et: 'netovoog reformist' },
+  sl: { lt: 'Mėnesiai nuo reformos', en: 'Months since the reform', lv: 'Mēneši kopš reformas', et: 'Kuud reformist' }, ey: { lt: 'Reformos', en: 'Reforms', lv: 'Reformas', et: 'Reformid' } };
+const rfcT = k => RFC[k][ulang] || RFC[k].en;
+function rfCards(s) {
+  let el = $('rfCards'); if (!el) { el = document.createElement('div'); el.id = 'rfCards'; $('rfL').after(el); }
+  const { L, E, li, lm, en, pc, fs } = s, t = T().rf, Q = rfcT('q'), ey = rfcT('ey'), sp = v => (v < 0 ? '−' : '+') + num(Math.abs(v), 1) + ' %', out = [];
+  const info = `${t.note}`;
+  const pAt = m => { const a = rfAt(L, m), b = rfAt(E, m); return { a, b, l: a >= 0 ? pc(L, a) : null, e: b >= 0 && E.part[b] ? pc(E, b) : null }; };
+  const fAt = m => { const a = rfAt(L, m), b = rfAt(E, m); return { l: a >= 0 ? fs(L, a) : null, e: b >= 0 ? fs(E, b) : null }; };
+  const vP = m => { const x = pAt(m); return { big: x.l == null ? '–' : sp(x.l), sub: `${rfcT('m')(m)} · ${rfcT('ee')}`, vis: ecBars([[t.lt, PAL[1], Math.abs(x.l || 0), x.l == null ? '–' : sp(x.l), true], [t.ee, PAL[0], Math.abs(x.e || 0), x.e == null ? '–' : sp(x.e)]]) }; };
+  const vF = m => { const x = fAt(m); return { big: x.l == null ? '–' : sp(x.l), sub: rfcT('m')(m), vis: ecBars([[t.lt, PAL[1], Math.abs(x.l || 0), x.l == null ? '–' : sp(x.l), true], [t.ee, PAL[0], Math.abs(x.e || 0), x.e == null ? '–' : sp(x.e)]]) }; };
+  const ms = L.o.filter((o, i) => i >= L.base && o >= 1), sl = (k, f) => ms.length > 1 ? { n: ms.length, v: ms.length - 1, aria: rfcT('sl'), lab: i => `${ms[i]} ${lang === 'lt' ? 'mėn.' : 'm'}`, on: i => ecUpd(k, f(ms[i])) } : null;
+  const p0 = vP(lm), f0 = vF(lm);
+  out.push(ecCard({ k: 'rf0', sz: 'w', img: 'sec2-results.jpg', ic: 'people', ey, q: Q[0], big: p0.big, sub: p0.sub, vis: p0.vis, info, sl: sl('rf0', vP) }));
+  out.push(ecCard({ k: 'rf1', sz: 'w', ic: 'money-hand', ey, q: Q[1], big: f0.big, sub: f0.sub, vis: f0.vis, info, sl: sl('rf1', vF) }));
+  const fl = E.flow.map((v, i) => i < E.base ? null : v / E.na[E.base] * 100), mi = fl.reduce((a, v, i) => v != null && (a < 0 || v < fl[a]) ? i : a, -1);
+  if (mi >= 0) out.push(ecCard({ k: 'rf2', sz: 'w', ic: 'arrow-trending-down', ey, q: Q[2], big: sp(fl[mi]), sub: `${rfcT('pk')} · ${E.d[mi]} (${E.o[mi]} ${lang === 'lt' ? 'mėn.' : 'm'})`, info,
+    vis: ecBars([[`${rfcT('pk')}`, PAL[0], Math.abs(fl[mi]), sp(fl[mi]), true], [`${rfcT('nw')} (${E.d[en]})`, PAL[0], Math.abs(fl[en]), sp(fl[en])]]) }));
+  if (E.part[en]) out.push(ecCard({ k: 'rf3', sz: 'w', ic: 'people', ey, q: Q[3], big: sp(pc(E, en)), sub: `${E.d[E.base]} → ${E.d[en]} (${E.o[en]} ${lang === 'lt' ? 'mėn.' : 'm'})`, info,
+    vis: ecBars([[E.d[E.base], PAL[0], E.part[E.base], num(E.part[E.base], 0)], [E.d[en], PAL[0], E.part[en], num(E.part[en], 0), true]]) }));
+  el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el);
+}
 function renderRf() {
   if (!BALTIC.rf || !$('rfT')) return;
   const t = T().rf, s = rfStats(), { L, E, li, lm, ei, en, pc, fs } = s;
   $('rfT').textContent = t.t; $('rfL').textContent = t.l;
+  try { rfCards(s); } catch (x) { console.warn(x); }
   const e13 = rfAt(E, 13);
   $('rfSay').innerHTML = `${hEsc(t.says(lm, pc(L, li), fs(L, li), fs(E, ei), pc(E, e13), pc(E, en), Math.min(...E.flow.slice(E.base)) / E.na[E.base] * 100, E.o[en]))} <button type="button" class="btn" id="rfCp">${T().copy || (lang === 'lt' ? 'Kopijuoti' : 'Copy')}</button>`;
   $('rfSeg').innerHTML = ['part', 'na', 'flow'].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === RFK}">${t.seg[k]}</button>`).join('');
