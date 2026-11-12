@@ -777,6 +777,7 @@ function renderBs() {
   $('bsM').innerHTML = `<thead><tr>${b.mH.map((h, i) => `<th${i > 1 ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>`
     + mk.map(r => `<tr><td class="nm"><b>${hEsc(r.lab)}</b></td><td>${r.d}</td><td class="n">${f1(r.na)}</td><td class="n ${sgn(r.d0)}">${f1(r.d0)}</td><td class="n ${sgn(r.dp)}">${r.dp == null ? '–' : pctPlain(r.dp)}</td><td class="n">${r.inv ? num(r.inv, 0) : '–'}</td><td class="n">${r.n}</td><td class="nm">${r.big ? `${hEsc(r.big[0])} (${pctPlain(r.big[1] / r.tot * 100)})` : '–'}</td></tr>`).join('')
     + `<tr class="tot"><td class="nm"><b>${b.all}</b></td><td></td><td class="n"><b>${f1(sum)}</b></td><td class="n ${sgn(sd)}">${f1(sd)}</td><td class="n ${sgn(sd)}">${sd == null ? '–' : pctPlain(sd / (sum - sd) * 100)}</td><td></td><td class="n">${G.size}</td><td></td></tr></tbody>`;
+  try { bsCards(mk, G, sum); } catch (x) { console.warn(x); }
   $('bsSeg').innerHTML = ['na', 'sh'].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === BSK}">${b.k[k]}</button>`).join('');
   const rows = [...G.entries()].map(([g, o]) => ({ g, o, s: Object.values(o).reduce((a, v) => a + v, 0) })).sort((x, y) => y.s - x.s);
   const cell = (r, m) => { const v = r.o[m.k]; return `<td class="n">${v == null ? '–' : BSK === 'na' ? num(v, 1) : pctPlain(v / m.tot * 100)}</td>`; };
@@ -784,6 +785,31 @@ function renderBs() {
     + rows.map(r => `<tr><td class="nm"><b>${hEsc(r.g)}</b></td>${mk.map(m => cell(r, m)).join('')}<td class="n"><b>${BSK === 'na' ? num(r.s, 1) : pctPlain(r.s / sum * 100)}</b></td></tr>`).join('') + '</tbody>';
 }
 $('bsSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; BSK = b.dataset.k; renderBs(); });
+const BSC = { q: { lt: ['Kiek turto valdo Baltijos pensijų fondai?', 'Kur turtas augo sparčiausiai nuo metų pradžios?', 'Kuris valdytojas didžiausias Baltijose?', 'Kiek dalyvių turi kiekviena rinka?'],
+    en: ['How much do Baltic pension funds manage?', 'Where did assets grow fastest since the start of the year?', 'Which manager is the largest in the Baltics?', 'How many participants does each market have?'],
+    lv: ['Cik aktīvu pārvalda Baltijas pensiju fondi?', 'Kur aktīvi auga visstraujāk kopš gada sākuma?', 'Kurš pārvaldītājs ir lielākais Baltijā?', 'Cik dalībnieku ir katrā tirgū?'],
+    et: ['Kui palju vara haldavad Balti pensionifondid?', 'Kus vara kasvas aasta algusest kõige kiiremini?', 'Milline fondivalitseja on Baltikumis suurim?', 'Kui palju osalejaid on igal turul?'] },
+  s: { lt: 'kiekviena šalis – su naujausiais turimais duomenimis', en: 'each country with its latest available data', lv: 'katra valsts – ar jaunākajiem pieejamajiem datiem', et: 'iga riik oma viimaste andmetega' },
+  ey: { lt: 'Baltijos rinka', en: 'Baltic market', lv: 'Baltijas tirgus', et: 'Balti turg' } };
+const bscT = k => BSC[k][ulang] || BSC[k].en;
+function bsCards(mk, G, sum) {
+  let el = $('bsCards'); if (!el) { el = document.createElement('div'); el.id = 'bsCards'; $('bsL').after(el); }
+  const Q = bscT('q'), ey = bscT('ey'), S = bscT('s'), mn = v => v >= 1000 ? `${num(v / 1000, 2)} ${lang === 'lt' ? 'mlrd.' : 'bn'} €` : `${num(v, 1)} ${lang === 'lt' ? 'mln.' : 'm'} €`, out = [];
+  const col = k => PAL[['LT-II', 'LT-III', 'LV-II', 'LV-III', 'EE-II', 'EE-III'].indexOf(k) % PAL.length] || PAL[0];
+  const a = mk.slice().sort((x, y) => y.na - x.na);
+  out.push(ecCard({ k: 'bs0', xu: 'mln. €', sz: 'w', img: 'sec2-aum.jpg', ic: 'building-bank', ey, q: Q[0], big: mn(sum), sub: S, info: T().bs.l,
+    vis: ecBars(a.map(r => [`${r.lab} · ${r.d}`, col(r.k), r.na, `${mn(r.na)} · ${num(r.na / sum * 100, 1)} %`, false, r.na])) }));
+  const g = mk.filter(r => r.dp != null).sort((x, y) => y.dp - x.dp);
+  if (g.length) out.push(ecCard({ k: 'bs1', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: hEsc(g[0].lab), cls: 'sm', sub: `${pctPlain(g[0].dp)} · ${S}`, info: T().bs.l,
+    vis: ecBars(g.map(r => [r.lab, r.dp >= 0 ? 'var(--dpos)' : 'var(--dneg)', r.dp, pctPlain(r.dp)])) }));
+  const m = [...G.entries()].map(([k, o]) => ({ k, s: Object.values(o).reduce((x, v) => x + v, 0) })).sort((x, y) => y.s - x.s);
+  if (m.length) out.push(ecCard({ k: 'bs2', xu: 'mln. €', sz: 'w', ic: 'trophy', ey, q: Q[2], big: hEsc(m[0].k), sub: `${mn(m[0].s)} · ${num(m[0].s / sum * 100, 1)} % · ${S}`, info: T().bs.l,
+    vis: ecBars(m.map(x => [x.k, 'var(--s1)', x.s, `${mn(x.s)} · ${num(x.s / sum * 100, 1)} %`, false, x.s])) }));
+  const p = mk.filter(r => r.inv).sort((x, y) => y.inv - x.inv), ps = p.filter(r => r.k.endsWith('-II')).reduce((x, r) => x + r.inv, 0);   // tik II pakopa: tas pats žmogus gali būti ir III pakopoje
+  if (p.length) out.push(ecCard({ k: 'bs3', sz: 'w', ic: 'people', ey, q: Q[3], big: num(ps, 0), sub: `${{ lt: 'II pakopos dalyviai trijose šalyse; III pakopos nesumuojami (tas pats žmogus gali būti abiejose)', en: 'pillar II participants in the three countries; pillar III not added (one person can be in both)', lv: 'II līmeņa dalībnieki trijās valstīs; III līmenis netiek summēts (viens cilvēks var būt abos)', et: 'II samba osalejad kolmes riigis; III sammast ei liideta (sama inimene võib olla mõlemas)' }[ulang] || ''} · ${S}`, info: T().bs.l,
+    vis: ecBars(p.map(r => [`${r.lab} · ${r.d}`, col(r.k), r.inv, num(r.inv, 0)])) }));
+  el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el);
+}
 
 /* ---------- Turto pokytis: kas keitė turtą – investicijų grąža, pinigų srautai ir sujungimai (kaip Lietuvos „Turtas“ – aum.html;
    savininkas 2026-11-10: „kad visos Baltijos šalys turėtų vienodas galimybes“). Duomenys – BXFLOW (baltic.py flows(), docs/data_bx_flow.js,
