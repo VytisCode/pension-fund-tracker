@@ -276,6 +276,7 @@ plan_id,file_id,name,first_seen
 004,471,2026. gada 1. ceturksnis,2026-10-21
 004,2037,2026. gada 2. ceturksnis,2026-10-21
 004,2042,2026. gada 2. ceturksnis,2026-10-26
+004,2057,2026. gada 2. ceturksnis,2026-11-12
 005,497,2004. gada 4. ceturksnis,2026-10-21
 005,498,2005. gada 1. ceturksnis,2026-10-21
 005,499,2005. gada 2. ceturksnis,2026-10-21
@@ -364,6 +365,7 @@ plan_id,file_id,name,first_seen
 005,2038,2026. gada 2. ceturksnis,2026-10-21
 005,2043,2026. gada 2. ceturksnis,2026-10-26
 005,2047,2026. gada 2. ceturksnis,2026-11-03
+005,2058,2026. gada 2. ceturksnis,2026-11-12
 008,806,2003. gada 1. ceturksnis,2026-10-21
 008,807,2003. gada 2. ceturksnis,2026-10-21
 008,808,2003. gada 3. ceturksnis,2026-10-21
@@ -736,6 +738,7 @@ plan_id,file_id,name,first_seen
 013,2039,2026. gada 2. ceturksnis,2026-10-21
 013,2044,2026. gada 2. ceturksnis,2026-10-26
 013,2048,2026. gada 2. ceturksnis,2026-11-03
+013,2059,2026. gada 2. ceturksnis,2026-11-12
 021,1453,2005. gada 1. ceturksnis,2026-10-21
 021,1454,2005. gada 2. ceturksnis,2026-10-21
 021,1455,2005. gada 3. ceturksnis,2026-10-21
@@ -1121,6 +1124,7 @@ plan_id,file_id,name,first_seen
 028,1716,2025. gada 4. ceturksnis,2026-10-21
 028,1717,2026. gada 1. ceturksnis,2026-10-21
 028,2031,2026. gada 2. ceturksnis,2026-10-21
+028,2051,2026. gada 2. ceturksnis,2026-11-12
 029,1822,2017. gada 3. ceturksnis,2026-10-21
 029,1823,2017. gada 4. ceturksnis,2026-10-21
 029,1824,2018. gada 1. ceturksnis,2026-10-21
@@ -1261,6 +1265,7 @@ plan_id,file_id,name,first_seen
 034,2040,2026. gada 2. ceturksnis,2026-10-21
 034,2045,2026. gada 2. ceturksnis,2026-10-26
 034,2049,2026. gada 2. ceturksnis,2026-11-03
+034,2060,2026. gada 2. ceturksnis,2026-11-12
 035,763,2018. gada 1. ceturksnis,2026-10-21
 035,764,2018. gada 2. ceturksnis,2026-10-21
 035,765,2018. gada 3. ceturksnis,2026-10-21
@@ -1297,6 +1302,7 @@ plan_id,file_id,name,first_seen
 035,2041,2026. gada 2. ceturksnis,2026-10-21
 035,2046,2026. gada 2. ceturksnis,2026-10-26
 035,2050,2026. gada 2. ceturksnis,2026-11-03
+035,2061,2026. gada 2. ceturksnis,2026-11-12
 037,1737,2018. gada 2. ceturksnis,2026-10-21
 037,1738,2018. gada 3. ceturksnis,2026-10-21
 037,1739,2018. gada 4. ceturksnis,2026-10-21
@@ -1330,6 +1336,7 @@ plan_id,file_id,name,first_seen
 037,1767,2025. gada 4. ceturksnis,2026-10-21
 037,1768,2026. gada 1. ceturksnis,2026-10-21
 037,2032,2026. gada 2. ceturksnis,2026-10-21
+037,2052,2026. gada 2. ceturksnis,2026-11-12
 038,1911,2018. gada 2. ceturksnis,2026-10-21
 038,1912,2018. gada 3. ceturksnis,2026-10-21
 038,1913,2018. gada 4. ceturksnis,2026-10-21
@@ -1483,6 +1490,7 @@ plan_id,file_id,name,first_seen
 043,1064,2025. gada 4. ceturksnis,2026-10-21
 043,1065,2026. gada 1. ceturksnis,2026-10-21
 043,2033,2026. gada 2. ceturksnis,2026-10-21
+043,2053,2026. gada 2. ceturksnis,2026-11-12
 044,1779,2021. gada 2. ceturksnis,2026-10-21
 044,1780,2021. gada 3. ceturksnis,2026-10-21
 044,1781,2021. gada 4. ceturksnis,2026-10-21
@@ -1504,6 +1512,7 @@ plan_id,file_id,name,first_seen
 044,1797,2025. gada 4. ceturksnis,2026-10-21
 044,1798,2026. gada 1. ceturksnis,2026-10-21
 044,2034,2026. gada 2. ceturksnis,2026-10-21
+044,2054,2026. gada 2. ceturksnis,2026-11-12
 045,355,2021. gada 4. ceturksnis,2026-10-21
 045,356,2022. gada 1. ceturksnis,2026-10-21
 045,357,2022. gada 2. ceturksnis,2026-10-21
@@ -1541,6 +1550,7 @@ plan_id,file_id,name,first_seen
 046,1090,2025. gada 4. ceturksnis,2026-10-21
 046,1091,2026. gada 1. ceturksnis,2026-10-21
 046,2035,2026. gada 2. ceturksnis,2026-10-21
+046,2055,2026. gada 2. ceturksnis,2026-11-12
 047,1806,2023. gada 3. ceturksnis,2026-10-21
 047,1807,2023. gada 4. ceturksnis,2026-10-21
 047,1808,2024. gada 1. ceturksnis,2026-10-21
@@ -1553,6 +1563,7 @@ plan_id,file_id,name,first_seen
 047,1815,2025. gada 4. ceturksnis,2026-10-21
 047,1816,2026. gada 1. ceturksnis,2026-10-21
 047,2036,2026. gada 2. ceturksnis,2026-10-21
+047,2056,2026. gada 2. ceturksnis,2026-11-12
 048,1953,2023. gada 4. ceturksnis,2026-10-21
 048,1954,2024. gada 1. ceturksnis,2026-10-21
 048,1955,2024. gada 2. ceturksnis,2026-10-21
