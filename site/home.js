@@ -233,6 +233,7 @@ function hgRender() {
         vis: hgSlope(rows, ds[pdi].slice(0, 7), d.slice(0, 7)), href: 'managers.html#tab=mg', src: 'lbh',
         tbl: { head: [t.ldMgr, ds[pdi], d, pp], rows: rows.map(([m, , x, y]) => [m, `${num(x, 2)} %`, `${num(y, 2)} %`, `${y - x >= 0 ? '+' : '−'}${num(Math.abs(y - x), 2)}`]) } })); }
   }
+  setTimeout(hgAumSl, 0);
   const keep = [...g.querySelectorAll(':scope > .hgx')];   // esamos kortelės (Lyderiai, naujienos…) – perpiešiant nepamesti
   g.innerHTML = out.join('');
   { const tx = document.querySelector('.sechero.has-kpi .shtx');   // nuotraukos juosta – tik šalis, pakopa ir duomenų data; skaičiai – kortelėse (be pasisveikinimo – savininkas)
@@ -242,6 +243,26 @@ function hgRender() {
   // pirmą kartą: esamos kortelės (nieko nenumetame) – į tą patį tinklelį
   [['ldrC', 'w'], ['tdNews', 'w'], [document.querySelector('.says'), 'w'], [document.querySelector('.tdmk'), 'w'], [document.getElementById('gT') && document.getElementById('gT').closest('section'), 'f']]
     .forEach(([el, sz]) => { el = typeof el === 'string' ? document.getElementById(el) : el; if (!el) return; el.classList.add('hgx', sz); g.appendChild(el); });
+}
+/* „Kiek sukaupta?“ – datos slankiklis (savininkas 2026-11-12). Istorija – Fondų turto puslapio duomenys (docs/data_aum.js, kraunama po puslapio):
+   valdytojų skelbiami dienos aktyvai, kai jų nėra – LB ketvirčių pabaigos; rodomos tik datos, kai yra visų tuo metu veikusių valdytojų duomenys. Kol kas – Lietuvai. */
+let HG_AUM = null;
+function hgAumSl() {
+  if (CTRY) return; const card = document.querySelector('.hgc[data-k="aum"]'); if (!card || card.querySelector('.ecsl')) return;
+  if (!HG_AUM) { HG_AUM = dlLoad('data_aum.js', 'AUM').then(a => { HG_AUM.v = a; hgAumSl(); }).catch(() => {}); return; }
+  const A = HG_AUM.v; if (!A || !A.funds) return;
+  const t = T(), fs = A.funds.filter(f => f.pl === 'II'), MS = [...new Set(fs.map(f => f.p))], DY = 864e5 / 864e5 * 1;
+  const at = (m, day) => fs.filter(f => f.p === m).reduce((a, f) => { const i = lastOnOrBefore(f, day); return a + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
+  const last = Math.max(...fs.map(f => f.d[f.d.length - 1])), first = Object.fromEntries(MS.map(m => [m, Math.min(...fs.filter(f => f.p === m).map(f => f.d[0]))]));
+  const f0 = Object.values(first), dS = Math.max(...f0.filter(d => d - Math.min(...f0) < 366)), stops = [last];
+  for (let k = 1; k <= 120; k++) { const x = new Date(last * 864e5), e = Math.round(Date.UTC(x.getUTCFullYear(), x.getUTCMonth() - k + 1, 0) / 864e5); if (e < dS) break; if (e < last && MS.every(m => first[m] > e || at(m, e) > 0)) stops.unshift(e); }
+  if (stops.length < 3) return; void DY;
+  const lab = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
+  const view = day => { const r = MS.map(m => [m, at(m, day) * 1e6]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]), tot = r.reduce((a, x) => a + x[1], 0);
+    const tb = card.querySelector('table'); if (tb) { const tr = tb.querySelectorAll('tbody tr'); if (tr.length) tb.querySelector('tbody').innerHTML = r.map(([m, v]) => `<tr><td>${hEsc(lab[m] || m)}</td><td class="n">${mInt(v)}</td><td class="n">${num(v / tot * 100, 1)} %</td></tr>`).join(''); }
+    return { big: money(tot), sub: `${t.hgS.aum(fs.filter(f => { const i = lastOnOrBefore(f, day); return i >= 0 && day - f.d[i] <= 10 && f.a[i] > 0; }).length, iso(day))}`, vis: hgDonut(r.map(([m, v]) => [lab[m] || m, mCol(m), v]), money(tot).replace(/ .*/, '')) }; };
+  const sl = { n: stops.length, v: stops.length - 1, aria: { lt: 'Pasirinkite datą', en: 'Choose a date', lv: 'Izvēlieties datumu', et: 'Valige kuupäev' }[ulang] || 'Choose a date', lab: i => iso(stops[i]), on: i => ecUpd('aum', view(stops[i])) };
+  const w = document.createElement('div'); w.innerHTML = ecSl({ k: 'aum', sl }); const more = card.querySelector('.hgm'); card.insertBefore(w.firstChild, more);
 }
 if (HG_ON) {
   document.documentElement.classList.add('hv3');
