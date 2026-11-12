@@ -411,6 +411,49 @@ async function download(k) {
   if (b) XLSX.writeFile(b.wb, b.file);
 }
 
+/* ---------- kortelės viršuje: pasirinkto valdytojo metai (mėnesiai, grupė, indeksas) ---------- */
+const RPC = {
+  q: { lt: [m => `Kuris mėnuo ${m} fondams buvo blogiausias?`, m => `Kiek mėnesių ${m} fondai uždirbo?`, m => `Keli ${m} fondai lenkia savo grupės medianą?`, m => `Ar ${m} fondai lenkia lyginamąjį indeksą?`],
+    en: [m => `Which month was worst for ${m} funds?`, m => `In how many months did ${m} funds earn?`, m => `How many ${m} funds beat their group median?`, m => `Do ${m} funds beat their benchmark?`],
+    lv: [m => `Kurš mēnesis ${m} fondiem bija sliktākais?`, m => `Cik mēnešos ${m} fondi nopelnīja?`, m => `Cik ${m} fondu pārspēj savas grupas mediānu?`, m => `Vai ${m} fondi pārspēj salīdzināmo indeksu?`],
+    et: [m => `Milline kuu oli ${m} fondidele halvim?`, m => `Mitmel kuul ${m} fondid teenisid?`, m => `Mitu ${m} fondi edestab oma rühma mediaani?`, m => `Kas ${m} fondid edestavad võrdlusindeksit?`] },
+  i: { lt: ['II pakopos valdytojo fondų mėnesio grąžų paprastas (nesvertinis) vidurkis, apskaičiuotas iš mėnesio pabaigos vieneto verčių; paskutinis mėnuo – iki paskutinės dienos.', 'Mėnesiai, kai valdytojo II pakopos fondų vidutinė grąža buvo teigiama; stulpeliai – kiekvieno fondo teigiamų mėnesių skaičius.', 'II pakopos fondo grąža nuo metų pradžios minus tos pačios gimimo metų grupės visų valdytojų fondų medianos (p. p.). Lyginama tik su savo grupe.', 'Fondo grąža nuo metų pradžios minus jo lyginamojo indekso grąža (p. p.), kaip valdytojai skelbia. Fondai be indekso neįtraukti.'],
+    en: ['Simple (unweighted) average of the manager’s pillar II fund monthly returns, from month-end unit values; the last month runs to the latest day.', 'Months in which the manager’s average pillar II fund return was positive; bars – positive months of each fund.', 'Pillar II fund return since the start of the year minus the median of all managers’ funds in the same birth-year group (pp). Compared only within its own group.', 'Fund return since the start of the year minus its benchmark return (pp), as published by managers. Funds without a benchmark are left out.'],
+    lv: ['Pārvaldītāja II līmeņa fondu mēneša ienesīguma vienkāršais (nesvērtais) vidējais no mēneša beigu daļas vērtībām; pēdējais mēnesis – līdz pēdējai dienai.', 'Mēneši, kuros pārvaldītāja II līmeņa fondu vidējais ienesīgums bija pozitīvs; joslas – katra fonda pozitīvo mēnešu skaits.', 'II līmeņa fonda ienesīgums kopš gada sākuma mīnus tās pašas dzimšanas gadu grupas visu pārvaldītāju fondu mediāna (p. p.). Salīdzina tikai savā grupā.', 'Fonda ienesīgums kopš gada sākuma mīnus tā salīdzināmā indeksa ienesīgums (p. p.), kā publicē pārvaldītāji. Fondi bez indeksa nav iekļauti.'],
+    et: ['Fondivalitseja II samba fondide kuutootluste lihtne (kaalumata) keskmine kuu lõpu osakuväärtustest; viimane kuu – viimase päevani.', 'Kuud, mil fondivalitseja II samba fondide keskmine tootlus oli positiivne; tulbad – iga fondi positiivsete kuude arv.', 'II samba fondi tootlus aasta algusest miinus sama sünniaastate rühma kõigi fondivalitsejate fondide mediaan (pp). Võrreldakse ainult oma rühmas.', 'Fondi tootlus aasta algusest miinus tema võrdlusindeksi tootlus (pp), nagu fondivalitsejad avaldavad. Võrdlusindeksita fondid on välja jäetud.'] },
+  of: { lt: 'iš', en: 'of', lv: 'no', et: '/' }, ey: { lt: 'Ataskaitos', en: 'Reports', lv: 'Pārskati', et: 'Aruanded' }, avg: { lt: 'vidurkis', en: 'average', lv: 'vidējais', et: 'keskmine' },
+  med: { lt: 'nuo metų pradžios, palyginti su grupės mediana', en: 'since the start of the year vs the group median', lv: 'kopš gada sākuma pret grupas mediānu', et: 'aasta algusest võrreldes rühma mediaaniga' },
+  bmS: { lt: 'nuo metų pradžios, fondas − indeksas', en: 'since the start of the year, fund − benchmark', lv: 'kopš gada sākuma, fonds − indekss', et: 'aasta algusest, fond − indeks' } };
+const rpT = k => RPC[k][ulang] || RPC[k].en;
+function repCards() {
+  let el = document.getElementById('kpis');
+  if (!el) { el = document.createElement('div'); el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  try {
+    const m = ST.m, nm = MLABEL[m], Q = rpT('q').map(f => f(nm)), I = rpT('i'), ey = rpT('ey'), out = [], fs = fundsOf('II', m);
+    if (!fs.length) { el.innerHTML = ''; return false; }
+    const e = Math.max(...REP.funds.filter(f => f.pl === 'II').map(f => f.ld)), y = yearOf(e), lastM = monthOf(e), i0 = mIdx(y - 1, 11);
+    const ret = (f, a, b, bm) => { const p = pt(f, a, bm), q = pt(f, b, bm); return p && q && p[1] && q[1] != null ? (q[1] / p[1] - 1) * 100 : null; };
+    const mr = (f, k) => ret(f, k === 0 ? i0 : mIdx(y, k - 1), k === lastM ? 'L' : mIdx(y, k));
+    const gL = f => f.g === 'turto' ? T().turto || (lang === 'lt' ? 'Turto išsaugojimo' : 'Asset preservation') : f.g.replace('-', '–');
+    const MN = T().months, pp = v => (v >= 0 ? '+' : '−') + num(Math.abs(v), 2), pc = v => pp(v) + ' %', sc = v => v >= 0 ? 'var(--dpos)' : 'var(--dneg)';
+    const av = Array.from({ length: lastM + 1 }, (_, k) => { const v = fs.map(f => mr(f, k)).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; });
+    const ok = av.map((v, k) => ({ k, v })).filter(x => x.v != null);
+    if (ok.length) { const w = ok.reduce((a, b) => b.v < a.v ? b : a);
+      out.push(ecCard({ k: 'rp0', sz: 'w', img: 'sec2-rep.jpg', ic: 'calendar-ltr', ey, q: Q[0], big: `${MN[w.k]} ${pc(w.v)}`, cls: w.v < 0 ? 'down' : 'up', sub: `${rpT('avg')} · ${y}`, info: I[0],
+        vis: ecBars(ok.slice().sort((a, b) => a.v - b.v).map(x => [`${MN[x.k]}`, sc(x.v), x.v, pc(x.v), x.k === w.k])) }));
+      const np = ok.filter(x => x.v > 0).length, pf = fs.map(f => ({ f, n: Array.from({ length: lastM + 1 }, (_, k) => mr(f, k)).filter(v => v != null && v > 0).length })).sort((a, b) => b.n - a.n);
+      out.push(ecCard({ k: 'rp1', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: `${np} ${rpT('of')} ${ok.length}`, sub: `${rpT('avg')} · ${y}`, info: I[1],
+        vis: ecBars(pf.map(x => [gL(x.f), colorOf(m), x.n, String(x.n)])) })); }
+    const all = REP.funds.filter(f => f.pl === 'II'), med = a => { const s = a.slice().sort((x, z) => x - z), h = s.length >> 1; return s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2; };
+    const gr = fs.map(f => { const peers = all.filter(x => x.g === f.g).map(x => ret(x, i0, 'L')).filter(v => v != null), v = ret(f, i0, 'L'); return peers.length >= 3 && v != null ? { f, d: v - med(peers) } : null; }).filter(Boolean).sort((a, b) => b.d - a.d);
+    if (gr.length) out.push(ecCard({ k: 'rp2', sz: 'w', ic: 'people', ey, q: Q[2], big: `${gr.filter(x => x.d > 0).length} ${rpT('of')} ${gr.length}`, sub: rpT('med'), info: I[2],
+      vis: ecBars(gr.map(x => [gL(x.f), sc(x.d), x.d, pp(x.d) + ' p. p.'])) }));
+    const bm = fs.map(f => { const v = ret(f, i0, 'L'), b = ret(f, i0, 'L', true); return v != null && b != null ? { f, d: v - b } : null; }).filter(Boolean).sort((a, b) => b.d - a.d);
+    if (bm.length) out.push(ecCard({ k: 'rp3', sz: 'w', ic: 'target-arrow', ey, q: Q[3], big: `${bm.filter(x => x.d > 0).length} ${rpT('of')} ${bm.length}`, sub: rpT('bmS'), info: I[3],
+      vis: ecBars(bm.map(x => [gL(x.f), sc(x.d), x.d, pp(x.d) + ' p. p.'])) }));
+    el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return out.length > 0;
+  } catch (x) { console.warn(x); return false; }
+}
 function repTabs() {                      // skirtukai; spausdinant rodomos visos dalys
   const L = lang === 'lt';
   addSubnav([['calTitle', L ? 'Grąža nuo 2019 m.' : 'Returns since 2019'], ['monTitle', L ? 'Mėnesių grąža' : 'Monthly returns'], ['kpiTitle', L ? 'Rezultatų rodikliai' : 'Performance KPI'],
@@ -418,7 +461,7 @@ function repTabs() {                      // skirtukai; spausdinant rodomos viso
 }
 function renderAllParts() {
   const lbd = String(REP.lbDate || ''), lbIso = lbd.length === 8 ? `${lbd.slice(0, 4)}-${lbd.slice(4, 6)}-${lbd.slice(6)}` : lbd;
-  kpiRow([[T().kpFunds, REP.funds.length, `${T().kpII} ${REP.funds.filter(f => f.pl === 'II').length} · ${T().kpIII} ${REP.funds.filter(f => f.pl === 'III').length}`],
+  if (!repCards()) kpiRow([[T().kpFunds, REP.funds.length, `${T().kpII} ${REP.funds.filter(f => f.pl === 'II').length} · ${T().kpIII} ${REP.funds.filter(f => f.pl === 'III').length}`],
     [T().kpMonth, iso(M[NM - 1])], lbIso ? [T().kpLb, lbIso] : null, [T().kpUntil, iso(Math.max(...REP.funds.map(f => f.ld)))]]);
   document.getElementById('sub').textContent = `${T().navReports} · ${T().updated} ${REP.generated}`;
   const bar = document.getElementById('mgrBar');
