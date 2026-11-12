@@ -596,6 +596,7 @@ const AUC = {
       'Pension-reform payouts (one-off withdrawal of savings) from the managers’ funds this year, by quarter; partly estimated from the asset change on payout days.',
       'Net assets of pillar II and III funds on the latest day.'] },
   of2: { lt: 'II pakopos dydžio', en: 'of pillar II', lv: 'no II līmeņa', et: 'II sambast' },
+  now: { lt: 'iki šiandien', en: 'to today', lv: 'līdz šodienai', et: 'tänaseni' }, sl: { lt: 'Pasirinkite datą', en: 'Choose a date', lv: 'Izvēlieties datumu', et: 'Valige kuupäev' },
 };
 const aucT = k => AUC[k][ulang] || AUC[k].en;
 function aumCards(last, y0, yr) {
@@ -606,8 +607,16 @@ function aumCards(last, y0, yr) {
     const Q = aucT('q'), I = aucT('i'), ey = aucT('ey'), M = Object.keys(MLABEL), mn = v => kpMoney(Math.abs(v) * 1e6), sg = v => (v >= 0 ? '+' : '−') + mn(v), out = [];
     const a2 = M.map(m => ({ m, v: at('II', m, last), v0: at('II', m, y0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), t2 = a2.reduce((s, x) => s + x.v, 0), t20 = a2.reduce((s, x) => s + x.v0, 0);
     if (!t2) { el.innerHTML = ''; return false; }
-    out.push(ecCard({ k: 'au0', sz: 'w', img: 'sec2-aum.jpg', ic: 'building-bank', ey, q: Q[0], big: mn(t2), sub: iso(last), info: I[0], xt: 'gtTable',
-      vis: ecBars(a2.map(x => [MLABEL[x.m], colorOf(x.m), x.v, `${mn(x.v)} · ${num(x.v / t2 * 100, 1)} %`])) }));
+    const d0 = Math.min(...AUM.funds.filter(f => f.pl === 'II').map(f => f.d[0])), stops = [last];   // slankiklis: šiandien ir kiekvieno mėnesio pabaiga atgal (iki 10 metų)
+    for (let k = 1; k <= 120; k++) { const t = new Date(last * DAY), e = Math.round(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() - k + 1, 0) / DAY); if (e < d0) break; if (e < last) stops.unshift(e); }
+    const full = (pl, day) => M.every(m => { const fs = AUM.funds.filter(f => f.pl === pl && f.p === m); return !fs.length || Math.min(...fs.map(f => f.d[0])) > day || at(pl, m, day) > 0; });   // tik datos, kai yra visų valdytojų duomenys (Swedbank, Luminor anksčiau – tik ketvirčių pabaigos)
+    const f0 = M.map(m => Math.min(...AUM.funds.filter(f => f.pl === 'II' && f.p === m).map(f => f.d[0]))).filter(isFinite), dS = Math.max(...f0.filter(d => d - Math.min(...f0) < 366));   // pradžia – kai jau yra visų tuomet veikusių valdytojų duomenys
+    for (let i = stops.length - 2; i >= 0; i--) if (stops[i] < dS || !full('II', stops[i])) stops.splice(i, 1);
+    const shareAt = day => { const r = M.map(m => ({ m, v: at('II', m, day) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), t = r.reduce((s, x) => s + x.v, 0);
+      return { big: mn(t), sub: iso(day) + (day < last && t ? ` · ${aucT('now')} ${sg(t2 - t)}` : ''), vis: ecBars(r.map(x => [MLABEL[x.m], colorOf(x.m), x.v, `${mn(x.v)} · ${num(x.v / t * 100, 1)} %`])) }; };
+    const s0 = shareAt(last);
+    out.push(ecCard({ k: 'au0', sz: 'w', img: 'sec2-aum.jpg', ic: 'building-bank', ey, q: Q[0], big: s0.big, sub: s0.sub, info: I[0], vis: s0.vis,
+      sl: stops.length > 2 ? { n: stops.length, v: stops.length - 1, aria: aucT('sl'), lab: i => iso(stops[i]), on: i => ecUpd('au0', shareAt(stops[i])) } : null }));
     if (t20) { const ch = a2.filter(x => x.v0 > 0).map(x => ({ m: x.m, d: x.v - x.v0, r: (x.v / x.v0 - 1) * 100 })).sort((a, b) => a.d - b.d);
       out.push(ecCard({ k: 'au1', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: sg(t2 - t20), cls: t2 >= t20 ? 'up' : 'down', sub: `${pct((t2 / t20 - 1) * 100)} · ${iso(y0)} → ${iso(last)}`, info: I[1], xt: 'gtTable',
         vis: ecBars(ch.map(x => [MLABEL[x.m], x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, `${sg(x.d)} · ${pct(x.r)}`])) })); }
@@ -615,8 +624,10 @@ function aumCards(last, y0, yr) {
     if (tp) out.push(ecCard({ k: 'au2', sz: 'w', ic: 'money-hand', ey, q: Q[2], big: '−' + mn(tp), sub: T().kpPay(yr), info: I[2], xt: 'poTable',
       vis: ecBars(po.map(x => [MLABEL[x.m], colorOf(x.m), x.v, '−' + mn(x.v)])) }));
     const t3 = at('III', null, last);
-    if (t3) out.push(ecCard({ k: 'au3', sz: 'w', ic: 'savings', ey, q: Q[3], big: mn(t3), sub: `${num(t3 / t2 * 100, 1)} % ${aucT('of2')} · ${iso(last)}`, info: I[3],
-      vis: ecBars([[T().kpII, 'var(--s1)', t2, mn(t2)], [T().kpIII, 'var(--s4)', t3, mn(t3)]]) }));
+    const d3 = Math.min(...AUM.funds.filter(f => f.pl === 'III').map(f => f.d[0])), st3 = stops.filter(d => d >= d3 && (d === last || full('III', d)));
+    const p23 = day => { const b = at('II', null, day), c = at('III', null, day); return { big: mn(c), sub: `${b ? num(c / b * 100, 1) : '–'} % ${aucT('of2')} · ${iso(day)}`, vis: ecBars([[T().kpII, 'var(--s1)', b, mn(b)], [T().kpIII, 'var(--s4)', c, mn(c)]]) }; };
+    if (t3) { const s3 = p23(last); out.push(ecCard({ k: 'au3', sz: 'w', ic: 'savings', ey, q: Q[3], big: s3.big, sub: s3.sub, info: I[3], vis: s3.vis,
+      sl: st3.length > 2 ? { n: st3.length, v: st3.length - 1, aria: aucT('sl'), lab: i => iso(st3[i]), on: i => ecUpd('au3', p23(st3[i])) } : null })); }
     el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return true;
   } catch (e) { console.warn(e); return false; }
 }

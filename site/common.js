@@ -2495,11 +2495,14 @@ const EC = { cp: { lt: 'Kopijuoti', en: 'Copy', lv: 'Kopēt', et: 'Kopeeri' }, i
 const ecT = k => EC[k][ulang] || EC[k].en;
 const ecIc = n => `<span class="hgic" style="--ic:url(img/ic/${n}.svg)" aria-hidden="true"></span>`;
 const ecBars = rows => { const m = Math.max(...rows.map(r => Math.abs(r[2])), 0.01), hi = rows.some(r => r[4]);   // r[4] – paryškinta eilutė (kitaip – pirma)
-  return `<div class="hgbars">${rows.map(([n, col, v, tx, h], i) => `<div class="r${(hi ? h : !i) ? ' top' : ''}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
+  return `<div class="hgbars${rows.some(r => String(r[3]).replace(/<[^>]+>/g, '').length > 13) ? ' lg' : ''}">${rows.map(([n, col, v, tx, h], i) => `<div class="r${(hi ? h : !i) ? ' top' : ''}"><span class="n">${hEsc(n)}</span><span class="t"><i style="width:${Math.abs(v) / m * 100}%;background:${col}"></i></span><b>${tx}</b></div>`).join('')}</div>`; };
 const EC_SL = {};   // slankikliai kortelėse: rakto → { lab(i), on(i) }
 const ecSl = o => { EC_SL[o.k] = o.sl; return `<div class="ecsl"><input type="range" min="0" max="${o.sl.n - 1}" step="1" value="${o.sl.v}" data-ecsl="${o.k}" aria-label="${hEsc(o.sl.aria || '')}"><div class="ecslv"><span>${hEsc(o.sl.lab(0))}</span><b>${hEsc(o.sl.lab(o.sl.v))}</b><span>${hEsc(o.sl.lab(o.sl.n - 1))}</span></div></div>`; };
 document.addEventListener('input', e => { const r = e.target.closest('input[data-ecsl]'); if (!r) return; const sl = EC_SL[r.dataset.ecsl]; if (!sl) return; const b = r.parentNode.querySelector('.ecslv b'); if (b) b.textContent = sl.lab(+r.value);
   clearTimeout(sl._t); sl._t = setTimeout(() => sl.on(+r.value), 60); });
+const ecUpd = (k, o) => { document.querySelectorAll(`.hgc[data-k="${k}"]`).forEach(c => {   // slankiklio pakeitimas – atnaujinti kortelę vietoje
+  const set = (sel, v) => { const e = c.querySelector(sel); if (e && v != null) e.innerHTML = v; };
+  set('.hgb', o.big); set('.hgs', o.sub); set('.hgv:not(.ecall)', o.vis); }); };
 const EC_OPEN = new Set();   // išskleistos kortelės (o.k) – išlieka perpiešiant
 const ecCard = o => `<article class="hgc fg ${o.k && EC_OPEN.has(o.k) ? 'f open' : o.sz}${o.img ? ' ph' : ''}"${o.k ? ` data-k="${o.k}" data-sz="${o.sz}"` : ''}${o.img ? ` style="--ph:url(img/${o.img})"` : ''}>
   <header class="hgh">${ecIc(o.ic)}<span class="ey">${o.ey}</span><span class="hgt"><button type="button" class="btn ico" data-jg="cp" title="${ecT('cp')}" aria-label="${ecT('cp')}">⧉</button><button type="button" class="btn ico" data-jg="png" title="PNG" aria-label="PNG">⤓</button><button type="button" class="btn ico" data-jg="xl"${o.xt ? ` data-xt="${o.xt}"` : ''}${o.xf ? ` data-xf="${o.xf}"` : ''} title="${ecT('xl')}" aria-label="Excel">X</button><button type="button" class="btn ico" data-jg="i" title="${ecT('inf')}" aria-label="${ecT('inf')}" aria-expanded="false">i</button>${o.k && (o.visAll || o.more) ? `<button type="button" class="btn ico" data-jg="ex" title="${ecT('ex')}" aria-label="${ecT('ex')}">⤢</button>` : ''}</span></header>
