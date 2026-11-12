@@ -524,7 +524,7 @@ function mgrFacts(pl, di, m) {
     if (best) { const nb = NB(), gl = groupLbl(pl, best.gi), cg = crG(pl, best.gi);
       const iv = nb.add(`${gl} · ${X.best} · ${t.thYtd.toLowerCase()}`, best.v, () => `_xlfn.MAXIFS(${MKX.D}!G:G,${byD(d0)},${cg},${cm})`, Zp);
       nb.add(X.rank, best.pos, c => `COUNTIFS(${byD(d0)},${cg},${MKX.D}!G:G,">"&${c(iv)})+1`, '0'); nb.add(X.of, best.of, () => `COUNTIFS(${byD(d0)},${cg},${MKX.D}!G:G,"<>")`, '0');
-      add(F.m4(m, best.pos, best.of, gl), X.calcM4, nb); } }
+      add(F.m4(m, best.pos, best.of, gl), X.calcM4, nb); out[out.length - 1].m4 = best; } }
   return out;
 }
 function renderFacts() {
@@ -539,8 +539,43 @@ function renderMgrCards() {
   const t = T(), X = t.fx, pl = MS.pl, di = dIdx(pl, MS.d), el = document.getElementById('miCards'); if (!el) return;
   document.getElementById('miTitle').textContent = X.miTitle; document.getElementById('miLead').textContent = X.miLead; document.getElementById('miXl').textContent = X.xlAll;
   const ms = Object.entries(byMgr(pl, di)).sort((a, b) => b[1].nav - a[1].nav).map(([m]) => m);
-  mgrCards(el, Object.fromEntries(ms.map(m => [m, [...mgrFacts(pl, di, m), strengthFact(pl, di, m)].filter(Boolean)])), X.miTitle, pl);
+  const byM = Object.fromEntries(ms.map(m => [m, [...mgrFacts(pl, di, m), strengthFact(pl, di, m)].filter(Boolean)]));
+  if (FU.view === 'list') { const c0 = document.getElementById('miChips'); if (c0) c0.remove(); mgrCards(el, byM, X.miTitle, pl); return; }
+  { const tt = T(), F = tt.f, X2 = tt.fx, QM = new Map([   // valdytojo faktų klausimai (kortelių antraštės)
+      [F.calcMgr, m => [`Kiek turto ir dalyvių valdo ${m}?`, `How much in assets and participants does ${m} manage?`, `Cik aktīvu un dalībnieku pārvalda ${m}?`, `Kui palju vara ja osalejaid haldab ${m}?`]],
+      [X2.calcM5, m => [`Kaip keičiasi ${m} rinkos dalis?`, `How is ${m}’s market share changing?`, `Kā mainās ${m} tirgus daļa?`, `Kuidas muutub ${m} turuosa?`]],
+      [F.calcChg, m => [`Kaip keitėsi ${m} dalyvių skaičius?`, `How did ${m}’s number of participants change?`, `Kā mainījās ${m} dalībnieku skaits?`, `Kuidas muutus ${m} osalejate arv?`]],
+      [F.calcGain, m => [`Kiek ${m} fondai uždirbo per ketvirtį?`, `How much did ${m}’s funds earn in the quarter?`, `Cik ${m} fondi nopelnīja ceturksnī?`, `Kui palju ${m} fondid kvartalis teenisid?`]],
+      [F.calcPer, m => [`Kiek turto tenka vienam ${m} dalyviui?`, `How much in assets per ${m} participant?`, `Cik aktīvu ir uz vienu ${m} dalībnieku?`, `Kui palju vara on ühe ${m} osaleja kohta?`]],
+      [X2.calcM3, m => [`Ar ${m} fondai lenkė grupės vidurkį?`, `Did ${m}’s funds beat the group average?`, `Vai ${m} fondi pārspēja grupas vidējo?`, `Kas ${m} fondid edestasid rühma keskmist?`]],
+      [X2.calcM4, m => [`Kurioje grupėje ${m} sekasi geriausiai?`, `In which group is ${m} doing best?`, `Kurā grupā ${m} veicas vislabāk?`, `Millises rühmas läheb ${m}-l kõige paremini?`]]]);
+    const Mx = byMgr(pl, di), dq = dIdx(pl, qBack(MS.d, 3)), Mq = byMgr(pl, dq), Tt = totals(pl, di);
+    const bars = (m, val, fmt) => { const r = Object.keys(Mx).map(k => ({ k, v: val(k) })).filter(x => x.v != null && isFinite(x.v)).sort((a, b) => b.v - a.v);
+      return r.length > 1 ? ecBars(r.map(x => [x.k, x.k === m ? mkColor(x.k) : `color-mix(in srgb, ${mkColor(x.k)} 45%, transparent)`, x.v, fmt(x.v), x.k === m])) : ''; };
+    const gainOf = k => { try { return gainAt(pl, di, k); } catch (e) { return null; } };
+    const VM = new Map([
+      [F.calcMgr, m => bars(m, k => Mx[k].nav, v => mMn(v))],
+      [F.calcChg, m => bars(m, k => Mq[k] && Mx[k].part && Mq[k].part ? Mx[k].part - Mq[k].part : null, v => (v >= 0 ? '+' : '−') + mInt(Math.abs(v)))],
+      [F.calcPer, m => bars(m, k => Mx[k].part ? Mx[k].nav * 1e6 / Mx[k].part : null, v => `${mInt(v)} €`)],
+      [F.calcGain, m => bars(m, gainOf, v => (v < 0 ? '−' : '') + mMn(Math.abs(v)))]]);
+    const firsts = k => { let n = 0; ['ret_ytd', 'ret_1y', 'ret_3y', 'ret_5y'].forEach(c => groupsAt(pl, di).forEach(gi => { const rs = rowsAt(pl, di).filter(r => fundOf(pl, r)[2] === gi && r[MC[c]] != null); if (rs.length < 2) return;
+      const mine = rs.filter(r => fundOf(pl, r)[0] === k); if (mine.length && Math.max(...mine.map(r => r[MC[c]])) >= Math.max(...rs.map(r => r[MC[c]]))) n++; })); return n; };
+    const OF = { lt: 'iš', en: 'of', lv: 'of', et: 'of' }[ulang] || 'of', FX = { lt: n => `${n} kartus pirmi`, en: n => `First ${n}×`, lv: n => `${n}× pirmie`, et: n => `${n}× esimesed` }[ulang] || (n => `First ${n}×`);
+    const m4Vis = (m, b) => { const rs = rowsAt(pl, di).filter(r => fundOf(pl, r)[2] === b.gi && r[MC.ret_ytd] != null).sort((x, y) => y[MC.ret_ytd] - x[MC.ret_ytd]);
+      return ecBars(rs.map(r => { const fd = fundOf(pl, r), me = fd[0] === m; return [fd[1], me ? mkColor(fd[0]) : `color-mix(in srgb, ${mkColor(fd[0])} 45%, transparent)`, r[MC.ret_ytd], pctPlain(r[MC.ret_ytd]), me]; })); };
+    Object.entries(byM).forEach(([m, fs]) => fs.forEach(f => {
+      if (f.m4) { f.big = `${f.m4.pos} ${OF} ${f.m4.of}`; f.vis = m4Vis(m, f.m4); }
+      else if (f.calc === tt.calcSt) { f.big = FX(firsts(m)); f.vis = bars(m, firsts, v => String(v)); } }));
+    Object.entries(byM).forEach(([m, fs]) => fs.forEach(f => { if (f.vis != null) return; const vv = VM.get(f.calc); if (vv) f.vis = vv(m); else if (f.calc !== X2.calcM5 && f.calc !== X2.calcM3) f.vis = ''; }));
+    void Tt;
+    Object.entries(byM).forEach(([m, fs]) => fs.forEach(f => { const g = QM.get(f.calc); f.q = g ? g(m) : [`Kuo išsiskiria ${m}?`, `What makes ${m} stand out?`, `Ar ko izceļas ${m}?`, `Mille poolest ${m} silma paistab?`]; })); }
+  const cur = ms.includes(MS.mgr) ? MS.mgr : ms.includes(MI_M) ? MI_M : ms[0];   // kortelės – vieno valdytojo (pasirenkama mygtukais arba paspaudus plytelę viršuje)
+  let ch = document.getElementById('miChips'); if (!ch) { ch = document.createElement('div'); ch.id = 'miChips'; ch.className = 'chips mich'; el.before(ch); }
+  ch.innerHTML = ms.map(m => `<button type="button" class="chip" data-mic="${hEsc(m)}" aria-pressed="${m === cur}"><i class="sw" style="background:${mkColor(m)}"></i>${hEsc(m)}</button>`).join('');
+  factCards(el, byM[cur] || [], `${X.miTitle} · ${cur}`, pl); el._byM = byM;
 }
+let MI_M = '';
+document.addEventListener('click', e => { const b = e.target.closest('#miChips [data-mic]'); if (!b) return; MI_M = b.dataset.mic; if (MS.mgr && MS.mgr !== MI_M) { MS.mgr = ''; mkSave(); mkRender(); } else renderMgrCards(); });
 /* „Kuo gali pasigirti“ (savininkas 2026-10-20: marketingui – paprasti, šiuo metu galiojantys faktai, kur valdytojas geriausias).
    Tik pirmos vietos rinkoje arba grupėje; fondai lyginami tik savo grupėje, grupės su mažiau nei 3 fondais neįtraukiamos. */
 addStrings({ br: {
@@ -665,7 +700,7 @@ document.addEventListener('click', async e => {
   const fs = box._facts || [], bm = box._byM || {}, title = box.dataset.title, pl = box.dataset.pl;
   if (b.dataset.fact != null || b.dataset.all) return mkCopy((b.dataset.all ? fs : [fs[+b.dataset.fact]]).map(f => `${f.text} ${f.src}`).join('\n\n'), b);
   if (b.dataset.mcp) { const f = bm[b.dataset.mcp] || []; return mkCopy(f.map(x => x.text).join(' ') + (f[0] ? ' ' + f[0].src : ''), b); }
-  const pick = b.dataset.xall ? fs : b.dataset.fx != null ? [fs[+b.dataset.fx]] : bm[b.dataset.mxl] || [];
+  const pick = b.dataset.xall ? (Object.keys(bm).length ? Object.values(bm).flat() : fs) : b.dataset.fx != null ? [fs[+b.dataset.fx]] : bm[b.dataset.mxl] || [];
   const ttl = b.dataset.fx != null ? `${title} · ${pick[0].h}` : b.dataset.mxl ? `${title} · ${b.dataset.mxl}` : title;
   const o = b.textContent; b.disabled = true; b.textContent = '…';
   try { await (pick[0] && pick[0].book ? pick[0].book(pick, ttl) : mkFactBook(pick, ttl, pl)); b.textContent = '✓'; } catch (err) { console.error(err); b.textContent = '!'; }
@@ -786,6 +821,10 @@ function renderMgrTiles(t, pl, di, list) {
       + `<b class="mgv">${sh == null ? '–' : pctPlain(sh, 1)}</b><span class="mgd"><span class="kd ${d == null ? '' : d < 0 ? 'neg' : 'pos'}">${d == null ? '–' : `${d >= 0 ? '+' : '−'}${num(Math.abs(d), 2)} ${pp}`}</span> ${(MS.tcmp === 'q' ? t.thDq : t.thDy).toLowerCase()}</span>${sp}`
       + `<small>${num(x.nav, 0)} ${T().mn || 'mln. €'} · ${x.nf} ${t.thFunds.toLowerCase()}${x.part ? `<br>${mInt(x.part)} ${t.thPart.toLowerCase()}` : ''}</small></button>`; }).join('');
   box.style.setProperty('--n', Math.min(list.length, 6));
+  let cap = document.getElementById('mgTcap'); if (!cap) { cap = document.createElement('p'); cap.id = 'mgTcap'; cap.className = 'note mgtcap'; box.before(cap); }
+  const LTx = lang === 'lt';
+  cap.textContent = ds[di] ? (LTx ? `${t.shOf[k]} ${ds[di]} (LB ketvirčio duomenys) · pokytis nuo ${ds[dc] || '–'}. Kitą ketvirtį pasirinkite viršuje „Ketvirčio pabaiga“; dienos turto dalys – „Valdytojas ir fondas“ ir „Turtas“.`
+    : `${t.shOf[k]} on ${ds[di]} (Bank of Lithuania quarterly data) · change since ${ds[dc] || '–'}. Pick another quarter in “Quarter end” above; daily asset shares – “Manager and fund” and “Assets”.`) : '';
 }
 document.addEventListener('click', e => {
   const a = e.target.closest('#mgTsh [data-tsh], #mgTcmp [data-tcmp], #mgTiles [data-tm]'); if (!a) return;
@@ -1381,6 +1420,7 @@ const FACT_OF = /\b\d+ (?:vietą )?(?:iš|of) \d+\b/g, FACT_ILL = new Set(['1 00
 function factBigS(f) {
   const t = T(), F = t.f || {}, P = t.pv || {}, P3 = t.p23 || {};
   if ([F.chgH, P3.aH].includes(f.h)) return '';
+  if (f.big != null) return f.big;
   let s = f.text || '';
   if (f.h === P.dblH) s = s.replace(/^[^.]*\.\s*/, '');           // pirmas sakinys – „100 % grąža reiškia…“ pavyzdys
   const re = new RegExp(FACT_NUM.source + (lang === 'en' ? '|(?<![\\d.,])\\d{1,3}(?:,\\d{3})+(?![\\d,]|\\.\\d)' : ''), 'g'), cand = [];
@@ -1473,7 +1513,7 @@ function fKey(f, id) {
   const k = ks.find(x => x.startsWith(id + ':') && hit(x.slice(id.length + 1))) || ks.find(x => !x.includes(':') && hit(x));
   return k || '';
 }
-function factQ(f, id) { const k = fKey(f, id), li = Math.max(0, ['lt', 'en', 'lv', 'et'].indexOf(ulang)); return k ? FQ[k][li] : f.h; }
+function factQ(f, id) { if (f.q) return f.q[Math.max(0, ['lt', 'en', 'lv', 'et'].indexOf(ulang))] || f.q[1]; const k = fKey(f, id), li = Math.max(0, ['lt', 'en', 'lv', 'et'].indexOf(ulang)); return k ? FQ[k][li] : f.h; }
 /* Diagramos su užrašais (savininkas 2026-11-11: geros kortelės – kur matosi kas ir kiek; stulpeliai be užrašų nieko nepaaiškina) */
 const FG_L = {
   wf: { lt: ['Prieš ketvirtį', 'Uždirbo', 'Kita (ne investicijos)', 'Dabar'], en: ['Quarter ago', 'Earned', 'Other (not investments)', 'Now'], lv: ['Pirms ceturkšņa', 'Nopelnīts', 'Cits (ne ieguldījumi)', 'Tagad'], et: ['Kvartal tagasi', 'Teenitud', 'Muu (mitte investeeringud)', 'Nüüd'] },
@@ -1543,6 +1583,7 @@ function fgOwn(f, el, x, key) {
   return null;
 }
 function fgVis(f, el, big) {
+  if (f.vis != null) return { k: f.vis ? 'own' : 'none', h: f.vis };   // faktas su savo grafiku (pvz. valdytojų įžvalgos)
   let x = null; try { x = exDefault(f, el, false); } catch (e) { return { k: 'none', h: '' }; }
   const own = fgOwn(f, el, x, fKey(f, el.id)); if (own) return own;
   const of = /^(\d+)\s(?:iš|of)\s(\d+)$/.exec(big || '');
