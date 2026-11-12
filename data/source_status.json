@@ -19,7 +19,11 @@
   "ok": "2026-11-12"
  },
  "bx.macro": {
-  "ok": "2026-11-12"
+  "err": "2026-11-12",
+  "kind": "network",
+  "msg": "lv_rows nepavyko: <urlopen error timed out> (išėjimo kodas 0)",
+  "ok": "2026-11-12",
+  "since": "2026-11-12"
  },
  "bx.main": {
   "ok": "2026-11-12"

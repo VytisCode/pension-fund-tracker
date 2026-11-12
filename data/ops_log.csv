@@ -601,3 +601,4 @@ ts,src,ev,dd,n,msg
 2026-11-12T13:44,nav.SEB,new,2026-11-11,8,
 2026-11-12T13:44,p3.SEB,new,2026-11-11,8,
 2026-11-12T13:58,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-12T14:58,bx.macro,fail,,,network: lv_rows nepavyko: <urlopen error timed out> (išėjimo kodas 0)
