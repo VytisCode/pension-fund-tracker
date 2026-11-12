@@ -1560,6 +1560,9 @@ function buildControls() {
     b.addEventListener('click', () => { P.ovP = new Set(OV_PRESETS[k]); saveState(); renderOverall(); });
     $('ovPreset').appendChild(b); });
   $('btnGx').addEventListener('click', () => { P.gx = !P.gx; saveState(); renderMarket(); });
+  { const pb = $('periods'); if (pb && !$('ymPerNote')) { const nt = document.createElement('p'); nt.id = 'ymPerNote'; nt.className = 'note';
+      nt.textContent = { lt: 'Šiame skirtuke – kalendoriniai metai ir mėnesiai, todėl laikotarpio jungiklis čia netaikomas; keičiasi tik grupė.', en: 'This tab shows calendar years and months, so the period switch does not apply here; only the group changes.', lv: 'Šajā cilnē – kalendārie gadi un mēneši, tāpēc perioda pārslēgs šeit netiek piemērots; mainās tikai grupa.', et: 'Sellel vahelehel on kalendriaastad ja -kuud, seega perioodi lüliti siin ei kehti; muutub ainult rühm.' }[ulang] || 'This tab shows calendar years and months, so the period switch does not apply here; only the group changes.';
+      pb.after(nt); } }
   $('btnMxl').addEventListener('click', () => exportMarketXlsx());
   { const bx = $('btnMxl'), mk = (id, tx) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'btn'; x.id = id; x.textContent = tx; return x; };
     const L4 = { lt: ['⤓ PNG – visos 4 lentelės', '⧉ Kopijuoti visas 4 (paveikslėlis)', 'Nukopijuota'], en: ['⤓ PNG – all 4 tables', '⧉ Copy all 4 (image)', 'Copied'], lv: ['⤓ PNG – visas 4 tabulas', '⧉ Kopēt visas 4 (attēls)', 'Nokopēts'], et: ['⤓ PNG – kõik 4 tabelit', '⧉ Kopeeri kõik 4 (pilt)', 'Kopeeritud'] }[ulang] || ['⤓ PNG – all 4 tables', '⧉ Copy all 4 (image)', 'Copied'];
