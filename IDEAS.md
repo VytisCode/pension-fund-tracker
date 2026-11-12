@@ -31,6 +31,15 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 
 - **2026-11-09 (kolegės iš Business Control prašymas, savininko sprendimai):** suvienodinti LT/LV/EE duomenų apimtį. PADARYTA: LV kiekvieno plāno turtas ir dalyviai kasdien + istorija nuo 2003 m. (`tools/fetch_lv_plans.py`, manapensija.lv API `?date=`; „Luminor plāns 53-58“ API nėra – iš ketvirčio ataskaitų, iki 2026-10-20 sujungimo su 50-60; sumos sutampa su Latvijas Banka); Valdytojai → „Rinkos dalis laike“ (turtas / dalyviai) ir „Pokytis nuo metų pradžios“; Šalių palyginimas → „Baltijos rinka“ (rinkos ir valdytojai visose šalyse). Savininkas: **dalintis dabartine nuoroda su kolegomis – taip, kaip yra** (rizika įvardyta); **gyvybės draudimo („Life“) rinką – įtraukti**. Laukiama iš kolegės: LV mėnesio dalyvių judėjimo šaltinis, EE III dalyviai pagal fondą, Life nuorodos. Toliau: VSAA metinės ataskaitos 2003–2025 (dalyvių judėjimas, plānu turtas iki 2018 m. Luminor 53-58), Life šaltiniai LT/LV/EE, EN versijos patikra Baltijos puslapiuose.
 
+## Kortelės (gija „Perdaryti dashboard kortelių tinkleliu“, uždaryta 2026-11-12) – laukiantys darbai, daryti pačiam
+- LV/EE: Pradžios „Kiek sukaupta?“ datos slankiklis (dabar tik LT, `home.js` `hgAumSl`; LV – `baltic_lv_daily.csv`, EE – `baltic_ee.csv` turtas).
+- LV/EE: tokios pat Turto kortelės kaip `aum.js` `aumCards` (II turtas su slankikliu, II vs III pagal valdytoją) – šalies puslapyje „Turto pokytis“ (`baltic.js` `fl`).
+- Lyginamieji indeksai: renkami tik iš valdytojų failų (SEB, Goindex; paskutinis 2026-10-06, `import_seb_csv.py`). Paprašyti savininko naujesnio SEB failo; ilgainiui – automatinis rinkimas. Tai reikalinga ir „indekso sekimo“ polapiui (savininkas 2026-11-11).
+- Slankikliai kitur – tik kur yra laiko eilutė ir jis duoda naują atsakymą (savininkas norėjo visur; Claude įvertino 5/10 – derinti). Kandidatai: Rezultatų kortelės (laikotarpis), Portfeliai (ketvirtis), Ataskaitos (metai).
+- „Tvarių investicijų dalis“ kortelė – SFDR duomenys tik fondams/ETF (`data/fund_attributes.csv`); daryti tik su aiškia išlyga ir savininkui sutikus.
+- Fakto kortelės (`mkt.js` `fgCard`) dar rodo iki 8 eilučių be slinkimo – suvienodinti su `ecBars` (visos eilutės, slinkimas).
+- Portfelių „Didžiausi pokyčiai“ – iki 25 eilučių kortelėje; prireikus – paieška kortelėje.
+
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
 
 - Saugumas: 2026-10-12 į projekto dėžutę atėjo GitHub raktas atviru tekstu. Patarta jį atšaukti. Raktas nenaudotas.
