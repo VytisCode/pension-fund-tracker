@@ -1,15 +1,15 @@
 {
  "2026-11-12": {
-  "LUMINOR": 1,
-  "LUMINOR@": 799,
-  "P3_LUMINOR": 1,
-  "P3_LUMINOR@": 799,
-  "P3_SEB": 3,
-  "P3_SEB@": 857,
+  "LUMINOR": 2,
+  "LUMINOR@": 888,
+  "P3_LUMINOR": 2,
+  "P3_LUMINOR@": 888,
+  "P3_SEB": 4,
+  "P3_SEB@": 888,
   "P3_SWEDBANK": 1,
   "P3_SWEDBANK@": 799,
-  "SEB": 3,
-  "SEB@": 857,
+  "SEB": 4,
+  "SEB@": 887,
   "SWEDBANK": 1,
   "SWEDBANK@": 797
  }
