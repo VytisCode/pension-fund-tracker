@@ -1,74 +1,4 @@
-49 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 50+: istorijos CSV 1717 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 58+: istorijos CSV 5072 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-
-Vilnius: 2026-11-11 15:15, laukiama diena: 2026-11-10
-ARTEA: jau atnaujinta iki 2026-11-10
-ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-11-10
-GOINDEX: jau atnaujinta iki 2026-11-10
-
-Vilnius: 2026-11-11 15:16, laukiama diena: 2026-11-10
-SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-GOINDEX: jau atnaujinta iki 2026-11-10
-
-III pakopa – Vilnius: 2026-11-11 15:17, laukiama diena: 2026-11-10
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-SEB: fondų puslapių nuorodos rastos 0: –
-SEB SEB index. Klimato ateitis: istorijos CSV 1266 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 18+: istorijos CSV 5749 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 50+: istorijos CSV 1717 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 58+: istorijos CSV 5072 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-
-Vilnius: 2026-11-11 15:46, laukiama diena: 2026-11-10
-SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-GOINDEX: jau atnaujinta iki 2026-11-10
-
-III pakopa – Vilnius: 2026-11-11 15:47, laukiama diena: 2026-11-10
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-SEB: fondų puslapių nuorodos rastos 0: –
-SEB SEB index. Klimato ateitis: istorijos CSV 1266 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 18+: istorijos CSV 5749 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 50+: istorijos CSV 1717 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 58+: istorijos CSV 5072 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-
-III pakopa – Vilnius: 2026-11-11 16:26, laukiama diena: 2026-11-10
-SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
-╔════════════════════════════════════════════════════════════╗
-║ Looks like Playwright was just installed or updated.       ║
-║ Please ru
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-
-III pakopa – Vilnius: 2026-11-11 16:56, laukiama diena: 2026-11-10
-SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
-╔════════════════════════════════════════════════════════════╗
-║ Looks like Playwright was just installed or updated.       ║
-║ Please ru
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-
-III pakopa – Vilnius: 2026-11-11 17:26, laukiama diena: 2026-11-10
-SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
-╔════════════════════════════════════════════════════════════╗
-║ Looks like Playwright was just installed or updated.       ║
-║ Please ru
-SWEDBANK: jau atnaujinta iki 2026-11-10
-LUMINOR: jau atnaujinta iki 2026-11-10
-
-III pakopa – Vilnius: 2026-11-11 17:56, laukiama diena: 2026-11-10
-SEB: klaida – BrowserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
-╔════════════════════════════════════════════════════════════╗
-║ Looks like Playwright was just installed or updated.       ║
-║ Please ru
-SWEDBANK: jau atnaujinta iki 2026-11-10
+nta iki 2026-11-10
 LUMINOR: jau atnaujinta iki 2026-11-10
 
 III pakopa – Vilnius: 2026-11-11 18:26, laukiama diena: 2026-11-10
@@ -240,6 +170,71 @@ LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
 GOINDEX: jau atnaujinta iki 2026-11-11
 
 III pakopa – Vilnius: 2026-11-12 13:48, laukiama diena: 2026-11-11
+SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
+SWEDBANK: jau atnaujinta iki 2026-11-11
+LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
+SEB: fondų puslapių nuorodos rastos 0: –
+SEB SEB index. Klimato ateitis: istorijos CSV 1267 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 18+: istorijos CSV 5750 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 50+: istorijos CSV 1718 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+SEB SEB pensija 58+: istorijos CSV 5750 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
+
+Vilnius: 2026-11-12 14:16, laukiama diena: 2026-11-11
+  ! Artea pensija 2003-2009: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 2003-2009: netinkama data 2026-10-30 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 1961-1967: netinkama data 2026-10-30 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 1968-1974: netinkama data 2026-10-30 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 1975-1981: netinkama data 2026-10-30 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 1982-1988: netinkama data 2026-10-30 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 1989-1995: netinkama data 2026-10-30 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-26 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-27 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-28 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-29 – praleista
+  ! Artea pensija 1996-2002: netinkama data 2026-10-30 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-26 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-27 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-28 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-29 – praleista
+  ! Artea pensijų turto išsaugojimo fondas: netinkama data 2026-10-30 – praleista
+ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-11-11
+ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+GOINDEX: jau atnaujinta iki 2026-11-11
+
+III pakopa – Vilnius: 2026-11-12 14:16, laukiama diena: 2026-11-11
+ARTEA: gauta 23058 eil., nauja/pakeista 5; viskas iki 2026-11-11
+GOINDEX: jau atnaujinta iki 2026-11-11
+
+Vilnius: 2026-11-12 14:17, laukiama diena: 2026-11-11
+SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
+SWEDBANK: jau atnaujinta iki 2026-11-11
+LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
+GOINDEX: jau atnaujinta iki 2026-11-11
+
+III pakopa – Vilnius: 2026-11-12 14:17, laukiama diena: 2026-11-11
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-11-11
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)

@@ -589,3 +589,7 @@ ts,src,ev,dd,n,msg
 2026-11-12T11:39,p3.GOINDEX,new,2026-11-11,2,
 2026-11-12T11:39,p3.SWEDBANK,new,2026-11-11,6,
 2026-11-12T11:39,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas
+2026-11-12T12:32,nav.ARTEA,new,2026-11-11,8,
+2026-11-12T12:32,p3.ARTEA,new,2026-11-11,5,
+2026-11-12T12:32,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
+2026-11-12T12:32,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
