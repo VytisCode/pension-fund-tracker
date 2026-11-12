@@ -1194,3 +1194,4 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hg.an > .hgc:not(.open) .hgbars { max-height: 104px; overflow-y: auto; scrollbar-width: thin; padding-right: 4px; overscroll-behavior: contain; }
 .hg.an > .hgc:not(.open) .hgbars.lg { max-height: 128px; }
 .hgc .hgv + .hgs, .hgc .ecall + .hgs { margin-top: 8px; }
+.rmseg { margin-left: 8px; vertical-align: middle; } .rmseg button { font-size: 12px; padding: 2px 8px; }

@@ -84,6 +84,8 @@ def main() -> None:
             entry = funds.setdefault(row["fund"], {"provider": row["provider"], "group": group, "rows": []})
             assets = float(row["net_assets"]) if row["net_assets"] else None
             entry["rows"].append((row["date"], float(row["unit_value"]), assets))
+            if (row.get("benchmark_index") or "").strip():
+                entry.setdefault("bm", []).append((row["date"], float(row["benchmark_index"])))
 
     assets_js = {name: {"d": [day_number(d) for d, _, a in sorted(e["rows"]) if a], "a": [a for d, _, a in sorted(e["rows"]) if a]} for name, e in funds.items()}
     groups = []
@@ -121,6 +123,9 @@ def main() -> None:
     (DOCS / "data.js").write_text(data_js, encoding="utf-8")
     # Grynieji aktyvai pagal dienas – kraunami tik spaudžiant „dienos lentelės“ Excel mygtuką
     (DOCS / "assets.js").write_text("const ASSETS=" + json.dumps(assets_js, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+    # Lyginamųjų indeksų vertės pagal dienas (tik valdytojų pateikti; kraunama tik įjungus „Indekso grąža“ Rezultatuose)
+    bench = {name: {"d": [day_number(d) for d, _ in sorted(e["bm"])], "b": [round(b, 5) for _, b in sorted(e["bm"])]} for name, e in funds.items() if e.get("bm")}
+    (DOCS / "bench.js").write_text("const BENCH=" + json.dumps(bench, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     build_fresh(groups, payload["generated"])
     build_indexes()
     build_fees()

@@ -477,9 +477,28 @@ function markGroup() {
     if (!b) { b = document.createElement('a'); b.className = 'gbadge'; b.href = '#'; b.onclick = e => { e.preventDefault(); $('group').scrollIntoView({ block: 'center' }); $('group').focus(); }; h.append(b); }
     b.textContent = g; b.title = lang === 'lt' ? 'Grupė – keisti „Fondų palyginimo“ viršuje' : 'Group – change at the top of “Fund comparison”'; });
 }
+/* „Grąža laikotarpyje“: fondų grąža / lyginamojo indekso grąža / fondas − indeksas (savininkas 2026-11-12: bent SEB būtina).
+   Indeksai – tik valdytojų pateikti (data/nav_history.csv benchmark_index), kraunami atskirai (docs/bench.js). */
+const RMS = { f: { lt: 'Fondų grąža', en: 'Fund return', lv: 'Fondu ienesīgums', et: 'Fondide tootlus' }, b: { lt: 'Indekso grąža', en: 'Benchmark return', lv: 'Indeksa ienesīgums', et: 'Indeksi tootlus' },
+  d: { lt: 'Fondas − indeksas, p. p.', en: 'Fund − benchmark, pp', lv: 'Fonds − indekss, p. p.', et: 'Fond − indeks, pp' },
+  n: { lt: (w, d) => `Lyginamieji indeksai – tik valdytojų pateikti (${w}); indekso duomenys iki ${d}, todėl tos eilutės skaičiuojamos iki šios dienos (fondo grąža stulpelyje „Fondas − indeksas“ – tam pačiam laikotarpiui). „–“ – indekso nėra.`,
+    en: (w, d) => `Benchmarks – only those provided by managers (${w}); benchmark data up to ${d}, so those cells run to that day (in “Fund − benchmark” the fund return covers the same period). “–” – no benchmark.`,
+    lv: (w, d) => `Salīdzināmie indeksi – tikai pārvaldītāju sniegtie (${w}); indeksa dati līdz ${d}, tāpēc šīs šūnas aprēķinātas līdz šai dienai. „–“ – indeksa nav.`,
+    et: (w, d) => `Võrdlusindeksid – ainult fondivalitsejate esitatud (${w}); indeksi andmed kuni ${d}, seega need lahtrid on arvutatud selle päevani. „–“ – indeks puudub.` } };
+const rmT = k => RMS[k][ulang] || RMS[k].en;
+let BENCH_P = null;
+const loadBench = () => BENCH_P || (BENCH_P = new Promise(ok => { const sc = document.createElement('script'); sc.src = 'bench.js?v=' + (DATA.generated || '').replace(/\D/g, ''); sc.onload = ok; sc.onerror = ok; document.head.appendChild(sc); }));
+function benchRet(g, pid, rng) {     // [indekso grąža, fondo grąža tam pačiam laikotarpiui, pabaigos diena]
+  if (typeof BENCH === 'undefined') return null; const f = g.funds.find(x => x.provider === pid), b = f && BENCH[f.name]; if (!b || !b.d.length) return null;
+  const at = day => { let lo = 0, hi = b.d.length - 1, r = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (b.d[m] <= day) { r = m; lo = m + 1; } else hi = m - 1; } return r; };
+  const ia = at(rng.anchor), ie = at(rng.end); if (ia < 0 || ie <= ia || rng.anchor - b.d[ia] > 7 || rng.end - b.d[ie] > 60) return null;
+  const s = seriesOf(f, rng.anchor, b.d[ie]); return [(b.b[ie] / b.b[ia] - 1) * 100, s ? s.ret : null, b.d[ie]];
+}
+document.addEventListener('click', e => { const x = e.target.closest('[data-rm]'); if (!x) return; P.rm = x.dataset.rm; if (P.rm === 'f') renderMarket(); else loadBench().then(renderMarket); });
 function renderMarket() {
   pcRender();
-  $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret'); $('hRank').innerHTML = T().hRank + ik('rank');
+  const RM_ON = !IS3 && !MK_ON, RMd = RM_ON && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f';
+  $('hMarket').textContent = T().hMarket; $('hRet').innerHTML = T().hRet + ik('ret') + (!RM_ON ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${RMd === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`); $('hRank').innerHTML = T().hRank + ik('rank');
   $('hRelM').innerHTML = T().hRelM + ik('relm'); $('hAnnM').innerHTML = T().hAnnM + ik('annm');
   $('mMarket').textContent = T().mMarket(periodText()); $('nMarket').textContent = T().nMarket;
   const provs = marketProvs(), ref = provs.some(p => p.id === P.mref) ? P.mref : '', refLabel = ref ? labelOf(ref) : '';
@@ -504,12 +523,16 @@ function renderMarket() {
       const f = g.funds.find(x => x.provider === p.id), days = f ? rng.end - Math.max(rng.anchor, f.d[0]) : 0;
       ann[p.id] = vals[p.id] === null || days < 1 ? null : (Math.pow(1 + vals[p.id] / 100, 365.25 / days) - 1) * 100;
     });
+    const disp = {}; let bEnd = 0;
+    if (RMd !== 'f') provs.forEach(p => { const x = benchRet(g, p.id, rng); if (x) bEnd = Math.max(bEnd, x[2]); disp[p.id] = !x ? null : RMd === 'b' ? x[0] : x[1] == null ? null : x[1] - x[0]; });
+    else provs.forEach(p => { disp[p.id] = vals[p.id]; });
     const med = medianOf(peers.map(p => vals[p.id]));
     const rel = {};
     if (ref) { peers.forEach(p => { rel[p.id] = vals[ref] === null || vals[p.id] === null ? null : vals[ref] - vals[p.id]; }); const pa = meanOf(peers.map(p => vals[p.id])); rel.avg = vals[ref] === null || pa === null ? null : vals[ref] - pa; }
     else provs.forEach(p => { const m = medianOf(provs.filter(q => q.id !== p.id).map(q => vals[q.id])); rel[p.id] = vals[p.id] === null || m === null ? null : vals[p.id] - m; });
     const { map, n } = rankOf(provs.map(p => ({ key: p.id, v: vals[p.id] })));
-    return { g, vals, ann, med, rel, ranks: map, n };
+    const dr = rankOf(provs.map(p => ({ key: p.id, v: disp[p.id] }))), dmed = medianOf(peers.map(p => disp[p.id]));
+    return { g, vals, ann, med, rel, ranks: map, n, disp, dr, dmed, bEnd };
   });
   const dGrp = new Set(rows.map(r => `${r.g.rngM.anchor}-${r.g.rngM.end}`)).size > 1;   // datos skiriasi pagal grupę – rodomos prie kiekvienos eilutės
   const gLbl = r => groupShort(r.g) + (dGrp ? `<small class="rd">${iso(r.g.rngM.anchor)} → ${iso(r.g.rngM.end)}</small>` : '');
@@ -534,7 +557,10 @@ function renderMarket() {
   const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
   const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
   const rkCell = (v, rank, n, f) => v === null ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
-  const retBody = rows.map(r => `<tr><td>${gLbl(r)}</td>${provs.map(p => rkCell(r.vals[p.id], r.ranks.get(p.id), r.n, pc2)).join('')}${pmCell(r.med)}</tr>`).join('')
+  const dF = RMd === 'd' ? v => num(v, 2) : pc2, avgD = {}; provs.forEach(p => { avgD[p.id] = avgOf(x => x.disp[p.id]); }); const adRank = rankOf(provs.map(p => ({ key: p.id, v: avgD[p.id] })));
+  const retBody = RMd !== 'f' ? rows.map(r => `<tr><td>${gLbl(r)}</td>${provs.map(p => rkCell(r.disp[p.id], r.dr.map.get(p.id), r.dr.n, dF)).join('')}${r.dmed == null ? na : `<td class="pm">${dF(r.dmed)}</td>`}</tr>`).join('')
+    + gap(provs.length + 2) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgD[p.id], adRank.map.get(p.id), adRank.n, dF)).join('')}${na}</tr>`
+    : rows.map(r => `<tr><td>${gLbl(r)}</td>${provs.map(p => rkCell(r.vals[p.id], r.ranks.get(p.id), r.n, pc2)).join('')}${pmCell(r.med)}</tr>`).join('')
     + gap(provs.length + 2) + `<tr class="avg"><td>${T().avg}</td>${provs.map(p => rkCell(avgRet[p.id], arRank.map.get(p.id), arRank.n, pc2)).join('')}${pmCell(avgMed)}</tr>`
     + `<tr class="avg"><td title="${T().avgWt}">${T().avgW} <span class="info" aria-hidden="true">i</span></td>${provs.map(p => rkCell(avgW[p.id], awRank.map.get(p.id), awRank.n, pc2)).join('')}${na}</tr>`;
   const relKeys = ref ? [...peers.map(p => p.id), 'avg'] : provs.map(p => p.id);
@@ -550,12 +576,24 @@ function renderMarket() {
   $('nGx').hidden = !P.gx; $('nGx').textContent = P.gx && gxStarts.length ? T().gxNote(gxa === gxb ? iso(gxa) : `${iso(gxa)}…${iso(gxb)}`) : '';
   ['tRet', 'tRank', 'tRelM', 'tAnnM'].forEach(id => setCap(id, spanAll));
   $('tRet').innerHTML = headRet + `<tbody>${retBody}</tbody>`;
+  { let nb = $('nRm'); if (!nb) { nb = document.createElement('p'); nb.id = 'nRm'; nb.className = 'note'; $('tRet').closest('.scroll').after(nb); }
+    const be = Math.max(0, ...rows.map(r => r.bEnd || 0)), who = provs.filter(p => rows.some(r => r.disp[p.id] != null)).map(p => p.label).join(', ');
+    nb.hidden = RMd === 'f'; nb.textContent = RMd === 'f' ? '' : typeof BENCH === 'undefined' ? '…' : rmT('n')(who || '–', be ? iso(be) : '–'); }
   $('tRelM').innerHTML = headRel + `<tbody>${relBody}</tbody>`;
   $('tRank').innerHTML = head + `<tbody>${rankBody}</tbody>`;
   $('tAnnM').innerHTML = head + `<tbody>${annBody}</tbody>`;
   renderOverall();
 }
 
+/* visos keturios „Visos rinkos“ lentelės viename paveikslėlyje (2 × 2), kaip puslapyje (savininkas 2026-11-12) */
+async function fourPng() {
+  const ims = await Promise.all(['tRet', 'tRelM', 'tRank', 'tAnnM'].map(async id => { const bl = await tablePng($(id)); const im = new Image(); im.src = URL.createObjectURL(bl); await im.decode(); return im; }));
+  const g = 24, w0 = Math.max(ims[0].width, ims[2].width), w1 = Math.max(ims[1].width, ims[3].width), h0 = Math.max(ims[0].height, ims[1].height), h1 = Math.max(ims[2].height, ims[3].height);
+  const c = document.createElement('canvas'); c.width = w0 + w1 + g; c.height = h0 + h1 + g; const x = c.getContext('2d');
+  x.fillStyle = getComputedStyle(document.body).backgroundColor || '#fff'; x.fillRect(0, 0, c.width, c.height);
+  x.drawImage(ims[0], 0, 0); x.drawImage(ims[1], w0 + g, 0); x.drawImage(ims[2], 0, h0 + g); x.drawImage(ims[3], w0 + g, h0 + g);
+  return new Promise((ok, no) => c.toBlob(b => b ? ok(b) : no(), 'image/png'));
+}
 /* bendras reitingas: visos grupės × laikotarpiai */
 /* „Bendras reitingas“ + „Vieta pagal laikotarpį“ – viena kortelė (savininko patvirtinta struktūra 2026-10-16):
    „Visos grupės“ – kiek kartų kiekvienas valdytojas buvo 1-as ar 2-as; pasirinkus grupę – tos grupės vietos kiekvienu laikotarpiu */
@@ -1522,7 +1560,12 @@ function buildControls() {
     b.addEventListener('click', () => { P.ovP = new Set(OV_PRESETS[k]); saveState(); renderOverall(); });
     $('ovPreset').appendChild(b); });
   $('btnGx').addEventListener('click', () => { P.gx = !P.gx; saveState(); renderMarket(); });
-  $('btnMxl').addEventListener('click', () => exportMarketXlsx()); $('btnMetXl').addEventListener('click', exportMetricsXlsx);
+  $('btnMxl').addEventListener('click', () => exportMarketXlsx());
+  { const bx = $('btnMxl'), mk = (id, tx) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'btn'; x.id = id; x.textContent = tx; return x; };
+    const L4 = { lt: ['⤓ PNG – visos 4 lentelės', '⧉ Kopijuoti visas 4 (paveikslėlis)', 'Nukopijuota'], en: ['⤓ PNG – all 4 tables', '⧉ Copy all 4 (image)', 'Copied'], lv: ['⤓ PNG – visas 4 tabulas', '⧉ Kopēt visas 4 (attēls)', 'Nokopēts'], et: ['⤓ PNG – kõik 4 tabelit', '⧉ Kopeeri kõik 4 (pilt)', 'Kopeeritud'] }[ulang] || ['⤓ PNG – all 4 tables', '⧉ Copy all 4 (image)', 'Copied'];
+    const bp = mk('btnM4png', L4[0]), bc = mk('btnM4cp', L4[1]); bx.after(' ', bp, ' ', bc);
+    bp.addEventListener('click', async () => { bp.disabled = true; try { const bl = await fourPng(); const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = `${T().hMarket.replace(/[^\p{L}\p{N}]+/gu, '_')}_${iso(LATEST)}.png`; a.click(); } catch (e) { console.warn(e); } finally { bp.disabled = false; } });
+    bc.addEventListener('click', async () => { bc.disabled = true; try { const bl = await fourPng(); await navigator.clipboard.write([new ClipboardItem({ 'image/png': bl })]); const t0 = bc.textContent; bc.textContent = '✓ ' + L4[2]; setTimeout(() => { bc.textContent = t0; }, 1800); } catch (e) { console.warn(e); } finally { bc.disabled = false; } }); } $('btnMetXl').addEventListener('click', exportMetricsXlsx);
   $('mref').addEventListener('change', e => { P.mref = e.target.value; saveState(); renderMarket(); });
   $('chips').innerHTML = '';
   DATA.providers.forEach(p => {

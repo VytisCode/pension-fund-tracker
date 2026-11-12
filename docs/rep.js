@@ -448,8 +448,9 @@ function repCards() {
     const gr = fs.map(f => { const peers = all.filter(x => x.g === f.g).map(x => ret(x, i0, 'L')).filter(v => v != null), v = ret(f, i0, 'L'); return peers.length >= 3 && v != null ? { f, d: v - med(peers) } : null; }).filter(Boolean).sort((a, b) => b.d - a.d);
     if (gr.length) out.push(ecCard({ k: 'rp2', sz: 'w', ic: 'people', ey, q: Q[2], big: `${gr.filter(x => x.d > 0).length} ${rpT('of')} ${gr.length}`, sub: rpT('med'), info: I[2],
       vis: ecBars(gr.map(x => [gL(x.f), sc(x.d), x.d, pp(x.d) + ' p. p.'])) }));
-    const bm = fs.map(f => { const v = ret(f, i0, 'L'), b = ret(f, i0, 'L', true); return v != null && b != null ? { f, d: v - b } : null; }).filter(Boolean).sort((a, b) => b.d - a.d);
-    if (bm.length) out.push(ecCard({ k: 'rp3', sz: 'w', ic: 'target-arrow', ey, q: Q[3], big: `${bm.filter(x => x.d > 0).length} ${rpT('of')} ${bm.length}`, sub: rpT('bmS'), info: I[3],
+    const bm = fs.map(f => { let ie = -1; for (let i = NM - 1; i > i0; i--) if (f.m[i] != null && f.bm && f.bm[i] != null) { ie = i; break; }   // tas pats laikotarpis fondui ir indeksui: paskutinė mėnesio pabaiga, kai yra abu
+      if (ie < 0) return null; const v = ret(f, i0, ie), b = ret(f, i0, ie, true); return v != null && b != null ? { f, d: v - b, e: M[ie] } : null; }).filter(Boolean).sort((a, b) => b.d - a.d);
+    if (bm.length) out.push(ecCard({ k: 'rp3', sz: 'w', ic: 'target-arrow', ey, q: Q[3], big: `${bm.filter(x => x.d > 0).length} ${rpT('of')} ${bm.length}`, sub: `${rpT('bmS')} · ${iso(Math.max(...bm.map(x => x.e)))}`, info: I[3],
       vis: ecBars(bm.map(x => [gL(x.f), sc(x.d), x.d, pp(x.d) + ' p. p.'])) }));
     el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return out.length > 0;
   } catch (x) { console.warn(x); return false; }
