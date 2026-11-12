@@ -591,11 +591,11 @@ const AUC = {
     lv: [m => `Kā mainījās ${m} II un III līmeņa aktīvi?`, 'Visi pārvaldītāji', 'II un III līmeņa aktīvi, indekss (sākums = 100)', 'līnijas – indekss, sākums = 100', 'Pārvaldītāja (vai visa tirgus) II un III līmeņa fondu neto aktīvu summa mēnešu beigās (kur nav dienas datu – ceturkšņu beigās); abas līnijas pārrēķinātas indeksā (izvēlētais sākuma datums = 100). Izmaiņa ietver ieguldījumu rezultātu, izmaksas un citas naudas plūsmas – tās atsevišķi netiek publicētas.', 'Pārvaldītājs', 'Sākuma datums'],
     et: [m => `Kuidas muutus ${m} II ja III samba vara?`, 'Kõik fondivalitsejad', 'II ja III samba vara, indeks (algus = 100)', 'jooned – indeks, algus = 100', 'Fondivalitseja (või kogu turu) II ja III samba fondide puhasvara summa kuude lõpus (kus päevaandmed puuduvad – kvartalite lõpus); mõlemad jooned on viidud indeksile (valitud alguskuupäev = 100). Muutus sisaldab investeerimistulemust, väljamakseid ja muid rahaliikumisi – neid eraldi ei avaldata.', 'Fondivalitseja', 'Alguskuupäev'] },
   ey: { lt: 'Turtas', en: 'Assets', lv: 'Aktīvi', et: 'Varad' },
-  i: { lt: ['Valdytojų II pakopos fondų grynųjų aktyvų suma paskutinę dieną (valdytojų skelbiami fondų aktyvai).',
+  i: { lt: ['Valdytojų II pakopos fondų grynųjų aktyvų suma slankikliu pasirinktą dieną (valdytojų skelbiami fondų aktyvai; kai dienos duomenų nėra – LB ketvirčio pabaigos sumos). Excel – tikslios sumos eurais.',
       'Turtas dabar − turtas praėjusių metų pabaigoje. Pokytis apima investicijų rezultatą, reformos išmokas ir kitą pokytį (įmokos, kitos išmokos, perėjimai kartu – atskirai neskelbiami). Kas kiek prisidėjo – skirtukas „Kas keitė turtą“.',
       'Pensijų reformos išmokos (vienkartinis turto išsiėmimas) iš valdytojų fondų šiais metais, pagal ketvirčius; dalis – įvertis iš turto pokyčio išmokų dieną.',
       'II ir III pakopos fondų grynieji aktyvai paskutinę dieną.'],
-    en: ['Sum of net assets of the managers’ pillar II funds on the latest day (fund assets published by managers).',
+    en: ['Sum of net assets of the managers’ pillar II funds on the day chosen with the slider (fund assets published by managers; where daily data are missing – Bank of Lithuania quarter-end totals). Excel – exact amounts in euros.',
       'Assets now − assets at the end of last year. The change includes investment results, reform payouts and other change (contributions, other payouts and switches together – not published separately). Who contributed how much – tab “What changed assets”.',
       'Pension-reform payouts (one-off withdrawal of savings) from the managers’ funds this year, by quarter; partly estimated from the asset change on payout days.',
       'Net assets of pillar II and III funds on the latest day.'] },
@@ -617,16 +617,16 @@ function aumCards(last, y0, yr) {
     const f0 = M.map(m => Math.min(...AUM.funds.filter(f => f.pl === 'II' && f.p === m).map(f => f.d[0]))).filter(isFinite), dS = Math.max(...f0.filter(d => d - Math.min(...f0) < 366));   // pradžia – kai jau yra visų tuomet veikusių valdytojų duomenys
     for (let i = stops.length - 2; i >= 0; i--) if (stops[i] < dS || !full('II', stops[i])) stops.splice(i, 1);
     const shareAt = day => { const r = M.map(m => ({ m, v: at('II', m, day) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), t = r.reduce((s, x) => s + x.v, 0);
-      return { big: mn(t), sub: iso(day) + (day < last && t ? ` · ${aucT('now')} ${sg(t2 - t)}` : ''), vis: ecBars(r.map(x => [MLABEL[x.m], colorOf(x.m), x.v, `${mn(x.v)} · ${num(x.v / t * 100, 1)} %`])) }; };
+      return { big: mn(t), sub: iso(day) + (day < last && t ? ` · ${aucT('now')} ${sg(t2 - t)}` : ''), vis: ecBars(r.map(x => [MLABEL[x.m], colorOf(x.m), x.v, `${mn(x.v)} · ${num(x.v / t * 100, 1)} %`, false, Math.round(x.v * 1e8) / 100])) }; };
     const s0 = shareAt(last);
-    out.push(ecCard({ k: 'au0', sz: 'w', img: 'sec2-aum.jpg', ic: 'building-bank', ey, q: Q[0], big: s0.big, sub: s0.sub, info: I[0], vis: s0.vis,
+    out.push(ecCard({ k: 'au0', xu: '€', sz: 'w', img: 'sec2-aum.jpg', ic: 'building-bank', ey, q: Q[0], big: s0.big, sub: s0.sub, info: I[0], vis: s0.vis,
       sl: stops.length > 2 ? { n: stops.length, v: stops.length - 1, aria: aucT('sl'), lab: i => iso(stops[i]), on: i => ecUpd('au0', shareAt(stops[i])) } : null }));
     if (t20) { const ch = a2.filter(x => x.v0 > 0).map(x => ({ m: x.m, d: x.v - x.v0, r: (x.v / x.v0 - 1) * 100 })).sort((a, b) => a.d - b.d);
-      out.push(ecCard({ k: 'au1', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: sg(t2 - t20), cls: t2 >= t20 ? 'up' : 'down', sub: `${pct((t2 / t20 - 1) * 100)} · ${iso(y0)} → ${iso(last)}`, info: I[1], xt: 'gtTable',
-        vis: ecBars(ch.map(x => [MLABEL[x.m], x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, `${sg(x.d)} · ${pct(x.r)}`])) })); }
+      out.push(ecCard({ k: 'au1', xu: '€', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: sg(t2 - t20), cls: t2 >= t20 ? 'up' : 'down', sub: `${pct((t2 / t20 - 1) * 100)} · ${iso(y0)} → ${iso(last)}`, info: I[1], xt: 'gtTable',
+        vis: ecBars(ch.map(x => [MLABEL[x.m], x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, `${sg(x.d)} · ${pct(x.r)}`, false, Math.round(x.d * 1e8) / 100])) })); }
     const po = M.map(m => ({ m, v: -AUM.payouts.filter(p => p.p === m && p.q.startsWith(String(yr))).reduce((s, p) => s + p.flow, 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v), tp = po.reduce((s, x) => s + x.v, 0);
-    if (tp) out.push(ecCard({ k: 'au2', sz: 'w', ic: 'money-hand', ey, q: Q[2], big: '−' + mn(tp), sub: T().kpPay(yr), info: I[2], xt: 'poTable',
-      vis: ecBars(po.map(x => [MLABEL[x.m], colorOf(x.m), x.v, '−' + mn(x.v)])) }));
+    if (tp) out.push(ecCard({ k: 'au2', xu: '€', sz: 'w', ic: 'money-hand', ey, q: Q[2], big: '−' + mn(tp), sub: T().kpPay(yr), info: I[2], xt: 'poTable',
+      vis: ecBars(po.map(x => [MLABEL[x.m], colorOf(x.m), x.v, '−' + mn(x.v), false, -Math.round(x.v * 1e8) / 100])) }));
     const t3 = at('III', null, last);
     { const ms3 = M.filter(m => AUM.funds.some(f => f.pl === 'III' && f.p === m) && AUM.funds.some(f => f.pl === 'II' && f.p === m)), m = ms3.includes(AU3M) ? AU3M : '';
       const fx = (pl, day) => at(pl, m || null, day), A = aucT('m23'), nm = m ? MLABEL[m] : A[1];

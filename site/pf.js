@@ -1326,9 +1326,9 @@ function tcCards() {
     const nm = o => `${posLabel(o.s).slice(0, 44)} (${[...o.ms].join(', ')})`;
     const b = bySec(1), sl = bySec(-1);
     if (b.length) out.push(ecCard({ k: 'tc0', sz: 'w', img: 'sec2-pf.jpg', ic: 'arrow-trending', ey, q: Q[0], big: eur(b[0].v), cls: 'sm', sub: `${esc(posLabel(b[0].s).slice(0, 60))} · ${ql}`, info: I, xt: 'tcTable',
-      vis: ecBars(b.slice(0, 8).map(o => [nm(o), 'var(--dpos)', o.v, eur(o.v)])) }));
+      vis: ecBars(b.slice(0, 25).map(o => [nm(o), 'var(--dpos)', o.v, eur(o.v)])) }));
     if (sl.length) out.push(ecCard({ k: 'tc1', sz: 'w', ic: 'arrow-trending-down', ey, q: Q[1], big: '−' + eur(-sl[0].v), cls: 'sm', sub: `${esc(posLabel(sl[0].s).slice(0, 60))} · ${ql}`, info: I, xt: 'tcTable',
-      vis: ecBars(sl.slice(0, 8).map(o => [nm(o), 'var(--dneg)', -o.v, '−' + eur(-o.v)])) }));
+      vis: ecBars(sl.slice(0, 25).map(o => [nm(o), 'var(--dneg)', -o.v, '−' + eur(-o.v)])) }));
     const pm = MGRS.map(m => ({ m, v: tr.filter(x => x.m === m).reduce((a, x) => a + Math.abs(x.trade), 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
     if (pm.length) out.push(ecCard({ k: 'tc2', sz: 'w', ic: 'arrow-swap', ey, q: Q[2], big: `${esc(pm[0].m)} · ${eur(pm[0].v)}`, cls: 'sm', sub: `${pfcT('tv')} · ${ql}`, info: I, xt: 'tcTable',
       vis: ecBars(pm.map(x => [x.m, colorOf(x.m), x.v, eur(x.v)])) }));
@@ -1349,7 +1349,7 @@ function altCards(pl, q0, q1) {
       vis: ecBars(d.map(x => [x.m, x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, pfPP(x.d)])) }));
     const fs = FUNDS.filter(f => f.pl === pl && f.q[q1] && f.tot[q1]).map(f => ({ f, v: altShare(f, q1) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
     if (fs.length) out.push(ecCard({ k: 'al2', sz: 'w', ic: 'scales', ey, q: Q[2], big: pc(fs[0].v), sub: `${esc(fundName(fs[0].f))}${pl === 'II' ? ` · ${pfcT('lim')}` : ''} · ${qLabel(q1)}`, info: I, xt: 'altTable',
-      vis: ecBars(fs.slice(0, 8).map(x => [fundName(x.f), pl === 'II' && x.v >= 25 ? 'var(--dneg)' : colorOf(x.f.p), x.v, pc(x.v)])) }));
+      vis: ecBars(fs.map(x => [fundName(x.f), pl === 'II' && x.v >= 25 ? 'var(--dneg)' : colorOf(x.f.p), x.v, pc(x.v)])) }));
     el.innerHTML = out.join(''); ecFold(el);
   } catch (e) { console.warn(e); el.innerHTML = ''; }
 }

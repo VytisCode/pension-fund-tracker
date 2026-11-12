@@ -634,7 +634,7 @@ function pcRender() {
   try {
     const gs = [];
     DATA.groups.forEach(g => { if (g.id === 'zz') return; const rng = rangeFor(g), it = [];   // zz – „Per trumpa istorija“ (EE), ne grupė
-      g.funds.forEach(f => { if (isStale(f, rng.overallLast)) return; const s = seriesOf(f, rng.anchor, rng.end); if (s && s.ret != null && isFinite(s.ret)) it.push({ p: f.provider, r: s.ret }); });
+      g.funds.forEach(f => { if (isStale(f, rng.overallLast)) return; const s = seriesOf(f, rng.anchor, rng.end); if (s && s.ret != null && isFinite(s.ret)) it.push({ p: f.provider, r: s.ret, g }); });
       if (it.length) { it.sort((a, b) => b.r - a.r); gs.push({ g, it }); } });
     if (!gs.length) { el.innerHTML = ''; return; }
     const per = periodText(), out = [], ey = pcT('ey'), Q = pcT('q'), I = pcT('i'), pp = pcT('pp'), multi = gs.filter(x => x.it.length >= 2);
@@ -647,8 +647,9 @@ function pcRender() {
       out.push(ecCard({ k: 'pc0', more, sz: 'l', img: 'sec2-results.jpg', ic: 'trophy', ey, q: Q[0], big: hEsc(rk.filter(x => x[1] === rk[0][1]).map(x => x[0]).join(' · ')), cls: rk.length > 1 && rk[1][1] === rk[0][1] ? 'sm' : '', sub: `${(rk.length > 1 && rk[1][1] === rk[0][1] ? pcT('tie') : pcT('lead'))(rk[0][1], multi.length)} · ${hEsc(per)}`, info: I[0], xt: 'tRet',
         vis: ecBars(rk.map(([n, k]) => [n, colorOf(pc[n]), k, `${k} ${pcT('gr')}`])) }));
     }
-    const all = gs.flatMap(x => x.it), np = all.filter(x => x.r > 0).length;
-    out.push(ecCard({ k: 'pc1', more, sz: out.length ? 'w' : 'l', img: out.length ? '' : 'sec2-results.jpg', ic: 'data-pie', ey, q: Q[1], big: `${np} ${pcT('of')} ${all.length}`, sub: `${pcT('pos')} · ${hEsc(per)}`, info: I[1], xt: 'tRet',
+    const all = gs.flatMap(x => x.it), np = all.filter(x => x.r > 0).length, ng = all.filter(x => x.r <= 0).sort((a, b) => a.r - b.r);
+    const negTx = ng.length ? `<br>${pcT('dn')}: ${ng.slice(0, 4).map(x => `${hEsc(labelOf(x.p))} (${hEsc(groupLabel(x.g))}) ${P1(x.r)}`).join(', ')}${ng.length > 4 ? ` +${ng.length - 4}` : ''}` : '';
+    out.push(ecCard({ k: 'pc1', more, sz: out.length ? 'w' : 'l', img: out.length ? '' : 'sec2-results.jpg', ic: 'data-pie', ey, q: Q[1], big: `${np} ${pcT('of')} ${all.length}`, sub: `${pcT('pos')} · ${hEsc(per)}${negTx}`, info: I[1], xt: 'tRet',
       vis: ecBars([[pcT('up'), 'var(--dpos)', np, String(np)], [pcT('dn'), 'var(--dneg)', all.length - np, String(all.length - np)]]) }));
     if (multi.length) {
       const sp = multi.map(x => ({ g: x.g, a: x.it[0], b: x.it[x.it.length - 1], d: x.it[0].r - x.it[x.it.length - 1].r })).sort((a, b) => b.d - a.d), m = sp[0];
