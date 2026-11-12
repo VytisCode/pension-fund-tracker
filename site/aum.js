@@ -586,6 +586,10 @@ const AUC = {
     en: ['How much do pillar II funds manage?', 'How did pillar II assets change since the start of the year?', 'How much has been paid out under the pension reform?', 'How big is pillar III compared with pillar II?'],
     lv: ['Cik aktīvu pārvalda II līmeņa fondi?', 'Kā mainījās II līmeņa aktīvi kopš gada sākuma?', 'Cik izmaksāts saskaņā ar pensiju reformu?', 'Cik liels ir III līmenis salīdzinājumā ar II?'],
     et: ['Kui palju vara haldavad II samba fondid?', 'Kuidas muutus II samba vara aasta algusest?', 'Kui palju on pensionireformi alusel välja makstud?', 'Kui suur on III sammas võrreldes II-ga?'] },
+  m23: { lt: [m => `Kaip keitėsi ${m} II ir III pakopos turtas?`, 'Visi valdytojai', 'II ir III pakopos turtas, indeksas (pradžia = 100)', 'linijos – indeksas, pradžia = 100', 'Valdytojo (arba visos rinkos) II ir III pakopos fondų grynųjų aktyvų suma mėnesių pabaigose (kai dienos duomenų nėra – ketvirčių pabaigose); abi linijos perskaičiuotos į indeksą (pasirinkta pradžios data = 100), kad matytųsi kryptis nepaisant dydžių skirtumo. Pokytis apima investicijų rezultatą, išmokas ir kitus pinigų judėjimus – atskirai jie neskelbiami.', 'Valdytojas', 'Pradžios data'],
+    en: [m => `How did ${m} pillar II and III assets change?`, 'All managers', 'Pillar II and III assets, index (start = 100)', 'lines – index, start = 100', 'Sum of net assets of the manager’s (or the whole market’s) pillar II and III funds at month ends (quarter ends where daily data are missing); both lines rebased to an index (chosen start date = 100) so the direction is visible despite the size difference. The change includes investment results, payouts and other money movements – these are not published separately.', 'Manager', 'Start date'],
+    lv: [m => `Kā mainījās ${m} II un III līmeņa aktīvi?`, 'Visi pārvaldītāji', 'II un III līmeņa aktīvi, indekss (sākums = 100)', 'līnijas – indekss, sākums = 100', 'Pārvaldītāja (vai visa tirgus) II un III līmeņa fondu neto aktīvu summa mēnešu beigās (kur nav dienas datu – ceturkšņu beigās); abas līnijas pārrēķinātas indeksā (izvēlētais sākuma datums = 100). Izmaiņa ietver ieguldījumu rezultātu, izmaksas un citas naudas plūsmas – tās atsevišķi netiek publicētas.', 'Pārvaldītājs', 'Sākuma datums'],
+    et: [m => `Kuidas muutus ${m} II ja III samba vara?`, 'Kõik fondivalitsejad', 'II ja III samba vara, indeks (algus = 100)', 'jooned – indeks, algus = 100', 'Fondivalitseja (või kogu turu) II ja III samba fondide puhasvara summa kuude lõpus (kus päevaandmed puuduvad – kvartalite lõpus); mõlemad jooned on viidud indeksile (valitud alguskuupäev = 100). Muutus sisaldab investeerimistulemust, väljamakseid ja muid rahaliikumisi – neid eraldi ei avaldata.', 'Fondivalitseja', 'Alguskuupäev'] },
   ey: { lt: 'Turtas', en: 'Assets', lv: 'Aktīvi', et: 'Varad' },
   i: { lt: ['Valdytojų II pakopos fondų grynųjų aktyvų suma paskutinę dieną (valdytojų skelbiami fondų aktyvai).',
       'Turtas dabar − turtas praėjusių metų pabaigoje. Pokytis apima investicijų rezultatą, reformos išmokas ir kitą pokytį (įmokos, kitos išmokos, perėjimai kartu – atskirai neskelbiami). Kas kiek prisidėjo – skirtukas „Kas keitė turtą“.',
@@ -624,18 +628,46 @@ function aumCards(last, y0, yr) {
     if (tp) out.push(ecCard({ k: 'au2', sz: 'w', ic: 'money-hand', ey, q: Q[2], big: '−' + mn(tp), sub: T().kpPay(yr), info: I[2], xt: 'poTable',
       vis: ecBars(po.map(x => [MLABEL[x.m], colorOf(x.m), x.v, '−' + mn(x.v)])) }));
     const t3 = at('III', null, last);
-    const d3 = Math.min(...AUM.funds.filter(f => f.pl === 'III').map(f => f.d[0])), st3 = stops.filter(d => d >= d3 && (d === last || full('III', d)));
-    const p23 = day => { const b = at('II', null, day), c = at('III', null, day); return { big: mn(c), sub: `${b ? num(c / b * 100, 1) : '–'} % ${aucT('of2')} · ${iso(day)}`, vis: ecBars([[T().kpII, 'var(--s1)', b, mn(b)], [T().kpIII, 'var(--s4)', c, mn(c)]]) }; };
-    if (t3) { const s3 = p23(last); out.push(ecCard({ k: 'au3', sz: 'w', ic: 'savings', ey, q: Q[3], big: s3.big, sub: s3.sub, info: I[3], vis: s3.vis,
-      sl: st3.length > 2 ? { n: st3.length, v: st3.length - 1, aria: aucT('sl'), lab: i => iso(st3[i]), on: i => ecUpd('au3', p23(st3[i])) } : null })); }
+    { const ms3 = M.filter(m => AUM.funds.some(f => f.pl === 'III' && f.p === m) && AUM.funds.some(f => f.pl === 'II' && f.p === m)), m = ms3.includes(AU3M) ? AU3M : '';
+      const fx = (pl, day) => at(pl, m || null, day), A = aucT('m23'), nm = m ? MLABEL[m] : A[1];
+      const st = stops.filter(d => fx('II', d) > 0 && fx('III', d) > 10 && (d === last || !m || full('III', d)));
+      const y1 = st.findIndex(d => d >= last - 365), v0 = y1 < 0 ? 0 : y1;
+      const draw = k => { const ds = st.slice(k), dE = ds[ds.length - 1], b2 = fx('II', ds[0]), b3 = fx('III', ds[0]), e2 = fx('II', dE), e3 = fx('III', dE);
+        AU3X = { m: nm, ds, s2: ds.map(d => fx('II', d)), s3: ds.map(d => fx('III', d)) };
+        const P2 = ds.map(d => fx('II', d) / b2 * 100), P3 = ds.map(d => fx('III', d) / b3 * 100), lo = Math.min(...P2, ...P3), hi = Math.max(...P2, ...P3), W = 300, H = 84, n1 = Math.max(1, ds.length - 1);
+        const X = i => (i / n1 * W).toFixed(1), Y = v => (H - 6 - (v - lo) / ((hi - lo) || 1) * (H - 12)).toFixed(1), path = P => P.map((v, i) => `${i ? 'L' : 'M'}${X(i)},${Y(v)}`).join(''), y100 = Y(100);
+        const svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:84px" role="img" aria-label="${hEsc(A[2])}"><line x1="0" x2="${W}" y1="${y100}" y2="${y100}" stroke="var(--line)" stroke-dasharray="3 3"/><path d="${path(P2)}" fill="none" stroke="var(--s1)" stroke-width="2"/><path d="${path(P3)}" fill="none" stroke="var(--s4)" stroke-width="2"/></svg>`;
+        const pc0 = v => (v >= 0 ? '+' : '−') + num(Math.abs(v), 0) + ' %', r2 = (e2 / b2 - 1) * 100, r3 = (e3 / b3 - 1) * 100;
+        return { big: `II ${pc0(r2)} · III ${pc0(r3)}`, sub: `${nm} · ${iso(ds[0])} → ${iso(dE)} · ${A[3]}`,
+          vis: svg + `<div class="fgle"><span><i style="background:var(--s1)"></i>${T().kpII}: ${mn(b2)} → <b>${mn(e2)}</b></span><span><i style="background:var(--s4)"></i>${T().kpIII}: ${mn(b3)} → <b>${mn(e3)}</b></span></div>` }; };
+      if (st.length > 1) { const s3 = draw(v0), q3 = A[0](nm);
+        out.push(ecCard({ k: 'au3', sz: 'w', ic: 'savings', ey, q: q3, big: s3.big, sub: s3.sub, info: A[4], vis: s3.vis, xf: 'au3Xl',
+          ctl: `<select data-au3 aria-label="${hEsc(A[5])}"><option value="">${hEsc(A[1])}</option>${ms3.map(x => `<option value="${x}"${x === m ? ' selected' : ''}>${hEsc(MLABEL[x])}</option>`).join('')}</select>`,
+          sl: st.length > 2 ? { n: st.length - 1, v: Math.min(v0, st.length - 2), aria: A[6], lab: i => iso(st[i]), on: i => ecUpd('au3', draw(i)) } : null })); } }
     el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el); return true;
   } catch (e) { console.warn(e); return false; }
+}
+let AU3M = 'SEB', AU3X = null, AU_ARGS = null;   // II vs III kortelė: valdytojas ir rodomi duomenys (Excel)
+document.addEventListener('change', e => { const s = e.target.closest('select[data-au3]'); if (!s) return; AU3M = s.value; if (AU_ARGS) aumCards(...AU_ARGS); });
+async function au3Xl() {   // įrodymų failas: mėnesių pabaigų turtas (mėlyni) → indeksas ir pokytis (formulės)
+  const L = lang === 'lt', x = AU3X; if (!x) return; const wb = XL.book(), A = aucT('m23'), r0 = 5, r1 = r0 + x.ds.length - 1, z = '#,##0.0';
+  const rows = [[{ v: A[0](x.m), s: 'title' }], [{ v: A[4], s: 'note' }], [],
+    [{ v: L ? 'Data' : 'Date', s: 'hdr' }, { v: `${T().kpII}, mln. €`, s: 'hdr' }, { v: `${T().kpIII}, mln. €`, s: 'hdr' }, { v: `${T().kpII}, ${L ? 'indeksas' : 'index'}`, s: 'hdr' }, { v: `${T().kpIII}, ${L ? 'indeksas' : 'index'}`, s: 'hdr' }]];
+  x.ds.forEach((d, i) => { const r = r0 + i; rows.push([{ v: iso(d) }, { t: 'n', v: x.s2[i], z, s: 'in' }, { t: 'n', v: x.s3[i], z, s: 'in' },
+    { t: 'n', f: `B${r}/B$${r0}*100`, v: x.s2[i] / x.s2[0] * 100, z: '0.0', s: 'calc' }, { t: 'n', f: `C${r}/C$${r0}*100`, v: x.s3[i] / x.s3[0] * 100, z: '0.0', s: 'calc' }]); });
+  rows.push([], [{ v: L ? 'Pokytis' : 'Change', s: 'b' }, { t: 'n', f: `B${r1}/B${r0}-1`, v: x.s2[x.s2.length - 1] / x.s2[0] - 1, z: '0.0%', s: 'calc' }, { t: 'n', f: `C${r1}/C${r0}-1`, v: x.s3[x.s3.length - 1] / x.s3[0] - 1, z: '0.0%', s: 'calc' }],
+    [{ v: L ? 'III dydis, % II' : 'III size, % of II', s: 'b' }, { t: 'n', f: `C${r1}/B${r1}`, v: x.s3[x.s3.length - 1] / x.s2[x.s2.length - 1], z: '0.0%', s: 'calc' }], [],
+    [{ v: L ? 'Mėlyni skaičiai – valdytojų skelbiami fondų grynieji aktyvai (prieš dienos duomenis – LB ketvirčių pabaigų sumos); juodi – Excel formulės.' : 'Blue numbers – net fund assets published by managers (before daily data – Bank of Lithuania quarter-end totals); black – Excel formulas.', s: 'note' }],
+    [{ v: location.href, l: location.href, s: 'link' }]);
+  XL.sheet(wb, L ? 'II ir III' : 'II and III', rows, { cols: [14, 16, 16, 14, 14] });
+  await XL.save(wb, `II_III_${x.m.replace(/[^\p{L}\p{N}]+/gu, '_')}_${iso(Math.floor(Date.now() / DAY))}.xlsx`);
 }
 function renderAllParts() {
   const last = Math.max(...AUM.funds.map(f => f.d[f.d.length - 1])), y0 = Math.round(Date.UTC(new Date(last * DAY).getUTCFullYear() - 1, 11, 31) / DAY);
   const tot = (pl, day) => AUM.funds.filter(f => f.pl === pl).reduce((s, f) => { const i = lastOnOrBefore(f, day); return s + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
   const t2 = tot('II', last), t2y = tot('II', y0), t3 = tot('III', last), yr = new Date(last * DAY).getUTCFullYear();
   const pay = AUM.payouts.filter(p => p.q.startsWith(String(yr))).reduce((s, p) => s + p.flow, 0);
+  AU_ARGS = [last, y0, yr];
   if (!aumCards(last, y0, yr)) kpiRow([[T().kpII, kpMoney(t2 * 1e6), iso(last)], t3 ? [T().kpIII, kpMoney(t3 * 1e6), iso(last)] : null,
     t2y ? [T().kpYtd, kpMoney(Math.abs(t2 - t2y) * 1e6).replace(/^/, t2 >= t2y ? '+' : '−'), pct((t2 / t2y - 1) * 100)] : null,
     pay ? [T().kpPay(yr), kpMoney(Math.abs(pay) * 1e6).replace(/^/, '−')] : null]);
