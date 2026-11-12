@@ -355,6 +355,7 @@ function changes() {
   return rows;
 }
 function renderTopChanges() {
+  tcCards();
   const bar = document.getElementById('tcBar');
   bar.innerHTML = field(T().quarter, quarterSelect('tcQ', ST.q, 1)) + `<span class="pfsub" id="tcVs"></span>`
     + field(T().pillar, seg('pl', [['II', 'II'], ['III', 'III'], ['all', T().all]], ST.pl))
@@ -737,6 +738,7 @@ function renderAlt() {
   wireSegs(bar, { apl: v => { ST.apl = v; save(); renderAlt(); } });
   const q1 = Math.min(NQ - 1, Math.max(1, ST.aq1 ?? NQ - 1)), q0 = Math.min(ST.aq0 ?? NQ - 3, q1 - 1);
   bar.querySelector('#altQ0').value = q0; bar.querySelector('#altQ1').value = q1;
+  altCards(pl, q0, q1);
   // pradžia visada ankstesnė už pabaigą: pakeitus vieną, kitas pritaikomas
   bar.querySelector('#altQ0').addEventListener('change', e => { ST.aq0 = +e.target.value; if ((ST.aq1 ?? NQ - 1) <= ST.aq0) ST.aq1 = ST.aq0 + 1; save(); renderAlt(); });
   bar.querySelector('#altQ1').addEventListener('change', e => { ST.aq1 = +e.target.value; if ((ST.aq0 ?? NQ - 3) >= ST.aq1) ST.aq0 = ST.aq1 - 1; save(); renderAlt(); });
@@ -1297,10 +1299,63 @@ const PFC = {
     en: 'Shares of the manager’s funds’ positions in the selected pillar, weighted by fund assets, look-through (ETF and fund contents by their attributes); Bank of Lithuania quarterly portfolio reports. Excel – the “What changed” table with calculations.' },
 };
 const pfPP = d => `${pp(d)} ${ulang === 'en' ? 'pp' : ulang === 'et' ? 'p.p.' : 'p. p.'}`;
+Object.assign(PFC, {
+  qn: { lt: 'Kas daugiausiai keitė portfelio sudėtį?', en: 'Who changed portfolio holdings the most?', lv: 'Kurš visvairāk mainīja portfeļa sastāvu?', et: 'Kes muutis portfelli koosseisu kõige rohkem?' },
+  ne: { lt: 'naujos / parduotos pozicijos', en: 'new / exited positions', lv: 'jaunas / pārdotas pozīcijas', et: 'uued / müüdud positsioonid' },
+  in: { lt: 'Pozicijos, kurių ketvirčio pradžioje nebuvo (naujos) arba kurios ketvirčio pabaigoje parduotos visos (išpirktos obligacijos neskaičiuojamos); kaip lentelėje „Kas pasikeitė“.', en: 'Positions not held at the start of the quarter (new) or fully sold by its end (matured bonds excluded); as in the “What changed” table.' },
+  tq: { lt: ['Ką valdytojai daugiausiai pirko?', 'Ką valdytojai daugiausiai pardavė?', 'Kas aktyviausiai prekiavo?'], en: ['What did managers buy the most?', 'What did managers sell the most?', 'Who traded the most?'],
+    lv: ['Ko pārvaldītāji visvairāk pirka?', 'Ko pārvaldītāji visvairāk pārdeva?', 'Kurš tirgojās visaktīvāk?'], et: ['Mida fondivalitsejad kõige rohkem ostsid?', 'Mida fondivalitsejad kõige rohkem müüsid?', 'Kes kauples kõige aktiivsemalt?'] },
+  ti: { lt: 'Sandorio suma = vienetų pokytis × kaina ketvirčio pabaigoje (iš LB portfelių ataskaitų); pinigai ir indėliai neįtraukiami. Ta pati logika kaip lentelėje žemiau.', en: 'Trade amount = change in units × price at quarter end (from LB portfolio reports); cash and deposits excluded. Same logic as the table below.' },
+  tv: { lt: 'pirkimų ir pardavimų suma', en: 'buys plus sells', lv: 'pirkumu un pārdošanas summa', et: 'ostude ja müükide summa' },
+  aq: { lt: ['Kas daugiausiai investuoja į alternatyvas?', 'Kas labiausiai pakeitė alternatyvų dalį?', 'Kurio fondo alternatyvų dalis didžiausia?'], en: ['Who invests the most in alternatives?', 'Who changed the alternatives share the most?', 'Which fund has the largest alternatives share?'],
+    lv: ['Kurš visvairāk iegulda alternatīvajos ieguldījumos?', 'Kurš visvairāk mainīja alternatīvo daļu?', 'Kuram fondam ir lielākā alternatīvo daļa?'], et: ['Kes investeerib kõige rohkem alternatiividesse?', 'Kes muutis alternatiivide osa kõige rohkem?', 'Millise fondi alternatiivide osa on suurim?'] },
+  ai: { lt: 'Alternatyvios investicijos – kaip lentelėje „Alternatyvios“ (privataus kapitalo, nekilnojamojo turto, infrastruktūros fondai ir kt.), % fondo grynųjų aktyvų; valdytojo dalis – svertinė pagal fondų turtą. II pakopos riba – 30 %.', en: 'Alternative investments as in the “Alternatives” table (private equity, real estate, infrastructure funds etc.), % of fund net assets; manager share – weighted by fund assets. Pillar II limit – 30%.' },
+  lim: { lt: 'riba 30 %', en: 'limit 30%', lv: 'robeža 30 %', et: 'piir 30%' },
+});
+const pfTr = (pl, q1) => { const q0 = q1 - 1, pos = new Map();   // visų valdytojų sandoriai pagal vertybinį popierių ir valdytoją
+  FUNDS.filter(f => f.pl === pl).forEach(f => [[f.q[q0], 0], [f.q[q1], 1]].forEach(([m, k]) => m && m.forEach((x, si) => { const sx = S[si]; if (sx.t === 'c' || sx.t === 'd' || x.u == null) return;
+    const key = f.p + '|' + si, P = pos.get(key) || { m: f.p, si, u: [0, 0], v: [0, 0] }; P.u[k] += x.u; P.v[k] += x.v; pos.set(key, P); })));
+  const out = []; pos.forEach(P => { const du = P.u[1] - P.u[0]; if (Math.abs(du) <= MIN_CHANGE * Math.max(Math.abs(P.u[0]), Math.abs(P.u[1]))) return; const pr = P.u[1] ? P.v[1] / P.u[1] : P.v[0] / P.u[0]; out.push({ m: P.m, s: S[P.si], si: P.si, trade: du * pr }); });
+  return out; };
+function tcCards() {
+  const el = document.getElementById('pfcTc'); if (!el) return;
+  try {
+    const pl = ST.pl === 'all' ? 'II' : ST.pl, q1 = ST.q; if (!(q1 >= 1)) { el.innerHTML = ''; return; }
+    const tr = pfTr(pl, q1), Q = pfcT('tq'), ey = pfcT('ey'), I = pfcT('ti'), ql = `${pl} · ${qLabel(q1 - 1)} → ${qLabel(q1)}`, out = [];
+    const bySec = sign => { const m = new Map(); tr.filter(x => x.trade * sign > 0).forEach(x => { const o = m.get(x.si) || { s: x.s, v: 0, ms: new Set() }; o.v += x.trade; o.ms.add(x.m); m.set(x.si, o); }); return [...m.values()].sort((a, b) => Math.abs(b.v) - Math.abs(a.v)); };
+    const nm = o => `${posLabel(o.s).slice(0, 44)} (${[...o.ms].join(', ')})`;
+    const b = bySec(1), sl = bySec(-1);
+    if (b.length) out.push(ecCard({ k: 'tc0', sz: 'w', img: 'sec2-pf.jpg', ic: 'arrow-trending', ey, q: Q[0], big: eur(b[0].v), cls: 'sm', sub: `${esc(posLabel(b[0].s).slice(0, 60))} · ${ql}`, info: I, xt: 'tcTable',
+      vis: ecBars(b.slice(0, 8).map(o => [nm(o), 'var(--dpos)', o.v, eur(o.v)])) }));
+    if (sl.length) out.push(ecCard({ k: 'tc1', sz: 'w', ic: 'arrow-trending-down', ey, q: Q[1], big: '−' + eur(-sl[0].v), cls: 'sm', sub: `${esc(posLabel(sl[0].s).slice(0, 60))} · ${ql}`, info: I, xt: 'tcTable',
+      vis: ecBars(sl.slice(0, 8).map(o => [nm(o), 'var(--dneg)', -o.v, '−' + eur(-o.v)])) }));
+    const pm = MGRS.map(m => ({ m, v: tr.filter(x => x.m === m).reduce((a, x) => a + Math.abs(x.trade), 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+    if (pm.length) out.push(ecCard({ k: 'tc2', sz: 'w', ic: 'arrow-swap', ey, q: Q[2], big: `${esc(pm[0].m)} · ${eur(pm[0].v)}`, cls: 'sm', sub: `${pfcT('tv')} · ${ql}`, info: I, xt: 'tcTable',
+      vis: ecBars(pm.map(x => [x.m, colorOf(x.m), x.v, eur(x.v)])) }));
+    el.innerHTML = out.join(''); ecFold(el);
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
+}
+function altCards(pl, q0, q1) {
+  const el = document.getElementById('pfcAlt'); if (!el) return;
+  try {
+    const Q = pfcT('aq'), ey = pfcT('ey'), I = pfcT('ai'), pc = v => `${num(v, 1)} %`, out = [];
+    const w = (m, qi) => { let a = 0, t0 = 0; FUNDS.filter(f => f.pl === pl && f.p === m && f.q[qi] && f.tot[qi]).forEach(f => { a += altShare(f, qi) * f.tot[qi]; t0 += f.tot[qi]; }); return t0 ? a / t0 : null; };
+    const r = MGRS.map(m => ({ m, a: w(m, q0), b: w(m, q1) })).filter(x => x.b != null).sort((x, y) => y.b - x.b);
+    if (!r.length) { el.innerHTML = ''; return; }
+    out.push(ecCard({ k: 'al0', sz: 'w', img: 'sec2-pf.jpg', ic: 'building-bank', ey, q: Q[0], big: `${esc(r[0].m)} · ${pc(r[0].b)}`, cls: 'sm', sub: `${pl} · ${qLabel(q1)}`, info: I, xt: 'altTable',
+      vis: ecBars(r.map(x => [x.m, colorOf(x.m), x.b, pc(x.b)])) }));
+    const d = r.filter(x => x.a != null).map(x => ({ m: x.m, d: x.b - x.a, a: x.a, b: x.b })).sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
+    if (d.length) out.push(ecCard({ k: 'al1', sz: 'w', ic: 'arrow-trending', ey, q: Q[1], big: pfPP(d[0].d), sub: `${esc(d[0].m)}: ${pc(d[0].a)} → ${pc(d[0].b)} · ${qLabel(q0)} → ${qLabel(q1)}`, info: I, xt: 'altTable',
+      vis: ecBars(d.map(x => [x.m, x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, pfPP(x.d)])) }));
+    const fs = FUNDS.filter(f => f.pl === pl && f.q[q1] && f.tot[q1]).map(f => ({ f, v: altShare(f, q1) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+    if (fs.length) out.push(ecCard({ k: 'al2', sz: 'w', ic: 'scales', ey, q: Q[2], big: pc(fs[0].v), sub: `${esc(fundName(fs[0].f))}${pl === 'II' ? ` · ${pfcT('lim')}` : ''} · ${qLabel(q1)}`, info: I, xt: 'altTable',
+      vis: ecBars(fs.slice(0, 8).map(x => [fundName(x.f), pl === 'II' && x.v >= 25 ? 'var(--dneg)' : colorOf(x.f.p), x.v, pc(x.v)])) }));
+    el.innerHTML = out.join(''); ecFold(el);
+  } catch (e) { console.warn(e); el.innerHTML = ''; }
+}
 const pfcT = k => PFC[k][ulang] || PFC[k].en;
 function pfCards(q1) {
-  let el = document.getElementById('kpis');
-  if (!el) { el = document.createElement('div'); el.id = 'kpis'; (document.getElementById('snav') || document.getElementById('top')).after(el); }
+  const el = document.getElementById('pfcOv'); if (!el) return;
   try {
     const q0 = q1 - 1, Q4 = pfcT('q'), ey = pfcT('ey'), I = pfcT('i'), pc = v => `${num(v, 1)} %`, ql = qLabel(q1);
     const rows = MGRS.map(m => ({ m, a: mgrMix(m, q0), b: mgrMix(m, q1) })).filter(x => x.b);
@@ -1316,7 +1371,10 @@ function pfCards(q1) {
     if (ch.length) { const c = ch[0], RF = inReform(q1) || inReform(q0);
       out.push(ecCard({ k: 'pf1', more, sz: 'w', ic: 'arrow-trending', ey, q: Q4[1], big: pfPP(c.d), sub: `${esc(c.m)}: ${pc(c.a)} → ${pc(c.b)} · ${qLabel(q0)} → ${ql}${RF && c.x != null ? ` · ${pfcT('ref')} ${pfPP(c.x)}` : ''}`, info: I, xt: 'ovChg',
         vis: ecBars(ch.map(x => [x.m, x.d >= 0 ? 'var(--dpos)' : 'var(--dneg)', x.d, pfPP(x.d)])) })); }
-    out.push(card(2, 'alt', { ic: 'building-bank' }), card(3, 'cash', { ic: 'savings' }));
+    out.push(card(3, 'cash', { ic: 'savings' }));
+    const nw = rows.map(x => ({ m: x.m, t: mgrTrades(x.m, q1) })).map(x => ({ m: x.m, n: x.t.nNew, e: x.t.nExit })).sort((a, b) => (b.n + b.e) - (a.n + a.e));
+    if (nw.length) out.push(ecCard({ k: 'pf4', more, sz: 'w', ic: 'arrow-swap', ey, q: pfcT('qn'), big: `${esc(nw[0].m)} · ${nw[0].n} / ${nw[0].e}`, cls: 'sm', sub: `${pfcT('ne')} · ${qLabel(q0)} → ${ql}`, info: pfcT('in'), xt: 'ovChg',
+      vis: ecBars(nw.map(x => [x.m, colorOf(x.m), x.n + x.e, `${x.n} / ${x.e}`])) }));
     el.className = 'hg jg'; el.style.margin = '6px 0 18px'; el.innerHTML = out.join(''); ecFold(el);
   } catch (e) { console.warn(e); }
 }
