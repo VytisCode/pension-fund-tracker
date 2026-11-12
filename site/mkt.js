@@ -571,7 +571,7 @@ function renderMgrCards() {
     Object.entries(byM).forEach(([m, fs]) => fs.forEach(f => { const g = QM.get(f.calc); f.q = g ? g(m) : [`Kuo išsiskiria ${m}?`, `What makes ${m} stand out?`, `Ar ko izceļas ${m}?`, `Mille poolest ${m} silma paistab?`]; })); }
   const cur = ms.includes(MS.mgr) ? MS.mgr : ms.includes(MI_M) ? MI_M : ms[0];   // kortelės – vieno valdytojo (pasirenkama mygtukais arba paspaudus plytelę viršuje)
   let ch = document.getElementById('miChips'); if (!ch) { ch = document.createElement('div'); ch.id = 'miChips'; ch.className = 'chips mich'; el.before(ch); }
-  ch.innerHTML = ms.map(m => `<button type="button" class="chip" data-mic="${hEsc(m)}" aria-pressed="${m === cur}"><i class="sw" style="background:${mkColor(m)}"></i>${hEsc(m)}</button>`).join('');
+  ch.innerHTML = ms.map(m => `<button type="button" class="chip" data-mic="${hEsc(m)}" aria-pressed="${m === cur}"><i class="sw" style="--c:${mkColor(m)};background:${mkColor(m)}"></i>${hEsc(m)}</button>`).join('');
   factCards(el, byM[cur] || [], `${X.miTitle} · ${cur}`, pl); el._byM = byM;
 }
 let MI_M = '';

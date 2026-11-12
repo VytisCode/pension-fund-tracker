@@ -1191,3 +1191,5 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hg.an .hgbars.lg .r { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; } .hg.an .hgbars.lg .n { grid-row: 1; grid-column: 1; } .hg.an .hgbars.lg b { grid-row: 1; grid-column: 2; } .hg.an .hgbars.lg .t { grid-row: 2; grid-column: 1 / -1; height: 6px; }
 .fgle i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: 0; }
 .hgc[data-k=au3] .fgle { display: grid; gap: 2px; font-size: 12px; }
+.mich .chip[aria-pressed="false"] { opacity: 1; } .mich .chip i.sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: var(--c) !important; }
+.mich .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 600; }
