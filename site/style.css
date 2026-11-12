@@ -1196,3 +1196,5 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .hgc .hgv + .hgs, .hgc .ecall + .hgs { margin-top: 8px; }
 .rmseg { margin-left: 8px; vertical-align: middle; } .rmseg button { font-size: 12px; padding: 2px 8px; }
 #ymPerNote { display: none; margin: 6px 0 0; } body[data-ptab="ym"] #ymPerNote { display: block; } body[data-ptab="ym"] #periods { opacity: .4; pointer-events: none; }
+.miq { display: inline-flex; align-items: center; gap: 8px; margin-left: 14px; font-size: 13px; color: var(--text-2); } .miq input { width: 220px; accent-color: var(--accent); } .miq b { color: var(--text); min-width: 9em; }
+.miq input[type=range], .ecsl input[type=range] { background: none; border: 0; padding: 0; box-shadow: none; height: 20px; }

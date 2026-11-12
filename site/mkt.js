@@ -571,10 +571,14 @@ function renderMgrCards() {
     Object.entries(byM).forEach(([m, fs]) => fs.forEach(f => { const g = QM.get(f.calc); f.q = g ? g(m) : [`Kuo išsiskiria ${m}?`, `What makes ${m} stand out?`, `Ar ko izceļas ${m}?`, `Mille poolest ${m} silma paistab?`]; })); }
   const cur = ms.includes(MS.mgr) ? MS.mgr : ms.includes(MI_M) ? MI_M : ms[0];   // kortelės – vieno valdytojo (pasirenkama mygtukais arba paspaudus plytelę viršuje)
   let ch = document.getElementById('miChips'); if (!ch) { ch = document.createElement('div'); ch.id = 'miChips'; ch.className = 'chips mich'; el.before(ch); }
-  ch.innerHTML = ms.map(m => `<button type="button" class="chip" data-mic="${hEsc(m)}" aria-pressed="${m === cur}"><i class="sw" style="--c:${mkColor(m)};background:${mkColor(m)}"></i>${hEsc(m)}</button>`).join('');
+  ch.innerHTML = ms.map(m => `<button type="button" class="chip" data-mic="${hEsc(m)}" aria-pressed="${m === cur}"><i class="sw" style="--c:${mkColor(m)};background:${mkColor(m)}"></i>${hEsc(m)}</button>`).join('')
+    + (() => { const ds = P().dates, k = ds.indexOf(MS.d); return ds.length > 1 ? `<span class="miq"><span>${hEsc(T().q)}</span><input type="range" min="0" max="${ds.length - 1}" value="${k}" data-miq aria-label="${hEsc(T().q)}"><b>${hEsc(T().dq(MS.d))}</b></span>` : ''; })();
   factCards(el, byM[cur] || [], `${X.miTitle} · ${cur}`, pl); el._byM = byM;
 }
 let MI_M = '';
+document.addEventListener('input', e => { const r = e.target.closest('input[data-miq]'); if (!r) return; const d = P().dates[+r.value], b = r.parentNode.querySelector('b'); if (b && d) b.textContent = T().dq(d); });
+document.addEventListener('change', e => { const r = e.target.closest('input[data-miq]'); if (!r) return; const d = P().dates[+r.value]; if (!d || d === MS.d) return; MS.d = d; mkSave(); mkRender();
+  const c = document.getElementById('miChips'); if (c) c.scrollIntoView({ block: 'start' }); const r2 = document.querySelector('input[data-miq]'); if (r2) r2.focus(); });
 document.addEventListener('click', e => { const b = e.target.closest('#miChips [data-mic]'); if (!b) return; MI_M = b.dataset.mic; if (MS.mgr && MS.mgr !== MI_M) { MS.mgr = ''; mkSave(); mkRender(); } else renderMgrCards(); });
 /* „Kuo gali pasigirti“ (savininkas 2026-10-20: marketingui – paprasti, šiuo metu galiojantys faktai, kur valdytojas geriausias).
    Tik pirmos vietos rinkoje arba grupėje; fondai lyginami tik savo grupėje, grupės su mažiau nei 3 fondais neįtraukiamos. */
