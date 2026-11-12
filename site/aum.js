@@ -62,6 +62,27 @@ addStrings({
   foot: 'Šaltiniai: bendrovių skelbiami kasdieniai grynieji aktyvai (renkami automatiškai), Lietuvos banko ketvirtinės portfelių ataskaitos. Informacinė medžiaga, ne investavimo rekomendacija.',
 });
 
+addStrings({
+  riTitle: 'Pension reform impact on assets by manager', riWhen: 'Payout', riCum: 'Cumulative', riAvg: 'Market avg.', riAvgX: 'Simple average of managers',
+  riCumWhen: m => `all payouts since ${m}; % of assets before the first payout`,
+  riSub: (p, b, when, w) => `≈ ${p} bn € paid out of ${b} bn € (${when}). Whole market (weighted): −${w}.`,
+  riNote: 'Share = amount paid out ÷ the manager’s II pillar assets just before that payout (so the shares of different payouts are measured against different bases and are not additive). Paid out is an estimate from daily net assets and unit values: the fall in assets on payout days that the unit value does not explain; it may include that day’s contributions and switches (small). It is not official withdrawal statistics. Market avg. = simple average of the managers; the weighted figure (all paid out ÷ all assets) is in the subtitle. The quarter label is the application quarter, as in the table below.',
+}, {
+  riTitle: 'Pensijų reformos poveikis turtui pagal valdytoją', riWhen: 'Išmokėjimas', riCum: 'Kaupiamai', riAvg: 'Rinkos vidurkis', riAvgX: 'Paprastas valdytojų vidurkis',
+  riCumWhen: m => `visi išmokėjimai, pirmasis – ${m}; % nuo turto prieš pirmą išmokėjimą`,
+  riSub: (p, b, when, w) => `≈ ${p} mlrd. € išmokėta iš ${b} mlrd. € (${when}). Visa rinka (svertinis): −${w}.`,
+  riNote: 'Dalis = išmokėta suma ÷ valdytojo II pakopos turtas prieš pat tą išmokėjimą (todėl skirtingų išmokėjimų dalys skaičiuojamos nuo skirtingos bazės ir nesumuojamos). Išmokėta – įvertis iš kasdienių grynųjų aktyvų ir vieneto verčių: turto sumažėjimas išmokėjimo dienomis, kurio nepaaiškina vieneto vertės pokytis; į jį gali patekti ir tos dienos įmokos bei perėjimai (maži). Tai ne oficiali atsiėmimų statistika. Rinkos vidurkis = paprastas valdytojų vidurkis; svertinis (visa išmokėta ÷ visas turtas) – paantraštėje. Ketvirtis – prašymų ketvirtis, kaip lentelėje žemiau.',
+});
+addStrings3({
+  riTitle: 'Pensiju reformas ietekme uz aktīviem pa pārvaldītājiem', riWhen: 'Izmaksa', riCum: 'Kopā', riAvg: 'Tirgus vidējais', riAvgX: 'Pārvaldītāju vienkāršais vidējais',
+  riCumWhen: m => `visas izmaksas kopš ${m}; % no aktīviem pirms pirmās izmaksas`,
+  riSub: (p, b, when, w) => `≈ ${p} mljrd. € izmaksāti no ${b} mljrd. € (${when}). Viss tirgus (svērtais): −${w}.`,
+}, {
+  riTitle: 'Pensionireformi mõju varadele fondivalitsejate kaupa', riWhen: 'Väljamakse', riCum: 'Kokku', riAvg: 'Turu keskmine', riAvgX: 'Fondivalitsejate lihtkeskmine',
+  riCumWhen: m => `kõik väljamaksed alates ${m}; % varadest enne esimest väljamakset`,
+  riSub: (p, b, when, w) => `≈ ${p} mld € välja makstud ${b} mld €-st (${when}). Kogu turg (kaalutud): −${w}.`,
+});
+
 const MGRS = ['ALLIANZ', 'ARTEA', 'GOINDEX', 'LUMINOR', 'SEB', 'SWEDBANK'];       // tvarka = spalvos --s1..--s6
 const MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var DATA = { providers: MGRS.map(m => ({ id: m, label: MLABEL[m] })) };
@@ -73,7 +94,7 @@ const cls = v => v > 0 ? 'up' : v < 0 ? 'down' : '';
 const grpLabel = (pl, g) => pl === 'III' ? T().cats[g] : g === 'turto' ? T().cpf : `${T().born} ${g.replace('-', '–')}`;
 
 const PO_MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // tvarka kaip savininko lentelėse
-const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', off: [], mode: 'grp', mgr: 'SEB', sel: [], from: '', to: '' },
+const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', ri: '', off: [], mode: 'grp', mgr: 'SEB', sel: [], from: '', to: '' },
   (() => { try { return JSON.parse(localStorage.getItem('aumstate')) || {}; } catch (e) { return {}; } })());
 const save = () => { try { localStorage.setItem('aumstate', JSON.stringify(ST)); } catch (e) {} };
 
@@ -334,6 +355,7 @@ function renderPayouts() {
     + `<button type="button" class="btn xls" id="poXls" title="${T().xlsTip}">⤓ ${T().xls}</button>`;
   wire(bar, { po: v => { ST.po = v; save(); renderPayouts(); }, pu: v => { ST.pu = v; save(); renderPayouts(); } });
   bar.querySelector('#poXls').addEventListener('click', () => payXls().catch(err => alert('Excel: ' + err)));
+  renderImpact();
   if (ST.po === 'sum') return renderPaySummary();
   const qs = [...new Set(AUM.payouts.map(e => e.q))].sort();
   const ev = (m, q) => AUM.payouts.find(e => e.p === m && e.q === q);
@@ -358,6 +380,43 @@ function renderPayouts() {
   document.getElementById('poNote').textContent = T().sumNote.split('. ')[0] + '. ' + T().poNote;
 }
 
+/* ---------- 3b. reformos poveikis turtui pagal valdytoją (savininkas 2026-11-12: vadovybės skaidrė „Pillar II reform impact on assets“) ----------
+   Stulpeliai žemyn nuo 0: išmokėta dalis = išmokėta ÷ turtas prieš pat tą išmokėjimą; „Kaupiamai“ = visų išmokėjimų suma ÷ turtas prieš pirmą.
+   Rinkos vidurkis – paprastas valdytojų vidurkis (kaip senojoje skaidrėje), svertinis – paantraštėje. */
+const payMonth = q => { const [y, n] = q.split('-').map(Number), m = new Date(Date.UTC(y, (n - 1) * 3, 1)).toLocaleString(T().locale, { month: 'long', timeZone: 'UTC' }); return lang === 'lt' ? `${y} m. ${m}` : `${m} ${y}`; };
+function riData(q) {
+  const ev = m => AUM.payouts.filter(e => e.p === m && (q === 'cum' || e.q === q));
+  const qs = [...new Set(AUM.payouts.map(e => e.q))].sort();
+  const rows = PO_MGRS.map(m => { const es = ev(m); if (!es.length) return null;
+    const paid = -es.reduce((a, e) => a + e.flow, 0), base = q === 'cum' ? (AUM.payouts.find(e => e.p === m && e.q === qs[0]) || {}).base : es[0].base;
+    return base ? { m, paid, base, v: paid / base * 100, est: es.some(e => e.est) } : null; }).filter(Boolean);
+  const P = rows.reduce((a, r) => a + r.paid, 0), B = rows.reduce((a, r) => a + r.base, 0);
+  return { rows, P, B, avg: rows.length ? rows.reduce((a, r) => a + r.v, 0) / rows.length : 0, w: B ? P / B * 100 : 0 };
+}
+function renderImpact() {
+  const box = document.getElementById('riChart'); if (!box) return;
+  const S = T(), qs = [...new Set(AUM.payouts.map(e => e.q))].sort();
+  if (!qs.length) { box.closest('section').hidden = true; return; }
+  if (ST.ri !== 'cum' && !qs.includes(ST.ri)) ST.ri = qs[qs.length - 1];
+  document.getElementById('riTitle').textContent = S.riTitle;
+  const bar = document.getElementById('riBar');
+  bar.innerHTML = field(S.riWhen, seg('ri', [...qs.map(q => [q, `${appQ(q)} · ${payMonth(q)}`]), ['cum', S.riCum]], ST.ri));
+  wire(bar, { ri: v => { ST.ri = v; save(); renderImpact(); } });
+  const d = riData(ST.ri), bn = v => num(v / 1000, 2);
+  const items = d.rows.slice().sort((a, b) => a.v - b.v).map(r => ({ lab: MLABEL[r.m], v: r.v, seb: r.m === 'SEB', est: r.est }))
+    .concat([{ lab: S.riAvg, v: d.avg, avg: true }]);
+  const W = 760, H = 345, top = 62, hMax = 220, n = items.length, gap = W / n, bw = Math.min(64, gap * 0.62), mx = Math.max(...items.map(i => i.v), 1);
+  const svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${S.riTitle}" style="max-width:${W}px;display:block;margin:0 auto">`
+    + items.map((it, i) => { const x = gap * i + gap / 2, h = hMax * it.v / mx, fill = it.seb ? colorOf('SEB') : it.avg ? 'var(--dneg)' : 'var(--axis)';
+      return `<text x="${x}" y="${top - 12}" text-anchor="middle" font-size="13" fill="var(--text)"${it.seb ? ' font-weight="700"' : ''}>${it.lab}</text>`
+        + `<rect x="${x - bw / 2}" y="${top}" width="${bw}" height="${h}" rx="3" fill="${fill}"${it.avg ? ' fill-opacity=".7"' : ''}><title>${it.lab}: −${num(it.v, 1)}${pctSfx()}</title></rect>`
+        + `<text x="${x}" y="${top + h + 18}" text-anchor="middle" font-size="13" fill="var(--text)"${it.seb ? ' font-weight="700"' : ''}>−${num(it.v, 1)}${pctSfx()}${it.est ? ' ≈' : ''}</text>`; }).join('')
+    + `<line x1="0" x2="${W}" y1="${top}" y2="${top}" stroke="var(--axis)" stroke-width="1"/></svg>`;
+  box.innerHTML = svg; box._xl = () => payXls();
+  document.getElementById('riCap').textContent = S.riSub(bn(d.P), bn(d.B), ST.ri === 'cum' ? S.riCumWhen(payMonth(qs[0])) : payMonth(ST.ri), num(d.w, 1) + pctSfx());
+  document.getElementById('riNote').textContent = S.riNote;
+}
+
 /* ---------- išmokėjimų Excel: langeliai – formulės, kad būtų galima patikrinti ---------- */
 function loadXlsx() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 const xDate = d => ({ t: 'n', v: Date.parse(d + 'T00:00:00Z') / 864e5 + 25569, z: 'yyyy-mm-dd' });
@@ -374,6 +433,7 @@ function payBook() {
   calc.push([], [S.xNote]);
   const qs = [...new Set(evs.map(e => e.q))];
   const head = first => [[...first, ...qs.flatMap(q => [appQ(q), null, null])], [...first.map(() => null), ...qs.flatMap(() => S.xTabH)]];
+  const headM = first => { const h = head(first); h[0].push(S.riCum, null, null); h[1].push(...S.xTabH); return h; };   // + kaupiamai (reformos poveikio grafikas)
   // vienas ketvirčio blokas: išmokėta, bazė, dalis (formulės SUMIFS iš „Skaičiavimai“)
   const block = (q, crit, paid, base, r) => {
     const cond = `${rng('A')},"${appQ(q)}"${crit}`;
@@ -382,7 +442,7 @@ function payBook() {
       base ? { t: 'n', v: -paid / base, f: `${L(r.c)}${r.n}/${L(r.c + 1)}${r.n}`, z: P } : null];
   };
   const sumOf = (es, pick) => es.reduce((a, e) => { const v = pick(e); return v ? [a[0] + v[0], a[1] + v[1]] : a; }, [0, 0]);
-  const mgrRows = head([S.thMgr]);
+  const mgrRows = headM([S.thMgr]);
   [...PO_MGRS, null].forEach(m => {
     const n = mgrRows.length + 1, row = [m ? MLABEL[m] : S.total];
     qs.forEach(q => {
@@ -390,8 +450,18 @@ function payBook() {
       const [fl, b] = sumOf(es, e => [e.rows ? Object.values(e.rows).flat().reduce((a, r) => a + r[5] - r[2] * r[4] / r[1], 0) : 0, Object.values(e.rows || {}).reduce((a, r) => a + r[0][2] * r[0][4] / r[0][1], 0)]);
       row.push(...(es.length ? block(q, m ? `,${rng('B')},"${MLABEL[m]}"` : '', fl, b, { c: row.length, n }) : [null, null, null]));
     });
+    // kaupiamai: visų išmokėjimų suma ÷ turtas prieš pirmą išmokėjimą
+    const L = c => XLSX.utils.encode_col(c), paidC = qs.map((_, i) => `${L(1 + 3 * i)}${n}`), c0 = row.length;
+    const cp = qs.reduce((a, _, i) => a + ((row[1 + 3 * i] || {}).v || 0), 0), cb = (row[2] || {}).v || 0;
+    row.push({ t: 'n', v: cp, f: `SUM(${paidC.join(',')})`, z: EUR }, { t: 'n', v: cb, f: `${L(2)}${n}`, z: EUR }, cb ? { t: 'n', v: cp / cb, f: `${L(c0)}${n}/${L(c0 + 1)}${n}`, z: P } : null);
     mgrRows.push(row);
   });
+  { // paprastas valdytojų vidurkis (kaip grafike „Rinkos vidurkis“)
+    const L = c => XLSX.utils.encode_col(c), r0 = 3, r1 = 2 + PO_MGRS.length, avg = [S.riAvgX];
+    for (let i = 0; i <= qs.length; i++) { const c = 3 + 3 * i, vs = mgrRows.slice(2, 2 + PO_MGRS.length).map(r => r[c] && r[c].v).filter(v => v != null);
+      avg.push(null, null, vs.length ? { t: 'n', v: vs.reduce((a, b) => a + b, 0) / vs.length, f: `AVERAGE(${L(c)}${r0}:${L(c)}${r1})`, z: P } : null); }
+    mgrRows.push(avg);
+  }
   const fundRows = head([S.xGroup, S.thMgr, S.thFund]);
   GROUPS2.forEach(g => PO_MGRS.forEach(m => {
     const names = [...new Set(evs.filter(e => e.p === m).flatMap(e => Object.keys(e.rows || {})))].filter(nm => fundsOf('II', g, m).some(f => f.n === nm));
@@ -405,7 +475,7 @@ function payBook() {
     });
   }));
   const wb = XLSX.utils.book_new(), add = (rows, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = cols; XLSX.utils.book_append_sheet(wb, ws, name); };
-  add(mgrRows, shM, [{ wch: 14 }, ...Array(qs.length * 3).fill({ wch: 15 })]);
+  add(mgrRows, shM, [{ wch: 22 }, ...Array((qs.length + 1) * 3).fill({ wch: 15 })]);
   add(fundRows, shF, [{ wch: 26 }, { wch: 11 }, { wch: 36 }, ...Array(qs.length * 3).fill({ wch: 15 })]);
   add(calc, shC, [{ wch: 11 }, { wch: 10 }, { wch: 36 }, { wch: 10 }, { wch: 11 }, { wch: 10 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 15 }, { wch: 17 }, { wch: 15 }, { wch: 10 }, { wch: 7 }]);
   return wb;
