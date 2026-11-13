@@ -603,3 +603,13 @@ ts,src,ev,dd,n,msg
 2026-11-12T13:58,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-12T14:58,bx.macro,fail,,,network: lv_rows nepavyko: <urlopen error timed out> (išėjimo kodas 0)
 2026-11-12T15:27,bx.macro,ok,,,vėl veikia
+2026-11-13T11:36,estr,new,2026-11-12,1,
+2026-11-13T11:36,idx.EUR_GOV7Y,new,2026-11-12,1,
+2026-11-13T11:36,idx.MSCI_ACWI,new,2026-11-12,1,
+2026-11-13T11:36,idx.MSCI_WORLD,new,2026-11-12,1,
+2026-11-13T11:36,idx.SP500,new,2026-11-12,1,
+2026-11-13T11:36,nav.GOINDEX,new,2026-11-11,1,
+2026-11-13T11:36,nav.SWEDBANK,new,2026-11-12,8,
+2026-11-13T11:36,p3.SWEDBANK,new,2026-11-12,6,
+2026-11-13T11:36,bx.lv_lb,ok,,,vėl veikia
+2026-11-13T11:36,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas

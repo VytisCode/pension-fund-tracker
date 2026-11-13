@@ -1,90 +1,86 @@
 {
  "bx.ee_rep": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.hicp": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.lv_lb": {
-  "err": "2026-11-12",
-  "kind": "other",
-  "msg": "Traceback (most recent call last): (išėjimo kodas 1)",
-  "ok": "2026-11-12",
-  "since": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.lv_plans": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.lv_rep": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.macro": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.main": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.vsaa": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "bx.vsaa_m": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "cpi": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "eonia": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "estr": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "idx.EURUSD": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "idx.EUR_GOV7Y": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "idx.MSCI_ACWI": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "idx.MSCI_WORLD": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "idx.SP500": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "lb": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "nav.ALLIANZ": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "nav.ARTEA": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "nav.GOINDEX": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "nav.LUMINOR": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "nav.SEB": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "nav.SWEDBANK": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "proxy": {
-  "ok": "2026-11-12"
+  "ok": "2026-11-13"
  },
  "site": {
   "detail": "46 puslapiai",
-  "err": "2026-11-12",
+  "err": "2026-11-13",
   "kind": "format",
   "msg": "facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas qf: rodyklė neranda #qfCards .fact (pataisyti site/present.js SLIDES)",
   "ok": "2026-11-11",
