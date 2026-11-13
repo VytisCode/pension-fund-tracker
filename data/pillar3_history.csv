@@ -5749,6 +5749,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,ARTEA,Artea Ambicingas 16+,1.2663,159541579.26,
 2026-11-10,ARTEA,Artea Ambicingas 16+,1.2681,159933582.56,
 2026-11-11,ARTEA,Artea Ambicingas 16+,1.2913,162934183.27,
+2026-11-12,ARTEA,Artea Ambicingas 16+,1.2947,163134594.48,
 2004-12-20,ARTEA,Artea Ambicingas Active 16+,0.28962002,,
 2004-12-21,ARTEA,Artea Ambicingas Active 16+,0.28962002,,
 2004-12-22,ARTEA,Artea Ambicingas Active 16+,0.28962002,,
@@ -11288,6 +11289,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,ARTEA,Artea Ambicingas Active 16+,0.7396,39702754.15,
 2026-11-10,ARTEA,Artea Ambicingas Active 16+,0.7414,39884136.16,
 2026-11-11,ARTEA,Artea Ambicingas Active 16+,0.7459,40178813.61,
+2026-11-12,ARTEA,Artea Ambicingas Active 16+,0.7496,40132690.65,
 2024-11-05,ARTEA,Artea Ambicingas Index 16+,1.0,10590,
 2024-11-06,ARTEA,Artea Ambicingas Index 16+,1.0,62139.5,
 2024-11-07,ARTEA,Artea Ambicingas Index 16+,1.0016,62664.8,
@@ -11795,6 +11797,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,ARTEA,Artea Ambicingas Index 16+,1.2437,22251623.7,
 2026-11-10,ARTEA,Artea Ambicingas Index 16+,1.2449,22388337.61,
 2026-11-11,ARTEA,Artea Ambicingas Index 16+,1.2701,23043000.27,
+2026-11-12,ARTEA,Artea Ambicingas Index 16+,1.2738,23081501.44,
 2004-12-20,ARTEA,Artea Stabilus 58+,0.28962002,,
 2004-12-21,ARTEA,Artea Stabilus 58+,0.28962002,,
 2004-12-22,ARTEA,Artea Stabilus 58+,0.28962002,,
@@ -17334,6 +17337,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,ARTEA,Artea Stabilus 58+,0.5508,15691103.68,
 2026-11-10,ARTEA,Artea Stabilus 58+,0.5503,15667529.74,
 2026-11-11,ARTEA,Artea Stabilus 58+,0.5503,15670207.54,
+2026-11-12,ARTEA,Artea Stabilus 58+,0.5497,15651553.75,
 2007-10-13,ARTEA,Artea Subalansuotas 47+,0.2896,,
 2007-10-14,ARTEA,Artea Subalansuotas 47+,0.2896,,
 2007-10-20,ARTEA,Artea Subalansuotas 47+,0.2896,,
@@ -23057,6 +23061,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,ARTEA,Artea Subalansuotas 47+,0.788,44608933.87,
 2026-11-10,ARTEA,Artea Subalansuotas 47+,0.7884,44541019.68,
 2026-11-11,ARTEA,Artea Subalansuotas 47+,0.795,44909068.78,
+2026-11-12,ARTEA,Artea Subalansuotas 47+,0.7959,44983900.42,
 2022-08-22,GOINDEX,Goindex pasaulio akcijų,1.0,,1.0
 2022-08-23,GOINDEX,Goindex pasaulio akcijų,1.0,,0.9964
 2022-08-24,GOINDEX,Goindex pasaulio akcijų,0.9999,,0.9977
@@ -24120,6 +24125,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,GOINDEX,Goindex pasaulio akcijų,1.5891,39115621.74,
 2026-11-10,GOINDEX,Goindex pasaulio akcijų,1.5939,39416574.33,
 2026-11-11,GOINDEX,Goindex pasaulio akcijų,1.6223999999999998,40229775.75,
+2026-11-12,GOINDEX,Goindex pasaulio akcijų,1.6287,40468572.18,
 2022-08-22,GOINDEX,Goindex subalansuotas,1.0,,1.0
 2022-08-23,GOINDEX,Goindex subalansuotas,1.0,,0.9977
 2022-08-24,GOINDEX,Goindex subalansuotas,1.0,,0.9979
@@ -25183,6 +25189,7 @@ date,provider,fund,unit_value,net_assets,benchmark_index
 2026-11-09,GOINDEX,Goindex subalansuotas,1.3845,5068358.15,
 2026-11-10,GOINDEX,Goindex subalansuotas,1.3847,5089502.35,
 2026-11-11,GOINDEX,Goindex subalansuotas,1.4005,5152938.87,
+2026-11-12,GOINDEX,Goindex subalansuotas,1.403,5181100.87,
 2007-10-01,LUMINOR,Luminor ateitis 16–50,0.28962002,,
 2007-10-02,LUMINOR,Luminor ateitis 16–50,0.28962002,,
 2007-10-03,LUMINOR,Luminor ateitis 16–50,0.28962002,,
