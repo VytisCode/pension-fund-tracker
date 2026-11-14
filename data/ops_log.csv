@@ -624,3 +624,8 @@ ts,src,ev,dd,n,msg
 2026-11-13T13:07,p3.SEB,new,2026-11-12,8,
 2026-11-13T13:26,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-13T14:27,nav.ALLIANZ,new,2026-11-12,8,
+2026-11-14T11:55,idx.MSCI_ACWI,new,2026-11-13,1,
+2026-11-14T11:55,idx.MSCI_WORLD,new,2026-11-13,1,
+2026-11-14T11:55,idx.SP500,new,2026-11-13,1,
+2026-11-14T11:55,bx.lv_lb,ok,,,vėl veikia
+2026-11-14T11:55,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas
