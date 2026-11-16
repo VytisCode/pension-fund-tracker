@@ -1200,3 +1200,24 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .miq input[type=range], .ecsl input[type=range] { background: none; border: 0; padding: 0; box-shadow: none; height: 20px; }
 #pfcTc { margin-top: 18px; }
 #pfcAlt { margin-top: 18px; }
+/* Indeksiniai ir aktyvūs fondai (portfolios.html#ix) */
+[data-design="v2"] .ixt td, [data-design="v2"] .ixt th { white-space: nowrap; }
+[data-design="v2"] .ixt tr.ixm td { background: var(--hover); }
+[data-design="v2"] .ixt tr.ixavg td { border-top: 2px solid var(--grid); font-weight: 600; }
+[data-design="v2"] .ixt tr.ixhl td { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+[data-design="v2"] .ixt tr.ixgh th { position: static; text-align: left; padding-top: 14px; color: var(--text-2); font-size: 13px; }
+[data-design="v2"] .ixt th.ixg { text-align: center; border-bottom: 1px solid var(--grid); }
+[data-design="v2"] .ixt .ixf { padding-left: 18px; display: inline-block; }
+[data-design="v2"] .ixc { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; background: var(--hover); color: var(--text); }
+[data-design="v2"] .ixc-index, [data-design="v2"] .ixs-p { background: #dcefe4; color: #1f6b43; }
+[data-design="v2"] .ixs-e { background: #e6f0dc; color: #4b6b1f; }
+[data-design="v2"] .ixs-m { background: #f6ecd6; color: #7a5a14; }
+[data-design="v2"] .ixc-active, [data-design="v2"] .ixs-a { background: #f6e0d8; color: #9a3b22; }
+[data-design="v2"] .ixc-und { background: #eee; color: #555; }
+[data-design="v2"] .ixc-dir { background: #e3e8f2; color: #2f4a7a; }
+[data-design="v2"] tr.ixdet > td { background: var(--card); white-space: normal; padding: 10px 12px 14px; }
+[data-design="v2"] .ixdetw { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+[data-design="v2"] .ixcol ol { margin: 6px 0 0; padding-left: 18px; max-height: 320px; overflow: auto; font-size: 13px; }
+[data-design="v2"] .ixcol li { display: list-item; } [data-design="v2"] .ixcol li > span { display: inline; } [data-design="v2"] .ixcol li > b { float: right; margin-left: 8px; font-variant-numeric: tabular-nums; }
+[data-design="v2"] .ixcol small { color: var(--text-3); }
+[data-design="v2"] .ixthr input { width: 56px; } [data-design="v2"] .ixhow p { margin: 0 0 8px; line-height: 1.5; }

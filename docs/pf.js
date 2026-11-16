@@ -1432,15 +1432,295 @@ function renderCompare() {
     ? 'Paskutinis blokas „išskaidžius pasaulio fondus“ – tikroji akcijų ekspozicija: tiesioginės akcijos pagal emitento šalį, regioniniai fondai pagal savo regioną, o pasaulio (MSCI World, ACWI ir pan.) ir kiti nepriskirti akcijų fondai išskaidyti pagal jų pačių sudėtį (© Morningstar). Šio bloko suma = akcijų dalis. Morningstar „išsivysčiusi Azija“ (Taivanas, P. Korėja, Honkongas, Singapūras) pasaulio su EM fonduose priskirta besivystančioms rinkoms, nes MSCI Taivaną ir Korėją laiko besivystančiomis. Viršutinės lentelės eilutės nepakeistos.'
     : 'Last block “with global funds split” – actual equity exposure: direct shares by issuer country, regional funds by their region, and global (MSCI World, ACWI etc.) and other unassigned equity funds split by their own holdings (© Morningstar). This block adds up to the equity share. Morningstar “Asia developed” (Taiwan, South Korea, Hong Kong, Singapore) in global funds that include EM is counted as emerging markets, as MSCI classifies Taiwan and Korea as EM. The rows above are unchanged.') + cov;
 }
+/* ---------- 6. Indeksiniai ir aktyvūs fondai (savininkas 2026-11-16: „ar labiau tampame indeksiniais, ar mažiau“) ----------
+   Klasifikacija – data/fund_attributes.csv stulpelis approach (index / active), sutikrinta su Morningstar „Index Fund“ požymiu
+   (2026-11-16: 390 ISIN – nė vieno nesutapimo). Kiekviena LB ataskaitos pozicija patenka į vieną iš 4 dalių:
+   index – indeksinis fondas / ETF, active – aktyvus fondas, und – fondas be klasifikacijos, dir – tiesioginė investicija
+   (akcija, obligacija, pinigai, indėlis, išvestinė). Visos keturios dalys = 100 % pozicijų vertės. */
+const ixCls = s => s.t !== 'f' ? 'dir' : s.a && (s.a.ap === 'index' || s.a.ap === 'active') ? s.a.ap : 'und';
+const IXS = {
+  lt: { title: 'Indeksiniai ir aktyvūs fondai', nav: 'Indeksiniai fondai',
+    lead: 'Kokia valdytojų ir fondų portfelio dalis investuota per indeksinius fondus (ETF ir indeksinius investicinius fondus), kokia – per aktyviai valdomus fondus ir kokia laikoma tiesiogiai (akcijos, obligacijos, indėliai). Lyginami visi valdytojai ir jų fondai kiekvieno ketvirčio pabaigoje – matyti, ar valdytojas tampa labiau ar mažiau indeksinis.',
+    metric: 'Rodiklis', period: 'Ketvirčiai', view: 'Rodyti', mgr: 'Valdytojas', all: 'Visi',
+    pYe: 'Metų pabaigos', pL8: 'Paskutiniai 8', pAll: 'Visi', vMgr: 'Valdytojus', vFund: 'Valdytojus ir fondus', vGrp: 'Amžiaus grupes',
+    avgMkt: 'Rinkos vidurkis (visi valdytojai)', avgGrp: 'Grupės vidurkis (visi valdytojai)', grpH: g => `Grupė: ${g}`,
+    thr: 'Strategijos ribos (aktyvių dalis tarp fondų)', thrP: 'pasyvi iki', thrE: 'enhanced iki', thrA: 'aktyvi nuo', thS: 'Strategija', thA: 'Aktyvių dalis tarp fondų',
+    st: { p: 'Pasyvi', e: 'Enhanced', m: 'Tarpinė', a: 'Aktyvi' },
+    stNote: (a, b, c, q) => `Strategija – pagal aktyvių fondų dalį tarp visų fondų (aktyvūs ÷ (indeksiniai + aktyvūs)) ${q}: iki ${a} % – pasyvi, ${a}–${b} % – enhanced (artima indeksui), ${b}–${c} % – tarpinė, nuo ${c} % – aktyvi. Ribas galima keisti viršuje. Tiesioginės investicijos (akcijos, obligacijos) į šį santykį neįeina.`,
+    det: 'Spustelėkite eilutę – pamatysite, kas sudaro indeksinę ir aktyvią dalį', detD: 'Tiesioginės investicijos', detNone: 'nėra',
+    m: { idx: 'Indeksiniai fondai, % portfelio', act: 'Aktyvūs fondai, % portfelio', dir: 'Tiesioginės investicijos, % portfelio', und: 'Neklasifikuoti fondai, % portfelio', idxF: 'Indeksinių dalis tarp visų fondų, %', actF: 'Aktyvių dalis tarp visų fondų, %', idxEq: 'Akcijos per indeksinius fondus, % visų akcijų' },
+    mS: { idx: 'Indeksiniai fondai', act: 'Aktyvūs fondai', dir: 'Tiesioginės investicijos', und: 'Neklasifikuoti fondai', idxF: 'Indeksinių dalis tarp fondų', actF: 'Aktyvių dalis tarp fondų', idxEq: 'Akcijos per indeksinius fondus' },
+    chartH: m => `${m}: valdytojai kiekvieno ketvirčio pabaigoje`, tblH: m => `${m}: visi valdytojai ir fondai`,
+    meta: (pl, a, b) => `${pl} pakopa · ${a} – ${b} · valdytojo reikšmė = visų jo pakopos fondų suma (svertinė pagal turtą)`,
+    thName: 'Valdytojas / fondas', thD: 'Pokytis, p. p.', thDw: (a, b) => `Pokytis nuo ${a} iki ${b}, procentiniais punktais`,
+    note: 'Dalis = pozicijų vertė ÷ visų fondo pozicijų vertė ketvirčio pabaigoje (LB ataskaitos). Valdytojo eilutė – visų jo tos pakopos fondų sumos (didesnis fondas sveria daugiau). „–“ – fondo tą ketvirtį nebuvo. Pokytis – paskutinio ir pirmo rodomo ketvirčio skirtumas; jis rodo ir sprendimus, ir rinkų judėjimą (pvz. pakilus akcijoms, akcijų ETF dalis auga ir be pirkimų).',
+    mixH: q => `Iš ko susideda 100 % portfelio, ${q}`, mixQ: 'Ketvirtis',
+    g: { idx: 'Indeksiniai fondai', act: 'Aktyvūs fondai', und: 'Neklasifikuoti fondai', dir: 'Tiesioginės investicijos', tot: 'Iš viso' },
+    c: { i_eq: 'akcijų', i_bd: 'obligacijų', i_ot: 'kiti', a_eq: 'akcijų', a_bd: 'obligacijų', a_alt: 'alternatyvūs', a_ot: 'pinigų rinkos ir kiti', und: 'fondai', d_e: 'akcijos', d_b: 'obligacijos', d_c: 'pinigai ir indėliai', d_d: 'išvestinės', tot: '' },
+    mixNote: 'Visos dalys – % fondo (valdytojo) portfelio vertės; eilutės suma = 100 %. Alternatyvūs – privataus kapitalo, nekilnojamojo turto, infrastruktūros ir kiti nelikvidūs fondai (LB KIS tipai 5–7); jie visada aktyvūs, išskyrus kelis kotiruojamus NT indekso ETF. „Pinigų rinkos ir kiti“ – pinigų rinkos fondai ir fondai be turto klasės.',
+    howH: 'Kas šiame puslapyje laikoma indeksiniu fondu',
+    how: [
+      ['Pagrindinė taisyklė', 'Indeksinis fondas – fondas, kurio tikslas yra atkartoti konkretų indeksą (beveik visi ETF ir indeksiniai investiciniai fondai, pvz. „iShares Core MSCI World“, „SEB Global All Countries Exposure“, „Amundi Index MSCI World SRI PAB“). Indeksu laikomas ir taisyklėmis paremtas indeksas: ESG / „Screened“ / „Paris-Aligned“, faktorių (Value, Momentum, Min. Volatility), sektorių, šalių ir obligacijų indeksai.'],
+      ['Kas laikoma aktyviu', 'Fondas, kurio valdytojas pats renkasi investicijas ir nesiekia atkartoti indekso, net jei su juo lygina rezultatus. Aktyvūs ir vadinamieji „patobulinto indekso“ (enhanced index) fondai (pvz. „JPM Research Enhanced Index Equity Active ETF“, „Nordea BetaPlus Enhanced“), aktyvūs ETF (pvz. „Robeco 3D“), visi privataus kapitalo, nekilnojamojo turto ir infrastruktūros fondai.'],
+      ['Kas nepatenka nei į vieną', 'Tiesioginės investicijos – valdytojo pačio pirktos akcijos, obligacijos, indėliai, pinigai ir išvestinės priemonės. Todėl „indeksiniai“ + „aktyvūs“ ≠ 100 %: likusi dalis daugiausia tiesioginės obligacijos ir pinigai. Pavyzdys – SEB pensija 58+ (III pakopa) 2026 m. III ketv.: indeksiniai fondai 32,86 % (obligacijų 27,47 %, akcijų 5,39 %), aktyvūs fondai 43,46 % (visi – obligacijų fondai), tiesioginės obligacijos 23,37 %, pinigai 0,31 %.'],
+      ['Svarbu skaitant', 'Tiesiogiai turimos akcijos nėra nei indeksinės, nei aktyvios – iš LB duomenų negalima pasakyti, ar valdytojas jas renkasi, ar atkartoja indeksą. Todėl valdytojas, perkantis akcijas tiesiogiai (pvz. Swedbank), turi mažesnę „indeksinių fondų“ dalį, nors tai nebūtinai reiškia aktyvesnį valdymą. Dalis keičiasi ir be sprendimų – kai indeksiniai fondai pabrangsta daugiau nei kitas turtas.'],
+      ['Duomenų šaltiniai', 'Pozicijos ir vertės – Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos (2019 m. III ketv. → dabar). Kiekvieno fondo „indeksinis / aktyvus“ požymis – fondų dokumentai ir justETF (data/fund_attributes.csv), 2026-11-16 sutikrintas su Morningstar požymiu „Index Fund“: visi 390 fondų su ISIN, kuriuos Morningstar atpažįsta, klasifikuoti vienodai. Fondai be ISIN (privataus kapitalo ir pan.) – pagal pobūdį (visada aktyvūs).'],
+      ['Neklasifikuoti fondai', 'Fondai, kurių nepavyko patikimai identifikuoti (pvz. LB ataskaitoje nurodytas ISIN priklauso kitam fondui nei nurodytas pavadinimas). Jie rodomi atskirai ir neįskaičiuojami nei į indeksinius, nei į aktyvius; jų dalis daugumoje ketvirčių mažesnė nei 1 %.'],
+      ['Tik Lietuva', 'Skaičiuojama tik Lietuvos II ir III pakopos fondams – Latvijos ir Estijos fondų visų pozicijų duomenų neturime.']],
+    listH: q => `Visi fondai portfeliuose ir jų klasifikacija, ${q}`, listMeta: (pl, m, n) => `${pl} pakopa · ${m} · ${n} fondų`,
+    lc: { pos: 'Fondas', isin: 'ISIN', grp: 'Turto klasė', cls: 'Klasifikacija', val: 'Vertė, €', w: 'Dalis portfelio', nm: 'Laiko fondų' },
+    cl: { index: 'Indeksinis', active: 'Aktyvus', und: 'Neklasifikuotas', dir: 'Tiesioginė' },
+    gr: { eq: 'Akcijos', bd: 'Obligacijos', cash: 'Pinigų rinka', alt: 'Alternatyvūs', der: 'Išvestinės', oth: 'Kita' },
+    listNote: 'Dalis portfelio – pozicijos vertė ÷ visų pasirinktų fondų pozicijų vertė. Pasirinkus valdytoją – tik jo fondai.',
+    src: 'Šaltinis: Lietuvos banko ketvirtinės pensijų fondų investicijų ataskaitos (https://www.lb.lt/lt/pensiju-fondai-1); fondų požymiai – data/fund_attributes.csv (fondų dokumentai, justETF; indeksinis/aktyvus sutikrintas su Morningstar „Index Fund“).' },
+  en: { title: 'Index and active funds', nav: 'Index funds',
+    lead: 'How much of each manager’s and fund’s portfolio is invested through index funds (ETFs and index mutual funds), how much through actively managed funds, and how much is held directly (shares, bonds, deposits). All managers and their funds are compared at each quarter end, so you can see whether a manager is becoming more or less index-based.',
+    metric: 'Indicator', period: 'Quarters', view: 'Show', mgr: 'Manager', all: 'All',
+    pYe: 'Year ends', pL8: 'Last 8', pAll: 'All', vMgr: 'Managers', vFund: 'Managers and funds', vGrp: 'Age groups',
+    avgMkt: 'Market average (all managers)', avgGrp: 'Group average (all managers)', grpH: g => `Group: ${g}`,
+    thr: 'Strategy thresholds (active share of funds)', thrP: 'passive up to', thrE: 'enhanced up to', thrA: 'active from', thS: 'Strategy', thA: 'Active share of funds',
+    st: { p: 'Passive', e: 'Enhanced', m: 'In between', a: 'Active' },
+    stNote: (a, b, c, q) => `Strategy – by the share of active funds among all funds (active ÷ (index + active)) ${q}: up to ${a} % – passive, ${a}–${b} % – enhanced (close to index), ${b}–${c} % – in between, from ${c} % – active. The thresholds can be changed above. Direct holdings (shares, bonds) are not part of this ratio.`,
+    det: 'Click a row to see what makes up the index and the active part', detD: 'Direct holdings', detNone: 'none',
+    m: { idx: 'Index funds, % of portfolio', act: 'Active funds, % of portfolio', dir: 'Direct holdings, % of portfolio', und: 'Unclassified funds, % of portfolio', idxF: 'Index share of all funds, %', actF: 'Active share of all funds, %', idxEq: 'Equities via index funds, % of all equities' },
+    mS: { idx: 'Index funds', act: 'Active funds', dir: 'Direct holdings', und: 'Unclassified funds', idxF: 'Index share of funds', actF: 'Active share of funds', idxEq: 'Equities via index funds' },
+    chartH: m => `${m}: managers at each quarter end`, tblH: m => `${m}: all managers and funds`,
+    meta: (pl, a, b) => `Pillar ${pl} · ${a} – ${b} · manager value = sum of all its funds in the pillar (asset-weighted)`,
+    thName: 'Manager / fund', thD: 'Change, pp', thDw: (a, b) => `Change from ${a} to ${b}, percentage points`,
+    note: 'Share = value of holdings ÷ value of all the fund’s holdings at quarter end (Bank of Lithuania reports). The manager row sums all its funds in the pillar (a larger fund weighs more). “–” – the fund did not exist that quarter. Change = last minus first quarter shown; it reflects both decisions and market moves (e.g. when equities rise, the equity ETF share grows without any purchases).',
+    mixH: q => `What makes up 100 % of the portfolio, ${q}`, mixQ: 'Quarter',
+    g: { idx: 'Index funds', act: 'Active funds', und: 'Unclassified funds', dir: 'Direct holdings', tot: 'Total' },
+    c: { i_eq: 'equity', i_bd: 'bond', i_ot: 'other', a_eq: 'equity', a_bd: 'bond', a_alt: 'alternatives', a_ot: 'money market and other', und: 'funds', d_e: 'shares', d_b: 'bonds', d_c: 'cash and deposits', d_d: 'derivatives', tot: '' },
+    mixNote: 'All parts are % of the fund’s (manager’s) portfolio value; each row sums to 100 %. Alternatives – private equity, real estate, infrastructure and other illiquid funds (Bank of Lithuania CIU types 5–7); they are always active except a few listed real-estate index ETFs. “Money market and other” – money market funds and funds without an asset class.',
+    howH: 'What this page counts as an index fund',
+    how: [
+      ['Main rule', 'An index fund is a fund whose objective is to replicate a specific index (almost all ETFs and index mutual funds, e.g. “iShares Core MSCI World”, “SEB Global All Countries Exposure”, “Amundi Index MSCI World SRI PAB”). Rules-based indices count too: ESG / “Screened” / “Paris-Aligned”, factor (Value, Momentum, Min. Volatility), sector, country and bond indices.'],
+      ['What counts as active', 'A fund whose manager picks the investments and does not aim to replicate an index, even if it compares its results with one. “Enhanced index” funds (e.g. “JPM Research Enhanced Index Equity Active ETF”, “Nordea BetaPlus Enhanced”), active ETFs (e.g. “Robeco 3D”) and all private equity, real estate and infrastructure funds are active.'],
+      ['What is in neither', 'Direct holdings – shares, bonds, deposits, cash and derivatives bought by the manager itself. Hence “index” + “active” ≠ 100 %: the rest is mostly direct bonds and cash. Example – SEB pensija 58+ (pillar III), Q3 2026: index funds 32.86 % (bond 27.47 %, equity 5.39 %), active funds 43.46 % (all bond funds), direct bonds 23.37 %, cash 0.31 %.'],
+      ['Read with care', 'Directly held shares are neither index nor active – the Bank of Lithuania data cannot show whether the manager picks them or replicates an index. A manager that buys shares directly (e.g. Swedbank) therefore has a lower “index funds” share, which does not necessarily mean more active management. The share also moves without decisions – when index funds rise more than other assets.'],
+      ['Data sources', 'Holdings and values – Bank of Lithuania quarterly pension fund investment reports (Q3 2019 → now). Each fund’s “index / active” attribute – fund documents and justETF (data/fund_attributes.csv), checked on 2026-11-16 against the Morningstar “Index Fund” attribute: all 390 funds with an ISIN known to Morningstar are classified the same way. Funds without an ISIN (private equity etc.) – by their nature (always active).'],
+      ['Unclassified funds', 'Funds that could not be identified reliably (e.g. the ISIN in the Bank of Lithuania report belongs to a different fund than the name given). They are shown separately and counted neither as index nor as active; their share is below 1 % in most quarters.'],
+      ['Lithuania only', 'Calculated only for Lithuanian pillar II and III funds – we have no full holdings data for Latvian and Estonian funds.']],
+    listH: q => `All funds in the portfolios and their classification, ${q}`, listMeta: (pl, m, n) => `Pillar ${pl} · ${m} · ${n} funds`,
+    lc: { pos: 'Fund', isin: 'ISIN', grp: 'Asset class', cls: 'Classification', val: 'Value, €', w: 'Share of portfolio', nm: 'Held by funds' },
+    cl: { index: 'Index', active: 'Active', und: 'Unclassified', dir: 'Direct' },
+    gr: { eq: 'Equity', bd: 'Bonds', cash: 'Money market', alt: 'Alternatives', der: 'Derivatives', oth: 'Other' },
+    listNote: 'Share of portfolio – holding value ÷ value of all holdings of the selected funds. When a manager is selected – only its funds.',
+    src: 'Source: Bank of Lithuania quarterly pension fund investment reports (https://www.lb.lt/lt/pensiju-fondai-1); fund attributes – data/fund_attributes.csv (fund documents, justETF; index/active checked against Morningstar “Index Fund”).' } };
+const IXT = () => IXS[lang] || IXS.en;
+const IX_KEYS = ['idx', 'act', 'dir', 'und', 'idxF', 'actF', 'idxEq'];
+const IXOPEN = new Set();
+const ixThr = () => { const d = [20, 30, 40], v = Array.isArray(ST.ixT) && ST.ixT.length === 3 && ST.ixT.every(x => isFinite(x)) ? ST.ixT : d; return v; };
+const ixStrat = a => { if (a == null) return null; const [p, e, c] = ixThr(); return a < p ? 'p' : a < e ? 'e' : a < c ? 'm' : 'a'; };
+const IX_MIX = [['idx', ['i_eq', 'i_bd', 'i_ot']], ['act', ['a_eq', 'a_bd', 'a_alt', 'a_ot']], ['und', ['und']], ['dir', ['d_e', 'd_b', 'd_c', 'd_d']], ['tot', ['tot']]];
+function ixSums(funds, qi) {                // pozicijų vertės pagal dalį → { tot, idx, act, und, dir, eq, i_eq, ... }
+  const o = { tot: 0, idx: 0, act: 0, und: 0, dir: 0, eq: 0, i_eq: 0, i_bd: 0, i_ot: 0, a_eq: 0, a_bd: 0, a_alt: 0, a_ot: 0, d_e: 0, d_b: 0, d_c: 0, d_d: 0, n: 0 };
+  funds.forEach(f => { const m = f.q[qi]; if (!m) return; o.n++;
+    m.forEach((x, si) => { const s = S[si], c = ixCls(s), b = bucket(s), v = x.v; o.tot += v; o[c] += v; if (b === 'eq') o.eq += v;
+      if (c === 'index') o.idx += v, o[b === 'eq' ? 'i_eq' : b === 'bd' ? 'i_bd' : 'i_ot'] += v;
+      else if (c === 'active') o.act += v, o[b === 'eq' ? 'a_eq' : b === 'bd' ? 'a_bd' : b === 'alt' ? 'a_alt' : 'a_ot'] += v;
+      else if (c === 'dir') o[{ e: 'd_e', b: 'd_b', c: 'd_c' }[s.t] || 'd_d'] += v; }); });
+  o.index = o.idx; o.active = o.act; return o;
+}
+function ixVal(o, k) {                      // rodiklis, % (null – nėra duomenų)
+  if (!o || !o.n || !o.tot) return null;
+  if (k === 'idxF') return o.idx + o.act > 0 ? o.idx / (o.idx + o.act) * 100 : null;
+  if (k === 'actF') return o.idx + o.act > 0 ? o.act / (o.idx + o.act) * 100 : null;
+  if (k === 'idxEq') return o.eq > 0 ? o.i_eq / o.eq * 100 : null;
+  return o[k] / o.tot * 100;
+}
+function ixQs() { const all = Q.map((_, i) => i); return ST.ixp === 'all' ? all : ST.ixp === 'l8' ? all.slice(-8) : all.filter(i => Q[i].slice(5, 7) === '12' || i === NQ - 1); }
+function ixRows(qis) {                      // [{ key, name, mgr, f, funds, kind: mgr|fund|avg|gh, kp, kt }] – kp/kt: rakto stulpelis Excel lapuose „Pozicijos“ / „Fondų sumos“
+  const t = IXT(), pf = FUNDS.filter(f => f.pl === ST.ixpl && qis.some(q => f.q[q])), out = [], fName = f => ST.ixpl === 'III' ? fundNameP(f) : fundName(f);
+  const mkt = { key: ST.ixpl, name: t.avgMkt, mgr: null, f: null, funds: pf, kind: 'avg', kp: 'C', kt: 'C' };
+  if (ST.ixv === 'grp') {
+    const groups = [...new Set(pf.map(ogOf))].sort((a, b) => (a === 'turto' ? '0' : a).localeCompare(b === 'turto' ? '0' : b));
+    groups.forEach(g => { const gf = pf.filter(f => ogOf(f) === g).sort((a, b) => a.p.localeCompare(b.p) || fName(a).localeCompare(fName(b)));
+      out.push({ key: g, name: t.grpH(gLab(g)), kind: 'gh', funds: [] });
+      gf.forEach(f => out.push({ key: f.c, name: fName(f), mgr: f.p, f, funds: [f], kind: 'fund', kp: 'D', kt: 'D', hl: ST.ixmgr !== 'all' && f.p === ST.ixmgr }));
+      out.push({ key: 'G ' + g, name: t.avgGrp, mgr: null, f: null, funds: gf, kind: 'avg', kp: 'M', kt: 'G' }); });
+    out.push(mkt); return out;
+  }
+  MGRS.filter(m => ST.ixmgr === 'all' || m === ST.ixmgr).forEach(m => {
+    const mf = pf.filter(f => f.p === m); if (!mf.length) return;
+    out.push({ key: m, name: m, mgr: m, f: null, funds: mf, kind: 'mgr', kp: 'B', kt: 'B' });
+    if (ST.ixv === 'fund') mf.slice().sort((a, b) => (a.g || '').localeCompare(b.g || '') || fName(a).localeCompare(fName(b))).forEach(f => out.push({ key: f.c, name: fName(f), mgr: m, f, funds: [f], kind: 'fund', kp: 'D', kt: 'D' }));
+  });
+  out.push(mkt); return out;
+}
+const ixNameCell = r => r.kind === 'fund' ? `<span class="ixf">${r.hl ? `<b>${esc(r.name)}</b>` : esc(r.name)}</span>` : r.kind === 'avg' ? `<i>${esc(r.name)}</i>` : `${sw(r.mgr)}<b>${esc(r.name)}</b>`;
+const ixTrCls = r => r.kind === 'fund' ? (r.hl ? ' class="ixhl"' : '') : r.kind === 'avg' ? ' class="ixavg"' : ' class="ixm"';
+const ixPct = v => v == null ? '–' : num(v, 2) + pctSfx();
+const ixPp = v => v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + num(Math.abs(v), 2);
+function renderIx() {
+  const t = IXT();
+  ST.ixpl = ['II', 'III'].includes(ST.ixpl) ? ST.ixpl : 'II'; ST.ixm = IX_KEYS.includes(ST.ixm) ? ST.ixm : 'idx'; ST.ixp = ['ye', 'l8', 'all'].includes(ST.ixp) ? ST.ixp : 'ye';
+  ST.ixv = ['fund', 'grp'].includes(ST.ixv) ? ST.ixv : 'mgr'; if (ST.ixmgr !== 'all' && !MGRS.includes(ST.ixmgr)) ST.ixmgr = 'all'; if (!(ST.ixq >= 0 && ST.ixq < NQ)) ST.ixq = NQ - 1;
+  document.getElementById('ixTitle').textContent = t.title; document.getElementById('ixLead').textContent = t.lead;
+  const bar = document.getElementById('ixBar');
+  bar.innerHTML = field(T().pillar, seg('ixpl', [['II', 'II'], ['III', 'III']], ST.ixpl))
+    + field(t.metric, `<select id="ixM">${IX_KEYS.map(k => `<option value="${k}"${k === ST.ixm ? ' selected' : ''}>${t.m[k]}</option>`).join('')}</select>`)
+    + field(t.period, seg('ixp', [['ye', t.pYe], ['l8', t.pL8], ['all', t.pAll]], ST.ixp))
+    + field(t.view, seg('ixv', [['mgr', t.vMgr], ['fund', t.vFund], ['grp', t.vGrp]], ST.ixv))
+    + field(t.mgr, `<select id="ixMg"><option value="all">${t.all}</option>${MGRS.map(m => `<option${m === ST.ixmgr ? ' selected' : ''}>${m}</option>`).join('')}</select>`);
+  const th = ixThr();
+  bar.insertAdjacentHTML('beforeend', `<span class="field ixthr">${t.thr}: ${t.thrP} <input type="number" min="0" max="100" step="1" data-i="0" value="${th[0]}"> %, ${t.thrE} <input type="number" min="0" max="100" step="1" data-i="1" value="${th[1]}"> %, ${t.thrA} <input type="number" min="0" max="100" step="1" data-i="2" value="${th[2]}"> %</span>`);
+  bar.querySelectorAll('.ixthr input').forEach(inp => inp.addEventListener('change', () => { const v = ixThr().slice(); v[+inp.dataset.i] = Math.max(0, Math.min(100, +inp.value || 0)); ST.ixT = v; go(); }));
+  const go = () => { save(); renderIx(); };
+  wireSegs(bar, { ixpl: v => { ST.ixpl = v; go(); }, ixp: v => { ST.ixp = v; go(); }, ixv: v => { ST.ixv = v; go(); } });
+  bar.querySelector('#ixM').addEventListener('change', e => { ST.ixm = e.target.value; go(); });
+  bar.querySelector('#ixMg').addEventListener('change', e => { ST.ixmgr = e.target.value; go(); });
+  const qis = ixQs(), k = ST.ixm, rows = ixRows(qis), q0 = qis[0], q1 = qis[qis.length - 1];
+  // grafikas: valdytojai, visi ketvirčiai tarp pirmo ir paskutinio rodomo
+  const span = Q.map((_, i) => i).filter(i => i >= q0 && i <= q1);
+  const series = (ST.ixv === 'grp' ? (() => { const sv = ST.ixv; ST.ixv = 'mgr'; const rr = ixRows(qis); ST.ixv = sv; return rr; })() : rows).filter(r => r.kind === 'mgr' || r.kind === 'avg').map(r => ({ provider: r.mgr || 'avg', label: r.mgr || r.name, color: r.mgr ? undefined : 'var(--text-2)', dash: r.mgr ? '' : '5 4', points: span.map(q => [QDAY[q], ixVal(ixSums(r.funds, q), k)]).filter(p => p[1] != null) }));
+  document.getElementById('ixChartH').textContent = t.chartH(t.mS[k]);
+  document.getElementById('ixChartMeta').textContent = t.meta(ST.ixpl, qLabel(q0), qLabel(q1));
+  const el = document.getElementById('ixChart');
+  drawLineChart(el, series, QDAY[q0], QDAY[q1], { fmt: v => num(v, 2) + pctSfx(), axisUnit: '%' });
+  const lastOf = r => { const p = r.points[r.points.length - 1]; return p ? p[1] : null; };
+  document.getElementById('ixLegend').innerHTML = series.map(r => `<span><i style="background:${r.color || colorOf(r.provider)}"></i>${esc(r.label)} <b>${ixPct(lastOf(r))}</b></span>`).join('');
+  // lentelė: valdytojai (+ fondai) × ketvirčiai
+  document.getElementById('ixTblH').textContent = t.tblH(t.mS[k]);
+  document.getElementById('ixTblMeta').textContent = t.meta(ST.ixpl, qLabel(q0), qLabel(q1));
+  const vals = rows.map(r => r.kind === 'gh' ? [] : qis.map(q => ixVal(ixSums(r.funds, q), k)));
+  const nC = qis.length + 4;
+  document.getElementById('ixTable').innerHTML = `<thead><tr><th>${t.thName}</th>${qis.map(q => `<th class="num">${qLabel(q)}</th>`).join('')}<th class="num" title="${esc(t.thDw(qLabel(q0), qLabel(q1)))}">${t.thD}</th><th class="num">${t.thA}, ${qLabel(q1)}</th><th>${t.thS}</th></tr></thead><tbody>`
+    + rows.map((r, i) => { if (r.kind === 'gh') return `<tr class="ixgh"><th colspan="${nC}">${esc(r.name)}</th></tr>`;
+      const v = vals[i], a = v[0], b = v[v.length - 1], d = a != null && b != null ? b - a : null, af = ixVal(ixSums(r.funds, q1), 'actF'), sk = ixStrat(af);
+      return `<tr${ixTrCls(r)} data-ixk="${esc(r.kind + ':' + r.key)}" title="${esc(t.det)}" style="cursor:pointer"><td>${ixNameCell(r)}</td>${v.map(x => `<td class="num">${ixPct(x)}</td>`).join('')}<td class="num ${d > 0 ? 'pos' : d < 0 ? 'neg' : ''}">${ixPp(d)}</td><td class="num">${ixPct(af)}</td><td>${sk ? `<span class="ixc ixs-${sk}">${t.st[sk]}</span>` : '–'}</td></tr>`; }).join('') + '</tbody>';
+  document.getElementById('ixTable').querySelectorAll('tr[data-ixk]').forEach(tr => tr.addEventListener('click', () => { IXOPEN.add(tr.dataset.ixk); ST.ixq = q1; save(); renderIxMix(); renderIxList(); document.getElementById('ixMixH').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
+  document.getElementById('ixNote').textContent = t.note + ' ' + t.stNote(...ixThr(), qLabel(q1)) + ' ' + t.det + '.';
+  renderIxMix(); renderIxHow(); renderIxList();
+}
+function renderIxMix() {
+  const t = IXT(), qi = ST.ixq, rows = ixRows([qi]);
+  document.getElementById('ixMixH').textContent = t.mixH(qLabel(qi));
+  const bar = document.getElementById('ixMixBar');
+  bar.innerHTML = field(t.mixQ, quarterSelect('ixQ', qi, 0));
+  bar.querySelector('#ixQ').addEventListener('change', e => { ST.ixq = +e.target.value; save(); renderIxMix(); renderIxList(); });
+  const head1 = `<tr><th rowspan="2">${t.thName}</th>${IX_MIX.map(([g, cs]) => `<th class="num ixg" colspan="${cs.length + (cs.length > 1 ? 1 : 0)}">${t.g[g]}</th>`).join('')}</tr>`;
+  const head2 = `<tr>${IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<th class="num"><b>${t.g[g].split(' ')[0]}</b></th>`] : []).concat(cs.map(c => `<th class="num">${t.c[c] || '%'}</th>`)).join('')).join('')}</tr>`;
+  const nCol = 1 + IX_MIX.reduce((n, [, cs]) => n + cs.length + (cs.length > 1 ? 1 : 0), 0);
+  document.getElementById('ixMix').innerHTML = `<thead>${head1}${head2}</thead><tbody>` + rows.map(r => { if (r.kind === 'gh') return `<tr class="ixgh"><th colspan="${nCol}">${esc(r.name)}</th></tr>`;
+    const o = ixSums(r.funds, qi); if (!o.tot) return ''; const id = r.kind + ':' + r.key, open = IXOPEN.has(id);
+    const p = x => ixPct(x / o.tot * 100);
+    return `<tr${ixTrCls(r)} data-ixk="${esc(id)}" title="${esc(t.det)}" style="cursor:pointer"><td>${open ? '▾' : '▸'} ${ixNameCell(r)}</td>` + IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<td class="num"><b>${p(o[g])}</b></td>`] : []).concat(cs.map(c => `<td class="num">${c === 'tot' ? p(o.tot) : c === 'und' ? p(o.und) : p(o[c])}</td>`)).join('')).join('') + '</tr>'
+      + (open ? `<tr class="ixdet"><td colspan="${nCol}">${ixDetail(r.funds, qi)}</td></tr>` : ''); }).join('') + '</tbody>';
+  document.getElementById('ixMix').querySelectorAll('tr[data-ixk]').forEach(tr => tr.addEventListener('click', () => { const k = tr.dataset.ixk; if (IXOPEN.has(k)) IXOPEN.delete(k); else IXOPEN.add(k); renderIxMix(); }));
+  document.getElementById('ixMixNote').textContent = t.mixNote + ' ' + t.det + '.';
+}
+function ixDetail(funds, qi) {             // išskleista eilutė: kiekvienos dalies fondai (ir tiesioginės pagal tipą), % portfelio
+  const t = IXT(), m = new Map(); let tot = 0;
+  funds.forEach(f => f.q[qi] && f.q[qi].forEach((x, si) => { tot += x.v; const s = S[si], c = ixCls(s), key = c === 'dir' ? 'dir:' + s.t : si;
+    const o = m.get(key) || { c, s, v: 0, b: bucket(s) }; o.v += x.v; m.set(key, o); }));
+  if (!tot) return '';
+  const all = [...m.values()].sort((a, b) => b.v - a.v), w = v => ixPct(v / tot * 100);
+  const blk = (c, h) => { const it = all.filter(o => o.c === c), sum = it.reduce((a, o) => a + o.v, 0);
+    return `<div class="ixcol"><div class="ixch"><span class="ixc ixc-${c}">${h}</span> <b>${w(sum)}</b></div>${it.length ? `<ol>${it.map(o => `<li><span>${c === 'dir' ? esc(T().types[o.s.t] ? T().types[o.s.t][0].toUpperCase() + T().types[o.s.t].slice(1) : o.s.t) : esc(posLabel(o.s))}${c !== 'dir' ? ` <small>${t.gr[o.b] || ''}</small>` : ''}</span><b>${w(o.v)}</b></li>`).join('')}</ol>` : `<p class="note">${t.detNone}</p>`}</div>`; };
+  return `<div class="ixdetw">${blk('index', t.g.idx)}${blk('active', t.g.act)}${all.some(o => o.c === 'und') ? blk('und', t.g.und) : ''}${blk('dir', t.detD)}</div>`;
+}
+function renderIxHow() {
+  const t = IXT();
+  document.getElementById('ixHowH').textContent = t.howH;
+  document.getElementById('ixHow').innerHTML = t.how.map(([h, p]) => `<p><b>${esc(h)}.</b> ${esc(p)}</p>`).join('');
+}
+function ixList(qi) {                       // visi fondai pasirinktuose portfeliuose: [{ s, si, v, nf }]
+  const funds = FUNDS.filter(f => f.pl === ST.ixpl && f.q[qi] && (ST.ixmgr === 'all' || f.p === ST.ixmgr)), m = new Map(); let tot = 0;
+  funds.forEach(f => f.q[qi].forEach((x, si) => { tot += x.v; if (S[si].t !== 'f') return; const o = m.get(si) || { s: S[si], si, v: 0, nf: 0 }; o.v += x.v; o.nf++; m.set(si, o); }));
+  return { funds, tot, rows: [...m.values()].sort((a, b) => b.v - a.v) };
+}
+function renderIxList() {
+  const t = IXT(), qi = ST.ixq, L = ixList(qi), c = t.lc;
+  document.getElementById('ixListH').textContent = t.listH(qLabel(qi));
+  document.getElementById('ixListMeta').textContent = t.listMeta(ST.ixpl, ST.ixmgr === 'all' ? t.all : ST.ixmgr, L.rows.length);
+  document.getElementById('ixList').innerHTML = `<thead><tr><th>${c.pos}</th><th>${c.isin}</th><th>${c.grp}</th><th>${c.cls}</th><th class="num">${c.val}</th><th class="num">${c.w}</th><th class="num">${c.nm}</th></tr></thead><tbody>`
+    + L.rows.map(o => { const k = ixCls(o.s); return `<tr><td>${esc(posLabel(o.s))}</td><td>${esc(o.s.isin || '')}</td><td>${t.gr[bucket(o.s)] || ''}</td><td><span class="ixc ixc-${k}">${t.cl[k]}</span></td><td class="num">${num(Math.round(o.v), 0)}</td><td class="num">${ixPct(L.tot ? o.v / L.tot * 100 : null)}</td><td class="num">${o.nf}</td></tr>`; }).join('') + '</tbody>';
+  document.getElementById('ixListNote').textContent = t.listNote;
+}
+/* Excel įrodymų failai: lapas „Pozicijos“ (LB pozicijos, mėlyni duomenys, klasė index/active/und/dir), „Fondų sumos“; rezultatai – SUMIFS formulės */
+function ixPosSheet(funds, qis, keep) {    // A ketvirtis, B valdytojas, C pakopa, D fondo kodas, E fondas, F pozicijos ID, G pozicija, H ISIN, I tipas (e/b/c/d/f), J turto grupė, K klasė, L vertė €, M amžiaus grupė
+  const L = lang === 'lt', rows = [[L ? 'Pozicijos (Lietuvos banko ketvirtinės investicijų ataskaitos)' : 'Holdings (Bank of Lithuania quarterly investment reports)'], [IXT().src],
+    L ? ['Ketvirtis', 'Valdytojas', 'Pakopa', 'Fondo kodas', 'Fondas', 'Pozicijos ID', 'Pozicija', 'ISIN', 'Tipas (e akcija, b obligacija, c pinigai, d išvestinė, f fondas)', 'Turto grupė (eq/bd/cash/alt/der/oth)', 'Klasė (index/active/und/dir)', 'Vertė, €', 'Amžiaus / turto grupė']
+      : ['Quarter', 'Manager', 'Pillar', 'Fund code', 'Fund', 'Holding ID', 'Holding', 'ISIN', 'Type (e share, b bond, c cash, d derivative, f fund)', 'Asset group (eq/bd/cash/alt/der/oth)', 'Class (index/active/und/dir)', 'Value, €', 'Age / asset group']];
+  funds.forEach(f => qis.forEach(qi => { if (!f.q[qi]) return; f.q[qi].forEach((x, si) => { const s = S[si]; if (keep && !keep(s)) return;
+    rows.push([Q[qi], f.p, f.pl, f.c, fundName(f), si, posLabel(s), s.isin || '', s.t, bucket(s), ixCls(s), { t: 'n', v: x.v, z: '#,##0' }, 'G ' + ogOf(f)]); }); }));
+  return rows;
+}
+function ixTotSheet(funds, qis) {
+  const L = lang === 'lt', r = totSheet(funds, qis), fb = Object.fromEntries(funds.map(f => [f.c, f]));
+  r[0].push(L ? 'Amžiaus / turto grupė' : 'Age / asset group'); r.slice(1).forEach(x => x.push('G ' + ogOf(fb[x[3]])));
+  return [[L ? 'Fondų visų pozicijų sumos ketvirčio pabaigoje' : 'Sum of all fund holdings at quarter end'], [IXT().src], ...r];
+}
+const IXW = [{ wch: 11 }, { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 30 }, { wch: 8 }, { wch: 44 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 14 }];
+const IXTW = [{ wch: 11 }, { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 30 }, { wch: 16 }, { wch: 12 }];
+function ixMeth() {
+  const t = IXT(), L = lang === 'lt';
+  return [[L ? 'Klasės' : 'Classes', L ? 'index – indeksinis fondas / ETF; active – aktyvus fondas; und – neklasifikuotas fondas; dir – tiesioginė investicija (akcija, obligacija, pinigai, indėlis, išvestinė). Klasė priskiriama kiekvienai pozicijai lape „Pozicijos“ (stulpelis K).' : 'index – index fund / ETF; active – active fund; und – unclassified fund; dir – direct holding (share, bond, cash, deposit, derivative). The class of each holding is in column K of “Holdings”.'],
+    ...t.how.map(([h, p]) => [h, p])];
+}
+XLB.set('ixTable', async () => {
+  const X = PXL(), t = IXT(), qis = ixQs(), k = ST.ixm, rows = ixRows(qis), funds = FUNDS.filter(f => f.pl === ST.ixpl), q1 = qis[qis.length - 1];
+  const P = `'${X.SP}'`, TT = `'${X.ST}'`, R = (sh, c) => `${sh}!$${c}:$${c}`;
+  const sp = (r, n, q, crit) => `SUMIFS(${R(P, 'L')},${R(P, r.kp)},$A${n},${R(P, 'A')},${xs(Q[q])},${R(P, 'C')},${xs(ST.ixpl)}${crit})`;
+  const st = (r, n, q) => `SUMIFS(${R(TT, 'F')},${R(TT, r.kt)},$A${n},${R(TT, 'A')},${xs(Q[q])},${R(TT, 'C')},${xs(ST.ixpl)})`;
+  const cls = (r, n, q, x) => sp(r, n, q, `,${R(P, 'K')},"${x}"`);
+  const fx = (r, n, q, kk) => { const T0 = st(r, n, q), i = cls(r, n, q, 'index'), a = cls(r, n, q, 'active');
+    if (kk === 'idxF') return `IF(${i}+${a}>0,${i}/(${i}+${a}),"")`;
+    if (kk === 'actF') return `IF(${i}+${a}>0,${a}/(${i}+${a}),"")`;
+    if (kk === 'idxEq') { const e = sp(r, n, q, `,${R(P, 'J')},"eq"`); return `IF(${e}>0,${sp(r, n, q, `,${R(P, 'K')},"index",${R(P, 'J')},"eq"`)}/${e},"")`; }
+    if (kk === 'dir') return `IF(${T0}>0,(${T0}-${sp(r, n, q, `,${R(P, 'K')},"<>dir"`)})/${T0},"")`;
+    return `IF(${T0}>0,${cls(r, n, q, { idx: 'index', act: 'active', und: 'und' }[kk])}/${T0},"")`; };
+  const th = ixThr(), nq = qis.length, cA = xlCol(2), cB = xlCol(1 + nq), cAF = xlCol(3 + nq);
+  const res = [[`${t.tblH(t.mS[k])}`], [t.src], [t.meta(ST.ixpl, qLabel(qis[0]), qLabel(q1))],
+    [t.thr + ' (%): ' + [t.thrP, t.thrE, t.thrA].join(' / '), th[0], th[1], th[2]],
+    [X.L ? 'Raktas (valdytojas / fondo kodas / grupė / pakopa)' : 'Key (manager / fund code / group / pillar)', t.thName, ...qis.map(q => qLabel(q)), t.thD, `${t.thA}, ${qLabel(q1)}`, t.thS]];
+  rows.forEach(r => { if (r.kind === 'gh') { res.push([null, r.name]); return; }
+    const n = res.length + 1, v = qis.map(q => ixVal(ixSums(r.funds, q), k)), af = ixVal(ixSums(r.funds, q1), 'actF'), sk = ixStrat(af), X1 = `${cAF}${n}`;
+    res.push([r.key, r.name, ...qis.map((q, j) => v[j] == null ? null : xlF(fx(r, n, q, k), v[j] / 100, '0.00%')),
+      v[0] != null && v[nq - 1] != null ? xlF(`(${cB}${n}-${cA}${n})*100`, v[nq - 1] - v[0], '+0.00" p. p.";-0.00" p. p."') : null,
+      af == null ? null : xlF(fx(r, n, q1, 'actF'), af / 100, '0.00%'),
+      af == null ? null : { f: `IF(${X1}="","",IF(${X1}*100<$B$4,${xs(t.st.p)},IF(${X1}*100<$C$4,${xs(t.st.e)},IF(${X1}*100<$D$4,${xs(t.st.m)},${xs(t.st.a)}))))`, v: t.st[sk] }]); });
+  const keep = k === 'idxEq' ? s => s.t === 'f' || bucket(s) === 'eq' : s => s.t === 'f';
+  return pxBook({ res, resW: [{ wch: 14 }, { wch: 34 }, ...qis.map(() => ({ wch: 12 })), { wch: 12 }, { wch: 14 }, { wch: 12 }],
+    sheets: [[X.SP, ixPosSheet(funds, qis, keep), IXW], [X.ST, ixTotSheet(funds, qis), IXTW]], meth: [[t.thS, t.stNote(...th, qLabel(q1))], ...ixMeth()] });
+});
+XLB.set('ixMix', async () => {
+  const X = PXL(), t = IXT(), qi = ST.ixq, rows = ixRows([qi]), funds = FUNDS.filter(f => f.pl === ST.ixpl);
+  const P = `'${X.SP}'`, TT = `'${X.ST}'`, R = (sh, c) => `${sh}!$${c}:$${c}`;
+  const CR = { i_eq: `"index",${R(P, 'J')},"eq"`, i_bd: `"index",${R(P, 'J')},"bd"`, a_eq: `"active",${R(P, 'J')},"eq"`, a_bd: `"active",${R(P, 'J')},"bd"`, a_alt: `"active",${R(P, 'J')},"alt"`,
+    und: `"und"`, d_e: `"dir",${R(P, 'I')},"e"`, d_b: `"dir",${R(P, 'I')},"b"`, d_c: `"dir",${R(P, 'I')},"c"`, d_d: `"dir",${R(P, 'I')},"d"` };
+  const cols = []; IX_MIX.forEach(([g, cs]) => { if (cs.length > 1) cols.push(g); cs.forEach(c => cols.push(c)); });
+  const lab = c => { const g = IX_MIX.find(x => x[0] === c); if (g) return t.g[c]; const p = IX_MIX.find(x => x[1].includes(c)); return c === 'tot' ? t.g.tot : `${t.g[p[0]]}: ${t.c[c]}`; };
+  const res = [[t.mixH(qLabel(qi))], [t.src], [`${ST.ixpl} · ${t.mixNote}`], [X.L ? 'Raktas (valdytojas / fondo kodas)' : 'Key (manager / fund code)', t.thName, ...cols.map(lab)]];
+  rows.forEach(r => { if (r.kind === 'gh') { res.push([null, r.name]); return; } const o = ixSums(r.funds, qi); if (!o.tot) return; const n = res.length + 1, kc = r.kp, kt = r.kt;
+    const base = `${R(P, 'L')},${R(P, kc)},$A${n},${R(P, 'A')},${xs(Q[qi])},${R(P, 'C')},${xs(ST.ixpl)}`, T0 = `SUMIFS(${R(TT, 'F')},${R(TT, kt)},$A${n},${R(TT, 'A')},${xs(Q[qi])},${R(TT, 'C')},${xs(ST.ixpl)})`;
+    const cell = {}; cols.forEach((c, j) => { cell[c] = xlCol(2 + j) + n; });
+    const f = c => c === 'idx' ? `${cell.i_eq}+${cell.i_bd}+${cell.i_ot}` : c === 'act' ? `${cell.a_eq}+${cell.a_bd}+${cell.a_alt}+${cell.a_ot}` : c === 'dir' ? `${cell.d_e}+${cell.d_b}+${cell.d_c}+${cell.d_d}`
+      : c === 'tot' ? `${cell.idx}+${cell.act}+${cell.und}+${cell.dir}` : c === 'i_ot' ? `SUMIFS(${base},${R(P, 'K')},"index")/${T0}-${cell.i_eq}-${cell.i_bd}`
+      : c === 'a_ot' ? `SUMIFS(${base},${R(P, 'K')},"active")/${T0}-${cell.a_eq}-${cell.a_bd}-${cell.a_alt}` : `SUMIFS(${base},${R(P, 'K')},${CR[c]})/${T0}`;
+    res.push([r.key, r.name, ...cols.map(c => xlF(f(c), (c === 'tot' ? o.tot : o[c]) / o.tot, '0.00%'))]); });
+  return pxBook({ res, resW: [{ wch: 14 }, { wch: 34 }, ...cols.map(() => ({ wch: 13 }))], sheets: [[X.SP, ixPosSheet(funds, [qi]), IXW], [X.ST, ixTotSheet(funds, [qi]), IXTW]], meth: ixMeth() });
+});
+XLB.set('ixList', async () => {
+  const X = PXL(), t = IXT(), qi = ST.ixq, L = ixList(qi), c = t.lc, P = `'${X.SP}'`, TT = `'${X.ST}'`, R = (sh, col) => `${sh}!$${col}:$${col}`;
+  const mc = ST.ixmgr === 'all' ? '"<>"' : xs(ST.ixmgr), tot = `SUMIFS(${R(TT, 'F')},${R(TT, 'A')},${xs(Q[qi])},${R(TT, 'C')},${xs(ST.ixpl)},${R(TT, 'B')},${mc})`;
+  const res = [[t.listH(qLabel(qi))], [t.src], [t.listMeta(ST.ixpl, ST.ixmgr === 'all' ? t.all : ST.ixmgr, L.rows.length)], [X.L ? 'Pozicijos ID' : 'Holding ID', c.pos, c.isin, c.grp, c.cls, c.val, c.w, c.nm]];
+  L.rows.forEach(o => { const n = res.length + 1, crit = `${R(P, 'F')},$A${n},${R(P, 'A')},${xs(Q[qi])},${R(P, 'C')},${xs(ST.ixpl)},${R(P, 'B')},${mc}`;
+    res.push([o.si, posLabel(o.s), o.s.isin || '', bucket(o.s), ixCls(o.s), xlF(`SUMIFS(${R(P, 'L')},${crit})`, o.v, '#,##0'), xlF(`F${n}/${tot}`, L.tot ? o.v / L.tot : 0, '0.00%'), xlF(`COUNTIFS(${crit})`, o.nf, '0')]); });
+  return pxBook({ res, resW: [{ wch: 9 }, { wch: 50 }, { wch: 14 }, { wch: 9 }, { wch: 9 }, { wch: 14 }, { wch: 10 }, { wch: 8 }],
+    sheets: [[X.SP, ixPosSheet(L.funds, [qi], s => s.t === 'f'), IXW], [X.ST, ixTotSheet(L.funds, [qi]), IXTW]], meth: ixMeth() });
+});
+
 function renderAll() {
   const qi = NQ - 1, live = FUNDS.filter(f => f.q[qi]), secs = new Set(live.flatMap(f => [...f.q[qi].keys()])).size;
   if (0) kpiRow([[T().kpQ, Q[qi]], [T().kpFunds, live.length], [T().kpPos, num(live.reduce((s, f) => s + f.q[qi].size, 0), 0)], [T().kpSecs, num(secs, 0)], [T().kpFrom, Q[0]]]);
   document.getElementById('sub').textContent = `${T().navPortfolios} · ${lang === 'lt' ? 'LB ataskaitos' : 'Bank of Lithuania reports'} ${qLabel(0)} – ${qLabel(NQ - 1)}`;
   ['tcTitle', 'tcLead', 'altTitle', 'altLead', 'pgTitle', 'pgLead', 'smTitle', 'smLead', 'fcTitle', 'fcLead', 'foot'].forEach(id => { document.getElementById(id).textContent = T()[id]; });
-  renderOverview(); renderTopChanges(); renderAlt(); renderPeers(); renderSim(); renderFund();
+  renderOverview(); renderTopChanges(); renderAlt(); renderPeers(); renderIx(); renderSim(); renderFund();
   const L = lang === 'lt';   // skirtukai (savininkas 2026-10-16: „per daug painus“) – viena dalis vienu metu
   addSubnav([['ovTitle', L ? 'Ketvirčio apžvalga' : 'Quarter overview'], ['tcTitle', L ? 'Pirkimai ir pardavimai' : 'Buys and sells'], ['altTitle', L ? 'Alternatyvios' : 'Alternatives'],
-    ['pgTitle', L ? 'Palyginimas grupėje' : 'Peer comparison'], ['smTitle', L ? 'Panašumas' : 'Similarity'], ['fcTitle', L ? 'Fondo portfelis' : 'Fund portfolio']].map(([id, label]) => ({ id, label })));
+    ['pgTitle', L ? 'Palyginimas grupėje' : 'Peer comparison'], ['ixTitle', L ? 'Indeksiniai fondai' : 'Index funds'], ['smTitle', L ? 'Panašumas' : 'Similarity'], ['fcTitle', L ? 'Fondo portfelis' : 'Fund portfolio']].map(([id, label]) => ({ id, label })));
 }
 renderHeader('portfolios', renderAll);
 renderAll();

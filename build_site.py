@@ -950,7 +950,7 @@ def build_portfolios(ver: dict) -> None:
         kind, country, cur, kis = meta[p]
         name = best_name(names[p], kind)
         co = kind == "fund" and bool(COMPANY_NAME.search(name))           # ataskaitoje nurodyta tik valdymo bendrovė
-        a = (attrs.get(p) or attr_alias(p, names[p], attrs)) if kind == "fund" else None
+        a = (attrs.get(p) or attrs.get(p.upper()) or attr_alias(p, names[p], attrs)) if kind == "fund" else None
         full = (a or {}).get("name") or (figi.get(p, "") if co else "")   # pilnas oficialus pavadinimas
         ter = (a or {}).get("ter_pct", "")
         secs.append([name, PF_TYPES[kind], country, cur, kis,
