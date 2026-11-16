@@ -204,7 +204,7 @@ III pakopa – Vilnius: 2026-11-16 13:45, laukiama diena: 2026-11-13
 ARTEA: gauta 23063 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
 GOINDEX: jau atnaujinta iki 2026-11-13
 
-Vilnius: 2026-11-16 14:45, laukiama diena: 2026-11-13
+Vilnius: 2026-11-16 14:57, laukiama diena: 2026-11-13
   ! Artea pensija 2003-2009: netinkama data 2026-10-28 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-29 – praleista
   ! Artea pensija 2003-2009: netinkama data 2026-10-30 – praleista
@@ -233,17 +233,17 @@ ARTEA: gauta 96 eil., nauja/pakeista 8; viskas iki 2026-11-13
 ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-11-13
 GOINDEX: jau atnaujinta iki 2026-11-13
 
-III pakopa – Vilnius: 2026-11-16 14:46, laukiama diena: 2026-11-13
+III pakopa – Vilnius: 2026-11-16 14:57, laukiama diena: 2026-11-13
 ARTEA: gauta 23068 eil., nauja/pakeista 5; viskas iki 2026-11-13
 GOINDEX: jau atnaujinta iki 2026-11-13
 
-Vilnius: 2026-11-16 14:46, laukiama diena: 2026-11-13
+Vilnius: 2026-11-16 14:58, laukiama diena: 2026-11-13
 SEB: jau atnaujinta iki 2026-11-13
 SWEDBANK: jau atnaujinta iki 2026-11-13
 LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-13
 GOINDEX: jau atnaujinta iki 2026-11-13
 
-III pakopa – Vilnius: 2026-11-16 14:46, laukiama diena: 2026-11-13
+III pakopa – Vilnius: 2026-11-16 14:58, laukiama diena: 2026-11-13
 SEB: jau atnaujinta iki 2026-11-13
 SWEDBANK: jau atnaujinta iki 2026-11-13
 LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-11-13

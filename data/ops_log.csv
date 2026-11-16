@@ -639,8 +639,8 @@ ts,src,ev,dd,n,msg
 2026-11-16T11:36,p3.SWEDBANK,new,2026-11-13,6,
 2026-11-16T11:36,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-16T11:36,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas
-2026-11-16T12:57,nav.ALLIANZ,new,2026-11-13,8,
-2026-11-16T12:57,nav.ARTEA,new,2026-11-13,8,
-2026-11-16T12:57,nav.LUMINOR,new,2026-11-13,8,
-2026-11-16T12:57,p3.ARTEA,new,2026-11-13,5,
-2026-11-16T12:57,p3.LUMINOR,new,2026-11-13,5,
+2026-11-16T13:12,nav.ALLIANZ,new,2026-11-13,8,
+2026-11-16T13:12,nav.ARTEA,new,2026-11-13,8,
+2026-11-16T13:12,nav.LUMINOR,new,2026-11-13,8,
+2026-11-16T13:12,p3.ARTEA,new,2026-11-13,5,
+2026-11-16T13:12,p3.LUMINOR,new,2026-11-13,5,
