@@ -2467,3 +2467,8 @@ Held by funds	Tur fondi	Hoiavad fondid
 Unclassified	Neklasificēts	Klassifitseerimata
 Share of portfolio – holding value ÷ value of all holdings of the selected funds. When a manager is selected – only its funds.	Daļa no portfeļa – ieguldījuma vērtība ÷ visu izvēlēto fondu ieguldījumu vērtība. Ja izvēlēts pārvaldītājs – tikai tā fondi.	Osa portfellist – investeeringu väärtus ÷ kõigi valitud fondide investeeringute väärtus. Kui valitud on fondivalitseja – ainult tema fondid.
 Click a row to see what makes up the index and the active part	Noklikšķiniet uz rindas, lai redzētu, kas veido indeksu un aktīvo daļu	Klõpsake real, et näha, millest koosneb indeks- ja aktiivne osa
+Change since	Izmaiņas kopš	Muutus alates
+Change in index fund share, pp	Indeksu fondu daļas izmaiņas, p. p.	Indeksfondide osa muutus, p. p.
+year to date (Q{N} {N})	kopš gada sākuma ({N}. cet. {N})	aasta algusest ({N}. kv {N})
+over the year (Q{N} {N})	gada laikā ({N}. cet. {N})	aasta jooksul ({N}. kv {N})
+since Q{N} {N}	kopš {N}. cet. {N}	alates {N}. kv {N}

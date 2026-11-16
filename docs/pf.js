@@ -1454,7 +1454,7 @@ const IXS = {
     meta: (pl, a, b) => `${pl} pakopa · ${a} – ${b} · valdytojo reikšmė = visų jo pakopos fondų suma (svertinė pagal turtą)`,
     thName: 'Valdytojas / fondas', thD: 'Pokytis, p. p.', thDw: (a, b) => `Pokytis nuo ${a} iki ${b}, procentiniais punktais`,
     note: 'Dalis = pozicijų vertė ÷ visų fondo pozicijų vertė ketvirčio pabaigoje (LB ataskaitos). Valdytojo eilutė – visų jo tos pakopos fondų sumos (didesnis fondas sveria daugiau). „–“ – fondo tą ketvirtį nebuvo. Pokytis – paskutinio ir pirmo rodomo ketvirčio skirtumas; jis rodo ir sprendimus, ir rinkų judėjimą (pvz. pakilus akcijoms, akcijų ETF dalis auga ir be pirkimų).',
-    mixH: q => `Iš ko susideda 100 % portfelio, ${q}`, mixQ: 'Ketvirtis',
+    mixH: q => `Iš ko susideda 100 % portfelio, ${q}`, mixQ: 'Ketvirtis', mixQ0: 'Pokytis nuo', dH: 'Indeksinių fondų dalies pokytis, p. p.', dYtd: q => `nuo metų pradžios (${q})`, dY: q => `per metus (${q})`, dC: q => `nuo ${q}`,
     g: { idx: 'Indeksiniai fondai', act: 'Aktyvūs fondai', und: 'Neklasifikuoti fondai', dir: 'Tiesioginės investicijos', tot: 'Iš viso' },
     c: { i_eq: 'akcijų', i_bd: 'obligacijų', i_ot: 'kiti', a_eq: 'akcijų', a_bd: 'obligacijų', a_alt: 'alternatyvūs', a_ot: 'pinigų rinkos ir kiti', und: 'fondai', d_e: 'akcijos', d_b: 'obligacijos', d_c: 'pinigai ir indėliai', d_d: 'išvestinės', tot: '' },
     mixNote: 'Visos dalys – % fondo (valdytojo) portfelio vertės; eilutės suma = 100 %. Alternatyvūs – privataus kapitalo, nekilnojamojo turto, infrastruktūros ir kiti nelikvidūs fondai (LB KIS tipai 5–7); jie visada aktyvūs, išskyrus kelis kotiruojamus NT indekso ETF. „Pinigų rinkos ir kiti“ – pinigų rinkos fondai ir fondai be turto klasės.',
@@ -1488,7 +1488,7 @@ const IXS = {
     meta: (pl, a, b) => `Pillar ${pl} · ${a} – ${b} · manager value = sum of all its funds in the pillar (asset-weighted)`,
     thName: 'Manager / fund', thD: 'Change, pp', thDw: (a, b) => `Change from ${a} to ${b}, percentage points`,
     note: 'Share = value of holdings ÷ value of all the fund’s holdings at quarter end (Bank of Lithuania reports). The manager row sums all its funds in the pillar (a larger fund weighs more). “–” – the fund did not exist that quarter. Change = last minus first quarter shown; it reflects both decisions and market moves (e.g. when equities rise, the equity ETF share grows without any purchases).',
-    mixH: q => `What makes up 100 % of the portfolio, ${q}`, mixQ: 'Quarter',
+    mixH: q => `What makes up 100 % of the portfolio, ${q}`, mixQ: 'Quarter', mixQ0: 'Change since', dH: 'Change in index fund share, pp', dYtd: q => `year to date (${q})`, dY: q => `over the year (${q})`, dC: q => `since ${q}`,
     g: { idx: 'Index funds', act: 'Active funds', und: 'Unclassified funds', dir: 'Direct holdings', tot: 'Total' },
     c: { i_eq: 'equity', i_bd: 'bond', i_ot: 'other', a_eq: 'equity', a_bd: 'bond', a_alt: 'alternatives', a_ot: 'money market and other', und: 'funds', d_e: 'shares', d_b: 'bonds', d_c: 'cash and deposits', d_d: 'derivatives', tot: '' },
     mixNote: 'All parts are % of the fund’s (manager’s) portfolio value; each row sums to 100 %. Alternatives – private equity, real estate, infrastructure and other illiquid funds (Bank of Lithuania CIU types 5–7); they are always active except a few listed real-estate index ETFs. “Money market and other” – money market funds and funds without an asset class.',
@@ -1593,19 +1593,29 @@ function renderIx() {
   document.getElementById('ixNote').textContent = t.note + ' ' + t.stNote(...ixThr(), qLabel(q1)) + ' ' + t.det + '.';
   renderIxMix(); renderIxHow(); renderIxList();
 }
+function ixBases(qi) {                    // pokyčių bazės: praėjusių metų gruodis, prieš metus, pasirinktas ketvirtis
+  const d = Q[qi], y = +d.slice(0, 4), ytd = Q.findIndex(x => x === `${y - 1}-12-31`), y1 = Q.findIndex(x => x === `${y - 1}${d.slice(4)}`);
+  let c = ST.ixq0 == null ? Math.max(0, qi - 8) : +ST.ixq0; if (c >= qi) c = Math.max(0, qi - 1);
+  return [ytd, y1, c];
+}
+const ixDelta = (funds, qi, b) => { if (b < 0 || b === qi) return null; const o = ixSums(funds, qi), o0 = ixSums(funds, b); return o.tot && o0.tot ? (o.idx / o.tot - o0.idx / o0.tot) * 100 : null; };
+const ixPP = v => v == null ? '–' : (v > 0 ? '+' : '') + num(v, 2) + ' p. p.';
 function renderIxMix() {
   const t = IXT(), qi = ST.ixq, rows = ixRows([qi]);
   document.getElementById('ixMixH').textContent = t.mixH(qLabel(qi));
   const bar = document.getElementById('ixMixBar');
-  bar.innerHTML = field(t.mixQ, quarterSelect('ixQ', qi, 0));
+  const B = ixBases(qi);
+  bar.innerHTML = field(t.mixQ, quarterSelect('ixQ', qi, 0)) + field(t.mixQ0, quarterSelect('ixQ0', B[2], 0).replace(/<option value="(\d+)"/g, (x, i) => +i >= qi ? x + ' disabled' : x));
   bar.querySelector('#ixQ').addEventListener('change', e => { ST.ixq = +e.target.value; save(); renderIxMix(); renderIxList(); });
-  const head1 = `<tr><th rowspan="2">${t.thName}</th>${IX_MIX.map(([g, cs]) => `<th class="num ixg" colspan="${cs.length + (cs.length > 1 ? 1 : 0)}">${t.g[g]}</th>`).join('')}</tr>`;
-  const head2 = `<tr>${IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<th class="num"><b>${t.g[g].split(' ')[0]}</b></th>`] : []).concat(cs.map(c => `<th class="num">${t.c[c] || '%'}</th>`)).join('')).join('')}</tr>`;
-  const nCol = 1 + IX_MIX.reduce((n, [, cs]) => n + cs.length + (cs.length > 1 ? 1 : 0), 0);
+  bar.querySelector('#ixQ0').addEventListener('change', e => { ST.ixq0 = +e.target.value; save(); renderIxMix(); });
+  const dL = [B[0] >= 0 ? t.dYtd(qLabel(B[0])) : t.dYtd('–'), B[1] >= 0 ? t.dY(qLabel(B[1])) : t.dY('–'), t.dC(qLabel(B[2]))];
+  const head1 = `<tr><th rowspan="2">${t.thName}</th><th class="num ixg" colspan="3">${t.dH}</th>${IX_MIX.map(([g, cs]) => `<th class="num ixg" colspan="${cs.length + (cs.length > 1 ? 1 : 0)}">${t.g[g]}</th>`).join('')}</tr>`;
+  const head2 = `<tr>${dL.map(x => `<th class="num">${x}</th>`).join('')}${IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<th class="num"><b>${t.g[g].split(' ')[0]}</b></th>`] : []).concat(cs.map(c => `<th class="num">${t.c[c] || '%'}</th>`)).join('')).join('')}</tr>`;
+  const nCol = 4 + IX_MIX.reduce((n, [, cs]) => n + cs.length + (cs.length > 1 ? 1 : 0), 0);
   document.getElementById('ixMix').innerHTML = `<thead>${head1}${head2}</thead><tbody>` + rows.map(r => { if (r.kind === 'gh') return `<tr class="ixgh"><th colspan="${nCol}">${esc(r.name)}</th></tr>`;
     const o = ixSums(r.funds, qi); if (!o.tot) return ''; const id = r.kind + ':' + r.key, open = IXOPEN.has(id);
     const p = x => ixPct(x / o.tot * 100);
-    return `<tr${ixTrCls(r)} data-ixk="${esc(id)}" title="${esc(t.det)}" style="cursor:pointer"><td>${open ? '▾' : '▸'} ${ixNameCell(r)}</td>` + IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<td class="num"><b>${p(o[g])}</b></td>`] : []).concat(cs.map(c => `<td class="num">${c === 'tot' ? p(o.tot) : c === 'und' ? p(o.und) : p(o[c])}</td>`)).join('')).join('') + '</tr>'
+    return `<tr${ixTrCls(r)} data-ixk="${esc(id)}" title="${esc(t.det)}" style="cursor:pointer"><td>${open ? '▾' : '▸'} ${ixNameCell(r)}</td>` + B.map(b => `<td class="num"><b>${ixPP(ixDelta(r.funds, qi, b))}</b></td>`).join('') + IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<td class="num"><b>${p(o[g])}</b></td>`] : []).concat(cs.map(c => `<td class="num">${c === 'tot' ? p(o.tot) : c === 'und' ? p(o.und) : p(o[c])}</td>`)).join('')).join('') + '</tr>'
       + (open ? `<tr class="ixdet"><td colspan="${nCol}">${ixDetail(r.funds, qi)}</td></tr>` : ''); }).join('') + '</tbody>';
   document.getElementById('ixMix').querySelectorAll('tr[data-ixk]').forEach(tr => tr.addEventListener('click', () => { const k = tr.dataset.ixk; if (IXOPEN.has(k)) IXOPEN.delete(k); else IXOPEN.add(k); renderIxMix(); }));
   document.getElementById('ixMixNote').textContent = t.mixNote + ' ' + t.det + '.';
@@ -1692,15 +1702,20 @@ XLB.set('ixMix', async () => {
     und: `"und"`, d_e: `"dir",${R(P, 'I')},"e"`, d_b: `"dir",${R(P, 'I')},"b"`, d_c: `"dir",${R(P, 'I')},"c"`, d_d: `"dir",${R(P, 'I')},"d"` };
   const cols = []; IX_MIX.forEach(([g, cs]) => { if (cs.length > 1) cols.push(g); cs.forEach(c => cols.push(c)); });
   const lab = c => { const g = IX_MIX.find(x => x[0] === c); if (g) return t.g[c]; const p = IX_MIX.find(x => x[1].includes(c)); return c === 'tot' ? t.g.tot : `${t.g[p[0]]}: ${t.c[c]}`; };
-  const res = [[t.mixH(qLabel(qi))], [t.src], [`${ST.ixpl} · ${t.mixNote}`], [X.L ? 'Raktas (valdytojas / fondo kodas)' : 'Key (manager / fund code)', t.thName, ...cols.map(lab)]];
+  const B = ixBases(qi), dL = [B[0] >= 0 ? t.dYtd(qLabel(B[0])) : t.dYtd('–'), B[1] >= 0 ? t.dY(qLabel(B[1])) : t.dY('–'), t.dC(qLabel(B[2]))], qs = [...new Set([qi, ...B.filter(b => b >= 0)])].sort((a, b) => a - b);
+  const res = [[t.mixH(qLabel(qi))], [t.src], [`${ST.ixpl} · ${t.mixNote}`], [X.L ? 'Raktas (valdytojas / fondo kodas)' : 'Key (manager / fund code)', t.thName, ...dL.map(x => `${t.dH}: ${x}`), ...cols.map(lab)]];
   rows.forEach(r => { if (r.kind === 'gh') { res.push([null, r.name]); return; } const o = ixSums(r.funds, qi); if (!o.tot) return; const n = res.length + 1, kc = r.kp, kt = r.kt;
     const base = `${R(P, 'L')},${R(P, kc)},$A${n},${R(P, 'A')},${xs(Q[qi])},${R(P, 'C')},${xs(ST.ixpl)}`, T0 = `SUMIFS(${R(TT, 'F')},${R(TT, kt)},$A${n},${R(TT, 'A')},${xs(Q[qi])},${R(TT, 'C')},${xs(ST.ixpl)})`;
-    const cell = {}; cols.forEach((c, j) => { cell[c] = xlCol(2 + j) + n; });
+    const cell = {}; cols.forEach((c, j) => { cell[c] = xlCol(5 + j) + n; });
     const f = c => c === 'idx' ? `${cell.i_eq}+${cell.i_bd}+${cell.i_ot}` : c === 'act' ? `${cell.a_eq}+${cell.a_bd}+${cell.a_alt}+${cell.a_ot}` : c === 'dir' ? `${cell.d_e}+${cell.d_b}+${cell.d_c}+${cell.d_d}`
       : c === 'tot' ? `${cell.idx}+${cell.act}+${cell.und}+${cell.dir}` : c === 'i_ot' ? `SUMIFS(${base},${R(P, 'K')},"index")/${T0}-${cell.i_eq}-${cell.i_bd}`
       : c === 'a_ot' ? `SUMIFS(${base},${R(P, 'K')},"active")/${T0}-${cell.a_eq}-${cell.a_bd}-${cell.a_alt}` : `SUMIFS(${base},${R(P, 'K')},${CR[c]})/${T0}`;
-    res.push([r.key, r.name, ...cols.map(c => xlF(f(c), (c === 'tot' ? o.tot : o[c]) / o.tot, '0.00%'))]); });
-  return pxBook({ res, resW: [{ wch: 14 }, { wch: 34 }, ...cols.map(() => ({ wch: 13 }))], sheets: [[X.SP, ixPosSheet(funds, [qi]), IXW], [X.ST, ixTotSheet(funds, [qi]), IXTW]], meth: ixMeth() });
+    const ib = b => { const T1 = `SUMIFS(${R(TT, 'F')},${R(TT, kt)},$A${n},${R(TT, 'A')},${xs(Q[b])},${R(TT, 'C')},${xs(ST.ixpl)})`;
+      return `SUMIFS(${R(P, 'L')},${R(P, kc)},$A${n},${R(P, 'A')},${xs(Q[b])},${R(P, 'C')},${xs(ST.ixpl)},${R(P, 'K')},"index")/${T1}`; };
+    const dc = b => { const v = ixDelta(r.funds, qi, b); if (v == null) return null; const T1 = `SUMIFS(${R(TT, 'F')},${R(TT, kt)},$A${n},${R(TT, 'A')},${xs(Q[b])},${R(TT, 'C')},${xs(ST.ixpl)})`;
+      return xlF(`IF(${T1}>0,(${cell.idx}-${ib(b)})*100,"")`, v, '+0.00" p. p.";-0.00" p. p."'); };
+    res.push([r.key, r.name, ...B.map(dc), ...cols.map(c => xlF(f(c), (c === 'tot' ? o.tot : o[c]) / o.tot, '0.00%'))]); });
+  return pxBook({ res, resW: [{ wch: 14 }, { wch: 34 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, ...cols.map(() => ({ wch: 13 }))], sheets: [[X.SP, ixPosSheet(funds, qs), IXW], [X.ST, ixTotSheet(funds, qs), IXTW]], meth: ixMeth() });
 });
 XLB.set('ixList', async () => {
   const X = PXL(), t = IXT(), qi = ST.ixq, L = ixList(qi), c = t.lc, P = `'${X.SP}'`, TT = `'${X.ST}'`, R = (sh, col) => `${sh}!$${col}:$${col}`;
