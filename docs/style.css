@@ -1221,3 +1221,7 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 [data-design="v2"] .ixcol li { display: list-item; } [data-design="v2"] .ixcol li > span { display: inline; } [data-design="v2"] .ixcol li > b { float: right; margin-left: 8px; font-variant-numeric: tabular-nums; }
 [data-design="v2"] .ixcol small { color: var(--text-3); }
 [data-design="v2"] .ixthr input { width: 56px; } [data-design="v2"] .ixhow p { margin: 0 0 8px; line-height: 1.5; }
+[data-design="v2"] .ixsec { margin: 4px 0 14px; } [data-design="v2"] .ixsec > .ixch { margin-bottom: 6px; }
+[data-design="v2"] .ixcg { font-size: 13px; font-weight: 600; color: var(--text-2); border-bottom: 1px solid var(--line); padding-bottom: 3px; } [data-design="v2"] .ixcg b { float: right; }
+[data-design="v2"] tr.ixdet td > .ixwrap { position: sticky; left: 8px; }
+[data-design="v2"] .ixcol li > span { display: inline-block; width: calc(100% - 64px); vertical-align: top; }

@@ -1616,7 +1616,8 @@ function renderIxMix() {
     const o = ixSums(r.funds, qi); if (!o.tot) return ''; const id = r.kind + ':' + r.key, open = IXOPEN.has(id);
     const p = x => ixPct(x / o.tot * 100);
     return `<tr${ixTrCls(r)} data-ixk="${esc(id)}" title="${esc(t.det)}" style="cursor:pointer"><td>${open ? '▾' : '▸'} ${ixNameCell(r)}</td>` + B.map(b => `<td class="num"><b>${ixPP(ixDelta(r.funds, qi, b))}</b></td>`).join('') + IX_MIX.map(([g, cs]) => (cs.length > 1 ? [`<td class="num"><b>${p(o[g])}</b></td>`] : []).concat(cs.map(c => `<td class="num">${c === 'tot' ? p(o.tot) : c === 'und' ? p(o.und) : p(o[c])}</td>`)).join('')).join('') + '</tr>'
-      + (open ? `<tr class="ixdet"><td colspan="${nCol}">${ixDetail(r.funds, qi)}</td></tr>` : ''); }).join('') + '</tbody>';
+      + (open ? `<tr class="ixdet"><td colspan="${nCol}"><div class="ixwrap">${ixDetail(r.funds, qi)}</div></td></tr>` : ''); }).join('') + '</tbody>';
+  const sc = document.getElementById('ixMix').closest('.scroll'); if (sc) document.querySelectorAll('#ixMix .ixwrap').forEach(d => { d.style.width = (sc.clientWidth - 24) + 'px'; });
   document.getElementById('ixMix').querySelectorAll('tr[data-ixk]').forEach(tr => tr.addEventListener('click', () => { const k = tr.dataset.ixk; if (IXOPEN.has(k)) IXOPEN.delete(k); else IXOPEN.add(k); renderIxMix(); }));
   document.getElementById('ixMixNote').textContent = t.mixNote + ' ' + t.det + '.';
 }
@@ -1626,9 +1627,15 @@ function ixDetail(funds, qi) {             // išskleista eilutė: kiekvienos da
     const o = m.get(key) || { c, s, v: 0, b: bucket(s) }; o.v += x.v; m.set(key, o); }));
   if (!tot) return '';
   const all = [...m.values()].sort((a, b) => b.v - a.v), w = v => ixPct(v / tot * 100);
-  const blk = (c, h) => { const it = all.filter(o => o.c === c), sum = it.reduce((a, o) => a + o.v, 0);
-    return `<div class="ixcol"><div class="ixch"><span class="ixc ixc-${c}">${h}</span> <b>${w(sum)}</b></div>${it.length ? `<ol>${it.map(o => `<li><span>${c === 'dir' ? esc(T().types[o.s.t] ? T().types[o.s.t][0].toUpperCase() + T().types[o.s.t].slice(1) : o.s.t) : esc(posLabel(o.s))}${c !== 'dir' ? ` <small>${t.gr[o.b] || ''}</small>` : ''}</span><b>${w(o.v)}</b></li>`).join('')}</ol>` : `<p class="note">${t.detNone}</p>`}</div>`; };
-  return `<div class="ixdetw">${blk('index', t.g.idx)}${blk('active', t.g.act)}${all.some(o => o.c === 'und') ? blk('und', t.g.und) : ''}${blk('dir', t.detD)}</div>`;
+  const lst = (it, dir) => `<ol>${it.map(o => `<li><span>${dir ? esc(T().types[o.s.t] ? T().types[o.s.t][0].toUpperCase() + T().types[o.s.t].slice(1) : o.s.t) : esc(posLabel(o.s))}</span><b>${w(o.v)}</b></li>`).join('')}</ol>`;
+  const sum = it => it.reduce((a, o) => a + o.v, 0);
+  const blk = (c, h) => { const it = all.filter(o => o.c === c);       // dalis → stulpeliai pagal turto grupę (akcijos, obligacijos, alternatyvūs, kita)
+    const head = `<div class="ixch"><span class="ixc ixc-${c}">${h}</span> <b>${w(sum(it))}</b></div>`;
+    if (!it.length) return `<div class="ixsec">${head}<p class="note">${t.detNone}</p></div>`;
+    if (c === 'dir') return `<div class="ixsec">${head}<div class="ixdetw"><div class="ixcol">${lst(it, true)}</div></div></div>`;
+    const bk = ['eq', 'bd', 'alt', 'cash', 'oth', 'der'].map(k => [k, it.filter(o => o.b === k)]).filter(([, x]) => x.length);
+    return `<div class="ixsec">${head}<div class="ixdetw">${bk.map(([k, x]) => `<div class="ixcol"><div class="ixcg">${esc(t.gr[k] || k)} <b>${w(sum(x))}</b></div>${lst(x)}</div>`).join('')}</div></div>`; };
+  return `${blk('index', t.g.idx)}${blk('active', t.g.act)}${all.some(o => o.c === 'und') ? blk('und', t.g.und) : ''}${blk('dir', t.detD)}`;
 }
 function renderIxHow() {
   const t = IXT();
