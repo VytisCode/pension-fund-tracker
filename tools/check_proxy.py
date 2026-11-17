@@ -41,7 +41,26 @@ def proxy_url() -> str:
     return server
 
 
+def shape() -> None:
+    """Diagnostika be slaptų reikšmių: tik secrets formatas ir ilgiai (python tools/check_proxy.py --shape)."""
+    def sh(v: str) -> str:
+        return re.sub(r"[A-Za-z]", "a", re.sub(r"[0-9]", "9", v)) if v else "(tuščia)"
+    server = os.getenv("LUMINOR_PROXY_SERVER", "").strip().strip("'\"")
+    user = os.getenv("LUMINOR_PROXY_USERNAME", "").strip().strip("'\"")
+    pw = os.getenv("LUMINOR_PROXY_PASSWORD", "").strip().strip("'\"")
+    has_scheme = bool(re.match(r"^[a-zA-Z][\w+.-]*://", server))
+    print(f"SERVER: schema={has_scheme}, '@'={'@' in server}, dalys per ':'={len(server.split(':'))}, ilgis={len(server)}")
+    print(f"USERNAME: ilgis={len(user)}, tarpų viduje={' ' in user}; PASSWORD: ilgis={len(pw)}, tarpų viduje={' ' in pw}")
+    if "@" in server or len(server.split(":")) == 4:
+        print("DĖMESIO: SERVER turi savo vartotoją/slaptažodį – jis gali būti naudojamas vietoj USERNAME/PASSWORD")
+    final = urllib.parse.urlsplit(proxy_url())
+    print(f"Naudojamas vartotojas sutampa su USERNAME secret: {urllib.parse.unquote(final.username or '') == user}")
+    print(f"Proxy adreso forma: {sh(final.hostname or '')}:{final.port}")
+
+
 def main() -> None:
+    if "--shape" in sys.argv:
+        shape()
     url = proxy_url()
     if not url:
         source_status.fail("proxy", "proxy nenurodytas (GitHub Secrets LUMINOR_PROXY_SERVER tuščias)", "auth")
