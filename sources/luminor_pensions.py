@@ -194,10 +194,7 @@ class LuminorPensionsScraper(BaseScraper):
         return bool(re.match(r"^[A-Za-z0-9.-]+$", value))
 
     def resolve_proxy_username(self) -> str:
-        username = os.getenv("LUMINOR_PROXY_USERNAME", "").strip().strip("'\"")
-        if username:
-            return username
-
+        # Pirmenybė – vartotojas/slaptažodis, įrašytas pačiame LUMINOR_PROXY_SERVER (viena eilutė iš Proxy-Cheap)
         proxy_server = os.getenv("LUMINOR_PROXY_SERVER", "").strip().strip("'\"")
         if "@" in proxy_server and ":" in proxy_server.split("@", 1)[0]:
             return proxy_server.split("@", 1)[0].split(":", 1)[0]
@@ -210,13 +207,10 @@ class LuminorPensionsScraper(BaseScraper):
         ):
             return raw_parts[2]
 
-        return ""
+        return os.getenv("LUMINOR_PROXY_USERNAME", "").strip().strip("'\"")
 
     def resolve_proxy_password(self) -> str:
-        password = os.getenv("LUMINOR_PROXY_PASSWORD", "").strip().strip("'\"")
-        if password:
-            return password
-
+        # Pirmenybė – vartotojas/slaptažodis, įrašytas pačiame LUMINOR_PROXY_SERVER (viena eilutė iš Proxy-Cheap)
         proxy_server = os.getenv("LUMINOR_PROXY_SERVER", "").strip().strip("'\"")
         if "@" in proxy_server and ":" in proxy_server.split("@", 1)[0]:
             return proxy_server.split("@", 1)[0].split(":", 1)[1]
@@ -229,7 +223,7 @@ class LuminorPensionsScraper(BaseScraper):
         ):
             return raw_parts[3]
 
-        return ""
+        return os.getenv("LUMINOR_PROXY_PASSWORD", "").strip().strip("'\"")
 
     def resolve_playwright_proxy_server(self) -> str:
         proxy_url = self.resolve_http_proxy()

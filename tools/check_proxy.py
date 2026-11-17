@@ -5,6 +5,7 @@ Luminor proxy (Proxy-Cheap) patikra: vienas mažas užklausimas per proxy, kad s
 Rezultatas – data/source_status.json raktas „proxy“ (žr. source_status.py). Niekada nesustabdo paleidimo.
 
 Proxy formatai kaip sources/luminor_pensions.py: HOST:PORT:USER:PASS, USER:PASS@HOST:PORT arba http://…
+Jei LUMINOR_PROXY_SERVER turi vartotoją/slaptažodį – jie naudojami vietoj LUMINOR_PROXY_USERNAME/PASSWORD.
 """
 import os
 import re
@@ -28,10 +29,10 @@ def proxy_url() -> str:
         return ""
     parts = server.split(":")
     if len(parts) == 4 and parts[1].isdigit() and not re.match(r"^[a-zA-Z][\w+.-]*://", server):
-        server, user, pw = f"{parts[0]}:{parts[1]}", user or parts[2], pw or parts[3]
+        server, user, pw = f"{parts[0]}:{parts[1]}", parts[2], parts[3]
     if "@" in server and not re.match(r"^[a-zA-Z][\w+.-]*://", server):
         auth, server = server.rsplit("@", 1)
-        if ":" in auth and not user:
+        if ":" in auth:
             user, pw = auth.split(":", 1)
     if not re.match(r"^[a-zA-Z][\w+.-]*://", server):
         server = "http://" + server
@@ -52,7 +53,7 @@ def shape() -> None:
     print(f"SERVER: schema={has_scheme}, '@'={'@' in server}, dalys per ':'={len(server.split(':'))}, ilgis={len(server)}")
     print(f"USERNAME: ilgis={len(user)}, tarpų viduje={' ' in user}; PASSWORD: ilgis={len(pw)}, tarpų viduje={' ' in pw}")
     if "@" in server or len(server.split(":")) == 4:
-        print("DĖMESIO: SERVER turi savo vartotoją/slaptažodį – jis gali būti naudojamas vietoj USERNAME/PASSWORD")
+        print("SERVER turi savo vartotoją/slaptažodį – naudojamas jis (USERNAME/PASSWORD ignoruojami)")
     final = urllib.parse.urlsplit(proxy_url())
     print(f"Naudojamas vartotojas sutampa su USERNAME secret: {urllib.parse.unquote(final.username or '') == user}")
     print(f"Proxy adreso forma: {sh(final.hostname or '')}:{final.port}")
