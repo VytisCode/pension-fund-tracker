@@ -644,3 +644,14 @@ ts,src,ev,dd,n,msg
 2026-11-16T13:12,nav.LUMINOR,new,2026-11-13,8,
 2026-11-16T13:12,p3.ARTEA,new,2026-11-13,5,
 2026-11-16T13:12,p3.LUMINOR,new,2026-11-13,5,
+2026-11-17T11:36,estr,new,2026-11-16,1,
+2026-11-17T11:36,idx.EUR_GOV7Y,new,2026-11-16,1,
+2026-11-17T11:36,idx.MSCI_ACWI,new,2026-11-16,1,
+2026-11-17T11:36,idx.MSCI_WORLD,new,2026-11-16,1,
+2026-11-17T11:36,idx.SP500,new,2026-11-16,1,
+2026-11-17T11:36,nav.GOINDEX,new,2026-11-13,2,
+2026-11-17T11:36,nav.SEB,new,2026-11-13,8,
+2026-11-17T11:36,nav.SWEDBANK,new,2026-11-16,8,
+2026-11-17T11:36,p3.SWEDBANK,new,2026-11-16,6,
+2026-11-17T11:36,bx.lv_lb,ok,,,vėl veikia
+2026-11-17T11:36,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas
