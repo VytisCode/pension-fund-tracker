@@ -655,3 +655,7 @@ ts,src,ev,dd,n,msg
 2026-11-17T11:36,p3.SWEDBANK,new,2026-11-16,6,
 2026-11-17T11:36,bx.lv_lb,ok,,,vėl veikia
 2026-11-17T11:36,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas
+2026-11-17T12:31,nav.ARTEA,new,2026-11-16,8,
+2026-11-17T12:31,p3.ARTEA,new,2026-11-16,5,
+2026-11-17T12:31,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
+2026-11-17T12:31,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
