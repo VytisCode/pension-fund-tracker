@@ -659,3 +659,12 @@ ts,src,ev,dd,n,msg
 2026-11-17T12:31,p3.ARTEA,new,2026-11-16,5,
 2026-11-17T12:31,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
 2026-11-17T12:31,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-17T13:04,nav.GOINDEX,new,2026-11-16,8,
+2026-11-17T13:04,nav.LUMINOR,new,2026-11-16,8,
+2026-11-17T13:04,nav.SEB,new,2026-11-16,8,
+2026-11-17T13:04,p3.GOINDEX,new,2026-11-16,2,
+2026-11-17T13:04,p3.LUMINOR,new,2026-11-16,5,
+2026-11-17T13:04,p3.SEB,new,2026-11-16,8,
+2026-11-17T13:04,eonia,fail,,,network: TimeoutError: The read operation timed out
+2026-11-17T13:04,idx.EURUSD,ok,,,vėl veikia
+2026-11-17T13:04,idx.SP500,ok,,,vėl veikia

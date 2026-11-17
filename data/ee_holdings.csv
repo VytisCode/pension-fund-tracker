@@ -361,6 +361,16 @@ fund_id,pillar,date,rank,name,weight,first_seen
 41,III,2026-10-31,8,ESTONIA 4 12/10/2032,3.88,2026-11-16
 41,III,2026-10-31,9,Lithuania 3.50 07/03/2031,3.87,2026-11-16
 41,III,2026-10-31,10,SSGA SPDR ETFS Europe Plc,3.68,2026-11-16
+42,III,2026-10-31,1,Amundi Index Euro Corporate Sri - Ucits Etf Dr,23.8,2026-11-17
+42,III,2026-10-31,2,Swedbank Robur Access Global A,10.5,2026-11-17
+42,III,2026-10-31,3,Swedbank Robur Corporate Bond Europe High Yield A,5.8,2026-11-17
+42,III,2026-10-31,4,Swedbank Robur Access Edge Global A,2.9,2026-11-17
+42,III,2026-10-31,5,French Republic Government 1.250% 25.05.2034,1.6,2026-11-17
+42,III,2026-10-31,6,East Capital Baltic Property Fund III,1.5,2026-11-17
+42,III,2026-10-31,7,Spain Government 1.850% 30.07.2035,1.5,2026-11-17
+42,III,2026-10-31,8,Germany Government 0.000% 15.05.2036,1.5,2026-11-17
+42,III,2026-10-31,9,Luminor Bank 2.653% 10.09.2029,1.5,2026-11-17
+42,III,2026-10-31,10,Belgium Government 3.000% 22.06.2033,1.4,2026-11-17
 43,III,2026-10-31,1,Invesco Nasdaq-100 ESG UCITS ETF,11.89,2026-11-12
 43,III,2026-10-31,2,SEB Emerging Markets Exposure Fund,8.41,2026-11-12
 43,III,2026-10-31,3,iShares MSCI USA Small Cap UCITS ETF,7.32,2026-11-12
@@ -550,6 +560,16 @@ fund_id,pillar,date,rank,name,weight,first_seen
 90,III,2026-10-31,4,iShares MSCI Europe ESG Enhanced UCITS ETF,12.79,2026-11-12
 90,III,2026-10-31,5,iShares MSCI EM ESG Enhanced UCITS ETF,11.87,2026-11-12
 90,III,2026-10-31,6,iShares MSCI Japan ESG Enhanced UCITS ETF,5.05,2026-11-12
+91,II,2026-10-31,1,iShares MSCI World Screened UCITS ETF,26.5,2026-11-17
+91,II,2026-10-31,2,Swedbank Robur Access Global A,17.5,2026-11-17
+91,II,2026-10-31,3,Swedbank Robur Globalfond A,10.3,2026-11-17
+91,II,2026-10-31,4,Swedbank Robur Access USA A,9.0,2026-11-17
+91,II,2026-10-31,5,Amundi MSCI EM ex China ESG ETF,4.4,2026-11-17
+91,II,2026-10-31,6,Swedbank Robur Access Edge Global A,3.4,2026-11-17
+91,II,2026-10-31,7,Xtrackers MSCI Japan ESG UCITS ETF,2.6,2026-11-17
+91,II,2026-10-31,8,Microsoft Corp,2.2,2026-11-17
+91,II,2026-10-31,9,Taiwan Semiconductor Manufacturing Co Ltd ADR,1.8,2026-11-17
+91,II,2026-10-31,10,Alphabet C,1.7,2026-11-17
 93,III,2026-10-31,1,Amundi Prime Global UCITS ETF C1,17.96,2026-11-16
 93,III,2026-10-31,2,L&G Global Equity UCITS ETF,17.96,2026-11-16
 93,III,2026-10-31,3,Amundi Core MSCI USA UCITS ETF,12.91,2026-11-16

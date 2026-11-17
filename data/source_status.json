@@ -30,17 +30,17 @@
   "ok": "2026-11-17"
  },
  "eonia": {
-  "ok": "2026-11-17"
+  "err": "2026-11-17",
+  "kind": "network",
+  "msg": "TimeoutError: The read operation timed out",
+  "ok": "2026-11-17",
+  "since": "2026-11-17"
  },
  "estr": {
   "ok": "2026-11-17"
  },
  "idx.EURUSD": {
-  "err": "2026-11-17",
-  "kind": "network",
-  "msg": "HTTPError: HTTP Error 503: Service Temporarily Unavailable",
-  "ok": "2026-11-17",
-  "since": "2026-11-17"
+  "ok": "2026-11-17"
  },
  "idx.EUR_GOV7Y": {
   "ok": "2026-11-17"
@@ -52,11 +52,7 @@
   "ok": "2026-11-17"
  },
  "idx.SP500": {
-  "err": "2026-11-17",
-  "kind": "other",
-  "msg": "RuntimeError: nėra ECB EUR/USD kurso",
-  "ok": "2026-11-17",
-  "since": "2026-11-17"
+  "ok": "2026-11-17"
  },
  "idx.SP500_PR": {
   "detail": "CNBC",
