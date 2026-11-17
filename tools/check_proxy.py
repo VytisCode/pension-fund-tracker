@@ -54,12 +54,12 @@ def main() -> None:
         source_status.ok("proxy")
         print("Proxy: veikia")
     except urllib.error.HTTPError as e:
-        kind = "auth" if e.code in (402, 403, 407) else "network"
+        kind = "auth" if e.code in (401, 402, 403, 407) else "network"
         source_status.fail("proxy", f"HTTP {e.code} {e.reason}", kind)
         print(f"Proxy: HTTP {e.code}")
     except Exception as e:  # noqa: BLE001
         msg = str(e)
-        kind = "auth" if re.search(r"\b40[27]\b", msg) else "network"
+        kind = "auth" if re.search(r"\b40[1237]\b", msg) else "network"
         source_status.fail("proxy", e, kind)
         print(f"Proxy: nepavyko ({e.__class__.__name__})")
 
