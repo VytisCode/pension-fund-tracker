@@ -614,8 +614,24 @@ function fsData(g) {
   const rr = o => rankOf(cols.map(c => ({ key: c.id, v: o[c.id] })));
   return { g, rng, cols, fs, v, ann, rel, med, rk, ra, avg, avgW, avgRel, avgRk, avgAnn, rAvg: rr(avg), rAvgW: rr(avgW), rAvgAnn: rr(avgAnn), rAvgRk: rankOf(cols.map(c => ({ key: c.id, v: avgRk[c.id] === null ? null : -avgRk[c.id] }))) };
 }
+/* Lyginamasis indeksas „Kiekvienas fondas“ vaizde (savininkas 2026-11-18: „jungiklio, kad perjungtų į lyginamojo indekso grąžą“) – tik Grąžos lentelėje,
+   kaip II pakopos „Visa rinka“. Indeksai – tik valdytojų pateikti (III pakopa: SEB, Goindex). Laikotarpio pabaiga – paskutinė indekso diena (≤ laikotarpio pabaigos). */
+const fsRbOn = () => (!PX || PX.c === 'LT') && !REAL;
+const fsRm = () => fsRbOn() && (P.rm === 'b' || P.rm === 'd') && typeof BENCH !== 'undefined' ? P.rm : 'f';
+function fsDisp(D, RMd) {                                // grąžos lentelės reikšmės: fondo / indekso / fondas − indeksas
+  if (RMd === 'f') return { v: D.v, med: D.med, rk: D.rk, avg: D.avg, avgW: D.avgW, rAvg: D.rAvg, rAvgW: D.rAvgW, bx: {} };
+  const v = {}, bx = {}, med = {}, cols = D.cols;
+  D.fs.forEach(f => { const x = benchRet(D.g, f.provider, D.rng); bx[f.provider] = x; v[f.provider] = !x ? null : RMd === 'b' ? x[0] : x[1] == null ? null : x[1] - x[0]; });
+  D.fs.forEach(f => { med[f.provider] = v[f.provider] === null ? null : medianOf(D.fs.filter(x => x !== f).map(x => v[x.provider])); });
+  const of = c => D.fs.filter(f => fsMgr(f.provider) === c.k), avg = {}, avgW = {};
+  cols.forEach(c => { const xs = of(c); avg[c.id] = meanOf(xs.map(f => v[f.provider]));
+    const w = xs.filter(f => v[f.provider] !== null && f.assets > 0), W = w.reduce((a, f) => a + f.assets, 0); avgW[c.id] = W > 0 ? w.reduce((a, f) => a + v[f.provider] * f.assets, 0) / W : null; });
+  const rr = o => rankOf(cols.map(c => ({ key: c.id, v: o[c.id] })));
+  return { v, med, bx, rk: rankOf(D.fs.map(f => ({ key: f.provider, v: v[f.provider] }))), avg, avgW, rAvg: rr(avg), rAvgW: rr(avgW) };
+}
 function renderFundM() {
   pcRender();
+  const RMd = fsRm(), rmSeg = !fsRbOn() ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${(fsRbOn() && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f') === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`;
   $('hMarket').textContent = T().hMarket; $('mMarket').textContent = T().mMarket(periodText());
   const pc2 = v => num(v, 2) + pctSfx(), na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
   const rkCell = (v, rank, n, f) => v === null || v === undefined ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
@@ -626,18 +642,21 @@ function renderFundM() {
     const row = (f, cell) => `<tr>${nm(f)}${D.cols.map(c => fsMgr(f.provider) === c.k ? cell(f) : '<td class="na"></td>').join('')}`;
     const gap = n => `<tr class="gap"><td colspan="${n}"></td></tr>`;
     const avgRow = (lbl, o, r, f, extra = '') => `<tr class="avg"><td>${lbl}</td>${D.cols.map(c => rkCell(o[c.id], r ? r.map.get(c.id) : null, r ? r.n : 0, f)).join('')}${extra}</tr>`;
-    const ret = D.fs.map(f => row(f, f => rkCell(D.v[f.provider], D.rk.map.get(f.provider), D.rk.n, pc2)) + (D.med[f.provider] === null ? na : `<td class="pm">${pc2(D.med[f.provider])}</td>`) + '</tr>').join('')
-      + gap(nC + 2) + avgRow(T().avg, D.avg, D.rAvg, pc2, na)
-      + `<tr class="avg"><td title="${T().avgWt}">${T().avgW} <span class="info" aria-hidden="true">i</span></td>${D.cols.map(c => rkCell(D.avgW[c.id], D.rAvgW.map.get(c.id), D.rAvgW.n, pc2)).join('')}${na}</tr>`;
+    const X = fsDisp(D, RMd), xf = RMd === 'd' ? v => num(v, 2) : pc2;
+    const ret = D.fs.map(f => row(f, f => rkCell(X.v[f.provider], X.rk.map.get(f.provider), X.rk.n, xf)) + (X.med[f.provider] === null ? na : `<td class="pm">${xf(X.med[f.provider])}</td>`) + '</tr>').join('')
+      + gap(nC + 2) + avgRow(T().avg, X.avg, X.rAvg, xf, na)
+      + `<tr class="avg"><td title="${T().avgWt}">${T().avgW} <span class="info" aria-hidden="true">i</span></td>${D.cols.map(c => rkCell(X.avgW[c.id], X.rAvgW.map.get(c.id), X.rAvgW.n, xf)).join('')}${na}</tr>`;
+    const bEnd = Math.max(0, ...Object.values(X.bx).filter(Boolean).map(x => x[2])), who = [...new Set(D.fs.filter(f => X.bx[f.provider]).map(f => D.cols.find(c => c.k === fsMgr(f.provider)).label))].join(', ');
+    const rmNote = RMd === 'f' ? '' : `<p class="note">${hEsc(rmT('n')(who || '–', bEnd ? iso(bEnd) : '–'))}</p>`;
     const relC = x => x === null || x === undefined ? na : `<td style="${relStyle(x)}">${num(x, 2)}</td>`;
     const rel = D.fs.map(f => row(f, f => relC(D.rel[f.provider])) + '</tr>').join('') + gap(nC + 1) + `<tr class="avg"><td>${T().avg}</td>${D.cols.map(c => relC(D.avgRel[c.id])).join('')}</tr>`;
     const rank = D.fs.map(f => row(f, f => { const k = D.rk.map.get(f.provider); return k ? `<td class="${rkClass(k, D.rk.n)}">${k}</td>` : na; }) + '</tr>').join('')
       + gap(nC + 1) + avgRow(T().avg, D.avgRk, D.rAvgRk, v => num(v, 1));
     const ann = D.fs.map(f => row(f, f => rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2)) + '</tr>').join('') + gap(nC + 1) + avgRow(T().avg, D.avgAnn, D.rAvgAnn, pc2);
     const cap = spanText(per, [D.rng]);
-    const blk = (k, h, ik_, th, body) => `<div><div class="group-h">${h}${ik(ik_)}</div><div class="cap" id="c_${id(k)}">${cap}</div><div class="scroll"><table class="mx fs" id="${id(k)}">${th}<tbody>${body}</tbody></table></div></div>`;
+    const blk = (k, h, ik_, th, body, x = '', nt = '') => `<div><div class="group-h">${h}${ik(ik_)}${x}</div><div class="cap" id="c_${id(k)}">${cap}</div><div class="scroll"><table class="mx fs" id="${id(k)}">${th}<tbody>${body}</tbody></table></div>${nt}</div>`;
     return `<div class="fsset"><h3 class="fsh">${hEsc(groupLabel(g))} <small>· ${D.fs.length} ${T().fsN}</small></h3><div class="two">`
-      + blk('ret', T().hRet, 'ret', head(`<th class="pm">${T().fsMedO}</th>`), ret) + blk('rel', T().fsRel, 'relm', head(), rel)
+      + blk('ret', RMd === 'f' ? T().hRet : rmT(RMd), 'ret', head(`<th class="pm">${T().fsMedO}</th>`), ret, rmSeg, rmNote) + blk('rel', T().fsRel, 'relm', head(), rel)
       + blk('rank', T().fsRank, 'rank', head(), rank) + blk('ann', T().hAnnM, 'annm', head(), ann) + '</div></div>';
   }).join('');
   DATA.groups.forEach(g => ['ret', 'rel', 'rank', 'ann'].forEach(k => XLB.set(`tFS_${g.id}_${k}`, async () => ({ sheets: XLSX_SHIM.toXL(fsBook([g])) }))));
@@ -652,7 +671,7 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
   const hdr = L ? ['Grupė', 'Valdytojas', 'Fondas', 'Laikotarpio pradžia', 'Laikotarpio pabaiga', 'Pradžios vertės data', 'Pradžios vieneto vertė, €', 'Pabaigos vertės data', 'Pabaigos vieneto vertė, €', 'Grąža', 'Dienos', 'Metinė grąža', 'Grynieji aktyvai (svoris), €']
     : ['Group', 'Manager', 'Fund', 'Period start', 'Period end', 'Start value date', 'Start unit value, €', 'End value date', 'End unit value, €', 'Return', 'Days', 'Annualized return', 'Net assets (weight), €'];
   if (REAL) hdr.push(L ? 'VKI pradžioje' : 'CPI at start', L ? 'VKI pabaigoje' : 'CPI at end');
-  const calc = [hdr], at = {}, Ds = groups.filter(g => g.id !== 'zz').map(fsData), fcol = {}, used = [];
+  const calc = [hdr], at = {}, Ds = groups.filter(g => g.id !== 'zz').map(fsData), fcol = {}, used = [], RMd = fsRm();
   Ds.forEach(D => D.fs.forEach(f => { if (!(f.provider in fcol)) { fcol[f.provider] = used.length + 1; used.push({ f, rng: D.rng }); } }));
   Ds.forEach(D => D.fs.forEach(f => {
     const v = D.v[f.provider]; if (v === null) return;
@@ -677,6 +696,20 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
     [L ? 'Svertinis' : 'Weighted', L ? 'Valdytojo fondų grąžos, pasvertos pagal paskutinius grynuosius aktyvus (stulpelis M).' : 'The manager’s fund returns weighted by latest net assets (column M).'],
     [L ? 'Metinė grąža' : 'Annualized', L ? '(1 + grąža) ^ (365,25 ÷ dienos) − 1.' : '(1 + return) ^ (365.25 ÷ days) − 1.']];
   add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  /* Indeksai (tik įjungus „Indekso grąža“ / „Fondas − indeksas“): indekso ir fondo vertės tam pačiam laikotarpiui (iki paskutinės indekso dienos) */
+  const SB = L ? 'Indeksai' : 'Benchmarks', B = q(SB), bat = {}, bused = []; let bsh = null;
+  if (RMd !== 'f') {
+    bsh = [[L ? 'Grupė' : 'Group', L ? 'Fondas' : 'Fund', L ? 'Laikotarpio pradžia' : 'Period start', L ? 'Pabaiga (paskutinė indekso diena)' : 'End (last benchmark day)', L ? 'Indekso pradžios data' : 'Benchmark start date', L ? 'Indekso pradžios vertė' : 'Benchmark start value',
+      L ? 'Indekso pabaigos vertė' : 'Benchmark end value', L ? 'Indekso grąža' : 'Benchmark return', L ? 'Fondo pradžios vertės data' : 'Fund start value date', L ? 'Fondo pradžios vertė, €' : 'Fund start value, €', L ? 'Fondo pabaigos vertės data' : 'Fund end value date', L ? 'Fondo pabaigos vertė, €' : 'Fund end value, €', L ? 'Fondo grąža' : 'Fund return', L ? 'Fondas − indeksas' : 'Fund − benchmark']];
+    Ds.forEach(D => { const X = fsDisp(D, RMd); D.X = X; D.fs.forEach(f => { const x = X.bx[f.provider]; if (!x) return;
+      const b = BENCH[f.name], at_ = day => { let r = -1; b.d.forEach((d, i) => { if (d <= day) r = i; }); return r; }, ia = at_(D.rng.anchor), ie = at_(D.rng.end), s = seriesOf(f, D.rng.anchor, b.d[ie]);
+      if (!(f.provider in fcol)) { fcol[f.provider] = used.length + 1; used.push({ f, rng: D.rng }); }
+      bused.push({ f, d0: Math.min(b.d[ia], s ? f.d[s.ia] : b.d[ia]) });
+      const R = bsh.length + 1, bc = () => xlCol(1 + Object.keys(fcol).length + bused.length - 1), vc = xlCol(fcol[f.provider]);
+      bat[D.g.id + '|' + f.provider] = { R, bcol: bused.length - 1, vc };
+      bsh.push({ D, f, R, ia, ie, s, b, x });
+    }); });
+  }
   Ds.forEach(D => {
     const g = D.g, nm = groupLabel(g).replace(/[\\/?*\[\]:]/g, '').replace(/ (fondai|funds)$/i, '').slice(0, 19), nC = D.cols.length, n = D.fs.length;
     const R_ = f => at[g.id + '|' + f.provider], cv = (f, k) => { const x = R_(f) ? calc[R_(f) - 1][k] : null; return x == null ? null : typeof x === 'object' ? x.v : x; };
@@ -687,11 +720,21 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
     const avgR = (t, z) => [T().avg, ...D.cols.map((c, i) => { const col = xlCol(i + 1), xs = t.slice(1, n + 1).map(r => r[i + 1]).filter(Boolean);
       return xs.length ? xlF(`AVERAGE(${col}2:${col}${n + 1})`, meanOf(xs.map(x => x.v)), z) : null; })];
     const oth = f => valid.filter(x => x !== f);
-    const ret = [head(T().fsMedO), ...grid(f => xlF(`${C}!J${R_(f)}`, cv(f, 9), '0.00%'))];
-    D.fs.forEach((f, k) => { const o = oth(f); ret[k + 1].push(R_(f) && o.length ? xlF(`MEDIAN(${o.map(x => `${C}!J${R_(x)}`).join(',')})`, medianOf(o.map(x => cv(x, 9))), '0.00%') : null); });
-    ret.push(avgR(ret, '0.00%'));
-    ret.push([T().avgW, ...D.cols.map(c => { const xs = valid.filter(f => fsMgr(f.provider) === c.k && cv(f, 12) > 0); if (!xs.length) return null;
-      return xlF(`(${xs.map(f => `${C}!J${R_(f)}*${C}!M${R_(f)}`).join('+')})/(${xs.map(f => `${C}!M${R_(f)}`).join('+')})`, xs.reduce((a, f) => a + cv(f, 9) * cv(f, 12), 0) / xs.reduce((a, f) => a + cv(f, 12), 0), '0.00%'); })]);
+    let ret;
+    if (RMd === 'f') {
+      ret = [head(T().fsMedO), ...grid(f => xlF(`${C}!J${R_(f)}`, cv(f, 9), '0.00%'))];
+      D.fs.forEach((f, k) => { const o = oth(f); ret[k + 1].push(R_(f) && o.length ? xlF(`MEDIAN(${o.map(x => `${C}!J${R_(x)}`).join(',')})`, medianOf(o.map(x => cv(x, 9))), '0.00%') : null); });
+      ret.push(avgR(ret, '0.00%'));
+      ret.push([T().avgW, ...D.cols.map(c => { const xs = valid.filter(f => fsMgr(f.provider) === c.k && cv(f, 12) > 0); if (!xs.length) return null;
+        return xlF(`(${xs.map(f => `${C}!J${R_(f)}*${C}!M${R_(f)}`).join('+')})/(${xs.map(f => `${C}!M${R_(f)}`).join('+')})`, xs.reduce((a, f) => a + cv(f, 9) * cv(f, 12), 0) / xs.reduce((a, f) => a + cv(f, 12), 0), '0.00%'); })]);
+    } else {                                             // „Indekso grąža“ (H) arba „Fondas − indeksas“ (N) iš lapo „Indeksai“
+      const X = D.X, bc = RMd === 'b' ? 'H' : 'N', BR = f => bat[g.id + '|' + f.provider], has = f => BR(f) && X.v[f.provider] !== null, bv = valid.length ? null : null;
+      ret = [head(T().fsMedO), ...D.fs.map(f => { const r = [labelOf(f.provider), ...D.cols.map(() => null)]; if (has(f)) r[ci(f) + 1] = xlF(`${B}!${bc}${BR(f).R}`, X.v[f.provider] / 100, '0.00%'); return r; })];
+      D.fs.forEach((f, k) => { const o = D.fs.filter(x => x !== f && has(x)); ret[k + 1].push(has(f) && o.length ? xlF(`MEDIAN(${o.map(x => `${B}!${bc}${BR(x).R}`).join(',')})`, medianOf(o.map(x => X.v[x.provider])) / 100, '0.00%') : null); });
+      ret.push(avgR(ret, '0.00%'));
+      ret.push([T().avgW, ...D.cols.map(c => { const xs = D.fs.filter(f => fsMgr(f.provider) === c.k && has(f) && cv(f, 12) > 0); if (!xs.length) return null;
+        return xlF(`(${xs.map(f => `${B}!${bc}${BR(f).R}*${C}!M${R_(f)}`).join('+')})/(${xs.map(f => `${C}!M${R_(f)}`).join('+')})`, X.avgW[c.id] / 100, '0.00%'); })]);
+    }
     const rel = [head(), ...grid(f => { const o = oth(f); return o.length ? xlF(`${C}!J${R_(f)}-MEDIAN(${o.map(x => `${C}!J${R_(x)}`).join(',')})`, cv(f, 9) - medianOf(o.map(x => cv(x, 9))), '0.00%') : null; })];
     rel.push(avgR(rel, '0.00%'));
     const rank = [head(), ...grid(f => xlF(`RANK(${C}!J${R_(f)},${C}!$J$${lo}:$J$${hi},0)`, D.rk.map.get(f.provider), '0'))];
@@ -701,9 +744,21 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
     add(ret, `${nm} – ${L ? 'grąža' : 'return'}`, w); add(rel, `${nm} – ${L ? 'palyg.' : 'relative'}`, w); add(rank, `${nm} – ${L ? 'vieta' : 'rank'}`, w); add(ann, `${nm} – ${L ? 'metinė' : 'annualized'}`, w);
   });
   add(calc, SC, [{ wch: 22 }, { wch: 12 }, { wch: 40 }, ...Array(hdr.length - 3).fill({ wch: 13 })]);
-  const d0 = Math.min(...calc.slice(1).map(r => r[5].v - 25569)), d1 = Math.max(...calc.slice(1).map(r => r[7].v - 25569));
+  if (bsh) {
+    const nF = used.length;
+    bsh = bsh.map((o, i) => { if (!i) return o; const { D, f, R, ia, ie, s, b, x } = o, bcol = xlCol(nF + 1 + bused.findIndex(u => u.f === f)), vc = xlCol(fcol[f.provider]);
+      const lk = (col, dc, val) => ({ t: 'n', f: `INDEX(${V}!${col}:${col},MATCH(${dc}${R},${V}!$A:$A,0))`, v: val, z: '0.0000' });
+      return [groupLabel(D.g), labelOf(f.provider), xlDate(D.rng.anchor), xlDate(b.d[ie]), xlDate(b.d[ia]), lk(bcol, 'E', b.b[ia]), lk(bcol, 'D', b.b[ie]), xlF(`G${R}/F${R}-1`, x[0] / 100, '0.00%'),
+        s ? xlDate(f.d[s.ia]) : null, s ? lk(vc, 'I', f.v[s.ia]) : null, s ? xlDate(f.d[s.ie]) : null, s ? lk(vc, 'K', f.v[s.ie]) : null,
+        s ? xlF(`L${R}/J${R}-1`, f.v[s.ie] / f.v[s.ia] - 1, '0.00%') : null, s ? xlF(`M${R}-H${R}`, (f.v[s.ie] / f.v[s.ia] - 1) - x[0] / 100, '0.00%') : null]; });
+  }
+  if (bsh) add(bsh, SB, [{ wch: 22 }, { wch: 40 }, ...Array(14).fill({ wch: 13 })]);
+  const d0 = Math.min(...calc.slice(1).map(r => r[5].v - 25569), ...bused.map(u => u.d0)), d1 = Math.max(...calc.slice(1).map(r => r[7].v - 25569));
   const days = [...new Set(used.flatMap(u => u.f.d.filter(d => d >= d0 && d <= d1)))].sort((a, b) => a - b), maps = used.map(u => new Map(u.f.d.map((d, i) => [d, u.f.v[i]])));
-  const vals = [[L ? 'Data' : 'Date', ...used.map(u => labelOf(u.f.provider))]]; days.forEach(d => vals.push([xlDate(d), ...maps.map(m => m.has(d) ? m.get(d) : null)]));
+  const bmaps = bused.map(u => { const b = BENCH[u.f.name]; return new Map(b.d.map((d, i) => [d, b.b[i]])); });
+  const days2 = [...new Set([...days, ...bused.flatMap(u => BENCH[u.f.name].d.filter(d => d >= d0 && d <= d1))])].sort((a, b) => a - b);
+  const vals = [[L ? 'Data' : 'Date', ...used.map(u => labelOf(u.f.provider)), ...bused.map(u => `${labelOf(u.f.provider)} – ${L ? 'indeksas' : 'benchmark'}`)]];
+  days2.forEach(d => vals.push([xlDate(d), ...maps.map(m => m.has(d) ? m.get(d) : null), ...bmaps.map(m => m.has(d) ? m.get(d) : null)]));
   add(vals, SV, [{ wch: 11 }, ...used.map(() => ({ wch: 14 }))]);
   return wb;
 }

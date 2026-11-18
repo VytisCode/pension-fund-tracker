@@ -125,6 +125,17 @@ def main() -> None:
     (DOCS / "assets.js").write_text("const ASSETS=" + json.dumps(assets_js, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     # Lyginamųjų indeksų vertės pagal dienas (tik valdytojų pateikti; kraunama tik įjungus „Indekso grąža“ Rezultatuose)
     bench = {name: {"d": [day_number(d) for d, _ in sorted(e["bm"])], "b": [round(b, 5) for _, b in sorted(e["bm"])]} for name, e in funds.items() if e.get("bm")}
+    p3h = DATA.parent / "pillar3_history.csv"          # III pakopa: lyginamieji indeksai iš valdytojų failų (SEB, Goindex)
+    if p3h.exists():
+        bm3 = {}
+        with p3h.open(encoding="utf-8", newline="") as f:
+            for row in csv.DictReader(f):
+                if (row.get("benchmark_index") or "").strip():
+                    bm3.setdefault(row["fund"], {})[row["date"]] = float(row["benchmark_index"])
+        for name, m in bm3.items():
+            if name not in bench:
+                ds = sorted(m)
+                bench[name] = {"d": [day_number(d) for d in ds], "b": [round(m[d], 5) for d in ds]}
     (DOCS / "bench.js").write_text("const BENCH=" + json.dumps(bench, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
     build_fresh(groups, payload["generated"])
     build_indexes()
