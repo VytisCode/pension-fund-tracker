@@ -6,7 +6,7 @@ Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `
 
 ## Taisyklės
 
-1. **Tik `main` šaka.** Jokių naujų šakų ir PR (savininko sprendimas 2026-10-14 – jis kodo netikrina). Commit'ai ir push tiesiai į `main`, tik po patikros (žr. „Patikra“).
+1. **Tik `main` šaka.** Jokių naujų šakų ir PR (savininko sprendimas 2026-10-14 – jis kodo netikrina). Commit'ai ir push tiesiai į `main`, tik po patikros (žr. „Patikra“). **Debesų sesija pradeda ne `main`, o `claude/…` šakoje – pirmas veiksmas: `git checkout main && git pull --ff-only origin main`** (2026-11-18 pakeitimai liko kitoje šakoje, `git push origin main` nieko neįkėlė, savininko demonstracija nepavyko).
 2. **Taupyk limitą.** Skaityk tik tai, ko reikia užduočiai (žr. „Failų žemėlapis“). Neskaityk `git log` istorijos, archyvo, sugeneruotų failų. Didelius CSV žiūrėk tik `head`/`tail`/`grep`. Svetainės peržiūra naršykle (Playwright) – tik kai keitei puslapį, vienas patikrinimas.
 3. **Viskas nemokama.** Jei kažkas kainuotų – nedaryk, paaiškink ir lauk patvirtinimo.
 4. **Viešas repo ir svetainė:** jokių asmeninių duomenų, savininko failų, slaptažodžių. Raktai tik GitHub Secrets. Svetainėje nerašyti, kad kodas viešas, ir nenurodyti GitHub.
@@ -63,6 +63,7 @@ Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – il
 2. Jei keistas puslapis – atsidaro be JS klaidų (Playwright, Chromium `/opt/pw-browsers/chromium`).
 3. Po build atstatyk `docs/data.js`, `docs/data3.js` ir `?v=` maišas HTML, jei keitėsi tik „generated“ laikas (`git checkout -- docs/...`).
 4. `git pull --rebase origin main`, tada `git push origin main`.
+5. **Įrodyti, kad įkelta:** `git branch --show-current` turi rodyti `main`; po push – `git fetch origin main && git log origin/main --oneline -1` turi rodyti tavo commit'ą. Tik tada savininkui rašyti „įkelta“.
 
 ## Kai duomenų rinkimas sugenda
 
