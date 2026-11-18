@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Pensijų fondų sekimas</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=e4c3c325">
+<link rel="stylesheet" href="style.css?v=8321b593">
 </head>
 <body>
 <div class="wrap">
@@ -38,6 +38,7 @@
       <div data-m="rel"><div class="group-h"><span id="hRelM"></span> <select id="mref"></select></div><div class="cap" id="c_tRelM"></div><div class="scroll"><table class="mx" id="tRelM"></table></div></div>
       <div data-m="rank"><div class="group-h" id="hRank"></div><div class="cap" id="c_tRank"></div><div class="scroll"><table class="mx" id="tRank"></table></div></div>
       <div data-m="ann"><div class="group-h" id="hAnnM"></div><div class="cap" id="c_tAnnM"></div><div class="scroll"><table class="mx" id="tAnnM"></table></div></div>
+      <div data-m="fund" hidden id="mFund"></div>
     </div>
     <div class="ovwrap">
       <div class="group-h"><span id="hOv"></span></div>
@@ -132,13 +133,13 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data.js?v=bd18f72c"></script>
+<script src="data.js?v=9e721449"></script>
 <script src="data_idx.js?v=a601a6b1"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
 <script src="data_cpi.js?v=16203d6d"></script>
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=f6d991ce"></script>
-<script>var PLX = {"c": "LT", "pl": "II", "page": "baltic_lt"};</script><script src="perf.js?v=8abcd1ef"></script>
+<script src="common.js?v=a1165d9e"></script>
+<script>var PLX = {"c": "LT", "pl": "II", "page": "baltic_lt"};</script><script src="perf.js?v=279edf85"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');

@@ -395,7 +395,7 @@ function mkBuild() {
       const live = fs.filter(f => !isStale(f, last)), tot = live.reduce((s, f) => s + (f.assets || 0), 0);
       return fs.slice().sort((a, b) => a.d[0] - b.d[0]).map((f, i) => ({ ...f, provider: first[k].id, _a: f.assets, assets: i ? f.assets : tot || f.assets })); }) };
   });
-  return { reps: reps.filter(p => big.some(g => g.funds.some(f => f.provider === p.id))), big, all, mode: (() => { try { return localStorage.getItem('bxMkMode') || 'all'; } catch (e) { return 'all'; } })() };
+  return { reps: reps.filter(p => big.some(g => g.funds.some(f => f.provider === p.id))), big, all, mode: (() => { try { return localStorage.getItem('bxMkMode2') || 'fund'; } catch (e) { return 'fund'; } })() };   // savininkas 2026-11-18: numatytasis – kiekvienas fondas atskirai
 }
 function mkStartOf(g, pid, rng) {                     // pasirinkto valdytojo pirmojo (veikiančio) fondo grupėje pradžia; neturi fondo – grupė be pakeitimų
   const d = g.funds.filter(f => f.provider === pid && !isStale(f, rng.overallLast)).map(f => f.d[0]);
@@ -411,8 +411,8 @@ function mkSwap(on) {                                 // valdytojų vaizdas: gru
   else { DATA.groups = MK.G; MK.reps.forEach((p, i) => { p.label = MK.L[i]; }); }
   MK_ON = on;
 }
-function withMk(fn) { if (!MK || MK_ON) return fn(); mkSwap(true); try { return fn(); } finally { mkSwap(false); } }
-async function withMkA(fn) { if (!MK || MK_ON) return fn(); mkSwap(true); try { return await fn(); } finally { mkSwap(false); } }
+function withMk(fn) { if (!MK || MK_ON || MK.mode === 'fund') return fn(); mkSwap(true); try { return fn(); } finally { mkSwap(false); } }
+async function withMkA(fn) { if (!MK || MK_ON || MK.mode === 'fund') return fn(); mkSwap(true); try { return await fn(); } finally { mkSwap(false); } }
 const retOf = (g, pid, rng) => {
   if (MK_ON && MK.mode === 'all') {                     // LV/EE „Visi fondai“: valdytojo veikiančių fondų grąžų vidurkis, svoriai – grynieji aktyvai (jų nėra – lygūs)
     const xs = g.funds.filter(x => x.provider === pid && !isStale(x, rng.overallLast)).map(x => { const s = seriesOf(x, rng.anchor, rng.end); return s ? [s.ret, x._a] : null; }).filter(Boolean);
@@ -585,6 +585,112 @@ function renderMarket() {
   renderOverall();
 }
 
+/* „Kiekvienas fondas“ (savininkas 2026-11-18: „3 tokius rinkinius, bet kad matytųsi kiekvienas fondas… nes būtent ir lyginame fondus kategorijose“):
+   kiekvienai grupei (III pakopoje – kategorijai) – tos pačios keturios heat map lentelės kaip „Visa rinka“, tik stulpeliai – visi grupės fondai,
+   eilutės – laikotarpiai. Fondų nekerpama: be duomenų – „–“. Excel – formulės iš vieneto verčių (fsBook). */
+const FS_PERS = ['1m', '3m', '6m', 'ytd', '1y', '3y', '5y', 'max'], FS_ANN = ['1y', '3y', '5y', 'max'];   // metinė grąža – tik ≥ 1 metų laikotarpiams
+const fsShort = t => String(t).replace(/Pensijos fondas /, '').replace(/\(apriboto nutraukimo\)/, '(apr. nutr.)');
+function mgrColor(pid) {                                 // fondo valdytojo spalva (tokia pati kaip valdytojų vaizde)
+  const pr = DATA.providers.find(p => p.id === pid), k = pr && (pr.m || pr.brand), r = MK && MK.reps.find(p => (p.m || p.brand) === k);
+  return colorOf(r ? r.id : pid);
+}
+function fsData(g) {                                     // grupės fondai × laikotarpiai
+  const fs = g.funds, rows = FS_PERS.map(per => {
+    const rng = rangeAt(g, per), v = {}, ann = {}, rel = {};
+    if (per === 'max') { const st = fs.filter(f => !isStale(f, rng.overallLast)).map(f => f.d[0]); if (st.length) rng.anchor = Math.max(rng.anchor, ...st); }   // visa istorija – nuo vėliausios veikiančių fondų pradžios
+    fs.forEach(f => { v[f.provider] = retOf(g, f.provider, rng); const days = rng.end - Math.max(rng.anchor, f.d[0]);
+      ann[f.provider] = v[f.provider] === null || days < 1 ? null : (Math.pow(1 + v[f.provider] / 100, 365.25 / days) - 1) * 100; });
+    fs.forEach(f => { const o = medianOf(fs.filter(x => x !== f).map(x => v[x.provider])); rel[f.provider] = v[f.provider] === null || o === null ? null : v[f.provider] - o; });
+    return { per, rng, v, ann, rel, rk: rankOf(fs.map(f => ({ key: f.provider, v: v[f.provider] }))), ra: rankOf(fs.map(f => ({ key: f.provider, v: ann[f.provider] }))), med: medianOf(fs.map(f => v[f.provider])) };
+  });
+  return { g, fs, rows };
+}
+function renderFundM() {
+  pcRender();
+  $('hMarket').textContent = T().hMarket; $('mMarket').textContent = T().fsMeta(iso(LATEST));
+  const pc2 = v => num(v, 2) + pctSfx(), na = '<td class="na">–</td>', box = $('mFund');
+  const rkCell = (v, rank, n, f) => v === null || v === undefined ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
+  box.innerHTML = DATA.groups.filter(g => g.id !== 'zz').map(g => {
+    const D = fsData(g), id = k => `tFS_${g.id}_${k}`, wide = D.fs.length > 5;
+    const hc = f => `<th title="${hEsc(labelOf(f.provider))}"><span class="sw-top" style="background:${mgrColor(f.provider)}"></span>${hEsc(fsShort(labelOf(f.provider)))}</th>`;
+    const head = (x = '') => `<thead><tr><th></th>${D.fs.map(hc).join('')}${x}</tr></thead>`;
+    const pl = r => `<td>${T().periods[r.per]}${r.per === 'max' ? `<small class="rd">${T().fsFrom} ${iso(r.rng.anchor)}</small>` : ''}</td>`;
+    const ret = D.rows.map(r => `<tr>${pl(r)}${D.fs.map(f => rkCell(r.v[f.provider], r.rk.map.get(f.provider), r.rk.n, pc2)).join('')}${r.med === null ? na : `<td class="pm">${pc2(r.med)}</td>`}</tr>`).join('');
+    const rel = D.rows.map(r => `<tr>${pl(r)}${D.fs.map(f => { const x = r.rel[f.provider]; return x === null ? na : `<td style="${relStyle(x)}">${num(x, 2)}</td>`; }).join('')}</tr>`).join('');
+    const avgRk = f => meanOf(D.rows.map(r => r.rk.map.get(f.provider) || null)), ar = rankOf(D.fs.map(f => ({ key: f.provider, v: avgRk(f) === null ? null : -avgRk(f) })));
+    const rank = D.rows.map(r => `<tr>${pl(r)}${D.fs.map(f => { const k = r.rk.map.get(f.provider); return k ? `<td class="${rkClass(k, r.rk.n)}">${k}</td>` : na; }).join('')}</tr>`).join('')
+      + `<tr class="gap"><td colspan="${D.fs.length + 1}"></td></tr><tr class="avg"><td>${T().avg}</td>${D.fs.map(f => rkCell(avgRk(f), ar.map.get(f.provider), ar.n, v => num(v, 1))).join('')}</tr>`;
+    const ann = D.rows.filter(r => FS_ANN.includes(r.per)).map(r => `<tr>${pl(r)}${D.fs.map(f => rkCell(r.ann[f.provider], r.ra.map.get(f.provider), r.ra.n, pc2)).join('')}</tr>`).join('');
+    const end = iso(Math.max(...D.rows.map(r => r.rng.end)));
+    const blk = (k, h, ik_, th, body) => `<div><div class="group-h">${h}${ik(ik_)}</div><div class="cap" id="c_${id(k)}">${T().fsCap(end)}</div><div class="scroll"><table class="mx fs" id="${id(k)}">${th}<tbody>${body}</tbody></table></div></div>`;
+    return `<div class="fsset"><h3 class="fsh">${hEsc(groupLabel(g))} <small>· ${D.fs.length} ${T().fsN}</small></h3><div class="two${wide ? ' one' : ''}">`
+      + blk('ret', T().hRet, 'ret', head(`<th class="pm">${T().fmMed}</th>`), ret) + blk('rel', T().fsRel, 'relm', head(), rel)
+      + blk('rank', T().fsRank, 'rank', head(), rank) + blk('ann', T().hAnnM, 'annm', head(), ann) + '</div></div>';
+  }).join('');
+  DATA.groups.forEach(g => ['ret', 'rel', 'rank', 'ann'].forEach(k => XLB.set(`tFS_${g.id}_${k}`, async () => ({ sheets: XLSX_SHIM.toXL(fsBook([g])) }))));
+  $('nMarket').textContent = T().fsNote;
+  $('btnGx').textContent = T().gxBtn; $('btnMxl').textContent = '⤓ ' + T().mxl; $('nGx').hidden = true;
+  renderOverall();
+}
+function fsBook(groups) {                                // Excel: Vertės (mėlyni pradiniai) → Skaičiavimai (INDEX/MATCH) → 4 lentelės kiekvienai grupei
+  const L = lang === 'lt', q = s => `'${s}'`, wb = XLSX.utils.book_new(), add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = w; XLSX.utils.book_append_sheet(wb, ws, name.slice(0, 31)); };
+  const SC = L ? 'Skaičiavimai' : 'Calculations', SV = L ? 'Vertės' : 'Values', C = q(SC), V = q(SV);
+  const hdr = L ? ['Grupė', 'Laikotarpis', 'Fondas', 'Laikotarpio pradžia', 'Laikotarpio pabaiga', 'Pradžios vertės data', 'Pradžios vieneto vertė, €', 'Pabaigos vertės data', 'Pabaigos vieneto vertė, €', 'Grąža', 'Dienos', 'Metinė grąža']
+    : ['Group', 'Period', 'Fund', 'Period start', 'Period end', 'Start value date', 'Start unit value, €', 'End value date', 'End unit value, €', 'Return', 'Days', 'Annualized return'];
+  if (REAL) hdr.push(L ? 'VKI pradžioje' : 'CPI at start', L ? 'VKI pabaigoje' : 'CPI at end');
+  const calc = [hdr], at = {}, Ds = groups.filter(g => g.id !== 'zz').map(fsData), fcol = {}, used = [];
+  Ds.forEach(D => D.fs.forEach(f => { if (!(f.provider in fcol)) { fcol[f.provider] = used.length + 1; used.push(f); } }));
+  Ds.forEach(D => D.rows.forEach(r => D.fs.forEach(f => {
+    const v = r.v[f.provider]; if (v === null) return;
+    const s = seriesOf(f, r.rng.anchor, r.rng.end), R = calc.length + 1, d0 = Math.max(r.rng.anchor, f.d[0]), days = r.rng.end - d0, vc = xlCol(fcol[f.provider]);
+    const look = (dc, val) => ({ t: 'n', f: `INDEX(${V}!${vc}:${vc},MATCH(${dc}${R},${V}!$A:$A,0))`, v: val, z: '0.0000' });
+    const row = [groupLabel(D.g), T().periods[r.per], labelOf(f.provider), xlDate(d0), xlDate(r.rng.end), xlDate(f.d[s.ia]), look('F', f.v[s.ia]), xlDate(f.d[s.ie]), look('H', f.v[s.ie])];
+    row.push(REAL ? xlF(`(I${R}/G${R})/(N${R}/M${R})-1`, v / 100, '0.00%') : xlF(`I${R}/G${R}-1`, f.v[s.ie] / f.v[s.ia] - 1, '0.00%'));
+    row.push(xlF(`E${R}-D${R}`, days, '0')); row.push(xlF(`(1+J${R})^(365.25/K${R})-1`, Math.pow(1 + v / 100, 365.25 / days) - 1, '0.00%'));
+    if (REAL) row.push(cpiAt(r.rng.anchor), cpiAt(f.d[s.ie]));
+    calc.push(row); at[D.g.id + '|' + r.per + '|' + f.provider] = R;
+  })));
+  const meth = [[L ? 'Metodika ir šaltiniai' : 'Methodology and sources'], [],
+    [L ? 'Kaip patikrinti' : 'How to check', L ? 'Lapas „Vertės“ – valdytojų paskelbtos vieneto vertės (mėlynos). Lapas „Skaičiavimai“ – kiekvienam fondui ir laikotarpiui pradžios ir pabaigos vertė paimama iš „Vertės“ (INDEX/MATCH pagal datą), iš jų – grąža ir metinė grąža. Lentelių lapai – nuorodos į „Skaičiavimai“ ir MEDIAN, RANK, AVERAGE.' : 'Sheet “Values” – unit values published by the managers (blue). Sheet “Calculations” – for each fund and period the start and end value is taken from “Values” (INDEX/MATCH by date), then return and annualized return. Table sheets – links to “Calculations” plus MEDIAN, RANK, AVERAGE.'],
+    [L ? 'Duomenys iki' : 'Data until', iso(LATEST)], [L ? 'Atsisiųsta' : 'Downloaded', DATA.generated], [],
+    [L ? 'Grąža' : 'Return', L ? 'Pabaigos vieneto vertė ÷ pradžios vieneto vertė − 1. Pradžios vertė – paskutinė vertė laikotarpio pradžios dieną arba prieš ją. Mokesčiai jau atskaityti iš vieneto verčių.' + (REAL ? ' Reali grąža: dar padalinta iš VKI pokyčio.' : '') : 'End unit value ÷ start unit value − 1. Start value – the last value on or before the period start. Fees are already deducted from unit values.' + (REAL ? ' Real return: also divided by the CPI change.' : '')],
+    [L ? 'Visa istorija' : 'Full history', L ? 'Nuo vėliausios grupės fondų pradžios, kad visi fondai būtų lyginami tuo pačiu laikotarpiu.' : 'From the latest start among the group’s funds, so all funds cover the same period.'],
+    [L ? 'Palyginimas' : 'Relative', L ? 'Fondo grąža minus kitų tos pačios grupės fondų grąžų medianos (MEDIAN), p. p.' : 'Fund return minus the median return of the other funds in the same group (MEDIAN), pp.'],
+    [L ? 'Vieta' : 'Rank', L ? 'RANK tarp grupės fondų tuo laikotarpiu: 1 – didžiausia grąža. Vidurkis – vietų vidurkis per laikotarpius, kuriuose fondas turi rezultatą.' : 'RANK among the group’s funds for the period: 1 – highest return. Average – mean rank over the periods where the fund has a result.'],
+    [L ? 'Metinė grąža' : 'Annualized', L ? '(1 + grąža) ^ (365,25 ÷ dienos) − 1; tik 1 metų ir ilgesniems laikotarpiams.' : '(1 + return) ^ (365.25 ÷ days) − 1; only for periods of 1 year or longer.']];
+  add(meth, L ? 'Metodika' : 'Methodology', [{ wch: 16 }, { wch: 110 }]);
+  const ref = (g, per, f, c) => { const R = at[g.id + '|' + per + '|' + f.provider]; return R ? `${C}!${c}${R}` : null; };
+  Ds.forEach(D => {
+    const g = D.g, nm = groupLabel(g).replace(/[\\/?*\[\]:]/g, '').replace(/ (fondai|funds)$/i, '').slice(0, 19), cols = D.fs.map(f => labelOf(f.provider)), last = xlCol(D.fs.length);
+    const pn = r => T().periods[r.per] + (r.per === 'max' ? ` (${L ? 'nuo' : 'from'} ${iso(r.rng.anchor)})` : '');
+    const RS = q(`${nm} – ${L ? 'grąža' : 'return'}`.slice(0, 31));
+    const ret = [[L ? 'Laikotarpis' : 'Period', ...cols, T().fmMed]];
+    D.rows.forEach((r, k) => { const rr = k + 2; ret.push([pn(r), ...D.fs.map(f => { const x = ref(g, r.per, f, 'J'); return x ? xlF(x, calc[at[g.id + '|' + r.per + '|' + f.provider] - 1][9].v, '0.00%') : null; }),
+      r.med === null ? null : xlF(`MEDIAN(B${rr}:${last}${rr})`, medianOf(D.fs.map(f => { const R = at[g.id + '|' + r.per + '|' + f.provider]; return R ? calc[R - 1][9].v : null; })), '0.00%')]); });
+    const valAt = (r, f) => { const R = at[g.id + '|' + r.per + '|' + f.provider]; return R ? calc[R - 1][9].v : null; };
+    const rel = [[L ? 'Laikotarpis (fondas minus kitų mediana)' : 'Period (fund minus median of the others)', ...cols]];
+    D.rows.forEach((r, k) => { const rr = k + 2; rel.push([pn(r), ...D.fs.map((f, i) => { const v = valAt(r, f), oth = D.fs.filter(o => o !== f && valAt(r, o) !== null);
+      if (v === null || !oth.length) return null; return xlF(`${RS}!${xlCol(i + 1)}${rr}-MEDIAN(${oth.map(o => `${RS}!${xlCol(D.fs.indexOf(o) + 1)}${rr}`).join(',')})`, v - medianOf(oth.map(o => valAt(r, o))), '0.00%'); })]); });
+    const rank = [[L ? 'Laikotarpis' : 'Period', ...cols]];
+    D.rows.forEach((r, k) => { const rr = k + 2; rank.push([pn(r), ...D.fs.map((f, i) => valAt(r, f) === null ? null : xlF(`RANK(${RS}!${xlCol(i + 1)}${rr},${RS}!$B${rr}:$${last}${rr},0)`, r.rk.map.get(f.provider), '0'))]); });
+    rank.push([T().avg, ...D.fs.map((f, i) => { const xs = D.rows.map(r => r.rk.map.get(f.provider) || null); return meanOf(xs) === null ? null : xlF(`AVERAGE(${xlCol(i + 1)}2:${xlCol(i + 1)}${D.rows.length + 1})`, meanOf(xs), '0.0'); })]);
+    const ann = [[L ? 'Laikotarpis' : 'Period', ...cols]];
+    D.rows.filter(r => FS_ANN.includes(r.per)).forEach(r => { ann.push([pn(r), ...D.fs.map(f => { const x = ref(g, r.per, f, 'L'); return x ? xlF(x, calc[at[g.id + '|' + r.per + '|' + f.provider] - 1][11].v, '0.00%') : null; })]); });
+    const w = [{ wch: 26 }, ...cols.map(() => ({ wch: 16 })), { wch: 12 }];
+    add(ret, `${nm} – ${L ? 'grąža' : 'return'}`, w); add(rel, `${nm} – ${L ? 'palyg.' : 'relative'}`, w); add(rank, `${nm} – ${L ? 'vieta' : 'rank'}`, w); add(ann, `${nm} – ${L ? 'metinė' : 'annualized'}`, w);
+  });
+  add(calc, SC, [{ wch: 22 }, { wch: 14 }, { wch: 40 }, ...Array(hdr.length - 3).fill({ wch: 13 })]);
+  const d0 = Math.min(...calc.slice(1).map(r => r[5].v - 25569)), d1 = Math.max(...calc.slice(1).map(r => r[7].v - 25569));
+  const days = [...new Set(used.flatMap(f => f.d.filter(d => d >= d0 && d <= d1)))].sort((a, b) => a - b), maps = used.map(f => new Map(f.d.map((d, i) => [d, f.v[i]])));
+  const vals = [[L ? 'Data' : 'Date', ...used.map(f => labelOf(f.provider))]]; days.forEach(d => vals.push([xlDate(d), ...maps.map(m => m.has(d) ? m.get(d) : null)]));
+  add(vals, SV, [{ wch: 11 }, ...used.map(() => ({ wch: 14 }))]);
+  return wb;
+}
+async function fsExport() {
+  const btn = $('btnMxl'); btn.disabled = true;
+  try { XLSX.writeFile(fsBook(DATA.groups), `${lang === 'lt' ? 'Kiekvienas_fondas' : 'Each_fund'}_${iso(LATEST)}.xlsx`); } catch (e) { console.warn(e); alert(T().xlsxFail); }
+  btn.disabled = false;
+}
 /* visos keturios „Visos rinkos“ lentelės viename paveikslėlyje (2 × 2), kaip puslapyje (savininkas 2026-11-12) */
 async function fourPng() {
   const ims = await Promise.all(['tRet', 'tRelM', 'tRank', 'tAnnM'].map(async id => { const bl = await tablePng($(id)); const im = new Image(); im.src = URL.createObjectURL(bl); await im.decode(); return im; }));
@@ -627,7 +733,7 @@ function renderOverall() {
   DATA.providers.forEach(p => { st[p.id] = { cmp: 0, first: 0, top2: 0, rs: 0 }; });
   DATA.groups.forEach(g => pers.forEach(per => {
     const rng = rangeAt(g, per), vals = DATA.providers.map(p => ({ key: p.id, v: retOf(g, p.id, rng) })), { map, n } = rankOf(vals);
-    const all = MK_ON ? marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).length : DATA.providers.length;   // LV/EE – visi tos grupės valdytojai
+    const all = MK_ON || IS3 ? marketProvs().filter(p => g.funds.some(f => f.provider === p.id)).length : DATA.providers.length;   // LV/EE, III pakopa – visi tos grupės valdytojai / fondai   // LV/EE – visi tos grupės valdytojai
     if (n < 3 || (P.ovCommon && n < all)) return;
     map.forEach((rank, id) => { const s = st[id]; s.cmp++; s.rs += rank; if (rank === 1) s.first++; if (rank <= 2) s.top2++; });
   }));
@@ -1718,16 +1824,30 @@ if (IS3) {                                              // „Visa rinka“: val
       mkNote: { all: 'Stulpelis – valdytojas; langelis – visų jo veikiančių fondų grupėje grąžų vidurkis, svertinis pagal grynuosius aktyvus (kur turto duomenų nėra – lygūs svoriai). Taip lentelėse matoma visa rinka.', big: 'Stulpelis – valdytojas; langelis – jo didžiausias veikiantis fondas grupėje (pagal grynuosius aktyvus).' } });
     addStrings({ ovCommonOn: 'Only where all the group’s managers take part', ovCommonNote: 'Younger funds take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all the group’s managers take part” keeps just the comparisons in which every manager with a fund in that group has a result for the period.' },
       { ovCommonOn: 'Tik kur dalyvauja visi grupės valdytojai', ovCommonNote: 'Jaunesni fondai dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi grupės valdytojai“ palieka tik tuos palyginimus, kuriuose rezultatą tam laikotarpiui turi kiekvienas valdytojas, turintis fondą toje grupėje.' });
+    { const CAT = !PX || PX.c === 'LT';                  // Lietuvos III pakopa – kategorijos, LV/EE – grupės
+      addStrings({ mkFund: CAT ? 'Each fund by category' : 'Each fund by group', mkFundXl: 'Every fund’s tables with the unit values used and Excel formulas', fmMed: 'Median',
+        fsRel: 'Compared with the other funds, pp', fsRank: CAT ? 'Rank in category (1 = best return)' : 'Rank in group (1 = best return)', fsN: 'funds', fsFrom: 'from',
+        fsMeta: d => `Rows – periods up to ${d}; columns – every fund of the ${CAT ? 'category' : 'group'}. The period switch above does not change these tables.`, fsCap: d => `Periods up to ${d}`,
+        fsNote: CAT ? 'Each fund is compared only with the other funds of its category. Colours: green – among the best of the category for that period, red – among the weakest. “Compared with the other funds” = the fund’s return minus the median return of the other funds in the category. “Full history” – from the latest start among the category’s funds, so all funds cover the same period. Annualized return – only for periods of 1 year or longer. “–” = the fund did not exist at the start of the period or has no fresh data.'
+          : 'Each fund is compared only with the other funds of its group. Colours: green – among the best of the group for that period, red – among the weakest. “Compared with the other funds” = the fund’s return minus the median return of the other funds in the group. “Full history” – from the latest start among the group’s funds, so all funds cover the same period. Annualized return – only for periods of 1 year or longer. “–” = the fund did not exist at the start of the period or has no fresh data.' },
+        { mkFund: CAT ? 'Kiekvienas fondas pagal kategoriją' : 'Kiekvienas fondas pagal grupę', mkFundXl: 'Kiekvieno fondo lentelės su naudotomis vieneto vertėmis ir Excel formulėmis', fmMed: 'Mediana',
+        fsRel: 'Palyginimas su kitais fondais, p. p.', fsRank: CAT ? 'Vieta kategorijoje (1 = geriausia grąža)' : 'Vieta grupėje (1 = geriausia grąža)', fsN: 'fondai', fsFrom: 'nuo',
+        fsMeta: d => `Eilutės – laikotarpiai iki ${d}; stulpeliai – visi ${CAT ? 'kategorijos' : 'grupės'} fondai. Viršutinis laikotarpio jungiklis šių lentelių nekeičia.`, fsCap: d => `Laikotarpiai iki ${d}`,
+        fsNote: CAT ? 'Kiekvienas fondas lyginamas tik su kitais savo kategorijos fondais. Spalvos: žalia – tarp geriausių kategorijoje tuo laikotarpiu, raudona – tarp silpniausių. „Palyginimas su kitais fondais“ – fondo grąža minus kitų tos kategorijos fondų grąžų medianos. „Visa istorija“ – nuo vėliausios kategorijos fondų pradžios, kad visi fondai būtų lyginami tuo pačiu laikotarpiu. Metinė grąža – tik 1 metų ir ilgesniems laikotarpiams. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų.'
+          : 'Kiekvienas fondas lyginamas tik su kitais savo grupės fondais. Spalvos: žalia – tarp geriausių grupėje tuo laikotarpiu, raudona – tarp silpniausių. „Palyginimas su kitais fondais“ – fondo grąža minus kitų tos grupės fondų grąžų medianos. „Visa istorija“ – nuo vėliausios grupės fondų pradžios, kad visi fondai būtų lyginami tuo pačiu laikotarpiu. Metinė grąža – tik 1 metų ir ilgesniems laikotarpiams. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų.' }); }
     const seg = document.createElement('div'); seg.className = 'seg'; seg.id = 'mkMode'; seg.setAttribute('role', 'group');
-    seg.innerHTML = '<button type="button" data-v="all"></button><button type="button" data-v="big"></button>';
+    seg.innerHTML = '<button type="button" data-v="fund"></button><button type="button" data-v="all"></button><button type="button" data-v="big"></button>';
     $('btnGx').before(seg);
-    seg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MK.mode = b.dataset.v; try { localStorage.setItem('bxMkMode', MK.mode); } catch (er) {} renderMarket(); });
+    seg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MK.mode = b.dataset.v; try { localStorage.setItem('bxMkMode2', MK.mode); } catch (er) {} renderMarket(); });
     const rm = renderMarket, ro = renderOverall, xm = exportMarketXlsx, ox = XLB.get('tOv');
-    renderMarket = () => withMk(() => { MK.gxUi(); rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode];
-      $('mkMode').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === 'all' ? T().mkAll : T().mkBig; b.setAttribute('aria-pressed', String(b.dataset.v === MK.mode)); });
-      const xb = $('btnMxl'); xb.disabled = MK.mode === 'all'; if (MK.mode === 'all') xb.title = T().mkXl; });
+    renderMarket = () => { const FM = MK.mode === 'fund', grid = $('mGrid');
+      grid.classList.toggle('one', FM); ['btnM4png', 'btnM4cp'].forEach(id => { const e = $(id); if (e) e.hidden = FM; });   // keturių lentelių paveikslėlis – ne šiam vaizdui
+      grid.querySelectorAll(':scope > [data-m]').forEach(d => { d.hidden = (d.dataset.m === 'fund') !== FM; });
+      if (FM) { MK.mode = 'all'; withMk(MK.gxUi); MK.mode = 'fund'; renderFundM(); } else withMk(() => { MK.gxUi(); rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode]; });
+      $('mkMode').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === 'all' ? T().mkAll : b.dataset.v === 'fund' ? T().mkFund : T().mkBig; b.setAttribute('aria-pressed', String(b.dataset.v === MK.mode)); });
+      const xb = $('btnMxl'); xb.disabled = MK.mode === 'all'; xb.title = MK.mode === 'all' ? T().mkXl : MK.mode === 'fund' ? T().mkFundXl : T().mxlTip; };
     renderOverall = () => withMk(ro);
-    exportMarketXlsx = () => withMkA(xm);
+    exportMarketXlsx = () => MK.mode === 'fund' ? fsExport() : withMkA(xm);
     if (ox) XLB.set('tOv', async () => MK.mode === 'all' ? null : withMkA(ox));   // „Visi fondai“ – Excel tik su lentelės reikšmėmis
   }
   if (!PX || PX.c === 'LT') addStrings({ hMarket: 'Whole market: return and rank by category' }, { hMarket: 'Visa rinka: grąža ir vieta pagal kategorijas' });
