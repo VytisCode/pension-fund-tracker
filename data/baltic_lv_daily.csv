@@ -150203,3 +150203,21 @@ date,pillar,slug,name,provider,nav,assets_eur,participants,stock_pct,risk,first_
 2026-11-16,II,swedbank-plans-dinamika-indekss-15-54,Swedbank plāns Dinamika Indekss 15-54,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",1.4630186,43555655,8679,98,Augsts risks,2026-11-17
 2026-11-16,II,swedbank-plans-sabalansetais-55-59,Swedbank plāns Sabalansētais 55-59,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",3.2253261,1013183590,161261,48,Vidējs risks,2026-11-17
 2026-11-16,II,swedbank-plans-stabilitate-60-plus,Swedbank plāns Stabilitāte 60+,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",2.344992,297876173,48416,10,Zems risks,2026-11-17
+2026-11-16,III,c-akciju-indeksu-pensiju-plans-18-45,C Akciju indeksu pensiju plāns 18-45,"Akciju sabiedrība ""CBL Atklātais pensiju fonds""",1.5266,6468963,3427,95,Augsts risks,2026-11-18
+2026-11-16,III,c-aktivais-pensiju-plans-46-55,C Aktīvais pensiju plāns 46-55,"Akciju sabiedrība ""CBL Atklātais pensiju fonds""",1.3193,24972879,15552,47,Vidējs risks,2026-11-18
+2026-11-16,III,c-sabalansetais-pensiju-plans-56-plus,C Sabalansētais pensiju plāns 56+,"Akciju sabiedrība ""CBL Atklātais pensiju fonds""",1.2238,44442913,21995,23,Zems risks,2026-11-18
+2026-11-16,III,indexo-pensiju-plans-akcijas,INDEXO pensiju plāns AKCIJAS,Indexo Atklātais Pensiju Fonds AS,1.8625,85558797,30248,100,Augsts risks,2026-11-18
+2026-11-16,III,indexo-pensiju-plans-obligacijas,INDEXO pensiju plāns OBLIGĀCIJAS,Indexo Atklātais Pensiju Fonds AS,0.9454,7123875,7751,0,Zems risks,2026-11-18
+2026-11-16,III,invl-pensiju-plans-ekstra-18-49,INVL pensiju plāns Ekstra 18-49,"Akciju sabiedrība ""INVL atklātais pensiju fonds""",1.5114,1512261,1749,48,Vidējs risks,2026-11-18
+2026-11-16,III,invl-pensiju-plans-komforts-50-69,INVL pensiju plāns Komforts 50 – 69,"Akciju sabiedrība ""INVL atklātais pensiju fonds""",2.0176,377658,429,23,Zems risks,2026-11-18
+2026-11-16,III,luminor-nakotne-indekss-pensiju-plans-16-50,Luminor Nākotne Indekss pensiju plāns 16-50,Luminor Latvijas atklātais pensiju fonds AS,1.1735,2161995,1298,98,Augsts risks,2026-11-18
+2026-11-16,III,luminor-nakotne-indekss-plus-pensiju-plans-16-50,Luminor Nākotne Indekss+ pensiju plāns 16–50,Luminor Latvijas atklātais pensiju fonds AS,1.5064,9004399,3564,99,Augsts risks,2026-11-18
+2026-11-16,III,luminor-nakotne-pensiju-plans-50-55,Luminor Nākotne pensiju plāns 50-55,Luminor Latvijas atklātais pensiju fonds AS,2.2349,41384876,9706,71,Augsts risks,2026-11-18
+2026-11-16,III,luminor-nakotne-pensiju-plans-55-plus,Luminor Nākotne pensiju plāns 55+,Luminor Latvijas atklātais pensiju fonds AS,1.9614,33358683,10032,23,Zems risks,2026-11-18
+2026-11-16,III,seb-klimata-indeksu-pensiju-plans-18-54,SEB-Klimata indeksu pensiju plāns 18-54,"Akciju sabiedrība ""SEB atklātais pensiju fonds""",1.9166,55807578,15151,100,Augsts risks,2026-11-18
+2026-11-16,III,seb-lidzsvara-pensiju-plans-55-59,SEB-Līdzsvara pensiju plāns 55-59,"Akciju sabiedrība ""SEB atklātais pensiju fonds""",2.3373,111173284,39326,58,Vidējs risks,2026-11-18
+2026-11-16,III,seb-stabilais-pensiju-plans-60-plus,SEB-Stabilais pensiju plāns 60+,"Akciju sabiedrība ""SEB atklātais pensiju fonds""",1.897,183666983,43777,19,Zems risks,2026-11-18
+2026-11-16,III,swedbank-pensiju-plans-dinamika-18-49,Swedbank pensiju plāns Dinamika 18–49,"""Swedbank Atklātais Pensiju Fonds"" AS",3.6538,208823465,99072,97,Augsts risks,2026-11-18
+2026-11-16,III,swedbank-pensiju-plans-dinamika-indekss-18-49,Swedbank pensiju plāns Dinamika Indekss 18–49,"""Swedbank Atklātais Pensiju Fonds"" AS",1.474,36936567,16679,99,Augsts risks,2026-11-18
+2026-11-16,III,swedbank-pensiju-plans-sabalansetais-50-54,Swedbank pensiju plāns Sabalansētais 50–54,"""Swedbank Atklātais Pensiju Fonds"" AS",2.3799,267573869,101575,58,Vidējs risks,2026-11-18
+2026-11-16,III,swedbank-pensiju-plans-stabilitate-55-plus,Swedbank pensiju plāns Stabilitāte 55+,"""Swedbank Atklātais Pensiju Fonds"" AS",2.0523,121421167,48575,15,Zems risks,2026-11-18
