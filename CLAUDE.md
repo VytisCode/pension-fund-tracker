@@ -63,7 +63,8 @@ Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – il
 2. Jei keistas puslapis – atsidaro be JS klaidų (Playwright, Chromium `/opt/pw-browsers/chromium`).
 3. Po build atstatyk `docs/data.js`, `docs/data3.js` ir `?v=` maišas HTML, jei keitėsi tik „generated“ laikas (`git checkout -- docs/...`).
 4. `git pull --rebase origin main`, tada `git push origin main`.
-5. **Įrodyti, kad įkelta:** `git branch --show-current` turi rodyti `main`; po push – `git fetch origin main && git log origin/main --oneline -1` turi rodyti tavo commit'ą. Tik tada savininkui rašyti „įkelta“.
+5. **Įrodyti, kad įkelta:** `git branch --show-current` turi rodyti `main`; po push – `git fetch origin main && git log origin/main --oneline -1` turi rodyti tavo commit'ą. 
+6. **Patikrinti gyvą svetainę:** po 1–3 min. `curl -s https://vytiscode.github.io/pension-fund-tracker/<failas> | grep <naujas kodas>`; jei sesijos tinklas github.io neleidžia – GitHub Actions „pages build and deployment“ paskutinis paleidimas su tavo commit'u turi būti „success“ (`mcp__github__actions_list`). Tik tada savininkui rašyti „įkelta / veikia“; jei nepatikrinta – taip ir parašyti.
 
 ## Kai duomenų rinkimas sugenda
 
