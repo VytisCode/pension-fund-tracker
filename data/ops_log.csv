@@ -688,3 +688,7 @@ ts,src,ev,dd,n,msg
 2026-11-18T11:40,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); pristatymas
 2026-11-18T12:08,nav.SEB,new,2026-11-17,8,
 2026-11-18T12:08,p3.SEB,new,2026-11-17,8,
+2026-11-18T12:32,nav.ALLIANZ,new,2026-11-17,8,
+2026-11-18T12:32,nav.ARTEA,new,2026-11-17,8,
+2026-11-18T12:32,nav.SEB,new,2026-11-17,8,
+2026-11-18T12:32,p3.ARTEA,new,2026-11-17,5,
