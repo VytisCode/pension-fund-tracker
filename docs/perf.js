@@ -616,6 +616,8 @@ function fsData(g) {
 }
 /* Lyginamasis indeksas „Kiekvienas fondas“ vaizde (savininkas 2026-11-18: „jungiklio, kad perjungtų į lyginamojo indekso grąžą“) – tik Grąžos lentelėje,
    kaip II pakopos „Visa rinka“. Indeksai – tik valdytojų pateikti (III pakopa: SEB, Goindex). Laikotarpio pabaiga – paskutinė indekso diena (≤ laikotarpio pabaigos). */
+let FS_LAY = (() => { try { return localStorage.getItem('fsLay') || 'c'; } catch (e) { return 'c'; } })();   // c – kompaktiška (savininkas 2026-11-18), m – valdytojai stulpeliuose
+const fsOrd = (D, X) => D.fs.slice().sort((a, b) => (X.rk.map.get(a.provider) || 1e9) - (X.rk.map.get(b.provider) || 1e9));   // kompaktiška: nuo geriausio
 const fsRbOn = () => (!PX || PX.c === 'LT') && !REAL;
 const fsRm = () => fsRbOn() && (P.rm === 'b' || P.rm === 'd') && typeof BENCH !== 'undefined' ? P.rm : 'f';
 function fsDisp(D, RMd) {                                // grąžos lentelės reikšmės: fondo / indekso / fondas − indeksas
@@ -654,13 +656,28 @@ function renderFundM() {
       + gap(nC + 1) + avgRow(T().avg, D.avgRk, D.rAvgRk, v => num(v, 1));
     const ann = D.fs.map(f => row(f, f => rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2)) + '</tr>').join('') + gap(nC + 1) + avgRow(T().avg, D.avgAnn, D.rAvgAnn, pc2);
     const cap = spanText(per, [D.rng]);
+    if (FS_LAY === 'c') {                                // kompaktiška: eilutė – fondas, stulpeliai – rodikliai; apačioje valdytojų vidurkiai
+      const mc = f => { const c = D.cols.find(x => x.k === fsMgr(f.provider)); return `<td class="mg"><span class="sw" style="background:${colorOf(c.id)}"></span>${hEsc(c.label)}</td>`; };
+      const body = fsOrd(D, X).map(f => { const k = D.rk.map.get(f.provider);
+        return `<tr>${mc(f)}<td title="${hEsc(labelOf(f.provider))}">${hEsc(fsShort(labelOf(f.provider)))}</td>${rkCell(X.v[f.provider], X.rk.map.get(f.provider), X.rk.n, xf)}${relC(D.rel[f.provider])}${k ? `<td class="${rkClass(k, D.rk.n)}">${k}</td>` : na}${rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2)}</tr>`; }).join('');
+      const xmed = medianOf(D.fs.map(f => X.v[f.provider])), amed = medianOf(D.fs.map(f => D.ann[f.provider]));
+      const medRow = `<tr class="avg"><td colspan="2">${T().fsCatMed}</td>${xmed === null ? na : `<td class="pm">${xf(xmed)}</td>`}${na}${na}${amed === null ? na : `<td class="pm">${pc2(amed)}</td>`}</tr>`;
+      const sum = D.cols.filter(c => D.fs.some(f => fsMgr(f.provider) === c.k)).map(c => { const nF = D.fs.filter(f => fsMgr(f.provider) === c.k).length;
+        return `<tr class="mavg"><td class="mg"><span class="sw" style="background:${colorOf(c.id)}"></span>${hEsc(c.label)}</td><td>${T().avg}${nF > 1 ? ` <small>(${nF} ${T().fsN})</small>` : ''}</td>${rkCell(X.avg[c.id], X.rAvg.map.get(c.id), X.rAvg.n, xf)}${relC(D.avgRel[c.id])}${rkCell(D.avgRk[c.id], D.rAvgRk.map.get(c.id), D.rAvgRk.n, v => num(v, 1))}${rkCell(D.avgAnn[c.id], D.rAvgAnn.map.get(c.id), D.rAvgAnn.n, pc2)}</tr>`
+          + (nF > 1 ? `<tr class="mavg w"><td class="mg"></td><td title="${T().avgWt}">${T().avgW} <span class="info" aria-hidden="true">i</span></td>${rkCell(X.avgW[c.id], X.rAvgW.map.get(c.id), X.rAvgW.n, xf)}${na}${na}${na}</tr>` : ''); }).join('');
+      const th = `<thead><tr><th>${T().thMgr}</th><th>${T().thFund}</th><th>${RMd === 'f' ? T().fsRetC : rmT(RMd)}</th><th>${T().fsRel}</th><th>${T().fsRankC}</th><th>${T().hAnnMC}</th></tr></thead>`;
+      return `<div class="fsset"><div class="group-h"><span class="fsh">${hEsc(groupLabel(g))}</span> <small>· ${D.fs.length} ${T().fsN}</small>${ik('ret')}${rmSeg}</div><div class="cap" id="c_${id('c')}">${cap}</div>`
+        + `<div class="scroll"><table class="mx fs fc" id="${id('c')}">${th}<tbody>${body}${medRow}<tr class="gap"><td colspan="6"></td></tr><tr class="ghd"><th colspan="6">${T().fsMgrAvg}</th></tr>${sum}</tbody></table></div>${rmNote}</div>`;
+    }
     const blk = (k, h, ik_, th, body, x = '', nt = '') => `<div><div class="group-h">${h}${ik(ik_)}${x}</div><div class="cap" id="c_${id(k)}">${cap}</div><div class="scroll"><table class="mx fs" id="${id(k)}">${th}<tbody>${body}</tbody></table></div>${nt}</div>`;
     return `<div class="fsset"><h3 class="fsh">${hEsc(groupLabel(g))} <small>· ${D.fs.length} ${T().fsN}</small></h3><div class="two">`
       + blk('ret', RMd === 'f' ? T().hRet : rmT(RMd), 'ret', head(`<th class="pm">${T().fsMedO}</th>`), ret, rmSeg, rmNote) + blk('rel', T().fsRel, 'relm', head(), rel)
       + blk('rank', T().fsRank, 'rank', head(), rank) + blk('ann', T().hAnnM, 'annm', head(), ann) + '</div></div>';
   }).join('');
-  DATA.groups.forEach(g => ['ret', 'rel', 'rank', 'ann'].forEach(k => XLB.set(`tFS_${g.id}_${k}`, async () => ({ sheets: XLSX_SHIM.toXL(fsBook([g])) }))));
-  $('nMarket').textContent = T().fsNote;
+  DATA.groups.forEach(g => ['ret', 'rel', 'rank', 'ann', 'c'].forEach(k => XLB.set(`tFS_${g.id}_${k}`, async () => ({ sheets: XLSX_SHIM.toXL(fsBook([g])) }))));
+  box.insertAdjacentHTML('afterbegin', `<div class="tools" style="margin:0 0 12px"><div class="seg" role="group" id="fsLay">${['c', 'm'].map(k => `<button type="button" data-fl="${k}" aria-pressed="${FS_LAY === k}">${k === 'c' ? T().fsLayC : T().fsLayM}</button>`).join('')}</div></div>`);
+  $('fsLay').onclick = e => { const b = e.target.closest('button'); if (!b) return; FS_LAY = b.dataset.fl; try { localStorage.setItem('fsLay', FS_LAY); } catch (er) {} renderMarket(); };
+  $('nMarket').textContent = FS_LAY === 'c' ? T().fsNoteC : T().fsNote;
   $('btnGx').textContent = T().gxBtn; $('btnMxl').textContent = '⤓ ' + T().mxl;
   { const gd = (MK.gxD || {})[MK.gxm]; $('nGx').hidden = !P.gx || gd == null; $('nGx').textContent = P.gx && gd != null ? T().gxNote(iso(gd)) : ''; }
   renderOverall();
@@ -741,6 +758,21 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
     rank.push(avgR(rank, '0.0'));
     const ann = [head(), ...grid(f => xlF(`${C}!L${R_(f)}`, cv(f, 11), '0.00%'))]; ann.push(avgR(ann, '0.00%'));
     const w = [{ wch: 44 }, ...D.cols.map(() => ({ wch: 12 })), { wch: 14 }];
+    if (FS_LAY === 'c') {                                // kompaktiška: tos pačios formulės, eilutė – fondas
+      const X = D.X || fsDisp(D, RMd), ord = fsOrd(D, X), cc = [[T().thMgr, T().thFund, RMd === 'f' ? T().fsRetC : rmT(RMd), T().fsRel, T().fsRankC, T().hAnnMC]];
+      const pos = {}, mg = f => D.cols.find(c => c.k === fsMgr(f.provider));
+      ord.forEach(f => { const k = D.fs.indexOf(f), i = ci(f) + 1; pos[f.provider] = cc.length + 1; cc.push([mg(f).label, labelOf(f.provider), ret[k + 1][i], rel[k + 1][i], rank[k + 1][i], ann[k + 1][i]]); });
+      const n1 = cc.length, cv2 = (r, c) => { const x = cc[r - 1][c]; return x && typeof x === 'object' ? x.v : null; };
+      const colMed = (c, L_) => { const xs = []; for (let r = 2; r <= n1; r++) if (cv2(r, c) !== null) xs.push(cv2(r, c)); return xs.length ? xlF(`MEDIAN(${L_}2:${L_}${n1})`, medianOf(xs), '0.00%') : null; };
+      cc.push([T().fsCatMed, '', colMed(2, 'C'), null, null, colMed(5, 'F')], []);
+      cc.push([T().fsMgrAvg]);
+      D.cols.forEach((c, i) => { const fs_ = ord.filter(f => mg(f) === c); if (!fs_.length) return;
+        const av = (col, k, z) => { const rs = fs_.map(f => pos[f.provider]).filter(r => cv2(r, k) !== null); return rs.length ? xlF(`AVERAGE(${rs.map(r => col + r).join(',')})`, meanOf(rs.map(r => cv2(r, k))), z) : null; };
+        cc.push([c.label, T().avg, av('C', 2, '0.00%'), av('D', 3, '0.00%'), av('E', 4, '0.0'), av('F', 5, '0.00%')]);
+        if (fs_.length > 1) cc.push([c.label, T().avgW, ret[n + 2][i + 1], null, null, null]); });
+      add(cc, `${nm} – ${L ? 'lentelė' : 'table'}`, [{ wch: 14 }, { wch: 44 }, { wch: 14 }, { wch: 16 }, { wch: 10 }, { wch: 14 }]);
+      return;
+    }
     add(ret, `${nm} – ${L ? 'grąža' : 'return'}`, w); add(rel, `${nm} – ${L ? 'palyg.' : 'relative'}`, w); add(rank, `${nm} – ${L ? 'vieta' : 'rank'}`, w); add(ann, `${nm} – ${L ? 'metinė' : 'annualized'}`, w);
   });
   add(calc, SC, [{ wch: 22 }, { wch: 12 }, { wch: 40 }, ...Array(hdr.length - 3).fill({ wch: 13 })]);
@@ -1901,6 +1933,10 @@ if (IS3) {                                              // „Visa rinka“: val
     addStrings({ ovCommonOn: 'Only where all the group’s managers take part', ovCommonNote: 'Younger funds take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all the group’s managers take part” keeps just the comparisons in which every manager with a fund in that group has a result for the period.' },
       { ovCommonOn: 'Tik kur dalyvauja visi grupės valdytojai', ovCommonNote: 'Jaunesni fondai dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi grupės valdytojai“ palieka tik tuos palyginimus, kuriuose rezultatą tam laikotarpiui turi kiekvienas valdytojas, turintis fondą toje grupėje.' });
     { const CAT = !PX || PX.c === 'LT';                  // Lietuvos III pakopa – kategorijos, LV/EE – grupės
+      addStrings({ fsLayC: 'Compact', fsLayM: 'Managers in columns', thMgr: 'Manager', fsRetC: 'Return', fsRankC: 'Rank', hAnnMC: 'Annualized return', fsCatMed: CAT ? 'Category median' : 'Group median', fsMgrAvg: 'Manager averages in the ' + (CAT ? 'category' : 'group'),
+        fsNoteC: 'Row = fund, sorted from the best return; the period is the one chosen above. Each fund is compared with all the other funds of its ' + (CAT ? 'category' : 'group') + ': rank 1 = highest return, “compared with the other funds” = the fund’s return minus the median return of the other funds. Below – each manager’s average of its funds (and asset-weighted, where it has several). “–” = the fund did not exist at the start of the period or has no fresh data.' },
+        { fsLayC: 'Kompaktiškai', fsLayM: 'Valdytojai stulpeliuose', thMgr: 'Valdytojas', fsRetC: 'Grąža', fsRankC: 'Vieta', hAnnMC: 'Metinė grąža', fsCatMed: CAT ? 'Kategorijos mediana' : 'Grupės mediana', fsMgrAvg: CAT ? 'Valdytojų vidurkiai kategorijoje' : 'Valdytojų vidurkiai grupėje',
+        fsNoteC: 'Eilutė – fondas, surikiuota nuo geriausios grąžos; laikotarpis – pasirinktas viršuje. Kiekvienas fondas lyginamas su visais kitais savo ' + (CAT ? 'kategorijos' : 'grupės') + ' fondais: vieta 1 – didžiausia grąža, „palyginimas su kitais fondais“ – fondo grąža minus kitų fondų grąžų medianos. Apačioje – kiekvieno valdytojo fondų vidurkis (ir svertinis pagal turtą, kai fondų keli). „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų.' });
       addStrings({ mkFund: CAT ? 'Each fund by category' : 'Each fund by group', mkFundXl: 'Every fund’s tables with the unit values used and Excel formulas', fsMedO: 'Median of others',
         fsRel: 'Compared with the other funds, pp', fsRank: CAT ? 'Rank in category (1 = best return)' : 'Rank in group (1 = best return)', fsN: 'funds',
         fsNote: CAT ? 'Row = fund, column = manager; the period is the one chosen above. Each fund is compared with all the other funds of its category: rank 1 = highest return, “compared with the other funds” = the fund’s return minus the median return of the other funds in the category. Average row: simple average of the manager’s funds in the category; asset-weighted row – weighted by the funds’ latest net assets. “–” = the fund did not exist at the start of the period or has no fresh data.'
