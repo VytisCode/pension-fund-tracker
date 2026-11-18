@@ -1,10 +1,3 @@
-iena: 2026-11-16
-SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
-SWEDBANK: jau atnaujinta iki 2026-11-16
-LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
-SEB: fondų puslapių nuorodos rastos 0: –
-SEB SEB index. Klimato ateitis: istorijos CSV 1270 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
-SEB SEB pensija 18+: istorijos CSV 5753 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 50+: istorijos CSV 1721 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 SEB SEB pensija 58+: istorijos CSV 5753 eil., tušti laukai (indeksas, aktyvai) papildyti 1 d.
 
@@ -238,4 +231,15 @@ SEB: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-17
 SWEDBANK: jau atnaujinta iki 2026-11-17
 LUMINOR: kitas bandymas vėliau (tarpas 75 min.)
 GOINDEX: jau atnaujinta iki 2026-11-17
+
+Vilnius: 2026-11-18 14:51, laukiama diena: 2026-11-17
+SEB: jau atnaujinta iki 2026-11-17
+SWEDBANK: jau atnaujinta iki 2026-11-17
+LUMINOR: gauta 8 eil., nauja/pakeista 8; viskas iki 2026-11-17
+GOINDEX: jau atnaujinta iki 2026-11-17
+
+III pakopa – Vilnius: 2026-11-18 14:51, laukiama diena: 2026-11-17
+SEB: jau atnaujinta iki 2026-11-17
+SWEDBANK: jau atnaujinta iki 2026-11-17
+LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-11-17
 
