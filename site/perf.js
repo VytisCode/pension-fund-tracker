@@ -552,7 +552,7 @@ function renderMarket() {
   });
   const awRank = rankOf(provs.map(p => ({ key: p.id, v: avgW[p.id] })));
   const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] }))), aaRank = rankOf(provs.map(p => ({ key: p.id, v: avgAnn[p.id] })));
-  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`;   // „%“ paslėptas (antraštėje „%“), lieka tekste
+  const pc2 = v => num(v, 2) + pctSfx();
   const na = '<td class="na">–</td>', gap = c => `<tr class="gap"><td colspan="${c}"></td></tr>`;
   const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
   const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
@@ -639,7 +639,7 @@ function renderFundM() {
   pcRender();
   const RMd = fsRm(), rmSeg = !fsRbOn() ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${(fsRbOn() && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f') === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`;
   $('hMarket').textContent = T().hMarket; $('mMarket').textContent = T().mMarket(periodText());
-  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`, na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
+  const pc2 = v => num(v, 2) + pctSfx(), na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
   const rkCell = (v, rank, n, f) => v === null || v === undefined ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
   box.innerHTML = DATA.groups.filter(g => g.id !== 'zz').map(g => {
     const D = fsData(g), id = k => `tFS_${g.id}_${k}`, nC = D.cols.length;
@@ -797,31 +797,37 @@ async function fsExport() {
   btn.disabled = false;
 }
 /* visos keturios „Visos rinkos“ lentelės viename paveikslėlyje (2 × 2), kaip puslapyje (savininkas 2026-11-12).
-   2026-11-19 (prezentacijoms): vienas bendras pavadinimas ir laikotarpis, vienodo pločio stulpeliai, eilutės ir antraštės sulygiuotos
-   tarp lentelių, vienas šaltinio parašas apačioje. */
-async function fourPng() {
+   2026-11-19 (prezentacijoms 16:9): bendras pavadinimas ir laikotarpis viršuje, keturi vienodo pločio langai, lentelės per visą langą
+   (vienodas pirmas stulpelis, vienodos eilutės ir antraštės), vienas šaltinio parašas apačioje. */
+async function fourPng(o = { fs: 12, fw: '400', ff: 'Arial, Helvetica, sans-serif' }) {   // langeliai – Arial 12 px, plonas (savininkas 2026-11-19: kaip Excel / PowerPoint)
   const tbs = ['tRet', 'tRelM', 'tRank', 'tAnnM'].map(id => $(id)), cs0 = getComputedStyle(document.documentElement), cv = k => cs0.getPropertyValue(k).trim();
   const font = getComputedStyle(document.body).fontFamily, txt = n => n ? n.textContent.replace(/\s+/g, ' ').trim() : '';
-  const hh = Math.max(...tbs.map(t => t.tHead ? t.tHead.getBoundingClientRect().height : 0));
-  const rws = tbs.map(t => [...t.tBodies[0].rows]), rh = [];
-  rws.forEach(rs => rs.forEach((r, i) => { rh[i] = Math.max(rh[i] || 0, r.getBoundingClientRect().height); }));
+  const BX = !!document.querySelector('.bxmk'), QW = BX ? 660 : 680, C0 = BX ? 190 : 124, RH = 19, HH = 28;
   const rb = $('hRet').querySelector('[data-rm][aria-pressed="true"]'), mo = $('mref').selectedOptions[0];
   const subs = [rb && rb.dataset.rm !== 'f' ? txt(rb) : '', mo ? txt(mo) : '', '', ''];
   const el = (tag, st, t) => { const e = document.createElement(tag); e.setAttribute('style', st); if (t != null) e.textContent = t; return e; };
-  const wrap = el('div', `display:inline-block;padding:20px 22px 14px;background:${cv('--card') || '#fff'};font-family:${font};color:${cv('--text')}`);
-  wrap.append(el('div', 'font-size:18px;font-weight:600;margin-bottom:2px;white-space:nowrap', txt($('hMarket'))),
-    el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:16px;white-space:nowrap`, txt($('c_tRet'))));
-  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:44px;row-gap:20px;align-items:start');
+  const wrap = el('div', `display:inline-block;padding:24px 28px 16px;background:${cv('--card') || '#fff'};font-family:${font};color:${cv('--text')}`);
+  wrap.append(el('div', 'font-size:20px;font-weight:600;margin-bottom:2px;white-space:nowrap', txt($('hMarket'))),
+    el('div', `font-size:13px;color:${cv('--text-2')};margin-bottom:14px;white-space:nowrap`, txt($('c_tRet'))));
+  const grid = el('div', `display:grid;grid-template-columns:${QW}px ${QW}px;column-gap:44px;row-gap:14px;align-items:start`);
   tbs.forEach((t, k) => {
     const c = tblClone(t);
-    if (c.tHead) [...c.tHead.rows].forEach(r => r.style.height = hh + 'px');
-    [...c.tBodies[0].rows].forEach((r, i) => { r.style.height = rh[i] + 'px'; });
-    c.style.width = 'auto';
+    c.style.width = QW + 'px'; c.style.tableLayout = 'fixed'; c.style.fontSize = (o.fs || 13) + 'px';
+    c.querySelectorAll('th, td').forEach(x => { x.style.minWidth = x.style.maxWidth = ''; x.style.width = x.cellIndex === 0 && x.colSpan === 1 ? C0 + 'px' : ''; x.style.whiteSpace = 'nowrap'; x.style.overflow = 'hidden'; x.style.lineHeight = '1.1'; x.style.paddingTop = x.style.paddingBottom = '0'; });
+    if (o.fw) c.querySelectorAll('tbody td').forEach(x => { if (x.cellIndex > 0) x.style.fontWeight = x.closest('tr.avg') ? '600' : o.fw; });
+    if (o.ff) c.querySelectorAll('td').forEach(x => { x.style.fontFamily = o.ff; });
+    c.querySelectorAll('td').forEach(x => { x.style.fontSize = (o.fs || 13) + 'px'; });
+    c.querySelectorAll('th').forEach(x => { x.style.fontSize = '12px'; x.style.paddingBottom = '3px'; });
+    c.querySelectorAll('.sw-top').forEach(x => { x.style.display = 'block'; x.style.height = '3px'; x.style.width = '24px'; x.style.borderRadius = '2px'; x.style.margin = '0 auto 3px'; });   // valdytojo spalva virš pavadinimo
+    if (c.tHead) [...c.tHead.rows].forEach(r => r.style.height = HH + 'px');
+    [...c.tBodies[0].rows].forEach(r => { if (!r.classList.contains('gap')) r.style.height = RH + 'px'; });
     const cell = el('div', '');
-    cell.append(el('div', 'font-size:14.5px;font-weight:600;white-space:nowrap', chartTitle(t)), el('div', `font-size:11.5px;color:${cv('--text-2')};height:16px;margin-bottom:6px;white-space:nowrap`, subs[k]), c);
+    const hd = el('div', 'font-size:14.5px;font-weight:600;white-space:nowrap;height:22px;margin-bottom:2px', chartTitle(t));
+    if (subs[k]) hd.append(el('span', `font-size:12px;font-weight:400;color:${cv('--text-2')};margin-left:10px`, subs[k]));   // pvz. „kiekvienas – su kitų penkių mediana“ toje pačioje eilutėje
+    cell.append(hd, c);
     grid.append(cell);
   });
-  wrap.append(grid, el('div', `font-size:11px;color:${cv('--text-3')};margin-top:12px;white-space:nowrap`, pngStamp(tbs[0])));
+  wrap.append(grid, el('div', `font-size:11.5px;color:${cv('--text-3')};margin-top:12px;white-space:nowrap`, pngStamp(tbs[0])));
   const host = el('div', 'position:absolute;left:-20000px;top:0'); host.append(wrap); document.body.append(host);
   const TW = Math.ceil(wrap.offsetWidth), TH = Math.ceil(wrap.offsetHeight); host.remove();
   wrap.style.width = TW + 'px'; wrap.style.height = TH + 'px'; wrap.style.boxSizing = 'border-box'; wrap.style.display = 'block';   // fonas per visą paveikslėlį
