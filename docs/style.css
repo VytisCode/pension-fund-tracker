@@ -1244,3 +1244,8 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 [data-design="v2"] .ixcg { font-size: 13px; font-weight: 600; color: var(--text-2); border-bottom: 1px solid var(--line); padding-bottom: 3px; } [data-design="v2"] .ixcg b { float: right; }
 [data-design="v2"] tr.ixdet td > .ixwrap { position: sticky; left: 8px; }
 [data-design="v2"] .ixcol li > span { display: inline-block; width: calc(100% - 64px); vertical-align: top; }
+/* „Kiekvienas fondas“ kompaktiška lentelė: vienodi stulpelių pločiai visose kategorijose (colgroup), LB stulpeliai – be spalvų (savininkas 2026-11-19) */
+.mx.fc { table-layout: fixed; max-width: none; } .mx.fc th { white-space: normal; vertical-align: bottom; line-height: 1.2; overflow-wrap: anywhere; } .mx.fc td { overflow: hidden; text-overflow: ellipsis; }
+.mx.fc td:first-child:not(.mg), .mx.fc td.mg + td { white-space: nowrap; max-width: none; min-width: 0; }
+.mx.fc td.fx { font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--text-1, inherit); text-align: right; white-space: nowrap; } .mx.fc th.fx { text-align: right; }
+.mx.fc .fx1 { border-left: 1px solid var(--border, rgba(127,127,127,.3)); }

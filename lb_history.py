@@ -256,6 +256,10 @@ def files():
         m = re.match(r"(iii|ii)-(\d{8})\.xlsx?$", p.name)
         if m:
             out[(m.group(1).upper(), m.group(2))] = p
+    for p in sorted(auto):                              # LB pataisytas failas (galūnė po datos, pvz. ..._20260930_.xlsx) – svarbiau už pradinį
+        m = re.search(r"(\d{8})_", p.name)
+        if m:
+            out[("II" if p.name.startswith("2") else "III", m.group(1))] = p
     return out
 
 

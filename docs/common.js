@@ -1,4 +1,4 @@
-var TR3V = {"lv": "e5264e29", "et": "6170ae45"};
+var TR3V = {"lv": "f34de893", "et": "bd58c096"};
 /* Bendras kodas visiems puslapiams: kalba, tema, antraštė, pagalbinės funkcijos, linijinė diagrama. */
 const DAY = 86400000;
 const hEsc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);

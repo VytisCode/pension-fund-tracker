@@ -635,6 +635,29 @@ function fsDisp(D, RMd) {                                // grąžos lentelės r
   const rr = o => rankOf(cols.map(c => ({ key: c.id, v: o[c.id] })));
   return { v, med, bx, rk: rankOf(D.fs.map(f => ({ key: f.provider, v: v[f.provider] }))), avg, avgW, rAvg: rr(avg), rAvgW: rr(avgW) };
 }
+/* „Kiekvienas fondas“ kompaktiškoje lentelėje – papildomi stulpeliai (savininkas 2026-11-19): iš naujausio LB III pakopos rezultatų failo
+   (veiklos laikotarpis, rizikingų aktyvų dalis – kaip LB skelbia, t. y. taisyklių riba „iki 100“, grynieji aktyvai, dalyviai) ir faktinė akcijų dalis
+   pro fondus (LB portfeliai + Morningstar, data_pf lt mix_eq). Tik Lietuvos III pakopa (build_site p3_facts); LV/EE šių duomenų čia nėra – nerodoma. */
+addStrings({ fxYrs: 'Operating period', fxRisky: 'Risky assets share (LB), %', fxNav: 'Net assets, € m', fxPart: 'Participants', fxEq: 'Actual equity share, %',
+  fxRiskyT: 'Bank of Lithuania column “Share of risky assets in the fund (share of investments in equities), %”: the limit set in the fund rules (e.g. “up to 100”), not the actual share.',
+  fxEqT: 'Actual share of equities at quarter end: directly held shares plus equities inside the funds and ETFs held (Bank of Lithuania portfolios, Morningstar fund composition).',
+  fxY: (y, m) => (y ? y + ' y' : '') + (y && m ? ' ' : '') + (m ? m + ' m' : ''), fxUpTo: 'up to',
+  fxNote: (a, b) => `Operating period, risky assets share, net assets and participants – Bank of Lithuania III pillar results ${a}; the risky assets share is the limit in the fund rules as published by the Bank of Lithuania, not the actual share. Actual equity share – Bank of Lithuania portfolios ${b} looked through the funds and ETFs held (© Morningstar).` },
+{ fxYrs: 'Veiklos laikotarpis', fxRisky: 'Rizikingų aktyvų dalis (LB), %', fxNav: 'Grynieji aktyvai, mln. €', fxPart: 'Dalyviai', fxEq: 'Faktinė akcijų dalis, %',
+  fxRiskyT: 'Lietuvos banko stulpelis „Rizikingų aktyvų dalis fonde (investicijų į akcijas dalis), proc.“: fondo taisyklėse nustatyta riba (pvz. „iki 100“), ne faktinė dalis.',
+  fxEqT: 'Faktinė akcijų dalis ketvirčio pabaigoje: tiesiogiai turimos akcijos ir akcijos turimų fondų bei ETF viduje (Lietuvos banko portfeliai, fondų sudėtis – Morningstar).',
+  fxY: (y, m) => (y ? y + ' m.' : '') + (y && m ? ' ' : '') + (m ? m + ' mėn.' : ''), fxUpTo: 'iki',
+  fxNote: (a, b) => `Veiklos laikotarpis, rizikingų aktyvų dalis, grynieji aktyvai ir dalyviai – Lietuvos banko III pakopos rezultatai ${a}; rizikingų aktyvų dalis – fondo taisyklėse nustatyta riba, kaip ją skelbia Lietuvos bankas, ne faktinė dalis. Faktinė akcijų dalis – Lietuvos banko portfeliai ${b}, išskaidžius turimus fondus ir ETF (© Morningstar).` });
+addStrings3({ fxYrs: 'Darbības periods', fxRisky: 'Riskanto aktīvu daļa (LB), %', fxNav: 'Neto aktīvi, milj. €', fxPart: 'Dalībnieki', fxEq: 'Faktiskā akciju daļa, %', fxY: (y, m) => (y ? y + ' g.' : '') + (y && m ? ' ' : '') + (m ? m + ' mēn.' : ''), fxUpTo: 'līdz' },
+  { fxYrs: 'Tegevusaeg', fxRisky: 'Riskantsete varade osa (LB), %', fxNav: 'Puhasvara, mln €', fxPart: 'Osalejad', fxEq: 'Tegelik aktsiate osa, %', fxY: (y, m) => (y ? y + ' a' : '') + (y && m ? ' ' : '') + (m ? m + ' k' : ''), fxUpTo: 'kuni' });
+const FX = () => !DATA.lb && !DATA.eq ? [] : [
+  ...(DATA.lb ? [
+    { h: () => T().fxYrs, xh: () => T().fxYrs + (lang === 'lt' ? ', metai' : ', years'), v: f => (DATA.lb.f[f.code] || [])[0] ?? null, d: v => { const m = Math.round(v * 12); return T().fxY(Math.floor(m / 12), m % 12); }, z: '0.00' },
+    { h: () => T().fxRisky, t: () => T().fxRiskyT, v: f => (DATA.lb.f[f.code] || [])[1] ?? null, d: v => typeof v === 'number' ? num(v, 0) : String(v).replace(/^iki\b/, T().fxUpTo) },
+    { h: () => T().fxNav, v: f => (DATA.lb.f[f.code] || [])[2] ?? null, d: v => num(v, 1), z: '#,##0.000000' },
+    { h: () => T().fxPart, v: f => (DATA.lb.f[f.code] || [])[3] ?? null, d: v => num(v, 0), z: '#,##0' }] : []),
+  ...(DATA.eq ? [{ h: () => T().fxEq, t: () => T().fxEqT, v: f => DATA.eq.f[f.code] ?? null, d: v => num(v, 1), x: v => v / 100, z: '0.0%' }] : [])];
+const fxNote = () => DATA.lb || DATA.eq ? T().fxNote(DATA.lb ? DATA.lb.d : '–', DATA.eq ? DATA.eq.d : '–') : '';
 function renderFundM() {
   pcRender();
   const RMd = fsRm(), rmSeg = !fsRbOn() ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${(fsRbOn() && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f') === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`;
@@ -662,14 +685,18 @@ function renderFundM() {
     const cap = spanText(per, [D.rng]);
     if (FS_LAY === 'c') {                                // kompaktiška: eilutė – fondas, stulpeliai – rodikliai; apačioje valdytojų vidurkiai
       const mc = f => { const c = D.cols.find(x => x.k === fsMgr(f.provider)); return `<td class="mg"><span class="sw" style="background:${colorOf(c.id)}"></span>${hEsc(c.label)}</td>`; };
-      const AL = fsAnnL(D.rng), nCol = AL ? 5 : 4;
+      const AL = fsAnnL(D.rng), fx = FX();
+      const fxC = f => fx.map((c, i) => { const v = c.v(f); return `<td class="fx${i ? '' : ' fx1'}">${v === null ? '–' : hEsc(c.d(v))}</td>`; }).join('');
       const body = fsOrd(D, X).map(f => { const k = D.rk.map.get(f.provider);
-        return `<tr>${mc(f)}<td title="${hEsc(labelOf(f.provider))}">${hEsc(fsShort(labelOf(f.provider)))}</td>${rkCell(X.v[f.provider], X.rk.map.get(f.provider), X.rk.n, xf)}${k ? `<td class="${rkClass(k, D.rk.n)}">${k}</td>` : na}${AL ? rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2) : ''}</tr>`; }).join('');
+        return `<tr>${mc(f)}<td title="${hEsc(labelOf(f.provider))}">${hEsc(fsShort(labelOf(f.provider)))}</td>${rkCell(X.v[f.provider], X.rk.map.get(f.provider), X.rk.n, xf)}${k ? `<td class="${rkClass(k, D.rk.n)}">${k}</td>` : na}${AL ? rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2) : ''}${fxC(f)}</tr>`; }).join('');
       const xmed = medianOf(D.fs.map(f => X.v[f.provider])), amed = medianOf(D.fs.map(f => D.ann[f.provider]));
-      const medRow = `<tr class="avg"><td colspan="2">${T().fsCatMed}</td>${xmed === null ? na : `<td class="pm">${xf(xmed)}</td>`}${na}${!AL ? '' : amed === null ? na : `<td class="pm">${pc2(amed)}</td>`}</tr>`;
-      const th = `<thead><tr><th>${T().thMgr}</th><th>${T().thFund}</th><th>${RMd === 'f' ? T().fsRetC : rmT(RMd)}</th><th>${T().fsRankC}</th>${AL ? `<th>${AL}</th>` : ''}</tr></thead>`;
+      const medRow = `<tr class="avg"><td colspan="2">${T().fsCatMed}</td>${xmed === null ? na : `<td class="pm">${xf(xmed)}</td>`}${na}${!AL ? '' : amed === null ? na : `<td class="pm">${pc2(amed)}</td>`}${fx.map((c, i) => `<td class="fx${i ? '' : ' fx1'}"></td>`).join('')}</tr>`;
+      // vienodas stulpelių plotis visose kategorijų lentelėse (savininkas 2026-11-19): fiksuoti pločiai, ne pagal turinį
+      const cw = [112, 236, 86, 62, ...(AL ? [112] : []), ...fx.map((c, i) => [112, 116, 104, 88, 104][i] || 100)];
+      const cg = `<colgroup>${cw.map(w => `<col style="width:${w}px">`).join('')}</colgroup>`;
+      const th = `${cg}<thead><tr><th>${T().thMgr}</th><th>${T().thFund}</th><th>${RMd === 'f' ? T().fsRetC : rmT(RMd)}</th><th>${T().fsRankC}</th>${AL ? `<th>${AL}</th>` : ''}${fx.map((c, i) => `<th class="fx${i ? '' : ' fx1'}"${c.t ? ` title="${hEsc(c.t())}"` : ''}>${hEsc(c.h())}${c.t ? ' <span class="info" aria-hidden="true">i</span>' : ''}</th>`).join('')}</tr></thead>`;
       return `<div class="fsset"><div class="group-h"><span class="fsh">${hEsc(groupLabel(g))}</span> <small>· ${D.fs.length} ${T().fsN}</small>${ik('ret')}${rmSeg}</div><div class="cap" id="c_${id('c')}">${cap}</div>`
-        + `<div class="scroll"><table class="mx fs fc" id="${id('c')}">${th}<tbody>${body}${medRow}</tbody></table></div>${rmNote}</div>`;
+        + `<div class="scroll"><table class="mx fs fc" id="${id('c')}" style="width:${cw.reduce((a, b) => a + b, 0)}px">${th}<tbody>${body}${medRow}</tbody></table></div>${rmNote}</div>`;
     }
     const blk = (k, h, ik_, th, body, x = '', nt = '') => `<div><div class="group-h">${h}${ik(ik_)}${x}</div><div class="cap" id="c_${id(k)}">${cap}</div><div class="scroll"><table class="mx fs" id="${id(k)}">${th}<tbody>${body}</tbody></table></div>${nt}</div>`;
     return `<div class="fsset"><h3 class="fsh">${hEsc(groupLabel(g))} <small>· ${D.fs.length} ${T().fsN}</small></h3><div class="two">`
@@ -680,6 +707,7 @@ function renderFundM() {
   box.insertAdjacentHTML('afterbegin', `<div class="tools" style="margin:0 0 12px"><div class="seg" role="group" id="fsLay">${['c', 'm'].map(k => `<button type="button" data-fl="${k}" aria-pressed="${FS_LAY === k}">${k === 'c' ? T().fsLayC : T().fsLayM}</button>`).join('')}</div></div>`);
   $('fsLay').onclick = e => { const b = e.target.closest('button'); if (!b) return; FS_LAY = b.dataset.fl; try { localStorage.setItem('fsLay', FS_LAY); } catch (er) {} renderMarket(); };
   $('nMarket').textContent = FS_LAY === 'c' ? T().fsNoteC : T().fsNote;
+  if (FS_LAY === 'c' && fxNote()) box.insertAdjacentHTML('beforeend', `<p class="note">${hEsc(fxNote())}</p>`);
   $('btnGx').textContent = T().gxBtn; $('btnMxl').textContent = '⤓ ' + T().mxl;
   { const gd = (MK.gxD || {})[MK.gxm]; $('nGx').hidden = !P.gx || gd == null; $('nGx').textContent = P.gx && gd != null ? T().gxNote(iso(gd)) : ''; }
   renderOverall();
@@ -761,13 +789,15 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
     const ann = [head(), ...grid(f => xlF(`${C}!L${R_(f)}`, cv(f, 11), '0.00%'))]; ann.push(avgR(ann, '0.00%'));
     const w = [{ wch: 44 }, ...D.cols.map(() => ({ wch: 12 })), { wch: 14 }];
     if (FS_LAY === 'c') {                                // kompaktiška: tos pačios formulės, eilutė – fondas
-      const AL = fsAnnL(D.rng), X = D.X || fsDisp(D, RMd), ord = fsOrd(D, X), cc = [[T().thMgr, T().thFund, RMd === 'f' ? T().fsRetC : rmT(RMd), T().fsRankC, ...(AL ? [AL] : [])]];
+      const AL = fsAnnL(D.rng), X = D.X || fsDisp(D, RMd), ord = fsOrd(D, X), fx = FX(), cc = [[T().thMgr, T().thFund, RMd === 'f' ? T().fsRetC : rmT(RMd), T().fsRankC, ...(AL ? [AL] : []), ...fx.map(c => (c.xh || c.h)())]];
       const pos = {}, mg = f => D.cols.find(c => c.k === fsMgr(f.provider));
-      ord.forEach(f => { const k = D.fs.indexOf(f), i = ci(f) + 1; pos[f.provider] = cc.length + 1; cc.push([mg(f).label, labelOf(f.provider), ret[k + 1][i], rank[k + 1][i], ...(AL ? [ann[k + 1][i]] : [])]); });
+      const fxX = f => fx.map(c => { const v = c.v(f); return v === null ? null : typeof v === 'number' && c.z ? { t: 'n', v: c.x ? c.x(v) : v, z: c.z } : v; });   // tikslios LB / portfelių reikšmės
+      ord.forEach(f => { const k = D.fs.indexOf(f), i = ci(f) + 1; pos[f.provider] = cc.length + 1; cc.push([mg(f).label, labelOf(f.provider), ret[k + 1][i], rank[k + 1][i], ...(AL ? [ann[k + 1][i]] : []), ...fxX(f)]); });
       const n1 = cc.length, cv2 = (r, c) => { const x = cc[r - 1][c]; return x && typeof x === 'object' ? x.v : null; };
       const colMed = (c, L_) => { const xs = []; for (let r = 2; r <= n1; r++) if (cv2(r, c) !== null) xs.push(cv2(r, c)); return xs.length ? xlF(`MEDIAN(${L_}2:${L_}${n1})`, medianOf(xs), '0.00%') : null; };
       cc.push([T().fsCatMed, '', colMed(2, 'C'), null, ...(AL ? [colMed(4, 'E')] : [])]);
-      add(cc, `${nm} – ${L ? 'lentelė' : 'table'}`, [{ wch: 14 }, { wch: 44 }, { wch: 14 }, { wch: 10 }, { wch: 26 }]);
+      if (fx.length) cc.push([], [fxNote()]);
+      add(cc, `${nm} – ${L ? 'lentelė' : 'table'}`, [{ wch: 14 }, { wch: 44 }, { wch: 14 }, { wch: 10 }, ...(AL ? [{ wch: 26 }] : []), ...fx.map(() => ({ wch: 18 }))]);
       return;
     }
     add(ret, `${nm} – ${L ? 'grąža' : 'return'}`, w); add(rel, `${nm} – ${L ? 'palyg.' : 'relative'}`, w); add(rank, `${nm} – ${L ? 'vieta' : 'rank'}`, w); add(ann, `${nm} – ${L ? 'metinė' : 'annualized'}`, w);
@@ -1973,16 +2003,14 @@ if (IS3) {                                              // „Visa rinka“: val
         fsRel: 'Palyginimas su kitais fondais, p. p.', fsRank: CAT ? 'Vieta kategorijoje (1 = geriausia grąža)' : 'Vieta grupėje (1 = geriausia grąža)', fsN: 'fondai',
         fsNote: CAT ? 'Eilutė – fondas, stulpelis – valdytojas; laikotarpis – pasirinktas viršuje. Kiekvienas fondas lyginamas su visais kitais savo kategorijos fondais: vieta 1 – didžiausia grąža, „palyginimas su kitais fondais“ – fondo grąža minus kitų tos kategorijos fondų grąžų medianos. Vidurkio eilutė – paprastas valdytojo fondų kategorijoje vidurkis; svertinio – pasvertas pagal fondų paskutinius grynuosius aktyvus. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų.'
           : 'Eilutė – fondas, stulpelis – valdytojas; laikotarpis – pasirinktas viršuje. Kiekvienas fondas lyginamas su visais kitais savo grupės fondais: vieta 1 – didžiausia grąža, „palyginimas su kitais fondais“ – fondo grąža minus kitų tos grupės fondų grąžų medianos. Vidurkio eilutė – paprastas valdytojo fondų grupėje vidurkis; svertinio – pasvertas pagal fondų paskutinius grynuosius aktyvus. „–“ = fondo laikotarpio pradžioje dar nebuvo arba nėra naujų duomenų.' }); }
-    const seg = document.createElement('div'); seg.className = 'seg'; seg.id = 'mkMode'; seg.setAttribute('role', 'group');
-    seg.innerHTML = '<button type="button" data-v="fund"></button><button type="button" data-v="all"></button><button type="button" data-v="big"></button>';
-    $('btnGx').before(seg);
-    seg.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; MK.mode = b.dataset.v; try { localStorage.setItem('bxMkMode2', MK.mode); } catch (er) {} renderMarket(); });
+    // „Visi valdytojo fondai“ ir „Didžiausias fondas“ mygtukai išimti (savininkas 2026-11-19: „nelabai naudingi, nereikalingi“) – lieka tik „Kiekvienas fondas“;
+    // galioja ir LV/EE (tas pats kodas). Valdytojų vaizdo kodas (mkBuild all/big) paliktas – juo dar naudojasi „Pradžia“ (gxUi) ir bendras reitingas.
+    MK.mode = 'fund';
     const rm = renderMarket, ro = renderOverall, xm = exportMarketXlsx, ox = XLB.get('tOv');
     renderMarket = () => { const FM = MK.mode === 'fund', grid = $('mGrid');
       grid.classList.toggle('one', FM); ['btnM4png', 'btnM4cp'].forEach(id => { const e = $(id); if (e) e.hidden = FM; });   // keturių lentelių paveikslėlis – ne šiam vaizdui
       grid.querySelectorAll(':scope > [data-m]').forEach(d => { d.hidden = (d.dataset.m === 'fund') !== FM; });
       if (FM) { MK.mode = 'all'; withMk(MK.gxUi); MK.mode = 'fund'; renderFundM(); } else withMk(() => { MK.gxUi(); rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode]; });
-      $('mkMode').querySelectorAll('button').forEach(b => { b.textContent = b.dataset.v === 'all' ? T().mkAll : b.dataset.v === 'fund' ? T().mkFund : T().mkBig; b.setAttribute('aria-pressed', String(b.dataset.v === MK.mode)); });
       const xb = $('btnMxl'); xb.disabled = MK.mode === 'all'; xb.title = MK.mode === 'all' ? T().mkXl : MK.mode === 'fund' ? T().mkFundXl : T().mxlTip; };
     renderOverall = () => withMk(ro);
     exportMarketXlsx = () => MK.mode === 'fund' ? fsExport() : withMkA(xm);

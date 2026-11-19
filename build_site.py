@@ -765,6 +765,34 @@ def build_indexes() -> None:
     print(f"docs/data_idx.js: {sum(len(x['v']) for x in out.values())} reikšmių")
 
 
+def p3_facts(codes: set) -> dict:
+    """„Kiekvienas fondas pagal kategoriją“ papildomi stulpeliai (savininkas 2026-11-19), naujausio ketvirčio:
+    lb – iš LB III pakopos rezultatų failo (data/lb_results_history.csv): [veiklos laikotarpis m., rizikingų aktyvų dalis
+    kaip LB rašo (taisyklių riba, pvz. „iki 100“), grynieji aktyvai mln. €, dalyviai];
+    eq – faktinė akcijų dalis pro fondus (data/lookthrough.csv mix_eq: LB portfeliai + Morningstar)."""
+    out = {}
+    path = ROOT / "data" / "lb_results_history.csv"
+    if path.exists():
+        rows = [r for r in csv.DictReader(path.open(encoding="utf-8", newline=""))
+                if r["pillar"] == "III" and r["kind"] == "fund" and r["code"] in codes]
+        if rows:
+            d = max(r["date"] for r in rows)
+            fl = lambda x: float(x) if x not in ("", None) else None
+            rk = lambda x: (int(float(x)) if float(x).is_integer() else float(x)) if re.fullmatch(r"[\d.]+", x or "") else (x or None)
+            out["lb"] = {"d": d, "f": {r["code"]: [fl(r["years"]), rk(r["risky"]), fl(r["nav_meur"]), fl(r["participants"])]
+                                       for r in rows if r["date"] == d}}
+    path = ROOT / "data" / "lookthrough.csv"
+    if path.exists():
+        eq = {}
+        for r in csv.DictReader(path.open(encoding="utf-8", newline="")):
+            if r["metric"] == "mix_eq" and r["fund_code"] in codes:
+                eq.setdefault(r["date"], {})[r["fund_code"]] = float(r["value"])
+        if eq:
+            d = max(eq)
+            out["eq"] = {"d": d, "f": eq[d]}
+    return out
+
+
 def build_pillar3(ver: dict) -> None:
     """III pakopos polapis: docs/data3.js iš data/pillar3_history.csv + site/pillar3.html, site/p3.js."""
     import pillar3
@@ -798,6 +826,7 @@ def build_pillar3(ver: dict) -> None:
         "generated": datetime.now(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M"),
         "providers": providers,
         "groups": [{"id": gid, "funds": funds} for gid, funds in groups.items()],
+        **p3_facts({c for _, _, _, c, _ in pillar3.FUNDS}),
     }
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data3.js").write_text(data_js, encoding="utf-8")
