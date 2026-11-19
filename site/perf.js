@@ -552,7 +552,7 @@ function renderMarket() {
   });
   const awRank = rankOf(provs.map(p => ({ key: p.id, v: avgW[p.id] })));
   const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] }))), aaRank = rankOf(provs.map(p => ({ key: p.id, v: avgAnn[p.id] })));
-  const pc2 = v => num(v, 2) + pctSfx();
+  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`;   // „%“ paslėptas (antraštėje „%“), lieka tekste
   const na = '<td class="na">–</td>', gap = c => `<tr class="gap"><td colspan="${c}"></td></tr>`;
   const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
   const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
@@ -639,7 +639,7 @@ function renderFundM() {
   pcRender();
   const RMd = fsRm(), rmSeg = !fsRbOn() ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${(fsRbOn() && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f') === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`;
   $('hMarket').textContent = T().hMarket; $('mMarket').textContent = T().mMarket(periodText());
-  const pc2 = v => num(v, 2) + pctSfx(), na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
+  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`, na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
   const rkCell = (v, rank, n, f) => v === null || v === undefined ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
   box.innerHTML = DATA.groups.filter(g => g.id !== 'zz').map(g => {
     const D = fsData(g), id = k => `tFS_${g.id}_${k}`, nC = D.cols.length;
@@ -811,7 +811,7 @@ async function fourPng() {
   const wrap = el('div', `display:inline-block;padding:20px 22px 14px;background:${cv('--card') || '#fff'};font-family:${font};color:${cv('--text')}`);
   wrap.append(el('div', 'font-size:18px;font-weight:600;margin-bottom:2px;white-space:nowrap', txt($('hMarket'))),
     el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:16px;white-space:nowrap`, txt($('c_tRet'))));
-  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:40px;row-gap:22px;align-items:start');
+  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:44px;row-gap:20px;align-items:start');
   tbs.forEach((t, k) => {
     const c = tblClone(t);
     if (c.tHead) [...c.tHead.rows].forEach(r => r.style.height = hh + 'px');
