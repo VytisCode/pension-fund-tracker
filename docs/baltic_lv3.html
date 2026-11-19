@@ -7,7 +7,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Latvija · III pakopa · Pensijų fondų sekimas</title>
 <meta name="description" content="Performance analysis and peer comparison of Lithuanian second-pillar pension funds">
-<link rel="stylesheet" href="style.css?v=4eef0dce">
+<link rel="stylesheet" href="style.css?v=84a12fac">
 </head>
 <body>
 <div class="wrap">
@@ -133,13 +133,13 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data_bx_lv3.js?v=25246b1e"></script><script>var PL3 = 1, PLX = {"c": "LV", "pl": "III", "page": "baltic_lv3", "ppy": 248.3, "stale": 5}, ASSETS_SRC = "assets_bx_lv3.js"; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_lv3.js?v=a4f59589"></script><script>var PL3 = 1, PLX = {"c": "LV", "pl": "III", "page": "baltic_lv3", "ppy": 248.3, "stale": 5}, ASSETS_SRC = "assets_bx_lv3.js"; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="data_idx.js?v=a601a6b1"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
 
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=e5241a3a"></script>
-<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {}); }</script><script src="perf.js?v=d6531da8"></script>
+<script src="common.js?v=e38482ad"></script>
+<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {}); }</script><script src="perf.js?v=6492e596"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');
