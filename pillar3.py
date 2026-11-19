@@ -181,6 +181,8 @@ def table_rows(page) -> list:
     return out
 
 
+FIX_DAYS = 60   # tiek paskutinių dienų vieneto vertes galima pataisyti pagal oficialią SEB istoriją
+CORR = []   # pataisymai -> data/corrections.csv
 DIAG = []   # papildomi pranešimai žurnalui (pvz. SEB lyginamojo indekso atsisiuntimas)
 
 
@@ -225,10 +227,14 @@ def parse_seb_ltdata(html: str, fund: str) -> list:
 
 def fetch_seb_history(page, links: dict) -> list:
     """Kiekvieno SEB III pakopos fondo puslapyje (FUND_DETAILS) perskaito „Istorinės fondo vieneto vertės“ duomenis (ltdata)
-    ir grąžina eilutes tik tuščiam lyginamajam indeksui užpildyti (esamos vieneto vertės neperrašomos)
-    ir trūkstamoms dienoms. Lyginamasis indeksas reikalingas KID scenarijams (kid_scenarios.py)."""
+    ir grąžina eilutes tuštiems laukams (lyginamasis indeksas, aktyvai) ir trūkstamoms dienoms užpildyti.
+    Lyginamasis indeksas reikalingas KID scenarijams (kid_scenarios.py).
+    Vieneto vertė: SEB istorija – oficialus šaltinis. Jei per paskutines FIX_DAYS dienas mūsų vertė skiriasi
+    (2026-11-17 sąraše buvo nauja data su praėjusios dienos vertėmis), ji pataisoma ir įrašoma į data/corrections.csv.
+    Senesnės vertės neperrašomos (taisyklė 6) – skirtumai tik pranešami žurnale."""
     existing = load()
     out = []
+    fix_from = (u.today_vilnius() - timedelta(days=FIX_DAYS)).isoformat()
     for fund, href in links.items():
         try:
             page.goto(urllib.parse.urljoin(fund_links.SEB_BASE, href), wait_until="domcontentloaded", timeout=90000)
@@ -239,17 +245,29 @@ def fetch_seb_history(page, links: dict) -> list:
             if not recs:
                 DIAG.append(f"SEB {fund}: puslapyje nerasta istorijos duomenų (ltdata)")
                 continue
-            filled = 0
+            filled = fixed = older = 0
             for r in recs:
                 old = existing.get((r["date"], fund))
+                if old and abs(float(old["unit_value"]) - r["unit_value"]) > 0.00005:
+                    if r["date"] >= fix_from:
+                        out.append({**r, "_official": True, "net_assets": old.get("net_assets") or r["net_assets"],
+                                    "benchmark_index": old.get("benchmark_index") or r["benchmark_index"]})
+                        CORR.append({"date": r["date"], "fund": fund, "old": old["unit_value"], "new": r["unit_value"],
+                                     "source": "SEB FUND_DETAILS ltdata"})
+                        fixed += 1
+                    else:
+                        older += 1
+                    continue
                 # pildomi tik tušti laukai (lyginamasis indeksas, grynieji aktyvai); esama vieneto vertė neperrašoma
                 if old and ((not old.get("benchmark_index") and r["benchmark_index"]) or (not old.get("net_assets") and r["net_assets"])):
                     out.append({**r, "unit_value": float(old["unit_value"]), "net_assets": old.get("net_assets") or r["net_assets"],
                                 "benchmark_index": old.get("benchmark_index") or r["benchmark_index"]})
                     filled += 1
                 elif not old:
-                    out.append(r)
-            DIAG.append(f"SEB {fund}: istorijos CSV {len(recs)} eil., tušti laukai (indeksas, aktyvai) papildyti {filled} d.")
+                    out.append({**r, "_official": True})
+            DIAG.append(f"SEB {fund}: istorijos CSV {len(recs)} eil., tušti laukai (indeksas, aktyvai) papildyti {filled} d."
+                        + (f"; vieneto vertė pataisyta pagal SEB istoriją {fixed} d." if fixed else "")
+                        + (f"; senesnių nei {FIX_DAYS} d. neatitikimų (neperrašyta): {older}" if older else ""))
         except Exception as exc:  # noqa: BLE001
             DIAG.append(f"SEB {fund}: istorijos CSV klaida – {str(exc)[:200]}")
     return out
@@ -289,8 +307,8 @@ def fetch_seb() -> list:
         for n, href in fund_links.SEB_III_DETAILS.items():   # trūkstamos – iš žinomų nuorodų
             links.setdefault(n, href)
         hist = fetch_seb_history(page, links)
-        have = {(r["date"], r["fund"]) for r in rows}
-        return rows + [r for r in hist if (r["date"], r["fund"]) not in have]
+        have = {(r["date"], r["fund"]) for r in hist}      # oficiali istorija svarbesnė už sąrašo lentelę
+        return hist + [r for r in rows if (r["date"], r["fund"]) not in have]
     finally:
         browser.close()
         pw.stop()
@@ -401,7 +419,10 @@ def missing(existing: dict, provider: str, expected: date) -> list:
 def accept(provider: str, rows: list, existing: dict, log: list, full_history: bool = False) -> list:
     today = u.today_vilnius().isoformat()
     out = []
+    stale = set() if full_history else u.stale_batch([r for r in rows if not r.get("_official")], existing, log)
     for r in rows:
+        if (r["date"], r["fund"]) in stale:
+            continue
         if not r["date"] or r["date"] > today or not r["unit_value"] or r["unit_value"] <= 0:
             log.append(f"  ! {r['fund']}: netinkama eilutė {r['date']} {r['unit_value']} – praleista")
             continue
@@ -416,7 +437,7 @@ def accept(provider: str, rows: list, existing: dict, log: list, full_history: b
         for col in ("net_assets", "benchmark_index"):      # kasdienis rinkimas jų neturi – paliekame turimas reikšmes
             if old and old.get(col) and not r.get(col):
                 r = {**r, col: old[col]}
-        out.append(r)
+        out.append({k: v for k, v in r.items() if k != "_official"})
     return out
 
 
@@ -457,6 +478,12 @@ def run(providers: dict, browser: bool) -> None:
             continue
         good = accept(provider, rows, existing, log, full_history=provider == "ARTEA")
         changed = save(good)
+        if CORR:
+            saved = {(g["date"], g["fund"]) for g in good}
+            fixes = [c for c in CORR if (c["date"], c["fund"]) in saved]
+            u.record_corrections(fixes)
+            log += [f"  pataisyta pagal oficialią istoriją: {c['fund']} {c['date']} {c['old']} → {c['new']}" for c in fixes]
+            CORR.clear()
         existing = load()
         still = missing(existing, provider, expected)
         log.append(f"{provider}: gauta {len(rows)} eil., nauja/pakeista {changed}; "

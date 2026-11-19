@@ -231,14 +231,61 @@ def too_soon(state: dict, provider: str) -> bool:
 
 
 # --------------------------------------------------------------------------- įrašymas
+CORRECTIONS = Path(__file__).parent / "data" / "corrections.csv"
+
+
+def stale_batch(rows: list, existing: dict, log: list, min_funds: int = 3) -> set:
+    """Apsauga nuo „pasenusios“ dienos (2026-11-18 SEB III, 2026-10-08 SEB II): valdytojo sąraše jau rodoma nauja
+    data, bet vieneto vertės – dar praėjusios dienos. Jei darbo dieną VISŲ (bent min_funds) valdytojo fondų nauja
+    vertė lygiai tokia pati kaip paskutinė įrašyta, tokios eilutės neįrašomos (bus paimtos kitu bandymu / iš istorijos).
+    Didysis penktadienis – išimtis (užsienio biržos uždarytos, vertės iš tiesų nesikeičia). Grąžina {(data, fondas)}."""
+    by_day = {}
+    for r in rows:
+        if (r["date"], r["fund"]) not in existing and r.get("unit_value"):
+            by_day.setdefault(r["date"], []).append(r)
+    bad = set()
+    for day, rs in by_day.items():
+        d = date.fromisoformat(day)
+        if not is_business_day(d) or d == easter(d.year) - timedelta(days=2) or len(rs) < min_funds:
+            continue
+        same = 0
+        for r in rs:
+            prev = [x for (dd, f), x in existing.items() if f == r["fund"] and dd < day]
+            if prev and abs(float(max(prev, key=lambda x: x["date"])["unit_value"]) - float(r["unit_value"])) < 1e-9:
+                same += 1
+        if same == len(rs):
+            log.append(f"  ! {day}: visų {len(rs)} fondų vertės lygiai tokios pat kaip ankstesnę dieną – "
+                       "tikėtina, kad valdytojas dar neatnaujino; neįrašoma")
+            bad |= {(day, r["fund"]) for r in rs}
+    return bad
+
+
+def record_corrections(items: list) -> None:
+    """Oficialios istorijos pataisytos vieneto vertės – papildomas žurnalas data/corrections.csv (skaidrumui)."""
+    if not items:
+        return
+    import csv
+    new = not CORRECTIONS.exists()
+    with open(CORRECTIONS, "a", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        if new:
+            w.writerow(["ts", "date", "fund", "old_unit_value", "new_unit_value", "source"])
+        ts = datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
+        for it in items:
+            w.writerow([ts, it["date"], it["fund"], it["old"], it["new"], it["source"]])
+
+
 def commit_rows(provider: str, new_rows: list, existing: dict, expected: date, log: list) -> int:
     """Patikrina eilutes ir įrašo. Grąžina nauja/pakeista eilučių skaičių."""
     known = {fund for (_, fund), r in existing.items() if r["provider"] == provider}
     today = today_vilnius()
     earliest = (expected - timedelta(days=10)).isoformat()
     accepted = []
+    stale = stale_batch([r for r in new_rows if r.get("fund") in known], existing, log)
     for row in new_rows:
         fund, day = row["fund"], row["date"]
+        if (day, fund) in stale:
+            continue
         if fund not in known:
             log.append(f"  ! {provider}: nežinomas fondas „{fund}“ – praleista")
             continue

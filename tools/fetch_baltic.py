@@ -103,7 +103,7 @@ def ee():
             d = r.get("Date", "")
             d = f"{d[6:10]}-{d[3:5]}-{d[0:2]}" if re.match(r"\d\d\.\d\d\.\d{4}", d) else d
             snap.append({"snapshot_date": TODAY, "pillar": pl, "fund": r.get("Fund", "").strip(), "date": d, "nav": num(r.get("NAV")),
-                         "r3m": num(r.get("3m")), "r6m": num(r.get("6m")), "r1y": num(r.get("1y")), "r3y": num(r.get("3y")),
+                         "r3m": num(r.get("3m")), "r6m": num(r.get("6m")), "r1y": num(r.get("1y") or r.get("12m") or r.get("1 y") or r.get("1Y")),   # 2026-11-19 auditas: „1y“ stulpelis visada tuščias "r3y": num(r.get("3y")),
                          "r5y": num(r.get("5y")), "r10y": num(r.get("10y")), "r15y": num(r.get("15y")), "r20y": num(r.get("20y")),
                          "ytd": num(r.get("YTD")), "ter": num(r.get("TER %")), "investors": num(r.get("Active invest.") or r.get("Unit ow.")),
                          "net_assets_m": num(r.get("Net assets"))})

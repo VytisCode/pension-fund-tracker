@@ -16,6 +16,7 @@ import json
 import re
 import sys
 import urllib.parse
+from datetime import timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -71,12 +72,19 @@ def plan(fund, web, have) -> tuple:
     if both:
         ratios = [float(ours[d]["benchmark_index"]) / web[d][1] for d in both[-60:]]
         scale = ratios[-1]
-    fills, bad_uv = {}, 0
+    fills, bad_uv, fixes = {}, 0, {}
+    fix_from = (pillar3.u.today_vilnius() - timedelta(days=pillar3.FIX_DAYS)).isoformat()
     for d, (uv, b) in sorted(web.items()):
         r = ours.get(d)
-        if not b or not r or r.get("benchmark_index"):
+        if not r:
             continue
-        if abs(float(r["unit_value"]) / uv - 1) > 0.0005:
+        # Oficiali SEB istorija: paskutinių FIX_DAYS dienų klaidinga vieneto vertė (pvz. 2026-10-08 – praėjusios dienos)
+        # pataisoma; senesni neatitikimai tik skaičiuojami (taisyklė 6).
+        if abs(float(r["unit_value"]) - uv) > 0.00005 and d >= fix_from and abs(float(r["unit_value"]) / uv - 1) < 0.05:
+            fixes[d] = uv
+        if not b or r.get("benchmark_index"):
+            continue
+        if abs(float(r["unit_value"]) / uv - 1) > 0.0005 and d not in fixes:
             bad_uv += 1
             continue
         fills[d] = round(b * scale, 6)
@@ -84,14 +92,14 @@ def plan(fund, web, have) -> tuple:
            "web_last": max(web) if web else None, "overlap": len(both), "scale": scale,
            "scale_min": min(ratios) if ratios else None, "scale_max": max(ratios) if ratios else None,
            "fills": len(fills), "fill_from": min(fills) if fills else None, "fill_to": max(fills) if fills else None,
-           "uv_mismatch": bad_uv}
-    return fills, rep
+           "uv_mismatch": bad_uv, "uv_fixed": len(fixes)}
+    return fills, fixes, rep
 
 
 def main(probe=False):
     have = store.load()
     pw, browser, page = pillar3.browser_page()
-    report, upd = {}, []
+    report, upd, corr = {}, [], []
     try:
         ln = []
         for fund in FUNDS:
@@ -101,15 +109,22 @@ def main(probe=False):
                 print(f"SEB {fund} klaida: {str(exc)[:200]}")
                 continue
             ln.append(fund)
-            fills, rep = plan(fund, web, have)
+            fills, fixes, rep = plan(fund, web, have)
             report[fund] = rep
             print(fund, rep)
             if probe and fund == "SEB pensija 1975-1981":
                 DEBUG["sample"] = {d: web[d] for d in sorted(web)[-15:]}
                 DEBUG["cmp"] = {d: [have.get((d, fund), {}).get("unit_value"), have.get((d, fund), {}).get("benchmark_index"), *web[d]]
                                 for d in sorted(web) if "2026-09-22" <= d <= "2026-10-08"}
-            for d, b in fills.items():
-                upd.append({**have[(d, fund)], "benchmark_index": b})
+            for d in sorted(set(fills) | set(fixes)):
+                r = dict(have[(d, fund)])
+                if d in fills:
+                    r["benchmark_index"] = fills[d]
+                if d in fixes:
+                    corr.append({"date": d, "fund": fund, "old": r["unit_value"], "new": fixes[d], "source": "SEB FUND_DETAILS ltdata"})
+                    print(f"  pataisyta pagal oficialią istoriją: {fund} {d} {r['unit_value']} → {fixes[d]}")
+                    r["unit_value"] = fixes[d]
+                upd.append(r)
     finally:
         browser.close()
         pw.stop()
@@ -126,6 +141,7 @@ def main(probe=False):
         print("SEB II lyginamasis indeksas nepavyko: puslapiuose nėra indekso serijos")
         return
     print(f"SEB II lyginamasis indeksas: papildyta {store.upsert(upd) if upd else 0} eilučių")
+    pillar3.u.record_corrections(corr)
 
 
 if __name__ == "__main__":
