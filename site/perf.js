@@ -1886,7 +1886,7 @@ function labelControls() {
   $('btnAdv').innerHTML = T().advBtn;
   { const bm = $('btnMore'), card = $('chartCard'); bm.textContent = lang === 'lt' ? '⚙ Daugiau nustatymų' : '⚙ More settings';   // retai naudojami nustatymai suskleisti (savininkas 2026-10-16: „per daug painus“)
     bm.onclick = () => { const on = !card.classList.contains('more'); card.classList.toggle('more', on); bm.setAttribute('aria-pressed', on); }; }
-  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => x.id === 'hMarket' ? MKT : x.id !== 'insTitle' || (PX ? PX.pl === 'II' : !IS3)));   // vidinė navigacija (auditas #43)
+  addSubnav(['hMarket', 'hSum', 'hFund', 'hRisk', 'hYM', 'insTitle'].map((id, i) => ({ id, label: T().pnav[i] })).filter(x => x.id === 'hMarket' ? MKT : x.id !== 'insTitle' || (PX ? PX.pl === 'II' : !IS3)).concat(document.getElementById('bmSec') && !IS3 && (!PX || (PX.c === 'LT' && PX.pl === 'II')) ? [{ id: 'bmTitle', label: lang === 'lt' ? 'Indekso sekimas' : 'Benchmark tracking' }] : []));   // + Indekso sekimas (site/bm.js)   // vidinė navigacija (auditas #43)
   syncSumWin(); syncView();
 }
 function syncAll() {

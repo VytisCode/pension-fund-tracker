@@ -438,7 +438,7 @@ function setConcl(hid, html) {
    items – [{ id: antraštės id, label }]; kviečiama iš naujo pakeitus kalbą. Nieko neslepia – tik greitas perėjimas. */
 /* LV/ET skirtukų pavadinimai (4 etapas): skirtukų sąrašuose tekstai saugomi LT/EN poromis – latviui ir estui verčiama pagal angliškąjį. */
 const TX = { lv: { 'Whole market': 'Viss tirgus', 'Leaders & moves': 'Līderi un izmaiņas', 'Fund comparison': 'Fondu salīdzinājums', Risk: 'Risks', 'Years & months': 'Gadi un mēneši',
-    'Group charts': 'Grupu grafiki', 'Market insights': 'Tirgus atziņas', 'Category charts': 'Kategoriju grafiki', 'All funds – key figures': 'Visi fondi – rādītāji', 'Pension news': 'Pensiju ziņas',
+    'Group charts': 'Grupu grafiki', 'Market insights': 'Tirgus atziņas', 'Benchmark tracking': 'Indeksa sekošana', 'Category charts': 'Kategoriju grafiki', 'All funds – key figures': 'Visi fondi – rādītāji', 'Pension news': 'Pensiju ziņas',
     'Month facts': 'Mēneša fakti', 'Gains in euros': 'Peļņa eiro', 'Facts for the public': 'Fakti sabiedrībai', 'Pillars II and III': 'II un III līmenis', 'Quarter overview': 'Ceturkšņa pārskats',
     'Buys and sells': 'Pirkumi un pārdevumi', Alternatives: 'Alternatīvie', 'Peer comparison': 'Salīdzinājums grupā', Similarity: 'Līdzība', 'Fund portfolio': 'Fonda portfelis', Assets: 'Aktīvi',
     'What changed assets': 'Kas mainīja aktīvus', 'Change in assets': 'Aktīvu izmaiņa', 'Quarter ends': 'Ceturkšņu beigas', 'Reform payouts': 'Reformas izmaksas', 'Returns since 2019': 'Ienesīgums kopš 2019',
@@ -447,7 +447,7 @@ const TX = { lv: { 'Whole market': 'Viss tirgus', 'Leaders & moves': 'Līderi un
     Overview: 'Pārskats', 'All funds': 'Visi fondi', 'Risk map & drawdown': 'Riska karte un kritums', Managers: 'Pārvaldītāji', 'Asset change': 'Aktīvu izmaiņa', 'Largest investments': 'Lielākie ieguldījumi',
     'Road to retirement': 'Ceļš uz pensiju', 'Run-up and drawdown': 'Kāpums un kritums', 'Similar risk': 'Līdzīgs risks', 'Calendar-year returns': 'Kalendāro gadu ienesīgums', Reforms: 'Reformas', 'Baltic market': 'Baltijas tirgus' },
   et: { 'Whole market': 'Kogu turg', 'Leaders & moves': 'Liidrid ja muutused', 'Fund comparison': 'Fondide võrdlus', Risk: 'Risk', 'Years & months': 'Aastad ja kuud',
-    'Group charts': 'Gruppide graafikud', 'Market insights': 'Turu tähelepanekud', 'Category charts': 'Kategooriate graafikud', 'All funds – key figures': 'Kõik fondid – näitajad', 'Pension news': 'Pensioniuudised',
+    'Group charts': 'Gruppide graafikud', 'Market insights': 'Turu tähelepanekud', 'Benchmark tracking': 'Indeksi järgimine', 'Category charts': 'Kategooriate graafikud', 'All funds – key figures': 'Kõik fondid – näitajad', 'Pension news': 'Pensioniuudised',
     'Month facts': 'Kuu faktid', 'Gains in euros': 'Tulu eurodes', 'Facts for the public': 'Faktid avalikkusele', 'Pillars II and III': 'II ja III sammas', 'Quarter overview': 'Kvartali ülevaade',
     'Buys and sells': 'Ostud ja müügid', Alternatives: 'Alternatiivid', 'Peer comparison': 'Võrdlus grupis', Similarity: 'Sarnasus', 'Fund portfolio': 'Fondi portfell', Assets: 'Varad',
     'What changed assets': 'Mis muutis varasid', 'Change in assets': 'Varade muutus', 'Quarter ends': 'Kvartalite lõpud', 'Reform payouts': 'Reformi väljamaksed', 'Returns since 2019': 'Tootlus alates 2019',
@@ -509,7 +509,7 @@ const TG3 = [['performance3', 'market', 'Visa rinka', 'Whole market'], ['perform
   ['performance3', 'risk', 'Rizika', 'Risk'], ['performance3', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['pillar3', 'cat', 'Kategorijų grafikai', 'Category charts'], ['pillar3', 'all', 'Visi fondai – rodikliai', 'All funds – key figures']];
 /* II ir III pakopa – ta pati skirtukų tvarka (auditas 2026-11-06): Visa rinka, Lyderiai, Fondų palyginimas, Rizika, Metai ir mėnesiai, grupių grafikai, tada pakopos savitas */
 const TG2 = [['performance', 'market', 'Visa rinka', 'Whole market'], ['performance', 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], ['performance', 'fund', 'Fondų palyginimas', 'Fund comparison'], ['performance', 'risk', 'Rizika', 'Risk'],
-  ['performance', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['overview', '', 'Grupių grafikai', 'Group charts'], ['performance', 'ins', 'Rinkos įžvalgos', 'Market insights']];
+  ['performance', 'ym', 'Metai ir mėnesiai', 'Years & months'], ['performance', 'bm', 'Indekso sekimas', 'Benchmark tracking'], ['overview', '', 'Grupių grafikai', 'Group charts'], ['performance', 'ins', 'Rinkos įžvalgos', 'Market insights']];
 const TAB_GROUP = { pillar3: TG3, performance3: TG3, performance: TG2, overview: TG2 };
 /* Baltijos šalys (savininkas 2026-10-21: „kad latviai ir estai jaustų tą pačią kokybę, kokią matys Lietuvoje“): kiekviena šalis turi
    tuos pačius skirtukus ta pačia tvarka. Dalis jų – baltic.html (šalis ir pakopa – #c=…&pl=…), dalis – „Rezultatų“ puslapio (perf.js)
@@ -521,7 +521,7 @@ function bxTabs(c, pl) {
   if (c === 'X') return [b('bs', 'Baltijos rinka', 'Baltic market'), b('rk', 'Panaši rizika', 'Similar risk'), b('hm', 'Metų grąžos', 'Yearly returns'), b('cmp', 'Fondų palyginimas', 'Fund comparison'), b('rf', 'Reformos', 'Reforms')];
   const pp = bxPage(c, pl), lt2 = c === 'LT' && pl === 'II';
   if (c === 'LT') return [b('ov', 'Apžvalga', 'Overview'), [pp, 'market', 'Visa rinka', 'Whole market'], b('cr', 'Visi fondai', 'All funds'), [pp, 'sum', 'Lyderiai ir judesiai', 'Leaders & moves'], [pp, 'fund', 'Fondų palyginimas', 'Fund comparison'],
-    b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
+    b('rs', 'Rizika', 'Risk'), [pp, 'ym', 'Metai ir mėnesiai', 'Years & months'], ...(lt2 ? [[pp, 'bm', 'Indekso sekimas', 'Benchmark tracking']] : []), [pp, 'risk', lt2 ? 'Rizikos žemėlapis ir kritimas' : 'Kilimas ir kritimas', lt2 ? 'Risk map & drawdown' : 'Run-up and drawdown'],
     b('mg', 'Valdytojai', 'Managers'), ['aum', 'dc', 'Turto pokytis', 'Asset change'], b('top', 'Didžiausios investicijos', 'Largest investments'), ...(pl === 'II' ? [b('jr', 'Kelias į pensiją', 'Road to retirement')] : [])];
   /* Latvija ir Estija (PERTVARKA-SALYS.md, 1 etapas): skirtukų juosta – tik to meniu skyriaus, kaip Lietuvos puslapiuose. „Rezultatai“ – ta pati
      tvarka kaip LT (Visa rinka, Lyderiai, Fondų palyginimas, Rizika, Metai ir mėnesiai), tada šalies papildomi; ko šalyje dar nėra – pilka. */

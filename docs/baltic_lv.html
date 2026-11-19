@@ -128,18 +128,21 @@
     <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
   </section>
 
+  <!-- Indekso sekimas (savininkas 2026-11-19): SEB II pakopos fondų grąža − lyginamojo indekso grąža (site/bm.js); tik LT II pakopa -->
+  <section class="sec" id="bmSec" data-src="nav" data-tab="bm"><h2 class="sec" id="bmTitle"></h2><p class="lead" id="bmLead"></p><div class="hg jg" id="bmCards"></div><div id="bmBody"></div></section>
+
   <!-- Rinkos įžvalgos (perkelta iš „Kelio į pensiją“, savininko patvirtinta struktūra 2026-10-16); duomenys kraunami tik priartėjus prie skilties -->
   <section class="sec" id="insSec" data-src="aum" data-tab="ins"><h2 class="sec" id="insTitle"></h2><p class="lead" id="insLead"></p><div id="insBody"></div></section>
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data_bx_lv2.js?v=a391d883"></script><script>var PL3 = 1, PLX = {"c": "LV", "pl": "II", "page": "baltic_lv", "ppy": 248.3, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_lv2.js?v=f56de91c"></script><script>var PL3 = 1, PLX = {"c": "LV", "pl": "II", "page": "baltic_lv", "ppy": 248.3, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="data_idx.js?v=a601a6b1"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
 
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=e38482ad"></script>
-<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {}); }</script><script src="perf.js?v=53580418"></script>
+<script src="common.js?v=4b74367c"></script>
+<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {}); }</script><script src="perf.js?v=845ad0d1"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');
@@ -150,5 +153,7 @@ var kpi = (l, v, s, cls = '') => `<div class="kpi ${cls}"><div class="l">${l}</d
 if (typeof window.PL3 !== 'undefined' && !(typeof PLX !== 'undefined' && PLX.pl === 'II')) document.getElementById('insSec').remove();   // III pakopai rinkos įžvalgų nėra
 if (typeof PLX !== 'undefined' && PLX.c !== 'LT') { MGRS = [...new Set(DATA.providers.map(p => p.m || p.brand))]; MLABEL = Object.fromEntries(MGRS.map(m => [m, m])); }   // LV/EE II: valdytojai iš duomenų</script>
 <script src="insights.js?v=90a65a4b"></script>
+<script>if (typeof window.PL3 !== 'undefined' || (typeof PLX !== 'undefined' && (PLX.c !== 'LT' || PLX.pl !== 'II'))) document.getElementById('bmSec').remove();   // indekso sekimas – tik LT II pakopa (SEB)</script>
+<script src="bm.js?v=c51a5fd9"></script>
 </body>
 </html>

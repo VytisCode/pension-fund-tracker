@@ -85,6 +85,13 @@ jobs:
         if: always() && steps.need.outputs.needs_browser_p3 == 'true'
         run: python -u pillar3.py browser
 
+      # SEB II pakopos lyginamasis indeksas (fondų puslapiai) – „Indekso sekimas“; papildo tik tuščius benchmark_index laukus.
+      - name: SEB II pillar benchmark
+        if: always() && (steps.need.outputs.needs_browser == 'true' || steps.need.outputs.needs_browser_p3 == 'true')
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python -u tools/run_src.py nav.seb_bench tools/fetch_seb_bench.py
+
       # Vertybinių popierių pavadinimai pagal ISIN (OpenFIGI, nemokamai): klausiama tik apie naujus ISIN
       # iš data/portfolios.csv, todėl dažniausiai trunka kelias sekundes.
       - name: Security names by ISIN (only new ones)

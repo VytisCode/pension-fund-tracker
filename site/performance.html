@@ -128,6 +128,9 @@
     <div class="cap" id="c_tQP"></div><div class="card scroll"><table class="mx" id="tQP"></table></div>
   </section>
 
+  <!-- Indekso sekimas (savininkas 2026-11-19): SEB II pakopos fondų grąža − lyginamojo indekso grąža (site/bm.js); tik LT II pakopa -->
+  <section class="sec" id="bmSec" data-src="nav" data-tab="bm"><h2 class="sec" id="bmTitle"></h2><p class="lead" id="bmLead"></p><div class="hg jg" id="bmCards"></div><div id="bmBody"></div></section>
+
   <!-- Rinkos įžvalgos (perkelta iš „Kelio į pensiją“, savininko patvirtinta struktūra 2026-10-16); duomenys kraunami tik priartėjus prie skilties -->
   <section class="sec" id="insSec" data-src="aum" data-tab="ins"><h2 class="sec" id="insTitle"></h2><p class="lead" id="insLead"></p><div id="insBody"></div></section>
   <footer id="foot"></footer>
@@ -150,5 +153,7 @@ var kpi = (l, v, s, cls = '') => `<div class="kpi ${cls}"><div class="l">${l}</d
 if (typeof window.PL3 !== 'undefined' && !(typeof PLX !== 'undefined' && PLX.pl === 'II')) document.getElementById('insSec').remove();   // III pakopai rinkos įžvalgų nėra
 if (typeof PLX !== 'undefined' && PLX.c !== 'LT') { MGRS = [...new Set(DATA.providers.map(p => p.m || p.brand))]; MLABEL = Object.fromEntries(MGRS.map(m => [m, m])); }   // LV/EE II: valdytojai iš duomenų</script>
 <script src="insights.js"></script>
+<script>if (typeof window.PL3 !== 'undefined' || (typeof PLX !== 'undefined' && (PLX.c !== 'LT' || PLX.pl !== 'II'))) document.getElementById('bmSec').remove();   // indekso sekimas – tik LT II pakopa (SEB)</script>
+<script src="bm.js"></script>
 </body>
 </html>
