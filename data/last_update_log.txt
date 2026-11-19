@@ -1,6 +1,4 @@
- 2003-2009: netinkama data 2026-11-06 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-10-30 – praleista
-  ! Artea pensija 1961-1967: netinkama data 2026-11-03 – praleista
+a
   ! Artea pensija 1961-1967: netinkama data 2026-11-04 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-11-05 – praleista
   ! Artea pensija 1961-1967: netinkama data 2026-11-06 – praleista
@@ -228,5 +226,9 @@ GOINDEX: jau atnaujinta iki 2026-11-18
 
 III pakopa – Vilnius: 2026-11-19 17:15, laukiama diena: 2026-11-18
 ARTEA: gauta 23082 eil., nauja/pakeista 4; dar trūksta: Artea Stabilus 58+
+GOINDEX: jau atnaujinta iki 2026-11-18
+
+III pakopa – Vilnius: 2026-11-19 17:45, laukiama diena: 2026-11-18
+ARTEA: gauta 23083 eil., nauja/pakeista 1; viskas iki 2026-11-18
 GOINDEX: jau atnaujinta iki 2026-11-18
 
