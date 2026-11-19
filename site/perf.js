@@ -552,7 +552,7 @@ function renderMarket() {
   });
   const awRank = rankOf(provs.map(p => ({ key: p.id, v: avgW[p.id] })));
   const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] }))), aaRank = rankOf(provs.map(p => ({ key: p.id, v: avgAnn[p.id] })));
-  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`;   // „%“ paslėptas (antraštėje „%“), lieka tekste
+  const pc2 = v => num(v, 2) + pctSfx();
   const na = '<td class="na">–</td>', gap = c => `<tr class="gap"><td colspan="${c}"></td></tr>`;
   const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
   const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
@@ -639,7 +639,7 @@ function renderFundM() {
   pcRender();
   const RMd = fsRm(), rmSeg = !fsRbOn() ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${(fsRbOn() && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f') === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`;
   $('hMarket').textContent = T().hMarket; $('mMarket').textContent = T().mMarket(periodText());
-  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`, na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
+  const pc2 = v => num(v, 2) + pctSfx(), na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
   const rkCell = (v, rank, n, f) => v === null || v === undefined ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
   box.innerHTML = DATA.groups.filter(g => g.id !== 'zz').map(g => {
     const D = fsData(g), id = k => `tFS_${g.id}_${k}`, nC = D.cols.length;
@@ -803,20 +803,19 @@ async function fourPng() {
   const tbs = ['tRet', 'tRelM', 'tRank', 'tAnnM'].map(id => $(id)), cs0 = getComputedStyle(document.documentElement), cv = k => cs0.getPropertyValue(k).trim();
   const font = getComputedStyle(document.body).fontFamily, txt = n => n ? n.textContent.replace(/\s+/g, ' ').trim() : '';
   const hh = Math.max(...tbs.map(t => t.tHead ? t.tHead.getBoundingClientRect().height : 0));
-  const rws = tbs.map(t => [...t.tBodies[0].rows]), rh = [];
-  rws.forEach(rs => rs.forEach((r, i) => { rh[i] = Math.max(rh[i] || 0, r.getBoundingClientRect().height); }));
   const rb = $('hRet').querySelector('[data-rm][aria-pressed="true"]'), mo = $('mref').selectedOptions[0];
   const subs = [rb && rb.dataset.rm !== 'f' ? txt(rb) : '', mo ? txt(mo) : '', '', ''];
   const el = (tag, st, t) => { const e = document.createElement(tag); e.setAttribute('style', st); if (t != null) e.textContent = t; return e; };
   const wrap = el('div', `display:inline-block;padding:20px 22px 14px;background:${cv('--card') || '#fff'};font-family:${font};color:${cv('--text')}`);
   wrap.append(el('div', 'font-size:18px;font-weight:600;margin-bottom:2px;white-space:nowrap', txt($('hMarket'))),
-    el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:16px;white-space:nowrap`, txt($('c_tRet'))));
-  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:44px;row-gap:20px;align-items:start');
+    el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:10px;white-space:nowrap`, txt($('c_tRet'))));
+  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:36px;row-gap:14px;align-items:start');
   tbs.forEach((t, k) => {
     const c = tblClone(t);
     if (c.tHead) [...c.tHead.rows].forEach(r => r.style.height = hh + 'px');
-    [...c.tBodies[0].rows].forEach((r, i) => { r.style.height = rh[i] + 'px'; });
     c.style.width = 'auto';
+    c.querySelectorAll('th, td').forEach(x => { if (x.cellIndex === 0 || x.colSpan > 1) return; const w = x.classList.contains('pm') ? 88 : 80; x.style.width = x.style.minWidth = x.style.maxWidth = w + 'px'; });
+    { const f = c.querySelectorAll('tr > :first-child'); f.forEach(x => { x.style.whiteSpace = 'nowrap'; x.style.width = x.style.minWidth = 'auto'; x.style.maxWidth = 'none'; }); }   // skaidrėje grupės pavadinimas vienoje eilutėje   // skaidrei – platūs, žemi langeliai (16:9)
     const cell = el('div', '');
     cell.append(el('div', 'font-size:14.5px;font-weight:600;white-space:nowrap', chartTitle(t)), el('div', `font-size:11.5px;color:${cv('--text-2')};height:16px;margin-bottom:6px;white-space:nowrap`, subs[k]), c);
     grid.append(cell);

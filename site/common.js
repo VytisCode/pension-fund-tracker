@@ -2012,7 +2012,7 @@ function tblClone(tbl) {                    // lentelės kopija su įterptais ap
   const clone = tbl.cloneNode(true);
   const src = [tbl, ...tbl.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
   src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', TBL_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';') + ';position:static'); });
-  clone.querySelectorAll('button, .info, .ik, .mx .u').forEach(n => n.remove());
+  clone.querySelectorAll('button, .info, .ik').forEach(n => n.remove());
   return clone;
 }
 function htmlPng(wrap, TW, TH) {             // HTML elementas → PNG (SVG foreignObject → drobė, 2×)

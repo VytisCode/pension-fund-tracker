@@ -162,24 +162,26 @@ a.btn { text-decoration: none; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
 .scroll { overflow-x: auto; }
-/* rinkos heat map lentelės – siauros ir vienodo tinklelio (savininkas 2026-11-19: prezentacijoms): visų keturių lentelių
-   stulpeliai vienodo pločio, lentelė neištempiama per visą pusę puslapio */
+/* rinkos heat map lentelės – žemos ir plačios (stačiakampės, kaip savininko Excel; 2026-11-19: prezentacijoms 16:9):
+   visų keturių lentelių stulpeliai vienodo pločio, eilutės žemos */
 #mGrid .mx:not(.fs), .fsset .mx:not(.fc) { width: auto; table-layout: auto; font-size: 12px; }
-#mGrid .mx .u, .fsset .mx .u { display: none; }   /* „%“ – tik antraštėje (tekste lieka kopijavimui ir Excel) */
-#mGrid .mx:not(.fs) th, #mGrid .mx:not(.fs) td, .fsset .mx:not(.fc) th, .fsset .mx:not(.fc) td { width: 54px; min-width: 54px; max-width: 54px; padding: 3px 2px; box-sizing: border-box; }
+#mGrid .mx:not(.fs) th, #mGrid .mx:not(.fs) td, .fsset .mx:not(.fc) th, .fsset .mx:not(.fc) td { width: 62px; min-width: 62px; max-width: 62px; padding: 1px 3px; line-height: 1.25; box-sizing: border-box; }
 #mGrid .mx:not(.fs) td, .fsset .mx td { vertical-align: middle; }
-#mGrid .mx:not(.fs) th, .fsset .mx th { font-size: 10.5px; padding-bottom: 4px; white-space: nowrap; line-height: 1.2; vertical-align: bottom; }
+#mGrid .mx:not(.fs) th, .fsset .mx th { font-size: 11px; padding-bottom: 3px; white-space: nowrap; line-height: 1.2; vertical-align: bottom; }
 #mGrid .mx:not(.fs) th, .fsset .mx:not(.fc) th { padding-left: 0; padding-right: 0; letter-spacing: 0; text-overflow: clip; }
 #mGrid .mx th.pm, .fsset .mx th.pm { white-space: normal; }
-#mGrid .mx:not(.fs) th:first-child, #mGrid .mx:not(.fs) td:first-child { width: 84px; min-width: 84px; max-width: 84px; padding-left: 0; white-space: normal; line-height: 1.2; }
-.bxmk #mGrid .mx:not(.fs) th:first-child, .bxmk #mGrid .mx:not(.fs) td:first-child { width: 108px; min-width: 108px; max-width: 108px; }   /* LV/EE grupių pavadinimai ilgesni */
-#mGrid .mx:not(.fs) th.pm, #mGrid .mx:not(.fs) td.pm, .fsset .mx th.pm, .fsset .mx td.pm { width: 60px; min-width: 60px; max-width: 60px; }
+#mGrid .mx:not(.fs) th:first-child, #mGrid .mx:not(.fs) td:first-child { width: 92px; min-width: 92px; max-width: 92px; padding-left: 0; white-space: nowrap; line-height: 1.25; }
+.bxmk #mGrid .mx:not(.fs) th:first-child, .bxmk #mGrid .mx:not(.fs) td:first-child { width: 120px; min-width: 120px; max-width: 120px; white-space: normal; }
+.bxmk #mGrid .mx:not(.fs) td:not(:first-child), .bxmk #mGrid .mx:not(.fs) th:not(:first-child) { width: 58px; min-width: 58px; max-width: 58px; }
+.bxmk #mGrid .mx:not(.fs) .pm { width: 66px; min-width: 66px; max-width: 66px; }   /* LV/EE grupių pavadinimai ilgesni */
+#mGrid .mx:not(.fs) th.pm, #mGrid .mx:not(.fs) td.pm, .fsset .mx th.pm, .fsset .mx td.pm { width: 70px; min-width: 70px; max-width: 70px; }
 .fsset .mx.fs:not(.fc) th:first-child, .fsset .mx.fs:not(.fc) td:first-child { width: 190px; min-width: 190px; max-width: 190px; padding-left: 0; }
-#mGrid:not(.one) { grid-template-columns: repeat(2, max-content); justify-content: start; column-gap: 48px; }
+#mGrid:not(.one) { grid-template-columns: repeat(auto-fill, minmax(536px, 1fr)); column-gap: 32px; row-gap: 14px; }
+#mGrid:not(.one) > [data-m] { min-width: 0; }
+#mGrid .mx .sw-top, .fsset .mx .sw-top { height: 3px; margin-bottom: 2px; }
 .fsset .two { grid-template-columns: repeat(2, max-content); justify-content: start; column-gap: 40px; }
 #mGrid > [data-m] > :not(.scroll), .fsset .two > div > :not(.scroll) { contain: inline-size; }   /* antraštės nepraplečia stulpelio – lūžta */
-@media (min-width: 1001px) { #mGrid:not(.one) > [data-m] { min-width: 470px; } }   /* antraštė su įrankiais telpa vienoje eilutėje; lentelė pati lieka siaura */
-@media (max-width: 1000px) { #mGrid:not(.one), .fsset .two { grid-template-columns: minmax(0, max-content); } }
+@media (max-width: 700px) { #mGrid:not(.one), .bxmk #mGrid:not(.one), .fsset .two { grid-template-columns: minmax(0, 1fr); } }
 /* III / LV / EE „Kiekvienas fondas“ kompaktiška lentelė – pagal turinį, ne per visą plotį */
 .mx.fc { width: auto; font-size: 12.5px; } .two.one .mx.fc { font-size: 12.5px; } .mx.fc td { padding: 3px 8px; } .mx.fc th { padding: 0 8px 6px; }
 .mx.fc td:not(.mg):not(:first-child):not(:nth-child(2)), .mx.fc th:nth-child(n+3) { min-width: 56px; }
