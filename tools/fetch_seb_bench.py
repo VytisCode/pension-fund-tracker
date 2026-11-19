@@ -27,28 +27,22 @@ FUNDS = ["SEB pensija 1961-1967", "SEB pensija 1968-1974", "SEB pensija 1975-198
          "SEB pensija 1989-1995", "SEB pensija 1996-2002", "SEB pensija 2003-2009", "SEB turto išsaugojimo fondas"]
 
 
-def links(page) -> dict:
+def open_list(page):
     page.goto(fund_links.SEB_II, wait_until="domcontentloaded", timeout=90000)
     page.wait_for_timeout(3000)
-    out, seen = {}, []
-    for a in page.query_selector_all("a"):
-        txt, href = " ".join((a.inner_text() or "").split()), a.get_attribute("href") or ""
-        if "SEB" in txt or "isin" in href.lower() or "FUND_DETAILS" in href.upper():
-            seen.append([txt[:80], href[:200]])
-        for f in FUNDS:
-            if txt == f and f not in out and href and not href.lower().startswith("javascript"):
-                out[f] = href
-    DEBUG["anchors"] = seen[:80]
-    return out
+
+
+def series(page, fund) -> dict:
+    """Fondų sąraše nuorodos turi href="#" (atidaroma JS), todėl paspaudžiama kaip sources/seb_pensions.py."""
+    open_list(page)
+    page.locator(f"a:has-text('{fund}')").first.click(timeout=15000)
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2500)
+    DEBUG.setdefault("urls", {})[fund] = page.url
+    return {r["date"]: (r["unit_value"], r["benchmark_index"]) for r in pillar3.parse_seb_ltdata(page.content(), fund)}
 
 
 DEBUG = {}
-
-
-def series(page, href, fund) -> dict:
-    page.goto(urllib.parse.urljoin(fund_links.SEB_BASE, href), wait_until="domcontentloaded", timeout=90000)
-    page.wait_for_timeout(2000)
-    return {r["date"]: (r["unit_value"], r["benchmark_index"]) for r in pillar3.parse_seb_ltdata(page.content(), fund)}
 
 
 def plan(fund, web, have) -> tuple:
@@ -81,21 +75,21 @@ def main(probe=False):
     pw, browser, page = pillar3.browser_page()
     report, upd = {}, []
     try:
-        ln = links(page)
-        missing = [f for f in FUNDS if f not in ln]
-        if missing:
-            print("SEB II: nerastos fondų nuorodos:", ", ".join(missing))
-        for fund, href in ln.items():
+        ln = []
+        for fund in FUNDS:
             try:
-                web = series(page, href, fund)
+                web = series(page, fund)
             except Exception as exc:  # noqa: BLE001
                 print(f"SEB {fund} klaida: {str(exc)[:200]}")
                 continue
+            ln.append(fund)
             fills, rep = plan(fund, web, have)
             report[fund] = rep
             print(fund, rep)
             if probe and fund == "SEB pensija 1975-1981":
                 DEBUG["sample"] = {d: web[d] for d in sorted(web)[-15:]}
+                DEBUG["cmp"] = {d: [have.get((d, fund), {}).get("unit_value"), have.get((d, fund), {}).get("benchmark_index"), *web[d]]
+                                for d in sorted(web) if "2026-09-22" <= d <= "2026-10-08"}
             for d, b in fills.items():
                 upd.append({**have[(d, fund)], "benchmark_index": b})
     finally:
