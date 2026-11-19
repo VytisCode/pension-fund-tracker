@@ -730,3 +730,5 @@ ts,src,ev,dd,n,msg
 2026-11-19T15:58,p3.ARTEA,new,2026-11-18,1,
 2026-11-19T15:58,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
 2026-11-19T15:58,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-19T16:22,idx.EURUSD,ok,,,vėl veikia
+2026-11-19T16:22,idx.SP500,ok,,,vėl veikia
