@@ -787,6 +787,8 @@ def perf_data(funds):
                     if dk:
                         dp = [(day(d), u) for d, u, _, _ in sorted(dk)]
                         ser[f["id"]] = [(x, y / 100) for x, y in ser[f["id"]] if x < dp[0][0]] + dp
+                    else:                       # 2026-11-19: be kasdienių (pvz. Luminor plāns 53-58) – tik indeksas (bazė 100), ne vieneto vertė
+                        f["idx"] = 1
             top = max(v[-1][0] for v in ser.values())
             fs = [f for f in fs if ser[f["id"]][-1][0] > top - 45]
             key = (lambda f: f["cg"] or "zz") if c == "LV" else (lambda f: f["risk"] or "zz")
@@ -803,12 +805,14 @@ def perf_data(funds):
                     dd, v = enc(pts)
                     rows.append({"provider": pid, "brand": provs[-1]["brand"], "name": f["n"], "code": f["id"], "risky": "0", "d0": dd[0], "dd": dd[1:], "v": v,
                                  "assets": round(f["na"] * 1e6) if f.get("na") else None, "assetsDate": (day(f["naQ"]) if f.get("naQ") else pts[-1][0]) if f.get("na") else None,
-                                 "fee": f["fee"] if f.get("feeK") == "ter" else None})
+                                 "fee": f["fee"] if f.get("feeK") == "ter" else None, **({"idx": 1} if f.get("idx") else {})})
                 groups.append({"id": gid, "lbl": {"lt": lt, "en": en}, "funds": rows})
             last = max(ser[f["id"]][-1][0] for f in fs)
             n3 = [len([p for p in ser[f["id"]] if p[0] > last - 1096]) / 3 for f in fs if ser[f["id"]][0][0] < last - 1096]
             ppy = sorted(n3)[len(n3) // 2] if n3 else 252
-            out[(c, pl)] = {"providers": provs, "groups": groups, "ppy": round(ppy, 1), "stale": 5}
+            cs = _series(c)[0]              # grynieji aktyvai kasdien – „Dienos lentelei“ (savininkas 2026-11-19)
+            assets = {f["n"]: [(d, a) for d, _, a, _ in cs.get((pl, f["n"]), [])] for f in fs}
+            out[(c, pl)] = {"providers": provs, "groups": groups, "ppy": round(ppy, 1), "stale": 5, "assets": assets}
     return out
 
 
