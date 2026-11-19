@@ -30,16 +30,19 @@ FUNDS = ["SEB pensija 1961-1967", "SEB pensija 1968-1974", "SEB pensija 1975-198
 def links(page) -> dict:
     page.goto(fund_links.SEB_II, wait_until="domcontentloaded", timeout=90000)
     page.wait_for_timeout(3000)
-    out = {}
-    for tr in page.query_selector_all("tr"):
-        a = tr.query_selector("a[href*='FUND_DETAILS'], a[href*='fund_details'], a[href*='isin=']")
-        if not a:
-            continue
-        txt = " ".join(tr.inner_text().split())
+    out, seen = {}, []
+    for a in page.query_selector_all("a"):
+        txt, href = " ".join((a.inner_text() or "").split()), a.get_attribute("href") or ""
+        if "SEB" in txt or "isin" in href.lower() or "FUND_DETAILS" in href.upper():
+            seen.append([txt[:80], href[:200]])
         for f in FUNDS:
-            if f in txt and f not in out:
-                out[f] = a.get_attribute("href")
+            if txt == f and f not in out and href and not href.lower().startswith("javascript"):
+                out[f] = href
+    DEBUG["anchors"] = seen[:80]
     return out
+
+
+DEBUG = {}
 
 
 def series(page, href, fund) -> dict:
@@ -91,6 +94,8 @@ def main(probe=False):
             fills, rep = plan(fund, web, have)
             report[fund] = rep
             print(fund, rep)
+            if probe and fund == "SEB pensija 1975-1981":
+                DEBUG["sample"] = {d: web[d] for d in sorted(web)[-15:]}
             for d, b in fills.items():
                 upd.append({**have[(d, fund)], "benchmark_index": b})
     finally:
@@ -99,7 +104,7 @@ def main(probe=False):
     if probe:
         out = ROOT / "probe_out"
         out.mkdir(exist_ok=True)
-        (out / "seb_bench.json").write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
+        (out / "seb_bench.json").write_text(json.dumps({"report": report, "debug": DEBUG}, ensure_ascii=False, indent=1), encoding="utf-8")
         (out / "seb_bench_rows.json").write_text(json.dumps(upd, ensure_ascii=False), encoding="utf-8")
         return
     if not ln:
