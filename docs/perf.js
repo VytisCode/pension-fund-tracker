@@ -648,22 +648,23 @@ addStrings({ fxYrs: 'Operating period', fxRisky: 'Risky assets share (LB), %', f
   fxEqT: 'Faktinė akcijų dalis ketvirčio pabaigoje: tiesiogiai turimos akcijos ir akcijos turimų fondų bei ETF viduje (Lietuvos banko portfeliai, fondų sudėtis – Morningstar).',
   fxY: (y, m) => (y ? y + ' m.' : '') + (y && m ? ' ' : '') + (m ? m + ' mėn.' : ''), fxUpTo: 'iki',
   fxNote: (a, b) => `Veiklos laikotarpis, rizikingų aktyvų dalis, grynieji aktyvai ir dalyviai – Lietuvos banko III pakopos rezultatai ${a}; rizikingų aktyvų dalis – fondo taisyklėse nustatyta riba, kaip ją skelbia Lietuvos bankas, ne faktinė dalis. Faktinė akcijų dalis – Lietuvos banko portfeliai ${b}, išskaidžius turimus fondus ir ETF (© Morningstar).` });
-addStrings3({ fxYrs: 'Darbības periods', fxRisky: 'Riskanto aktīvu daļa (LB), %', fxNav: 'Neto aktīvi, milj. €', fxPart: 'Dalībnieki', fxEq: 'Faktiskā akciju daļa, %', fxY: (y, m) => (y ? y + ' g.' : '') + (y && m ? ' ' : '') + (m ? m + ' mēn.' : ''), fxUpTo: 'līdz' },
-  { fxYrs: 'Tegevusaeg', fxRisky: 'Riskantsete varade osa (LB), %', fxNav: 'Puhasvara, mln €', fxPart: 'Osalejad', fxEq: 'Tegelik aktsiate osa, %', fxY: (y, m) => (y ? y + ' a' : '') + (y && m ? ' ' : '') + (m ? m + ' k' : ''), fxUpTo: 'kuni' });
+addStrings3({ fxTo: d => `līdz ${d}`, fxAt: d => `ceturkšņa beigas ${d}`, fxSum: 'Kopā', fxYrs: 'Darbības periods', fxRisky: 'Riskanto aktīvu daļa (LB), %', fxNav: 'Neto aktīvi, milj. €', fxPart: 'Dalībnieki', fxEq: 'Faktiskā akciju daļa, %', fxY: (y, m) => (y ? y + ' g.' : '') + (y && m ? ' ' : '') + (m ? m + ' mēn.' : ''), fxUpTo: 'līdz' },
+  { fxTo: d => `kuni ${d}`, fxAt: d => `kvartali lõpp ${d}`, fxSum: 'Kokku', fxYrs: 'Tegevusaeg', fxRisky: 'Riskantsete varade osa (LB), %', fxNav: 'Puhasvara, mln €', fxPart: 'Osalejad', fxEq: 'Tegelik aktsiate osa, %', fxY: (y, m) => (y ? y + ' a' : '') + (y && m ? ' ' : '') + (m ? m + ' k' : ''), fxUpTo: 'kuni' });
 const FX = () => !DATA.lb && !DATA.eq ? [] : [
   ...(DATA.lb ? [
-    { bar: 'max', h: () => T().fxYrs, xh: () => T().fxYrs + (lang === 'lt' ? ', metai' : ', years'), v: f => (DATA.lb.f[f.code] || [])[0] ?? null, d: v => { const m = Math.round(v * 12); return T().fxY(Math.floor(m / 12), m % 12); }, z: '0.00' },
-    { h: () => T().fxRisky, t: () => T().fxRiskyT, v: f => (DATA.lb.f[f.code] || [])[1] ?? null, d: v => typeof v === 'number' ? num(v, 0) : String(v).replace(/^iki\b/, T().fxUpTo) },
-    { bar: 'max', h: () => T().fxNav, v: f => (DATA.lb.f[f.code] || [])[2] ?? null, d: v => num(v, 1), z: '#,##0.000000' },
-    { bar: 'max', h: () => T().fxPart, v: f => (DATA.lb.f[f.code] || [])[3] ?? null, d: v => num(v, 0), z: '#,##0' }] : []),
-  ...(DATA.eq ? [{ bar: 'eq', h: () => T().fxEq, t: () => T().fxEqT, v: f => DATA.eq.f[f.code] ?? null, d: v => num(v, 1), x: v => v / 100, z: '0.0%' }] : [])];
+    { dt: 'lb', bar: 'max', h: () => T().fxYrs, xh: () => T().fxYrs + (lang === 'lt' ? ', metai' : ', years'), v: f => (DATA.lb.f[f.code] || [])[0] ?? null, d: v => { const m = Math.round(v * 12); return T().fxY(Math.floor(m / 12), m % 12); }, z: '0.00' },
+    { dt: 'lb', h: () => T().fxRisky, t: () => T().fxRiskyT, v: f => (DATA.lb.f[f.code] || [])[1] ?? null, d: v => typeof v === 'number' ? num(v, 0) : String(v).replace(/^iki\b/, T().fxUpTo) },
+    { dt: 'lb', bar: 'max', sum: 1, h: () => T().fxNav, v: f => (DATA.lb.f[f.code] || [])[2] ?? null, d: v => num(v, 1), z: '#,##0.000000' },
+    { dt: 'lb', bar: 'max', sum: 1, h: () => T().fxPart, v: f => (DATA.lb.f[f.code] || [])[3] ?? null, d: v => num(v, 0), z: '#,##0' }] : []),
+  ...(DATA.eq ? [{ dt: 'eq', bar: 'eq', h: () => T().fxEq, t: () => T().fxEqT, v: f => DATA.eq.f[f.code] ?? null, d: v => num(v, 1), x: v => v / 100, z: '0.0%' }] : [])];
 const fxRaw = f => DATA.lb && DATA.lb.f[f.code] ? DATA.lb.f[f.code][1] : null;
 const fxLim = f => { const r = fxRaw(f); if (r === null || r === undefined) return null; if (typeof r === 'number') return [0, r];   // LB riba → [nuo, iki] %
   let m = /^iki\s*([\d.,]+)/i.exec(r); if (m) return [0, +m[1].replace(',', '.')]; m = /^([\d.,]+)\s*[-–]\s*([\d.,]+)/.exec(r); return m ? [+m[1].replace(',', '.'), +m[2].replace(',', '.')] : null; };
-addStrings({ fxBarN: 'Bars in the cells: operating period, net assets and participants – length compared with the largest value in that category; actual equity share – scale 0–100 %, light band – range allowed by the fund rules, line – upper limit, orange bar – share outside the allowed range.',
+addStrings({ fxTo: d => `until ${d}`, fxAt: d => `quarter end ${d}`, fxSum: 'Total', fxSumT: 'Sum over the category’s funds. Participants are summed by fund: a person in several III pillar funds is counted in each of them.', fxBarN: 'Bars in the cells: operating period, net assets and participants – length compared with the largest value in that category; actual equity share – scale 0–100 %, light band – range allowed by the fund rules, line – upper limit, orange bar – share outside the allowed range.',
   fxLimT: (v, r) => `Actual equity share ${v} %; limit in the fund rules (Bank of Lithuania): ${r} %. Light band – allowed range, line – upper limit.` },
-  { fxBarN: 'Juostos langeliuose: veiklos laikotarpio, grynųjų aktyvų ir dalyvių – ilgis lyginant su didžiausia reikšme toje kategorijoje; faktinės akcijų dalies – skalė 0–100 %, šviesus fonas – fondo taisyklėse leidžiamas intervalas, brūkšnys – viršutinė riba, oranžinė juosta – dalis už leidžiamo intervalo.',
+  { fxTo: d => `iki ${d}`, fxAt: d => `ketvirčio pab. ${d}`, fxSum: 'Iš viso', fxSumT: 'Kategorijos fondų suma. Dalyviai sumuojami pagal fondus: žmogus, turintis kelis III pakopos fondus, skaičiuojamas kiekviename iš jų.', fxBarN: 'Juostos langeliuose: veiklos laikotarpio, grynųjų aktyvų ir dalyvių – ilgis lyginant su didžiausia reikšme toje kategorijoje; faktinės akcijų dalies – skalė 0–100 %, šviesus fonas – fondo taisyklėse leidžiamas intervalas, brūkšnys – viršutinė riba, oranžinė juosta – dalis už leidžiamo intervalo.',
     fxLimT: (v, r) => `Faktinė akcijų dalis ${v} %; riba fondo taisyklėse (Lietuvos bankas): ${r} %. Šviesi juosta – leidžiamas intervalas, brūkšnys – viršutinė riba.` });
+const fxD = c => T().fxAt(DATA[c.dt] ? DATA[c.dt].d : '–');   // stulpelio duomenų data – ketvirčio pabaiga, ne laikotarpio pabaiga (savininkas 2026-11-19)
 const fxNote = () => DATA.lb || DATA.eq ? T().fxNote(DATA.lb ? DATA.lb.d : '–', DATA.eq ? DATA.eq.d : '–') : '';
 function renderFundM() {
   pcRender();
@@ -706,11 +707,14 @@ function renderFundM() {
       const body = fsOrd(D, X).map(f => { const k = D.rk.map.get(f.provider);
         return `<tr>${mc(f)}<td title="${hEsc(labelOf(f.provider))}">${hEsc(fsShort(labelOf(f.provider)))}</td>${rkCell(X.v[f.provider], X.rk.map.get(f.provider), X.rk.n, xf)}${k ? `<td class="${rkClass(k, D.rk.n)}">${k}</td>` : na}${AL ? rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2) : ''}${fxC(f)}</tr>`; }).join('');
       const xmed = medianOf(D.fs.map(f => X.v[f.provider])), amed = medianOf(D.fs.map(f => D.ann[f.provider]));
-      const medRow = `<tr class="avg"><td colspan="2">${T().fsCatMed}</td>${xmed === null ? na : `<td class="pm">${xf(xmed)}</td>`}${na}${!AL ? '' : amed === null ? na : `<td class="pm">${pc2(amed)}</td>`}${fx.map((c, i) => `<td class="fx${i ? '' : ' fx1'}"></td>`).join('')}</tr>`;
+      const medRow = `<tr class="avg"><td colspan="2">${T().fsCatMed}</td>${xmed === null ? na : `<td class="pm">${xf(xmed)}</td>`}${na}${!AL ? '' : amed === null ? na : `<td class="pm">${pc2(amed)}</td>`}${fx.map((c, i) => `<td class="fx${i ? '' : ' fx1'}"></td>`).join('')}</tr>`
+        + (fx.some(c => c.sum) ? `<tr class="avg"><td colspan="2" title="${hEsc(T().fxSumT)}">${T().fxSum} <span class="info" aria-hidden="true">i</span></td><td></td><td></td>${AL ? '<td></td>' : ''}${fx.map((c, i) => { const xs = D.fs.map(f => c.v(f)).filter(v => typeof v === 'number');
+            return `<td class="fx${i ? '' : ' fx1'}">${c.sum && xs.length ? hEsc(c.d(xs.reduce((a, b) => a + b, 0))) : ''}</td>`; }).join('')}</tr>` : '');   // „Iš viso“ (savininkas 2026-11-19): grynieji aktyvai ir dalyviai
       // vienodas stulpelių plotis visose kategorijų lentelėse (savininkas 2026-11-19): fiksuoti pločiai, ne pagal turinį
-      const cw = [112, 236, 86, 62, ...(AL ? [112] : []), ...fx.map((c, i) => [112, 116, 104, 88, 104][i] || 100)];
+      const cw = [104, 222, 96, 88, ...(AL ? [112] : []), ...fx.map((c, i) => [104, 116, 104, 92, 104][i] || 100)];
       const cg = `<colgroup>${cw.map(w => `<col style="width:${w}px">`).join('')}</colgroup>`;
-      const th = `${cg}<thead><tr><th>${T().thMgr}</th><th>${T().thFund}</th><th>${RMd === 'f' ? T().fsRetC : rmT(RMd)}</th><th>${T().fsRankC}</th>${AL ? `<th>${AL}</th>` : ''}${fx.map((c, i) => `<th class="fx${i ? '' : ' fx1'}"${c.t ? ` title="${hEsc(c.t())}"` : ''}>${hEsc(c.h())}${c.t ? ' <span class="info" aria-hidden="true">i</span>' : ''}</th>`).join('')}</tr></thead>`;
+      const rd = `<br><small class="fxd">${hEsc(T().fxTo('§')).replace('§', `<span class="nw">${iso(D.rng.end)}</span>`)}</small>`;   // grąžos – iki laikotarpio pabaigos (nauji duomenys), LB stulpeliai – ketvirčio pabaigos
+      const th = `${cg}<thead><tr><th>${T().thMgr}</th><th>${T().thFund}</th><th>${RMd === 'f' ? T().fsRetC : rmT(RMd)}${rd}</th><th>${T().fsRankC}${rd}</th>${AL ? `<th>${AL}${rd}</th>` : ''}${fx.map((c, i) => `<th class="fx${i ? '' : ' fx1'}"${c.t ? ` title="${hEsc(c.t())}"` : ''}>${hEsc(c.h())}${c.t ? ' <span class="info" aria-hidden="true">i</span>' : ''}<br><small class="fxd">${hEsc(T().fxAt('§')).replace('§', `<span class="nw">${DATA[c.dt] ? DATA[c.dt].d : '–'}</span>`)}</small></th>`).join('')}</tr></thead>`;
       return `<div class="fsset"><div class="group-h"><span class="fsh">${hEsc(groupLabel(g))}</span> <small>· ${D.fs.length} ${T().fsN}</small>${ik('ret')}${rmSeg}</div><div class="cap" id="c_${id('c')}">${cap}</div>`
         + `<div class="scroll"><table class="mx fs fc" id="${id('c')}" style="width:${cw.reduce((a, b) => a + b, 0)}px">${th}<tbody>${body}${medRow}</tbody></table></div>${rmNote}</div>`;
     }
@@ -805,13 +809,17 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
     const ann = [head(), ...grid(f => xlF(`${C}!L${R_(f)}`, cv(f, 11), '0.00%'))]; ann.push(avgR(ann, '0.00%'));
     const w = [{ wch: 44 }, ...D.cols.map(() => ({ wch: 12 })), { wch: 14 }];
     if (FS_LAY === 'c') {                                // kompaktiška: tos pačios formulės, eilutė – fondas
-      const AL = fsAnnL(D.rng), X = D.X || fsDisp(D, RMd), ord = fsOrd(D, X), fx = FX(), cc = [[T().thMgr, T().thFund, RMd === 'f' ? T().fsRetC : rmT(RMd), T().fsRankC, ...(AL ? [AL] : []), ...fx.map(c => (c.xh || c.h)())]];
+      const AL = fsAnnL(D.rng), X = D.X || fsDisp(D, RMd), ord = fsOrd(D, X), fx = FX(), cc = [[T().thMgr, T().thFund, RMd === 'f' ? T().fsRetC : rmT(RMd), T().fsRankC, ...(AL ? [AL] : []), ...fx.map(c => `${(c.xh || c.h)()} (${fxD(c)})`)]];
       const pos = {}, mg = f => D.cols.find(c => c.k === fsMgr(f.provider));
       const fxX = f => fx.map(c => { const v = c.v(f); return v === null ? null : typeof v === 'number' && c.z ? { t: 'n', v: c.x ? c.x(v) : v, z: c.z } : v; });   // tikslios LB / portfelių reikšmės
       ord.forEach(f => { const k = D.fs.indexOf(f), i = ci(f) + 1; pos[f.provider] = cc.length + 1; cc.push([mg(f).label, labelOf(f.provider), ret[k + 1][i], rank[k + 1][i], ...(AL ? [ann[k + 1][i]] : []), ...fxX(f)]); });
       const n1 = cc.length, cv2 = (r, c) => { const x = cc[r - 1][c]; return x && typeof x === 'object' ? x.v : null; };
       const colMed = (c, L_) => { const xs = []; for (let r = 2; r <= n1; r++) if (cv2(r, c) !== null) xs.push(cv2(r, c)); return xs.length ? xlF(`MEDIAN(${L_}2:${L_}${n1})`, medianOf(xs), '0.00%') : null; };
       cc.push([T().fsCatMed, '', colMed(2, 'C'), null, ...(AL ? [colMed(4, 'E')] : [])]);
+      if (fx.some(c => c.sum)) { const o = AL ? 5 : 4;   // „Iš viso“: SUM per fondų eilutes
+        cc.push([T().fxSum, '', null, null, ...(AL ? [null] : []), ...fx.map((c, i) => { if (!c.sum) return null; const L_ = xlCol(o + i), xs = [];
+          for (let r = 2; r < n1 + 1; r++) { const x = cc[r - 1][o + i]; if (x && typeof x === 'object') xs.push(x.v); }
+          return xs.length ? xlF(`SUM(${L_}2:${L_}${n1})`, xs.reduce((a, b) => a + b, 0), c.z) : null; })]); }
       if (fx.length) cc.push([], [fxNote()]);
       add(cc, `${nm} – ${L ? 'lentelė' : 'table'}`, [{ wch: 14 }, { wch: 44 }, { wch: 14 }, { wch: 10 }, ...(AL ? [{ wch: 26 }] : []), ...fx.map(() => ({ wch: 18 }))]);
       return;
