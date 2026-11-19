@@ -713,3 +713,5 @@ ts,src,ev,dd,n,msg
 2026-11-19T11:39,idx.MSCI_WORLD,ok,,,vėl veikia
 2026-11-19T11:39,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); performance
 2026-11-19T11:56,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-19T12:30,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
+2026-11-19T12:30,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
