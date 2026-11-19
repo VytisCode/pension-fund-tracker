@@ -136,13 +136,13 @@
   <footer id="foot"></footer>
 </div>
 <div id="pop" role="tooltip"></div>
-<script src="data_bx_lv3.js?v=86f50e6f"></script><script>var PL3 = 1, PLX = {"c": "LV", "pl": "III", "page": "baltic_lv3", "ppy": 248.3, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
+<script src="data_bx_lv3.js?v=f739fe46"></script><script>var PL3 = 1, PLX = {"c": "LV", "pl": "III", "page": "baltic_lv3", "ppy": 248.3, "stale": 5}; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>
 <script src="data_idx.js?v=22e3cef6"></script>
 <script src="data_fee.js?v=0e639ac4"></script>
 
 <script src="events.js?v=37e94529"></script>
-<script src="common.js?v=5299b5a2"></script>
-<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {}); }</script><script src="perf.js?v=cbecdee1"></script>
+<script src="common.js?v=978bdc0d"></script>
+<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, {}); }</script><script src="perf.js?v=6ae2a39e"></script>
 <script>/* Rinkos įžvalgoms reikalingi bendri pavadinimai (Kelio į pensiją puslapyje jie – journey.js) */
 var JDATA = { generated: DATA.generated }, MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'LUMINOR', 'ALLIANZ', 'GOINDEX'], MLABEL = { ALLIANZ: 'Allianz', ARTEA: 'Artea', GOINDEX: 'Goindex', LUMINOR: 'Luminor', SEB: 'SEB', SWEDBANK: 'Swedbank' };
 var LAST = Math.max(...DATA.groups.flatMap(g => g.funds.map(f => f.d[f.d.length - 1]))), yearOf = d => new Date(d * DAY).getUTCFullYear(), dots = d => iso(d).replace(/-/g, '.');

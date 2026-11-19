@@ -600,7 +600,7 @@ function fsData(g) {
   const cols = fsCols(), ord = k => cols.findIndex(c => c.k === k);
   const fs = g.funds.slice().sort((a, b) => ord(fsMgr(a.provider)) - ord(fsMgr(b.provider)));
   const rng = rangeFor(g);
-  if (P.gx) { const gs = (MK.gxD || {})[MK.gxm]; if (gs != null) rng.anchor = Math.max(rng.anchor, gs); }
+  if (P.gx && !fsInc()) { const gs = (MK.gxD || {})[MK.gxm]; if (gs != null) rng.anchor = Math.max(rng.anchor, gs); }
   g.rngM = rng;
   // „Visa istorija“ šiame vaizde = „Nuo įsteigimo“ (savininkas 2026-11-19): kiekvienas fondas nuo savo pirmos vertės, vieta – pagal vidutinę metinę grąžą
   const INC = fsInc(), anc = {};
@@ -620,7 +620,7 @@ function fsData(g) {
 /* Lyginamasis indeksas „Kiekvienas fondas“ vaizde (savininkas 2026-11-18: „jungiklio, kad perjungtų į lyginamojo indekso grąžą“) – tik Grąžos lentelėje,
    kaip II pakopos „Visa rinka“. Indeksai – tik valdytojų pateikti (III pakopa: SEB, Goindex). Laikotarpio pabaiga – paskutinė indekso diena (≤ laikotarpio pabaigos). */
 let FS_LAY = (() => { try { return localStorage.getItem('fsLay') || 'c'; } catch (e) { return 'c'; } })();   // c – kompaktiška (savininkas 2026-11-18), m – valdytojai stulpeliuose
-const fsInc = () => P.period === 'max' && !P.gx;
+const fsInc = () => P.period === 'max';   // „Visa istorija“ – visada nuo kiekvieno fondo įsteigimo; „Pradžia“ šiam laikotarpiui netaikoma (savininkas 2026-11-19)
 const fsAnnL = rng => { if (fsInc()) return T().fsAnnInc;                                 // „Metinė grąža“ – pavadinimas pagal laikotarpį; < 1 metų – nerodoma (savininkas 2026-11-19)
   const days = rng.end - rng.anchor; if (days < 360) return null;
   const m = /^([135])y$/.exec(P.period); return m ? T().fsAnnN(+m[1]) : T().fsAnnY(num(days / 365.25, 1));
@@ -664,9 +664,9 @@ const FX = () => !DATA.lb && !DATA.eq ? [] : [
 const fxRaw = f => DATA.lb && DATA.lb.f[f.code] ? DATA.lb.f[f.code][1] : null;
 const fxLim = f => { const r = fxRaw(f); if (r === null || r === undefined) return null; if (typeof r === 'number') return [0, r];   // LB riba → [nuo, iki] %
   let m = /^iki\s*([\d.,]+)/i.exec(r); if (m) return [0, +m[1].replace(',', '.')]; m = /^([\d.,]+)\s*[-–]\s*([\d.,]+)/.exec(r); return m ? [+m[1].replace(',', '.'), +m[2].replace(',', '.')] : null; };
-addStrings({ fsAnnInc: 'Average annual return since inception', fsRetInc: 'Return since inception', fsRankInc: 'Rank by annual return', fsFrom: d => `since ${d}`, fsIncCap: e => `Full history = each fund since its own inception → ${e}. Funds started at different times, so the rank is by average annual return.`, fxTo: d => `until ${d}`, fxAt: d => `quarter end ${d}`, fxSum: 'Total', fxSumT: 'Sum over the category’s funds. Participants are summed by fund: a person in several III pillar funds is counted in each of them.', fxBarN: 'Bars in the cells: operating period, net assets and participants – length compared with the largest value in that category; actual equity share – scale 0–100 %, light band – range allowed by the fund rules, line – upper limit, orange bar – share outside the allowed range.',
+addStrings({ gxInc: '“Full history” always counts each fund from its own inception, so “Start” does not apply. To compare from one date, choose “Custom” and set the start date.', fsAnnInc: 'Average annual return since inception', fsRetInc: 'Return since inception', fsRankInc: 'Rank by annual return', fsFrom: d => `since ${d}`, fsIncCap: e => `Full history = each fund since its own inception → ${e}. Funds started at different times, so the rank is by average annual return.`, fxTo: d => `until ${d}`, fxAt: d => `quarter end ${d}`, fxSum: 'Total', fxSumT: 'Sum over the category’s funds. Participants are summed by fund: a person in several III pillar funds is counted in each of them.', fxBarN: 'Bars in the cells: operating period, net assets and participants – length compared with the largest value in that category; actual equity share – scale 0–100 %, light band – range allowed by the fund rules, line – upper limit, orange bar – share outside the allowed range.',
   fxLimT: (v, r) => `Actual equity share ${v} %; limit in the fund rules (Bank of Lithuania): ${r} %. Light band – allowed range, line – upper limit.` },
-  { fsAnnInc: 'Vidutinė metinė grąža nuo įsteigimo', fsRetInc: 'Grąža nuo įsteigimo', fsRankInc: 'Vieta pagal metinę grąžą', fsFrom: d => `nuo ${d}`, fsIncCap: e => `Visa istorija = kiekvienas fondas nuo savo įsteigimo → ${e}. Fondai pradėjo skirtingu metu, todėl vieta – pagal vidutinę metinę grąžą.`, fxTo: d => `iki ${d}`, fxAt: d => `ketvirčio pab. ${d}`, fxSum: 'Iš viso', fxSumT: 'Kategorijos fondų suma. Dalyviai sumuojami pagal fondus: žmogus, turintis kelis III pakopos fondus, skaičiuojamas kiekviename iš jų.', fxBarN: 'Juostos langeliuose: veiklos laikotarpio, grynųjų aktyvų ir dalyvių – ilgis lyginant su didžiausia reikšme toje kategorijoje; faktinės akcijų dalies – skalė 0–100 %, šviesus fonas – fondo taisyklėse leidžiamas intervalas, brūkšnys – viršutinė riba, oranžinė juosta – dalis už leidžiamo intervalo.',
+  { gxInc: '„Visa istorija“ visada skaičiuojama nuo kiekvieno fondo įsteigimo, todėl „Pradžia“ netaikoma. Norint lyginti nuo vienos datos – pasirinkite „Pasirinktas“ ir nurodykite pradžios datą.', fsAnnInc: 'Vidutinė metinė grąža nuo įsteigimo', fsRetInc: 'Grąža nuo įsteigimo', fsRankInc: 'Vieta pagal metinę grąžą', fsFrom: d => `nuo ${d}`, fsIncCap: e => `Visa istorija = kiekvienas fondas nuo savo įsteigimo → ${e}. Fondai pradėjo skirtingu metu, todėl vieta – pagal vidutinę metinę grąžą.`, fxTo: d => `iki ${d}`, fxAt: d => `ketvirčio pab. ${d}`, fxSum: 'Iš viso', fxSumT: 'Kategorijos fondų suma. Dalyviai sumuojami pagal fondus: žmogus, turintis kelis III pakopos fondus, skaičiuojamas kiekviename iš jų.', fxBarN: 'Juostos langeliuose: veiklos laikotarpio, grynųjų aktyvų ir dalyvių – ilgis lyginant su didžiausia reikšme toje kategorijoje; faktinės akcijų dalies – skalė 0–100 %, šviesus fonas – fondo taisyklėse leidžiamas intervalas, brūkšnys – viršutinė riba, oranžinė juosta – dalis už leidžiamo intervalo.',
     fxLimT: (v, r) => `Faktinė akcijų dalis ${v} %; riba fondo taisyklėse (Lietuvos bankas): ${r} %. Šviesi juosta – leidžiamas intervalas, brūkšnys – viršutinė riba.` });
 const fxD = c => T().fxAt(DATA[c.dt] ? DATA[c.dt].d : '–');   // stulpelio duomenų data – ketvirčio pabaiga, ne laikotarpio pabaiga (savininkas 2026-11-19)
 const fxNote = () => DATA.lb || DATA.eq ? T().fxNote(DATA.lb ? DATA.lb.d : '–', DATA.eq ? DATA.eq.d : '–') : '';
@@ -733,7 +733,8 @@ function renderFundM() {
   $('nMarket').textContent = FS_LAY === 'c' ? T().fsNoteC : T().fsNote;
   if (FS_LAY === 'c' && fxNote()) box.insertAdjacentHTML('beforeend', `<p class="note">${hEsc(fxNote())}</p><p class="note">${hEsc(T().fxBarN)}</p>`);
   $('btnGx').textContent = T().gxBtn; $('btnMxl').textContent = '⤓ ' + T().mxl;
-  { const gd = (MK.gxD || {})[MK.gxm]; $('nGx').hidden = !P.gx || gd == null; $('nGx').textContent = P.gx && gd != null ? T().gxNote(iso(gd)) : ''; }
+  { const gd = (MK.gxD || {})[MK.gxm], inc = fsInc(); $('nGx').hidden = !P.gx || gd == null || inc; $('nGx').textContent = P.gx && gd != null && !inc ? T().gxNote(iso(gd)) : '';
+    const gs = $('gxSel'); if (gs) { gs.disabled = inc; gs.title = inc ? T().gxInc : ''; } }
   renderOverall();
 }
 function fsBook(groups) {                                // Excel: Vertės (mėlyni pradiniai) → Skaičiavimai (INDEX/MATCH) → 4 lentelės kiekvienai grupei
@@ -757,7 +758,7 @@ function fsBook(groups) {                                // Excel: Vertės (mėl
   }));
   const meth = [[L ? 'Metodika ir šaltiniai' : 'Methodology and sources'], [],
     [L ? 'Kaip patikrinti' : 'How to check', L ? 'Lapas „Vertės“ – valdytojų paskelbtos vieneto vertės (mėlynos). Lapas „Skaičiavimai“ – kiekvienam fondui pradžios ir pabaigos vertė paimama iš „Vertės“ (INDEX/MATCH pagal datą), iš jų – grąža ir metinė grąža. Lentelių lapai – nuorodos į „Skaičiavimai“ ir MEDIAN, RANK, AVERAGE.' : 'Sheet “Values” – unit values published by the managers (blue). Sheet “Calculations” – each fund’s start and end value is taken from “Values” (INDEX/MATCH by date), then return and annualized return. Table sheets – links to “Calculations” plus MEDIAN, RANK, AVERAGE.'],
-    [L ? 'Laikotarpis' : 'Period', periodText() + (P.gx ? ' · ' + T().gxBtn : '')], [L ? 'Duomenys iki' : 'Data until', iso(LATEST)], [L ? 'Atsisiųsta' : 'Downloaded', DATA.generated], [],
+    [L ? 'Laikotarpis' : 'Period', periodText() + (P.gx && !fsInc() ? ' · ' + T().gxBtn : '')], [L ? 'Duomenys iki' : 'Data until', iso(LATEST)], [L ? 'Atsisiųsta' : 'Downloaded', DATA.generated], [],
     [L ? 'Lentelės' : 'Tables', L ? 'Eilutės – visi grupės fondai, stulpeliai – valdytojai; fondo reikšmė – jo valdytojo stulpelyje.' : 'Rows – all funds of the group, columns – managers; a fund’s value is in its manager’s column.'],
     [L ? 'Grąža' : 'Return', L ? 'Pabaigos vieneto vertė ÷ pradžios vieneto vertė − 1. Pradžios vertė – paskutinė vertė laikotarpio pradžios dieną arba prieš ją. Mokesčiai jau atskaityti iš vieneto verčių.' + (REAL ? ' Reali grąža: dar padalinta iš VKI pokyčio.' : '') : 'End unit value ÷ start unit value − 1. Start value – the last value on or before the period start. Fees are already deducted from unit values.' + (REAL ? ' Real return: also divided by the CPI change.' : '')],
     [L ? 'Kitų mediana' : 'Median of others', L ? 'Kitų tos pačios grupės fondų grąžų mediana (MEDIAN).' : 'Median return of the other funds in the same group (MEDIAN).'],
