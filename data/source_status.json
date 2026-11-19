@@ -6,7 +6,11 @@
   "ok": "2026-11-19"
  },
  "bx.lv_lb": {
-  "ok": "2026-11-19"
+  "err": "2026-11-19",
+  "kind": "other",
+  "msg": "Traceback (most recent call last): (išėjimo kodas 1)",
+  "ok": "2026-11-19",
+  "since": "2026-11-19"
  },
  "bx.lv_plans": {
   "ok": "2026-11-19"
@@ -43,11 +47,7 @@
   "ok": "2026-11-19"
  },
  "idx.EUR_GOV7Y": {
-  "err": "2026-11-19",
-  "kind": "network",
-  "msg": "HTTPError: HTTP Error 503: Service Temporarily Unavailable",
-  "ok": "2026-11-19",
-  "since": "2026-11-19"
+  "ok": "2026-11-19"
  },
  "idx.MSCI_ACWI": {
   "ok": "2026-11-19"

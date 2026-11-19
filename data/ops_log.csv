@@ -723,3 +723,5 @@ ts,src,ev,dd,n,msg
 2026-11-19T13:03,idx.EURUSD,ok,,,vėl veikia
 2026-11-19T13:03,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
 2026-11-19T13:03,idx.SP500,ok,,,vėl veikia
+2026-11-19T13:25,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-19T13:25,idx.EUR_GOV7Y,ok,,,vėl veikia
