@@ -13,6 +13,7 @@ naudojami tik santykiai). Jei persidengimo nėra – įrašoma kaip yra.
   python tools/fetch_seb_bench.py --probe    # nieko neįrašo, ataskaita į probe_out/seb_bench.json
 """
 import json
+import re
 import sys
 import urllib.parse
 from pathlib import Path
@@ -27,19 +28,36 @@ FUNDS = ["SEB pensija 1961-1967", "SEB pensija 1968-1974", "SEB pensija 1975-198
          "SEB pensija 1989-1995", "SEB pensija 1996-2002", "SEB pensija 2003-2009", "SEB turto išsaugojimo fondas"]
 
 
-def open_list(page):
-    page.goto(fund_links.SEB_II, wait_until="domcontentloaded", timeout=90000)
-    page.wait_for_timeout(3000)
+# Fondų puslapiai (sąraše nuorodos atidaromos JS, adresai nustatyti 2026-11-19); jei kuris neveiks – bandoma paspausti sąraše.
+DETAILS = {f: f"{fund_links.SEB_BASE}?sesskey=&lang=LIT&act=FUND_DETAILS&isin={code}&frnam=X&unetmenuhigh=" for f, code in {
+    "SEB pensija 1961-1967": "FOVIS61XXXXX", "SEB pensija 1968-1974": "FOVIS68XXXXX", "SEB pensija 1975-1981": "FOVIS75XXXXX",
+    "SEB pensija 1982-1988": "FOVIS82XXXXX", "SEB pensija 1989-1995": "FOVIS89XXXXX", "SEB pensija 1996-2002": "FOVIS96XXXXX",
+    "SEB pensija 2003-2009": "FOVIS09XXXXX", "SEB turto išsaugojimo fondas": "FOVIS516XXXX"}.items()}
+
+
+def parse_ltdata(html: str) -> dict:
+    """JS kintamasis ltdata: pirma serija – fondas ["YYYYMMDD", vieneto vertė, aktyvai], serija su „lyginamasis“ – indeksas.
+    Grąžina {data: (vieneto vertė, indeksas arba None)} (logika – kaip pillar3.parse_seb_ltdata)."""
+    series = re.findall(r'isin:\s*"[^"]*",\s*name:\s*"([^"]*)",\s*data:\s*\[(.*?)\]\s*\}', html, re.S)
+    if not series:
+        return {}
+    pts = lambda body: re.findall(r'\["(\d{8})",\s*([-\d.eE]+)(?:,\s*([-\d.eE]+))?\]', body)
+    bench = next(({d: float(v) for d, v, _ in pts(body)} for name, body in series[1:] if "lyginamasis" in name.lower()), {})
+    return {f"{d[:4]}-{d[4:6]}-{d[6:]}": (float(u), bench.get(d)) for d, u, _ in pts(series[0][1]) if float(u) > 0}
 
 
 def series(page, fund) -> dict:
-    """Fondų sąraše nuorodos turi href="#" (atidaroma JS), todėl paspaudžiama kaip sources/seb_pensions.py."""
-    open_list(page)
-    page.locator(f"a:has-text('{fund}')").first.click(timeout=15000)
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(2500)
-    DEBUG.setdefault("urls", {})[fund] = page.url
-    return {r["date"]: (r["unit_value"], r["benchmark_index"]) for r in pillar3.parse_seb_ltdata(page.content(), fund)}
+    page.goto(DETAILS[fund], wait_until="domcontentloaded", timeout=90000)
+    page.wait_for_timeout(2000)
+    out = parse_ltdata(page.content())
+    if not out:     # atsarginis kelias – paspausti sąraše (kaip sources/seb_pensions.py)
+        page.goto(fund_links.SEB_II, wait_until="domcontentloaded", timeout=90000)
+        page.wait_for_timeout(3000)
+        page.locator(f"a:has-text('{fund}')").first.click(timeout=15000)
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(2500)
+        out = parse_ltdata(page.content())
+    return out
 
 
 DEBUG = {}
