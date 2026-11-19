@@ -715,3 +715,11 @@ ts,src,ev,dd,n,msg
 2026-11-19T11:56,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-19T12:30,idx.EURUSD,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
 2026-11-19T12:30,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
+2026-11-19T13:03,nav.ALLIANZ,new,2026-11-18,8,
+2026-11-19T13:03,nav.LUMINOR,new,2026-11-18,8,
+2026-11-19T13:03,p3.LUMINOR,new,2026-11-18,5,
+2026-11-19T13:03,bx.lv_lb,ok,,,vėl veikia
+2026-11-19T13:03,estr,fail,,,other: UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte
+2026-11-19T13:03,idx.EURUSD,ok,,,vėl veikia
+2026-11-19T13:03,idx.EUR_GOV7Y,fail,,,network: HTTPError: HTTP Error 503: Service Temporarily Unavailable
+2026-11-19T13:03,idx.SP500,ok,,,vėl veikia
