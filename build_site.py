@@ -414,7 +414,7 @@ def build_perf3(ver: dict) -> None:
     """III pakopa Rezultatuose (savininkas 2026-10-16): performance.html su data3.js – žr. perf.js PL3."""
     text = (DOCS / "performance.html").read_text(encoding="utf-8")
     v3 = hashlib.md5((DOCS / "data3.js").read_bytes()).hexdigest()[:8]
-    shim = ('<script src="data3.js?v=' + v3 + '"></script><script>var PL3 = 1, ASSETS_SRC = "assets3.js"; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; '
+    shim = ('<script src="data3.js?v=' + v3 + '"></script><script>var PL3 = 1; DATA.groups.forEach(g => g.funds.forEach(f => { if (!f.d) { const d = [f.d0]; '
             'f.dd.forEach(x => d.push(d[d.length - 1] + x)); f.d = d; } }));</script>')
     t3 = text.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', shim).replace("<title>", "<title>III pakopa · ")
     t3 = t3.replace(f'<script src="perf.js?v={ver["perf.js"]}"></script>', f'<script>p3Colors();</script><script src="perf.js?v={ver["perf.js"]}"></script>')
@@ -517,12 +517,10 @@ def build_baltic_perf(ver: dict, perf: dict, cpi: dict) -> None:
                                          ensure_ascii=False, separators=(",", ":")) + ";\n" + ("const CPI=" + json.dumps(months, separators=(",", ":")) + ";\n" if months else ""))
         fn = f"data_bx_{c.lower()}{pl.count('I')}.js"
         (DOCS / fn).write_text(dj, encoding="utf-8")
-        afn = f"assets_bx_{c.lower()}{pl.count('I')}.js"
-        write_assets(afn, d.get("assets") or {})
         h = hashlib.md5(dj.encode()).hexdigest()[:8]
         plx = json.dumps({"c": c, "pl": pl, "page": name, "ppy": d["ppy"], "stale": d["stale"]})
         fees = {f"{f['provider']}|{g['id']}": f["fee"] for g in d["groups"] for f in g["funds"] if f.get("fee") is not None}
-        t = base.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', f'<script src="{fn}?v={h}"></script><script>var PL3 = 1, PLX = {plx}, ASSETS_SRC = "{afn}"; {dec}</script>')
+        t = base.replace(f'<script src="data.js?v={ver["data.js"]}"></script>', f'<script src="{fn}?v={h}"></script><script>var PL3 = 1, PLX = {plx}; {dec}</script>')
         t = t.replace(f'<script src="data_cpi.js?v={ver["data_cpi.js"]}"></script>', "")
         t = t.replace(f'<script src="perf.js?v={ver["perf.js"]}"></script>', '<script>p3Colors(); if (typeof FEES !== "undefined") { for (const k in FEES) delete FEES[k]; Object.assign(FEES, '
                       + json.dumps(fees) + f'); }}</script><script src="perf.js?v={ver["perf.js"]}"></script>')
@@ -767,12 +765,6 @@ def build_indexes() -> None:
     print(f"docs/data_idx.js: {sum(len(x['v']) for x in out.values())} reikšmių")
 
 
-def write_assets(fn: str, ser: dict) -> None:
-    """Grynųjų aktyvų istorija „Dienos lentelei“ (perf.js exportDay, kraunama tik paspaudus): {fondas: {"d": [dienos nr.], "a": [€]}}."""
-    out = {n: {"d": [day_number(d) for d, a in sorted(r) if a], "a": [a for d, a in sorted(r) if a]} for n, r in ser.items()}
-    (DOCS / fn).write_text("const ASSETS=" + json.dumps({n: v for n, v in out.items() if v["d"]}, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
-
-
 def build_pillar3(ver: dict) -> None:
     """III pakopos polapis: docs/data3.js iš data/pillar3_history.csv + site/pillar3.html, site/p3.js."""
     import pillar3
@@ -809,7 +801,6 @@ def build_pillar3(ver: dict) -> None:
     }
     data_js = "const DATA=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (DOCS / "data3.js").write_text(data_js, encoding="utf-8")
-    write_assets("assets3.js", {n: [(d, a) for d, _, a in r] for n, r in series.items()})
     shutil.copyfile(SITE / "pillar3.html", DOCS / "pillar3.html")
     shutil.copyfile(SITE / "p3.js", DOCS / "p3.js")
     ver = {**ver, **{n: hashlib.md5((DOCS / n).read_bytes()).hexdigest()[:8] for n in ("data3.js", "p3.js")}}

@@ -552,7 +552,7 @@ function renderMarket() {
   });
   const awRank = rankOf(provs.map(p => ({ key: p.id, v: avgW[p.id] })));
   const arRank = rankOf(provs.map(p => ({ key: p.id, v: avgRet[p.id] }))), akRank = rankOf(provs.map(p => ({ key: p.id, v: avgRank[p.id] === null ? null : -avgRank[p.id] }))), aaRank = rankOf(provs.map(p => ({ key: p.id, v: avgAnn[p.id] })));
-  const pc2 = v => num(v, 2) + pctSfx();
+  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`;   // „%“ paslėptas (antraštėje „%“), lieka tekste
   const na = '<td class="na">–</td>', gap = c => `<tr class="gap"><td colspan="${c}"></td></tr>`;
   const pmCell = v => v === null ? na : `<td class="pm">${pc2(v)}</td>`;
   const relCell = v => v === null || v === undefined ? na : `<td style="${relStyle(v)}">${num(v, 2)}</td>`;
@@ -639,7 +639,7 @@ function renderFundM() {
   pcRender();
   const RMd = fsRm(), rmSeg = !fsRbOn() ? '' : ` <span class="seg sm rmseg" role="group">${['f', 'b', 'd'].map(k => `<button type="button" data-rm="${k}" aria-pressed="${(fsRbOn() && (P.rm === 'b' || P.rm === 'd') ? P.rm : 'f') === k}">${hEsc(rmT(k))}</button>`).join('')}</span>`;
   $('hMarket').textContent = T().hMarket; $('mMarket').textContent = T().mMarket(periodText());
-  const pc2 = v => num(v, 2) + pctSfx(), na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
+  const pc2 = v => num(v, 2) + `<span class="u">${pctSfx()}</span>`, na = '<td class="na">–</td>', box = $('mFund'), per = periodText() + (P.gx ? ' · ' + T().gxBtn : '');
   const rkCell = (v, rank, n, f) => v === null || v === undefined ? na : `<td class="${rkClass(rank, n)}">${f(v)}</td>`;
   box.innerHTML = DATA.groups.filter(g => g.id !== 'zz').map(g => {
     const D = fsData(g), id = k => `tFS_${g.id}_${k}`, nC = D.cols.length;
@@ -803,19 +803,20 @@ async function fourPng() {
   const tbs = ['tRet', 'tRelM', 'tRank', 'tAnnM'].map(id => $(id)), cs0 = getComputedStyle(document.documentElement), cv = k => cs0.getPropertyValue(k).trim();
   const font = getComputedStyle(document.body).fontFamily, txt = n => n ? n.textContent.replace(/\s+/g, ' ').trim() : '';
   const hh = Math.max(...tbs.map(t => t.tHead ? t.tHead.getBoundingClientRect().height : 0));
+  const rws = tbs.map(t => [...t.tBodies[0].rows]), rh = [];
+  rws.forEach(rs => rs.forEach((r, i) => { rh[i] = Math.max(rh[i] || 0, r.getBoundingClientRect().height); }));
   const rb = $('hRet').querySelector('[data-rm][aria-pressed="true"]'), mo = $('mref').selectedOptions[0];
   const subs = [rb && rb.dataset.rm !== 'f' ? txt(rb) : '', mo ? txt(mo) : '', '', ''];
   const el = (tag, st, t) => { const e = document.createElement(tag); e.setAttribute('style', st); if (t != null) e.textContent = t; return e; };
   const wrap = el('div', `display:inline-block;padding:20px 22px 14px;background:${cv('--card') || '#fff'};font-family:${font};color:${cv('--text')}`);
   wrap.append(el('div', 'font-size:18px;font-weight:600;margin-bottom:2px;white-space:nowrap', txt($('hMarket'))),
-    el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:10px;white-space:nowrap`, txt($('c_tRet'))));
-  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:36px;row-gap:14px;align-items:start');
+    el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:16px;white-space:nowrap`, txt($('c_tRet'))));
+  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:44px;row-gap:20px;align-items:start');
   tbs.forEach((t, k) => {
     const c = tblClone(t);
     if (c.tHead) [...c.tHead.rows].forEach(r => r.style.height = hh + 'px');
+    [...c.tBodies[0].rows].forEach((r, i) => { r.style.height = rh[i] + 'px'; });
     c.style.width = 'auto';
-    c.querySelectorAll('th, td').forEach(x => { if (x.cellIndex === 0 || x.colSpan > 1) return; const w = x.classList.contains('pm') ? 88 : 80; x.style.width = x.style.minWidth = x.style.maxWidth = w + 'px'; });
-    { const f = c.querySelectorAll('tr > :first-child'); f.forEach(x => { x.style.whiteSpace = 'nowrap'; x.style.width = x.style.minWidth = 'auto'; x.style.maxWidth = 'none'; }); }   // skaidrėje grupės pavadinimas vienoje eilutėje   // skaidrei – platūs, žemi langeliai (16:9)
     const cell = el('div', '');
     cell.append(el('div', 'font-size:14.5px;font-weight:600;white-space:nowrap', chartTitle(t)), el('div', `font-size:11.5px;color:${cv('--text-2')};height:16px;margin-bottom:6px;white-space:nowrap`, subs[k]), c);
     grid.append(cell);
@@ -1369,46 +1370,27 @@ function tableToAoa(id) {
 function loadScript(src) { return new Promise((ok, no) => { if (window.XLSX) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 /* „Dienos lentelė“: tas pats stulpelių ir fondų pavadinimų išdėstymas kaip senajame faile (pension_data_combined_YYYY-MM-DD.xlsx) */
 const EXPORT_NAMES = {"ALLIANZ":[["2003-2009","Allianz D1 gimusiems 2003-2009 m."],["turto","Allianz S turto išsaugojimo"],["1961-1967","Allianz X1 gimusiems 1961–1967 m."],["1968-1974","Allianz X2 gimusiems 1968–1974 m."],["1975-1981","Allianz X3 gimusiems 1975–1981 m."],["1982-1988","Allianz Y1 gimusiems 1982–1988 m."],["1989-1995","Allianz Y2 gimusiems 1989–1995 m."],["1996-2002","Allianz Y3 gimusiems 1996–2002 m."]],"ARTEA":[["2003-2009","Artea pensija 2003-2009"],["1996-2002","Artea pensija 1996-2002"],["1989-1995","Artea pensija 1989-1995"],["1982-1988","Artea pensija 1982-1988"],["1975-1981","Artea pensija 1975-1981"],["1968-1974","Artea pensija 1968-1974"],["1961-1967","Artea pensija 1961-1967"],["turto","Artea pensijų turto išsaugojimo fondas"]],"GOINDEX":[["2003-2009","Goindex pensija 2003-2009"],["1996-2002","Goindex pensija 1996-2002"],["1989-1995","Goindex pensija 1989-1995"],["1982-1988","Goindex pensija 1982-1988"],["1975-1981","Goindex pensija 1975-1981"],["1968-1974","Goindex pensija 1968-1974"],["1961-1967","Goindex pensija 1961-1967"],["turto","Goindex pensijų turto išsaugojimo fondas"]],"LUMINOR":[["2003-2009","Luminor 2003-2009 tikslinės grupės pensijų fondas"],["1996-2002","Luminor 1996-2002 tikslinės grupės pensijų fondas"],["1989-1995","Luminor 1989-1995 tikslinės grupės pensijų fondas"],["1982-1988","Luminor 1982-1988 tikslinės grupės pensijų fondas"],["1975-1981","Luminor 1975-1981 tikslinės grupės pensijų fondas"],["1968-1974","Luminor 1968-1974 tikslinės grupės pensijų fondas"],["1961-1967","Luminor 1961-1967 tikslinės grupės pensijų fondas"],["turto","Luminor pensijų turto išsaugojimo fondas"]],"SEB":[["2003-2009","SEB pensija 2003-2009"],["1996-2002","SEB pensija 1996-2002"],["1989-1995","SEB pensija 1989-1995"],["1982-1988","SEB pensija 1982-1988"],["1975-1981","SEB pensija 1975-1981"],["1968-1974","SEB pensija 1968-1974"],["1961-1967","SEB pensija 1961-1967"],["turto","SEB turto išsaugojimo fondas"]],"SWEDBANK":[["2003-2009","Pensija 2003-2009"],["1996-2002","Pensija 1996-2002"],["1989-1995","Pensija 1989-1995"],["1982-1988","Pensija 1982-1988"],["1975-1981","Pensija 1975-1981"],["1968-1974","Pensija 1968-1974"],["1961-1967","Pensija 1961-1967"],["turto","Turto išsaugojimo pensijų fondas"]]};
-function loadAssets() { return new Promise((ok, no) => { if (typeof ASSETS !== 'undefined') return ok(); const s = document.createElement('script'); s.src = (typeof ASSETS_SRC !== 'undefined' ? ASSETS_SRC : 'assets.js') + '?v=' + encodeURIComponent(DATA.generated); s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
-/* Dienos lentelė visiems puslapiams (savininkas 2026-11-19: III pakopoje rašė f0…f21 ir tuščias reikšmes – ten „valdytojas“ yra fondo raktas).
-   LT II – senojo failo išdėstymas (EXPORT_NAMES); kiti (LT III, LV, EE) – valdytojo eilutė, po ja jo fondai tikrais pavadinimais. */
+function loadAssets() { return new Promise((ok, no) => { if (typeof ASSETS !== 'undefined') return ok(); const s = document.createElement('script'); s.src = 'assets.js?v=' + encodeURIComponent(DATA.generated); s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 async function exportDay() {
   const btn = $('btnXlsxDay'); btn.textContent = T().xlsxBusy; btn.disabled = true;
   try {
-    const C = typeof PLX !== 'undefined' && PLX ? PLX.c : 'LT', oldLT = C === 'LT' && !(typeof PL3 !== 'undefined' && PL3);
-    await Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'), loadAssets().catch(() => null)]);
+    await Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'), loadAssets()]);
     const D = Math.min(Math.max(dayOf($('xlDate').value || iso(LATEST)), EARLIEST), LATEST);
-    const rows = [['Fondo pavadinimas', 'Data', 'Vieneto vertė', 'Grynieji aktyvai']]; let eff = 0, noA = 0; const idx = [];
-    const put = (name, f) => {
-      const i = f ? lastOnOrBefore(f, D) : -1;
-      if (i < 0) { rows.push([name, '', '', '']); return; }
-      let na = '';
-      const a = typeof ASSETS !== 'undefined' ? ASSETS[f.name] : null; let j = a ? a.d.length - 1 : -1; while (j >= 0 && a.d[j] > f.d[i]) j--;
-      if (j >= 0 && f.d[i] - a.d[j] <= 7) na = a.a[j];   // turtas – ta pati arba artimiausia ankstesnė diena (iki savaitės)
-      if (na === '') noA++;
-      if (f.idx) { idx.push(f.name); rows.push([name, iso(f.d[i]), '', na]); return; }   // LV: tik indeksas (bazė 100), ne vieneto vertė
-      eff = Math.max(eff, f.d[i]); rows.push([name, iso(f.d[i]), f.v[i], na]);
-    };
-    if (oldLT) DATA.providers.forEach(p => { rows.push([p.id]);
-      (EXPORT_NAMES[p.id] || []).forEach(([gid, name]) => { const g = byId(gid); put(name, g && g.funds.find(x => x.provider === p.id)); }); });
-    else {
-      const mgr = f => { const p = DATA.providers.find(x => x.id === f.provider) || {}; return p.m || (p.brand ? labelOfMgr(p.brand) : f.provider); };
-      const funds = DATA.groups.flatMap(g => g.funds), by = new Map();
-      funds.forEach(f => { const m = mgr(f); if (!by.has(m)) by.set(m, []); if (!by.get(m).includes(f)) by.get(m).push(f); });
-      [...by.keys()].sort((x, y) => x.localeCompare(y)).forEach(m => { rows.push([m]);
-        by.get(m).sort((x, y) => x.name.localeCompare(y.name)).forEach(f => put(f.name, f)); });
-    }
-    const src = { LT: 'Valdytojų svetainės ir duomenų sąsajos (renkama kasdien)', LV: 'manapensija.lv (Latvija)', EE: 'pensionikeskus.ee (Estija)' }[C] || '';
-    const info = [['Dienos lentelė'], ['Prašyta data', iso(D)], ['Šalis ir pakopa', `${C} ${typeof PLX !== 'undefined' && PLX ? PLX.pl : (oldLT ? 'II' : 'III')} pakopa`], ['Šaltinis', src],
-      ['Data', 'Paskutinė diena su vieneto verte, ne vėlesnė už prašytą datą.'], ['Vieneto vertė', 'Kaip paskelbė šaltinis, eurais, jau atskaičius valdymo mokestį.'],
-      ['Grynieji aktyvai', 'Tos pačios šaltinio dienos grynieji aktyvai, €; jei tą dieną nepaskelbti – artimiausios ankstesnės dienos (iki 7 d.); kitaip langelis tuščias.'],
-      ['Tuščių grynųjų aktyvų langelių', noA]].concat(idx.length ? [['Be vieneto vertės', `${idx.join(', ')}: šaltinis skelbia tik indeksą (bazė 100), ne vieneto vertę.`]] : []);
+    const rows = [['Fondo pavadinimas', 'Data', 'Vieneto vertė', 'Grynieji aktyvai']]; let eff = 0;
+    DATA.providers.forEach(p => {
+      rows.push([p.id]);
+      (EXPORT_NAMES[p.id] || []).forEach(([gid, name]) => {
+        const g = byId(gid), f = g && g.funds.find(x => x.provider === p.id), i = f ? lastOnOrBefore(f, D) : -1;
+        if (i < 0) { rows.push([name, '', '', '']); return; }
+        const a = ASSETS[f.name]; let j = a ? a.d.length - 1 : -1; while (j >= 0 && a.d[j] > f.d[i]) j--;
+        eff = Math.max(eff, f.d[i]);
+        rows.push([name, iso(f.d[i]), f.v[i], j >= 0 ? a.a[j] : '']);
+      });
+    });
     const wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols'] = [{ wch: 40 }, { wch: 21.5 }, { wch: 21.5 }, { wch: 21.5 }]; ws['!freeze'] = false;   // kaip senajame faile – be užšaldytų eilučių
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const wi = XLSX.utils.aoa_to_sheet(info); wi['!cols'] = [{ wch: 30 }, { wch: 90 }]; XLSX.utils.book_append_sheet(wb, wi, 'Šaltiniai');
-    const pl = typeof PLX !== 'undefined' && PLX ? PLX.pl : (oldLT ? 'II' : 'III');
-    XLSX.writeFile(wb, `pension_data_combined_${oldLT ? '' : `${C}_${pl}_`}${iso(eff || D)}.xlsx`);
+    XLSX.writeFile(wb, `pension_data_combined_${iso(eff)}.xlsx`);
   } catch (e) { alert(T().xlsxFail); }
   btn.disabled = false; btn.textContent = T().xlsxDay;
 }
@@ -1849,6 +1831,8 @@ function buildControls() {
   $('rfAuto').addEventListener('click', () => { P.rf = null; saveState(); renderAdvanced(lastParts, P.group === 'all'); });
   $('btnXlsx').addEventListener('click', exportXlsx);
   $('btnXlsxDay').addEventListener('click', exportDay);
+  /* Dienos lentelė – tik Lietuvos II pakopai (savininkas 2026-11-19: ji skirta tik įklijuoti į jo II pakopos Excel; III, LV, EE puslapiuose rašė f0…f21) */
+  if (typeof PL3 !== 'undefined' && PL3 || typeof PLX !== 'undefined' && PLX && PLX.c !== 'LT') $('btnXlsxDay').closest('.xlday').style.display = 'none';
   $('btnPrint').addEventListener('click', () => window.print());
   $('btnShare').addEventListener('click', async () => {
     const url = shareUrl(); history.replaceState(null, '', url.slice(url.indexOf('#')));
