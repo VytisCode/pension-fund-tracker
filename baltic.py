@@ -768,6 +768,30 @@ PGRP = {"LV": [("e30", "Iki 30 % akcijų", "Up to 30% equities"), ("e75", "31–
                ("r3", "Didesnė rizika (8–12 %)", "Higher risk (8–12%)"), ("r4", "Didelė rizika (daugiau nei 12 %)", "High risk (over 12%)"), ("zz", "Per trumpa istorija", "Too short history")]}   # nuo mažiausios rizikos, kaip LT; „kiti“ – gale
 
 
+LV_MERGED = {"LV-II-028": "→ 50-60, 2026-10-20"}     # plāns sujungtas (paskutinė vertė 2026-10-19) – rodomas prie pavadinimo
+
+
+def _lv_idx_eur(f, pts):
+    """LV plāno indeksas (manapensija.lv, bazė 100, LVL laikais pradėtas) → vieneto vertė € pagal ketvirčio ataskaitų vertes
+    (data/lv_reports.csv „unit“). Vienas daugiklis – iš naujausio ketvirčio, kurio dieną yra indekso taškas (kitaip – artimiausias
+    ankstesnis ≤ 10 d.), todėl grąžos lieka tos pačios kaip indekso, o lygis atitinka ataskaitas (028: nuokrypis ≤ ~1 %).
+    Jei ataskaitų vertių nėra – grąžinama None (fondas tada nerodomas, kad indeksas nebūtų pateiktas kaip vieneto vertė)."""
+    pid = f["id"].split("-")[-1]
+    ds = [x for x, _ in pts]
+    anc = []
+    for q, r in sorted(lv_reports()[0].get(pid, {}).items()):
+        if not r.get("unit"):
+            continue
+        dq = day(q)
+        i = max((j for j, x in enumerate(ds) if x <= dq), default=None)
+        if i is not None and dq - ds[i] <= 10:
+            anc.append((ds[i] == dq, q, float(r["unit"]) / pts[i][1]))
+    if not anc:
+        return None
+    k = max(anc)[2]
+    return [(x, round(y * k, 7)) for x, y in pts]
+
+
 def perf_data(funds):
     """Latvijos ir Estijos fondai tuo pačiu formatu kaip III pakopos data3.js – kad „Rezultatų“ puslapis (perf.js) veiktų ir jiems
     (savininkas 2026-10-21: „kad latviai ir estai jaustų tą pačią kokybę, kokią matys Lietuvoje“). Grupės – šalies peer grupės:
@@ -787,7 +811,10 @@ def perf_data(funds):
                     if dk:
                         dp = [(day(d), u) for d, u, _, _ in sorted(dk)]
                         ser[f["id"]] = [(x, y / 100) for x, y in ser[f["id"]] if x < dp[0][0]] + dp
-            top = max(v[-1][0] for v in ser.values())
+                    elif ser[f["id"]]:      # 2026-11-19: plāns be kasdienių vertių (manapensija.lv jo neskelbia; „Luminor plāns 53-58“ –
+                        ser[f["id"]] = _lv_idx_eur(f, ser[f["id"]])   # sujungtas su 50-60 2026-10-20) – indeksas (bazė 100) → € pagal ataskaitas
+            fs = [f for f in fs if ser[f["id"]]]
+            top = max(ser[f["id"]][-1][0] for f in fs)
             fs = [f for f in fs if ser[f["id"]][-1][0] > top - 45]
             key = (lambda f: f["cg"] or "zz") if c == "LV" else (lambda f: f["risk"] or "zz")
             provs, groups = [], []
@@ -798,10 +825,11 @@ def perf_data(funds):
                 rows = []
                 for f in gf:
                     pid = f"f{len(provs)}"
-                    provs.append({"id": pid, "label": f["n"], "brand": re.sub(r"[^A-Z]", "", f["m"].upper()) or "X", "m": f["m"]})
+                    nm = f["n"] + (f" ({LV_MERGED[f['id']]})" if f["id"] in LV_MERGED else "")
+                    provs.append({"id": pid, "label": nm, "brand": re.sub(r"[^A-Z]", "", f["m"].upper()) or "X", "m": f["m"]})
                     pts = ser[f["id"]]
                     dd, v = enc(pts)
-                    rows.append({"provider": pid, "brand": provs[-1]["brand"], "name": f["n"], "code": f["id"], "risky": "0", "d0": dd[0], "dd": dd[1:], "v": v,
+                    rows.append({"provider": pid, "brand": provs[-1]["brand"], "name": nm, "code": f["id"], "risky": "0", "d0": dd[0], "dd": dd[1:], "v": v,
                                  "assets": round(f["na"] * 1e6) if f.get("na") else None, "assetsDate": (day(f["naQ"]) if f.get("naQ") else pts[-1][0]) if f.get("na") else None,
                                  "fee": f["fee"] if f.get("feeK") == "ter" else None})
                 groups.append({"id": gid, "lbl": {"lt": lt, "en": en}, "funds": rows})
