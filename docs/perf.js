@@ -796,14 +796,36 @@ async function fsExport() {
   try { XLSX.writeFile(fsBook(DATA.groups), `${lang === 'lt' ? 'Kiekvienas_fondas' : 'Each_fund'}_${iso(LATEST)}.xlsx`); } catch (e) { console.warn(e); alert(T().xlsxFail); }
   btn.disabled = false;
 }
-/* visos keturios „Visos rinkos“ lentelės viename paveikslėlyje (2 × 2), kaip puslapyje (savininkas 2026-11-12) */
+/* visos keturios „Visos rinkos“ lentelės viename paveikslėlyje (2 × 2), kaip puslapyje (savininkas 2026-11-12).
+   2026-11-19 (prezentacijoms): vienas bendras pavadinimas ir laikotarpis, vienodo pločio stulpeliai, eilutės ir antraštės sulygiuotos
+   tarp lentelių, vienas šaltinio parašas apačioje. */
 async function fourPng() {
-  const ims = await Promise.all(['tRet', 'tRelM', 'tRank', 'tAnnM'].map(async id => { const bl = await tablePng($(id)); const im = new Image(); im.src = URL.createObjectURL(bl); await im.decode(); return im; }));
-  const g = 24, w0 = Math.max(ims[0].width, ims[2].width), w1 = Math.max(ims[1].width, ims[3].width), h0 = Math.max(ims[0].height, ims[1].height), h1 = Math.max(ims[2].height, ims[3].height);
-  const c = document.createElement('canvas'); c.width = w0 + w1 + g; c.height = h0 + h1 + g; const x = c.getContext('2d');
-  x.fillStyle = getComputedStyle(document.body).backgroundColor || '#fff'; x.fillRect(0, 0, c.width, c.height);
-  x.drawImage(ims[0], 0, 0); x.drawImage(ims[1], w0 + g, 0); x.drawImage(ims[2], 0, h0 + g); x.drawImage(ims[3], w0 + g, h0 + g);
-  return new Promise((ok, no) => c.toBlob(b => b ? ok(b) : no(), 'image/png'));
+  const tbs = ['tRet', 'tRelM', 'tRank', 'tAnnM'].map(id => $(id)), cs0 = getComputedStyle(document.documentElement), cv = k => cs0.getPropertyValue(k).trim();
+  const font = getComputedStyle(document.body).fontFamily, txt = n => n ? n.textContent.replace(/\s+/g, ' ').trim() : '';
+  const hh = Math.max(...tbs.map(t => t.tHead ? t.tHead.getBoundingClientRect().height : 0));
+  const rws = tbs.map(t => [...t.tBodies[0].rows]), rh = [];
+  rws.forEach(rs => rs.forEach((r, i) => { rh[i] = Math.max(rh[i] || 0, r.getBoundingClientRect().height); }));
+  const rb = $('hRet').querySelector('[data-rm][aria-pressed="true"]'), mo = $('mref').selectedOptions[0];
+  const subs = [rb && rb.dataset.rm !== 'f' ? txt(rb) : '', mo ? txt(mo) : '', '', ''];
+  const el = (tag, st, t) => { const e = document.createElement(tag); e.setAttribute('style', st); if (t != null) e.textContent = t; return e; };
+  const wrap = el('div', `display:inline-block;padding:20px 22px 14px;background:${cv('--card') || '#fff'};font-family:${font};color:${cv('--text')}`);
+  wrap.append(el('div', 'font-size:18px;font-weight:600;margin-bottom:2px;white-space:nowrap', txt($('hMarket'))),
+    el('div', `font-size:12.5px;color:${cv('--text-2')};margin-bottom:16px;white-space:nowrap`, txt($('c_tRet'))));
+  const grid = el('div', 'display:grid;grid-template-columns:max-content max-content;column-gap:40px;row-gap:22px;align-items:start');
+  tbs.forEach((t, k) => {
+    const c = tblClone(t);
+    if (c.tHead) [...c.tHead.rows].forEach(r => r.style.height = hh + 'px');
+    [...c.tBodies[0].rows].forEach((r, i) => { r.style.height = rh[i] + 'px'; });
+    c.style.width = 'auto';
+    const cell = el('div', '');
+    cell.append(el('div', 'font-size:14.5px;font-weight:600;white-space:nowrap', chartTitle(t)), el('div', `font-size:11.5px;color:${cv('--text-2')};height:16px;margin-bottom:6px;white-space:nowrap`, subs[k]), c);
+    grid.append(cell);
+  });
+  wrap.append(grid, el('div', `font-size:11px;color:${cv('--text-3')};margin-top:12px;white-space:nowrap`, pngStamp(tbs[0])));
+  const host = el('div', 'position:absolute;left:-20000px;top:0'); host.append(wrap); document.body.append(host);
+  const TW = Math.ceil(wrap.offsetWidth), TH = Math.ceil(wrap.offsetHeight); host.remove();
+  wrap.style.width = TW + 'px'; wrap.style.height = TH + 'px'; wrap.style.boxSizing = 'border-box'; wrap.style.display = 'block';   // fonas per visą paveikslėlį
+  return htmlPng(wrap, TW, TH);
 }
 /* bendras reitingas: visos grupės × laikotarpiai */
 /* „Bendras reitingas“ + „Vieta pagal laikotarpį“ – viena kortelė (savininko patvirtinta struktūra 2026-10-16):

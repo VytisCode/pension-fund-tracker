@@ -162,9 +162,23 @@ a.btn { text-decoration: none; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
 .scroll { overflow-x: auto; }
-#tRet, #tRank { table-layout: fixed; min-width: 520px; }        /* vienodo pločio langeliai rinkos lentelėse */
-#tRet th:first-child, #tRet td:first-child, #tRank th:first-child, #tRank td:first-child { width: 92px; }
-.bxmk #tRet th:first-child, .bxmk #tRet td:first-child, .bxmk #tRank th:first-child, .bxmk #tRank td:first-child { width: 128px; }   /* LV/EE grupių pavadinimai ilgesni */
+/* rinkos heat map lentelės – siauros ir vienodo tinklelio (savininkas 2026-11-19: prezentacijoms): visų keturių lentelių
+   stulpeliai vienodo pločio, lentelė neištempiama per visą pusę puslapio */
+#mGrid .mx:not(.fs), .fsset .mx:not(.fc) { width: auto; table-layout: auto; font-size: 12.5px; }
+#mGrid .mx:not(.fs) th, #mGrid .mx:not(.fs) td, .fsset .mx:not(.fc) th, .fsset .mx:not(.fc) td { width: 64px; min-width: 64px; max-width: 64px; padding: 4px 3px; box-sizing: border-box; }
+#mGrid .mx:not(.fs) td, .fsset .mx td { vertical-align: middle; }
+#mGrid .mx:not(.fs) th, .fsset .mx th { font-size: 11px; white-space: normal; line-height: 1.2; vertical-align: bottom; overflow-wrap: anywhere; }
+#mGrid .mx:not(.fs) th:first-child, #mGrid .mx:not(.fs) td:first-child { width: 96px; min-width: 96px; max-width: 96px; padding-left: 0; white-space: normal; line-height: 1.2; }
+.bxmk #mGrid .mx:not(.fs) th:first-child, .bxmk #mGrid .mx:not(.fs) td:first-child { width: 120px; min-width: 120px; max-width: 120px; }   /* LV/EE grupių pavadinimai ilgesni */
+#mGrid .mx:not(.fs) th.pm, #mGrid .mx:not(.fs) td.pm, .fsset .mx th.pm, .fsset .mx td.pm { width: 72px; min-width: 72px; max-width: 72px; }
+.fsset .mx.fs:not(.fc) th:first-child, .fsset .mx.fs:not(.fc) td:first-child { width: 190px; min-width: 190px; max-width: 190px; padding-left: 0; }
+#mGrid:not(.one) { grid-template-columns: repeat(2, max-content); justify-content: start; column-gap: 40px; }
+.fsset .two { grid-template-columns: repeat(2, max-content); justify-content: start; column-gap: 40px; }
+#mGrid > [data-m] > :not(.scroll), .fsset .two > div > :not(.scroll) { contain: inline-size; }   /* antraštės nepraplečia stulpelio – lūžta */
+@media (max-width: 1000px) { #mGrid:not(.one), .fsset .two { grid-template-columns: minmax(0, max-content); } }
+/* III / LV / EE „Kiekvienas fondas“ kompaktiška lentelė – pagal turinį, ne per visą plotį */
+.mx.fc { width: auto; font-size: 12.5px; } .mx.fc td { padding: 4px 8px; } .mx.fc th { padding: 0 8px 6px; }
+.mx.fc td:not(.mg):not(:first-child):not(:nth-child(2)), .mx.fc th:nth-child(n+3) { min-width: 72px; }
 .bxmk .mx td:first-child { white-space: normal; line-height: 1.25; }
 .mx th { overflow: hidden; text-overflow: ellipsis; }
 .mx .sw-top { display: block; width: 18px; height: 4px; border-radius: 2px; margin: 0 auto 4px; }

@@ -1995,7 +1995,7 @@ async function tableCopy(tbl) {
   catch (e) { try { await navigator.clipboard.writeText(tsv); return true; } catch (e2) { return false; } }
 }
 const TBL_PROPS = ['color', 'background-color', 'font-family', 'font-size', 'font-weight', 'font-style', 'font-variant-numeric', 'text-align', 'vertical-align', 'white-space', 'line-height',
-  'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse', 'border-spacing', 'width', 'min-width'];
+  'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse', 'border-spacing', 'width', 'min-width', 'max-width', 'box-sizing', 'overflow-wrap'];
 /* paveikslėliui prezentacijoms (savininkas 2026-10-16): po pavadinimu – laikotarpis / paaiškinimas, apačioje – šaltinis ir duomenų data */
 function pngSub(el) {
   const c = el.id && document.getElementById('c_' + el.id), card = el.closest('.card, section') || el.parentElement;
@@ -2008,13 +2008,28 @@ function pngStamp(el) {
   const src = sl ? sl.replace(/ · Metodika.*$|· Methodology.*$/, '').trim() : '';
   return [T().siteTitle, src || (typeof FRESH !== 'undefined' ? T().dataUntil + ' ' + iso(FRESH.top) : '')].filter(Boolean).join(' · ');
 }
+function tblClone(tbl) {                    // lentelės kopija su įterptais apskaičiuotais stiliais (paveikslėliams)
+  const clone = tbl.cloneNode(true);
+  const src = [tbl, ...tbl.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
+  src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', TBL_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';') + ';position:static'); });
+  clone.querySelectorAll('button, .info, .ik').forEach(n => n.remove());
+  return clone;
+}
+function htmlPng(wrap, TW, TH) {             // HTML elementas → PNG (SVG foreignObject → drobė, 2×)
+  return new Promise((ok, no) => {
+    wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${TH}"><foreignObject width="100%" height="100%">${new XMLSerializer().serializeToString(wrap)}</foreignObject></svg>`;
+    const img = new Image();
+    img.onload = () => { const c = document.createElement('canvas'); c.width = TW * 2; c.height = TH * 2; const x = c.getContext('2d'); x.scale(2, 2); x.drawImage(img, 0, 0);
+      try { c.toBlob(b => b ? ok(b) : no(), 'image/png'); } catch (e) { no(e); } };
+    img.onerror = no;
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+}
 function tablePng(tbl) {                    // lentelė → PNG: kopija su įterptais stiliais SVG foreignObject viduje → drobė
   return new Promise((ok, no) => {
     const cs0 = getComputedStyle(document.documentElement), v = k => cs0.getPropertyValue(k).trim();
-    const clone = tbl.cloneNode(true);
-    const src = [tbl, ...tbl.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
-    src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', TBL_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';') + ';position:static'); });
-    clone.querySelectorAll('button, .info, .ik').forEach(n => n.remove());
+    const clone = tblClone(tbl);
     const sub = pngSub(tbl), W = Math.ceil(Math.max(tbl.scrollWidth, tbl.getBoundingClientRect().width)), H = Math.ceil(tbl.scrollHeight), pad = 16;
     const head = 34 + (sub ? 18 * Math.ceil(sub.length * 6.6 / Math.max(300, W)) : 0), foot = 28;
     const stamp = pngStamp(tbl), font = getComputedStyle(document.body).fontFamily;
