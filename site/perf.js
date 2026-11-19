@@ -652,11 +652,18 @@ addStrings3({ fxYrs: 'Darbības periods', fxRisky: 'Riskanto aktīvu daļa (LB),
   { fxYrs: 'Tegevusaeg', fxRisky: 'Riskantsete varade osa (LB), %', fxNav: 'Puhasvara, mln €', fxPart: 'Osalejad', fxEq: 'Tegelik aktsiate osa, %', fxY: (y, m) => (y ? y + ' a' : '') + (y && m ? ' ' : '') + (m ? m + ' k' : ''), fxUpTo: 'kuni' });
 const FX = () => !DATA.lb && !DATA.eq ? [] : [
   ...(DATA.lb ? [
-    { h: () => T().fxYrs, xh: () => T().fxYrs + (lang === 'lt' ? ', metai' : ', years'), v: f => (DATA.lb.f[f.code] || [])[0] ?? null, d: v => { const m = Math.round(v * 12); return T().fxY(Math.floor(m / 12), m % 12); }, z: '0.00' },
+    { bar: 'max', h: () => T().fxYrs, xh: () => T().fxYrs + (lang === 'lt' ? ', metai' : ', years'), v: f => (DATA.lb.f[f.code] || [])[0] ?? null, d: v => { const m = Math.round(v * 12); return T().fxY(Math.floor(m / 12), m % 12); }, z: '0.00' },
     { h: () => T().fxRisky, t: () => T().fxRiskyT, v: f => (DATA.lb.f[f.code] || [])[1] ?? null, d: v => typeof v === 'number' ? num(v, 0) : String(v).replace(/^iki\b/, T().fxUpTo) },
-    { h: () => T().fxNav, v: f => (DATA.lb.f[f.code] || [])[2] ?? null, d: v => num(v, 1), z: '#,##0.000000' },
-    { h: () => T().fxPart, v: f => (DATA.lb.f[f.code] || [])[3] ?? null, d: v => num(v, 0), z: '#,##0' }] : []),
-  ...(DATA.eq ? [{ h: () => T().fxEq, t: () => T().fxEqT, v: f => DATA.eq.f[f.code] ?? null, d: v => num(v, 1), x: v => v / 100, z: '0.0%' }] : [])];
+    { bar: 'max', h: () => T().fxNav, v: f => (DATA.lb.f[f.code] || [])[2] ?? null, d: v => num(v, 1), z: '#,##0.000000' },
+    { bar: 'max', h: () => T().fxPart, v: f => (DATA.lb.f[f.code] || [])[3] ?? null, d: v => num(v, 0), z: '#,##0' }] : []),
+  ...(DATA.eq ? [{ bar: 'eq', h: () => T().fxEq, t: () => T().fxEqT, v: f => DATA.eq.f[f.code] ?? null, d: v => num(v, 1), x: v => v / 100, z: '0.0%' }] : [])];
+const fxRaw = f => DATA.lb && DATA.lb.f[f.code] ? DATA.lb.f[f.code][1] : null;
+const fxLim = f => { const r = fxRaw(f); if (r === null || r === undefined) return null; if (typeof r === 'number') return [0, r];   // LB riba → [nuo, iki] %
+  let m = /^iki\s*([\d.,]+)/i.exec(r); if (m) return [0, +m[1].replace(',', '.')]; m = /^([\d.,]+)\s*[-–]\s*([\d.,]+)/.exec(r); return m ? [+m[1].replace(',', '.'), +m[2].replace(',', '.')] : null; };
+addStrings({ fxBarN: 'Bars in the cells: operating period, net assets and participants – length compared with the largest value in that category; actual equity share – scale 0–100 %, light band – range allowed by the fund rules, line – upper limit, orange bar – share outside the allowed range.',
+  fxLimT: (v, r) => `Actual equity share ${v} %; limit in the fund rules (Bank of Lithuania): ${r} %. Light band – allowed range, line – upper limit.` },
+  { fxBarN: 'Juostos langeliuose: veiklos laikotarpio, grynųjų aktyvų ir dalyvių – ilgis lyginant su didžiausia reikšme toje kategorijoje; faktinės akcijų dalies – skalė 0–100 %, šviesus fonas – fondo taisyklėse leidžiamas intervalas, brūkšnys – viršutinė riba, oranžinė juosta – dalis už leidžiamo intervalo.',
+    fxLimT: (v, r) => `Faktinė akcijų dalis ${v} %; riba fondo taisyklėse (Lietuvos bankas): ${r} %. Šviesi juosta – leidžiamas intervalas, brūkšnys – viršutinė riba.` });
 const fxNote = () => DATA.lb || DATA.eq ? T().fxNote(DATA.lb ? DATA.lb.d : '–', DATA.eq ? DATA.eq.d : '–') : '';
 function renderFundM() {
   pcRender();
@@ -686,7 +693,16 @@ function renderFundM() {
     if (FS_LAY === 'c') {                                // kompaktiška: eilutė – fondas, stulpeliai – rodikliai; apačioje valdytojų vidurkiai
       const mc = f => { const c = D.cols.find(x => x.k === fsMgr(f.provider)); return `<td class="mg"><span class="sw" style="background:${colorOf(c.id)}"></span>${hEsc(c.label)}</td>`; };
       const AL = fsAnnL(D.rng), fx = FX();
-      const fxC = f => fx.map((c, i) => { const v = c.v(f); return `<td class="fx${i ? '' : ' fx1'}">${v === null ? '–' : hEsc(c.d(v))}</td>`; }).join('');
+      // juostos langelyje (savininkas 2026-11-19: „Data Bars, ne heat map“): ilgis – lyginant su didžiausia reikšme šioje lentelėje;
+      // akcijų dalis – skalė 0–100 %, šviesus fonas – taisyklėse leidžiamas intervalas (LB „iki X“ / „A-B“), brūkšnys – viršutinė riba
+      const fxMax = fx.map(c => Math.max(0, ...D.fs.map(f => c.v(f)).filter(v => typeof v === 'number')));
+      const fxC = f => fx.map((c, i) => { const v = c.v(f), cls = `fx${i ? '' : ' fx1'}`;
+        if (v === null) return `<td class="${cls}">–</td>`;
+        if (!c.bar || typeof v !== 'number') return `<td class="${cls}">${hEsc(c.d(v))}</td>`;
+        let w = c.bar === 'eq' ? v : fxMax[i] > 0 ? v / fxMax[i] * 100 : 0, lim = '', out = false;
+        if (c.bar === 'eq') { const r = fxLim(f); if (r) { out = v > r[1] + 0.05 || v < r[0] - 0.05;
+          lim = `<span class="dbl" style="left:${r[0]}%;width:${r[1] - r[0]}%"></span><span class="dbm" style="left:${r[1]}%"></span>`; } }
+        return `<td class="${cls} dbc"${c.bar === 'eq' && fxLim(f) ? ` title="${hEsc(T().fxLimT(c.d(v), fxRaw(f)))}"` : ''}><div class="dbw">${lim}<span class="db${out ? ' out' : ''}" style="width:${Math.max(0, Math.min(100, w)).toFixed(1)}%"></span><span class="dv">${hEsc(c.d(v))}</span></div></td>`; }).join('');
       const body = fsOrd(D, X).map(f => { const k = D.rk.map.get(f.provider);
         return `<tr>${mc(f)}<td title="${hEsc(labelOf(f.provider))}">${hEsc(fsShort(labelOf(f.provider)))}</td>${rkCell(X.v[f.provider], X.rk.map.get(f.provider), X.rk.n, xf)}${k ? `<td class="${rkClass(k, D.rk.n)}">${k}</td>` : na}${AL ? rkCell(D.ann[f.provider], D.ra.map.get(f.provider), D.ra.n, pc2) : ''}${fxC(f)}</tr>`; }).join('');
       const xmed = medianOf(D.fs.map(f => X.v[f.provider])), amed = medianOf(D.fs.map(f => D.ann[f.provider]));
@@ -707,7 +723,7 @@ function renderFundM() {
   box.insertAdjacentHTML('afterbegin', `<div class="tools" style="margin:0 0 12px"><div class="seg" role="group" id="fsLay">${['c', 'm'].map(k => `<button type="button" data-fl="${k}" aria-pressed="${FS_LAY === k}">${k === 'c' ? T().fsLayC : T().fsLayM}</button>`).join('')}</div></div>`);
   $('fsLay').onclick = e => { const b = e.target.closest('button'); if (!b) return; FS_LAY = b.dataset.fl; try { localStorage.setItem('fsLay', FS_LAY); } catch (er) {} renderMarket(); };
   $('nMarket').textContent = FS_LAY === 'c' ? T().fsNoteC : T().fsNote;
-  if (FS_LAY === 'c' && fxNote()) box.insertAdjacentHTML('beforeend', `<p class="note">${hEsc(fxNote())}</p>`);
+  if (FS_LAY === 'c' && fxNote()) box.insertAdjacentHTML('beforeend', `<p class="note">${hEsc(fxNote())}</p><p class="note">${hEsc(T().fxBarN)}</p>`);
   $('btnGx').textContent = T().gxBtn; $('btnMxl').textContent = '⤓ ' + T().mxl;
   { const gd = (MK.gxD || {})[MK.gxm]; $('nGx').hidden = !P.gx || gd == null; $('nGx').textContent = P.gx && gd != null ? T().gxNote(iso(gd)) : ''; }
   renderOverall();

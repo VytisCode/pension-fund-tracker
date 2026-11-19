@@ -1249,3 +1249,10 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .mx.fc td:first-child:not(.mg), .mx.fc td.mg + td { white-space: nowrap; max-width: none; min-width: 0; }
 .mx.fc td.fx { font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--text-1, inherit); text-align: right; white-space: nowrap; } .mx.fc th.fx { text-align: right; }
 .mx.fc .fx1 { border-left: 1px solid var(--border, rgba(127,127,127,.3)); }
+/* LB stulpelių juostos (data bars) – savininkas 2026-11-19 */
+.mx.fc td.dbc { padding-top: 2px; padding-bottom: 2px; } .mx.fc .dbw { position: relative; height: 18px; line-height: 18px; }
+.mx.fc .db { position: absolute; left: 0; top: 2px; bottom: 2px; background: color-mix(in srgb, var(--accent, #4a7bb7) 32%, transparent); border-radius: 2px; }
+.mx.fc .db.out { background: color-mix(in srgb, #d9822b 55%, transparent); }
+.mx.fc .dbl { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--text-3, #888) 12%, transparent); }
+.mx.fc .dbm { position: absolute; top: -1px; bottom: -1px; width: 2px; margin-left: -1px; background: var(--text-2, #555); }
+.mx.fc .dv { position: relative; padding-right: 2px; }
