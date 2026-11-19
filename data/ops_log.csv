@@ -697,3 +697,18 @@ ts,src,ev,dd,n,msg
 2026-11-18T13:36,bx.lv_lb,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
 2026-11-18T19:32,idx.MSCI_ACWI,fail,,,network: TimeoutError: The read operation timed out
 2026-11-18T19:32,idx.MSCI_WORLD,fail,,,network: TimeoutError: The read operation timed out
+2026-11-19T11:39,estr,new,2026-11-18,1,
+2026-11-19T11:39,idx.EUR_GOV7Y,new,2026-11-18,1,
+2026-11-19T11:39,idx.MSCI_ACWI,new,2026-11-18,1,
+2026-11-19T11:39,idx.MSCI_WORLD,new,2026-11-18,1,
+2026-11-19T11:39,idx.SP500,new,2026-11-18,1,
+2026-11-19T11:39,nav.GOINDEX,new,2026-11-18,8,
+2026-11-19T11:39,nav.SEB,new,2026-11-18,16,
+2026-11-19T11:39,nav.SWEDBANK,new,2026-11-18,8,
+2026-11-19T11:39,p3.GOINDEX,new,2026-11-18,2,
+2026-11-19T11:39,p3.SEB,new,2026-11-18,8,
+2026-11-19T11:39,p3.SWEDBANK,new,2026-11-18,6,
+2026-11-19T11:39,bx.lv_lb,ok,,,vėl veikia
+2026-11-19T11:39,idx.MSCI_ACWI,ok,,,vėl veikia
+2026-11-19T11:39,idx.MSCI_WORLD,ok,,,vėl veikia
+2026-11-19T11:39,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); performance

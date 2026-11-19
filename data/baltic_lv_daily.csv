@@ -150221,3 +150221,35 @@ date,pillar,slug,name,provider,nav,assets_eur,participants,stock_pct,risk,first_
 2026-11-16,III,swedbank-pensiju-plans-dinamika-indekss-18-49,Swedbank pensiju plāns Dinamika Indekss 18–49,"""Swedbank Atklātais Pensiju Fonds"" AS",1.474,36936567,16679,99,Augsts risks,2026-11-18
 2026-11-16,III,swedbank-pensiju-plans-sabalansetais-50-54,Swedbank pensiju plāns Sabalansētais 50–54,"""Swedbank Atklātais Pensiju Fonds"" AS",2.3799,267573869,101575,58,Vidējs risks,2026-11-18
 2026-11-16,III,swedbank-pensiju-plans-stabilitate-55-plus,Swedbank pensiju plāns Stabilitāte 55+,"""Swedbank Atklātais Pensiju Fonds"" AS",2.0523,121421167,48575,15,Zems risks,2026-11-18
+2026-11-17,II,c-akciju-indeksu-plans-15-50,C Akciju indeksu plāns 15-50,"""CBL Asset Management"" Ieguldījumu pārvaldes akciju sabiedrība",1.6511835,399301611,31537,99,Augsts risks,2026-11-19
+2026-11-17,II,c-aktivais-plans-51-60,C Aktīvais plāns 51-60,"""CBL Asset Management"" Ieguldījumu pārvaldes akciju sabiedrība",3.6776486,622841266,93678,47,Vidējs risks,2026-11-19
+2026-11-17,II,c-ilgtspejas-plans-15-50,C Ilgtspējas plāns 15-50,"""CBL Asset Management"" Ieguldījumu pārvaldes akciju sabiedrība",1.7213605,85267433,19445,98,Augsts risks,2026-11-19
+2026-11-17,II,c-universalais-plans-61-plus,C Universālais plāns 61+,"""CBL Asset Management"" Ieguldījumu pārvaldes akciju sabiedrība",2.6367109,212252259,56797,6,Zems risks,2026-11-19
+2026-11-17,II,indexo-dzives-cikla-plans-1960-1969,INDEXO dzīves cikla plāns 1960-1969,INDEXO Asset Management IPAS,1.0524038,2398231,220,25,Zems risks,2026-11-19
+2026-11-17,II,indexo-dzives-cikla-plans-1970-1979,INDEXO dzīves cikla plāns 1970-1979,INDEXO Asset Management IPAS,1.5166718,23990904,1576,99,Augsts risks,2026-11-19
+2026-11-17,II,indexo-dzives-cikla-plans-1980-1989,INDEXO dzīves cikla plāns 1980-1989,INDEXO Asset Management IPAS,1.5366447,31496879,2204,99,Augsts risks,2026-11-19
+2026-11-17,II,indexo-dzives-cikla-plans-1990-plus,INDEXO dzīves cikla plāns 1990+,INDEXO Asset Management IPAS,1.5320702,31769055,6360,100,Augsts risks,2026-11-19
+2026-11-17,II,indexo-plans-izaugsme-55-62,INDEXO plāns Izaugsme 55-62,"IPAS ""Indexo""",1.6425785,244243853,15932,50,Vidējs risks,2026-11-19
+2026-11-17,II,indexo-plans-jauda-16-55,INDEXO plāns Jauda 16-55,"IPAS ""Indexo""",2.4191774,1291879512,100755,100,Augsts risks,2026-11-19
+2026-11-17,II,indexo-plans-konservativais-62-plus,INDEXO plāns Konservatīvais 62+,"IPAS ""Indexo""",0.9809142,31804753,6297,25,Zems risks,2026-11-19
+2026-11-17,II,invl-ekstra-plans-50-65,INVL Ekstra plāns 50–65,"Ieguldījumu pārvaldes akciju sabiedrība ""INVL Asset Management""",3.3059833,329724353,29328,50,Vidējs risks,2026-11-19
+2026-11-17,II,invl-komforta-plans-55-65,INVL Komforta plāns 55–65,"Ieguldījumu pārvaldes akciju sabiedrība ""INVL Asset Management""",2.9315173,91660771,10084,25,Zems risks,2026-11-19
+2026-11-17,II,invl-konservativais-plans-58-plus,INVL Konservatīvais plāns 58+,"Ieguldījumu pārvaldes akciju sabiedrība ""INVL Asset Management""",2.8780224,81197078,18804,0,Zems risks,2026-11-19
+2026-11-17,II,invl-maksimalais-plans-15-60,INVL Maksimālais plāns 15–60,"Ieguldījumu pārvaldes akciju sabiedrība ""INVL Asset Management""",2.0995455,58816365,12962,100,Augsts risks,2026-11-19
+2026-11-17,II,luminor-indekss-plus-plans-16-50,Luminor Indekss+ plāns 16-50,Luminor Asset Management IPAS,1.4617328,30970799,4959,99,Augsts risks,2026-11-19
+2026-11-17,II,luminor-plans-16-50,Luminor plāns 16-50,Luminor Asset Management IPAS,1.5673779,476454601,53461,100,Augsts risks,2026-11-19
+2026-11-17,II,luminor-plans-50-60,Luminor plāns 50-60,Luminor Asset Management IPAS,1.6816257,522838151,45765,67,Vidējs risks,2026-11-19
+2026-11-17,II,luminor-plans-60-plus,Luminor plāns 60+,Luminor Asset Management IPAS,2.7276858,178339202,19233,24,Zems risks,2026-11-19
+2026-11-17,II,luminor-plans-62-65,Luminor plāns 62-65,Luminor Asset Management IPAS,1.6907738,106082179,23317,0,Zems risks,2026-11-19
+2026-11-17,II,seb-indeksu-plans-15-54,SEB indeksu plāns 15-54,"Ieguldījumu pārvaldes akciju sabiedrība ""SEB Investment Management""",2.4474414,748230986,54419,99,Augsts risks,2026-11-19
+2026-11-17,II,seb-izaugsmes-plans-15-54,SEB izaugsmes plāns 15-54,"Ieguldījumu pārvaldes akciju sabiedrība ""SEB Investment Management""",2.019688,440994649,49490,96,Augsts risks,2026-11-19
+2026-11-17,II,seb-konservativais-plans-60-plus,SEB konservatīvais plāns 60+,"Ieguldījumu pārvaldes akciju sabiedrība ""SEB Investment Management""",2.1554215,150343615,33199,0,Zems risks,2026-11-19
+2026-11-17,II,seb-lidzsvara-plans-55-59,SEB līdzsvara plāns 55-59,"Ieguldījumu pārvaldes akciju sabiedrība ""SEB Investment Management""",3.6226967,653045193,76759,42,Vidējs risks,2026-11-19
+2026-11-17,II,seb-stabilais-plans-60-plus,SEB stabilais plāns 60+,"Ieguldījumu pārvaldes akciju sabiedrība ""SEB Investment Management""",2.9778061,302823979,32689,21,Zems risks,2026-11-19
+2026-11-17,II,swedbank-dzives-cikla-plans-1970-plus,Swedbank dzīves cikla plāns 1970+,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",1.9462213,1073945252,78013,80,Augsts risks,2026-11-19
+2026-11-17,II,swedbank-dzives-cikla-plans-1980-plus,Swedbank dzīves cikla plāns 1980+,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",2.0182341,1118687584,85366,98,Augsts risks,2026-11-19
+2026-11-17,II,swedbank-dzives-cikla-plans-1990-plus,Swedbank dzīves cikla plāns 1990+,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",2.0437295,676062255,122586,98,Augsts risks,2026-11-19
+2026-11-17,II,swedbank-dzives-cikla-plans-2000-plus,Swedbank dzīves cikla plāns 2000+,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",1.1626492,26703744,11931,99,Augsts risks,2026-11-19
+2026-11-17,II,swedbank-plans-dinamika-indekss-15-54,Swedbank plāns Dinamika Indekss 15-54,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",1.4378611,42806688,8679,98,Augsts risks,2026-11-19
+2026-11-17,II,swedbank-plans-sabalansetais-55-59,Swedbank plāns Sabalansētais 55-59,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",3.1933119,1003126836,161261,48,Vidējs risks,2026-11-19
+2026-11-17,II,swedbank-plans-stabilitate-60-plus,Swedbank plāns Stabilitāte 60+,"""Swedbank Ieguldījumu Pārvaldes Sabiedrība"" AS",2.3367732,296832174,48416,10,Zems risks,2026-11-19
