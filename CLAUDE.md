@@ -55,15 +55,15 @@ Claude – šio projekto **produkto savininkas (product owner)**. Tikslas – il
 **„Kaip tai veikia“:** `site/how.html`+`how.js` – ranka aprašyta duomenų gijų schema (NODES/EDGES); pridėjus šaltinį ar puslapį – papildyti.
 **Šaltinių sąrašas ir priminimai:** `sources_list.py` (`SOURCES`: visi šaltiniai, ir Baltijos `bx_*` su `c`=šalis, `st`=būsenos raktas, `how_lt` – konkreti instrukcija; `_bx()` – paskutinė data ir kada laukiama naujų) → „Apie“ lentelė pagal šalis, svetainės pranešimai (`build_site` `bxLate`, `man`), vakarinis laiškas (`daily_report.bx_late_lines`, `stale_section`). Baltijos rinkikliai `update.yml` paleidžiami per `tools/run_src.py <raktas> <skriptas>` → klaida į `source_status.json`. Naujas šaltinis = įrašas `SOURCES` + `_bx()` + `run_src.py`.
 **Savarankiškumas:** `tools/smoke_test.py` – kasdien po build atidaro visus puslapius, ir LV/EE kopijas bei LV/ET kalbas (`LANG_PAGES`) (JS klaidos, tuščios lentelės) → `source_status.json` raktas `site` → vakarinis laiškas. `tools/ops_log.py` – duomenų įvykių žurnalas (Duomenų kalendorius `ops.html`).
-**Darbo eigos:** `.github/workflows/update.yml` (rinkimas + build + laiškas; keisti tik būtinai), `notify.yml`.
+**Darbo eigos:** `.github/workflows/update.yml` (rinkimas + build + laiškas; keisti tik būtinai), `notify.yml`. Bibliotekų versijos užfiksuotos `requirements.txt` (keičiant – patikrinti `regress.py`); naršyklė iš talpyklos; mėnesio/ketvirčio šaltiniai ir Seimas – kol tą dieną pavyksta (`tools/daily_due.py`); svetainės patikra – po build arba kartą per dieną.
 **Idėjos:** `IDEAS.md` (aktyvus sąrašas). Ciklo nurodymas: `CIKLO-NURODYMAS.md`.
 
 **NESKAITYTI (dideli / sugeneruoti):** visas `docs/` (generuojamas – taisyti `site/`), `data/portfolios.csv` (14 MB), `data/lb_results_history.csv` (tik `head`), `data/nav_history.csv` (5 MB), `data/pillar3_history.csv` (4 MB), `data/baltic_ee.csv` (7 MB), `data/baltic_lv_index.csv`, `data/indexes.csv`, kiti `data/*.csv` (tik `head`), `imports/` (pradiniai failai), `site/fonts/`, `archyvas/`, `README.md` (žmonėms), `data/last_update_log.txt` (tik `tail -40`). Draudimai įrašyti `.claude/settings.json`.
 
 ## Patikra prieš push
 
-1. `python build_site.py` veikia be klaidų.
-2. Jei keistas puslapis – atsidaro be JS klaidų (Playwright, Chromium `/opt/pw-browsers/chromium`).
+1. `python build_site.py` veikia be klaidų. Keičiant kodą (ne duomenis): prieš – `python tools/regress.py save`, po – `python tools/regress.py check` (visi `docs/` failai, ir Excel, be laiko žymų; skirtis gali tik pakeisti kodo failai). Bazę daryti iš to paties duomenų commit'o (`git stash -- site` → build → save → `stash pop`).
+2. Jei keistas puslapis – atsidaro be JS klaidų: `PW_CHROMIUM=/opt/pw-browsers/chromium python tools/smoke_test.py` (visi puslapiai, LV/ET, pristatymo skaidrės; reikia `pip install playwright`).
 3. Po build atstatyk `docs/data.js`, `docs/data3.js` ir `?v=` maišas HTML, jei keitėsi tik „generated“ laikas (`git checkout -- docs/...`).
 4. `git pull --rebase origin main`, tada `git push origin main`.
 5. **Įrodyti, kad įkelta:** `git branch --show-current` turi rodyti `main`; po push – `git fetch origin main && git log origin/main --oneline -1` turi rodyti tavo commit'ą. 
