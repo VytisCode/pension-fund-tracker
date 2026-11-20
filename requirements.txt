@@ -1,6 +1,6 @@
-playwright
+playwright==1.65.2
 playwright-stealth==2.0.3
-pandas
-openpyxl
-python-docx
-xlrd
+pandas==3.1.1
+openpyxl==3.1.5
+python-docx==1.2.0
+xlrd==2.0.2

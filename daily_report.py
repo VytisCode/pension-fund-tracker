@@ -198,7 +198,7 @@ def source_lines() -> list:
              "bx.main": "Latvija ir Estija: vieneto vertės, turtas (manapensija.lv, pensionikeskus.ee)", "bx.lv_plans": "Latvija: plānų turtas ir dalyviai (manapensija.lv API)",
              "bx.vsaa": "Latvija: VSAA metinė ataskaita", "bx.vsaa_m": "Latvija: VSAA mėnesio perėjimai tarp plānų", "bx.lv_rep": "Latvija: plānų ketvirčio ataskaitos",
              "bx.lv_lb": "Latvija: Latvijas Banka rinkos suma", "bx.ee_rep": "Estija: fondų mėnesio ataskaitos", "bx.hicp": "Eurostat infliacija (Baltija)",
-             "bx.macro": "LV/EE atlyginimai ir pensijos"}
+             "bx.macro": "LV/EE atlyginimai ir pensijos", "seimas": "Seimo darbotvarkė (lrs.lt)"}
     why = {"auth": "baigėsi arba neveikia prieiga", "blocked": "šaltinis blokuoja", "network": "nepasiekiamas",
            "format": "pasikeitė puslapis – reikia taisyti", "other": "klaida"}
     out = [f"  ⚠ {names.get(k, k.replace('idx.', 'indeksas ').replace('nav.', ''))}: {why.get(v.get('kind'), 'klaida')} nuo {v.get('since') or v['err']} ({v.get('msg', '')})"

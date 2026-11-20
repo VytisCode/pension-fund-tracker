@@ -50,6 +50,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip                      # bibliotekos iš talpyklos (requirements.txt versijos užfiksuotos)
 
       - name: Light providers (Artea, Allianz, Goindex API)
         run: python -u update.py light
@@ -64,12 +65,24 @@ jobs:
           python update.py needs-browser
           python pillar3.py needs-browser
 
+      # Naršyklė iš talpyklos (raktas = Playwright versija requirements.txt). Anksčiau „--with-deps“ kas kartą diegė
+      # sistemos šriftus per apt ir užtrukdavo ~9 min.; GitHub serveryje bibliotekos jau yra, todėl jos diegiamos
+      # tik tada, jei naršyklė be jų nepasileidžia.
+      - name: Browser cache
+        if: steps.need.outputs.needs_browser == 'true' || steps.need.outputs.needs_browser_p3 == 'true'
+        continue-on-error: true         # talpykla neprivaloma: be jos naršyklė tiesiog parsisiunčiama
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
       - name: Install browser
         if: steps.need.outputs.needs_browser == 'true' || steps.need.outputs.needs_browser_p3 == 'true'
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
+          pip install -q -r requirements.txt
+          python -m playwright install chromium
+          python -c "from playwright.sync_api import sync_playwright as s; p = s().start(); p.chromium.launch().close(); p.stop()" \
+            || sudo python -m playwright install-deps chromium
 
       # Luminor proxy (Proxy-Cheap) patikra – svetainė praneš, jei prieiga nebeveikia (pvz. baigėsi prenumerata)
       - name: Luminor proxy check
@@ -148,20 +161,31 @@ jobs:
       # Latvijos II ir III pakopos plānų turtas ir dalyviai kasdien (manapensija.lv API, tools/fetch_lv_plans.py) -> data/baltic_lv_daily.csv;
       # kasdien ir dalis istorijos nuo 2003 m. (biudžetas), kol užsipildo.
       # Estijos fondų 10 didžiausių investicijų – naujausia pensionikeskus.ee mėnesio ataskaita -> data/ee_holdings.csv.
+      # Mėnesio / ketvirčio / metų šaltiniai ir Seimo darbotvarkė keičiasi ne dažniau kaip kartą per dieną: jie tikrinami,
+      # kol tą dieną (UTC) pavyksta, o vėlesni paleidimai juos praleidžia (sutaupo ~5 min. kiekviename paleidime).
+      # tools/daily_due.py – kurie šaltiniai šiandien dar nepavyko (pagal data/source_status.json).
+      - name: Which once-a-day sources are due?
+        id: due
+        if: always()
+        run: python tools/daily_due.py bx.lv_rep bx.vsaa bx.vsaa_m bx.lv_lb bx.ee_rep bx.hicp bx.macro seimas
+
       - name: Latvian and Estonian fund reports
         if: always()
         continue-on-error: true
         timeout-minutes: 10
+        env:
+          DUE: ${{ steps.due.outputs.due }}
         run: |
+          due() { case " $DUE " in *" $1 "*) return 0;; *) echo "[$1] šiandien jau pavyko – praleidžiama"; return 1;; esac; }
           command -v pdftotext >/dev/null || sudo apt-get install -y -q poppler-utils >/dev/null
-          python -u tools/run_src.py bx.lv_rep tools/fetch_lv_reports.py --budget 150 --minutes 6
+          if due bx.lv_rep; then python -u tools/run_src.py bx.lv_rep tools/fetch_lv_reports.py --budget 150 --minutes 6; fi
           python -u tools/run_src.py bx.lv_plans tools/fetch_lv_plans.py --budget 300 --minutes 5
-          python -u tools/run_src.py bx.vsaa tools/fetch_vsaa.py
-          python -u tools/run_src.py bx.vsaa_m tools/fetch_vsaa_switch.py
-          python -u tools/run_src.py bx.lv_lb tools/fetch_lv_lb.py
-          python -u tools/run_src.py bx.ee_rep tools/fetch_ee_reports.py
-          python -u tools/run_src.py bx.hicp tools/fetch_hicp.py
-          python -u tools/run_src.py bx.macro tools/fetch_baltic_macro.py
+          if due bx.vsaa; then python -u tools/run_src.py bx.vsaa tools/fetch_vsaa.py; fi
+          if due bx.vsaa_m; then python -u tools/run_src.py bx.vsaa_m tools/fetch_vsaa_switch.py; fi
+          if due bx.lv_lb; then python -u tools/run_src.py bx.lv_lb tools/fetch_lv_lb.py; fi
+          if due bx.ee_rep; then python -u tools/run_src.py bx.ee_rep tools/fetch_ee_reports.py; fi
+          if due bx.hicp; then python -u tools/run_src.py bx.hicp tools/fetch_hicp.py; fi
+          if due bx.macro; then python -u tools/run_src.py bx.macro tools/fetch_baltic_macro.py; fi
 
       # Naujienos apie pensijas (LT, LV, EE): Google News ir leidinių RSS -> data/news.csv (tik papildoma)
       - name: Pension news
@@ -171,13 +195,15 @@ jobs:
         run: python -u tools/fetch_news.py
 
       # Ką svarsto Seimas: posėdžių darbotvarkių pensijų klausimai (atviri LRS duomenys) -> data/seimas.csv (tik papildoma)
+      # Klaida (pvz. lrs.lt neatsako) dabar matoma vakariniame laiške (būsenos raktas „seimas“), ne tik žurnale.
       - name: Seimas agenda
-        if: always()
+        if: always() && contains(format(' {0} ', steps.due.outputs.due), ' seimas ')
         continue-on-error: true
         timeout-minutes: 5
-        run: python -u tools/fetch_seimas.py
+        run: python -u tools/run_src.py seimas tools/fetch_seimas.py
 
       - name: Build website (only if data changed)
+        id: build
         if: always()
         run: |
           if git diff --quiet -- data/nav_history.csv data/pillar3_history.csv data/indexes.csv imports/journey/cpi.csv imports/journey/pensions.csv imports/journey/wages.csv data/fees.csv data/portfolios.csv data/lb_results_history.csv data/baltic_ee.csv data/baltic_lv_index.csv data/baltic_lv_plans.csv data/lv_reports.csv data/lv_holdings.csv data/lv_files.csv data/baltic_lv_lb.csv data/ee_holdings.csv data/hicp.csv data/baltic_macro.csv data/news.csv data/seimas.csv \
@@ -186,12 +212,19 @@ jobs:
           else
             python -c "import openpyxl" 2>/dev/null || pip install -q openpyxl   # be naršyklės žingsnio nebūna įdiegta
             python build_site.py
+            echo "built=true" >> "$GITHUB_OUTPUT"
           fi
 
       # Svetainės patikra: kiekvienas puslapis atsidaro be klaidų, pagrindinės lentelės užpildytos (tools/smoke_test.py);
       # problema įrašoma į source_status.json ir matoma vakariniame laiške bei svetainės pranešimuose
-      - name: Website check
+      # Tik kai svetainė ką tik sugeneruota arba šiandien dar netikrinta (nepasikeitusios svetainės kas pusvalandį netikriname – ~3 min.)
+      - name: Is a website check due?
+        id: sdue
         if: always()
+        run: python tools/daily_due.py site
+
+      - name: Website check
+        if: always() && (steps.build.outputs.built == 'true' || steps.sdue.outputs.due != '')
         continue-on-error: true
         run: python -u tools/smoke_test.py
 
