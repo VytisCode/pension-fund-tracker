@@ -9,7 +9,7 @@ on:
         required: false
         default: ""
       script:
-        description: "Skriptas tools/ aplanke"
+        description: "Skriptas tools/ (arba archyvas/probes/) aplanke"
         required: false
         default: "probe_pillar3.py"
 
@@ -39,7 +39,9 @@ jobs:
           PROVIDERS: ${{ inputs.providers }}
           SCRIPT: ${{ inputs.script }}
           PYTHONDONTWRITEBYTECODE: "1"
-        run: xvfb-run -a python -u "tools/$(basename "$SCRIPT")" $PROVIDERS
+        run: |
+          F="tools/$(basename "$SCRIPT")"; [ -f "$F" ] || F="archyvas/probes/$(basename "$SCRIPT")"   # senos patikros – archyve
+          xvfb-run -a python -u "$F" $PROVIDERS
       # Rezultatai įrašomi į atskirą šaką „probe-results“ (ne main), kad juos būtų galima perskaityti.
       - name: Save results to probe-results branch
         if: always()

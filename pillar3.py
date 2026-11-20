@@ -9,7 +9,7 @@ Komandos:
     python pillar3.py needs-browser   # needs_browser_p3=true/false į $GITHUB_OUTPUT
     python pillar3.py status
 
-Šaltiniai ir fondų kodai patikrinti 2026-10-05 (žr. tools/probe_pillar3*.py).
+Šaltiniai ir fondų kodai patikrinti 2026-10-05 (žr. archyvas/probes/probe_pillar3*.py).
 Kiekvienas tiekėjas tikrinamas tik jei dar nėra laukiamos dienos duomenų (kaip ir II pakopoje).
 """
 import csv
