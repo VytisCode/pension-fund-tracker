@@ -231,13 +231,13 @@ SEB SEB pensija 18+: istorijos CSV 5756 eil., tušti laukai (indeksas, aktyvai) 
 SEB SEB pensija 50+: istorijos CSV 1724 eil., tušti laukai (indeksas, aktyvai) papildyti 0 d.
 SEB SEB pensija 58+: istorijos CSV 5756 eil., tušti laukai (indeksas, aktyvai) papildyti 0 d.
 
-Vilnius: 2026-11-20 15:15, laukiama diena: 2026-11-19
+Vilnius: 2026-11-20 15:32, laukiama diena: 2026-11-19
 SEB: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
 SWEDBANK: jau atnaujinta iki 2026-11-19
 LUMINOR: jau atnaujinta iki 2026-11-19
 GOINDEX: jau atnaujinta iki 2026-11-19
 
-III pakopa – Vilnius: 2026-11-20 15:16, laukiama diena: 2026-11-19
+III pakopa – Vilnius: 2026-11-20 15:32, laukiama diena: 2026-11-19
 SEB: gauta 4 eil., nauja/pakeista 0; dar trūksta: SEB pensija 58+, SEB pensija 50+, SEB pensija 18+, SEB index. Klimato ateitis
 SWEDBANK: jau atnaujinta iki 2026-11-19
 LUMINOR: jau atnaujinta iki 2026-11-19
