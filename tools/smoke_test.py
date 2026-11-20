@@ -12,6 +12,7 @@ Jei naršyklė neįdiegta (tą dieną jos nereikėjo duomenims), patikra praleid
 """
 import functools
 import http.server
+import os
 import socketserver
 import sys
 import threading
@@ -25,11 +26,11 @@ DOCS = ROOT / "docs"
 # puslapis -> [(CSS selektorius, mažiausias eilučių / elementų skaičius)]
 CHECKS = {
     "index.html": [("#gT tbody tr", 7)],
-    "facts.html": [("#qfTable tbody tr", 6), ("#qfCards .fact", 8), ("#mfCards .fact", 5), ("#pvCards .fact", 3), ("#p23Cards .fact", 3)],
+    "facts.html": [("#qfTable tbody tr", 6), ("#qfCards .hgc", 8), ("#mfCards .hgc", 5), ("#pvCards .hgc", 3), ("#p23Cards .hgc", 3)],
     "managers.html": [("#mgT tbody tr", 5)],
     "review.html": [],
     "performance.html": [("#tRet tbody tr", 8), ("#tOv tbody tr", 5)],
-    "performance3.html": [("#tSum tbody tr", 3), ("#tRet tbody tr", 3)],
+    "performance3.html": [("#tSum tbody tr", 3), ("#mFund tbody tr", 3)],
     "pillar3.html": [("#all tbody tr", 10)],
     "overview.html": [],
     "manager.html": [],
@@ -38,8 +39,8 @@ CHECKS = {
     "reports.html": [("#calTable tbody tr", 5)],
     "journey.html": [("#annTable tbody tr", 1)],
     "baltic.html": [("#crTbl tbody tr", 10), ("#mgTbl tbody tr", 3)],
-    "baltic_ee.html": [("#tSum tbody tr", 3), ("#tRet tbody tr", 3)],
-    "baltic_lv.html": [("#tSum tbody tr", 3), ("#tRet tbody tr", 3)],
+    "baltic_ee.html": [("#tSum tbody tr", 3), ("#mFund tbody tr", 3)],
+    "baltic_lv.html": [("#tSum tbody tr", 3), ("#mFund tbody tr", 3)],
     "baltic_ee3.html": [], "baltic_lv3.html": [], "baltic_lt.html": [], "baltic_lt3.html": [],
     # LV/EE kopijos (trys šalys viename dashboard, PERTVARKA-SALYS.md) – generuoja build_site.py iš LT puslapių
     "index_lv.html": [("#gT tbody tr", 3)], "index_ee.html": [("#gT tbody tr", 3)],
@@ -113,7 +114,7 @@ def main() -> int:
     try:
         with sync_playwright() as p:
             try:
-                browser = p.chromium.launch()
+                browser = p.chromium.launch(executable_path=os.environ.get("PW_CHROMIUM") or None)  # vietinė patikra: PW_CHROMIUM=kelias iki chromium
             except Exception as e:  # noqa: BLE001 – naršyklė neįdiegta šiame paleidime
                 print(f"Svetainės patikra praleista: {e.__class__.__name__}")
                 return 0
