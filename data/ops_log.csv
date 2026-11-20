@@ -746,3 +746,7 @@ ts,src,ev,dd,n,msg
 2026-11-20T11:38,bx.lv_lb,ok,,,vėl veikia
 2026-11-20T11:38,estr,ok,,,vėl veikia
 2026-11-20T11:38,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); performance
+2026-11-20T12:32,idx.SP500,new,2026-11-19,1,
+2026-11-20T12:32,nav.ALLIANZ,new,2026-11-19,8,
+2026-11-20T12:32,nav.ARTEA,new,2026-11-19,8,
+2026-11-20T12:32,p3.ARTEA,new,2026-11-19,5,
