@@ -752,3 +752,5 @@ ts,src,ev,dd,n,msg
 2026-11-20T12:32,p3.ARTEA,new,2026-11-19,5,
 2026-11-20T13:04,nav.LUMINOR,new,2026-11-19,8,
 2026-11-20T13:04,p3.LUMINOR,new,2026-11-19,5,
+2026-11-20T14:28,seimas,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-20T14:28,site,ok,,,vėl veikia

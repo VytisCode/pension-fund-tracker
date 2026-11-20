@@ -81,12 +81,14 @@
  "proxy": {
   "ok": "2026-11-20"
  },
+ "seimas": {
+  "err": "2026-11-20",
+  "kind": "other",
+  "msg": "Traceback (most recent call last): (išėjimo kodas 1)",
+  "since": "2026-11-20"
+ },
  "site": {
   "detail": "46 puslapiai",
-  "err": "2026-11-20",
-  "kind": "format",
-  "msg": "facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); performance3.html: #tRet tbody tr – 0 (laukta ≥ 3); baltic_ee.html: #tRet tbody tr – 0 (laukta ≥ 3); baltic_lv.html: #tRet tbody tr – 0 (laukta ≥ 3); pristatymas qf: rodyklė neranda #qfCards .fact (pataisyti site/present.js SLIDES); pristatymas p3: rodyklė neranda #tRank (pataisyti site/present.js SLIDES)",
-  "ok": "2026-11-11",
-  "since": "2026-11-12"
+  "ok": "2026-11-20"
  }
 }
