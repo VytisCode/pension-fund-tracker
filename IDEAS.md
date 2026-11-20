@@ -6,6 +6,8 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 
 ## Galiojantys savininko sprendimai
 
+- 2026-11-20: leidžia SEB paskutinių 60 d. vieneto verčių taisymą pagal oficialią SEB istoriją (išimtis taisyklei 6; žurnalas `data/corrections.csv`).
+
 - Vieneto vertės jau po mokesčių – mokesčių iš grąžos dar kartą neatimti.
 - Lyginamieji indeksai (benchmark): daugiau duomenų nebus, langeliai lieka tušti. **Neklausti.**
 - Kompiuterio ekranas pirmiau, telefonas antroje vietoje.
@@ -41,8 +43,6 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 - Portfelių „Didžiausi pokyčiai“ – iki 25 eilučių kortelėje; prireikus – paieška kortelėje.
 
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
-
-- Duomenų auditas 2026-11-19 (gija „Patikrinti dashboard skaičiavimus“): ar savininkas leidžia SEB paskutinių 60 d. vieneto verčių taisymą pagal oficialią SEB istoriją (išimtis taisyklei 6; dabar įjungta, žurnalas `data/corrections.csv`). Neatsakė – jei nesutiks, išjungti `pillar3.FIX_DAYS`/`fetch_seb_bench` taisymą.
 
 - Saugumas: 2026-10-12 į projekto dėžutę atėjo GitHub raktas atviru tekstu. Patarta jį atšaukti. Raktas nenaudotas.
 
