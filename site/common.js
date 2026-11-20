@@ -1427,6 +1427,12 @@ function dlLoad(file, name) {             // grąžina failo kintamąjį (DATA, 
   if (!DL.cache[file]) DL.cache[file] = fetch(file, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(file); return r.text(); }).then(t => new Function(t + `;return ${name};`)());
   return DL.cache[file];
 }
+/* Fondų turto duomenys (data_aum.js, ~1 MB) – vienas bendras įkėlimas visiems Pradžios / Rinkos faktų blokams (anksčiau kiekvienas
+   kraudavo atskirai, todėl tas pats failas atsisiųsdavo 2 kartus). Jei puslapis failą jau turi (aum.html, manager.html) – naudojamas jis. */
+function aumLoad() {
+  if (typeof AUM !== 'undefined') return Promise.resolve(AUM);
+  return dlLoad('data_aum.js', 'AUM').then(a => { if (typeof AUM === 'undefined') window.AUM = a; return a; });
+}
 const LB_URL = 'https://www.lb.lt/lt/pf-veiklos-rodikliai';
 const dlIn = s => (!DL.from || s >= DL.from) && (!DL.to || s <= DL.to);          // ISO data / mėnuo / metai laikotarpyje
 const dlInY = y => (!DL.from || String(y) >= DL.from.slice(0, 4)) && (!DL.to || String(y) <= DL.to.slice(0, 4));

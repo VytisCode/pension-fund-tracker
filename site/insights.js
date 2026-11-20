@@ -103,9 +103,9 @@ function inBxAum() {
 function inLoad() {
   if (IN.loaded) return Promise.resolve();
   return new Promise((ok, no) => {
-    const s = document.createElement('script'); s.src = inBx() ? 'data_bx_flow.js?v=' + encodeURIComponent(JDATA.generated) : 'data_aum.js?v=' + encodeURIComponent(JDATA.generated);
-    if (inBx()) { s.onload = () => { window.AUM = inBxAum(); IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = () => { s.remove(); no(); }; document.head.appendChild(s); return; }
-    s.onload = () => { IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = () => { s.remove(); no(); }; document.head.appendChild(s);
+    if (!inBx()) { aumLoad().then(() => { IN.F = inPrepare(); IN.loaded = true; ok(); }, no); return; }
+    const s = document.createElement('script'); s.src = 'data_bx_flow.js?v=' + encodeURIComponent(JDATA.generated);
+    s.onload = () => { window.AUM = inBxAum(); IN.F = inPrepare(); IN.loaded = true; ok(); }; s.onerror = () => { s.remove(); no(); }; document.head.appendChild(s);
   });
 }
 const inLatest = () => Math.min(LAST, Math.max(...IN.F.map(f => f.d[f.d.length - 1])));

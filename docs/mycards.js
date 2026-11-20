@@ -217,7 +217,7 @@ const MY_R = {
   },
 };
 let MY_AUM = 0;
-function myNeedAum() { if (MY_AUM) return; MY_AUM = 1; const s = document.createElement('script'); s.src = 'data_aum.js'; s.onload = () => myRender(); document.head.append(s); }
+function myNeedAum() { if (MY_AUM) return; MY_AUM = 1; aumLoad().then(() => myRender()).catch(() => {}); }
 function myRender() {
   const el = document.getElementById('myC'); if (!el) return;
   const t = myT(); if (!MY) MY = myDefaults();

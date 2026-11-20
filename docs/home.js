@@ -249,7 +249,7 @@ function hgRender() {
 let HG_AUM = null;
 function hgAumSl() {
   if (CTRY) return; const card = document.querySelector('.hgc[data-k="aum"]'); if (!card || card.querySelector('.ecsl')) return;
-  if (!HG_AUM) { HG_AUM = dlLoad('data_aum.js', 'AUM').then(a => { HG_AUM.v = a; hgAumSl(); }).catch(() => {}); return; }
+  if (!HG_AUM) { HG_AUM = aumLoad().then(a => { HG_AUM.v = a; hgAumSl(); }).catch(() => {}); return; }
   const A = HG_AUM.v; if (!A || !A.funds) return;
   const t = T(), fs = A.funds.filter(f => f.pl === 'II'), MS = [...new Set(fs.map(f => f.p))], DY = 864e5 / 864e5 * 1;
   const at = (m, day) => fs.filter(f => f.p === m).reduce((a, f) => { const i = lastOnOrBefore(f, day); return a + (i >= 0 && day - f.d[i] <= 10 ? f.a[i] : 0); }, 0);
