@@ -42,7 +42,16 @@ Būsenos: *nauja → patvirtinta → daroma → atlikta*. Atliktą punktą **iš
 
 ## Laukia savininko (nieko nedaryti, kol neatsakys)
 
+- Duomenų auditas 2026-11-19 (gija „Patikrinti dashboard skaičiavimus“): ar savininkas leidžia SEB paskutinių 60 d. vieneto verčių taisymą pagal oficialią SEB istoriją (išimtis taisyklei 6; dabar įjungta, žurnalas `data/corrections.csv`). Neatsakė – jei nesutiks, išjungti `pillar3.FIX_DAYS`/`fetch_seb_bench` taisymą.
+
 - Saugumas: 2026-10-12 į projekto dėžutę atėjo GitHub raktas atviru tekstu. Patarta jį atšaukti. Raktas nenaudotas.
+
+## Duomenų patikra – likę darbai (auditas 2026-11-19), daryti pačiam
+
+- LB rizikos rodiklio (`std_3y`) neatkartojame: mūsų dienos ×√252 skiriasi 0,3–1,5 p. p., mėnesio/savaitės variantai irgi nesutampa. Išsiaiškinti LB metodiką (LB metodikos aprašas) ir, jei rodome LB std, aiškiai žymėti, kieno skaičius.
+- `tools/audit_returns.py` įtraukti į kasdienį `update.yml` po LB ketvirčio failo atsiradimo → neatitikimai į vakarinį laišką (`source_status`).
+- LV: `tools/fetch_lv_reports.py` kai kur ima ne tą vieneto vertės stulpelį (CBL 2016–2017, Luminor 021 2026 Q1–Q2, 037 2023 Q4); grąžoms neturi įtakos (tik `_lv_idx_eur` lygiui).
+- EE: `baltic_ee_funds.csv` `r1y` visada tuščias – 2026-11-19 pridėti stulpelio pavadinimo variantai; patikrinti, ar užsipildė, jei ne – Actions probe pažiūrėti tikrą antraštę.
 
 ## Nedaryti (savininkas atmetė)
 

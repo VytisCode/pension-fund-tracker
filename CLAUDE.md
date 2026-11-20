@@ -11,7 +11,7 @@ Lietuvos II ir III pakopos pensijų fondų analitinė svetainė (GitHub Pages, `
 3. **Viskas nemokama.** Jei kažkas kainuotų – nedaryk, paaiškink ir lauk patvirtinimo.
 4. **Viešas repo ir svetainė:** jokių asmeninių duomenų, savininko failų, slaptažodžių. Raktai tik GitHub Secrets. Svetainėje nerašyti, kad kodas viešas, ir nenurodyti GitHub.
 5. **Svetimų repozitorijų neliesti:** `VytisCode/Daily-LT-funds-NAV-data-collector`, `fundsautomationbot-oss/Daily-LT-funds-NAV-data-collector` – tik skaityti.
-6. **Istorinių duomenų** (`data/*.csv`) niekada netrinti ir neperrašyti; papildyti tik tuščius laukus.
+6. **Istorinių duomenų** (`data/*.csv`) niekada netrinti ir neperrašyti; papildyti tik tuščius laukus. Vienintelė išimtis (2026-11-19, laukia savininko patvirtinimo): SEB paskutinių 60 d. vieneto vertės taisomos pagal oficialią SEB istoriją, kiekvienas pataisymas – `data/corrections.csv`.
 7. Kai reikia savininko veiksmų – žingsnis po žingsnio, paprastai, kad galėtų padaryti telefonu.
 8. **Teiginiai – tik tai, ką rodo duomenys (savininkas 2026-11-11).** Kiekvienas sakinys kortelėse, laiškuose ir Excel turi būti teisingas, neklaidinantis ir paremtas turimais tos šalies duomenimis. Lietuvoje įmokų, išmokų ir perėjimų duomenų nėra: turto pokytis − investicinis prieaugis = tik likutis („pokytis be investicijų“), ne „įmokos viršijo išmokas“; dalyvių skaičiaus pokytis = grynasis (atėję − išėję), ne „pritraukė naujų dalyvių“ ar „naujų pinigų“. Prieš rašant LV/EE – patikrinti, ar ta šalis tokius duomenis turi (pvz. LV VSAA perėjimai).
 
