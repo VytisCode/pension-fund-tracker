@@ -732,3 +732,17 @@ ts,src,ev,dd,n,msg
 2026-11-19T15:58,idx.SP500,fail,,,other: RuntimeError: nėra ECB EUR/USD kurso
 2026-11-19T16:22,idx.EURUSD,ok,,,vėl veikia
 2026-11-19T16:22,idx.SP500,ok,,,vėl veikia
+2026-11-20T11:38,estr,new,2026-11-19,1,
+2026-11-20T11:38,idx.EUR_GOV7Y,new,2026-11-19,1,
+2026-11-20T11:38,idx.MSCI_ACWI,new,2026-11-19,1,
+2026-11-20T11:38,idx.MSCI_WORLD,new,2026-11-19,1,
+2026-11-20T11:38,nav.GOINDEX,new,2026-11-19,8,
+2026-11-20T11:38,nav.LUMINOR,new,2026-11-18,6,
+2026-11-20T11:38,nav.SWEDBANK,new,2026-11-19,8,
+2026-11-20T11:38,p3.GOINDEX,new,2026-11-19,2,
+2026-11-20T11:38,p3.LUMINOR,new,2026-11-18,5,
+2026-11-20T11:38,p3.SWEDBANK,new,2026-11-19,6,
+2026-11-20T11:38,pens,new,2026,1,
+2026-11-20T11:38,bx.lv_lb,ok,,,vėl veikia
+2026-11-20T11:38,estr,ok,,,vėl veikia
+2026-11-20T11:38,site,fail,,,format: facts.html: #qfCards .fact – 0 (laukta ≥ 8); facts.html: #mfCards .fact – 0 (laukta ≥ 5); facts.html: #pvCards .fact – 0 (laukta ≥ 3); facts.html: #p23Cards .fact – 0 (laukta ≥ 3); performance
