@@ -395,7 +395,7 @@ function mkBuild() {
       const live = fs.filter(f => !isStale(f, last)), tot = live.reduce((s, f) => s + (f.assets || 0), 0);
       return fs.slice().sort((a, b) => a.d[0] - b.d[0]).map((f, i) => ({ ...f, provider: first[k].id, _a: f.assets, assets: i ? f.assets : tot || f.assets })); }) };
   });
-  return { reps: reps.filter(p => big.some(g => g.funds.some(f => f.provider === p.id))), big, all, mode: (() => { try { return localStorage.getItem('bxMkMode2') || 'fund'; } catch (e) { return 'fund'; } })() };   // savininkas 2026-11-18: numatytasis – kiekvienas fondas atskirai
+  return { reps: reps.filter(p => big.some(g => g.funds.some(f => f.provider === p.id))), big, all, mode: 'fund' };   // savininkas 2026-11-18: numatytasis – kiekvienas fondas atskirai
 }
 function mkStartOf(g, pid, rng) {                     // pasirinkto valdytojo pirmojo (veikiančio) fondo grupėje pradžia; neturi fondo – grupė be pakeitimų
   const d = g.funds.filter(f => f.provider === pid && !isStale(f, rng.overallLast)).map(f => f.d[0]);
@@ -2013,10 +2013,7 @@ if (IS3) {                                              // „Visa rinka“: val
       $('gxSel').innerHTML = `<option value="off">${T().gxOff}</option><option value="common">${T().gxCommon}${MK.gxD.common != null ? ` (${iso(MK.gxD.common)})` : ''}</option>`
         + ms.map(({ p, d }) => `<option value="${p.id}">${T().gxOf(p.m || p.label)} (${iso(d)})</option>`).join('');
       $('gxSel').value = P.gx ? MK.gxm : 'off'; };
-    addStrings({ hMarket: 'Whole market: return and rank by group', mkAll: 'All manager’s funds', mkBig: 'Largest fund', mkXl: 'Excel with formulas – in the “Largest fund” view',
-      mkNote: { all: 'Column = manager; cell = asset-weighted average return of all the manager’s active funds in the group (equal weights where assets are unknown), so the whole market is covered.', big: 'Column = manager; cell = the manager’s largest active fund in the group (by net assets).' } },
-      { hMarket: 'Visa rinka: grąža ir vieta pagal grupes', mkAll: 'Visi valdytojo fondai', mkBig: 'Didžiausias fondas', mkXl: 'Excel su formulėmis – „Didžiausias fondas“ vaizde',
-      mkNote: { all: 'Stulpelis – valdytojas; langelis – visų jo veikiančių fondų grupėje grąžų vidurkis, svertinis pagal grynuosius aktyvus (kur turto duomenų nėra – lygūs svoriai). Taip lentelėse matoma visa rinka.', big: 'Stulpelis – valdytojas; langelis – jo didžiausias veikiantis fondas grupėje (pagal grynuosius aktyvus).' } });
+    addStrings({ hMarket: 'Whole market: return and rank by group' }, { hMarket: 'Visa rinka: grąža ir vieta pagal grupes' });
     addStrings({ ovCommonOn: 'Only where all the group’s managers take part', ovCommonNote: 'Younger funds take part in fewer comparisons than the others, so their shares are based on a different set. “Only where all the group’s managers take part” keeps just the comparisons in which every manager with a fund in that group has a result for the period.' },
       { ovCommonOn: 'Tik kur dalyvauja visi grupės valdytojai', ovCommonNote: 'Jaunesni fondai dalyvauja mažiau palyginimų nei kiti, todėl jų dalys skaičiuojamos iš kitokio rinkinio. „Tik kur dalyvauja visi grupės valdytojai“ palieka tik tuos palyginimus, kuriuose rezultatą tam laikotarpiui turi kiekvienas valdytojas, turintis fondą toje grupėje.' });
     { const CAT = !PX || PX.c === 'LT';                  // Lietuvos III pakopa – kategorijos, LV/EE – grupės
@@ -2040,8 +2037,8 @@ if (IS3) {                                              // „Visa rinka“: val
     renderMarket = () => { const FM = MK.mode === 'fund', grid = $('mGrid');
       grid.classList.toggle('one', FM); ['btnM4png', 'btnM4cp'].forEach(id => { const e = $(id); if (e) e.hidden = FM; });   // keturių lentelių paveikslėlis – ne šiam vaizdui
       grid.querySelectorAll(':scope > [data-m]').forEach(d => { d.hidden = (d.dataset.m === 'fund') !== FM; });
-      if (FM) { MK.mode = 'all'; withMk(MK.gxUi); MK.mode = 'fund'; renderFundM(); } else withMk(() => { MK.gxUi(); rm(); $('nMarket').textContent += ' ' + T().mkNote[MK.mode]; });
-      const xb = $('btnMxl'); xb.disabled = MK.mode === 'all'; xb.title = MK.mode === 'all' ? T().mkXl : MK.mode === 'fund' ? T().mkFundXl : T().mxlTip; };
+      if (FM) { MK.mode = 'all'; withMk(MK.gxUi); MK.mode = 'fund'; renderFundM(); } else withMk(() => { MK.gxUi(); rm(); });
+      const xb = $('btnMxl'); xb.disabled = false; xb.title = FM ? T().mkFundXl : T().mxlTip; };
     renderOverall = () => withMk(ro);
     exportMarketXlsx = () => MK.mode === 'fund' ? fsExport() : withMkA(xm);
     if (ox) XLB.set('tOv', async () => MK.mode === 'all' ? null : withMkA(ox));   // „Visi fondai“ – Excel tik su lentelės reikšmėmis
