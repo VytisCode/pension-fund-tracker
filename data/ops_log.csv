@@ -756,3 +756,7 @@ ts,src,ev,dd,n,msg
 2026-11-20T14:42,site,ok,,,vėl veikia
 2026-11-20T19:17,nav.SEB,new,2026-11-19,8,
 2026-11-20T19:17,p3.SEB,new,2026-11-19,4,
+2026-11-21T13:13,idx.MSCI_ACWI,new,2026-11-20,1,
+2026-11-21T13:13,idx.MSCI_WORLD,new,2026-11-20,1,
+2026-11-21T13:13,idx.SP500,new,2026-11-20,1,
+2026-11-21T13:13,seimas,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
