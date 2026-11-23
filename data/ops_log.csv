@@ -760,3 +760,12 @@ ts,src,ev,dd,n,msg
 2026-11-21T13:13,idx.MSCI_WORLD,new,2026-11-20,1,
 2026-11-21T13:13,idx.SP500,new,2026-11-20,1,
 2026-11-21T13:13,seimas,fail,,,other: Traceback (most recent call last): (išėjimo kodas 1)
+2026-11-23T11:34,estr,new,2026-11-20,1,
+2026-11-23T11:34,idx.EUR_GOV7Y,new,2026-11-20,1,
+2026-11-23T11:34,nav.GOINDEX,new,2026-11-20,8,
+2026-11-23T11:34,nav.SEB,new,2026-11-20,8,
+2026-11-23T11:34,nav.SWEDBANK,new,2026-11-20,8,
+2026-11-23T11:34,p3.GOINDEX,new,2026-11-20,2,
+2026-11-23T11:34,p3.SEB,new,2026-11-20,4,
+2026-11-23T11:34,p3.SWEDBANK,new,2026-11-20,6,
+2026-11-23T11:34,seimas,ok,,,vėl veikia
