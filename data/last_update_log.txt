@@ -1,8 +1,4 @@
-il., nauja/pakeista 0; dar trūksta: 8 fondų
-ALLIANZ: gauta 32 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-GOINDEX: gauta 8 eil., nauja/pakeista 0; dar trūksta: 8 fondų
-
-III pakopa – Vilnius: 2026-11-24 00:33, laukiama diena: 2026-11-23
+33, laukiama diena: 2026-11-23
 ARTEA: gauta 23093 eil., nauja/pakeista 0; dar trūksta: Artea Stabilus 58+, Artea Subalansuotas 47+, Artea Ambicingas Active 16+, Artea Ambicingas 16+, Artea Ambicingas Index 16+
 GOINDEX: gauta 2 eil., nauja/pakeista 0; dar trūksta: Goindex subalansuotas, Goindex pasaulio akcijų
 
@@ -232,4 +228,9 @@ III pakopa – Vilnius: 2026-11-24 14:46, laukiama diena: 2026-11-23
 SEB: jau atnaujinta iki 2026-11-23
 SWEDBANK: jau atnaujinta iki 2026-11-23
 LUMINOR: gauta 5 eil., nauja/pakeista 5; viskas iki 2026-11-23
+
+Vilnius: 2026-11-24 15:15, laukiama diena: 2026-11-23
+ARTEA: jau atnaujinta iki 2026-11-23
+ALLIANZ: gauta 40 eil., nauja/pakeista 8; viskas iki 2026-11-23
+GOINDEX: jau atnaujinta iki 2026-11-23
 
