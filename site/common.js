@@ -979,7 +979,8 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const els = {};                               // provider -> [elementai] paryškinimui
   const V2 = document.documentElement.dataset.design === 'v2', LW = V2 ? 2.4 : 2;   // naujame dizaine – storesnės linijos, ištisinis švelnus tinklelis
   const sCol = r => r.color || colorOf(r.provider), sLab = r => { const x = r.label || labelOf(r.provider); return typeof tr3 === 'function' ? tr3(x) : x; };  // LV/ET – verčiama prieš trumpinant   // eilutė gali turėti savo spalvą / pavadinimą
-  el._legend = series.map(r => { let l = ''; try { l = sLab(r); } catch (e) {} return { c: sCol(r), l, d: r.dash || '' }; }).filter(x => x.l);   // PNG legendai (chartPng)
+  el._dl = { series, x0, x1, opts };                 // skaidrės paveikslėliui (chartPng perpiešia 16:9)
+  el._legend = series.map(r => { let l = ''; try { l = sLab(r); } catch (e) {} const lv = r.points[r.points.length - 1][1]; return { c: sCol(r), l, d: r.dash || '', v: opts.fmt ? opts.fmt(lv) : pct(lv, 1) }; }).filter(x => x.l);   // PNG legendai (chartPng)
   let lo = opts.zero === false ? Infinity : 0, hi = opts.zero === false ? -Infinity : 0;    // zero: false – ašis neprivalo apimti nulio
   series.forEach(s => s.points.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
   const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
@@ -1009,7 +1010,7 @@ function drawLineChart(el, series, x0, x1, opts = {}) {
   const tickTxt = (x, label, anchor) => { const tx = add('text', { x, y: H - 6, 'text-anchor': anchor, fill: 'var(--text-3)', 'font-size': 11 }); tx.textContent = label; };
   tickTxt(m.l, iso(x0), 'start');
   ticks.forEach(([d, label]) => {
-    if (d <= x0 || d > x1 || X(d) - m.l < 78) return;      // neužlipti ant pradžios žymos
+    if (d <= x0 || d > x1 || X(d) - m.l < 100) return;      // neužlipti ant pradžios žymos
     tickTxt(X(d), label, 'middle');
   });
 
@@ -1228,6 +1229,7 @@ function buildSeries(fs, x0, x1) {
 /* Grafikas „susispaudžia“ užvedus pelę, kad dešinėje tilptų fondų pavadinimai su galutinėmis reikšmėmis.
    paint(mr) – perpiešia grafiką su nurodyta dešine paraštė. */
 function hoverCompress(el, paint) {
+  return { mr: undefined };      // savininkas 2026-11-24: galutinės reikšmės matomos visada – paraštė užrašams nuolatinė (nebesusispaudžia)
   const st = { mr: 16, anim: 0 };
   const go = target => {
     cancelAnimationFrame(st.anim);
@@ -1679,32 +1681,62 @@ function chartTitle(box) {                  // artimiausia antraštė prieš len
   if (h) { h = h.cloneNode(true); h.querySelectorAll('button, select, .info, .ik, .gbadge').forEach(n => n.remove()); }
   return (h ? h.textContent : document.title).replace(/[ⓘ▾▴]/g, '').replace(/\s+/g, ' ').trim();
 }
-function chartPng(box) {
+/* Grafiko paveikslėlis (savininkas 2026-11-24: „neaišku ir netinka į skaidrę“): skaidrei 16:9 (1280×720, 2×), pavadinime – kas rodoma
+   (puslapio pasirinkimai: pakopa, valdytojas, grupė, vienetai) ir laikotarpis, legenda su paskutinėmis reikšmėmis, linijų galuose – reikšmės,
+   apačioje – šaltinis ir duomenų data. Paaiškinimai, kaip naudotis puslapiu („spustelėkite…“), į paveikslėlį nekeliami.
+   Linijinis grafikas (drawLineChart) perpiešiamas skaidrės dydžiu; kiti – kopijuojami kaip ekrane. */
+function pngCtx(box) {
+  if (box._pngCtx) return typeof box._pngCtx === 'function' ? box._pngCtx() : box._pngCtx;
+  const card = box.closest('section, .card'), scope = [...document.querySelectorAll('.pick.sticky, .bar.sticky')].filter(x => !x.contains(box)).concat(card);   // puslapio pasirinkimas (valdytojas, fondas) – pirmas
+  for (let p = card && card.previousElementSibling, i = 0; p && i < 3; p = p.previousElementSibling, i++) { if (p.matches('.bar, .pfbar, .pick, .ctrl')) scope.push(p); else if (p.matches('h2, h3')) break; }
+  const out = [];
+  scope.filter(Boolean).forEach(s => {
+    s.querySelectorAll('select').forEach(x => { if (x.closest('.ctools, .ttools, .tip') || x.offsetParent === null) return; const o = x.options[x.selectedIndex]; const t = o && o.value !== '' ? o.textContent.replace(/[▾…]/g, '').trim() : ''; if (t) out.push(t); });
+    s.querySelectorAll('.seg button[aria-pressed="true"]').forEach(b => { if (b.offsetParent !== null && !b.closest('.ctools, .ttools')) out.push(b.textContent.trim()); });
+  });
+  return [...new Set(out)].filter(Boolean).join(' · ');
+}
+const PNG_UI = /spustel|paspaud|užved|užvesk|dukart|pažymėk|click|hover|tap |double|klikšķ|noklikšķ|klõpsa|vii kursor/i;
+function chartPng(box, o = {}) {
   return new Promise((ok, no) => {
-    const svg = box.querySelector('svg'); if (!svg) return no();
-    const r = svg.getBoundingClientRect(), W = Math.ceil(r.width), H = Math.ceil(r.height), bottom = 24;
-    const lg = box._legend || [], cs0 = getComputedStyle(document.documentElement);
-    let sub = pngSub(box); const maxC = Math.floor(W / 6.4); if (sub.length > maxC) sub = sub.slice(0, maxC - 1) + '…';
-    let lx = 16, ly = 50 + (sub ? 18 : 0), leg = '';                       // legenda po pavadinimu, eilutėmis per plotį
-    lg.forEach(x => { const w = 34 + x.l.length * 7.4; if (lx + w > W + 16 && lx > 16) { lx = 16; ly += 18; }
+    let svg = box.querySelector(':scope > svg') || box.querySelector('svg'); if (!svg) return no();
+    const dl = box._dl, slide = o.slide && dl && !dl.opts.width && svg.isConnected;
+    const cs0 = getComputedStyle(document.documentElement), v = k => cs0.getPropertyValue(k).trim(), esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    let W = Math.ceil(svg.getBoundingClientRect().width), H = Math.ceil(svg.getBoundingClientRect().height);
+    if (slide) W = 1248;
+    const fs = slide ? { t: 22, c: 15, s: 13, l: 14, f: 12 } : { t: 16, c: 13, s: 12, l: 12, f: 11 };
+    const cut = (s, px) => { const n = Math.floor(W / (px * 0.53)); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+    const title = chartTitle(box);
+    const per = dl && dl.x1 > dl.x0 ? `${iso(dl.x0)} – ${iso(dl.x1)}` : '';
+    const pc = pngCtx(box), ctx = cut([pc, per].filter(Boolean).join(' · '), fs.c);
+    let sub = pngSub(box).replace(/…$/, '').split(/(?<=[.!?])\s+(?=[A-ZĄČĘĖĮŠŲŪŽĀĒĪŌŪÕÄÖÜ])/).filter(x => !PNG_UI.test(x))[0] || ''; if (pc && pc.split(' · ').every(x => sub.includes(x))) sub = ''; sub = cut(sub, fs.s);   // tik pirmas sakinys (vienetai, laikotarpis) – ilgi metodikos paaiškinimai lieka svetainėje
+    let y = 16 + fs.t, head = `<text x="16" y="${y}" font-size="${fs.t}" font-weight="700" fill="${v('--text')}">${esc(title)}</text>`;
+    if (ctx) { y += fs.c + 8; head += `<text x="16" y="${y}" font-size="${fs.c}" font-weight="600" fill="${v('--text-2')}">${esc(ctx)}</text>`; }
+    if (sub) { y += fs.s + 6; head += `<text x="16" y="${y}" font-size="${fs.s}" fill="${v('--text-2')}">${esc(sub)}</text>`; }
+    const lg = box._legend || []; let lx = 16, ly = y + fs.l + 12;
+    lg.forEach(x => { const t = x.l + (x.v ? '  ' + x.v : ''), w = 34 + t.length * fs.l * 0.56; if (lx + w > W + 16 && lx > 16) { lx = 16; ly += fs.l + 8; }
       const col = x.c.startsWith('var(') ? cs0.getPropertyValue(x.c.slice(4, -1)).trim() : x.c;
-      leg += `<line x1="${lx}" x2="${lx + 18}" y1="${ly - 4}" y2="${ly - 4}" stroke="${col}" stroke-width="2.5"${x.d ? ` stroke-dasharray="${x.d}"` : ''}/><text x="${lx + 23}" y="${ly}" font-size="12" fill="${cs0.getPropertyValue('--text-2').trim()}">${x.l.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text>`;
+      head += `<line x1="${lx}" x2="${lx + 18}" y1="${ly - fs.l * 0.33}" y2="${ly - fs.l * 0.33}" stroke="${col}" stroke-width="3"${x.d ? ` stroke-dasharray="${x.d}"` : ''}/><text x="${lx + 23}" y="${ly}" font-size="${fs.l}" fill="${v('--text-2')}">${esc(x.l)}${x.v ? `<tspan font-weight="700" fill="${v('--text')}">  ${esc(x.v)}</tspan>` : ''}</text>`;
       lx += w; });
-    const top = lg.length ? ly + 12 : 40 + (sub ? 18 : 0);
+    const top = (lg.length ? ly : y) + 14, bottom = slide ? 30 : 24;
+    let tmp = null;
+    if (slide) {                                         // perpiešti skaidrės dydžiu (16:9)
+      H = Math.max(260, 720 - top - bottom);
+      tmp = document.createElement('div'); tmp.className = box.className; tmp.style.cssText = `position:absolute;left:-20000px;top:0;width:${W}px` ; tmp.setAttribute('aria-hidden', 'true');
+      (box.parentElement || document.body).append(tmp);
+      drawLineChart(tmp, dl.series, dl.x0, dl.x1, Object.assign({}, dl.opts, { width: W, height: H, mr: undefined, onZoom: null, onPick: null }));
+      svg = tmp.querySelector('svg') || svg;
+    }
     const clone = svg.cloneNode(true), src = [svg, ...svg.querySelectorAll('*')], dst = [clone, ...clone.querySelectorAll('*')];
     src.forEach((el, i) => { const cs = getComputedStyle(el); dst[i].setAttribute('style', SVG_PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';')); });
+    if (tmp) tmp.remove();
     clone.setAttribute('x', 16); clone.setAttribute('y', top); clone.setAttribute('width', W); clone.setAttribute('height', H);
-    const cs = getComputedStyle(document.documentElement), v = k => cs.getPropertyValue(k).trim(), esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-    const font = getComputedStyle(document.body).fontFamily.replace(/"/g, "'");
-    const stamp = pngStamp(box);
-    const out = `<svg xmlns="http://www.w3.org/2000/svg" width="${W + 32}" height="${H + top + bottom}" font-family="${font}"><rect width="100%" height="100%" fill="${v('--card') || '#fff'}"/>`
-      + `<text x="16" y="26" font-size="16" font-weight="600" fill="${v('--text')}">${esc(chartTitle(box))}</text>`
-      + (sub ? `<text x="16" y="44" font-size="12" fill="${v('--text-2')}">${esc(sub)}</text>` : '')
-      + leg
-      + new XMLSerializer().serializeToString(clone)
-      + `<text x="16" y="${H + top + 16}" font-size="11" fill="${v('--text-3')}">${esc(stamp)}</text></svg>`;
+    const font = getComputedStyle(document.body).fontFamily.replace(/"/g, "'"), TH = slide ? 720 : H + top + bottom, TW = W + 32;
+    const out = `<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${TH}" font-family="${font}"><rect width="100%" height="100%" fill="${v('--card') || '#fff'}"/>`
+      + head + new XMLSerializer().serializeToString(clone)
+      + `<text x="16" y="${TH - 10}" font-size="${fs.f}" fill="${v('--text-3')}">${esc(pngStamp(box))}</text></svg>`;
     const img = new Image();
-    img.onload = () => { const c = document.createElement('canvas'); c.width = (W + 32) * 2; c.height = (H + top + bottom) * 2; const x = c.getContext('2d'); x.scale(2, 2); x.drawImage(img, 0, 0); c.toBlob(b => b ? ok(b) : no(), 'image/png'); };
+    img.onload = () => { const c = document.createElement('canvas'); c.width = TW * 2; c.height = TH * 2; const x = c.getContext('2d'); x.scale(2, 2); x.drawImage(img, 0, 0); c.toBlob(b => b ? ok(b) : no(), 'image/png'); };
     img.onerror = no;
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(out);
   });
@@ -1722,7 +1754,7 @@ function chartTools() {
       const b = e.target.closest('button'); if (!b) return; e.stopPropagation();
       try {
         if (b.dataset.a === 'xl') { b.disabled = true; try { if (box._xl) await box._xl(); else await tableBook(ctbl); } finally { b.disabled = false; } return; }
-        const blob = await chartPng(box);
+        const blob = await chartPng(box, { slide: true });
         if (b.dataset.a === 'png') return savePng(blob, box);
         try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); b.textContent = '✓'; b.title = T().cpDone; setTimeout(() => { b.textContent = '⧉'; b.title = T().cpImg; }, 1500); }
         catch (err) { savePng(blob, box); alert(T().cpFail); }
@@ -1782,7 +1814,7 @@ function cardHead() {
       if (n.matches('.ldhd')) { t._ch = 1; n.append(t); return; }   // lyderių kortelė turi savo antraštę
       if (!n.matches(CH_BETWEEN) || n.querySelector('table, svg:not(.info svg)')) break;
     }
-    if (!ttl) { t._ch = 1; return; }
+    if (!ttl) { t._ch = 1; if (t.classList.contains('ctools') && blk.matches('.chart, .mchart')) { blk.classList.add('ctop'); blk.prepend(t); } return; }   // be antraštės – įrankiai virš grafiko, ne ant jo (savininkas 2026-11-24)
     let hd = ttl.parentElement.matches('.chtx') ? ttl.parentElement.parentElement : null;
     if (hd) { const old = hd.querySelector(':scope > .ttools, :scope > .ctools'); if (old && old._tgt && old._tgt.isConnected) { t._ch = 1; return; } if (old) old.remove(); }   // vienas pavadinimas – vieni įrankiai
     else {

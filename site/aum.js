@@ -73,6 +73,33 @@ addStrings({
   riSub: (p, b, when, w) => `≈ ${p} mlrd. € išmokėta iš ${b} mlrd. € (${when}). Visa rinka (svertinis): −${w}.`,
   riNote: 'Dalis = išmokėta suma ÷ valdytojo II pakopos turtas prieš pat tą išmokėjimą (todėl skirtingų išmokėjimų dalys skaičiuojamos nuo skirtingos bazės ir nesumuojamos). Išmokėta – įvertis iš kasdienių grynųjų aktyvų ir vieneto verčių: turto sumažėjimas išmokėjimo dienomis, kurio nepaaiškina vieneto vertės pokytis; į jį gali patekti ir tos dienos įmokos bei perėjimai (maži). Tai ne oficiali atsiėmimų statistika. Rinkos vidurkis = paprastas valdytojų vidurkis; svertinis (visa išmokėta ÷ visas turtas) – paantraštėje. Ketvirtis – prašymų ketvirtis, kaip lentelėje žemiau.',
 });
+/* Visa rinka ir II vs III pakopa (savininkas 2026-11-24) */
+addStrings({
+  ogMgr: 'By manager', ogMkt: 'Whole market', ogFunds: 'Funds of one manager', ogPP: 'Pillar II vs III',
+  vMkt: 'Whole market – all managers in one line', mktName: 'Whole market', vPP: m => `${m}: Pillar II vs III`, plName: pl => `Pillar ${pl}`,
+  sumH: 'Change in net assets:', sumLim: 'The change in net assets includes both the investment return and money flows (contributions, payouts, switches); the split is in the tab “Asset change”.',
+  mktFrom: (d) => `The whole-market sum starts on ${d}: earlier we do not have data for all managers.`,
+  mktLag: (l, d, w) => `${l}: up to ${d} – later data not yet available for ${w}.`,
+}, {
+  ogMgr: 'Pagal valdytoją', ogMkt: 'Visa rinka', ogFunds: 'Vieno valdytojo fondai', ogPP: 'II ir III pakopa',
+  vMkt: 'Visa rinka – visi valdytojai viena linija', mktName: 'Visa rinka', vPP: m => `${m}: II ir III pakopa`, plName: pl => `${pl} pakopa`,
+  sumH: 'Turto pokytis:', sumLim: 'Grynųjų aktyvų pokytis apima ir investicijų grąžą, ir pinigų srautus (įmokas, išmokas, perėjimus); jų išskaidymas – skirtuke „Turto pokytis“.',
+  mktFrom: (d) => `Visos rinkos suma skaičiuojama nuo ${d}: anksčiau neturime visų valdytojų duomenų.`,
+  mktLag: (l, d, w) => `${l}: iki ${d} – naujesnių duomenų dar nėra (${w}).`,
+});
+addStrings3({
+  ogMgr: 'Pa pārvaldītājiem', ogMkt: 'Viss tirgus', ogFunds: 'Viena pārvaldītāja plāni', ogPP: 'II un III līmenis',
+  vMkt: 'Viss tirgus – visi pārvaldītāji vienā līnijā', mktName: 'Viss tirgus', vPP: m => `${m}: II un III līmenis`, plName: pl => `${pl} līmenis`,
+  sumH: 'Aktīvu izmaiņa:', sumLim: 'Neto aktīvu izmaiņa ietver gan ieguldījumu ienesīgumu, gan naudas plūsmas (iemaksas, izmaksas, pārejas); to sadalījums – cilnē “Aktīvu izmaiņa”.',
+  mktFrom: (d) => `Visa tirgus summa tiek rēķināta no ${d}: agrāk mums nav visu pārvaldītāju datu.`,
+  mktLag: (l, d, w) => `${l}: līdz ${d} – jaunāku datu vēl nav (${w}).`,
+}, {
+  ogMgr: 'Fondivalitsejate kaupa', ogMkt: 'Kogu turg', ogFunds: 'Ühe fondivalitseja fondid', ogPP: 'II ja III sammas',
+  vMkt: 'Kogu turg – kõik fondivalitsejad ühe joonena', mktName: 'Kogu turg', vPP: m => `${m}: II ja III sammas`, plName: pl => `${pl} sammas`,
+  sumH: 'Varade muutus:', sumLim: 'Puhasvara muutus sisaldab nii investeeringute tootlust kui ka rahavooge (sissemaksed, väljamaksed, vahetused); nende jaotus – vahelehel „Varade muutus“.',
+  mktFrom: (d) => `Kogu turu summa arvutatakse alates ${d}: varem pole meil kõigi fondivalitsejate andmeid.`,
+  mktLag: (l, d, w) => `${l}: kuni ${d} – uuemaid andmeid veel pole (${w}).`,
+});
 addStrings3({
   riTitle: 'Pensiju reformas ietekme uz aktīviem pa pārvaldītājiem', riWhen: 'Izmaksa', riCum: 'Kopā', riAvg: 'Tirgus vidējais', riAvgX: 'Pārvaldītāju vienkāršais vidējais',
   riCumWhen: m => `visas izmaksas kopš ${m}; % no aktīviem pirms pirmās izmaksas`,
@@ -94,7 +121,7 @@ const cls = v => v > 0 ? 'up' : v < 0 ? 'down' : '';
 const grpLabel = (pl, g) => pl === 'III' ? T().cats[g] : g === 'turto' ? T().cpf : `${T().born} ${g.replace('-', '–')}`;
 
 const PO_MGRS = ['SEB', 'SWEDBANK', 'ARTEA', 'ALLIANZ', 'LUMINOR', 'GOINDEX'];   // tvarka kaip savininko lentelėse
-const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', ri: '', off: [], mode: 'grp', mgr: 'SEB', sel: [], from: '', to: '' },
+const ST = Object.assign({ pl: 'II', g: 'all', per: '1y', unit: 'eur', po: 'sum', pu: 'pct', ri: '', off: [], mode: 'grp', mgr: 'SEB', ppm: 'ALL', sel: [], from: '', to: '' },
   (() => { try { return JSON.parse(localStorage.getItem('aumstate')) || {}; } catch (e) { return {}; } })());
 const save = () => { try { localStorage.setItem('aumstate', JSON.stringify(ST)); } catch (e) {} };
 
@@ -109,6 +136,28 @@ function sumSeries(fs) {
   const days = [...new Set(fs.flatMap(f => f.d))].sort((a, b) => a - b), d = [], a = [];
   days.forEach(day => { let s = 0, any = false; fs.forEach(f => { const v = valueAt(f, day); if (v != null) { s += v; any = true; } }); if (any) { d.push(day); a.push(s); } });
   return { d, a };
+}
+/* Visos rinkos (ar valdytojo) suma be dirbtinių šuolių (savininkas 2026-11-24):
+   – kol kuris nors fondas turi tik LB ketvirčio sumas, suma skaičiuojama tik ketvirčio pabaigose (kitaip maišytųsi kasdienės ir pasenusios ketvirtinės reikšmės);
+   – pradžia – kai jau turime kiekvieno valdytojo duomenis (naujas valdytojas, pradėjęs nuo mažo turto (< 2 % rinkos), – tikras rinkos pokytis, laukti nereikia);
+   – pabaiga – paskutinė diena, kurią turime visų veikiančių fondų duomenis (kitaip vėluojančio valdytojo turtas „dingtų“ iš sumos). */
+function mktSeries(fs) {
+  fs = fs.filter(f => f.d.length > 1);
+  if (!fs.length) return { d: [], a: [] };
+  const lastOf = f => f.d[f.d.length - 1], gLast = Math.max(...fs.map(lastOf));
+  const act = fs.filter(f => lastOf(f) >= gLast - 120), endC = Math.min(...act.map(lastOf));
+  const tot = (xs, d) => xs.reduce((s, f) => s + (valueAt(f, d) || 0), 0);
+  const provs = [...new Set(fs.map(f => f.p))], pFirst = p => Math.min(...fs.filter(f => f.p === p).map(f => f.d[0]));
+  let start = Math.min(...provs.map(pFirst));
+  provs.forEach(p => { const d = pFirst(p); if (d > start && tot(fs.filter(f => f.p === p), d) > 0.02 * tot(fs.filter(f => f.p !== p), d)) start = d; });
+  provs.forEach(p => { const d = pFirst(p); if (d > start && tot(fs.filter(f => f.p === p), d) > 0.02 * tot(fs.filter(f => f.p !== p), d)) start = d; });
+  const qEnd = Math.max(-Infinity, ...fs.filter(f => f.q > 0).map(f => f.d[Math.min(f.q, f.d.length - 1)]));   // pirmoji kasdienė diena (tarp jos ir paskutinio ketvirčio – duomenų nėra)
+  const qDays = new Set(fs.filter(f => f.q > 0).flatMap(f => f.d.slice(0, f.q)));
+  const days = [...new Set(fs.flatMap(f => f.d))].filter(d => d >= start && d <= endC && (d >= qEnd || qDays.has(d))).sort((a, b) => a - b);
+  const d = [], a = [];
+  days.forEach(day => { let s = 0, any = false; fs.forEach(f => { const v = valueAt(f, day); if (v != null) { s += v; any = true; } }); if (any) { d.push(day); a.push(s); } });
+  const lag = endC < gLast - 7 ? [...new Set(act.filter(f => lastOf(f) <= endC).map(f => MLABEL[f.p] || f.p))] : [];
+  return { d, a, lag, dash: qEnd > -Infinity ? qEnd : null };
 }
 const fundsOf = (pl, g, m) => AUM.funds.filter(f => f.pl === pl && (g === 'all' || f.g === g) && (!m || f.p === m));
 
@@ -138,16 +187,21 @@ function renderChart() {
   const bar = document.getElementById('chBar');
   const groups = ST.pl === 'II' ? GROUPS2 : ['bond', 'mixed', 'equity'];
   if (ST.g !== 'all' && !groups.includes(ST.g)) ST.g = 'all';
-  if (!['grp', 'mgr', 'sel'].includes(ST.mode)) ST.mode = 'grp';
+  if (!['grp', 'mgr', 'sel', 'mkt', 'pp'].includes(ST.mode)) ST.mode = 'grp';
   if (!Array.isArray(ST.sel)) ST.sel = [];
-  const viewVal = ST.mode === 'mgr' ? 'mgr:' + ST.mgr : ST.mode === 'sel' ? 'sel' : ST.g;
+  const ppMgrs = MGRS.filter(m => ['II', 'III'].every(pl => AUM.funds.some(f => f.p === m && f.pl === pl && f.d.length > 1)));
+  if (ST.mode === 'pp' && ST.ppm !== 'ALL' && !ppMgrs.includes(ST.ppm)) ST.ppm = 'ALL';
+  const viewVal = ST.mode === 'mgr' ? 'mgr:' + ST.mgr : ST.mode === 'sel' ? 'sel' : ST.mode === 'mkt' ? 'mkt' : ST.mode === 'pp' ? 'pp:' + ST.ppm : ST.g;
   const plFunds = AUM.funds.filter(f => f.pl === ST.pl && f.d.length > 1);
   const selSet = new Set(ST.sel.filter(k => plFunds.some(f => fundKey(f) === k)));
   const pick = ST.mode !== 'sel' ? '' : `<details class="fpick"><summary>${selSet.size ? T().selPick(selSet.size) : T().selNone}</summary><div class="fplist">`
     + MGRS.map(m => { const fs = plFunds.filter(f => f.p === m); return fs.length ? `<div class="fpm">${sw(m)}<b>${MLABEL[m]}</b></div>` + fs.map(f => `<label><input type="checkbox" value="${fundKey(f)}"${selSet.has(fundKey(f)) ? ' checked' : ''}> ${fundShort(f)}</label>`).join('') : ''; }).join('') + '</div></details>';
-  bar.innerHTML = field(T().pillar, seg('pl', [['II', 'II'], ['III', 'III']], ST.pl))
-    + field(T().view, `<select id="chG"><option value="all">${T().vMgr}</option>${groups.map(g => `<option value="${g}">${grpLabel(ST.pl, g)}</option>`).join('')}`
-      + MGRS.map(m => `<option value="mgr:${m}">${T().vFundsOf(MLABEL[m])}</option>`).join('') + `<option value="sel">${T().vSel}</option></select>`) + pick
+  const og = (l, h) => `<optgroup label="${l}">${h}</optgroup>`;
+  bar.innerHTML = (ST.mode === 'pp' ? '' : field(T().pillar, seg('pl', [['II', 'II'], ['III', 'III']], ST.pl)))
+    + field(T().view, `<select id="chG">` + og(T().ogMgr, `<option value="all">${T().vMgr}</option>${groups.map(g => `<option value="${g}">${grpLabel(ST.pl, g)}</option>`).join('')}`)
+      + og(T().ogMkt, `<option value="mkt">${T().vMkt}</option><option value="pp:ALL">${T().vPP(T().mktName)}</option>`)
+      + og(T().ogFunds, MGRS.map(m => `<option value="mgr:${m}">${T().vFundsOf(MLABEL[m])}</option>`).join('') + `<option value="sel">${T().vSel}</option>`)
+      + og(T().ogPP, ppMgrs.map(m => `<option value="pp:${m}">${T().vPP(MLABEL[m])}</option>`).join('')) + '</select>') + pick
     + field(T().period, seg('per', PERIODS.map(p => [p, T().periods[p] || p]), ST.per))
     + `<label class="field">${T().from} <input type="date" id="chFrom" value="${ST.per === 'custom' ? ST.from : ''}"></label><label class="field">${T().to} <input type="date" id="chTo" value="${ST.per === 'custom' ? ST.to : ''}"></label>`
     + field(T().show, seg('unit', [['eur', T().sEur], ['pct', T().sPct]], ST.unit));
@@ -156,6 +210,8 @@ function renderChart() {
   bar.querySelector('#chG').addEventListener('change', e => {
     const v = e.target.value;
     if (v.startsWith('mgr:')) { ST.mode = 'mgr'; ST.mgr = v.slice(4); ST.g = 'all'; }
+    else if (v === 'mkt') { ST.mode = 'mkt'; ST.g = 'all'; }
+    else if (v.startsWith('pp:')) { if (ST.mode !== 'pp') ST.unit = 'pct'; ST.mode = 'pp'; ST.ppm = v.slice(3); ST.g = 'all'; }   // skirtingo dydžio pakopos – palyginama procentais (vienetus galima perjungti)
     else if (v === 'sel') { ST.mode = 'sel'; ST.g = 'all'; }
     else { ST.mode = 'grp'; ST.g = v; }
     ST.off = []; save(); renderAllParts();
@@ -167,7 +223,9 @@ function renderChart() {
   if (fp) fp.addEventListener('change', () => { ST.sel = [...fp.querySelectorAll('input:checked')].map(i => i.value); save(); renderChart(); const d = document.querySelector('.fpick'); if (d) d.open = true; });
 
   let raw;
-  if (ST.mode === 'grp') raw = MGRS.map(m => { const fs = fundsOf(ST.pl, ST.g, m); return fs.length ? { m, fs, s: sumSeries(fs) } : null; }).filter(x => x && x.s.d.length > 1);
+  if (ST.mode === 'mkt') { const fs = AUM.funds.filter(f => f.pl === ST.pl && f.d.length > 1); raw = [{ m: 'MKT', fs, s: mktSeries(fs), color: 'var(--accent)', label: T().mktName }].filter(x => x.s.d.length > 1); }
+  else if (ST.mode === 'pp') raw = ['II', 'III'].map(pl => { const fs = AUM.funds.filter(f => f.pl === pl && f.d.length > 1 && (ST.ppm === 'ALL' || f.p === ST.ppm)); return fs.length ? { m: 'P' + pl, fs, s: mktSeries(fs), color: ST.ppm === 'ALL' ? (pl === 'II' ? 'var(--accent)' : '#d9822b') : colorOf(ST.ppm), dash: pl === 'III' && ST.ppm !== 'ALL' ? '6 3' : null, label: (ST.ppm === 'ALL' ? '' : MLABEL[ST.ppm] + ' ') + T().plName(pl) } : null; }).filter(x => x && x.s.d.length > 1);
+  else if (ST.mode === 'grp') raw = MGRS.map(m => { const fs = fundsOf(ST.pl, ST.g, m); return fs.length ? { m, fs, s: sumSeries(fs) } : null; }).filter(x => x && x.s.d.length > 1);
   else {
     const fs = ST.mode === 'mgr' ? plFunds.filter(f => f.p === ST.mgr) : plFunds.filter(f => selSet.has(fundKey(f)));
     raw = fs.map((f, i) => ({ m: 'F' + i, fs: [f], s: { d: f.d, a: f.a }, color: ST.mode === 'mgr' ? FUND_COLORS[i % FUND_COLORS.length] : colorOf(f.p), dash: ST.mode === 'sel' && fs.filter(x => x.p === f.p).indexOf(f) % 2 ? '6 3' : null, label: (ST.mode === 'sel' ? MLABEL[f.p] + ' ' : '') + fundShort(f).replace(/^(Allianz|Artea|Goindex|Luminor|SEB|Swedbank)\s+/, '') }));
@@ -175,7 +233,9 @@ function renderChart() {
   if (!raw.length) { document.getElementById('chart').innerHTML = `<p class="na">${T().selNone}</p>`; document.getElementById('chLegend').innerHTML = ''; return; }
   const dataEnd = Math.max(...raw.map(r => r.s.d[r.s.d.length - 1])), first = Math.min(...raw.map(r => r.s.d[0]));
   const end = ST.per === 'custom' && ST.to ? Math.max(first + 1, Math.min(dataEnd, dayOf(ST.to))) : dataEnd;
-  const x0 = Math.max(first, ST.per === 'custom' ? (ST.from ? dayOf(ST.from) : first) : periodStart(ST.per, end, first));
+  let x0 = Math.max(first, ST.per === 'custom' ? (ST.from ? dayOf(ST.from) : first) : periodStart(ST.per, end, first));
+  const sumMode = ST.mode === 'mkt' || ST.mode === 'pp', xs = Math.max(...raw.map(r => r.s.d[0])), clamped = sumMode && xs > x0;
+  if (clamped) x0 = xs;                                     // visos linijos – nuo tos pačios dienos, kad % būtų palyginami
   renderDecomp(raw, x0, end);
   const series = raw.map(r => {
     const i0 = Math.max(0, lastOnOrBefore(r.s, x0)), i1 = lastOnOrBefore(r.s, end);
@@ -187,7 +247,8 @@ function renderChart() {
     }
     if (ST.unit === 'pct' && r.s.d[0] > x0) return null;     // pradėjo vėliau – procentinis pokytis neteisingas
     const qEnd = Math.max(-Infinity, ...r.fs.filter(f => f.q > 0).map(f => f.d[f.q - 1]));   // iki šios dienos – tik ketvirčio sumos (auditas #14)
-    return { provider: r.m, points: pts, dashUntil: qEnd > x0 ? qEnd : null, color: r.color, label: r.label, dash: r.dash };
+    const qE = r.s.dash != null ? r.s.dash : qEnd;
+    return { provider: r.m, points: pts, dashUntil: qE > x0 ? qE : null, color: r.color, label: r.label, dash: r.dash };
   }).filter(Boolean);
   if (!Array.isArray(ST.off)) ST.off = [];
   const shown = series.filter(r => !ST.off.includes(r.provider));
@@ -218,8 +279,15 @@ function renderChart() {
     clearTimeout(clickT);
     ST.off = series.map(r => r.provider).filter(x => x !== b.dataset.m); save(); renderChart();
   };
-  const qOnly = [...new Set(fundsOf(ST.pl, ST.g).filter(f => f.q > 0 && f.d[f.q - 1] >= x0).map(f => `${MLABEL[f.p]} ${lang === 'lt' ? 'iki' : 'until'} ${iso(f.d[f.q - 1])}`))];
-  document.getElementById('chNote').textContent = T().chNote(qOnly.join(', '));
+  const qOnly = [...new Set(raw.flatMap(r => r.fs).filter(f => f.q > 0 && f.d[f.q - 1] >= x0).map(f => `${MLABEL[f.p]}${ST.mode === 'pp' ? ' ' + f.pl : ''} ${lang === 'lt' ? 'iki' : 'until'} ${iso(f.d[f.q - 1])}`))];
+  const ex = sumMode ? [clamped ? T().mktFrom(iso(x0)) : '', ...raw.filter(r => r.s.lag && r.s.lag.length).map(r => T().mktLag(r.label, iso(r.s.d[r.s.d.length - 1]), r.s.lag.join(', '))), T().sumLim] : [];
+  document.getElementById('chNote').textContent = [T().chNote(qOnly.join(', ')), ...ex].filter(Boolean).join(' ');
+  // Visa rinka / II ir III pakopa: pokytis mln. € ir % per pasirinktą laikotarpį (kiekvienai linijai – jos pirmoji ir paskutinė diena)
+  const U = lang === 'lt' ? 'mln. €' : '€ m', sm = document.getElementById('chSum');
+  sm.innerHTML = !sumMode ? '' : `<b>${T().sumH}</b> ` + raw.map(r => { const i0 = Math.max(0, lastOnOrBefore(r.s, x0)), i1 = lastOnOrBefore(r.s, end); if (i1 <= i0) return '';
+    const a0 = r.s.a[i0], a1 = r.s.a[i1], ch = a1 - a0, pc = (a1 / a0 - 1) * 100;
+    return `<span><span class="sw" style="background:${r.color || colorOf(r.m)}"></span><b>${r.label}</b>: ${mEur(a0)} → ${mEur(a1)} ${U} <b class="${pc >= 0 ? 'pos' : 'neg'}">${signed(pc, x => num(x, 2))}${pctSfx()}</b> (${signed(ch, mEur)} ${U}) <small>${iso(r.s.d[i0])} – ${iso(r.s.d[i1])}</small></span>`; }).filter(Boolean).join(' · ');
+  el._pngCtx = () => { const o = bar.querySelector('#chG'); return [ST.mode === 'pp' ? '' : T().plName(ST.pl), o ? o.options[o.selectedIndex].textContent.replace('…', '') : '', ST.mode === 'sel' ? raw.map(r => r.label).join(', ') : ''].filter(Boolean).join(' · '); };
 }
 
 /* ---------- 2. turto pokyčio lentelė ---------- */

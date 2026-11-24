@@ -1258,3 +1258,8 @@ table.myt.yrs td.l { width: 18%; } table.myt.yrs { font-size: 12.5px; } table.my
 .mx.fc .dv { position: relative; padding-right: 2px; }
 .mx.fc th .fxd { font-weight: 400; color: var(--text-3); font-size: 11px; white-space: normal; overflow-wrap: normal; display: inline-block; line-height: 1.2; }
 .mx.fc th .fxd .nw { white-space: nowrap; font-size: 10.5px; letter-spacing: -0.1px; }
+/* grafiko įrankiai be kortelės antraštės – atskira eilutė virš grafiko, kad neuždengtų linijų (savininkas 2026-11-24) */
+[data-design="v2"] .ctop > .ctools { position: static; margin: 0 0 4px auto; }
+.aumsum { font-size: 13.5px; color: var(--text-2); margin-top: 8px; line-height: 1.7; }
+.aumsum:empty { display: none; }
+.aumsum b.pos { color: var(--dpos, var(--accent)); } .aumsum b.neg { color: var(--dneg); }
