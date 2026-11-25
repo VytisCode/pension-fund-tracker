@@ -47,7 +47,7 @@ addStrings({
   kidWhyLead: n => `How SEB’s result becomes the correct one: each row fixes one thing, and the small number shows how much that fix changes the ${n}-year amount. Explanation of each fix below.`,
   kidSrcT: 'Sources and notes',
   kidShI: 'Instructions', kidShE: 'Evidence', kidShP: 'Comparison',
-  kidRegL: 'Regulation (EU) 2017/653 (EUR-Lex, Lithuanian)',
+  kidRegL: 'Regulation (EU) 2017/653, consolidated version with the 2021/2268 amendments (in force since 2023):', kidRegA: 'all languages and the latest version',
   kidExt: a => `From ${a} SEB’s KID benchmark series is extended automatically with the monthly returns of the fund benchmark SEB publishes daily (SEB’s KID Excel files will no longer be used). Check: extending one year this way differs from SEB’s exact calculation by 0–7 €.`,
   kidShM: 'Months', kidShW: 'Windows', kidShC: 'Calculation', kidShT: 'Scenarios',
 }, {
@@ -95,7 +95,7 @@ addStrings({
   kidWhyLead: n => `Kaip SEB rezultatas virsta teisingu: kiekviena eilutė ištaiso vieną dalyką, o mažas skaičius rodo, kiek tas pataisymas pakeičia ${n} m. sumą. Kiekvieno pataisymo paaiškinimas – žemiau.`,
   kidSrcT: 'Šaltiniai ir pastabos',
   kidShI: 'Instrukcija', kidShE: 'Įrodymai', kidShP: 'Palyginimas',
-  kidRegL: 'Reglamentas (ES) 2017/653 (EUR-Lex, lietuviškai)',
+  kidRegL: 'Reglamentas (ES) 2017/653, suvestinė redakcija su 2021/2268 pakeitimais (galioja nuo 2023 m.):', kidRegA: 'visos kalbos ir naujausia redakcija',
   kidExt: a => `Nuo ${a} SEB PID indekso eilutė automatiškai pratęsiama SEB kasdien skelbiamo fondo lyginamojo indekso mėnesio grąžomis (SEB PID Excel failų nebebus). Patikra: taip pratęsus vienus metus, skirtumas nuo tikslaus SEB skaičiavimo 0–7 €.`,
   kidShM: 'Mėnesiai', kidShW: 'Langai', kidShC: 'Skaičiavimai', kidShT: 'Scenarijai',
 });
@@ -297,7 +297,8 @@ function renderKid() {
     }
   }
   const ex = p.bench && REP.kidm.x[p.bench] && REP.kidm.x[p.bench].ext;
-  html += `<p class="kidi"><a href="${KID_REG}" target="_blank" rel="noopener">${S.kidRegL}</a> · <a href="${KID_REGC}" target="_blank" rel="noopener">${lang === 'lt' ? 'konsoliduota redakcija su 2021/2268 pakeitimais' : 'consolidated version with the 2021/2268 amendments'}</a></p>`
+  const ra = (u, x) => `<a href="${u}" target="_blank" rel="noopener">${x}</a>`, rl = ['LT', 'EN', 'LV', 'ET'];
+  html += `<p class="kidi"><span>${S.kidRegL}</span> ${rl.map(c => ra(kidRegC(c), c)).join(' · ')} · ${ra(KID_REGA, S.kidRegA)}</p>`
     + `<details class="kidsrc"><summary>${S.kidSrcT}</summary><p class="note">${ex && p.to >= kidYm(ex) && !(p.own && R.nOwn === R.N) ? S.kidExt(ex) + ' ' : ''}${S.kidPidSrc} ${S.kidBenchNote} ${p.alt && p.mode === 'reg' ? (lang === 'lt' ? p.alt.note_lt : p.alt.note_en) + ' ' : ''}${p.momDrop ? S.kidMomDrop(60 - p.momDrop) + ' ' : ''}${p.w12 ? S.kidW12(p.rhp, kidYs(p.from - 1 + p.w12), kidYs(p.to - 12 * p.rhp)) + ' ' : ''}</p></details>`;
   box.innerHTML = html;
   const set = (k, v) => { const cur = { ...(KS.o[fk] || {}) }; if (v === d[k]) delete cur[k]; else cur[k] = v; KS.o[fk] = cur; kidSave(); renderKid(); };
@@ -320,7 +321,11 @@ function renderKid() {
 }
 const isoEnd = i => { const y = Math.floor(i / 12), m = i % 12 + 1, last = new Date(Date.UTC(y, m, 0)).getUTCDate(); return `${y}-${String(m).padStart(2, '0')}-${last}`; };
 
-const KID_REG = 'https://eur-lex.europa.eu/eli/reg_del/2017/653/oj/lit', KID_REGC = 'https://eur-lex.europa.eu/legal-content/LT/TXT/?uri=CELEX:02017R0653-20230101',
+/* Reglamento nuorodos (Vytis 2026-11-25): pagrindinė – suvestinė (konsoliduota) redakcija nuo 2023-01-01 svetainės kalba;
+   KID_REGA – dokumento kortelė (visos kalbos ir naujausia suvestinė redakcija); KID_REG – pradinis 2017 m. OL tekstas (tik OL puslapiams). */
+const kidRegC = c => `https://eur-lex.europa.eu/legal-content/${c}/TXT/HTML/?uri=CELEX:02017R0653-20230101`;
+const KID_REG = 'https://eur-lex.europa.eu/eli/reg_del/2017/653/oj/lit', KID_REGC = kidRegC('LT'),
+  KID_REGA = 'https://eur-lex.europa.eu/legal-content/LT/ALL/?uri=CELEX:32017R0653',
   KID_QA = 'https://www.esma.europa.eu/sites/default/files/2023-05/JC_2023_22_-_Consolidated_JC_PRIIPs_Q_As.pdf';
 /* Įrodymų lentelė Excel'iui: kiekvienas skaičiavimo žingsnis – reglamento reikalavimas (oficiali EN citata, OL puslapis),
    ką daro SEB skaičiavimo failas (langelis, formulė), ar atitinka, kur tai šiame faile ir kiek keičia rezultatą.
@@ -394,9 +399,10 @@ function kidEvidence(f, L) {
       ok: t('Ne (50+ 2026)', 'No (50+ 2026)'), w: t('Langai: visų langų formulės vienodos', 'Windows: all window formulas are the same'), note: t('įtaka – kartu su ankstesne eilute', 'impact together with the previous row') }] : []),
     { t: t('Stresinis ne geresnis už nepalankų', 'Stress not better than unfavourable'), q: '"The stress scenario value shown shall not be better than the value of the unfavourable scenario." (20)', s: D + '20 p.; ' + O + '21',
       m: t('Stresinis = min(stresinis, nepalankus).', 'Stress = min(stress, unfavourable).'), e: t('Taikoma.', 'Applied.'), ok: Y, w: t('Skaičiavimai: 28 eil.', 'Calculation: row 28') },
-    { t: t('Tarpiniai laikotarpiai', 'Intermediate periods'), q: '"…at the end of the first year, after half of the recommended holding period rounded up to the end of the nearest year, and at the end of the recommended holding period." (33)',
-      s: D + '33, 35, 36 p.; ' + O + '23–24', m: t('1 m., pusė RHP (suapvalinus aukštyn), RHP; stresiniam N = tarpinio laikotarpio mėnesiai.', '1 year, half RHP (rounded up), RHP; stress N = months of the intermediate period.'),
-      e: t('Taip pat.', 'The same.'), ok: Y, w: t('Skaičiavimai: B–D stulpeliai, 24 eil. (N)', 'Calculation: columns B–D, row 24 (N)') },
+    { t: t('Tarpiniai laikotarpiai', 'Intermediate periods'), q: '"For PRIIPs with a recommended holding period of between 1 and 10 years, performance shall be shown at two holding periods: at the end of the first year and at the end of the recommended holding period." (32); "For PRIIPs with a recommended holding period of 10 years or more, performance shall be shown at three holding periods: at the end of the first year, after half of the recommended holding period rounded up to the end of the nearest year, and at the end of the recommended holding period." (33)',
+      s: D + '32, 33, 35, 36 p.; ' + O + '23–24', m: t('RHP nuo 1 iki 10 m.: 1 m. ir RHP; RHP 10 m. ir daugiau: 1 m., pusė RHP (suapvalinus aukštyn), RHP; nepalankiausiam N = tarpinio laikotarpio mėnesiai. Lietuviškame 33 p. tekste praleistas žodis „pusės“.', 'RHP of 1–10 years: 1 year and RHP; RHP of 10 years or more: 1 year, half RHP (rounded up), RHP; stress N = months of the intermediate period.'),
+      e: k.rhp < 10 ? t(`RHP ${k.rhp} m., bet PID rodo ir tarpinį ${Math.ceil(k.rhp / 2)} m. laikotarpį.`, `RHP ${k.rhp} years, but the KID also shows an intermediate ${Math.ceil(k.rhp / 2)}-year period.`) : t('Taip pat.', 'The same.'),
+      ok: k.rhp < 10 ? No : Y, w: t('Skaičiavimai: B–D stulpeliai, 24 eil. (N)', 'Calculation: columns B–D, row 24 (N)') },
     { t: t('Pateikimas: sumos ir grąža', 'Presentation: amounts and return'), q: '"Figures shall by default be rounded to the nearest 10 EUR" (42); "Performance scenarios shall also be presented in percentage terms, as the average annual return of the investment." (44)',
       s: D + '42, 44 p.; ' + O + '24–25', m: t('Sumos pagal nutylėjimą apvalinamos iki 10 EUR; grąža – vidutinė metinė.', 'Amounts rounded to 10 EUR by default; return – average annual.'),
       e: t('Sumos – iki cento; III pakopai (1000 € kasmet) grąža – įmokų XIRR.', 'Amounts to the cent; for the III pillar (1,000 € a year) the return is the XIRR of the payments.'), ok: t('Iš dalies', 'Partly'),
@@ -539,7 +545,7 @@ function kidBook() {
     S.kidSc.forEach((sc, j) => off.years.forEach((n, i) => I.push([`${sc}, ${S.kidYr(n)}`, P(off.a[i][j], '#,##0.00'), P(X.amt[i][j], '#,##0.00'), P(X.amt[i][j] - off.a[i][j], '+#,##0.00;-#,##0.00;0.00')])));
   }
   I.push([], [L ? 'ŠALTINIAI' : 'SOURCES'],
-    ['Reglamentas (ES) 2017/653: ' + KID_REG], ['Konsoliduota redakcija su 2021/2268 pakeitimais (IV priedas): ' + KID_REGC],
+    ['Reglamentas (ES) 2017/653, suvestinė redakcija su 2021/2268 pakeitimais (IV priedas): ' + KID_REGC], ['Ta pati redakcija angliškai: ' + kidRegC('EN')], ['Visos kalbos ir naujausia redakcija: ' + KID_REGA], ['Pradinis 2017 m. tekstas (OL L 100): ' + KID_REG],
     ['ESAs Q&A (JC 2023 22), skyrius „Performance scenarios“: https://www.esma.europa.eu/sites/default/files/2023-05/JC_2023_22_-_Consolidated_JC_PRIIPs_Q_As.pdf'],
     [L ? 'SEB PID ir SEB Excel skaičiavimo failai (gauti iš savininko); indekso duomenys – SEB; SOLEBLS EUR – Bloomberg.' : 'SEB KIDs and SEB Excel calculation files (from the owner); index data – SEB; SOLEBLS EUR – Bloomberg.']);
   // Įrodymai: reikalavimas → SEB failas → atitinka? → kur šiame faile → įtaka eurais (žingsnių lentelė)
@@ -560,7 +566,7 @@ function kidBook() {
     E.push([i + 1, x.t, x.q, x.s, x.m, x.e, x.ok, x.w, ...scN.map((_, j) => im ? im[j] : (x.step && stp[x.step] && x.note ? x.note : null))]);
   });
   E.push([], [L ? `Įtaka – kiek eurų pasikeičia kiekvieno laikotarpio suma, ištaisius tą neatitikimą (žingsniai iš eilės, kaip lape „${S.kidShP}“). Tuščia – neatitikimo nėra arba pasirinktas ne PID laikotarpis.` : `Impact – change in EUR of each period’s amount after fixing that item (steps in order, as on “${S.kidShP}”). Empty – compliant or the period is not the KID period.`],
-    [], [L ? 'Šaltiniai' : 'Sources'], [KID_REG], [KID_REGC], ['2021/2268 (OL L 455 I, 2021-12-20): https://eur-lex.europa.eu/legal-content/LT/TXT/?uri=CELEX:32021R2268'], [KID_QA]);
+    [], [L ? 'Šaltiniai' : 'Sources'], [KID_REGC], [kidRegC('EN')], [KID_REGA], [KID_REG], ['2021/2268 (OL L 455 I, 2021-12-20): https://eur-lex.europa.eu/legal-content/LT/TXT/?uri=CELEX:32021R2268'], [KID_QA]);
   // Palyginimas: paskelbtas PID, SEB metodas ir reglamentas tam pačiam laikotarpiui
   const Rs = kidCalc(kidParams(f, KS.o[kidKey(f)] || {}, { mode: 'seb' })), Rg = kidCalc(kidParams(f, KS.o[kidKey(f)] || {}, { mode: 'reg' }));
   const pidOk = off && off.years.every((n, i) => n === R.ns[i]) && kidYm(off.from.slice(0, 7)) === p.from && kidYm(off.to.slice(0, 7)) === p.to;
