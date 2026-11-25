@@ -1,4 +1,4 @@
-var TR3V = {"lv": "ff60a2ff", "et": "3bd3ca46"};
+var TR3V = {"lv": "9163d5d2", "et": "0d486cb1"};
 /* Bendras kodas visiems puslapiams: kalba, tema, antraštė, pagalbinės funkcijos, linijinė diagrama. */
 const DAY = 86400000;
 const hEsc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -1522,11 +1522,14 @@ async function dlNavSet(p3) {
   const label = id => (D.providers.find(p => p.id === id) || {}).label || labelOfMgr(id);
   const brand = b => b === 'SWEDBANK' ? 'Swedbank' : b === 'GOINDEX' ? 'Goindex' : b[0] + b.slice(1).toLowerCase().replace(/^eb$/, 'EB');
   const funds = D.groups.flatMap(g => g.funds.map(f => ({ g: p3 ? t.dlCat[g.id] || g.id : g.id, name: f.name, mgr: p3 ? brand(f.brand || f.provider) : label(f.provider), d: dlDays(f), v: f.v })));
-  const days = [...new Set(funds.flatMap(f => f.d))].filter(d => dlIn(iso(d))).sort((a, b) => a - b), pos = new Map(days.map((d, i) => [d, i]));
+  // Lentelėje – tik darbo dienos (Vytis 2026-11-25): kai kurie valdytojai (Artea, Luminor) skelbia ir savaitgalio vertes, todėl kitų fondų stulpeliuose atsirasdavo tuščių eilučių.
+  // Savaitgalio vertės lieka sąraše (long). d – dienos nuo 1970-01-01 (ketvirtadienis), todėl (d + 3) % 7 ≥ 5 – šeštadienis ar sekmadienis.
+  const wkd = d => (d + 3) % 7 < 5;
+  const days = [...new Set(funds.flatMap(f => f.d))].filter(d => wkd(d) && dlIn(iso(d))).sort((a, b) => a - b), pos = new Map(days.map((d, i) => [d, i]));
   const grid = days.map(d => [dlD(iso(d)), ...funds.map(() => null)]), long = [];
-  funds.forEach((f, j) => f.d.forEach((d, i) => { if (pos.has(d)) { grid[pos.get(d)][j + 1] = f.v[i]; long.push([dlD(iso(d)), f.mgr, f.g, f.name, f.v[i]]); } }));
+  funds.forEach((f, j) => f.d.forEach((d, i) => { if (!dlIn(iso(d))) return; if (pos.has(d)) grid[pos.get(d)][j + 1] = f.v[i]; long.push([dlD(iso(d)), f.mgr, f.g, f.name, f.v[i]]); }));
   const pl = p3 ? 'III' : 'II', tab = `${S.tab} ${pl}`, list = `${S.list} ${pl}`;
-  const src = [[t.dlSets[p3 ? 'nav3' : 'nav2'], `${tab}, ${list}`, t.dlNote.nav2, L ? 'Valdytojų svetainės ir duomenų sąsajos; ankstesnė istorija – valdytojų failai' : 'Managers’ websites and data interfaces; earlier history – managers’ files', dlLink(p3 ? F.urls.p3 : F.urls.nav), L ? 'Darbo dienomis' : 'Business days', L ? 'Vieneto vertės jau po valdymo mokesčio.' : 'Unit values are already net of fees.']];
+  const src = [[t.dlSets[p3 ? 'nav3' : 'nav2'], `${tab}, ${list}`, t.dlNote.nav2, L ? 'Valdytojų svetainės ir duomenų sąsajos; ankstesnė istorija – valdytojų failai' : 'Managers’ websites and data interfaces; earlier history – managers’ files', dlLink(p3 ? F.urls.p3 : F.urls.nav), L ? 'Darbo dienomis' : 'Business days', L ? 'Vieneto vertės jau po valdymo mokesčio. Lentelėje – tik darbo dienos; savaitgalio vertės (kai kurie valdytojai jas skelbia) – sąraše.' : 'Unit values are already net of fees. The table shows business days only; weekend values (some managers publish them) are in the list.']];
   if (!p3) (F.providers || []).forEach(p => src.push(['', '', p.label, L ? `${p.label} – vieneto vertės` : `${p.label} – unit values`, dlLink(p.url), '', '']));
   return { sheets: [{ name: tab, rows: [[{ v: c.date, s: 'hdr' }, ...funds.map(f => ({ v: f.name, s: 'hdr' }))], ...grid], o: { cols: [11, ...funds.map(() => 14)], freeze: { r: 1, c: 1 } } },
     dlSheet(list, [c.date, c.mgr, c.grp, c.fund, c.unit], long, [11, 12, 12, 48, 12])], src };
