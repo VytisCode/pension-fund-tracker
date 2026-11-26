@@ -17,6 +17,8 @@ from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+import navdays  # noqa: E402  tik tikros GAV skelbimo dienos
 TOL = 0.03  # p. p.
 
 
@@ -34,7 +36,7 @@ def key(provider, name):
 def series():
     s = defaultdict(dict)
     for pillar, f in (("II", "nav_history.csv"), ("III", "pillar3_history.csv")):
-        for r in csv.DictReader(open(ROOT / "data" / f, encoding="utf-8")):
+        for r in navdays.read(ROOT / "data" / f):
             try:
                 v = float(r["unit_value"])
             except ValueError:

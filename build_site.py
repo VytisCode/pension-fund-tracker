@@ -76,8 +76,9 @@ def build_i18n() -> str:
 
 def main() -> None:
     funds = {}
-    with DATA.open(encoding="utf-8", newline="") as f:
-        for row in csv.DictReader(f):
+    import navdays                                      # tik tikros GAV skelbimo dienos (be švenčių kopijų)
+    if True:
+        for row in navdays.read(DATA):
             group = group_of(row["fund"])
             if group is None or not row["unit_value"]:
                 continue
@@ -128,8 +129,8 @@ def main() -> None:
     p3h = DATA.parent / "pillar3_history.csv"          # III pakopa: lyginamieji indeksai iš valdytojų failų (SEB, Goindex)
     if p3h.exists():
         bm3 = {}
-        with p3h.open(encoding="utf-8", newline="") as f:
-            for row in csv.DictReader(f):
+        if True:
+            for row in navdays.read(p3h):
                 if (row.get("benchmark_index") or "").strip():
                     bm3.setdefault(row["fund"], {})[row["date"]] = float(row["benchmark_index"])
         for name, m in bm3.items():
@@ -801,8 +802,9 @@ def build_pillar3(ver: dict) -> None:
     if not path.exists():
         return
     series = {}
-    with path.open(encoding="utf-8", newline="") as f:
-        for row in csv.DictReader(f):
+    import navdays
+    if True:
+        for row in navdays.read(path):
             if row["unit_value"]:
                 series.setdefault(row["fund"], []).append(
                     (row["date"], float(row["unit_value"]), float(row["net_assets"]) if row["net_assets"] else None))

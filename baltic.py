@@ -226,7 +226,8 @@ def lt_funds():
     out = []
     for pl, path in (("II", D / "nav_history.csv"), ("III", D / "pillar3_history.csv")):
         ser, na = defaultdict(list), {}
-        for r in csv.DictReader(path.open(encoding="utf-8")):
+        import navdays                                  # tik tikros GAV skelbimo dienos
+        for r in navdays.read(path):
             if not r["unit_value"]:
                 continue
             k = (r["provider"], r["fund"])

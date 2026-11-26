@@ -36,8 +36,8 @@ def group_of(fund: str):
 def read(path: Path):
     """{(tiekėjas, fondas): [(data, vieneto vertė, turtas | None, indeksas | None)]}"""
     out = defaultdict(list)
-    with path.open(encoding="utf-8", newline="") as f:
-        for r in csv.DictReader(f):
+    import navdays                                      # tik tikros GAV skelbimo dienos
+    for r in navdays.read(path):
             if r["unit_value"]:
                 out[(r["provider"], r["fund"])].append((r["date"], float(r["unit_value"]),
                                                         float(r["net_assets"]) if r["net_assets"] else None,
