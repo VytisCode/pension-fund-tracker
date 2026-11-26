@@ -819,3 +819,5 @@ ts,src,ev,dd,n,msg
 2026-11-26T11:37,p3.SEB,new,2026-11-25,4,
 2026-11-26T11:37,p3.SWEDBANK,new,2026-11-25,6,
 2026-11-26T11:37,bx.macro,fail,,,network: lv_rows nepavyko: <urlopen error timed out> (išėjimo kodas 0)
+2026-11-26T11:58,nav.GOINDEX,new,2026-11-25,8,
+2026-11-26T11:58,p3.GOINDEX,new,2026-11-25,2,
