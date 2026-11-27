@@ -836,3 +836,8 @@ ts,src,ev,dd,n,msg
 2026-11-27T11:36,p3.ARTEA,new,2026-11-26,1,
 2026-11-27T11:36,p3.SWEDBANK,new,2026-11-26,6,
 2026-11-27T11:36,bx.macro,fail,,,network: lv_rows nepavyko: <urlopen error timed out> (išėjimo kodas 0)
+2026-11-27T11:59,nav.GOINDEX,new,2026-11-26,8,
+2026-11-27T11:59,nav.SEB,new,2026-11-26,8,
+2026-11-27T11:59,p3.ARTEA,new,2026-11-26,4,
+2026-11-27T11:59,p3.GOINDEX,new,2026-11-26,2,
+2026-11-27T11:59,p3.SEB,new,2026-11-26,4,
